@@ -1,0 +1,108 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="Content-Language" content="en-us">
+<title>Games of Soldiers - HEX</title>
+<script LANGUAGE="JavaScript" src="hex2diag/hex2diag.js"></script>
+</head>
+
+<body background="ricebk.jpg" bgcolor="#FFFFFF" text="#000000" link="#666633" vlink="#333366" alink="#990000">
+
+<blockquote>
+  <h1 align="center"><font face="Arial Black"><strong>NEX</strong> &nbsp;</font></h1>
+  <p align="center"><strong><font size="3">Copyright (c) 2004 João Pedro Neto</font></strong></p>
+ 
+  <p align="left"><font face="Arial">Nex is played in the same board as Hex:</font></p>
+    
+  <center>
+    <table border="2" width="330" bordercolorlight="#333366" bordercolordark="#000000">
+      <tr>
+        <td width="100%" background="back-kings.jpg"><script LANGUAGE="JavaScript"><!--
+hexgv2diag("1,11,1,./../.../..../...../....../......./......../........./........../.........../........../........./......../......./....../...../..../.../../.");
+        //--></script></td>
+      </tr>
+    </table>
+    </center>
+    
+    <p align="left"><font face="Arial">The game needs also a set of neutral pieces that are shared by both players.</font></p>    
+
+<table border="0" width="87%">
+  <tr>
+    <td width="100%">
+      <ul>
+		<li><font size="3"
+        face="Arial"><b>TURN</b> - On each turn, each player either:</font><ul>
+		<li><font size="3" face="Arial">drops one friendly stone and one neutral stone in empty cells</font></li>
+		<li><font face="Arial">replace two neutral stones by friendly stones, 
+		and another friendly stone by a neutral stone</font></li>
+		</ul>
+    	</li>
+		<li><font size="3" face="Arial"><b>GOAL
+            </b>- The first player (say, Black) is to form a unbroken chain of stones that
+            connects the SE and&nbsp; NW sides of the board, while the second player 
+		(say, White) attempts to
+            form an unbroken chain of her stones connecting the SW and NE sides 
+		of the board.</font></li>
+		</ul>
+    </td>
+  </tr>
+</table>
+&nbsp;
+  <table border="1" width="600" cellspacing="3" cellpadding="2" bordercolorlight="#333366" bordercolordark="#000000">
+    <tr>
+      <td align="left" width="360" bordercolor="#000000" bgcolor="#D5BD83" background="back-kings.jpg"><script LANGUAGE="JavaScript"><!--
+hexgv2diag("1,11,1,./../.../..../q..../xx..../xwx..../xwwwqx../wxxqwwxq./QQxww.wwww/Qwxwqqx..xw/.wwq.wxxq./..qxq..../..w...../..xx.../....../...../..../.../../.");
+//--></script>
+      </td>
+      <td valign="top" width="295"><font face="Arial"><strong>An example</strong></font>
+        <p><font face="Arial">In this position, Black resigns. There are a 
+		triple threat of connection at the marked neutral stones.</font><p>
+		<font face="Arial">Even if Black replaces two of them, White still has 
+		the third to make a winning connection.</font></td>
+    </tr>
+  </table>
+    <p><font size="3" face="Arial">The use of neutral stones greatly increases 
+	the game complexity with a small increase in rule complexity. The tactical 
+	possibilities are larger since neutral stones are both a benefit and a 
+	problem shared by both players.<br>
+	<br>
+	Whatever the options of White and Black, the number of black and white 
+	stones will always be equal at the end of each turn. The number of neutral 
+	stones, however, can change and be reduced even to zero.</font></p>
+	<p><font size="3" face="Arial">Nex games are full of tactical subtleties. An 
+	interesting feature is that there are no useless stones on board; it is 
+	always possible to recycle them to swap a pair of neutral stones.<br>
+	<br>
+	When the number of neutral stones rises, the game reaches a critical mass 
+	that produces swap battles that may decide the winner. Forcing moves (i.e., 
+	making the adversary to play at a specific point) are the easiest way of 
+	preventing the adversary from swapping important neutral stones on his next 
+	turn.<br>
+	<br>
+	It is common the co-existence of two plans: one with friendly pieces and 
+	another based on neutral structures that mines the adversary groups and may 
+	provide an alternative path to victory.<br>
+	<br>
+	In the extreme (and rare) case where the board is almost full, we apply the 
+	following conventions:</font></p>
+	<ul>
+		<li><font size="3" face="Arial">When there is only one empty hexagon and 
+		there are no neutral stones, the player just drops a friendly stone.</font></li>
+		<li><font size="3" face="Arial">When there is only one neutral stone and 
+		no empty hexagons, the player converts the remaining neutral into a 
+		friendly stone.</font></li>
+		<li><font size="3" face="Arial">When there is one neutral and one empty 
+		hexagon, the player drops a friendly stone on the empty hexagon and the 
+		opponent converts the neutral stone.</font></li>
+	</ul>
+	<p><font face="Arial">After each one of this moves, the game will surely 
+	end.</font></p>
+	<p><font face="Arial">These conventions are required to completely define 
+	Nex and any other game where this mutator is applied. Actually, games like 
+	Gomoku, Y and Gonnect can be transformed into very nice variants with this 
+	concept.</font></p>
+</blockquote>
+<hr>
+</body>
+</html>
