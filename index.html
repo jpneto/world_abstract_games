@@ -7,6 +7,19 @@
  <meta name="author"      content="João Pedro Neto">
  <meta name="viewport"    content="width=device-width, initial-scale=1, shrink-to-fit=no">
  <title>World of Abstract Games</title>
+ 
+ <style>
+    input {
+       background-color:inherit;
+    }
+ </style>
+ 
+ <script>
+    function searchWAG() {
+        url = document.forms["wag_search"]["q"].value
+        window.open(url, "_blank")
+    }     
+ </script> 
 </head>
 
 <body background = "back-wood.gif">
@@ -25,33 +38,29 @@
   <a href="projects.htm">GAMES &amp; PROJECTS</a>
 </p>
 
-<font size="2">
+<br><br><br><br>
 
-<p align="center">
-  &nbsp;</p>
-<p align="center">
-  &nbsp;</p>
-<p align="center">
-  &nbsp;</p>
-<p align="center">
-  &nbsp;</p>
-<p align="center">
-  <strong><em style="font-style: normal"><font face="Courier New">
-  This is a new website version, the old website will not be updated.<br>
-  </font></em></strong><em style="font-style: normal"><strong>
-	<font face="Courier New">New games are posted weekly at Sagme&#39;s
-	<a href="http://sagme.blogspot.com">blog</a>.</font></strong></em><br>
-&nbsp;</p>
-<p align="center">
-  <em style="font-style: normal"><strong><font face="Courier New">The Feb 2025 update (a) corrected broken 
-	links, replacing them with<br>
-	backups from the Wayback Machine; (b) placed all 276 zrfs as local files, <br>
-	(c) included many variants in the main three sections, bringing the <br>
-	total number of indexed games to 594.<br>
-	<br>
-	</font></strong></em>
-  <strong><em style="font-style: normal"><font face="Courier New">
-  Written and last modified by João Pedro Neto at Feb 26, 2025</font></em></strong></p>
+<font size="2"><em style="font-style: normal"><strong><font face="Courier New">
 
+	<p align="center">This is a new website version, the old website will not be updated.<br>
+	  New games are posted weekly at Sagme's <a href="http://sagme.blogspot.com">blog</a>.
+	  <br><br><br>
+	  The Feb 2025 update (a) corrected broken links, replacing them with<br>
+	  backups from the Wayback Machine; (b) placed all 276 zrfs as local files, <br>
+	  (c) included many variants in the main three sections, bringing the <br>
+	  total number of indexed games to 594.<br>
+	  <br>
+	  Written and last modified by João Pedro Neto at Feb 26, 2025</p>
+
+</font></strong></em></font>
+  
+  <!--
+<center>
+  <form id="wag_search">
+    <input type="text" id="q" name="q">
+    <input type="submit" value="search" onclick="searchWAG()"></input>
+  </form>
+</center>
+ -->
 </body>
 </html>
