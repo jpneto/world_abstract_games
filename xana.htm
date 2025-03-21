@@ -31,44 +31,43 @@ stackable.</font></p>
     <td width="100%">
       <ul>
 		<li><strong><font face="Arial">DEFINITIONS</font></strong><ul>
-		<li><font size="3" face="Arial"><b>Accessibility</b>: Any empty cell X 
-		is accessible to a player on his 1st move, or if it is stepwise 
-		connected by empty cells to some friendly stack. </font></li>
-		<li><font size="3" face="Arial"><b>Circle</b>: The circle of stack S 
-		(with height H) is all cells accessible to S at Hex-Euclidean distance 
-		(from S) less or equal to H. <i>Check the examples below.</i></font></li>
+		<li><font size="3" face="Arial">A cell is <b>accessible</b> if it is 
+		empty and there is a path of empty hexes to a friendly stone</font></li>
+		<li><font face="Arial">The <b>distance</b> between two cells is the 
+		number of steps needed to reach from one to the other (hex occupancy is 
+		irrelevant)</font></li>
+		<li><font face="Arial">The <b>circle</b> of a stack of height H&gt;0 is the 
+		set of all accessible cells up to distance H</font><font size="3" face="Arial">. <i>Check the examples below.</i></font></li>
+		<li><font face="Arial">A stack has <b>liberty</b> if it is adjacent to 
+		at least one empty hex</font></li>
 		</ul>
-		</li>
+		<p>&nbsp;</li>
 		<li><strong><font face="Arial">T</font></strong><font size="3" face="Arial"><strong>URN 
-		</strong>-&nbsp;At each turn, each player may do two actions: </font>
-		<ul>
-			<li><font face="Arial">First, o</font><font size="3" face="Arial">ptionally 
-			insert or move a friendly stack.</font><ul>
-				<li><font size="3" face="Arial">A stack (one or more friendly 
-				stones off board) is inserted at an accessible cell or on top of 
-				a friendly stack already on board (which increases its height).</font></li>
-				<li><font size="3" face="Arial">A stack must be adjacent to an 
-				empty cell, unless it produces immediate captures</font></li>
-				<li><font size="3" face="Arial">A stack may move to a cell of 
-				its own circle </font></li>
-				<li><font size="3" face="Arial">A stack may move only part of 
-				its stones (thus splitting in two). In this cases, the distance 
-				traveled by the moving part is up to the circle radius of the 
-				moving part only.</font></li>
-			</ul></li>
-			<li><font face="Arial">Second, o</font><font size="3" face="Arial">ptionally 
-			insert up to two walls on friendly circles.</font></li>
-			<li><font size="3" face="Arial">There is a swap option after the 
-			first move. </font></li>
-			<li><font size="3" face="Arial">Any stack (friend of foe) not adjacent to an empty 
-			cell, is immediately captured. </font></li>
+		</strong>-&nbsp;</font><ul>
+		<li><font size="3" face="Arial">Initially, each player drops a friendly 
+		stack (of any size) in an empty cell</font><ul>
+		<li><font size="3" face="Arial">Pie rule: the second player can swap 
+		colors instead of moving</font></li>
+		</ul>
+    	</li>
+		<li><font face="Arial">On his turn, the player either:</font><ul>
+			<li><font face="Arial">pass</font></li>
+			<li><font face="Arial">drops a stack on an accessible cell or on top 
+			of a friendly stack</font></li>
+			<li><font face="Arial">moves a stack, or part of it, within its 
+			circle</font></li>
 		</ul></li>
+		<li><font face="Arial">Then, optionally, the player can drop one or two 
+		walls on accessible cells</font></li>
+		<li><font face="Arial">After the player&#39;s turn, any stack (of either 
+		color) without liberties is captured</font></li>
+		</ul>
+    	<p>&nbsp;</li>
 		<li><font size="3" face="Arial"><b>GOAL</b>
-            -&nbsp;When both players pass, the player with more points wins.
-		</font>
-      <ul>
-		<li><font size="3" face="Arial">Score 1 per cell only accessible to the 
-		player, 1 point per captured enemy stone. </font></li>
+            -&nbsp;When both players pass, the game ends</font><ul>
+		<li><font face="Arial">Wins the player with highest score</font></li>
+		<li><font face="Arial">One point per accessible cell, one point per 
+		captured stone</font></li>
 		</ul></li>
 		</ul>
     </td>
@@ -79,7 +78,7 @@ stackable.</font></p>
     <tr>
       <td align="left" width="340" bordercolor="#000000" background="back-kings.jpg" height="53">
 <script LANGUAGE="JavaScript"><!--
-hexgv2diag("6,11,6,....../u,,,.../.u,,,.../..u,,,.../..u3u,,.../..uuu,,..../.u,,,,..../u,,,,..../......../......./....../")
+hexgv2diag("6,11,6,....../u,,,.../.u,,,.../..u,,,.../..u3u,,.../..uuu,,..../.u,,,,..../u,,,,..../......../......./......")
 //--></script>
       </td>
       <td valign="top" width="260" height="53"><strong><font face="Arial">A 
@@ -105,7 +104,7 @@ hexgv2diag("6,11,6,....../.u...../.2.,u.../.u.,6u.../uu..u;..../.........../....
 		stack, by dropping a stack at the green dot (the cell is accessible) and 
 		drop two walls at the blue dots (those cells are within the circle of 
 		the black stack of size 2).</font><p><font face="Arial">Another possible 
-		move would be to secure an area of six cells at the upper left sector, 
+		move would be to secure an area of five cells at the upper left sector, 
 		by dropping to walls and a stack near the north edge. Can you see how?</font></td>
     </tr>
     </table>
@@ -127,7 +126,7 @@ Numbers<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb
 	<br>&nbsp;&nbsp;&nbsp; . # # . # # # . 1 # #&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4&nbsp;&nbsp; By8&nbsp; + y6h9&nbsp;&nbsp;&nbsp;&nbsp; t3&gt;2r3 + w2m4 
 	<br>&nbsp;&nbsp; . # # . . . . A 1 . # .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 5&nbsp;&nbsp; Bt13 + y10n13&nbsp;&nbsp; r3&gt;2u4 + wy4 
 	<br>&nbsp; . # . A . . . . # # # # .&nbsp;&nbsp;&nbsp;&nbsp; 6&nbsp;&nbsp; Av5&nbsp; + w6x7&nbsp;&nbsp;&nbsp;&nbsp; 1z7&nbsp;&nbsp;&nbsp; + x5B7<br>&nbsp;. . 1 # . . . . . . . # 1 #&nbsp;&nbsp;&nbsp; 7&nbsp;&nbsp; y8&gt;1x9 + A8v11&nbsp; u4&gt;1t5 + g10u6:1 
-	<br>&nbsp;. . 3 # . . . . . . # . # .&nbsp;&nbsp;&nbsp; 8&nbsp;&nbsp; x9v10 + x9q14&nbsp;&nbsp; 2z9&nbsp;&nbsp;&nbsp; + w8z11:1<br>&nbsp;. . . # . . . . . . . # 2 .&nbsp;&nbsp;&nbsp; 9&nbsp;&nbsp; Au12&nbsp; + r13r15&nbsp; 1f7&nbsp;&nbsp;&nbsp; + f5d11 
+	<br>. . 3 # . . . . . . # . # .&nbsp;.&nbsp;&nbsp; 8&nbsp;&nbsp; x9v10 + x9q14&nbsp;&nbsp; 2z9&nbsp;&nbsp;&nbsp; + w8z11:1<br>&nbsp;. . . # . . . . . . . # 2 .&nbsp;&nbsp;&nbsp; 9&nbsp;&nbsp; Au12&nbsp; + r13r15&nbsp; 1f7&nbsp;&nbsp;&nbsp; + f5d11 
 	<br>&nbsp; . # # . . . . . . . A # .&nbsp;&nbsp;&nbsp; 10&nbsp;&nbsp; t13s12 + p13i8&nbsp; 1k14&nbsp;&nbsp; + l13j15 
 	<br>&nbsp;&nbsp; # . # C . . . . . # . #&nbsp;&nbsp;&nbsp;&nbsp; 11&nbsp;&nbsp; Ai6&nbsp;&nbsp; +&nbsp; h5h7&nbsp;&nbsp; 1i12&nbsp;&nbsp; + h11k12??<br>&nbsp;&nbsp;&nbsp; . . 1 # . . . B A . .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 12&nbsp;&nbsp; Ar5&nbsp;&nbsp; +&nbsp; q4s6&nbsp;&nbsp;&nbsp;resign 
 	<br>&nbsp;&nbsp;&nbsp;&nbsp; . . . # # # # . . .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 13&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
