@@ -164,28 +164,21 @@ boardgv2diag("lurd,10,10,40/..cx.w4/..xwa5/3x6/30")
       </td>
       <td width="420"><font face="Arial"><strong>Density
         </strong><font size="3"
-      face="arial, helvetica">(by João Pedro Neto</font>)</font><p><font
-      size="3" face="Arial">Mutator Density(N,M) is a rule stating that for each NxN
-      cell (N odd) inside the board should have at most M
-      pieces on it. With no restrictions, i.e., Density(N,N*N) we get standard Go. I estimate
-      that M &gt; N*sqrt(N) to create an interesting game. In the example, the game has
-      Density(3,5), so White can protect is soldier by playing at [2] for example, since Black
-      cannot play [1] or else the density would be 6 on that 3x3 square. </font></td>
-    </tr>
-    <tr>
-      <td align="center" width="230" bordercolor="#000000" background="back-kings.jpg">
-<script LANGUAGE="JavaScript">
-<!--
-boardgv2diag("lurd,10,10,20/..w4w../7x../.wxw..w.w./50")
-//-->
-</script>
-      </td>
-      <td width="420"><font face="Arial"><strong>Capture GO </strong><font
-      size="3" face="arial, helvetica">(described by </font>Andre Engels)</font><p><font
-      face="Arial" size="3">Mutator Capture(N) applied to Go creates a game where the winner is
-      the first player who captures N stones from his opponent. Capture(1) is like Go, but with
-      some remarkable differences. For example, two connected internal liberties count as two
-      eyes instead of one. In the picture there are two nice handicap positions.</font></td>
+      face="arial, helvetica">(by João Pedro Neto</font>)</font><p>
+		<font
+      size="3" face="Arial">Same rules as GO except:<br>
+		<br>
+		+ Any 3x3 area can have up to five stones<br>
+		<br>
+		In the example White, instead of [1], can also protect his soldier by 
+		playing at [2], since Black cannot play [1] or else the density would be 
+		six on that 3x3 area.<br>
+		<br>
+		This idea can be generalized via a mutator. </font>
+		<p><font
+      size="3" face="Arial">Mutator Density(N,M) states that for each NxN board 
+		area should have at most M stones inside it. So, Density(19,361) reduces 
+		to Go. </font></td>
     </tr>
     <tr>
       <td align="center" width="230" bordercolor="#000000" background="back-kings.jpg">
@@ -453,29 +446,29 @@ boardgv2diag("lurd,32,11,.....x...../..w..x...../..w..x..x../..ww.x..x../x.ww.x.
 &nbsp;      
       </td>
       <td width="398"><font face="Arial" size="3"><b>No Pass Go</b></font>
-        <p><font face="Arial" size="3">All rules like Go, except no passing is
-        allowed. A player loses if it cannot make a valid move.</font></p>
-        <p><font face="Arial" size="3">The game ends when only one player is
-        left on the board, with all his interior spaces being single points. In
-        practice, it will end long before this by resignation, when the Go-like
-        part has finished, then the &quot;cold&quot; (check next paragraph) part
-        has finished, (all territories reduced to solid stones with 2 eyes
-        each), so that finally someone has to fill in one of an only 2-eyed
-        group and his opponent captures it; thus gaining a huge amount of extra
-        territory and free moves, till the loser has to self-destruct another
-        group, and so on till all are gone.</font> <font face="Arial" size="3">The
-        best way of filling in opponent territory and own territory make very
-        intriguing Combinatorial Game Theory (CGT) example puzzles.</font></p>
-        <p><font face="Arial" size="3">A hot position is one where both players
-        really want to move, where no-one would pass even if it were legal. Most
-        positions in chess and Go are such, and all in Hex, Moku, etc etc.</font>
-        <font face="Arial" size="3">A cold position is one where no-one wants to
-        move, and would pass if it were legal. e.g. Zugwang positions in chess,
-        post-dame (fill-eye) moves in Gonnect, and a great many positions in Nim
-        and so forth. There may also be lukewarm positions where no-one cares if
-        they or their opponent moves first, such as filling in dame in
-        (territory scoring) Go.</font> <font face="Arial" size="3">It is a very
-        useful term in CGT.</font>
+        <p><font face="Arial" size="3">All rules like Go, except pass is not 
+		allowed. A player loses if he cannot make a valid move.<br>
+		<br>
+		The game ends when only one player is left on the board, with all his 
+		interior spaces being single points. In practice, it will end long 
+		before this by resignation, when the Go-like part has finished, then the 
+		&quot;cold&quot; (check next paragraph) part has finished, (all territories 
+		reduced to solid stones with 2 eyes each), so that finally someone has 
+		to fill in one of the 2-eyed group and his opponent captures it; thus 
+		gaining a huge amount of extra territory and free moves, till the loser 
+		has to self-destruct another group, and so on till all are gone. The 
+		best way of filling in opponent territory and own territory makes very 
+		intriguing Combinatorial Game Theory (CGT) example puzzles.<br>
+		<br>
+		A hot position is one where both players really want to move, where no 
+		one would pass even if it were legal. Most positions in chess and Go are 
+		such, and all in Hex, Moku, etc etc. A cold position is one where no-one 
+		wants to move and would pass if it were legal. e.g. Zugwang positions in 
+		chess, post-dame (fill-eye) moves in Gonnect, and a great many positions 
+		in Nim and so forth. There may also be lukewarm positions where no-one 
+		cares if they or their opponent moves first, such as filling in dame in 
+		(territory scoring) Go. It is a very useful term in CGT.<br>
+		</font>&nbsp;</p>
       </td>
     </tr>
     <tr>
