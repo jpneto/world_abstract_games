@@ -605,7 +605,8 @@ Aÿ)</font><p><font face="Arial">Groups are captured when they have a number of
 &nbsp;</td>
       <td width="398"><b><font face="Arial" size="3">DanGo </font></b>
 		<font face="Arial" size="3">(</font><font face="Arial">Caspar Nijhuis 
-		and Robin Upton, <a href="http://www.new-ideas.org/games/dango/">1991</a>)</font><p>
+		and Robin Upton,
+		<a href="https://web.archive.org/web/20040106055749/http:/www.new-ideas.org/games/dango/">1991</a>)</font><p>
 		<font face="Arial">Stones once captured, are not removed from play but 
 		relocated on the board by the capturer. The game starts with two stones 
 		of each colour on opposite corners.</font></td>
@@ -755,16 +756,20 @@ boardgv2diag("lurd,10,10,20/.xw7/..ww6/..w7/6xx../5wx3/5wx3/4ww4/5ww3")
 //-->
 </script>
       </td>
-      <td width="398"><font face="Arial"><strong>Pentaminoes</strong>
+      <td width="398"><font face="Arial"><strong>Pentominoes</strong>
         <font size="3"
       face="arial, helvetica">(by João Pedro
   Neto</font>)</font><p><font face="Arial"
-      size="3">When a player creates a pentaminoe, he<strong> </strong><u>must</u> append an
-      extra soldier to create an hexaminoe, capturing any eventual enemy soldier. In the
-        left example, White can capture the Black piece by forming a pentaminoe. In the other example,
-      if Black capture the top white soldier, then the white structure is again a pentaminoe and
+      size="3">When a player creates a pentomino, he<strong> </strong><u>must</u> append an
+      extra soldier to create an hexomino, capturing any eventual enemy soldier. In the
+        left example, White can capture the Black piece by forming a pentomino. 
+		The resulting pattern must be a hexomino. If the group, with the extra 
+		soldier, would connect to another friendly group, then the move is 
+		invalid.</font><p><font face="Arial"
+      size="3">In the other example,
+      if Black capture the top white soldier, then the white structure is again a pentomino and
       can capture a black stone. Therefore there is a special Ko rule, that forbids those
-      pentaminoes swaps on two sequential moves.</font>
+      pentominoes swaps on two sequential moves.</font>
       </td>
     </tr>
   </table>
@@ -798,7 +803,7 @@ boardgv2diag("lurd,10,10,4c5/10/4w5/xcw.acx3/4c5/4x5/40")
       attracted (if your opponent's) or repelled (if your own). That is, it is moved in a
       straight line away from or to the stone just played, until it reaches the edge or another
       stone (in the case of attraction always the stone just played). In the example, if a white
-      soldier is dropped at [1], the 4 pieces (2 whites and 2 blacks) go to cells [2].</font><p>
+      soldier is dropped at [1], the four pieces (two whites and two blacks) go to cells [2].</font><p>
 		<font face="Arial">A variant may define a maximum length of this 
 		magnetic effect (only attract pieces closer than N cells and repel 
 		pieces at most to N cells).</font></td>
@@ -813,7 +818,7 @@ boardgv2diag("lurd,10,10,10/..ax4x./.xwx6/.wx3w3/60")
       </td>
       <td width="420"><font face="Arial"><strong>Atom GO </strong><font size="3"
       face="arial, helvetica">(by Thomas Hillebrand</font>)</font><p><font
-      face="Arial" size="3">If a stone is killed all 4 stones around it also die. So, if a group
+      face="Arial" size="3">If a stone is killed all four stones around it also die. So, if a group
       of stones dies then all surrounding stones are removed, too. In the example, a black
       soldier dropped at [1] will kill all 5 stones.</font></td>
     </tr>
@@ -833,8 +838,8 @@ boardgv2diag("lurd,10,10,10/.x4wx../.wa4w../..x3x3/20/.xw4x../.cxx..x.x./7x../10
       neighbor (including diagonals) the player may rotate all neighbors (including diagonals)
       one cell clockwise. A stone cannot be dropped in a cell with no liberties, even if the
       stone gets some liberty after the rotation. In the example, a white soldier dropped at [1]
-      will produce the rotation of its 3 neighbors. In the other example, the black stone
-      dropped at [2] rotates the 3 stones, and because of that, captures the white stone.</font></td>
+      will produce the rotation of its three neighbors. In the other example, the black stone
+      dropped at [2] rotates the three stones, and because of that, captures the white stone.</font></td>
     </tr>
     <tr>
       <td align="center" width="230" bordercolor="#000000" background="back-kings.jpg">
@@ -847,16 +852,24 @@ boardgv2diag("lurd,10,10,10/.xxwa5/7x../..w3xcx./..w3xwx./..w4w../..x4x../..w4x.
       <td width="420"><font face="Arial"><strong>Push GO</strong>
         <font size="3"
       face="arial, helvetica">(by João Pedro
-  Neto</font>)</font><p><font face="Arial"><font size="3">This one is similar to Abalone's push rules. A line of N stones can
-      push another line of M&lt;N opponent stones, at a distance of 1 cell, if that next cell is
-      empty.</font> In the example, the black line can push the
-      white stone to [1]. The triple black line can push the double white line into [2], thus
-      capturing two white stones. The triple white line cannot push the black stone, because
-      there is another white stone above [3]. There is a KO rule, that forbids
-        to drop a stone on a cell just made vacant by a push move.</font>
-        <p><font face="Arial">The game can be improved by giving a limited
-        number of neutral stones, for each player, that cannot be pushed, but
-        don't count in the score.</font></td>
+  Neto</font>)</font><p><font face="Arial">Same as Go, except: a line of 
+		friendly stones can push, by one intersection, an adjacent enemy line of 
+		stones, if (a) the enemy line is smaller in size, (b) the next 
+		intersection, where the last enemy stone will be placed, is empty <br>
+		<br>
+		A push is valid if it pushes an enemy stone off-board (resulting in the 
+		capture of that stone)<br>
+		<br>
+		It&#39;s invalid to drop a stone at the intersection left empty by a push, 
+		on the immediate next turn<br>
+		<br>
+		In the example, the black line can push the white stone to [1]. The 
+		triple black line can push the double white line into [2], thus 
+		capturing two white stones. The triple white line cannot push the black 
+		stone, because there is another white stone above [3].<br>
+		<br>
+		Another variant gives each player an equal number of immovable neutral 
+		stones, that can be used to prevent enemy pushes.</font></td>
     </tr>
     <tr>
       <td align="center" width="230" bordercolor="#000000" background="back-kings.jpg">
