@@ -32,46 +32,34 @@
   <tr>
     <td width="100%">
       <ul>
-		<li><font face="Arial"><b>LIBERTY</b> - A stone is free if it is
-          orthogonally adjacent to an empty cell, or is adjacent to a friend
-          stone with liberty.</font>
+		<li><font face="Arial"><b>DEFINITIONS</b> -</font><ul>
+		<li><font face="Arial">Go concepts like group, liberty, Ko are applied 
+		here. </font></li>
+		<li><font face="Arial">A <b>swap</b> is to move a stone already on one 
+		board, to the other board on the same coordinate, provided that the 
+		destination is empty.</font></li>
+		</ul>
             </li>
-		<li><font face="Arial"><b>SWAP
-            </b>- A stone can swap its position to the same
-          cell on the other board, if that cell is empty.</font></li>
 		<li><font face="Arial"><b>PIE
-            RULE</b> - One player places 3 black stones and 2 white stones on
-            some empty cells. The other player choose sides. White drops the
-            next cell, then turns alternate.</font></li>
+            RULE</b> - One player places three black stones and two white stones on
+            some empty cells. The other player choose sides. White continues.</font></li>
 		<li><font face="Arial"><b>TURN</b> - On each turn, each player must do
           one of the following things:</font>
-            <ul>
-				<li><font face="Arial">Pass
-                  his turn;</font></li>
-				<li><font face="Arial">Swap
-                  a stone (removing all stones without liberty) and then drop a stone on an empty cell
-                  (removing all stones without liberty).&nbsp;</font>
-				<ul>
-					<li><font face="Arial">Swapping
-                        is mandatory but dropping is not.</font></li>
-					<li><font face="Arial">If
-                        a player cannot swap one of his stones, then he can swap
-                        an opponent's stone.</font></li>
-					<li><font face="Arial">It
-                        is not valid to create a position where no swaps are
-                        possible.</font></li>
-				</ul>
-				</li>
-		</ul>
-		</li>
+		<ul>
+			<li><font face="Arial">Passes</font></li>
+			<li><font face="Arial">Swaps a friendly stone and then, optionally, 
+			drops a stone.&nbsp;</font> 
+			<ul>
+				<li><font face="Arial">If no friendly stone can be swapped, the 
+				player can swap an enemy stone.</font></li>
+				<li><font face="Arial">It is illegal to create a position with 
+				no swaps.</font></li>
+				<li><font face="Arial">Ko is also applied to both boards, it is 
+				invalid to make the same swap twice in a row.</font></li>
+			</ul></li>
+		</ul></li>
 		<li><font face="Arial"><b>GOAL</b>
-            - The game ends when both players pass. Wins the player with more points.</font>
-            <ul>
-				<li><font face="Arial">A stone counts as one point, and a
-              cell inside the player's own territory counts also as one point (same as
-              Chinese Go rules)</font></li>
-		</ul>
-		</li>
+            - The game ends when both players pass; scoring by Chinese rules.</font></li>
 		</ul>
     </td>
   </tr>
@@ -90,19 +78,16 @@ boardgv2diag("lurd,5,11,.....z.x.../.....zxwx../ww...zxwa../.Xw..z.c.../.w...z..
 //-->
 </script>
       </td>
-      <td valign="top" width="338"><font face="Arial"><strong>An example</strong></font>
-        <p><font face="Arial">Black's move.&nbsp;</font><font face="Arial">The
-        marked black stone has only one liberty (to its left; the cell on the other
-        board does not count has one). Black swaps the marked
-        stone to [2] and drop a stone at cell [1] capturing the white group.</font>
-      </td>
+		<td valign="top" width="338"><font face="Arial"><strong>An example</strong></font>
+		<p><font face="Arial">Black's move.&nbsp;</font><font face="Arial">The
+        marked black stone has only one liberty. </font>
+		<p><font face="Arial">Black swaps the marked
+        stone to [2] and drops at [1], capturing the white group.</font> </td>
     </tr>
-</table>
-  <br>
-<font size="3" face="Arial">As easily seen, this game is a mix of Go with a wonderful
-game, <a href="https://www.chessvariants.com/other.dir/alice.html"> Alice
+</table><br><font face="Arial">T</font><font size="3" face="Arial">his game is a mix of Go with a wonderful
+game, <a href="https://www.chessvariants.com/other.dir/alice.html">Alice
 Chess</a>.&nbsp;Notice that the rules permit suicides,
-which can be useful when there is no better move left, and a drop is essential.</font>
+which can be useful when creating area for future swaps is more important.</font>
 </blockquote>
 <hr>
 </body>
