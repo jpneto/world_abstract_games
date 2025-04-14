@@ -1,0 +1,211 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="Content-Language" content="en-us">
+<title>Games of Soldiers - Lisbon</title>
+<SCRIPT LANGUAGE="JavaScript" src="board2diag/board2diag.js"></SCRIPT>
+</head>
+
+<body background="ricebk.jpg" bgcolor="#FFFFFF" text="#000000" link="#666633" vlink="#333366" alink="#990000">
+
+<blockquote mstheme>
+<h1 align="center"><strong><font face="Arial Black">LISBON</font></strong></h1>
+<p align="center"><strong>Copyright (c) 2004 Bill Taylor, João Pedro Neto</strong></p>
+<p align="left"><font face="Arial">Lisbon was inspired by Christian Freeling&#39;s 
+Havannah.<br>
+<br>
+The game is played on an hexhex board with alternating sizes 8/9 where no edge 
+hex has special status, i.e., corner hexes are not treated differently than any 
+other hexes at the edge. That is achieved by modelling the board perimeter as a 
+circle approximation.</font></p><center>
+      <img border="0" src="taylor_neto/lisbon_setup.gif" width="480" height="422"></center>
+&nbsp;
+
+<table border="0" width="80%">
+  <tr>
+    <td width="100%">
+      <ul>
+		<li><font face="Arial"><b>Definitions</b></font><ul>
+		<li><font face="Arial">The <b>perimeter</b> consists of all hexes from 
+		the board&#39;s edges</font></li>
+		<li><font face="Arial"><b>Distances</b> only refer to sizes of paths 
+		across the perimeter</font></li>
+		<li><font face="Arial">For any edge hex, the <b>near-opposite</b> hexes 
+		are the two farthest edge hexes (which distances are exactly a 
+		half-perimeter)</font></li>
+		</ul>
+    	</li>
+		</ul>
+    </td>
+  </tr>
+</table>
+
+<p align="left"><font face="Arial">Given this board, for any edge hex, there are 
+always two farthest hexes at distance 21 (half-perimeter). This happens because 
+of the board format, where edges have alternating sizes of eight and nine hexes, 
+resulting in odd-sized half-perimeters. <br>
+<br>
+Here lies a potential problem of lack of clarity: near-opposite stones are not 
+obvious to beginners. But it is a matter of practice. For example, one way to 
+quickly check for near-opposites is starting at a board corner. At a corner, say 
+stone [1], the near-opposites are (a) the other corner, and (b) the other 
+corner&#39;s neighbor in the direction of the largest edge (check arrow).<br>
+<br>
+The (counter-)clockwise distance of a edge stone from a corner, like black [2], 
+is the same (counter-)clockwise distance for its near-opposites. Stone [3] is 
+another example, by shifting four edge hexes clockwise.</font></p>
+<p align="center">
+<img border="0" src="taylor_neto/lisbon_egs1.gif" width="480" height="422"></p>
+
+<table border="0" width="80%">
+  <tr>
+    <td width="100%">
+      <b><font face="Arial">Rules</font></b><ul>
+		<li><font face="Arial">Players place stones following the progressive 
+		sequence 122234445666...</font><ul>
+			<li><font face="Arial">No pair of currently placed stones can share 
+			the same group</font></li>
+			<li><font face="Arial">Players do not need to use all available 
+			moves</font></li>
+		</ul></li>
+		<li><font face="Arial">Winner is whoever makes a connected group of 
+		friendly stones that either:</font><ul>
+			<li><font face="Arial">includes two near-opposite edge hexes</font></li>
+			<li><font face="Arial">includes three edge hexes, where all the 
+			three pair-wise clockwise distances are less than a half-perimeter</font></li>
+			<li><font face="Arial">completely surrounds at least one empty hex 
+			or one opponent stone (not includes edges)</font></li>
+		</ul></li>
+		</ul>
+    </td>
+  </tr>
+</table>
+
+<p align="left"><font face="Arial">The original ruleset used a restricted 12* 
+move sequence. We replaced it with a slow progressive mutator for a faster and 
+more dramatic game. This progressive sequence is less decisive than standard 
+progressive games (where matches end too soon).</font></p>
+<p align="left"><font face="Arial">Some examples of patterns with three edge 
+hexes:</font></p>
+<p align="center">
+<img border="0" src="taylor_neto/lisbon_egs2.gif" width="480" height="422"></p>
+<p align="left"><font face="Arial">Assume a group connecting the stones of the 
+same color, using only non-edge hexes, in the above diagram:</font></p>
+<ul>
+	<li>
+	<p align="left"><font face="Arial">The three black stones form a winning 
+	pattern; this is an example of a standard Y shape: touching three 
+	non-adjacent edges (of course, in Lisbon there is only one edge: the 
+	perimeter).</font></p></li>
+	<li>
+	<p align="left"><font face="Arial">The three white stones, despite not 
+	making a Y, are also a winning pattern, since neither is more than half a 
+	distance from the others. Notice that if either one of the lower white 
+	stones were where the yellow stones are, that shape would not be winning, 
+	given that there would have been a pair of stones with a distance of half 
+	the perimeter (it needs to be strictly less than half the perimeter).</font></p>
+	</li>
+	<li>
+	<p align="left"><font face="Arial">The three cyan stones are also a winning 
+	pattern (the upper pair is adjacent to both near-opposites of the lower 
+	stone).</font></p></li>
+	<li>
+	<p align="left"><font face="Arial">The three purple stones do not form a 
+	winning pattern (one pair-wise distance is much greater than a 
+	half-perimeter). Notice that if a player has several friendly stones at the 
+	edges, to win he needs to select three that make the winning pattern, the 
+	remaining unselected stones are immaterial.</font></p></li>
+</ul>
+<p align="left"><font face="Arial">The next diagrams show an actual match between us:</font></p>
+
+<p align="center">
+  <img border="0" src="taylor_neto/lisbon_match1_1.gif" width="480" height="423"><br>
+  <font face="Arial">The first four turns with 1,2,2,2 moves. Players are trying to gain the center. <br>
+   Black cannot cut both [4] to [2] given the group restriction placement rule.</font>
+</p>
+
+<p align="center">
+  <img border="0" src="taylor_neto/lisbon_match1_2.gif" width="480" height="423"><br>
+  <font face="Arial">The next three turns. Black is trying to isolate the center white group,<br>
+   while creating two parallel line groups to reach the edges</font>
+</p>
+
+<p align="center">
+  <img border="0" src="taylor_neto/lisbon_match1_3.gif" width="480" height="423"><br>
+  <font face="Arial">White [8] makes four group extensions, spreading her influence outwards the center.<br>
+Three of the five [9] stones, are placed a bit more outside to counter this influence.</font>
+</p>
+
+<p align="center">
+  <img border="0" src="taylor_neto/lisbon_match1_4.gif" width="480" height="423"><br>
+  <font face="Arial">White maintains the integrity of its main group, and spreads to the south perimeter.</font>
+</p>
+
+<p align="center">
+  <img border="0" src="taylor_neto/lisbon_match1_5.gif" width="480" height="423"><br>
+  <font face="Arial">Black is unable to gain the initiative. He uses five or his six moves to try to contain White's vertical expansion. 
+  <br>The single middle stone is trying to keep alive the connection to the western perimeter.</font>
+</p>
+
+<p align="center">
+  <img border="0" src="taylor_neto/lisbon_match1_6.gif" width="480" height="423"><br>
+  <font face="Arial">White invests again in the south perimeter, almost guaranteeing its connection. <br>
+  Notice that Black cannot cut the two white south branches, since they would belong to the same black group.</font>
+</p>
+
+<p align="center">
+  <img border="0" src="taylor_neto/lisbon_match1_7.gif" width="480" height="423"><br>
+  <font face="Arial">Black tries to build a north wall. In principle this would not be enough to stop <br>
+  White connecting, but White's central group is very big, and she needs to worry about  <br>
+  the south battle, that might compromise the northern advance.</font>
+</p>
+
+<p align="center">
+  <img border="0" src="taylor_neto/lisbon_match1_8.gif" width="480" height="423"><br>
+  <font face="Arial">The pace increases. Now we have eight movements per turn. White needs to deviate the <br>
+  north path, creating a new path to connection, since she needed to connect the central group with <br>
+  its three south branches/threats. Also, her task is not only to connect opposite edges <br>
+   ("there are no edges") but to connect near-opposite edge hexes.<br><br>
+  But now Black has a difficult task, there are multiple connections to cut. It is difficult for him to stop <br>
+  either the north and the south advances. Still, he tries the following:</font>
+</p>
+
+<p align="center">
+  <img border="0" src="taylor_neto/lisbon_match1_9.gif" width="480" height="423"><br>
+  <font face="Arial">At the south, Black is forcing White to choose a path. No matter the option, this will  mean that, <br>
+ at the north, White will not be able to place stone on the [a] hexes. This gives Black some hope.</font>
+</p>
+
+<p align="center">
+  <img border="0" src="taylor_neto/lisbon_match1_10.gif" width="480" height="423"><br>
+  <font face="Arial">White finally connects to the south perimeter. But to face next turn, she creates alternative routes, 
+  <br>to the southwest and northeast. Also, White is quietly surrounding the three [a] stones.</font>
+</p>
+
+<p align="center">
+  <img border="0" src="taylor_neto/lisbon_match1_11.gif" width="480" height="423"><br>
+  <font face="Arial">Black protects his three pieces, and expands to the north and east.<br>
+   The hex [a] becomes decisive. Also, Black is threatening to win at [b].</font>
+</p>
+
+<p align="center">
+  <img border="0" src="taylor_neto/lisbon_match1_12.gif" width="480" height="423"><br>
+  <font face="Arial">White now has 10 moves (!) She is able to develop an entire new branch at the east, while consolidating <br>
+  her main group by playing at the previous hex [a], and still opening a new threat at the northeast.<br><br>
+  In this position, Black resigns. He is forced to play at [a] and [b]. This opens White's [c], which<br>
+  together with many options at [d], will connect three edge hexes in a winning pattern.</font>
+</p>
+<p align="left">
+  <font face="Arial">The final position:</font></p>
+
+
+<p align="center">
+  <img border="0" src="taylor_neto/lisbon_final_pos.gif" width="480" height="423"></font>
+</p>
+
+</blockquote>
+
+<hr>
+</body>
+</html>
