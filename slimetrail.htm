@@ -106,11 +106,91 @@ w n w nw nw n nw ne nw s ne e s e sw! [<i>any other move would be a win for the
           <p><font size="3" face="Arial">The board shows the final position.</font><font face="Arial"><strong>&nbsp;</strong></font></td>
       </tr>
     </table>
-<p><font size="3" face="Arial"><a name="slimemoku"></a>One variant is <b>Slime-Moku</b>. After each move, the slime leaves alternating color
+<p><font size="3" face="Arial"><a name="medusa"></a><font face="Arial">A variant by Bill Taylor and João Neto is called <b>Medusa</b>. 
+Players decide how many <i>heads</i> (whites stones) are to be played. 
+Initially, there's one head on the center of a 8x8 board. Then, on his turn, 
+each player picks a head on board and orthogonally or diagonally slides 
+over a sequence of empty cells (placing black stones during its path). If the number of 
+heads still didn't reach the maximum, the player leaves a head 
+at the initial moving cell. </font></font></p>
+<p><font size="3" face="Arial">Here are some initial moves from a Medusa(3) 
+match:</font></p>
+<blockquote>
+	<p><font size="3" face="Courier New">MEDUSA(3)<br>
+	======<br>
+	a b c d e f g h i ___B____J_<br>
+	. . . . . . . . . 1. h2&nbsp;&nbsp; h8<br>
+	. . . . . . . x . 2. hb8&nbsp;&nbsp; <br>
+	. . . . . . o o . 3.<br>
+	. . . . . o . o . 4.<br>
+	. . . . x . . o . 5.<br>
+	. . . . . . . o . 6.<br>
+	. . . . . . . o . 7.<br>
+	. x o o o o o o . 8.<br>
+	. . . . . . . . . 9.</font></p>
+	<p><font size="3" face="Courier New"><br>
+	a b c d e f g h i ___B____J_<br>
+	x . . . . . . . . 1. h2&nbsp;&nbsp; h8<br>
+	. o x o o o o o . 2. hb8&nbsp; bd5<br>
+	. . o . . . o o . 3. a1&nbsp;&nbsp; c2<br>
+	. . . o . o . o . 4. dg6<br>
+	. . . . o . . o . 5.<br>
+	. . . o o o x o . 6.<br>
+	. . o . . . . o . 7.<br>
+	. o o o o o o o . 8.<br>
+	. . . . . . . . . 9.</font></p>
+	<p><br>
+	<font size="3" face="Courier New">a b c d e f g h i ___B____J_<br>
+	o o o o o o o x . 1. h2&nbsp;&nbsp; h8<br>
+	. o o o o o o o . 2. hb8&nbsp; bd5<br>
+	. . o o . . o o . 3. a1&nbsp;&nbsp; c2<br>
+	. . . o o o x o . 4. dg6&nbsp; cf5<br>
+	. . . . o o o o . 5. fg5&nbsp; g4<br>
+	. . . o o o x o . 6. h1<br>
+	. . o . . . . o . 7.<br>
+	. o o o o o o o . 8.<br>
+	. . . . . . . . . 9.<br>
+	<br>
+	The entire match:<br>
+	<br>
+	a b c d e f g h i ___B_____J_&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; _B_____J_<br>
+	o o o o o o o o o 1. h2&nbsp;&nbsp;&nbsp; h8&nbsp;&nbsp; 11. a2&nbsp;&nbsp;&nbsp; 
+	d7<br>
+	o o o o o o o o o 2. hb8&nbsp;&nbsp; bd5&nbsp; 12. c4&nbsp;&nbsp;&nbsp; c6<br>
+	o o o o . . o o o 3. a1&nbsp;&nbsp;&nbsp; c2&nbsp;&nbsp; 13. c4b5&nbsp; bd5<br>
+	o . o o o o x o o 4. dg6&nbsp;&nbsp; cf5&nbsp; 14. resigns, 0-1<br>
+	o o o x o o o o o 5. fg5&nbsp;&nbsp; g4<br>
+	o . x o o o o o o 6. h1&nbsp;&nbsp;&nbsp; i1<br>
+	o . o o o o o o o 7. i8&nbsp;&nbsp;&nbsp; i9<br>
+	o o o o o o o o o 8. b9&nbsp;&nbsp;&nbsp; a9<br>
+	o o o o o o o o o 9. g7&nbsp;&nbsp;&nbsp; e7<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	10 a8&nbsp;&nbsp;&nbsp; a3</font></p>
+</blockquote>
+<font size="3" face="Arial">
+<p>The hexagonal variant is called <b>Hydra</b>, and follows the same rules. 
+Here's a sample game using four heads:</p></font>
+<blockquote>
+	<p><font size="3" face="Courier New">HYDRA(4)<br>
+	========<br>
+	abcdefghijklmnopq ___J____B_<br>
+&nbsp;&nbsp;&nbsp; o o o o x&nbsp;&nbsp;&nbsp;&nbsp; 1. i5&nbsp;&nbsp; l2<br>
+&nbsp;&nbsp; o o x . o o&nbsp;&nbsp;&nbsp; 2. if2&nbsp; m9<br>
+&nbsp; o . o . o . o&nbsp;&nbsp; 3. mq5&nbsp; f8<br>
+&nbsp;x . . o o . . o&nbsp; 4. fc5&nbsp; a5<br>
+	o o . . o . . . o 5. qm1&nbsp; lk1<br>
+&nbsp;o o . o o . . o&nbsp; 6. d8&nbsp;&nbsp; ke1<br>
+&nbsp; o o o . o . o&nbsp;&nbsp; 7. b4&nbsp;&nbsp; h2<br>
+&nbsp;&nbsp; x o . . o o&nbsp;&nbsp;&nbsp; 8. resigns, 0-1 (all positions have 
+	NIM value zero)<br>
+&nbsp;&nbsp;&nbsp; . . . . o&nbsp;&nbsp;&nbsp;&nbsp; 9.</font></p>
+</blockquote>
+<font size="3" face="Arial">
+<p><a name="slimemoku"></a>In <b>Slime-Moku</b>, after each move, the slime leaves alternating color
 stones. A player wins if he makes a 5 in-a-row with his stones (if no player are
 able to do that, after the board is full, the game is a tie). Also, if before
 the board is full, the Slime cannot move (all adjacent cells are occupied), the
-next player may move the Slime to any other empty cell.</font></p>
+next player may move the Slime to any other empty cell.</p>
 <p><font size="3" face="Arial"><a name="snakepit"></a>Another variant for 3 players is called <b>Snake
 Pit</b> is played on the next hexagonal board. Each player has 4 stones (snakes)
 that can move. On each turn, each player moves 3 of the 4 snakes to an empty
