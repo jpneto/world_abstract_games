@@ -20,7 +20,7 @@ N in-a-row games (win by making a line of N connected stones) seem to appear
 independently in different cultures, which is not very common to abstract games. 
 This page includes many games, old and new, and are divided by the size of the 
 winning sequence.</font></p>
-<p align="left"><font face="Arial"><b>ROWS OF 3</b></font></p>
+<p align="left"><font face="Arial" size="5"><b>ROWS OF 3</b></font></p>
 <p align="left"><font face="Arial"><a name="tictactoe"></a>The most basic game of
 this family, played
 by most children, is <b> Tic-Tac-Toe</b> played in a 3x3 board:</font></p>
@@ -143,7 +143,7 @@ Bolotoudou</b> <a href="zrfs/Bolotoudou.zip">
 	<a href="https://www.zillions-of-games.com/cgi-bin/zilligames/submissions.cgi?do=show;id=2384">
 	ref</a></font></font></p>
 </blockquote>
-<p align="left"><font face="Arial"><b>ROWS OF 4</b></font></p>
+<p align="left"><font face="Arial" size="5"><b>ROWS OF 4</b></font></p>
 <p align="left"><font face="Arial"><a name="qubic"></a>There are several games that use 4 in-a-row. </font></p>
 <p align="left"><font face="Arial">The most famous is <a href="connect4.htm">Connect 4</a>. 
 Also indexed here are <a href="contigo.htm">Contigo</a>,
@@ -335,7 +335,7 @@ first to have four pieces in a straight line wins the game..</font></p>
 <p align="center">
 <img src='https://cf.geekdo-images.com/o5ExgSTGYgotdQ4C9qfmWg__original/img/9S0ahLAVeVuIynUX2Z94J7cBpA8=/0x0/filters:format(jpeg)/pic66412.jpg' width=245 height="182"></p>
 
-<p align="left"><font face="Arial"><b>ROWS OF 5</b></font></p>
+<p align="left"><font face="Arial" size="5"><b>ROWS OF 5</b></font></p>
 
     <p align="left"><font face="Arial"><a name="gomoku"></a>Perhaps the most famous 5 in-a-row game
     is <b>GO-MOKU</b>, an ancient Japanese game. The full name,
@@ -450,14 +450,6 @@ with shifting rows, is <b> <a href="http://jeuxsoc.free.fr/sev/perplexu.htm">Per
 where the player may drop a stone or shift a row one cell to the right or left
 (with 6 sliding rows of 7 stones placed within a base row of length 11). </font>
 </p>
-<p>
-<font size="3" face="Arial">Other
-games indexed at WAG: <b> <a href="andantino.htm">Andantino</a></b>, <b> <a href="kassle.htm">Kassle</a></b>, 
-<b> <a href="quixo.htm">Quixo</a></b>,
-<b>
-<a href="campaign.htm">Campaign</a></b>, <b> <a href="ergo.htm">Ergo</a></b>, <b> <a href="pentagonal.htm">Pentagonal 3D5</a></b> and 
-<b> <a href="hexgomoku.htm">Hex-gomoku</a></b>.</font>
-</p>
 <p><font size="3" face="Arial">Some comments from <a href="mailto:Webmaster@margaretcho.net">Edward
 Jackman</a>:
 <i>Here's a list of modifications we've used to address first player advantage and handicapping:</i></font></p>
@@ -482,6 +474,35 @@ game from Edward (around 1995) is <b>Progressive Gomoku</b>: Black starts by dro
 one stone, then White drops two, then Black drops three... There is, however,
 one restriction: during a drop sequence, all the stones must be mutually
 non-adjacent (i.e., they cannot be adjacent to each other).</font></p>
+
+<p><font size="3" face="Arial">Applying the progressive mutator (drop one stone
+at the first move, then drop two, then drop three...)&nbsp; to Gomoku also
+provides a very enjoyable game, if we add a restriction: <font SIZE="3"><i>No
+two stones in a turn may finish in the same group</i> (i.e., a set of friendly
+stones orthogonally or diagonally connected). If a fast game, but with lots of
+tactical subtleties. This game should be played on an unlimited board.</font></font></p>
+
+<table border="1" width="600" cellspacing="3" cellpadding="2" height="326" bordercolorlight="#333366" bordercolordark="#000000">
+    <tr>
+      <td align="center" width="264" bordercolor="#000000" background="back-board.jpg" height="316">
+      
+<script LANGUAGE="JavaScript">
+<!--
+boardgv2diag(",11,11,3x7/3wW..W3/4xwxwx2/5xaa3/3wxwxw3/3w.wxWw2/3xxww.x2/4wx5/3x2x.x2/7W3/8x2");
+//-->
+</script>
+      </td>
+      <td valign="top" width="346" height="316"><font face="Arial"><strong>An example</strong></font>
+        <p><font face="Arial">White's turn. This is the 8th move, so White can
+        drop eight stones. However, it is enough to drop four (the marked
+        stones).&nbsp;</font>
+        <p><font face="Arial"> After that sequence, Black cannot stop the double attack at
+        cells [1] because it would violate the restriction (two stones on the
+        same group).</font>
+      </td>
+    </tr>
+</table>
+
 <p><a href="quad_motu"></a><font size="3" face="Arial">The next game was designed by Bill Taylor and is called <b>QUAD-MOTU</b>:</font></p>
 <table border="0" width="80%">
   <tr>
@@ -533,37 +554,9 @@ non-adjacent (i.e., they cannot be adjacent to each other).</font></p>
 <p><font size="3" face="Arial">These rules define a more &quot;violent&quot;
 game. This extra freedom may provide a solution to the drawish feature of <a href="hexgomoku.htm"> gomoku in
 hex boards</a>.</font></p>
-<p><font size="3" face="Arial">Another related variant is to give each player just 12
+<p><font size="3" face="Arial"><b>Drop and Move Gomoku</b> gives each player just 12
 stones. After the drop phase, the move phase begins: each player moves one stone to an adjacent
 (orthogonal or diagonal) empty cell. Wins the player that makes a 5 in-a-row.</font></p>
-
-<p><font size="3" face="Arial">Applying the progressive mutator (drop one stone
-at the first move, then drop two, then drop three...)&nbsp; to Gomoku also
-provides a very enjoyable game, if we add a restriction: <font SIZE="3"><i>No
-two stones in a turn may finish in the same group</i> (i.e., a set of friendly
-stones orthogonally or diagonally connected). If a fast game, but with lots of
-tactical subtleties. This game should be played on an unlimited board.</font></font></p>
-
-<table border="1" width="600" cellspacing="3" cellpadding="2" height="326" bordercolorlight="#333366" bordercolordark="#000000">
-    <tr>
-      <td align="center" width="264" bordercolor="#000000" background="back-board.jpg" height="316">
-      
-<script LANGUAGE="JavaScript">
-<!--
-boardgv2diag(",11,11,3x7/3wW..W3/4xwxwx2/5xaa3/3wxwxw3/3w.wxWw2/3xxww.x2/4wx5/3x2x.x2/7W3/8x2");
-//-->
-</script>
-      </td>
-      <td valign="top" width="346" height="316"><font face="Arial"><strong>An example</strong></font>
-        <p><font face="Arial">White's turn. This is the 8th move, so White can
-        drop eight stones. However, it is enough to drop four (the marked
-        stones).&nbsp;</font>
-        <p><font face="Arial"> After that sequence, Black cannot stop the double attack at
-        cells [1] because it would violate the restriction (two stones on the
-        same group).</font>
-      </td>
-    </tr>
-</table>
 
 <p><font face="Arial">Tomas Flodén designed <b>
 <a href="https://web.archive.org/web/20051022070928/http:/www.pentago.se/ENRules.pdf">Pentago</a></b>, a 5 in-a-row game 
@@ -634,6 +627,71 @@ an edge, a corner is not enough). If no 5 in-a-row (orthogonal or diagonal) is
 reached after all 32 pieces are dropped, players take turns picking one friendly 
 tile and moving elsewhere in the playing area (again adjacent to another piece). 
 It is illegal to pick a tile that would split the group.</font></p>
+<p align="left"><a href="neumoku"></a><font face="Arial"><b>Neumoku</b> is a 2004 game by João Pedro 
+Neto and Bill Taylor, where the neutral mutator of <a href="nex.htm">Nex</a> is applied:</font></p>
+<blockquote>
+	<ul>
+		<li>
+		<font face="Arial">Same as Gomoku, except that each player either:</font>
+		<ul>
+			<li>
+			<p align="left"><font face="Arial">drops a friendly stone plus a 
+			neutral stone</font></p></li>
+			<li>
+			<p align="left"><font face="Arial">flips two neutral stones into 
+			friendly stones and then flip another friendly stone into a neutral 
+			stone</font></p></li>
+		</ul>
+		</li>
+		<li>
+		<p align="left"><font face="Arial">Pie rule: after the third move, the 
+		second player may swap sides.</font></p></li>
+	</ul>
+	<p align="left"><font face="Courier New">A&nbsp;sample&nbsp;game:<br>
+	<br>
+	&nbsp;&nbsp;&nbsp;--x----?-----o----?--<br>
+	1.&nbsp;&nbsp;n3&nbsp;&nbsp;m5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;o2&nbsp;&nbsp;&nbsp;n4<br>
+	2.&nbsp;&nbsp;l6&nbsp;&nbsp;q2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;o3&nbsp;&nbsp;&nbsp;p2<br>
+	3.&nbsp;&nbsp;o4&nbsp;&nbsp;p5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m2&nbsp;&nbsp;&nbsp;q1<br>
+	4.&nbsp;&nbsp;n2&nbsp;&nbsp;n6&nbsp;&nbsp;&nbsp;&nbsp;n4p2&nbsp;&nbsp;o2<br>
+	5.&nbsp;q1o2&nbsp;n2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;p4&nbsp;&nbsp;&nbsp;q5<br>
+	6.&nbsp;n2q5&nbsp;n3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;p3&nbsp;&nbsp;&nbsp;m3<br>
+	7.&nbsp;n3p5&nbsp;q5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;p1&nbsp;&nbsp;&nbsp;q3<br>
+	8.&nbsp;&nbsp;p0&nbsp;&nbsp;q6&nbsp;&nbsp;&nbsp;&nbsp;q5q6&nbsp;&nbsp;p3<br>
+	9.&nbsp;&nbsp;l4&nbsp;&nbsp;k5&nbsp;&nbsp;&nbsp;&nbsp;m3q3&nbsp;&nbsp;p2<br>
+	10.&nbsp;p2q2&nbsp;q1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;r2&nbsp;&nbsp;&nbsp;r3<br>
+	<br>
+	Actual&nbsp;Board:<br>
+	<br>
+	j&nbsp;k&nbsp;l&nbsp;m&nbsp;n&nbsp;o&nbsp;p&nbsp;q&nbsp;r&nbsp;s<br>
+	.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;-1<br>
+	.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;x&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;0<br>
+	.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;o&nbsp;?&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;1<br>
+	.&nbsp;.&nbsp;.&nbsp;o&nbsp;x&nbsp;x&nbsp;x&nbsp;x&nbsp;o&nbsp;.&nbsp;&nbsp;&nbsp;2<br>
+	.&nbsp;.&nbsp;.&nbsp;o&nbsp;x&nbsp;o&nbsp;?&nbsp;o&nbsp;?&nbsp;.&nbsp;&nbsp;&nbsp;3<br>
+	.&nbsp;.&nbsp;x&nbsp;.&nbsp;o&nbsp;x&nbsp;o&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;4<br>
+	.&nbsp;?&nbsp;.&nbsp;?&nbsp;.&nbsp;.&nbsp;x&nbsp;o&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;5<br>
+	.&nbsp;.&nbsp;x&nbsp;.&nbsp;?&nbsp;.&nbsp;.&nbsp;o&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;6<br>
+	.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;7<br>
+	<br>
+	Here,&nbsp;&#39;o&#39;&nbsp;has&nbsp;a&nbsp;winning&nbsp;sequence:<br>
+	<br>
+	&nbsp;&nbsp;&nbsp;--x---?-----o---?--<br>
+	11.&nbsp;&nbsp;o5&nbsp;&nbsp;l5&nbsp;&nbsp;&nbsp;&nbsp;r7&nbsp;&nbsp;s1<br>
+	12.&nbsp;&nbsp;s7&nbsp;&nbsp;l3&nbsp;&nbsp;&nbsp;&nbsp;q4&nbsp;&nbsp;t0<br>
+	<br>
+	j&nbsp;k&nbsp;l&nbsp;m&nbsp;n&nbsp;o&nbsp;p&nbsp;q&nbsp;r&nbsp;s&nbsp;t&nbsp;u<br>
+	.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;-1<br>
+	.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;x&nbsp;.&nbsp;.&nbsp;.&nbsp;?&nbsp;.&nbsp;&nbsp;0<br>
+	.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;o&nbsp;?&nbsp;.&nbsp;?&nbsp;.&nbsp;.&nbsp;&nbsp;1<br>
+	.&nbsp;.&nbsp;?&nbsp;o&nbsp;x&nbsp;x&nbsp;x&nbsp;x&nbsp;o&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;2<br>
+	.&nbsp;.&nbsp;.&nbsp;o&nbsp;x&nbsp;o&nbsp;?&nbsp;o&nbsp;?&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;3<br>
+	.&nbsp;.&nbsp;x&nbsp;.&nbsp;o&nbsp;x&nbsp;o&nbsp;o&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;4<br>
+	.&nbsp;?&nbsp;?&nbsp;?&nbsp;.&nbsp;x&nbsp;x&nbsp;o&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;5<br>
+	.&nbsp;.&nbsp;x&nbsp;.&nbsp;?&nbsp;.&nbsp;.&nbsp;o&nbsp;o&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;6<br>
+	.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;x&nbsp;.&nbsp;.&nbsp;&nbsp;7<br>
+	.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;8</font></p>
+</blockquote>
 <p align="left"><font face="Arial"><b>Qui Vive</b> <a href="zrfs/Qui-Vive.zip">
 <img border="0" src="icons/z.gif" width="11" height="11"></a>, by Eugene de 
 Wolf, uses five pieces 
@@ -646,7 +704,15 @@ fives!).</font></p>
      . . X . .     . X . X .      . . . X .      . . X . .      . X X X .
      . . . . .     . . . . .      . . . . X      . . . . .      . . . . .
 </pre>
-<p align="left"><font face="Arial"><b>ROWS OF 6</b></font></p>
+<p>
+<font size="3" face="Arial">Other
+games indexed at WAG: <b> <a href="andantino.htm">Andantino</a></b>, <b> <a href="kassle.htm">Kassle</a></b>, 
+<b> <a href="quixo.htm">Quixo</a></b>,
+<b>
+<a href="campaign.htm">Campaign</a></b>, <b> <a href="ergo.htm">Ergo</a></b>, <b> <a href="pentagonal.htm">Pentagonal 3D5</a></b> and 
+<b> <a href="hexgomoku.htm">Hex-gomoku</a></b>.</font>
+</p>
+<p align="left"><font face="Arial" size="5"><b>ROWS OF 6</b></font></p>
 
 <p><font size="3" face="Arial">Games with more than 5 in-a-row need extra
 liberties to avoid easy draws (it's much easier to block a player in a regular
@@ -695,11 +761,11 @@ in-a-row on a <a href="http://www.boardgamegeek.com/image/135319">large</a>
 hexagonal board, however, with no additional rule, this simple goal cannot be 
 done. </font></p>
 <p><font size="3" face="Arial">Check also Freeling's <b> <a href="hexade.htm">Hexade</a></b>.</font></p>
-<p><font face="Arial">A &quot;bent moku&quot; game is Corners by Stuart Elliott. Here a 
+<p><font face="Arial">A &quot;bent moku&quot; game is <b>Corners</b> by Stuart Elliott. Here a 
 review from <i>Games and Puzzles</i> #73:</font></p>
 <p align="center">
 <img border="0" src="icons/Corner_G&P_73.gif" width="790" height="1473"></p>
-<p align="left"><font face="Arial"><b>ROWS OF 7, 8, 9...</b></font></p>
+<p align="left"><font face="Arial" size="5"><b>ROWS OF 7, 8, 9...</b></font></p>
 
 <p><font size="3" face="Arial">There is a proof that 9 in-a-row games is a draw
 even on infinite boards and 8 in-a-row is almost proved.</font> <font size="3" face="Arial">No
@@ -711,7 +777,7 @@ at the 19x19 board center, the next player must place one friendly stone on an
 empty cell (orthogonally or diagonally) adjacent to any other stone, and the 
 second stone adjacent to the first one. This means a player cannot start by 
 placing a stone where there are no empty adjacent cell.</font></p>
-<p align="left"><font face="Arial"><b>OTHER ROWS</b></font></p>
+<p align="left"><font face="Arial" size="5"><b>OTHER ROWS</b></font></p>
 <p><font face="Arial"><b><a href="http://www.boardgamegeek.com/game/23703">Shan 
 Jari</a></b> (by FUNaddicts Games ) is a moku game with shared stones of four 
 different colors (the board is a large 13x16 rectangle of hexagons). Both 
