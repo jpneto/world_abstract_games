@@ -601,6 +601,12 @@ boardgv2diag("lurd,10,12,12/2x9/3wx3w3/.xwxwwwxw.w./2wxxx3xx./2xxwx6/.wxwwwwx4/.
     </tr>
 </table>
 
+<blockquote>
+	<p align="left"><font face="Arial">sidenote: The idea that motivates In Love 
+	Gomoku can be made a mutator and applied to other games, like <b>In Love Y</b>, 
+	which is a reasonable playable connection game. <b>In Love Go</b>, otoh, 
+	does not seem to work that well.</font></p>
+</blockquote>
 <p align="left"><font face="Arial">Philip Shoptaugh's <b>Challenge 5</b>, aka,
 <b> <a href="https://boardgamegeek.com/boardgame/3932/interplay">
 Interplay</a></b> (from 1980): there are narrow and wide stones, and wins by making 
@@ -704,6 +710,62 @@ fives!).</font></p>
      . . X . .     . X . X .      . . . X .      . . X . .      . X X X .
      . . . . .     . . . . .      . . . . X      . . . . .      . . . . .
 </pre>
+<p><a href="chicken_gomoku"></a><font face="Arial"><b>Chicken Gomoku</b> applies the auction rule to balance 
+asymmetrical games. In this case, Black must make 5 in-a-row in a 9x9 board 
+(which is basically impossible), while White tries to prevent it. The auction 
+will provide players the change to play black stones until the first player 
+decides to take the role as Black.</font></p>
+<ul>
+	<li><font face="Arial">Same as Gomoku, except:</font><ul>
+		<li><font face="Arial">Played on a 9x9 board</font></li>
+		<li><font face="Arial">Black must make a 5-in-a-row, White must prevent 
+		him.</font></li>
+		<li><font face="Arial">Both players play black moves until one declares 
+		to be black, simultaneously passing.</font></li>
+		<li><font face="Arial">Then alternation as usual starting with White.</font></li>
+	</ul>
+	</li>
+</ul>
+<p><font face="Arial">Here&#39;s some matches of this surprisingly good variant (&#39;f&#39; 
+means forced move):</font></p>
+<blockquote>
+	<p><font face="Courier New">a&nbsp;b&nbsp;c&nbsp;d&nbsp;e&nbsp;f&nbsp;g&nbsp;h&nbsp;i&nbsp;&nbsp;0.&nbsp;J starts: 
+	e5,&nbsp;f3,&nbsp;h9,&nbsp;&nbsp;B&nbsp;takes<br>
+	.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;1.&nbsp;e4&nbsp;&nbsp;&nbsp;d5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10.&nbsp;f3&nbsp;f&nbsp;&nbsp;b3<br>
+	.&nbsp;.&nbsp;.&nbsp;o&nbsp;o&nbsp;x&nbsp;x&nbsp;.&nbsp;.&nbsp;&nbsp;2.&nbsp;c5&nbsp;&nbsp;&nbsp;d4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;11.&nbsp;a3&nbsp;f&nbsp;&nbsp;h5<br>
+	o&nbsp;x&nbsp;x&nbsp;x&nbsp;x&nbsp;o&nbsp;x&nbsp;.&nbsp;.&nbsp;&nbsp;3.&nbsp;f6&nbsp;&nbsp;&nbsp;d6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;12.&nbsp;f5&nbsp;f&nbsp;&nbsp;h4<br>
+	.&nbsp;.&nbsp;.&nbsp;x&nbsp;o&nbsp;o&nbsp;o&nbsp;x&nbsp;.&nbsp;&nbsp;4.&nbsp;d7&nbsp;&nbsp;&nbsp;g3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;13.&nbsp;h6&nbsp;&nbsp;&nbsp;&nbsp;Black resigns<br>
+	.&nbsp;.&nbsp;o&nbsp;x&nbsp;x&nbsp;o&nbsp;x&nbsp;x&nbsp;.&nbsp;&nbsp;5.&nbsp;f4&nbsp;&nbsp;&nbsp;g2<br>
+	.&nbsp;.&nbsp;.&nbsp;x&nbsp;o&nbsp;o&nbsp;.&nbsp;o&nbsp;.&nbsp;&nbsp;6.&nbsp;e2&nbsp;&nbsp;&nbsp;g5<br>
+	.&nbsp;.&nbsp;.&nbsp;o&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;7.&nbsp;g4&nbsp;&nbsp;&nbsp;d3<br>
+	.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;8.&nbsp;d2&nbsp;f&nbsp;c3<br>
+	.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;x&nbsp;.&nbsp;&nbsp;9.&nbsp;e6&nbsp;&nbsp;&nbsp;e3<br>
+&nbsp;</font></p>
+	<p><font face="Courier New">a&nbsp;b&nbsp;c&nbsp;d&nbsp;e&nbsp;f&nbsp;g&nbsp;h&nbsp;i&nbsp;&nbsp;0.&nbsp;B 
+	starts:&nbsp;e5,h1,f2,h9&nbsp;&nbsp;B&nbsp;takes<br>
+	.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;x&nbsp;.&nbsp;&nbsp;1.&nbsp;f4&nbsp; &nbsp; e3<br>
+	.&nbsp;.&nbsp;.&nbsp;.&nbsp;o&nbsp;x&nbsp;o&nbsp;.&nbsp;.&nbsp;&nbsp;2.&nbsp;d4&nbsp;&nbsp;&nbsp;&nbsp;e4<br>
+	.&nbsp;.&nbsp;x&nbsp;.&nbsp;x&nbsp;x&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;3.&nbsp;e2&nbsp;&nbsp;&nbsp;&nbsp;e6<br>
+	.&nbsp;.&nbsp;.&nbsp;o&nbsp;x&nbsp;o&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;4.&nbsp;e7&nbsp;f&nbsp; d5<br>
+	.&nbsp;.&nbsp;.&nbsp;x&nbsp;x&nbsp;o&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;5.&nbsp;f5&nbsp;&nbsp;&nbsp;&nbsp;f3!<br>
+	.&nbsp;.&nbsp;x&nbsp;.&nbsp;x&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;6.&nbsp;g2&nbsp;f &nbsp;f7<br>
+	.&nbsp;o&nbsp;.&nbsp;.&nbsp;o&nbsp;x&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;7.&nbsp;g8&nbsp;f&nbsp; c6<br>
+	.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;o&nbsp;.&nbsp;.&nbsp;&nbsp;8.&nbsp;b7&nbsp;f&nbsp; c3<br>
+	.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;x&nbsp;.&nbsp;&nbsp;9.&nbsp;White&nbsp;resigns<br>
+&nbsp;</font></p>
+	<p><font face="Courier New">a&nbsp;b&nbsp;c&nbsp;d&nbsp;e&nbsp;f&nbsp;g&nbsp;h&nbsp;i&nbsp;&nbsp;0.&nbsp;<br>
+	.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;1.&nbsp;B starts: d3,h8,a9 &nbsp;J&nbsp;takes&nbsp;&nbsp;&nbsp;&nbsp;<br>
+	.&nbsp;.&nbsp;o&nbsp;.&nbsp;x&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;2.&nbsp;d6&nbsp;&nbsp;&nbsp;&nbsp;c4&nbsp;<br>
+	.&nbsp;.&nbsp;.&nbsp;x&nbsp;o&nbsp;x&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;3.&nbsp;b5&nbsp;&nbsp;&nbsp;&nbsp;e4<br>
+	.&nbsp;.&nbsp;x&nbsp;.&nbsp;x&nbsp;o&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;4.&nbsp;f4&nbsp;&nbsp;&nbsp;&nbsp;f5<br>
+	.&nbsp;o&nbsp;.&nbsp;x&nbsp;x&nbsp;x&nbsp;o&nbsp;x&nbsp;.&nbsp;&nbsp;5.&nbsp;c2&nbsp;&nbsp;&nbsp;&nbsp;h7<br>
+	.&nbsp;.&nbsp;.&nbsp;o&nbsp;x&nbsp;.&nbsp;o&nbsp;o&nbsp;.&nbsp;&nbsp;6.&nbsp;g6&nbsp;&nbsp;&nbsp;&nbsp;h5<br>
+	.&nbsp;.&nbsp;.&nbsp;.&nbsp;o&nbsp;o&nbsp;.&nbsp;x&nbsp;.&nbsp;&nbsp;7.&nbsp;h6&nbsp;&nbsp;&nbsp;&nbsp;e5<br>
+	.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;x&nbsp;.&nbsp;&nbsp;8.&nbsp;g5&nbsp;&nbsp;&nbsp;&nbsp;e6<br>
+	x&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;9.&nbsp;e2&nbsp;&nbsp;&nbsp;&nbsp;e3 f <br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10.&nbsp;e7&nbsp;&nbsp;&nbsp;&nbsp;d5&nbsp;&nbsp;&nbsp;&nbsp;<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;11.&nbsp;f7&nbsp;&nbsp;&nbsp;&nbsp;f3&nbsp;&amp;&nbsp;Black wins&nbsp;in&nbsp;two&nbsp;moves</font></p>
+</blockquote>
 <p>
 <font size="3" face="Arial">Other
 games indexed at WAG: <b> <a href="andantino.htm">Andantino</a></b>, <b> <a href="kassle.htm">Kassle</a></b>, 
