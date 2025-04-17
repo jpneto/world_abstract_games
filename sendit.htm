@@ -14,13 +14,13 @@
 <h1 align="center"><strong><font face="Arial Black">SEND IT</font></strong></h1>
   <p align="center"><font size="3"><strong>Copyright (c) 2004 </strong></font>
 	<strong>João Pedro Neto</strong></p>
-<p align="left"><font size="3" face="Arial">The game is played on a 8 sided 
+<p align="left"><font size="3" face="Arial">The game is played on a 8-sided 
 hexagonal board:</font></p>
        <center>
     <table border="2" width="435" bgcolor="#D5BD83" bordercolorlight="#333366" bordercolordark="#000000">
       <tr>
         <td width="100%" background="back-board.jpg"><script LANGUAGE="JavaScript"><!--
-hexgv2diag("8,15,8,......../........./........../.........../............/............./............../.............../............../............./............/.........../........../........./........");
+hexgv2diag("8,15,8,......../........./..x....w../.........../............/............./............../..w.........x../............../............./............/.........../..x....w../........./........");
         //--></script></td>
       </tr>
     </table>
@@ -66,7 +66,7 @@ next stone.</font></p>
       <tr>
         <td align="left" width="435" bordercolor="#000000" bgcolor="#D5BD83" background="back-board.jpg">
 <script LANGUAGE="JavaScript"><!--
-hexgv2diag("8,15,8,......../........./..w.x..X../.X........./..xWX......./..........xW./..W...w.....w./..x.........w../.x............/..w.......w../.........xw./......W..X./..w..wxx../.....w.../........");
+hexgv2diag("8,15,8,......../........./..w.X..x../.X........./..xWX......./..........xW./..W...w.....w./..x.........w../.x............/..w.......w../.........xw./......W..X./..w..wxx../.....w.../........");
 //--></script>
         </td>
         <td valign="top" width="242"><font face="Arial"><strong>An initial game</strong></font><p>
@@ -93,28 +93,10 @@ make safe structures (to control a cell only needs four stones, instead of six).
 So, this variant was tested with the following extra rule: &quot;An isolated enemy 
 stone with just one liberty can be pushed into that empty cell while the player 
 drops a friendly stone on that now vacant cell&quot;.</font></p>
-<p><font face="Arial">Next are shown one match of each type, played by João 
-Pedro Neto and Bil Taylor (using a 134* move sequence):</font></p>
+<p><font face="Arial">Next are shown some matches, played by João 
+Pedro Neto and Bill Taylor:</font></p>
 <blockquote>
-	<p><font face="Courier New">a&nbsp;b&nbsp;c&nbsp;d&nbsp;e&nbsp;f&nbsp;g&nbsp;h&nbsp;i&nbsp;j&nbsp;k&nbsp;l&nbsp;m&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Joax&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Billo&nbsp;<br>
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=====================&nbsp;<br>
-	.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;x&nbsp;.&nbsp;x&nbsp;.&nbsp;x&nbsp;o&nbsp;.&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;i3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cgk7&nbsp;<br>
-	.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;x&nbsp;x&nbsp;o&nbsp;.&nbsp;o&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;bg3&nbsp;g11&nbsp;b7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;il7&nbsp;i11&nbsp;l12&nbsp;<br>
-	.&nbsp;x&nbsp;x&nbsp;x&nbsp;x&nbsp;.&nbsp;x&nbsp;x&nbsp;x&nbsp;.&nbsp;o&nbsp;x&nbsp;o&nbsp;&nbsp;&nbsp;3&nbsp;&nbsp;&nbsp;g1&nbsp;i2&nbsp;e3&nbsp;b11&nbsp;&nbsp;&nbsp;cfk12&nbsp;c8&nbsp;<br>
-	.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;x&nbsp;o&nbsp;x&nbsp;x&nbsp;x&nbsp;o&nbsp;.&nbsp;o&nbsp;&nbsp;&nbsp;4&nbsp;&nbsp;&nbsp;d3&nbsp;b8.12&nbsp;k10&nbsp;&nbsp;&nbsp;k5&nbsp;c6&nbsp;i10&nbsp;l9&nbsp;<br>
-	.&nbsp;.&nbsp;x&nbsp;x&nbsp;x&nbsp;x&nbsp;o&nbsp;x&nbsp;o&nbsp;x&nbsp;o&nbsp;x&nbsp;.&nbsp;&nbsp;&nbsp;5&nbsp;&nbsp;&nbsp;b6&nbsp;cf5&nbsp;g9&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;g8&nbsp;e10&nbsp;f9.11&nbsp;<br>
-	.&nbsp;x&nbsp;.&nbsp;x&nbsp;o&nbsp;x&nbsp;o&nbsp;x&nbsp;o&nbsp;x&nbsp;o&nbsp;x&nbsp;x&nbsp;&nbsp;&nbsp;6&nbsp;&nbsp;&nbsp;d11&nbsp;g10&nbsp;k9&nbsp;j5&nbsp;&nbsp;h8&nbsp;l10&nbsp;j7&nbsp;f10&nbsp;<br>
-	.&nbsp;x&nbsp;.&nbsp;x&nbsp;o&nbsp;o&nbsp;o&nbsp;o&nbsp;o&nbsp;o&nbsp;o&nbsp;o&nbsp;o&nbsp;&nbsp;&nbsp;7&nbsp;&nbsp;&nbsp;d9&nbsp;km8&nbsp;m11&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m7&nbsp;l11&nbsp;i9&nbsp;d10&nbsp;<br>
-	.&nbsp;x&nbsp;.&nbsp;x&nbsp;o&nbsp;.&nbsp;o&nbsp;o&nbsp;.&nbsp;.&nbsp;x&nbsp;.&nbsp;x&nbsp;&nbsp;&nbsp;8&nbsp;&nbsp;&nbsp;b10&nbsp;c9&nbsp;d7&nbsp;f8&nbsp;&nbsp;&nbsp;k2&nbsp;e68:1&nbsp;f9&nbsp;<br>
-	.&nbsp;.&nbsp;x&nbsp;x&nbsp;x&nbsp;o&nbsp;x&nbsp;.&nbsp;o&nbsp;.&nbsp;x&nbsp;o&nbsp;.&nbsp;&nbsp;&nbsp;9&nbsp;&nbsp;&nbsp;b13&nbsp;d58&nbsp;f6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;j1&nbsp;k4&nbsp;e7&nbsp;d12&nbsp;<br>
-	.&nbsp;x&nbsp;o&nbsp;o&nbsp;o&nbsp;o&nbsp;x&nbsp;.&nbsp;o&nbsp;.&nbsp;x&nbsp;o&nbsp;.&nbsp;&nbsp;10&nbsp;&nbsp;&nbsp;d6:3&nbsp;jm6&nbsp;i1&nbsp;&nbsp;&nbsp;&nbsp;g6&nbsp;k6&nbsp;c10&nbsp;j12&nbsp;<br>
-	.&nbsp;x&nbsp;o&nbsp;x&nbsp;.&nbsp;o&nbsp;.&nbsp;o&nbsp;o&nbsp;.&nbsp;x&nbsp;o&nbsp;x&nbsp;&nbsp;11&nbsp;&nbsp;&nbsp;km1&nbsp;f4&nbsp;j2:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;l1&nbsp;m2:&nbsp;ch13&nbsp;<br>
-	.&nbsp;x&nbsp;o&nbsp;o&nbsp;o&nbsp;o&nbsp;o&nbsp;.&nbsp;.&nbsp;o&nbsp;o&nbsp;o&nbsp;o&nbsp;&nbsp;12&nbsp;&nbsp;&nbsp;h36&nbsp;j4&nbsp;e5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gi5&nbsp;gm12&nbsp;<br>
-	.&nbsp;x&nbsp;o&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;o&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;13&nbsp;&nbsp;&nbsp;l6&nbsp;e9&nbsp;h5&nbsp;i4&nbsp;&nbsp;&nbsp;&nbsp;gm4&nbsp;i6&nbsp;h11&nbsp;<br>
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;14&nbsp;&nbsp;&nbsp;h4&nbsp;l35&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;e12&nbsp;h7&nbsp;m3&nbsp;&nbsp;&nbsp;&nbsp;1-0&nbsp;(93-76)<br>
-	<br>
-	<br>
-	abcdefghijklmnopqrstuvwxyzABC&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Billx&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Joao&nbsp;<br>
+	<p><font face="Courier New">abcdefghijklmnopqrstuvwxyzABC&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Billx&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Joao&nbsp;<br>
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=============================&nbsp;<br>
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;o&nbsp;.&nbsp;.&nbsp;x&nbsp;x&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;w6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gw10&nbsp;p13&nbsp;<br>
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;x&nbsp;x&nbsp;o&nbsp;x&nbsp;o&nbsp;x&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;n3&nbsp;h5&nbsp;v11r13&nbsp;&nbsp;&nbsp;&nbsp;nz7&nbsp;x11&nbsp;q14&nbsp;<br>
@@ -132,9 +114,44 @@ Pedro Neto and Bil Taylor (using a 134* move sequence):</font></p>
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;.&nbsp;.&nbsp;o&nbsp;.&nbsp;o&nbsp;x&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;14&nbsp;&nbsp;o2&nbsp;r4&nbsp;d5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f9&nbsp;<br>
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;.&nbsp;.&nbsp;o&nbsp;o&nbsp;x&nbsp;x&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;15&nbsp;&nbsp;1-0&nbsp;(95-72&nbsp;with&nbsp;2&nbsp;seki&nbsp;points)<br>
 	<br>
-	abcdefghijklmnopqrstuvwxyzABC&nbsp;</font></p>
+	abcdefghijklmnopqrstuvwxyzABC&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Joao&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Billx&nbsp;<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=============================&nbsp;<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;h11&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v5&nbsp;g6&nbsp;p13&nbsp;<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;o&nbsp;o&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;hn3&nbsp;w10&nbsp;s14&nbsp;&nbsp;&nbsp;&nbsp;f5&nbsp;g8&nbsp;iu4&nbsp;<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;o&nbsp;o&nbsp;x&nbsp;o&nbsp;o&nbsp;.&nbsp;o&nbsp;o&nbsp;o&nbsp;o&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3&nbsp;&nbsp;i2&nbsp;l3&nbsp;h5&nbsp;n11&nbsp;&nbsp;&nbsp;g4&nbsp;fz9&nbsp;w12&nbsp;<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;o&nbsp;x&nbsp;x&nbsp;x&nbsp;x&nbsp;o&nbsp;.&nbsp;o&nbsp;x&nbsp;X&nbsp;x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4&nbsp;&nbsp;k2&nbsp;v3&nbsp;h7&nbsp;e10&nbsp;&nbsp;&nbsp;nh13&nbsp;f7.11&nbsp;<br>
+	&nbsp;&nbsp;&nbsp;o&nbsp;x&nbsp;.&nbsp;x&nbsp;o&nbsp;x&nbsp;X&nbsp;o&nbsp;o&nbsp;x&nbsp;x&nbsp;o&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5&nbsp;&nbsp;b7&nbsp;d9&nbsp;r3&nbsp;o4&nbsp;&nbsp;&nbsp;&nbsp;y10&nbsp;v13&nbsp;t11.15&nbsp;<br>
+	&nbsp;&nbsp;.&nbsp;o&nbsp;x&nbsp;.&nbsp;x&nbsp;o&nbsp;o&nbsp;o&nbsp;x&nbsp;x&nbsp;.&nbsp;o&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6&nbsp;&nbsp;r5&nbsp;d7&nbsp;s12&nbsp;x11&nbsp;&nbsp;g10&nbsp;f13&nbsp;o12&nbsp;r11&nbsp;<br>
+	&nbsp;o&nbsp;o&nbsp;x&nbsp;.&nbsp;.&nbsp;x&nbsp;o&nbsp;x&nbsp;x&nbsp;o&nbsp;x&nbsp;x&nbsp;x&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;7&nbsp;&nbsp;m6&nbsp;dp11&nbsp;u12&nbsp;&nbsp;&nbsp;&nbsp;rv9&nbsp;q12&nbsp;u6&nbsp;<br>
+	.&nbsp;.&nbsp;o&nbsp;x&nbsp;x&nbsp;x&nbsp;o&nbsp;o&nbsp;x&nbsp;o&nbsp;.&nbsp;x&nbsp;x&nbsp;o&nbsp;o&nbsp;&nbsp;&nbsp;8&nbsp;&nbsp;s4&nbsp;l5&nbsp;tx9&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;t7&nbsp;u10.14&nbsp;o14&nbsp;<br>
+	&nbsp;.&nbsp;o&nbsp;x&nbsp;o&nbsp;o&nbsp;o&nbsp;x&nbsp;x&nbsp;x&nbsp;o&nbsp;x&nbsp;o&nbsp;x&nbsp;x&nbsp;&nbsp;&nbsp;&nbsp;9&nbsp;&nbsp;ou14&nbsp;u10&nbsp;t7&nbsp;&nbsp;&nbsp;&nbsp;s6&nbsp;x5&nbsp;m14&nbsp;p15&nbsp;<br>
+	&nbsp;&nbsp;.&nbsp;o&nbsp;x&nbsp;x&nbsp;x&nbsp;o&nbsp;.&nbsp;o&nbsp;o&nbsp;o&nbsp;o&nbsp;x&nbsp;o&nbsp;&nbsp;&nbsp;&nbsp;10&nbsp;&nbsp;q6.10&nbsp;s8&nbsp;r15&nbsp;&nbsp;&nbsp;q8&nbsp;n9&nbsp;i10&nbsp;q14&nbsp;<br>
+	&nbsp;&nbsp;&nbsp;o&nbsp;x&nbsp;o&nbsp;o&nbsp;o&nbsp;o&nbsp;o&nbsp;x&nbsp;x&nbsp;x&nbsp;o&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;11&nbsp;&nbsp;o68&nbsp;s10&nbsp;l9&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i8&nbsp;l7&nbsp;w14&nbsp;p9&nbsp;<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;o&nbsp;x&nbsp;.&nbsp;o&nbsp;x&nbsp;x&nbsp;x&nbsp;o&nbsp;o&nbsp;x&nbsp;x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;12&nbsp;&nbsp;e12&nbsp;j7.11&nbsp;m10&nbsp;&nbsp;k6&nbsp;p7&nbsp;g12&nbsp;v15&nbsp;<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x&nbsp;x&nbsp;x&nbsp;x&nbsp;x&nbsp;x&nbsp;.&nbsp;o&nbsp;x&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;13&nbsp;&nbsp;z5&nbsp;&nbsp;x3&nbsp;i6&nbsp;m8&nbsp;&nbsp;&nbsp;k8&nbsp;y4&nbsp;m12&nbsp;x7&nbsp;<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;.&nbsp;.&nbsp;x&nbsp;o&nbsp;x&nbsp;o&nbsp;o&nbsp;x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;14&nbsp;&nbsp;k12&nbsp;f3&nbsp;d5&nbsp;n7&nbsp;&nbsp;&nbsp;v7&nbsp;m4&nbsp;y12&nbsp;j5:4&nbsp;<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;x&nbsp;.&nbsp;.&nbsp;x&nbsp;o&nbsp;x&nbsp;x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;15&nbsp;&nbsp;ey6&nbsp;A8&nbsp;l11&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;z7&nbsp;n5&nbsp;l13&nbsp;j15&nbsp;<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;16&nbsp;&nbsp;e4&nbsp;C8&nbsp;j9&nbsp;A10&nbsp;&nbsp;&nbsp;k4&nbsp;B9&nbsp;<br>
+	abcdefghijklmnopqrstuvwxyzABC&nbsp;&nbsp;17&nbsp;&nbsp;t5&nbsp;h9&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;p5&nbsp;w4&nbsp;<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;18&nbsp;&nbsp;resign</font></p>
+	<p><font face="Courier New">a&nbsp;b&nbsp;c&nbsp;d&nbsp;e&nbsp;f&nbsp;g&nbsp;h&nbsp;i&nbsp;j&nbsp;k&nbsp;l&nbsp;m&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Joax&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Billo&nbsp;<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;==================== (x-pieces: c3/k11, 
+	o-pieces: k3/c11)<br>
+	.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;x&nbsp;.&nbsp;x&nbsp;.&nbsp;x&nbsp;o&nbsp;.&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;i3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cgk7&nbsp;<br>
+	.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;x&nbsp;x&nbsp;o&nbsp;.&nbsp;o&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;bg3&nbsp;g11&nbsp;b7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;il7&nbsp;i11&nbsp;l12&nbsp;<br>
+	.&nbsp;x&nbsp;x&nbsp;x&nbsp;x&nbsp;.&nbsp;x&nbsp;x&nbsp;x&nbsp;.&nbsp;o&nbsp;x&nbsp;o&nbsp;&nbsp;&nbsp;3&nbsp;&nbsp;&nbsp;g1&nbsp;i2&nbsp;e3&nbsp;b11&nbsp;&nbsp;&nbsp;cfk12&nbsp;c8&nbsp;<br>
+	.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;x&nbsp;o&nbsp;x&nbsp;x&nbsp;x&nbsp;o&nbsp;.&nbsp;o&nbsp;&nbsp;&nbsp;4&nbsp;&nbsp;&nbsp;d3&nbsp;b8.12&nbsp;k10&nbsp;&nbsp;&nbsp;k5&nbsp;c6&nbsp;i10&nbsp;l9&nbsp;<br>
+	.&nbsp;.&nbsp;x&nbsp;x&nbsp;x&nbsp;x&nbsp;o&nbsp;x&nbsp;o&nbsp;x&nbsp;o&nbsp;x&nbsp;.&nbsp;&nbsp;&nbsp;5&nbsp;&nbsp;&nbsp;b6&nbsp;cf5&nbsp;g9&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;g8&nbsp;e10&nbsp;f9.11&nbsp;<br>
+	.&nbsp;x&nbsp;.&nbsp;x&nbsp;o&nbsp;x&nbsp;o&nbsp;x&nbsp;o&nbsp;x&nbsp;o&nbsp;x&nbsp;x&nbsp;&nbsp;&nbsp;6&nbsp;&nbsp;&nbsp;d11&nbsp;g10&nbsp;k9&nbsp;j5&nbsp;&nbsp;h8&nbsp;l10&nbsp;j7&nbsp;f10&nbsp;<br>
+	.&nbsp;x&nbsp;.&nbsp;x&nbsp;o&nbsp;o&nbsp;o&nbsp;o&nbsp;o&nbsp;o&nbsp;o&nbsp;o&nbsp;o&nbsp;&nbsp;&nbsp;7&nbsp;&nbsp;&nbsp;d9&nbsp;km8&nbsp;m11&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m7&nbsp;l11&nbsp;i9&nbsp;d10&nbsp;<br>
+	.&nbsp;x&nbsp;.&nbsp;x&nbsp;o&nbsp;.&nbsp;o&nbsp;o&nbsp;.&nbsp;.&nbsp;x&nbsp;.&nbsp;x&nbsp;&nbsp;&nbsp;8&nbsp;&nbsp;&nbsp;b10&nbsp;c9&nbsp;d7&nbsp;f8&nbsp;&nbsp;&nbsp;k2&nbsp;e68:1&nbsp;f9&nbsp;<br>
+	.&nbsp;.&nbsp;x&nbsp;x&nbsp;x&nbsp;o&nbsp;x&nbsp;.&nbsp;o&nbsp;.&nbsp;x&nbsp;o&nbsp;.&nbsp;&nbsp;&nbsp;9&nbsp;&nbsp;&nbsp;b13&nbsp;d58&nbsp;f6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;j1&nbsp;k4&nbsp;e7&nbsp;d12&nbsp;<br>
+	.&nbsp;x&nbsp;o&nbsp;o&nbsp;o&nbsp;o&nbsp;x&nbsp;.&nbsp;o&nbsp;.&nbsp;x&nbsp;o&nbsp;.&nbsp;&nbsp;10&nbsp;&nbsp;&nbsp;d6:3&nbsp;jm6&nbsp;i1&nbsp;&nbsp;&nbsp;&nbsp;g6&nbsp;k6&nbsp;c10&nbsp;j12&nbsp;<br>
+	.&nbsp;x&nbsp;o&nbsp;x&nbsp;.&nbsp;o&nbsp;.&nbsp;o&nbsp;o&nbsp;.&nbsp;x&nbsp;o&nbsp;x&nbsp;&nbsp;11&nbsp;&nbsp;&nbsp;km1&nbsp;f4&nbsp;j2:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;l1&nbsp;m2:&nbsp;ch13&nbsp;<br>
+	.&nbsp;x&nbsp;o&nbsp;o&nbsp;o&nbsp;o&nbsp;o&nbsp;.&nbsp;.&nbsp;o&nbsp;o&nbsp;o&nbsp;o&nbsp;&nbsp;12&nbsp;&nbsp;&nbsp;h36&nbsp;j4&nbsp;e5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gi5&nbsp;gm12&nbsp;<br>
+	.&nbsp;x&nbsp;o&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;o&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;13&nbsp;&nbsp;&nbsp;l6&nbsp;e9&nbsp;h5&nbsp;i4&nbsp;&nbsp;&nbsp;&nbsp;gm4&nbsp;i6&nbsp;h11&nbsp;<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;14&nbsp;&nbsp;&nbsp;h4&nbsp;l35&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;e12&nbsp;h7&nbsp;m3&nbsp;&nbsp;&nbsp;&nbsp;1-0&nbsp;(93-76)</font></p>
 </blockquote>
-<p>&nbsp;</p>
 </blockquote>
 <hr>
 </body>
