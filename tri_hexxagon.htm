@@ -1,0 +1,131 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="Content-Language" content="en-us">
+<title>Games of Towers - TRICOLEUR HEXXAGON</title>
+<script LANGUAGE="JavaScript" src="hex2diag/hex2diag.js"></script>
+</head>
+
+<body background="ricebk.jpg" bgcolor="#FFFFFF" text="#000000" link="#666633" vlink="#333366" alink="#990000">
+
+<blockquote mstheme>
+  <h1 align="center"><strong><font face="Arial Black">TRICOLEUR HEXXAGON</font></strong><font face="Arial Black"> 
+	&nbsp;</font></h1>
+  <p align="center"><strong><font size="3">Copyright (c) 2005 Bill Taylor</font></strong></p>
+  <p align="left"><font size="3" face="Arial">The game is played on a 9x9 
+	hexagonal board, with a hole at the center, using this setup:</font></p>
+    <center>
+    <table border="2" width="480" bordercolorlight="#333366" bordercolordark="#000000">
+      <tr>
+        <td width="100%" background="icons/back-kings.jpg"><script LANGUAGE="JavaScript"><!--
+hexgv2diag("9,17,9,U...t...s/........../.........../............/S...S...u...U/............../.............../.......hh......./t...t..hhh..T...T/.......hh......./.............../............../u...U...s...s/............/.........../........../S...T...u");
+        //--></script></td>
+      </tr>
+    </table>
+    </center>
+<p align="left"><font size="3" face="Arial">The marked stones belong to First player, the others belong to Second. 
+The moves are the same as in
+<a href="http://www.gamerz.net/pbmserv/hexxagon.html">Hexxagon</a>, and captures 
+are inspired in the Rock-Paper-Scissors game.</font></p>
+
+  <table border="0" width="89%">
+  <tr>
+    <td width="100%">
+      <ul>
+		<li><font face="Arial"><strong>MOVE SEQUENCE</strong> - The move 
+		sequence is given by 134444.... moves per turn</font></li>
+		<li><font size="3" face="Arial"><strong>MOVE</strong>
+        - On this turn, the player either:</font><ul>
+		<li><font face="Arial">passes</font></li>
+		<li><font face="Arial">grows: adds one friendly stone adjacent to a 
+		friendly piece of the same type</font></li>
+		<li><font face="Arial">jumps: moves a piece already on board to an empty 
+		cell two positions away (includes jumping over pieces of either type)</font></li>
+		</ul></li>
+		<li><font face="Arial"><font size="3"><strong>CAPTURE</strong> - </font>
+		after the movement (grow or jump) all adjacent enemy pieces of the <i>
+		same</i> <i>type </i>are removed</font></li>
+		<li><font face="Arial"><strong>FLIP</strong> - after the movement (grow 
+		or jump) all adjacent enemy pieces of the <i>weak type </i>change color</font><ul>
+		<li><font face="Arial">for Red, the weak type is Green</font></li>
+		<li><font face="Arial">for Green, the weak type is Blue</font></li>
+		<li><font face="Arial">for Blue, the weak type is Red</font></li>
+		</ul></li>
+		<li><font size="3" face="Arial"><strong>GOAL</strong>
+        - When both players pass (usually because they can no longer move), the 
+		game ends</font><ul>
+		<li><font face="Arial">wins the player with more friendly stones</font></li>
+		</ul>
+		</li>
+		</ul>
+    </td>
+  </tr>
+</table>
+    <p align="left"><font size="3" face="Arial">A big group of stones of the 
+	same color is very fragile near just one enemy stone of the right color. 
+	Flexible armies are required here, which means a lot of care to choose which 
+	is the best part to develop on each turn.</font></p>
+	<p align="left"><font face="Arial">Here&#39;s a sample match by Bill Taylor and 
+	João Neto (A, B, C stand for Red, Green, Blue):</font></p>
+	<blockquote>
+		<p align="left"><font size="3" face="Courier New">
+		&nbsp;1.&nbsp;m3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;31.&nbsp;aA15&nbsp;&nbsp;&nbsp; G9C9&nbsp;&nbsp;&nbsp;&nbsp;H6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A11<br>
+		&nbsp;2.&nbsp;s3&nbsp;&nbsp;&nbsp;&nbsp;z2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A11&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;32.&nbsp;A9&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x6B6&nbsp;&nbsp;&nbsp;&nbsp;Ap16&nbsp;&nbsp;&nbsp;&nbsp;n12r12<br>
+		&nbsp;3.&nbsp;m9&nbsp;&nbsp;&nbsp;&nbsp;w5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v14&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v18&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;33.&nbsp;bv16&nbsp;&nbsp;&nbsp; F6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;u17r16&nbsp;&nbsp;cu17<br>
+		&nbsp;4.&nbsp;S3o3&nbsp;&nbsp;A11y13&nbsp;&nbsp;p14n12&nbsp;&nbsp;p6s5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;34.&nbsp;B6E7&nbsp;&nbsp;&nbsp; C11&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;o17q15&nbsp;&nbsp;Ao17<br>
+		&nbsp;5.&nbsp;h6j4&nbsp;&nbsp;x6z8&nbsp;&nbsp;&nbsp;&nbsp;v18z18&nbsp;&nbsp;u17&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;35.&nbsp;B12&nbsp;&nbsp;&nbsp;&nbsp; v16r17&nbsp;&nbsp;aA15&nbsp;&nbsp;&nbsp;&nbsp;by15<br>
+		&nbsp;6.&nbsp;n2&nbsp;&nbsp;&nbsp;&nbsp;s5p4&nbsp;&nbsp;&nbsp;&nbsp;n12n10&nbsp;&nbsp;i15&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;36.&nbsp;I7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; q15t16&nbsp;&nbsp;B10D12&nbsp;&nbsp;z6B8<br>
+		&nbsp;7.&nbsp;A9&nbsp;&nbsp;&nbsp;&nbsp;v14r14&nbsp;&nbsp;u17w15&nbsp;&nbsp;k3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;37.&nbsp;bv16&nbsp;&nbsp;&nbsp; B14E13&nbsp;&nbsp;aB14&nbsp;&nbsp;&nbsp;&nbsp;v18<br>
+		&nbsp;8.&nbsp;p4l4&nbsp;&nbsp;i15k17&nbsp;&nbsp;z2x4&nbsp;&nbsp;&nbsp;&nbsp;h14k13&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;38.&nbsp;Cc9&nbsp;&nbsp;&nbsp;&nbsp; H8F10&nbsp;&nbsp;&nbsp;s13&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;o15<br>
+		&nbsp;9.&nbsp;l2p2&nbsp;&nbsp;F6C5&nbsp;&nbsp;&nbsp;&nbsp;C11&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x14&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;39.&nbsp;v16r16&nbsp; bv16&nbsp;&nbsp;&nbsp;&nbsp;x14u13&nbsp;&nbsp;t18<br>
+		10.&nbsp;m3q3&nbsp;&nbsp;t2w3&nbsp;&nbsp;&nbsp;&nbsp;k11&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;e11&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;40.&nbsp;C9E11&nbsp;&nbsp; t12&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Bp16&nbsp;&nbsp;&nbsp;&nbsp;Bd10<br>
+		11.&nbsp;D4&nbsp;&nbsp;&nbsp;&nbsp;t18p18&nbsp;&nbsp;r14r12&nbsp;&nbsp;C11E13&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;41.&nbsp;C17&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;D14&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A15y17&nbsp;&nbsp;z16B16<br>
+		12.&nbsp;y3&nbsp;&nbsp;&nbsp;&nbsp;m3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;e11i11&nbsp;&nbsp;r4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;42.&nbsp;E11c13&nbsp;&nbsp;t12x12&nbsp;&nbsp;A11&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;E11&nbsp;&nbsp;&nbsp;<br>
+		13.&nbsp;D6&nbsp;&nbsp;&nbsp;&nbsp;y7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;D4D2&nbsp;&nbsp;&nbsp;&nbsp;r12p10&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;43.&nbsp;y15B14&nbsp;&nbsp;A15&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y17u17&nbsp;&nbsp;t18p17<br>
+		14.&nbsp;y3c3&nbsp;&nbsp;i11m11&nbsp;&nbsp;t4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x4u3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;44.&nbsp;A11A13&nbsp;&nbsp;E13C15&nbsp;&nbsp;x12x14&nbsp;&nbsp;E11E13<br>
+		15.&nbsp;y7A5&nbsp;&nbsp;C5E7&nbsp;&nbsp;&nbsp;&nbsp;o9&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;p18m17&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;45.&nbsp;o17&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;at18&nbsp;&nbsp;&nbsp;&nbsp;y15&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;E15<br>
+		16.&nbsp;t4x4&nbsp;&nbsp;n10n12&nbsp;&nbsp;n10&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;t4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;46.&nbsp;z14&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B14B16&nbsp;&nbsp;BD14&nbsp;&nbsp;&nbsp;&nbsp;o15m17<br>
+		17.&nbsp;A5A3&nbsp;&nbsp;k17i15&nbsp;&nbsp;C7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;G7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;47.&nbsp;C17z16&nbsp;&nbsp;w17w15&nbsp;&nbsp;u17q17&nbsp;&nbsp;t16<br>
+		18.&nbsp;j12&nbsp;&nbsp;&nbsp;x4z2&nbsp;&nbsp;&nbsp;&nbsp;v2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;l12&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;48.&nbsp;C15A17&nbsp;&nbsp;Bb14&nbsp;&nbsp;&nbsp;&nbsp;p14r16&nbsp;&nbsp;n18<br>
+		19.&nbsp;E3&nbsp;&nbsp;&nbsp;&nbsp;E13C15&nbsp;&nbsp;G7G9&nbsp;&nbsp;&nbsp;&nbsp;j14&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;49&nbsp;&nbsp;o17l16&nbsp;&nbsp;v16s17&nbsp;&nbsp;v18y17&nbsp;&nbsp;aw17<br>
+		20.&nbsp;m13&nbsp;&nbsp;&nbsp;j12h14&nbsp;&nbsp;A3D4&nbsp;&nbsp;&nbsp;&nbsp;x4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;50.&nbsp;r18&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B18x18&nbsp;&nbsp;P16s17&nbsp;&nbsp;m15<br>
+		21.&nbsp;D6F4&nbsp;&nbsp;C15z16&nbsp;&nbsp;m17q17&nbsp;&nbsp;l18p18&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;51.&nbsp;o17&nbsp;&nbsp;&nbsp;&nbsp; t16t18&nbsp;&nbsp;cw17&nbsp;&nbsp;&nbsp;&nbsp;C17<br>
+		22.&nbsp;e3&nbsp;&nbsp;&nbsp;&nbsp;i15l16&nbsp;&nbsp;k13&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;52.&nbsp;l14l16&nbsp; m15m17&nbsp;&nbsp;A15y13&nbsp;&nbsp;A15<br>
+		23.&nbsp;G9E11&nbsp;p18t18&nbsp;&nbsp;q17u17&nbsp;&nbsp;Bx16&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;53.&nbsp;p18s19&nbsp; cv18&nbsp;&nbsp;&nbsp;&nbsp;w15s15&nbsp;&nbsp;w15<br>
+		24.&nbsp;D4&nbsp;&nbsp;&nbsp;&nbsp;Bw5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;z4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Al14&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;54.&nbsp;z16v16&nbsp; z16&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m17q17&nbsp;&nbsp;r12t14<br>
+		25.&nbsp;C7C5&nbsp;&nbsp;J10H8&nbsp;&nbsp;&nbsp;E11C13&nbsp;&nbsp;B8&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;55.&nbsp;resigns,&nbsp;0-1<br>
+		26.&nbsp;CB4&nbsp;&nbsp;&nbsp;AD4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;l16o17&nbsp;&nbsp;m15&nbsp;&nbsp;&nbsp;&nbsp;<br>
+		27.&nbsp;bv16&nbsp;&nbsp;t18w19&nbsp;&nbsp;E7G9&nbsp;&nbsp;&nbsp;&nbsp;z8B6&nbsp;&nbsp;&nbsp;<br>
+		28.&nbsp;D4A5&nbsp;&nbsp;q17&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An16&nbsp;&nbsp;&nbsp;&nbsp;m13p14&nbsp;<br>
+		29&nbsp;&nbsp;z10&nbsp;&nbsp;&nbsp;G7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B14&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v16s17&nbsp;<br>
+		30&nbsp;&nbsp;B6z8&nbsp;&nbsp;x6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x4z6&nbsp;&nbsp;&nbsp;&nbsp;q17&nbsp;&nbsp;&nbsp;&nbsp;<br>
+		<br>
+		Final Position:</font></p>
+		<p align="left"><font size="3" face="Courier New">
+		abcdefghijklmnopqrstuvwxyzABCDEFGHIJKL<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;.&nbsp;A&nbsp;A&nbsp;.&nbsp;.&nbsp;C&nbsp;.&nbsp;A&nbsp;A&nbsp;A&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;A&nbsp;A&nbsp;A&nbsp;A&nbsp;.&nbsp;B&nbsp;C&nbsp;.&nbsp;.&nbsp;A&nbsp;A&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;A&nbsp;A&nbsp;.&nbsp;.&nbsp;A&nbsp;B&nbsp;B&nbsp;.&nbsp;C&nbsp;C&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;B&nbsp;.&nbsp;A&nbsp;A&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5.<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;B&nbsp;B&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6.<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;B&nbsp;B&nbsp;B&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7.<br>
+		&nbsp;&nbsp;&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;A&nbsp;C&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;8.<br>
+		&nbsp;&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;C&nbsp;C&nbsp;.&nbsp;___&nbsp;.&nbsp;.&nbsp;A&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;9.<br>
+		&nbsp;.&nbsp;C&nbsp;.&nbsp;.&nbsp;.&nbsp;B&nbsp;C&nbsp;C&nbsp;/&nbsp;&nbsp;&nbsp;\&nbsp;.&nbsp;A&nbsp;.&nbsp;B&nbsp;B&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;10<br>
+		&nbsp;&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;B&nbsp;C&nbsp;.&nbsp;.\___/.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;11<br>
+		&nbsp;&nbsp;&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;A&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;12<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;.&nbsp;.&nbsp;A&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;B&nbsp;A&nbsp;A&nbsp;B&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;13<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;B&nbsp;B&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;C&nbsp;.&nbsp;.&nbsp;A&nbsp;B&nbsp;B&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;14<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;:&nbsp;.&nbsp;:&nbsp;.&nbsp;B&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;15<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;.&nbsp;A&nbsp;.&nbsp;.&nbsp;A&nbsp;.&nbsp;B&nbsp;:&nbsp;B&nbsp;B&nbsp;c&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;16<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;A&nbsp;A&nbsp;:&nbsp;B&nbsp;B&nbsp;B&nbsp;c&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;17<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;b&nbsp;c&nbsp;c&nbsp;c&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;18<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;a&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;19<br>
+		abcdefghijklmnopqrstuvwxyzABCDEFGHIJKL</font></p>
+	</blockquote>
+</blockquote>
+<hr>
+</body>
+</html>
