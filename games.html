@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Search Games</title>
+  <style>
+    body {
+      font-family: Courier New, sans-serif;
+      padding: 20px;
+      font-size: 12px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid #bbb;
+      padding: 6px 10px;
+      text-align: left;
+      vertical-align: top;
+      font-size: 12px;
+    }
+    th {
+      <!--background-color: #f4f4f4;-->
+      cursor: pointer;
+      font-size: 14px;
+    }
+    th.sorted-asc::after {
+      content: " ↑";
+    }
+    th.sorted-desc::after {
+      content: " ↓";
+    }    
+    input[type="text"] {
+      width: 300px;
+      padding: 6px 10px;
+      margin-bottom: 10px;
+      font-size: 12px;
+    }
+    a {
+      color: #000000; <!-- #007bff; -->
+      text-decoration: none;
+      margin-right: 8px;
+      display: inline-block;
+      font-size: 12px;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    input[type="text"],
+    input[type="text"]:focus   
+    {
+         background: transparent;
+         <!--border: none;-->
+         outline-width: 0;
+    }    
+  </style>
+</head>
+<body background = "back-wood.gif">
+
+  <h1>World of Abstract Games Database</h1>
+  
+  <span id="list-length"></span> 
+  <br>        
+  <input type="text" id="searchInput" onkeyup="filterTable()"
+         placeholder="Search (!word for exclusion, >year <year for ranges)">
+  <!--<br><font style="font-size:10px">Use <b>!word</b> to exclude, <b>&gt;2000 &lt;2010</b> includes only games between 2001-2009</font><br><br>-->
+
+  <table id="dataTable">
+    <thead>
+      <tr>
+        <th onclick="sortTable(0)"><center>Year</center></th>
+        <th onclick="sortTable(1)">Game</th>
+        <th onclick="sortTable(2)">Author</th>
+        <th onclick="sortTable(3)">Goal</th>
+        <th onclick="sortTable(4)">Ludemes</th>
+        <th onclick="sortTable(5)">Board</th>
+        <th onclick="sortTable(6)">Refs</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Rows will be inserted here -->
+    </tbody>
+  </table>
+
+  <script>
+    const data = [
+      { 
+        year: 0, 
+        name: "Three Colors", 
+        author: "Unknown", 
+        type: "score", 
+        features: "setup,short-jump,multiple-jump", 
+        boardType: "8x8", 
+        link: "3colors.htm", 
+        linkNames: "WAG"
+      },
+      { 
+        year: 2001, 
+        name: "Three Crowns", 
+        author: "Larry Black", 
+        type: "capture,promotion", 
+        features: "setup,move,jump", 
+        boardType: "8x8", 
+        link: "3crowns.htm,https://boardgamegeek.com/boardgame/29675", 
+        linkNames: "WAG,BGG"
+      },
+      { 
+        year: 1969, 
+        name: "Three Musketeers", 
+        author: "Haar Hoolim", 
+        type: "stalemate,pattern", 
+        features: "move,replacement", 
+        boardType: "5x5", 
+        link: "3musketeers.htm,https://boardgamegeek.com/boardgame/21861", 
+        linkNames: "WAG,BGG"
+      },
+      { 
+        year: 2000, 
+        name: "Three Stones", 
+        author: "Andy Daniel", 
+        type: "moku", 
+        features: "drop,color3", 
+        boardType: "misc", 
+        link: "3stones.htm,https://boardgamegeek.com/boardgame/7834/", 
+        linkNames: "WAG,BGG"
+      },
+      { 
+        year: 1998, 
+        name: "4D Tic-Tac-Toe", 
+        author: "Sean Bridges", 
+        type: "moku", 
+        features: "drop", 
+        boardType: "9x3x3", 
+        link: "4dttt.htm,https://boardgamegeek.com/boardgame/32596", 
+        linkNames: "WAG,BGG"
+      },
+      { 
+        year: 2009, 
+        name: "Four Squared", 
+        author: "Martin Windischer", 
+        type: "stalemate", 
+        features: "drop,move,short,replacement", 
+        boardType: "4x5x5", 
+        link: "4squared.htm", 
+        linkNames: "WAG"
+      },
+      { 
+        year: 1980, 
+        name: "7 Sages", 
+        author: "Max Gerchambeau", 
+        type: "score", 
+        features: "move,bounce", 
+        boardType: "15x15", 
+        link: "7sages.htm,https://boardgamegeek.com/boardgame/37237", 
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2004,
+        name: "16!",
+        author: "Niek Neuwahl",
+        type: "stalemate",
+        features: "drop,pattern",
+        boardType: "12x12",
+        link: "16.htm,https://boardgamegeek.com/boardgame/17228",
+        linkNames: "WAG,BGG"
+      },      
+      {
+        year: 2000,
+        name: "90 Grad",
+        author: "Gunnar Kuhlencord",
+        type: "capture,zone",
+        features: "move,range,ko",
+        boardType: "7x7",
+        link: "90grad.htm,https://boardgamegeek.com/boardgame/990",
+        linkNames: "WAG,BGG"
+      },      
+      {
+        year: 1995,
+        name: "3 6 9",
+        author: "Paul Townsend",
+        type: "score",
+        features: "drop,moku,color1",
+        boardType: "9x9",
+        link: "369.htm,https://boardgamegeek.com/boardgame/32597",
+        linkNames: "WAG,BGG"
+      },      
+      {
+        year: 1987,
+        name: "Abalone",
+        author: "M.Lalet, L.Levi",
+        type: "capture",
+        features: "push,phalanx,push-off",
+        boardType: "hexhex5",
+        link: "abalone.htm,https://boardgamegeek.com/boardgame/526",
+        linkNames: "WAG,BGG"
+      },      
+      {
+        year: 2005,
+        name: "Abande",
+        author: "Dieter Stein",
+        type: "score",
+        features: "stack,group,drop,move",
+        boardType: "7x7,hexhex4",
+        link: "abande.htm,https://boardgamegeek.com/boardgame/21324",
+        linkNames: "WAG,BGG"
+      },      
+      {
+        year: 2003,
+        name: "Abstract Chess",
+        author: "João Pedro Neto",
+        type: "royal",
+        features: "stack,move,replacement",
+        boardType: "8x8",
+        link: "abchess.htm,https://boardgamegeek.com/boardgame/441851",
+        linkNames: "WAG,BGG"
+      },      
+      {
+        year: 1968,
+        name: "Abstract Crosse",
+        author: "David Rea",
+        type: "annihilation",
+        features: "move,short-jump",
+        boardType: "10x10",
+        link: "abcrosse.htm",
+        linkNames: "WAG"
+      },      
+      {
+        year: 1995,
+        name: "Aboyne",
+        author: "Paul Sijben",
+        type: "zone,stalemate",
+        features: "move,replacement,long-jump",
+        boardType: "hexhex5",
+        link: "aboyne.htm,https://boardgamegeek.com/boardgame/32350",
+        linkNames: "WAG,BGG"
+      },      
+      {
+        year: 2002,
+        name: "Abstract Puluc",
+        author: "João Pedro Neto",
+        type: "stalemate",
+        features: "stack,move,replacement",
+        boardType: "10x5",
+        link: "abpuluc.htm",
+        linkNames: "WAG"
+      },      
+      {
+        year: 2002,
+        name: "Abyss",
+        author: "Walter Joris",
+        type: "score",
+        features: "setup,slide,push,push-off,pencil&paper",
+        boardType: "5x5",
+        link: "abyss.htm,https://boardgamegeek.com/boardgame/32564",
+        linkNames: "WAG,BGG"
+      },      
+      {
+        year: 2004,
+        name: "Accasta Pari",
+        author: "Dieter Stein",
+        type: "zone",
+        features: "stack,slide",
+        boardType: "hexhex4",
+        link: "accastapari.htm",
+        linkNames: "WAG"
+      },      
+      {
+        year: 1996,
+        name: "Agora",
+        author: "Nicolas Herlas",
+        type: "stalemate",
+        features: "stack,move,capture",
+        boardType: "6x6",
+        link: "agora.htm,https://boardgamegeek.com/boardgame/11680",
+        linkNames: "WAG,BGG"
+      },      
+      {
+        year: 1000,
+        name: "Alquerque",
+        author: "Traditional",
+        type: "capture",
+        features: "move,short-jump,multiple-jump",
+        boardType: "5x5",
+        link: "alquerque.htm,https://boardgamegeek.com/boardgame/11464",
+        linkNames: "WAG,BGG"
+      },      
+      {
+        year: 1500,
+        name: "Awithlak0nai",
+        author: "Traditional",
+        type: "capture",
+        features: "move,short-jump,multiple-jump",
+        boardType: "hexhex16x3",
+        link: "alquerque.htm#awithlak0nai,https://boardgamegeek.com/boardgame/13766",
+        linkNames: "WAG,BGG"
+      }, 
+      {
+        year: 0,
+        name: "Dablot Prejjesne",
+        author: "Traditional",
+        type: "capture",
+        features: "move,short-jump,multiple-jump",
+        boardType: "misc",
+        link: "alquerque.htm#dablot,https://boardgamegeek.com/boardgame/13777,https://ludii.games/details.php?keyword=Dablot%20Prejjesne",
+        linkNames: "WAG,BGG,Ludii"
+      }, 
+      {
+        year: 0,
+        name: "Damiano",
+        author: "Traditional",
+        type: "capture",
+        features: "move,short-jump,multiple-jump",
+        boardType: "7x7",
+        link: "alquerque.htm#damiano",
+        linkNames: "WAG"
+      }, 
+      {
+        year: 0,
+        name: "Zamma",
+        author: "Traditional",
+        type: "capture",
+        features: "move,short-jump,multiple-jump",
+        boardType: "9x9",
+        link: "alquerque.htm#zamma,https://ludii.games/details.php?keyword=Zamma",
+        linkNames: "WAG,Ludii"
+      },
+      {
+        year: 0,
+        name: "Kharbaga",
+        author: "Traditional",
+        type: "capture",
+        features: "move,short-jump,multiple-jump",
+        boardType: "misc",
+        link: "alquerque.htm#kharbaga,https://ludii.games/details.php?keyword=Kharbaga",
+        linkNames: "WAG,Ludii"
+      },
+      {
+        year: 0,
+        name: "Fetach",
+        author: "Traditional",
+        type: "capture",
+        features: "move,short-jump,multiple-jump",
+        boardType: "5x5",
+        link: "alquerque.htm#fetach,https://ludii.games/details.php?keyword=Fetach",
+        linkNames: "WAG,Ludii"
+      },
+      {
+        year: 1893,
+        name: "Politics",
+        author: "Silas Robbins",
+        type: "capture",
+        features: "setup,color6,moku,capture,short-jump",
+        boardType: "misc",
+        link: "alquerque.htm#politics,https://boardgamegeek.com/boardgame/153635",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 1990,
+        name: "Alva",
+        author: "Alvydas Jakeliunas",
+        type: "score",
+        features: "move,long-jump",
+        boardType: "9x9",
+        link: "alva.htm,https://boardgamegeek.com/boardgame/24785",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 1988,
+        name: "Amazons",
+        author: "Walter Zamkauskas",
+        type: "stalemate",
+        features: "move,wall",
+        boardType: "10x10",
+        link: "amazons.htm,https://boardgamegeek.com/boardgame/2125",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2002,
+        name: "Ambivalence",
+        author: "Walter Joris",
+        type: "score",
+        features: "drop,custodian,neutral,rek,pencil&paper",
+        boardType: "6x6",
+        link: "ambivalence.htm,https://boardgamegeek.com/boardgame/88330",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2000,
+        name: "Anchor",
+        author: "Steven Meyers",
+        type: "territory",
+        features: "drop,group,connect,pie",
+        boardType: "hexhex8",
+        link: "anchor.htm,https://boardgamegeek.com/boardgame/23235",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 1995,
+        name: "Andantino",
+        author: "David Smith",
+        type: "moku,enclosure",
+        features: "drop",
+        boardType: "hexhex10",
+        link: "andantino.htm,https://boardgamegeek.com/boardgame/11893",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2001,
+        name: "Annuvin",
+        author: "Jeff Roy",
+        type: "annihilation",
+        features: "move,range,replacement",
+        boardType: "hexhex4",
+        link: "annuvin.htm,https://boardgamegeek.com/boardgame/32595",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2003,
+        name: "Antipod",
+        author: "Cameron Browne",
+        type: "connect,block",
+        features: "drop",
+        boardType: "hexhex6",
+        link: "antipod.htm,https://boardgamegeek.com/boardgame/19130",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2001,
+        name: "Apex",
+        author: "Jochen Drechsler",
+        type: "connect",
+        features: "drop,slide,replacement",
+        boardType: "8x8",
+        link: "apex.htm,https://boardgamegeek.com/boardgame/21344",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 1976,
+        name: "Apocalypse",
+        author: "C.S.Elliot",
+        type: "annihilation",
+        features: "move,replacement,promotion",
+        boardType: "5x5",
+        link: "apocalypse.htm,https://boardgamegeek.com/boardgame/14123",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 0,
+        name: "",
+        author: "",
+        type: "",
+        features: "",
+        boardType: "",
+        link: "",
+        linkNames: "WAG,BGG"
+      },
+    ];
+
+/*
+    type:
+        annihilation -  remove all friendly stones
+        asymmetric - players have different armies/strength
+        block - one player must block the other
+        capture - capture the adversary army (or part of it)
+        connect - connection game
+        enclosure - surround something
+        moku - make a N in-a-row
+        promotion - promote to something
+        pattern - achieve some shape
+        stalemate - be the last to move
+        score - get N points
+        single-group - make all stones belong to one group
+        zone - reach some part of the board
+        
+    ludemes:
+        bounce - stones bounce at the edge or in other stones
+        color-N - needs N types of stones
+        connect - use connection concepts
+        custodian - capture stone in-between
+        drop - stones can be dropped
+        group - groups of connected stones have relevance
+        intrusion - capture stone at left/right (inverse of custodian)
+        jump - other jumps
+        ko - Ko rule is included
+        move - stones move
+        multiple-jump - jumps can be multiple
+        neutral - use neutral stones
+        pencil&paper - can be played with just pencil and paper
+        phalanx - a line of stones can move together
+        pie - Pie rule is included
+        push - stone(s) can push
+        push-off - stones can be pushed off the board
+        range - move/capture range depends on some criteria
+        replacement - capture by replacement
+        setup - has a initial setup phase
+        short-jump - checkers-like jump
+        slide - stones slide over a line of empty cells
+        stack - stacks can be made
+*/
+    
+    let currentSort = {
+      column: -1,
+      direction: 'asc'
+    };
+
+    function populateTable() {
+      const tableBody = document.querySelector("#dataTable tbody");
+      tableBody.innerHTML = "";
+
+      data.forEach(item => {
+        const urls  = item.link.split(',').map(url => url.trim());
+        const names = item.linkNames.split(',').map(name => name.trim());
+
+        // Match links with their custom names
+        const linksHtml = urls.map((url, index) => {
+          const linkName = names[index] || "Visit"; // fallback if missing
+          return `<a href="${url}" target="_blank">${linkName}</a>`;
+        }).join('');
+
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td><center>${item.year}</center></td>
+          <td>${item.name}</td>
+          <td>${item.author}</td>
+          <td>${item.type}</td>
+          <td>${item.features}</td>
+          <td>${item.boardType}</td>
+          <td>${linksHtml}</td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    function filterTable() {
+      const input = document.getElementById("searchInput").value.trim().toLowerCase();
+      const rows = document.querySelectorAll("#dataTable tbody tr");
+
+      if (input === "") {
+        // If search box is empty, show all rows
+        rows.forEach(row => row.style.display = "");
+        return;
+      }
+
+      const excludedTerms = input.split(" ").filter(term => term.startsWith("!")).map(term => term.slice(1).trim());
+      const greaterThanTerms = input.split(" ").filter(term => term.startsWith(">")).map(term => parseInt(term.slice(1).trim(), 10));
+      const lessThanTerms = input.split(" ").filter(term => term.startsWith("<")).map(term => parseInt(term.slice(1).trim(), 10));
+      const includedTerms = input.split(" ").filter(term => !term.startsWith("!") && !term.startsWith(">") && !term.startsWith("<")).map(term => term.trim());
+
+      rows.forEach(row => {
+        const cells = row.querySelectorAll("td");
+        const rowText = Array.from(cells).map(cell => cell.textContent.toLowerCase()).join(" ");
+        const rowYear = parseInt(cells[0].textContent.trim(), 10);
+
+        // Check if the row contains any excluded terms
+        const containsExcluded = excludedTerms.some(term => rowText.includes(term));
+        if (containsExcluded) {
+          row.style.display = "none";
+          return;
+        }
+
+        // Check if the row year is greater than any specified in the search
+        const matchesGreaterThan = greaterThanTerms.every(term => rowYear > term);
+
+        // Check if the row year is less than any specified in the search
+        const matchesLessThan = lessThanTerms.every(term => rowYear < term);
+
+        // Check if the row contains all included terms
+        const matchesIncluded = includedTerms.every(term => rowText.includes(term));
+
+        if (matchesIncluded && matchesGreaterThan && matchesLessThan) {
+          row.style.display = "";
+        } else {
+          row.style.display = "none";
+        }
+      });
+    }
+
+    function sortTable(columnIndex) {
+      const direction = currentSort.column === columnIndex && currentSort.direction === 'asc' ? 'desc' : 'asc';
+      currentSort = { column: columnIndex, direction };
+
+      const sortedData = [...data].sort((a, b) => {
+        let valueA = a[Object.keys(a)[columnIndex]].toString().toLowerCase();
+        let valueB = b[Object.keys(b)[columnIndex]].toString().toLowerCase();
+
+        if (columnIndex === 0) { // If sorting by year (numeric)
+          valueA = parseInt(valueA, 10);
+          valueB = parseInt(valueB, 10);
+        }
+
+        if (valueA < valueB) return direction === 'asc' ? -1 :  1;
+        if (valueA > valueB) return direction === 'asc' ?  1 : -1;
+        return 0;
+      });
+
+      // Update table after sorting
+      data.length = 0; // Clear the original array
+      data.push(...sortedData); // Push the sorted data
+
+      // Re-render the table
+      populateTable();
+
+      // Update sorting indicators
+      updateSortingIndicators(columnIndex, direction);
+    }
+
+    function updateSortingIndicators(columnIndex, direction) {
+      const headers = document.querySelectorAll("th");
+      headers.forEach((header, index) => {
+        header.classList.remove("sorted-asc", "sorted-desc");
+        if (index === columnIndex) {
+          header.classList.add(direction === 'asc' ? 'sorted-asc' : 'sorted-desc');
+        }
+      });
+    }
+
+    // Populate the table initially
+    populateTable();
+    
+    // Show total number of games at the top of the page
+    document.getElementById("list-length").textContent = "Total Games: " + data.length;
+  </script>
+
+</body>
+</html>
