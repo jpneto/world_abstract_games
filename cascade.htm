@@ -1,0 +1,164 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="Content-Language" content="en-us">
+<title>Games of Soldiers - CASCADE</title>
+<script LANGUAGE="JavaScript" src="hex2diag/hex2diag.js"></script>
+</head>
+
+<body background="ricebk.jpg" bgcolor="#FFFFFF" text="#000000" link="#666633" vlink="#333366" alink="#990000">
+
+<font face="Times New Roman, Times" >
+
+<blockquote >
+</font >
+<h1 align="center"><font face="Times New Roman, Times" color="#333333" ><strong><font face="Arial Black">
+CASCADE</font></strong></font ></h1>
+<p align="center"><strong><font size="3">Copyright (c) 2009 Torben Ægidius 
+Mogensen</font></strong></p>
+
+    <p><font face="Arial" size="3"> The game is played on the following hex 
+	board:</font></p>
+     <center>
+
+    <table border="2" width="250">
+      <tr>
+        <td width="100%" background="back-kings.jpg"><script LANGUAGE="JavaScript"><!--
+hexgv2diag("1,8,1,./../.../..../...../....../......./......../......./....../...../..../.../../.");
+        //--></script></td>
+      </tr>
+    </table>
+    </center>
+
+    <p><font face="Arial" size="3"> The game is played also with neutral stones 
+	(here, we use red):</font></p>
+   <table border="0" width="80%">
+      <tr>
+        <td width="100%">
+
+          <table border="0" cellpadding="0" cellspacing="0" width="100%" >
+            <tr >
+              <td valign="top" width="42" ><img src="aricebu1.gif" width="15" height="15" hspace="13"></td>
+              <td valign="top" width="100%"><font face="Times New Roman, Times" ><font face="Arial" size="3"><b>
+				DROP
+                </b>- drop a stone of either color (white, black or red) on an 
+				empty cell</font></font ></td >
+            </tr>
+            <tr >
+              <td valign="baseline" width="42" ><img src="aricebu1.gif" width="15" height="15" hspace="13"></td>
+              <td valign="top" width="100%"><font face="Arial" size="3" >
+				There&#39;s a possible chain-reaction after each drop:<br>
+				&nbsp;- if an empty cell is directly below two cells with stones of 
+				the same colour, it receives a stone of that colour.<br>
+				&nbsp;- if an empty cell is directly below two cells with stones of 
+				different colours, it receives a stone of the third colour</font></td >
+            </tr>
+            <tr >
+              <td valign="baseline" width="42" ><img src="aricebu1.gif" width="15" height="15" hspace="13"></td>
+              <td valign="top" width="100%"><font face="Times New Roman, Times" ><font face="Arial"><b>
+				GOAL</b>
+                - When the board is full, wins the player with more stones.</font>
+                </font ></td >
+            </tr>
+          </table >
+          <font face="Times New Roman, Times" ></font >
+        </td>
+      </tr>
+    </table>
+
+    <br>
+</font >
+  <table border="1" width="500" cellspacing="3" cellpadding="2" bordercolorlight="#333366" bordercolordark="#000000">
+    <tr>
+      <td align="left" width="250" bordercolor="#000000" background="back-kings.jpg"><font face="Times New Roman, Times" ><script LANGUAGE="JavaScript"><!--
+hexgv2diag("1,8,1,./../.../..../...../.Wwx../..Wuxx./...Xwx../...Uu../...U../...../..../.x./../.");
+//--></script>
+      </td>
+
+      <td valign="top" width="250"><font face="Times New Roman, Times" ><font face="Arial"><strong>
+		An example</strong></font>
+        </font ><font face="Arial">
+		<p>White played at b4, which produced a chain-reaction of more four 
+		stones (the marked ones).</font ></td>
+    </tr>
+  </table>
+<font face="Arial" >
+    <p>Here&#39;s the complete match from the previous example:</p>
+</font >
+<font face="Courier New" >
+    <blockquote>
+		<p>abcdefghijklmno&nbsp;&nbsp;&nbsp;__Black____________White_____<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.&nbsp;x&nbsp;h13&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;o&nbsp;g6<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.&nbsp;x&nbsp;i6&nbsp;=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x&nbsp;j7&nbsp;o<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;o&nbsp;o&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.&nbsp;x&nbsp;l7&nbsp;x=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;o&nbsp;e6&nbsp;ox==&nbsp;&nbsp;&nbsp;<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;x&nbsp;x&nbsp;o&nbsp;o&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.&nbsp;x&nbsp;n7&nbsp;xxox&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;o&nbsp;o8&nbsp;=oo=&nbsp;&nbsp;<br>
+		&nbsp;&nbsp;&nbsp;.&nbsp;x&nbsp;=&nbsp;o&nbsp;=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5.&nbsp;x&nbsp;c6&nbsp;=xxoxxo=&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;d9&nbsp;oo=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+		&nbsp;&nbsp;x&nbsp;o&nbsp;o&nbsp;x&nbsp;X&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;6.&nbsp;=&nbsp;b9&nbsp;=x==ox&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;o&nbsp;h3<br>
+		&nbsp;.&nbsp;=&nbsp;o&nbsp;=&nbsp;x&nbsp;x&nbsp;x&nbsp;&nbsp;&nbsp;7.&nbsp;x&nbsp;g2&nbsp;=x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;o&nbsp;j3&nbsp;o=<br>
+		.&nbsp;.&nbsp;x&nbsp;x&nbsp;o&nbsp;x&nbsp;x&nbsp;o&nbsp;&nbsp;8.&nbsp;x&nbsp;e4&nbsp;x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;o&nbsp;k4&nbsp;o<br>
+		&nbsp;=&nbsp;=&nbsp;x&nbsp;=&nbsp;=&nbsp;x&nbsp;=&nbsp;&nbsp;&nbsp;9.&nbsp;=&nbsp;l5&nbsp;x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;resigns<br>
+		&nbsp;&nbsp;=&nbsp;o&nbsp;o&nbsp;=&nbsp;o&nbsp;o&nbsp;&nbsp;&nbsp;10.&nbsp;<br>
+		&nbsp;&nbsp;&nbsp;x&nbsp;o&nbsp;x&nbsp;x&nbsp;o&nbsp;&nbsp;&nbsp;&nbsp;11.&nbsp;<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;=&nbsp;x&nbsp;=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;12.&nbsp;<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;x&nbsp;o&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;13.&nbsp;<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;o&nbsp;=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;14.&nbsp;<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;15.&nbsp;<br>
+		abcdefghijklmno&nbsp;&nbsp;&nbsp;&nbsp;</p>
+</blockquote>
+</font >
+<font face="Times New Roman, Times" >
+    <p><font size="3" face="Arial">The game was proposed in a
+	<a href="https://groups.google.com/u/1/g/rec.games.abstract/c/esIZ4shgKyI/m/0Ku3iPtxNAAJ">
+	post</a> at r.g.a. Here are some words from the author:</font></p>
+</font >
+<blockquote>
+	<div class="DTXlsb">
+		<font size="2" face="Courier New">&gt; Unusual! What was the inspiration 
+		for this one?</font></div>
+	<font face="Times New Roman, Times" ></font >
+	<font face="Courier New">
+	<p><font size="2">A puzzle I once saw:</font></p>
+	<p><font size="2">Given a line of +s and -s, write a new line under this but 
+	staggered<br>
+	half a position. The symbols in the new line (which will be one<br>
+	shorter than that above) will be made by the multiplication rule:</font></p>
+	<p><font size="2">+ x + = +<br>
+	+ x - = -<br>
+	- x + = -<br>
+	- x - = +</font></p>
+	<p><font size="2">This is continued until the last line has only one symbol. 
+	Examples:</font></p>
+	<p><font size="2">- + - - + + - + - +<br>
+&nbsp; - - + - - - - -<br>
+&nbsp;&nbsp;&nbsp; + - - + + +<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - + + +<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - +</font></p>
+	<p><font size="2">The puzzle is if there are arbitrarily large such 
+	constructed<br>
+	triangles with an equal number of +s and -s (and provide a proof or<br>
+	disproof of this).</font></p>
+	<p><font size="2">The asymmetry of the multiplication rule makes it 
+	unsuitable for a<br>
+	game, so I wanted a symmetric variant. Using three colours, this was<br>
+	possible. My original game only allowed placing in the top line, but<br>
+	I found the game more interesting in the general version. This also<br>
+	allowed using a normal Checker board.</font></p>
+	<p><font size="2">Another way of making it symmetric is to use three 
+	predecessors and<br>
+	use a majority rule. This can be done in 3D by placing stones in a<br>
+	triangular grid and then place new stones on top of three lower<br>
+	stones, forming a triangular pyramid in the end. Obviously, placement<br>
+	is only at the bottom, and counting requires breaking down the pyramid<br>
+	(or counting unused stones). I tried this with marbles, but it proved<br>
+	too mechanically unstable. You could use coloured disks instead.</font></p>
+	<p><font size="2">However, I like the idea of using a third colour and that 
+	it may<br>
+	sometimes be advantageous to place a stone of the opponent&#39;s colour.</font></p>
+</font >
+</blockquote><font face="Times New Roman, Times" >
+</blockquote>
+<p align="center" separator><img src="aricerul.gif" width="600" height="10"></p>
+</font >
+</body>
+</html>

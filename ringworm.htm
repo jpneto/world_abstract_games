@@ -1,0 +1,105 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta http-equiv="Content-Language" content="en-us">
+<meta name="GENERATOR" content="Microsoft FrontPage 6.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>Games of Soldiers - RINGWORM</title>
+<script LANGUAGE="JavaScript" src="hex2diag/hex2diag.js"></script>
+<meta name="Microsoft Theme" content="ricepapr 011">
+</head>
+
+<body background="ricebk.jpg" bgcolor="#FFFFFF" text="#000000" link="#666633" vlink="#333366" alink="#990000">
+
+<blockquote mstheme>
+  <h1 align="center"><font face="Arial Black"><strong>RINGWORM</strong> &nbsp;</font></h1>
+  <p align="center"><strong><font size="3">Copyright (c) 2009 João Pedro Neto</font></strong></p>
+  <p align="left"><font size="3" face="Arial">The game starts at an empty 9x9 hexagonal board:</font></p>
+    <center>
+    <table border="2" width="490" bgcolor="#D5BD83" bordercolorlight="#333366" bordercolordark="#000000">
+      <tr>
+        <td width="100%" background="icons/back-board.jpg"><script LANGUAGE="JavaScript"><!--
+hexgv2diag("9,17,9,........./........../.........../............/............./............../.............../................/................./................/.............../............../............./............/.........../........../.........");
+        //--></script></td>
+      </tr>
+    </table>
+    </center>
+&nbsp;
+  <p align="left"><font size="3" face="Arial">A <b>ring</b> is a shape of six 
+	hexagons of the same color around the same cell.</font></p>
+  <table border="0" width="89%">
+  <tr>
+    <td width="100%">
+      <ul>
+		<li><font size="3" face="Arial"><strong>MOVE</strong>
+        - On his turn, the player drops his friendly stones. Players use the 
+		progressive sequence 134* moves</font><ul>
+		<li><font size="3" face="Arial">When a Ring is made, the drop sequence 
+		stops and the moving player must burst it, i.e., it chooses one of its 
+		stones as a pivot and place the other five stones in a straight 
+		connected line starting at the pivot.</font></li>
+		<li><font face="Arial">Any stone occupying those line cells, friend of 
+		foe, is captured.</font></li>
+		<li><font face="Arial">A player continues his turn if a new Ring is 
+		produced (by bursting it)</font></li>
+		<li><font face="Arial">If two or more rings are made, the player must 
+		choose only one to burst.</font></li>
+		<li><font face="Arial">A player can pass his turn. After two consecutive 
+		passes, the game ends.</font></li>
+		</ul>
+    	</li>
+		<li><font size="3" face="Arial"><strong>GOAL</strong>
+        - Wins the player with more stones.</font></li>
+		</ul>
+    </td>
+  </tr>
+</table>
+    <p align="left"><font face="Arial">Here's a sample game played by João Neto 
+	and Bill Taylor (notation </font><font face="Courier New">-&gt;</font><font face="Arial"> 
+	means a burst):</font></p>
+	<blockquote>
+		<p align="left"><font face="Courier New">_________Joaox____________________Billo_________<br>
+		1.&nbsp;--&nbsp;&nbsp;--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;&nbsp;q9&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;&nbsp;t6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;u7&nbsp;v8<br>
+		2.&nbsp;q7&nbsp;&nbsp;w7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;u9&nbsp;&nbsp;t10&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;r8&nbsp;&nbsp;w9&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x10&nbsp;s9<br>
+		3.&nbsp;v6&nbsp;&nbsp;o7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;q11&nbsp;r12&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;q5&nbsp;&nbsp;n12&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y5&nbsp;A5<br>
+		4.&nbsp;t4&nbsp;&nbsp;x4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m5&nbsp;&nbsp;A7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;o9..s9&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;p8-&gt;k3<br>
+		5.&nbsp;o9..r10&nbsp;&nbsp;&nbsp;&nbsp;q9-&gt;l4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;l8&nbsp;&nbsp;j6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;o3&nbsp;n10<br>
+		6.&nbsp;m3&nbsp;s7..s9&nbsp;&nbsp;s7-&gt;n3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;l6..m7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i7-&gt;n2&nbsp;&nbsp;<br>
+		7.&nbsp;q9&nbsp;t8&nbsp;n4p6&nbsp;n6-&gt;i1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;p2..n4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;p4-&gt;u9&nbsp;&nbsp;<br>
+		8.&nbsp;w5&nbsp;ln2n4&nbsp;&nbsp;&nbsp;o3-&gt;t8&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x8..v10&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;u9-&gt;p4&nbsp;&nbsp;<br>
+		9.&nbsp;q7rn8o9&nbsp;&nbsp;&nbsp;&nbsp;q9-&gt;v4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;p1012mq11&nbsp;&nbsp;&nbsp;&nbsp;p10-&gt;u5&nbsp;<br>
+		10&nbsp;tv3sw4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v4-&gt;q9&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;q11r10s9v10&nbsp;&nbsp;s9-&gt;x4&nbsp;&nbsp;<br>
+		11&nbsp;s3&nbsp;&nbsp;&nbsp;y3&nbsp;&nbsp;&nbsp;m7&nbsp;&nbsp;p12&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gi5&nbsp;f6&nbsp;g7&nbsp;&nbsp;&nbsp;&nbsp;i7-&gt;s7&nbsp;&nbsp;<br>
+		12&nbsp;m9u3r4s5&nbsp;&nbsp;&nbsp;s5-&gt;C5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;l6i5h6t4&nbsp;k5&gt;u5&nbsp;&nbsp;s5&gt;c5<br>
+		13&nbsp;xz6&nbsp;xz8&nbsp;&nbsp;&nbsp;&nbsp;w8-&gt;s3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;l6p6s7##&nbsp;p6-&gt;z6&nbsp;t6-&gt;y1&nbsp;v6-&gt;A11<br>
+		14&nbsp;os13&nbsp;pr14&nbsp;&nbsp;p13-&gt;u7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y5&nbsp;y7&nbsp;o7&nbsp;u9&nbsp;&nbsp;v6-&gt;q11&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+		15&nbsp;t2&nbsp;&nbsp;w7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A7&nbsp;&nbsp;v10&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;p2&nbsp;x6&nbsp;y7&nbsp;v8&nbsp;&nbsp;x6-&gt;s11&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+		16&nbsp;k3&nbsp;B8&nbsp;n12&nbsp;k9&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y7y8w9A9&nbsp;&nbsp;w9&gt;r14&nbsp;s9&gt;i9&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+		17&nbsp;mq13&nbsp;np14&nbsp;&nbsp;p12-&gt;u7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m7&nbsp;l8&nbsp;p8&nbsp;x10&nbsp;p8&gt;z8&nbsp;x8&gt;s3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+		18&nbsp;resign<br>
+		<br>
+		&nbsp;&nbsp;&nbsp;abcdefghijklmnopqrstuvwxyzABCDEFG<br>
+		1.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;o<br>
+		2.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;x&nbsp;.&nbsp;.&nbsp;o&nbsp;.&nbsp;x&nbsp;.&nbsp;o&nbsp;.&nbsp;<br>
+		3.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;.&nbsp;x&nbsp;.&nbsp;x&nbsp;.&nbsp;o&nbsp;.&nbsp;o&nbsp;x&nbsp;.&nbsp;<br>
+		4.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;o&nbsp;.&nbsp;o&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;<br>
+		5.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;.&nbsp;.&nbsp;o&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;o&nbsp;.&nbsp;.&nbsp;o&nbsp;o&nbsp;<br>
+		6.&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;x&nbsp;.&nbsp;o&nbsp;o&nbsp;o&nbsp;o&nbsp;.&nbsp;.&nbsp;.&nbsp;<br>
+		7.&nbsp;&nbsp;&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;x&nbsp;o&nbsp;.&nbsp;x&nbsp;.&nbsp;.&nbsp;<br>
+		8.&nbsp;&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;o&nbsp;o&nbsp;o&nbsp;o&nbsp;o&nbsp;.&nbsp;x&nbsp;.&nbsp;.&nbsp;<br>
+		9.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;o&nbsp;o&nbsp;.&nbsp;.&nbsp;o&nbsp;x&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.<br>
+		10&nbsp;&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;o&nbsp;x&nbsp;o&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.<br>
+		11&nbsp;&nbsp;&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;x&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;o&nbsp;.&nbsp;.<br>
+		12&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;x&nbsp;.&nbsp;o&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;<br>
+		13&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;o&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;<br>
+		14&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;o&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;<br>
+		15&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;<br>
+		16&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+		17&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.<br>
+		&nbsp;&nbsp;&nbsp;abcdefghijklmnopqrstuvwxyzABCDEFG</font></p>
+	</blockquote>
+</blockquote>
+<hr>
+</body>
+</html>
