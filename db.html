@@ -57,12 +57,73 @@
     }    
   </style>
 </head>
-<body background = "back-wood3.jpg">
 
+<body background = "back-wood3.jpg">
   <h1>World of Abstract Games Database</h1>
   
   <span id="list-length"></span> 
-  <br>        
+  
+  <details>
+     <summary>Ludemes</summary>
+     <ul>
+      <li>asymmetric - player have different armies</li>
+      <li>auction - there's an initial bid phase to decide color</li>
+      <li>bounce - stones bounce at the edge or in other stones</li>
+      <li>chain-reaction - an action might provoke more similar actions</li>
+      <li>color-N - needs N types of stones</li>
+      <li>connect - use connection concepts</li>
+      <li>custodian - capture stone in-between</li>
+      <li>drop - stones can be dropped</li>
+      <li>explode - piece explode and destroy neighbors</li>
+      <li>group - groups of connected stones have relevance</li>
+      <li>intrusion - capture stone at left/right (inverse of custodian)</li>
+      <li>jump - other jumps</li>
+      <li>ko - Ko rule is included</li>
+      <li>magnetic - attract/repulse stones</li>
+      <li>move - stones move</li>
+      <li>multiple-move - moves can be repeated in the same turn</li>
+      <li>multiple-jump - jumps can be repeated in the same turn</li>
+      <li>neutral - use neutral stones</li>
+      <li>pencil&paper - can be played with just pencil and paper</li>
+      <li>phalanx - a line of stones can move together</li>
+      <li>pie - Pie rule is included</li>
+      <li>pivot - move by orbiting stones, use of pivots</li>
+      <li>polyominoes - use tiling pieces</li>
+      <li>push - stone(s) can push</li>
+      <li>push-off - stones can be pushed off the board</li>
+      <li>range - move/capture range depends on some criteria</li>
+      <li>remove - able to remove pattern of pieces from the board (usually a NIM-like game)</li>
+      <li>replacement - capture by replacement</li>
+      <li>rotate - pieces are able to rotate</li>
+      <li>setup - has a initial setup phase</li>
+      <li>shoot - capture by line-of-sight</li>
+      <li>short-jump - checkers-like jump</li>
+      <li>slide - stones slide over a line of empty cells</li>
+      <li>stack - stacks can be made</li>
+      <li>torus - board has no edges</li>
+      <li>wall - use wall pieces</li>
+     </ul>
+  </details>
+  
+  <details>
+     <summary>Goal</summary>
+     <ul>
+      <li>annihilation -  remove all friendly stones</li>
+      <li>asymmetric - players have different armies/strength</li>
+      <li>block - one player must block the other</li>
+      <li>capture - capture the adversary army (or part of it)</li>
+      <li>connect - connection game</li>
+      <li>enclosure - surround something</li>
+      <li>moku - make a N in-a-row</li>
+      <li>promotion - promote to something</li>
+      <li>pattern - achieve some shape</li>
+      <li>stalemate - be the last to move</li>
+      <li>score - get N points</li>
+      <li>single-group - make all stones belong to one group</li>
+      <li>zone - reach some part of the board</li>
+     </ul>
+  </details>
+  
   <input type="text" id="searchInput" onkeyup="filterTable()"
          placeholder="Search (!word for exclusion, >year <year for ranges)">
 
@@ -1087,62 +1148,6 @@
       },
     ];
 
-/*
-    type:
-        annihilation -  remove all friendly stones
-        asymmetric - players have different armies/strength
-        block - one player must block the other
-        capture - capture the adversary army (or part of it)
-        connect - connection game
-        enclosure - surround something
-        moku - make a N in-a-row
-        promotion - promote to something
-        pattern - achieve some shape
-        stalemate - be the last to move
-        score - get N points
-        single-group - make all stones belong to one group
-        zone - reach some part of the board
-        
-    ludemes:   
-        asymmetric - player have different armies
-        auction - there's an initial bid phase to decide color
-        bounce - stones bounce at the edge or in other stones
-        chain-reaction - an action might provoke more similar actions
-        color-N - needs N types of stones
-        connect - use connection concepts
-        custodian - capture stone in-between
-        drop - stones can be dropped
-        explode - piece explode and destroy neighbors
-        group - groups of connected stones have relevance
-        intrusion - capture stone at left/right (inverse of custodian)
-        jump - other jumps
-        ko - Ko rule is included
-        magnetic - attract/repulse stones
-        move - stones move
-        multiple-move - moves can be repeated in the same turn
-        multiple-jump - jumps can be repeated in the same turn
-        neutral - use neutral stones
-        pencil&paper - can be played with just pencil and paper
-        phalanx - a line of stones can move together
-        pie - Pie rule is included
-        pivot - move by orbiting stones, use of pivots
-        polyominoes - use tiling pieces
-        push - stone(s) can push
-        push-off - stones can be pushed off the board
-        range - move/capture range depends on some criteria
-        remove - able to remove pattern of pieces from the board (usually a NIM-like game)
-        replacement - capture by replacement
-        rotate - pieces are able to rotate
-        setup - has a initial setup phase
-        shoot - capture by line-of-sight
-        short-jump - checkers-like jump
-        slide - stones slide over a line of empty cells
-        stack - stacks can be made
-        torus - board has no edges
-        wall - use wall pieces
-        
-        ★☆
-*/
     let n_filtered = data.length;
     
     let currentSort = {
