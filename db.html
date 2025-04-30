@@ -95,8 +95,10 @@
       <li>explode - piece explode and destroy neighbors</li>
       <li>gravity - game uses or simulates weight and/or falls</li>
       <li>group - groups of connected stones have relevance</li>
+      <li>grow - pieces grow from/to a pattern</li>
       <li>intrusion - capture stone at left/right (inverse of custodian)</li>
       <li>jump - other jumps</li>
+      <li>long-jump - jump more than one stone in line</li>
       <li>ko - Ko rule is included</li>
       <li>magnetic - attract/repulse stones</li>
       <li>move - stones move</li>
@@ -118,7 +120,9 @@
       <li>shoot - capture by line-of-sight</li>
       <li>short-jump - checkers-like jump with enemy capture</li>
       <li>slide - stones slide over a line of empty cells</li>
+      <li>sow - stacks or group of pieces are sowed Mancala-like</li>
       <li>stack - stacks can be made</li>
+      <li>swap - two or more pieces swap position</li>
       <li>torus - board has no edges</li>
       <li>wall - use wall pieces</li>
      </ul>
@@ -1407,6 +1411,176 @@
         boardType: "19x19",
         link: "connect6.htm,https://boardgamegeek.com/boardgame/22847",
         linkNames: "WAG,BGG"
+      },
+      {
+        year: 0,
+        name: "Conquest",
+        author: "Unknown",
+        type: "zone,pattern",
+        features: "move,custodian",
+        boardType: "9x9",
+        link: "conquest.htm",
+        linkNames: "WAG"
+      },
+      {
+        year: 1800,
+        name: "Conspirateurs",
+        author: "Traditional",
+        type: "zone",
+        features: "setup,move,short-jump,multiple-jump",
+        boardType: "17x17",
+        link: "conspirators.htm,https://boardgamegeek.com/boardgame/60707",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 1974,
+        name: "Contigo",
+        author: "Frank Thibault",
+        type: "moku",
+        features: "stack,move,jump,sow",
+        boardType: "8x8",
+        link: "contigo.htm,https://boardgamegeek.com/boardgame/2545",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2005,
+        name: "Corintho",
+        author: "Paolo Scattini",
+        type: "moku",
+        features: "setup,stack,drop,move",
+        boardType: "4x4",
+        link: "corintho.htm,https://boardgamegeek.com/boardgame/20630",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 1974,
+        name: "Corner",
+        author: "Sid Sackson",
+        type: "score",
+        features: "drop,range,",
+        boardType: "5x5,6x6",
+        link: "corner.htm,https://boardgamegeek.com/boardgame/931",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 1976,
+        name: "Courier",
+        author: "Aladdin Publisher",
+        type: "zone,annihilation",
+        features: "setup,move,short-jump,multiple-jump",
+        boardType: "8x8",
+        link: "courier.htm,https://boardgamegeek.com/boardgame/2056",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2001,
+        name: "Court",
+        author: "João Pedro Neto",
+        type: "capture",
+        features: "move,drop,stack,promotion",
+        boardType: "8x8",
+        link: "court.htm,https://boardgamegeek.com/boardgame/109681",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2004,
+        name: "CQT",
+        author: "Costanzo Zingrillo",
+        type: "stalemate",
+        features: "setup,remove,range,color3",
+        boardType: "2x9",
+        link: "cqt.htm",
+        linkNames: "WAG"
+      },
+      {
+        year: 1950,
+        name: "Cram",
+        author: "Martin Gardner",
+        type: "stalemate",
+        features: "drop,polyominoes",
+        boardType: "8x8",
+        link: "cram.htm",
+        linkNames: "WAG"
+      },
+      {
+        year: 1976,
+        name: "Stop-Gate",
+        author: "John Conway",
+        type: "stalemate",
+        features: "drop,polyominoes",
+        boardType: "8x8",
+        link: "cram.htm,https://boardgamegeek.com/boardgame/7450",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 1997,
+        name: "Creeper",
+        author: "Graham Lipscomb",
+        type: "connect",
+        features: "move,short-jump,long-jump",
+        boardType: "oct6x6,13x13",
+        link: "creeper.htm,https://boardgamegeek.com/boardgame/2271",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 1998,
+        name: "Criss Cross",
+        author: "Unknown",
+        type: "pattern",
+        features: "move,swap",
+        boardType: "8x8",
+        link: "criss_cross.htm",
+        linkNames: "WAG"
+      },
+      {
+        year: 1999,
+        name: "Crockodator",
+        author: "Frank Tapson, Alan Parr",
+        type: "zone",
+        features: "move,replacement",
+        boardType: "7x7",
+        link: "crockodator.htm",
+        linkNames: "WAG"
+      },
+      {
+        year: 1995,
+        name: "Croda",
+        author: "Ljuban Dedic",
+        type: "stalemate",
+        features: "move,short-jump,multiple-jump,promotion",
+        boardType: "8x8",
+        link: "croda.htm,https://boardgamegeek.com/boardgame/19843",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2002,
+        name: "Crusade",
+        author: "Keith Carter",
+        type: "score",
+        features: "move,replacement,flip",
+        boardType: "8x8",
+        link: "crusade.htm,https://boardgamegeek.com/boardgame/70926",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 1973,
+        name: "Crystals",
+        author: "Eric Solomon",
+        type: "score",
+        features: "drop,grow",
+        boardType: "19x19,21x21",
+        link: "crystals.htm,https://boardgamegeek.com/boardgame/311277",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 1986,
+        name: "Cyclo",
+        author: "Skill Games",
+        type: "enclosure",
+        features: "setup,drop,remove",
+        boardType: "hexhex6",
+        link: "cyclo.htm",
+        linkNames: "WAG"
       },
       {
         year: 0,
