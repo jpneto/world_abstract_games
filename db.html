@@ -61,7 +61,25 @@
 <body background = "back-wood3.jpg">
   <h1>World of Abstract Games Database</h1>
   
-  <span id="list-length"></span> 
+  <details>
+     <summary>Goal</summary>
+     <ul>
+      <li>annihilation -  remove all friendly stones</li>
+      <li>asymmetric - players have different armies/strength</li>
+      <li>block - one player must block the other</li>
+      <li>capture - capture the adversary army (or part of it)</li>
+      <li>connect - connection game</li>
+      <li>enclosure - surround something</li>
+      <li>moku - make a N in-a-row</li>
+      <li>promotion - promote to something</li>
+      <li>pattern - achieve some shape</li>
+      <li>royal - checkmate/capture a royal piece</li>
+      <li>stalemate - be the last to move</li>
+      <li>score - get N points</li>
+      <li>single-group - make all stones belong to one group</li>
+      <li>zone - reach some part of the board</li>
+     </ul>
+  </details>
   
   <details>
      <summary>Ludemes</summary>
@@ -97,7 +115,7 @@
       <li>rotate - pieces are able to rotate</li>
       <li>setup - has a initial setup phase</li>
       <li>shoot - capture by line-of-sight</li>
-      <li>short-jump - checkers-like jump</li>
+      <li>short-jump - checkers-like jump with enemy capture</li>
       <li>slide - stones slide over a line of empty cells</li>
       <li>stack - stacks can be made</li>
       <li>torus - board has no edges</li>
@@ -105,28 +123,11 @@
      </ul>
   </details>
   
-  <details>
-     <summary>Goal</summary>
-     <ul>
-      <li>annihilation -  remove all friendly stones</li>
-      <li>asymmetric - players have different armies/strength</li>
-      <li>block - one player must block the other</li>
-      <li>capture - capture the adversary army (or part of it)</li>
-      <li>connect - connection game</li>
-      <li>enclosure - surround something</li>
-      <li>moku - make a N in-a-row</li>
-      <li>promotion - promote to something</li>
-      <li>pattern - achieve some shape</li>
-      <li>stalemate - be the last to move</li>
-      <li>score - get N points</li>
-      <li>single-group - make all stones belong to one group</li>
-      <li>zone - reach some part of the board</li>
-     </ul>
-  </details>
-  
   <input type="text" id="searchInput" onkeyup="filterTable()"
          placeholder="Search (!word for exclusion, >year <year for ranges)">
-
+  <br>
+  <span id="list-length"></span> 
+  
   <table id="dataTable">
     <thead>
       <tr>
@@ -1135,6 +1136,146 @@
         boardType: "8x8",
         link: "catdogs.htm,https://boardgamegeek.com/boardgame/151888",
         linkNames: "WAG,BGG"
+      },
+      {
+        year: 1978,
+        name: "Cathedral",
+        author: "Robert Moore",
+        type: "score",
+        features: "drop,polyominoes,enclosure",
+        boardType: "10x10",
+        link: "cathedral.htm,https://boardgamegeek.com/boardgame/7",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 1986,
+        name: "Cavalier au Cordeau",
+        author: "T. Truran",
+        type: "moku",
+        features: "setup,move",
+        boardType: "8x8",
+        link: "cavalier.htm",
+        linkNames: "WAG"
+      },
+      {
+        year: 1982,
+        name: "Chad",
+        author: "Christian Freeling",
+        type: "royal",
+        features: "move,slide,replacement",
+        boardType: "12x12",
+        link: "chad.htm,https://boardgamegeek.com/boardgame/193537",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 1989,
+        name: "Chain Reaction",
+        author: "Sid Sackson",
+        type: "score",
+        features: "stack,move",
+        boardType: "9x8",
+        link: "chainreaction.htm,https://boardgamegeek.com/boardgame/3619",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2000,
+        name: "Chameleons",
+        author: "Chris Huntoon",
+        type: "annihilation",
+        features: "move,short-jump,multiple-jump",
+        boardType: "7x7",
+        link: "chameleons.htm,https://boardgamegeek.com/boardgame/64785",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2001,
+        name: "Chase II",
+        author: "Karl Scherer",
+        type: "stalemate",
+        features: "setup,move,wall",
+        boardType: "8x8",
+        link: "chase2.htm",
+        linkNames: "WAG"
+      },
+      {
+        year: 1150,
+        name: "Checkers",
+        author: "Traditional",
+        type: "annihilation",
+        features: "move,short-jump,multiple-jump,promotion",
+        boardType: "8x8,10x10",
+        link: "checkers.htm,https://boardgamegeek.com/boardgame/2083",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 1800,
+        name: "Dablo Daares",
+        author: "Traditional",
+        type: "annihilation",
+        features: "move,short-jump,multiple-jump",
+        boardType: "misc",
+        link: "checkers.htm#dablo",
+        linkNames: "WAG"
+      },
+      {
+        year: 1963,
+        name: "The Sisti Challenge",
+        author: "Unknown",
+        type: "annihilation",
+        features: "move,short-jump,multiple-jump,promotion",
+        boardType: "circular",
+        link: "checkers.htm#sisti,https://boardgamegeek.com/boardgame/39648",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 0,
+        name: "Scoundrels",
+        author: "V.R.Parton",
+        type: "annihilation,zone",
+        features: "move,short-jump,multiple-jump",
+        boardType: "10x10",
+        link: "checkers.htm#scoundrels",
+        linkNames: "WAG"
+      },
+      {
+        year: 1980,
+        name: "Trojan Horse",
+        author: "Enoch Hicks",
+        type: "annihilation",
+        features: "move,short-jump,multiple-jump",
+        boardType: "13x13",
+        link: "checkers.htm#trojan,https://boardgamegeek.com/boardgame/143852",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 1965,
+        name: "Castello",
+        author: "Carl Renström",
+        type: "capture",
+        features: "move,short-jump,multiple-jump",
+        boardType: "21x15",
+        link: "checkers.htm#castello,https://boardgamegeek.com/boardgame/116215",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 0,
+        name: "Checkers Gomoku",
+        author: "Unknown",
+        type: "moku",
+        features: "setup,move",
+        boardType: "8x8",
+        link: "checkgomoku.htm,https://boardgamegeek.com/boardgame/87467",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2004,
+        name: "Chogo",
+        author: "David Jagger",
+        type: "royal,stalemate",
+        features: "setup,move,phalanx,group,capture,drop",
+        boardType: "7x8",
+        link: "chogo44.htm",
+        linkNames: "WAG"
       },
       {
         year: 0,
