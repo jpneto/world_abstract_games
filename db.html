@@ -1466,8 +1466,12 @@
         "Total Games: " + n_filtered + "/" + data.length;
   </script>
 
-<!-- show number of game entries per year 
-<div id="yearCounts"></div>
+<!-- show number of game entries per year -->
+
+<details>
+ <summary>Total Entries per Year</summary>
+   <div id="yearCounts"></div>
+</details>
 
 <script>
 // Count rows per year
@@ -1493,7 +1497,7 @@ for (const year in countsByYear) {
 html += '</ul>';
 yearCountsDiv.innerHTML = html;
 </script>
--->
+
 
 </body>
 </html>
