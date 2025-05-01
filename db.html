@@ -102,6 +102,7 @@
       <li>explode - pieces explode and destroy neighbors</li>
       <li>gravity - game uses or simulates weight and/or fall of pieces</li>
       <li>group - groups of connected pieces have relevance</li>
+      <li>group-move - pieces of the same group move together</li>
       <li>grow - pieces grow from/to a pattern</li>
       <li>intrusion - capture pieces at left/right (inverse of custodian)</li>
       <li>jump - other jumps</li>
@@ -126,11 +127,13 @@
       <li>reserve - number of pieces off-board has a relevant role</li>
       <li>rotate - pieces are able to rotate</li>
       <li>setup - has a initial setup phase</li>
+      <li>share - (some) pieces are shared</li>
       <li>shoot - capture by line-of-sight</li>
       <li>short-jump - checkers-like jump with enemy capture</li>
       <li>slide - pieces slide over a line of empty cells</li>
       <li>sow - stacks or group of pieces are sowed Mancala-like</li>
-      <li>stack - stacks can be made</li>
+      <li>split - a piece splits into two or more</li>
+      <li>stack - pieces can be stacked</li>
       <li>swap - two or more pieces swap position</li>
       <li>wall - use wall pieces</li>
       <li>withdrawal - capture by moving away</li>
@@ -2311,6 +2314,206 @@
         boardType: "9x9",
         link: "gobs.htm",
         linkNames: "WAG"
+      },
+      {
+        year: 2002,
+        name: "Gogol",
+        author: "Gustav Levay",
+        type: "position,royal",
+        features: "setup,move,slide,short-jump",
+        boardType: "8x8",
+        link: "gogol.htm,https://boardgamegeek.com/boardgame/3437",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 1986,
+        name: "Goju",
+        author: "Christiane Frankenstein",
+        type: "position,capture",
+        features: "move,slide,custodian",
+        boardType: "misc",
+        link: "goju.htm,https://boardgamegeek.com/boardgame/10011",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 1980,
+        name: "Gomony",
+        author: "Harvey Kline",
+        type: "stalemate",
+        features: "stack,move,short-jump,multiple-jump",
+        boardType: "8x8",
+        link: "Gomony.pdf,https://boardgamegeek.com/boardgame/135803",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2000,
+        name: "Gonnect",
+        author: "João Pedro Neto",
+        type: "connection",
+        features: "group,pie,enclosure",
+        boardType: "13x13",
+        link: "gonnect.htm,https://boardgamegeek.com/boardgame/12146",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 0,
+        name: "The Good for Nothings",
+        author: "V.R.Parton",
+        type: "elimination,capture,position",
+        features: "move,jumps,multiple-jumps,promotion",
+        boardType: "10x10",
+        link: "goodnothings.htm",
+        linkNames: "WAG"
+      },
+      {
+        year: 2001,
+        name: "Gorgon",
+        author: "Chris Huntoon",
+        type: "stalemate",
+        features: "move,short-jump,multiple-jmup,wall",
+        boardType: "8x8 cilinder",
+        link: "gorgon.htm,https://boardgamegeek.com/boardgame/63620",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2006,
+        name: "Gosix",
+        author: "Pierre Canuel",
+        type: "pattern",
+        features: "drop,enclosure,capture",
+        boardType: "hexhex2",
+        link: "Gosix.pdf,https://boardgamegeek.com/boardgame/23863",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 0,
+        name: "Gothic Checkers",
+        author: "Traditional",
+        type: "elimination",
+        features: "move,short-jump,multiple-jump",
+        boardType: "8x8",
+        link: "gothic.htm,https://boardgamegeek.com/boardgame/94446",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 0,
+        name: "Gounki",
+        author: "Christophe Malavasi",
+        type: "position",
+        features: "stack,move,bounce,capture",
+        boardType: "8x8",
+        link: "Gounki.pdf",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 0,
+        name: "Gravity",
+        author: "Unknown",
+        type: "moku",
+        features: "drop,gravity",
+        boardType: "8x8",
+        link: "gravity.htm,https://boardgamegeek.com/boardgame/98863",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2004,
+        name: "Grensholm",
+        author: "Markus Salo",
+        type: "position",
+        features: "move,replacement,promotion",
+        boardType: "6x4",
+        link: "grensholm.htm",
+        linkNames: "WAG"
+      },
+      {
+        year: 1999,
+        name: "Gro",
+        author: "Greg Turner",
+        type: "position",
+        features: "stack,move,split,grow",
+        boardType: "8x8",
+        link: "gro.htm,https://boardgamegeek.com/boardgame/1427",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 1998,
+        name: "Groups",
+        author: "Richard Hutnik",
+        type: "unification",
+        features: "move,short-jump",
+        boardType: "8x8",
+        link: "groups.htm,https://boardgamegeek.com/boardgame/30332",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2002,
+        name: "Growths",
+        author: "Chris Dissembler",
+        type: "stalemate",
+        features: "group,group-move,drop",
+        boardType: "8x8",
+        link: "growths.htm",
+        linkNames: "WAG"
+      },
+      {
+        year: 1997,
+        name: "Guards and Towers",
+        author: "Christoph Endres, Robert Wirth",
+        type: "position,royal",
+        features: "move,stack,replacement,split",
+        boardType: "7x7",
+        link: "guards.htm",
+        linkNames: "WAG"
+      },
+      {
+        year: 1976,
+        name: "Guerilla",
+        author: "David Wells",
+        type: "territory",
+        features: "group,pie,drop,grow,long-jump,replacement",
+        boardType: "hexhex 12,7,7",
+        link: "guerilla.htm,https://boardgamegeek.com/boardgame/8216",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 1961,
+        name: "Gung Ho",
+        author: "E.S.Lowe Inc.",
+        type: "moku",
+        features: "drop",
+        boardType: "11x11",
+        link: "GungHo.pdf",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 1984,
+        name: "Gyges",
+        author: "Claude Leroy",
+        type: "position",
+        features: "setup,stack,move,share,bounce,ko",
+        boardType: "8x6",
+        link: "gyges.htm,https://boardgamegeek.com/boardgame/10527",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2004,
+        name: "Guerre des Deux Rose",
+        author: "Le Korrigan",
+        type: "capture",
+        features: "setup,move,phalanx,group-move,push",
+        boardType: "hexhex3,4",
+        link: "guerrerose.htm",
+        linkNames: "WAG"
+      },
+      {
+        year: 2010,
+        name: "Guerrilla Checkers",
+        author: "Brian R. Train",
+        type: "elimination",
+        features: "asymmetric,drop,move,enclosure,short-jump,multiple-jump",
+        boardType: "8x8",
+        link: "guerrilla.htm,https://boardgamegeek.com/boardgame/71035",
+        linkNames: "WAG,BGG"
       },
       {
         year: 0,
