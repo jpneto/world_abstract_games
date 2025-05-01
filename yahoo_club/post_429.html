@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Re: Jade rule tweak to follow</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2em; }
+        .meta { color: #555; font-size: 0.9em; margin-bottom: 1em; }
+        pre { white-space: pre-wrap; word-wrap: break-word; }
+    </style>
+</head>
+<body>
+    <h1>Re: Jade rule tweak to follow</h1>
+    <div class="meta">
+        <p><strong>Author:</strong> merle</p>
+        <p><strong>Date:</strong> 2003-06-22 00:53:56</p>
+        <p><strong>Post ID:</strong> 429</p>
+    </div>
+    <div>> Meanwhile, perhaps our readers would like to<br>> work on this as a puzzle: find the winning<br>> strategy for Jade.<br><br>This is far from a proof... more like an idea.  Haven't done any game theory for decades, and my brain has gotten holistic and sloppy.  But here's a try:<br><br>Even-sized boards where Cross plays first are clearly a win for Parallel (by mirroring with reversed colors).  From this I'm going to assume Cross has some advantage in odd games by playing the center.<br><br>So, play the center (say black).  <br><br>Use bridges or whatever means to prove connectivity to one side.  If Parallel played black on the first move, work from that, if not, work towards an opposite side.<br><br>Now, look at the board.  If Parallel has a good start for a parallel white line, see if you can cut it off.  <br><br>If you can't cut it off (proven connection), then white already has two sides -- and I think it means Parallel has been playing all whites.  The line should be close enough to one of the two remaining sides to be provably joinable, as it can't go through the center.  Since you (black) were only working towards one side, I think you can connect this white line to the remaining side.<br><br>So assume you can cut it off.  Do so, thereby gaining connectivity to an adjoining side in the process.  Now the board should have black connected to two adjacent sides as well as the middle.<br><br>Look at the board.  If you can connect to both sides, bingo.  If you provably can't, then you can force a white four-way connection: if Parallel is blocking, try to escape (solidifying a white cross), if Parallel helps, block (ditto).<br><br>Not sure if it's always provable at this stage or not, though.  I'm kind of assuming that Parallel's strategy is mainly defensive.<br><br>Merle</div>
+</body>
+</html>

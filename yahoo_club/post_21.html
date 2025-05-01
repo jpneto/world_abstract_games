@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>fractional games</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2em; }
+        .meta { color: #555; font-size: 0.9em; margin-bottom: 1em; }
+        pre { white-space: pre-wrap; word-wrap: break-word; }
+    </style>
+</head>
+<body>
+    <h1>fractional games</h1>
+    <div class="meta">
+        <p><strong>Author:</strong> clauchau</p>
+        <p><strong>Date:</strong> 2000-11-13 19:03:10</p>
+        <p><strong>Post ID:</strong> 21</p>
+    </div>
+    <div>I've thought of a general transformation that<br>could apply to many<br>games and yield a variant of it<br>-- a mutator, Joao would say.<br>I'll tell it<br>applied to Go. Tell me what you think of it.<br><br>Keep<br>the finite n x n board and the moves by turns. But<br>any<br>player can now split the single stone to play into<br>smaller parts<br>and put the parts onto different<br>intersections in one move,<br>provided the opponent didn't<br>already occupy any of the<br>intersections. Let's call<br>this fractional Go.<br><br>It is already interesting<br>to restrict the splitting into only<br>halves or<br>quarters of stones. You can play with coins that<br>would<br>represent the smallest fraction and which you would pile<br>up. But<br>I'm also wondering if unrestricted<br>fractions makes interesting<br>games. It may well turn out<br>that only a finite subset of them are<br>needed to<br>play well -- isn't it similar to linear<br>optimization?<br><br>Now what happens about life and death in fractional<br>Go? It's not<br>clear to me yet, but it would be nice<br>if fractional games<br>complied to the following<br>principles:<br><br> 1. The fractional moves played instead of a<br>single move can be<br> thought as consecutive or<br>simultaneous the way it suits the<br> player, when it makes<br>any difference.<br><br>For example if the rules says<br>you can kill your opponent's groups<br>of half stones<br>by surrounding it with half stones of yours,<br>then<br>groups of half stones with only two eyes can be killed.<br>Below,<br>you would play simultaneously {A2 B1}/2 (with half<br>Os) and kill<br>all the half Xs. (Sorry for those of<br>you who read it with proportional fonts.)<br><br> A B<br>C D<br><br> 1 x/2 . x/2 o/2<br><br> 2 . x/2 x/2<br>o/2<br><br> 3 x/2 x/2 o/2 .<br><br> 4 o/2 o/2 .<br>.<br><br><br>I suggest to write simultaneous moves inside curly<br>brackets (as a set),<br>and consecutive moves inside round<br>bracket (as a list) when necessary.<br><br> 2. Always<br>playing with 1/k fractions of moves should be much<br><br>like allowing the players to play k normal moves at<br>once in<br> every turn. If the board only contains the<br>same fractions of<br> pieces, they should interact as<br>if they were complete pieces.<br><br>Hence a group<br>only made of 1/k fractions and with only k eyes<br>is<br>not safe.<br><br> 3. When different fractions<br>interact, the bigger should be the<br> stronger, as a<br>trade-off to the high mobility of small<br><br>fractions.<br><br>So you can kill p/q fractions with p/q or higher<br>fractions but<br>not with lower ones. Here are examples<br>where the half Xs are all<br>dead and must be<br>immediately removed but the full Xs stay alive:<br><br> A B C<br>D E F G H<br><br> 1 . o/2 . . . o/2 o/2 .<br><br> 2<br>o/2 x/2 o/2 . o/2 x x/2 o/2<br><br> 3 . o/2 . . . o/2<br>o/2 .<br><br> 4 . . . . . . . .<br><br> 5 . . . . . o<br>o .<br><br> 6 . . . . o x x/2 o<br><br> 7 . . . . .<br>o o .<br><br><br> 4. Fractions already played<br>should not be definitively stuck to<br> fractions. The<br>players should be allowed to complete them<br> later<br>on.<br><br>For example you can further add half a stone to half<br>a stone<br>already on the board and make it<br>full.<br><br> 5. The rules should be quite the same at any<br>scale.<br><br>For example, unlike normal Go, you can add a complete<br>stone to a<br>complete stone already on the board and<br>make it a double stone.<br>Groups made of double<br>stones are safe as soon as they have got<br>one<br>eye.<br><br>That's it for now.<br><br>Claude Chaunier</div>
+</body>
+</html>

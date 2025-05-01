@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Re: [Abstract Games] Hex Reduction</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2em; }
+        .meta { color: #555; font-size: 0.9em; margin-bottom: 1em; }
+        pre { white-space: pre-wrap; word-wrap: break-word; }
+    </style>
+</head>
+<body>
+    <h1>Re: [Abstract Games] Hex Reduction</h1>
+    <div class="meta">
+        <p><strong>Author:</strong> Steven Meyers</p>
+        <p><strong>Date:</strong> 2005-03-27 14:04:04</p>
+        <p><strong>Post ID:</strong> 728</p>
+    </div>
+    <div>That is indeed true.<br><br>Note that in "padding" the board, you chose this orientation:<br><br>    v<br>   v v<br>  . V .<br> V V . h<br>V H . h h<br><br>But you could have chosen this orientation instead:<br><br><br> h h . V .<br>  h V V .<br>   V H .<br>    v v<br>     v<br><br>This is *not* the same orientation simply flipped.  Yet performing n-1<br>reduction on this also yields a win for Vertical.<br><br>Funny how that works! :)<br><br>Steve<br><br><br><br><br><br><br><br><br><br><br>Steve<br><br><br><br>----- Original Message ----- <br>From: "ccaammbb" <no_reply@yahoogroups.com><br>To: <abstractgames@yahoogroups.com><br>Sent: Saturday, March 26, 2005 10:52 AM<br>Subject: [Abstract Games] Hex Reduction<br><br><br>><br>> Hi,<br>><br>> Given that a game of Hex:<br>><br>>     . . . V .<br>>    H H H V .<br>>   . V V V .<br>> . V H H H<br>> . V . . .<br>><br>> can be converted into a game of Y by padding the board and filling<br>> the new areas with pieces:<br>><br>>         v<br>>        v v<br>>       v v v<br>>      v v v v<br>>     . . . V .<br>>    H H H V . h<br>>   . V V V . h h<br>> . V H H H h h h<br>> . V . . . h h h h<br>><br>> then it follows that the "N-1" Y reduction rule can be used to<br>> determine whether a player has won a game of Hex or not. The actual<br>> reduction for this sample game of Hex-converted-to-Y follows:<br>><br>> N=9     V<br>>        V V<br>>       V V V<br>>      V V V V<br>>     . . . V .<br>>    H H H V . H<br>>   . V V V . H H<br>> . V H H H H H H<br>> . V . . . H H H H<br>><br>> N=8    V<br>>       V V<br>>      V V V<br>>     . . V V<br>>    H H . V .<br>>   . V V V . H<br>> . V H H H H H<br>> . V . . H H H H<br>><br>> N=7   V<br>>      V V<br>>     . V V<br>>    H . V V<br>>   . V V V .<br>> . V H H H H<br>> . V . H H H H<br>><br>> N=6   V<br>>      V V<br>>     . V V<br>>    . V V V<br>>   . V H H H<br>> . V H H H H<br>><br>> N=5   V<br>>      V V<br>>     . V V<br>>    . V H H<br>>   . V H H H<br>><br>> N=4   V<br>>      V V<br>>     . V H<br>>    . V H H<br>><br>> N=3   V<br>>      V V<br>>     . V H<br>><br>> N=2   V<br>>      V V<br>><br>> N=1   V wins!<br>><br>> Cameron<br>><br>><br>><br>><br>><br>>       Yahoo! Groups Sponsor<br>>             ADVERTISEMENT<br>><br>><br>><br>><br>><br>> --------------------------------------------------------------------------<br>------<br>> Yahoo! Groups Links<br>><br>>   a.. To visit your group on the web, go to:<br>>   http://groups.yahoo.com/group/abstractgames/<br>><br>>   b.. To unsubscribe from this group, send an email to:<br>>   abstractgames-unsubscribe@yahoogroups.com<br>><br>>   c.. Your use of Yahoo! Groups is subject to the Yahoo! Terms of Service.<br>><br>></div>
+</body>
+</html>

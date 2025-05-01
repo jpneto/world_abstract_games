@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>On Clarity and Depth of Games: A Computer Science Perspective</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2em; }
+        .meta { color: #555; font-size: 0.9em; margin-bottom: 1em; }
+        pre { white-space: pre-wrap; word-wrap: break-word; }
+    </style>
+</head>
+<body>
+    <h1>On Clarity and Depth of Games: A Computer Science Perspective</h1>
+    <div class="meta">
+        <p><strong>Author:</strong> William Chang</p>
+        <p><strong>Date:</strong> 2005-11-08 23:53:26</p>
+        <p><strong>Post ID:</strong> 817</p>
+    </div>
+    <div>Hi everyone.  A few years ago I wrote a short piece on "clarity and depth",<br>but it disappeared into the ether when I emailed it.  Here's a brief<br>summary of how these two concepts might be given a mathematical treatment.<br><br>The theory of NP-Completeness in combinatorial computation states, <br>essentially, that most nontrivial combinatorial problems are equivalently<br>complex, in the sense that they are reducible to one another.  After more<br>than 30 years as the outstanding open problem of theoretical computer<br>science, no one has proved, but everyone "believes", these so-called NP<br>(Nondeterministic Polynomial time) problems do not have P (deterministic<br>Polynomial time) general solutions.  I.e. P not= NP.<br><br>Think of an NP problem as a combinatorial game or puzzle where an "Oracle"<br>provides the correct move at every step, and the total number of moves is<br>polynomial in the size of the problem.  Of course the complexity (search<br>space) is exponential, assuming P not= NP.  One can model the computation<br>states of a computer as itself a combinatorial puzzle -- thereby deriving<br>a general, "Complete" combinatorial problem solver for all NP problems.<br>Thusly, one can reduce _any_ NP problem to any known NP-Complete problem.<br><br>One can then look at the general problem solver state transitions (aka<br>computation tree), that ends in a "Satisfying" state (possibly with the<br>help of an Oracle), as providing the certification of a full solution,<br>consisting of a polynomial number of steps.  This is a useful characterization<br>of all NP problems: the solution, once given, can be verified in polynomial<br>time, deterministically, without resort to Oracle -- even if finding a<br>solution in polynomial time had required an Oracle.<br><br>So an NP-Complete problem is both exponentially hard to solve (assuming<br>P not= NP) and polynomially easy to verify once a solution is given.<br><br>This combination of properties translates to game depth and clarity.<br><br>Depth: a measure of the difficulty of coming up with a winning line of play.<br>Clarity: a measure of the ease of verifying a winning line of play.<br><br>As we all appreciate, it is the combination of these two qualities that<br>makes a good game easy to learn yet hard to master.  Clarity enables us<br>to develop pruning strategies for exploring the full depth of the game.<br><br>-- William Chang (Saratoga, CA)</div>
+</body>
+</html>

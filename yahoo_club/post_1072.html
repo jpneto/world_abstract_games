@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Levee - A Game solved by Mike Terry and Professor Dr. Bertram Felgenhauer</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2em; }
+        .meta { color: #555; font-size: 0.9em; margin-bottom: 1em; }
+        pre { white-space: pre-wrap; word-wrap: break-word; }
+    </style>
+</head>
+<body>
+    <h1>Levee - A Game solved by Mike Terry and Professor Dr. Bertram Felgenhauer</h1>
+    <div class="meta">
+        <p><strong>Author:</strong> Ralf</p>
+        <p><strong>Date:</strong> 2007-06-08 18:21:36</p>
+        <p><strong>Post ID:</strong> 1072</p>
+    </div>
+    <div>Levee <br>=3D=3D=3D=3D=3D<br><br>A Game solved by Mike Terry and Professor Dr. Bertram Felgenhauer (TU<br>Dresden, Germany).<br><br><br>Mike Terry:<br>-----------<br><br>"It seems to me that the first player has an easy win by simply<br>playing all moves on her opponents home intersections."<br><br><br>Bertram Felgenhauer:<br>--------------------<br><br>"I'm afraid it's really that easy. Ok, let's discuss this for the 7x7<br>board. Assume that black only plays on the left and right edge.<br><br>Note: For this article, the egdes don't include the four corners of<br>the board. So the left and right edge consist of 10 points in total.<br><br>The trouble is that White needs at least 7 moves to win on an edge<br>(namely, three moves to close the channel above, three moves to close<br>it below and one move to close one edge), while black needs only<br>5 moves to completely block that edge.<br><br>Here is a winning strategy for black:<br><br>a) on the first move, play on the left edge<br>b) in reply to white's move, if possible:<br>   - if white moves on the center column, play on the right edge<br>     (i.e. the edge opposite to the first move)<br>   - if white plays on the center row, play on the opposite edge<br>     (this is the key trick)<br>   - otherwise, play on the edge on the same side of the board white<br>     just played on.<br>c) if this is not possible, play on the other edge<br>d) otherwise, play any valid move.<br><br>Note that once both edges are completely filled, white can no longer<br>win, and, because draws are impossible, black will win eventually.<br><br>If black follows that strategy, white can not win. There are two<br>scenarios to consider:<br><br>1) white forms a channel on one edge without using black's stones on <br>   the other edge. To do that, white must play at least two stones in <br>   the center column (meaning that including the first move black has <br>   played at least one stone on the edge the channel is on), one stone <br>   in the center row, on the side opposite of the channel, and four <br>   more stones on the side the channel is on. By the strategy above, <br>   black has already played at least 1+1+4-1 =3D 5 stones on the edge <br>   the channel is on at the time white would play the last of these <br>   stones, blocking it completely.<br><br>2) white forms a channel by blocking it above, using some of black's<br>   stones on one edge and blocking it below. So he has to play at<br>   least 5 stones below and 5 above the channel, but before that <br>   happens, black has already completed 10 moves and filled both edges <br>   completely, preventing a win for white.<br><br>So white can not win either way.<br><br>The argument carries over to larger boards."</div>
+</body>
+</html>
