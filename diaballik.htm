@@ -4,7 +4,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta http-equiv="Content-Language" content="en-us">
 <title>Games of Kings and Soldiers - DIABALLIK</title>
-<SCRIPT LANGUAGE="JavaScript" src="board2diag/board2diag.js"></SCRIPT>
+<script LANGUAGE="JavaScript" src="board2diag/board2diag.js"></script>
+<script LANGUAGE="JavaScript" src="hex2diag/hex2diag.js"></script>
 </head>
 
 <body background="ricebk.jpg" bgcolor="#FFFFFF" text="#000000" link="#666633" vlink="#333366" alink="#990000">
@@ -86,6 +87,30 @@ boardgv2diag("lurd,7,7,3b.b./.g.B..g/5g./.b5/b.Gb.gb/.g..g../7");
 <p><font face="Arial">Check this
 <a href="http://info.iut-bm.univ-fcomte.fr/staff/couturie/Code/Diaballik/">Java 
 application</a> to play Diaballik against an AI programmed by Raphaël Couturier.</font></p>
+<p align="center"><font face="Arial">§</font></p>
+<p><a name="diabalex"></a><font face="Arial">The hexagonal variant, <b>Diabalex</b>, was proposed and playtested by Bill Taylor and 
+João Pedro Neto in 2004.</font></p>
+
+    <center>
+    <table border="2" width="220" bordercolorlight="#333366" bordercolordark="#000000">
+      <tr>
+        <td width="100%" background="back-kings.jpg"><script LANGUAGE="JavaScript"><!--
+hexgv2diag("4,7,4,wwww/..W../....../......./....../..X../xxxx");
+        //--></script></td>
+      </tr>
+    </table>
+    </center>
+    
+    
+<p align="left"><font face="Arial">Some matches played by the authors (^coord 
+	means swap the King with soldier at a given coordinate):</font></p>
+<blockquote>
+	<p align="left"><font face="Courier New">abcdefghijklm&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Joaox&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Billo&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>&nbsp;&nbsp;&nbsp;o&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;1.&nbsp;&nbsp;&nbsp;..&nbsp;&nbsp;h7-f5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; j1-i2&nbsp;&nbsp;h1-j3<br>&nbsp;&nbsp;.&nbsp;.&nbsp;o&nbsp;.&nbsp;x&nbsp;&nbsp;&nbsp;2.&nbsp;d7-e6&nbsp;f7-h5^&nbsp;&nbsp;&nbsp;&nbsp; i2-k4&nbsp;&nbsp;f1-j5^<br>&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;3.&nbsp;e6-g4&nbsp;g6-k2&nbsp;f5^&nbsp; k4-i6^&nbsp;j3-h3<br>.&nbsp;.&nbsp;.&nbsp;.&nbsp;x&nbsp;.&nbsp;.&nbsp;4.&nbsp;g4-i4&nbsp;j7-h7&nbsp;h5^&nbsp; j5-k6&nbsp;&nbsp;h3-j5<br>&nbsp;.&nbsp;.&nbsp;x&nbsp;J&nbsp;o&nbsp;.&nbsp;&nbsp;5.&nbsp;resigns&nbsp;0-1<br>&nbsp;&nbsp;.&nbsp;.&nbsp;.&nbsp;B&nbsp;o&nbsp;&nbsp;&nbsp;6.<br>&nbsp;&nbsp;&nbsp;.&nbsp;.&nbsp;x&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;7.<br>abcdefghijklm</font></p>
+	<p align="left"><font face="Courier New"><br>abcdefghijklm&nbsp;&nbsp;&nbsp;&nbsp;Bilx&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Joao<br>&nbsp;&nbsp;&nbsp;.&nbsp;.&nbsp;x&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;1.&nbsp;..&nbsp;&nbsp;&nbsp;&nbsp;f7-h5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;h1-i2&nbsp;d1-k3<br>&nbsp;&nbsp;.&nbsp;.&nbsp;.&nbsp;o&nbsp;.&nbsp;&nbsp;&nbsp;2.&nbsp;h5-g4&nbsp;j7-h1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;j1-f5&nbsp;j3-i4^<br>&nbsp;.&nbsp;.&nbsp;.&nbsp;o&nbsp;.&nbsp;.&nbsp;&nbsp;3.&nbsp;g4-k4&nbsp;d7-f7&nbsp;^k4&nbsp;&nbsp;&nbsp;f1-j5&nbsp;g4-h5&nbsp;^j5<br>.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;B&nbsp;.&nbsp;4.&nbsp;h7-j7&nbsp;g6-h7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;g2-h3&nbsp;i4-g6&nbsp;^h5<br>&nbsp;.&nbsp;.&nbsp;.&nbsp;o&nbsp;.&nbsp;.&nbsp;&nbsp;5.&nbsp;f7-d7&nbsp;j7-f7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;j5-i6&nbsp;i6-j7^&nbsp;&nbsp;0-1<br>&nbsp;&nbsp;.&nbsp;.&nbsp;o&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;6.<br>&nbsp;&nbsp;&nbsp;x&nbsp;x&nbsp;x&nbsp;J&nbsp;&nbsp;&nbsp;&nbsp;7.<br>abcdefghijklm<br>
+	<br><br>abcdefghijklm&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Joao&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Bilx<br>&nbsp;&nbsp;&nbsp;x&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;1.&nbsp;&nbsp;&nbsp;h7-i6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f1-h3-h4^<br>&nbsp;&nbsp;.&nbsp;.&nbsp;x&nbsp;x&nbsp;o&nbsp;&nbsp;&nbsp;2.&nbsp;&nbsp;&nbsp;d7-f5&nbsp;j7-j3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;j1-j5-k6^<br>&nbsp;.&nbsp;.&nbsp;.&nbsp;J&nbsp;o&nbsp;.&nbsp;&nbsp;3.&nbsp;&nbsp;&nbsp;f7-h5&nbsp;i6-j5&nbsp;f5^&nbsp;&nbsp;h1-i2&nbsp;i4-k4<br>.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;4.&nbsp;&nbsp;&nbsp;j5-h3&nbsp;g6-k2&nbsp;h3^&nbsp;&nbsp;k4-l5-j7^&nbsp;&nbsp;0-1<br>&nbsp;.&nbsp;.&nbsp;o&nbsp;o&nbsp;.&nbsp;.&nbsp;&nbsp;5.<br>&nbsp;&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;x&nbsp;&nbsp;&nbsp;6.<br>&nbsp;&nbsp;&nbsp;.&nbsp;.&nbsp;.&nbsp;B&nbsp;&nbsp;&nbsp;&nbsp;7.<br>abcdefghijklm</font></p>
+</blockquote>
+    
+    
 </blockquote>
 <hr>
 </body>
