@@ -33,8 +33,15 @@
       content: " ↓";
     }    
     input[type="text"] {
-      width: 300px;
+      font-family: Courier New;
+      width: 380px;
       padding: 6px 10px;
+      margin-bottom: 10px;
+      font-size: 12px;
+    }
+    input[class="bgg"] {
+      width: 28px;
+      padding: 5px 6px;
       margin-bottom: 10px;
       font-size: 12px;
     }
@@ -55,6 +62,7 @@
          <!--border: none;-->
          outline-width: 0;
     }    
+    
   </style>
 </head>
 
@@ -3343,16 +3351,6 @@
       },
       {
         year: 0,
-        name: "",
-        author: "",
-        type: "",
-        features: "",
-        boardType: "",
-        link: "",
-        linkNames: "WAG,BGG"
-      },
-      {
-        year: 0,
         name: "Latrunculi",
         author: "Traditional",
         type: "elimination,stalemate",
@@ -3410,16 +3408,6 @@
         boardType: "6x6",
         link: "lifta.htm",
         linkNames: "WAG"
-      },
-      {
-        year: 0,
-        name: "",
-        author: "",
-        type: "",
-        features: "",
-        boardType: "",
-        link: "",
-        linkNames: "WAG,BGG"
       },
       {
         year: 2001,
@@ -3662,5 +3650,33 @@ html += '</ul>';
 yearCountsDiv.innerHTML = html;
 </script>
 
+<!-- BGG Hyper-parameterized mega-search of Abstract Games -->
+
+<script>
+  function searchBGG() { 
+    let url1 =  "https://boardgamegeek.com/geeksearch.php?action=search&advsearch=1&objecttype=boardgame&q=&include%5Bdesignerid%5D=&geekitemname=&geekitemname=&include%5Bpublisherid%5D=&range%5Byearpublished%5D%5Bmin%5D=";
+    
+    let url2 = "&range%5Byearpublished%5D%5Bmax%5D=";
+    
+    let url3 =  "&range%5Bminage%5D%5Bmax%5D=&floatrange%5Bavgrating%5D%5Bmin%5D=&floatrange%5Bavgrating%5D%5Bmax%5D=&range%5Bnumvoters%5D%5Bmin%5D=&floatrange%5Bavgweight%5D%5Bmin%5D=&floatrange%5Bavgweight%5D%5Bmax%5D=&range%5Bnumweights%5D%5Bmin%5D=&colfiltertype=&searchuser=joaopedroneto&nosubtypes%5B%5D=boardgameexpansion&range%5Bminplayers%5D%5Bmax%5D=2&range%5Bmaxplayers%5D%5Bmin%5D=2&playerrangetype=normal&range%5Bleastplaytime%5D%5Bmin%5D=&range%5Bplaytime%5D%5Bmax%5D=&propertyids%5B%5D=1009&nopropertyids%5B%5D=1023&nopropertyids%5B%5D=1117&nopropertyids%5B%5D=1002&nopropertyids%5B%5D=1039&nopropertyids%5B%5D=1094&nopropertyids%5B%5D=1072&nopropertyids%5B%5D=1042&nopropertyids%5B%5D=1104&nopropertyids%5B%5D=1045&nopropertyids%5B%5D=1040&nopropertyids%5B%5D=1054&nopropertyids%5B%5D=1026&nopropertyids%5B%5D=1030&nopropertyids%5B%5D=1037&nopropertyids%5B%5D=1115&nopropertyids%5B%5D=1027&nopropertyids%5B%5D=1101&nopropertyids%5B%5D=1025&nopropertyids%5B%5D=2916&nopropertyids%5B%5D=2014&nopropertyids%5B%5D=2957&nopropertyids%5B%5D=2913&nopropertyids%5B%5D=2857&nopropertyids%5B%5D=2013&nopropertyids%5B%5D=3004&nopropertyids%5B%5D=2072&nopropertyids%5B%5D=3096&nopropertyids%5B%5D=2967&nopropertyids%5B%5D=2891&nopropertyids%5B%5D=2987&nopropertyids%5B%5D=3000&nopropertyids%5B%5D=2904&nopropertyids%5B%5D=2900&nopropertyids%5B%5D=2047&nopropertyids%5B%5D=2915&nopropertyids%5B%5D=3102&nopropertyids%5B%5D=2831&nopropertyids%5B%5D=2028&nopropertyids%5B%5D=2016&nopropertyids%5B%5D=2020&B1=Submit";
+    
+    let start_date = document.forms["bgg"]["start_date"].value;
+    let end_date   = document.forms["bgg"]["end_date"].value;
+    url = url1 + start_date + url2 + end_date + url3;
+    window.open(url, "_blank");  // open new tab in browser
+  }
+</script>
+
+<br>
+<form name="bgg" onsubmit="return false">
+ Search Abstract Games on Board Game Geek from
+ <input type="text" class="bgg" id="start_date" name="start_date" value="2024"></input>
+ to
+ <input type="text" class="bgg" id="end_date" name="end_date" value="2025"></input>
+    
+ <input type="submit" value="🔍" onclick="searchBGG()"></input>
+</form>
+
 </body>
 </html>
+
