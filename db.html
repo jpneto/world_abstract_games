@@ -92,6 +92,7 @@
       <li>auction - there's an initial bid phase to decide color</li>
       <li>bounce - pieces bounce at the edge or in other pieces</li>
       <li>chain-reaction - an action might provoke more similar actions</li>
+      <li>choice - adversary restricts player's choices</li>
       <li>colorN - needs N piece colors (default is two colors of one/two types)</li>
       <li>connect - use connection concepts</li>
       <li>custodian - capture pieces in-between</li>
@@ -104,7 +105,7 @@
       <li>group - groups of connected pieces have relevance</li>
       <li>group-move - pieces of the same group move together</li>
       <li>grow - pieces grow from/to a pattern</li>
-      <li>intrusion - capture pieces at left/right (inverse of custodian)</li>
+      <li>intrusion/intervention - capture pieces at left/right (inverse of custodian)</li>
       <li>jump - other jumps</li>
       <li>long-jump - jump more than one piece in line</li>
       <li>ko - no repeated position rule is included</li>
@@ -119,7 +120,8 @@
       <li>pivot - move by orbiting pieces, use of pivots</li>
       <li>polyominoes - use polyominoes/tile pieces</li>
       <li>promotion - pieces can be upgraded</li>
-      <li>push - pieces(s) can push</li>
+      <li>pull - pieces(s) can pull</li>
+      <li>push - pieces(s) can push</li>
       <li>push-off - pieces can be pushed off the board</li>
       <li>range - move/capture range depends on some criteria</li>
       <li>remove - remove some pattern of pieces from the board</li>
@@ -269,7 +271,7 @@
         name: "Abalone",
         author: "M.Lalet, L.Levi",
         type: "capture",
-        features: "push,phalanx,push-off",
+        features: "phalanx,push-off",
         boardType: "hexhex5",
         link: "abalone.htm,https://boardgamegeek.com/boardgame/526",
         linkNames: "WAG,BGG"
@@ -329,7 +331,7 @@
         name: "Abyss",
         author: "Walter Joris",
         type: "score",
-        features: "setup,slide,push,push-off,pencil&paper",
+        features: "setup,slide,push-off,pencil&paper",
         boardType: "5x5",
         link: "abyss.htm,https://boardgamegeek.com/boardgame/32564",
         linkNames: "WAG,BGG"
@@ -1339,7 +1341,7 @@
         name: "Cleave",
         author: "Chris Huntoon",
         type: "stalemate,capture",
-        features: "slide,custodian,intervention",
+        features: "slide,custodian,intrusion",
         boardType: "8x8",
         link: "cleave.htm,https://boardgamegeek.com/boardgame/30262",
         linkNames: "WAG,BGG"
@@ -2603,6 +2605,306 @@
         features: "move,short-jump,multiple-jump",
         boardType: "misc",
         link: "halma.htm#Torno",
+        linkNames: "WAG"
+      },
+      {
+        year: 0,
+        name: "Hasami Shogi",
+        author: "Traditional",
+        type: "elimination",
+        features: "slide,custodian",
+        boardType: "9x9",
+        link: "hasami.htm,https://boardgamegeek.com/boardgame/13716",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 0,
+        name: "Mak-yek, Apit-sodok",
+        author: "Traditional",
+        type: "elimination",
+        features: "slide,custodian,intrusion",
+        boardType: "9x9",
+        link: "hasami.htm#makyek,https://boardgamegeek.com/boardgame/40574",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 0,
+        name: "Mhark Nheeb",
+        author: "Traditional",
+        type: "elimination",
+        features: "slide,custodian,intrusion",
+        boardType: "8x8",
+        link: "hasami.htm#mhark_nheeb,https://boardgamegeek.com/boardgame/278577",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 1980,
+        name: "Havannah",
+        author: "Christian Freeling",
+        type: "connection,looping",
+        features: "drop",
+        boardType: "hexhex10",
+        link: "havannah.htm,https://boardgamegeek.com/boardgame/2759",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2000,
+        name: "Hecatomb",
+        author: "Kevin Maroney",
+        type: "royal",
+        features: "slide,replacement",
+        boardType: "8x8",
+        link: "hecatomb.htm",
+        linkNames: "WAG"
+      },
+      {
+        year: 1974,
+        name: "Hepta",
+        author: "Alex Randolph",
+        type: "stalemate",
+        features: "setup,drop,pattern,neutral",
+        boardType: "7x7",
+        link: "hepta.htm,https://boardgamegeek.com/boardgame/10593",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 1942,
+        name: "Hex",
+        author: "Piet Hein",
+        type: "connection",
+        features: "pie,drop",
+        boardType: "hex11",
+        link: "hex.htm,https://boardgamegeek.com/boardgame/4112",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 1995,
+        name: "Link",
+        author: "Michael Howe",
+        type: "connection",
+        features: "pie,drop,move,range",
+        boardType: "hex11",
+        link: "hex.htm#vex",
+        linkNames: "WAG"
+      },
+      {
+        year: 1995,
+        name: "Tack",
+        author: "Michael Howe",
+        type: "connection",
+        features: "pie,drop,custodian",
+        boardType: "hex11",
+        link: "hex.htm#vex",
+        linkNames: "WAG"
+      },
+      {
+        year: 2003,
+        name: "Chameleon",
+        author: "Randy Cox,Bill Taylor",
+        type: "connection",
+        features: "pie,drop,share",
+        boardType: "hex11",
+        link: "hex.htm#chameleon,https://boardgamegeek.com/boardgame/36945",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2008,
+        name: "Dozer Hex",
+        author: "Bill Taylor,João Pedro Neto",
+        type: "connection",
+        features: "pie,drop,push-off",
+        boardType: "hex11",
+        link: "hex.htm#dozer",
+        linkNames: "WAG"
+      },
+      {
+        year: 2003,
+        name: "Imnyss",
+        author: "Cameron Browne",
+        type: "connection",
+        features: "pie,drop",
+        boardType: "hex11",
+        link: "hex.htm#Imnyss,https://boardgamegeek.com/boardgame/36945",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 1992,
+        name: "Hexade",
+        author: "Christian Freeling",
+        type: "moku,pattern",
+        features: "pie,drop",
+        boardType: "hexhex10",
+        link: "hexade.htm,https://boardgamegeek.com/boardgame/21025",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 1988,
+        name: "Hexagrams",
+        author: "Marv Nelson",
+        type: "elimination,stalemate",
+        features: "move,replacement",
+        boardType: "misc",
+        link: "hexagrams.htm,https://boardgamegeek.com/boardgame/21089",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 1962,
+        name: "Hexapawn",
+        author: "Martin Gardner",
+        type: "position",
+        features: "move,replacement",
+        boardType: "3x3",
+        link: "hexapawn.htm,https://boardgamegeek.com/boardgame/33379",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 0,
+        name: "",
+        author: "",
+        type: "",
+        features: "",
+        boardType: "",
+        link: "",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 1979,
+        name: "Hexdame",
+        author: "Christian Freeling",
+        type: "stalemate",
+        features: "move,short-jump,multiple-jump",
+        boardType: "hexhex5",
+        link: "hexdame.htm,https://boardgamegeek.com/boardgame/24697",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 1995,
+        name: "Hex-Gomoku",
+        author: "Edward Jackman",
+        type: "moku",
+        features: "drop",
+        boardType: "hexhex9",
+        link: "hexgomoku.htm",
+        linkNames: "WAG"
+      },
+      {
+        year: 2004,
+        name: "Hex-It, Exxit",
+        author: "Vincent Everaert",
+        type: "score",
+        features: "stack,drop,sow",
+        boardType: "none",
+        link: "hexit.htm,https://boardgamegeek.com/boardgame/22947",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 1980,
+        name: "Hexmeister",
+        author: "William M. Helvey",
+        type: "moku,looping",
+        features: "drop,move,replacement",
+        boardType: "hexhex6",
+        link: "hexmeister.htm",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2002,
+        name: "Highs & Lows",
+        author: "Brendon Hyde",
+        type: "elimination",
+        features: "move,wall",
+        boardType: "8x5",
+        link: "highlow.htm",
+        linkNames: "WAG"
+      },
+      {
+        year: 1960,
+        name: "Hip",
+        author: "Martin Gardner",
+        type: "stalemate",
+        features: "move,pattern",
+        boardType: "5x5",
+        link: "hip.htm",
+        linkNames: "WAG"
+      },
+      {
+        year: 400,
+        name: "Hnefatafl",
+        author: "Traditional",
+        type: "position,royal",
+        features: "asymmetric,move,custodian",
+        boardType: "9x9",
+        link: "hnefatafl.htm",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2002,
+        name: "Hobbes",
+        author: "Dan Troyka",
+        type: "royal",
+        features: "move,replacement,push,pull",
+        boardType: "5x5",
+        link: "hobbes.htm,https://boardgamegeek.com/boardgame/63802",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2003,
+        name: "Hodge Podge",
+        author: "Chris Huntoon",
+        type: "royal,position,moku,capture",
+        features: "slide,short-jump,custodian",
+        boardType: "9x9",
+        link: "hodgepodge.htm",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 1969,
+        name: "Hold that Line",
+        author: "Sid Sackson",
+        type: "stalemate",
+        features: "setup,drop,move,swap,paper&pencil",
+        boardType: "5x5",
+        link: "holdthatline.htm,https://boardgamegeek.com/boardgame/38346",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 1990,
+        name: "Holly",
+        author: "Unknown",
+        type: "elimination",
+        features: "move,replacement,short-jump,multiple-jump",
+        boardType: "hexhex9,3",
+        link: "holly.htm",
+        linkNames: "WAG"
+      },
+      {
+        year: 2000,
+        name: "Huntsmen",
+        author: "Jeff Roy",
+        type: "elimination",
+        features: "multiple-move,replacement,range",
+        boardType: "8x8",
+        link: "huntsmen.htm",
+        linkNames: "WAG"
+      },
+      {
+        year: 0,
+        name: "Hupo",
+        author: "Unknown",
+        type: "position,elimination",
+        features: "move,choice",
+        boardType: "5x3",
+        link: "hupo.htm",
+        linkNames: "WAG"
+      },
+      {
+        year: 2002,
+        name: "Hibryd",
+        author: "Jared McComb",
+        type: "royal,moku,position,capture",
+        features: "move,replacement,neutral",
+        boardType: "4x4",
+        link: "hybrid.htm",
         linkNames: "WAG"
       },
       {
