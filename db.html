@@ -45,6 +45,12 @@
       margin-bottom: 10px;
       font-size: 12px;
     }
+    input[class="google"] {
+      width: 112px;
+      padding: 5px 6px;
+      margin-bottom: 10px;
+      font-size: 12px;
+    }
     a {
       color: #000000; <!-- #007bff; -->
       text-decoration: none;
@@ -5155,6 +5161,116 @@
         linkNames: "WAG,BGG"
       },
       {
+        year: 1973,
+        name: "Shift",
+        author: "Kontrell Industries",
+        type: "traversal",
+        features: "pie,multiple-move,push,ko,neutral",
+        boardType: "8x6",
+        link: "shift.htm,https://boardgamegeek.com/boardgame/664",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 1999,
+        name: "Shoo",
+        author: "David Andrew, Justin Kalef, Chris Kidd",
+        type: "position",
+        features: "slide,merge,split,approach,custodian",
+        boardType: "9x9",
+        link: "shoo.htm",
+        linkNames: "WAG"
+      },
+      {
+        year: 2003,
+        name: "Sidekicker",
+        author: "Ingo Althofer, Eiko Bleicher",
+        type: "stalemate",
+        features: "move,replacement",
+        boardType: "6x7",
+        link: "sidekicker.htm",
+        linkNames: "WAG"
+      },
+      {
+        year: 1966,
+        name: "Siege",
+        author: "Tri-ang Publ.",
+        type: "elimination",
+        features: "asymmetric,move,replacement",
+        boardType: "7x8",
+        link: "Siege.pdf,https://boardgamegeek.com/boardgame/2873",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2003,
+        name: "Siegestones",
+        author: "Patrick Matthews",
+        type: "territory",
+        features: "stack,drop,neutral",
+        boardType: "hexhex4",
+        link: "siegestones.htm,https://boardgamegeek.com/boardgame/10386",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 1976,
+        name: "Simultana",
+        author: "Alexander Zerykier",
+        type: "stalemate",
+        features: "move,range",
+        boardType: "5x5",
+        link: "simultana.htm,https://boardgamegeek.com/boardgame/66335",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 1982,
+        name: "Ski Jumps",
+        author: "Berlekamp, Conway & Guy",
+        type: "stalemate",
+        features: "slide,short-jump",
+        boardType: "10x10",
+        link: "skijump.htm",
+        linkNames: "WAG"
+      },
+      {
+        year: 2003,
+        name: "Slides of Action",
+        author: " Clark D Rodeffer",
+        type: "unification",
+        features: "push,ko",
+        boardType: "4x4",
+        link: "slides.htm,https://boardgamegeek.com/boardgame/63600",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 1992,
+        name: "Slimetrail",
+        author: "Bill Taylor",
+        type: "position,stalemate",
+        features: "move,wall",
+        boardType: "hex11 8x8",
+        link: "slimetrail.htm,https://boardgamegeek.com/boardgame/31467",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2004,
+        name: "Medusa",
+        author: "Bill Taylor, Richard Rognlie",
+        type: "position,stalemate",
+        features: "move,wall",
+        boardType: "8x8",
+        link: "slimetrail.htm#medusa",
+        linkNames: "WAG"
+      },
+      {
+        year: 2008,
+        name: "Penguins",
+        author: "Unknown",
+        type: "score",
+        features: "move,wall",
+        boardType: "8x8",
+        link: "slimetrail.htm#penguins",
+        linkNames: "WAG"
+      },
+      {
         year: NaN,
         name: "",
         author: "",
@@ -5364,6 +5480,24 @@ yearCountsDiv.innerHTML = html;
  <input type="submit" value="🔍" onclick="searchBGG()"></input>
 </form>
 
+<!-- Form to search WAG using google -->
+<!--
+<script>
+  function searchGoogle() { 
+    let url =  "site:https://jpneto.github.io/world_abstract_games/ ";     
+    let token = document.forms["google"]["token"].value;
+
+    window.open("http://www.google.com/search?q=" + url + token, "_blank");
+  }
+</script>
+
+<form name="google" onsubmit="return false">
+ Search WAG using Google
+ <input type="text" class="google" id="token" name="token" value="Abalone"></input>
+    
+ <input type="submit" value="🔍" onclick="searchGoogle()"></input>
+</form>
+-->
 </body>
 </html>
 
