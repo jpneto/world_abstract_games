@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">SQUIRM - a game with recursive size comparisons.</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Jul 10, 2011, 1:45:17 PM</div>
+    <div class="content">
+Nick was recently asking me what other games we played that had as goal,
+to make something as large as possible, with the recursive extension that
+if the two players had the same sized one, then the second-largest of
+each player were to be compared to decide the winner, and if still
+no decision, then 3rd-largest, and so on.
+
+Innuendos aside, we call it "deciding by the largest group, recursively".
+
+Here is a game we (Joao and I) have been playing for some time. I think
+it's mentioned on his web site, but this is obviously the right time for
+some publicity. The basic game is one move per turn, but in email
+games we tend to play multi-move modifiers. This one is based on 12*,
+that is, 1 2 2 2 2 ... moves successively. Any move may be passed.
+
+The object of the game is to make the longest possible "snake" -
+a wiggly but effectively-linear group of stones. (No branching.)
+
+In all the games we've had so far, I don't think the 2nd-largest groups
+have ever actually been called into judgment, but this current one
+looks like it almost could - it just misses by a whisker I think.
+
+____________________________________________________________
+
+SQUIRM 12* group-restricted game 5 [B:3 J:1]
+=========
+DROP - On each turn, pass or drop 1 or 2 stones into empty cells.
+The very first turn is restricted to one stone. When 2 stones
+are dropped in one turn, they must finish up in disconnected
+groups. (This is the "restriction" referred to above.)
+
+SNAKE - A maximally-connected group of stones of the same color,
+with each stone adjacent to either 1 or 2 friendly stones.
+
+The very first turn is restricted to one stone. When 2 stones
+are dropped in one turn, they must finish up in disconnected
+groups. (This is the "group-restriction" referred to above.)
+
+GOAL - Two successive passes ends the game. Whoever has the longest
+snake wins the game. If these are equal, then compare the next
+longest to decide the winner; and so on recursively.
+____________________________________________________________
+
+
+Here is the game we are currently playing.
+It will look better if you have a fixed-font option.
+
+| bcdefghijklmnopqr    ___o_______x__
+|     . O . . .     1. .. g4    i4 i6
+|    . o . . . .    2. h5 h7    g6 l5
+|   . . o . . . .   3. h3 k6    j7 m8
+|  . . o x . . . .  4. g2 m6    k8 o6
+| . x . o . x . . . 5. e6 n7    d5 o8
+|  . o x x o o x .  6. h1 p7
+|   . . o x . o O   7.
+|    . . . x x x    8.
+|     . . . . .     9.
+| bcdefghijklmnopqr
+
+Above is the current situation.
+
+The situation after move 2 is interesting:-
+
+| bcdefghijklmnopqr    ___o_______x__
+|     . . . . .     1. .. g4    i4 i6
+|    . . . . . .    2. h5 h7    g6 l5
+|   . . . . . . .   3.
+|  . . o x . . . .  4.
+| . . . o . x . . . 5.
+|  . . x x . . . .  6.
+|   . . o . . . .   7.
+|    . . . . . .    8.
+|     . . . . .     9.
+| bcdefghijklmnopqr
+
+l5 was a definite blunder. It should perhaps have been at l7.
+
+Of course x wants to make a "diamond connection" there, . x
+because these are still unbreakable with the 12*(r) modifier:- x .
+
+Unfortunately, the stone at i4 interferes with this, because x cannot
+afford to link up there after o's nasty next k6, as this would make
+a three-legged critter which would not count toward a win - a snake
+may be wiggly, but it must be topologically equivalent to a straight
+line.
+
+The remainder of the game (so far) has been about x's efforts to recover
+the situation by making a long snake anyway, with his southwestern stones.
+Note that o cannot break the connection at f5 for the same reasons.
+And even if x fails to make a longer snake there, he still has some
+tiny chance of making a long snake in the north-east.
+
+The game proceeds!
+
+-- Battling Bill
+
+** There is just one huge universal abstract game,
+** and each time we play, we are settling just one small region of it.   
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: SQUIRM - a game with recursive size comparisons.</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Jul 10, 2011, 9:14:55 PM</div>
+    <div class="content">
+Interesting. Question: when I imagine playing in my head, I imagine
+the first player opening in the center, and then extending outward in
+two opposite directions from there, and I don't see what the second
+player could do about it. Why does this not happen in practice?
+
+This relates to the "current" state of the game above. On his last
+turn, O played to the ends of his snake, rather than connecting across
+the middle. From my naive understanding, it seems like the connection
+across the middle would have been much better. What am I missing? 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: SQUIRM - a game with recursive size comparisons.</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Jul 11, 2011, 7:11:14 AM</div>
+    <div class="content">
+> This relates to the "current" state of the game above.  On his last
+> turn, O played to the ends of his snake, rather than connecting across
+> the middle. From my naive understanding, it seems like the connection
+> across the middle would have been much better.  What am I missing?
+
+Firstly, o does not *need* to play in the centre, because x cannot
+play there without utterly destroying his position. So o can wait
+indefinitely to play there - he will do so in the end, of course.
+
+Secondly, because of the group-restriction rule, it is not necessarily
+a good idea to join up even strongly useful connections, because with
+two separate "half-snakes", a double move can add one stone to each;
+but with a single joined-up snake, only one stone can be added per
+turn.
+
+Of course, one cannot always afford to lazily lie back and wait
+indefinitely, as in the above example. Some connections are urgent.
+Each case must be decided on its own merits.
+
+This is one of the surprising bonuses of the restricted-2-move
+modifiers that we play so often. It is a fascinating area!
+
+-- Boardlike Bill 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: SQUIRM - a game with recursive size comparisons.</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Jul 11, 2011, 1:51:46 PM</div>
+    <div class="content">
+Ahhhhhh, there it is. I overlooked the group-restriction rule. Silly
+me. Derp. Indeed, with that rule in place, I'm excited to give this
+one a spin. 
+    </div>
+  </div>
+
+</body>
+</html>

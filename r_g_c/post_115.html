@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">New checker family game: Eximo</div>
+    <div class="author">Matteo Perlini</div>
+    <div class="timestamp">Posted on Feb 7, 2013, 11:49:55 AM</div>
+    <div class="content">
+EXIMO
+
+Member of the Checkers family, Eximo has orthogonal and diagonal movement and capture. There are no kings, only men. Men can jump without capturing. When a man reach the last row, it frees another man.
+
+
+SETUP
+On a 8x8 square board, Black has his pieces on b1, c1, d1, e1, f1, g1, b2, c2, d2, e2, f2, g2,b3, c3, f3, g3; White on b8, c8, d8, e8, f8, g8, b7, c7, d7, e7, f7, g7,b6, c6, f6, g6.
+
+OBJECT
+Capture all your opponent's pieces by jumping over them, or stalemate the opponent so he has no moves.
+
+MOVE AND CAPTURE
+Checkers can move or capture.
+
+A checker can move forward or diagonally forward.
+There are two type of move: ordinary move and jumping move.
+
+- ORDINARY MOVE: a checker moves to a (forward or diagonally forward) adjacent and empty square.
+- JUMPING MOVE: a checker jumps over a (forward or diagonally forward) adjacent friendly piece if the next square in the same direction is empty, placing the jumping checker on the next empty square. If the same player's checker can continue moving by jumping another friendly piece then it must do so. (No need to choose the longest path.)
+
+A checker can capture forward, diagonally forward, right or left.
+
+- CAPTURE: a checker jumps over a (forward, diagonally forward, right or left) adjacent opponent's piece if the next square in the same direction is empty, placing the jumping checker on the next empty square. The opponent's piece is removed from the board immediately. If the same player's checker can continue capturing by jumping another opponent's piece then it must do so. Capturing is mandatory, and you must keep capturing as long as it is possible. (No need to take the maximum number of pieces.)
+
+ON THE LAST ROW
+When a checker reaches the other end of the board, it is removed from the board immediately and the player gets two extra-moves to make instantly: dropping two new checkers in any empty square in his own first two rows, except in the four squares on the sides.
+(The dropping zone for Black: b1, c1, d1, e1, f1, g1, b2, c2, d2, e2, f2, g2; for White: b8, c8, d8, e8, f8, g8, b7, c7, d7, e7, f7, g7).
+
+If there isn't any empty square in the dropping zone, the player cannot move the checker to the last row. If there are just one empty square in the dropping zone, the player gets only one drop.    
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: New checker family game: Eximo</div>
+    <div class="author">Matteo Perlini</div>
+    <div class="timestamp">Posted on </div>
+    <div class="content">
+Here is the link to the Eximo's Zillions file: <a href="https://www.zillions-of-games.com/cgi-bin/zilligames/submissions.cgi?do=show;id=2084">http://epicurus.altervista.org/Eximo.zip</a>
+
+Please, let me know what you think.
+    </div>
+  </div>
+  
+  <div class="post level-1">
+    <div class="subject">Re: New checker family game: Eximo</div>
+    <div class="author">Matteo Perlini</div>
+    <div class="timestamp">Posted on </div>
+    <div class="content">
+There is an important omission in my rules.
+
+What happen if a checker can jump a enemy piece, landing on the last row, but the drop zone is full?
+
+The case is rare but it has to be covered.
+
+Here the updated rule:
+
+If a checker reaches the other end of the board and there isn't any empty square in the drop zone, the player loses that piece. If there are just one empty square in the drop zone, the player gets only one drop.
+
+I think this rule adds another (very thin) layer of subtleness to the game.
+    </div>
+  </div>
+
+</body>
+</html>

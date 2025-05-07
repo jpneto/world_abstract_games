@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">A Visual-spatial approach to Sprouts and Dots and Boxes</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on May 9, 2012, 3:59:39 PM</div>
+    <div class="content">
+Here's a nice article about how to overcome the initial difficulties in learning Sprouts and Dots and Boxes.
+
+<i>Sprouts and Dots and Boxes are two games that have extremely low clarity. While most games require a great deal of knowledge to play well, these games require certain specific knowledge to even play anything other than random moves. In addition, both are dominated by mathematical analysis, so if you are used to playing a game based on visual-spatial reasoning (which is dominant in most games) it can be very difficult to pick either game up.
+
+It happens that roughly the same visual strategy can be applied to both games as a first step in making them less opaque. I will assume that the reader is familiar with the rules of both games, and the double-cross rule in Dots and Boxes.
+
+In both games, there is a fight for control of “parity”: one player wants to divide the board into an even number of regions, and the other wants to divide the board into an odd number of regions. It is important to know beforehand which is which. I use the mnemonic “Normally, lefties want change.” In a normal (last-move wins*) game, the “left” (first) player wants a different parity from the beginning of the game:
+
+In Dots and Boxes
+
+    Starting from an even number of boxes, left wants an odd number of chains
+    Starting from an odd number of boxes, left wants an even number of chains
+
+In Sprouts
+
+    Starting from an even number of spots, left wants an odd number of survivors
+    Starting from an odd number of spots, left wants an even number of survivors
+
+*Dots and Boxes is a territory game, not a combinatorial game, but the strategy still works because you generally do not want to be the first person to move into a chain.
+
+In Dots-and-Boxes, the visual strategy is to divide the board into regions, and learn to visually tell whether a region is large enough to support a chain or not. You can count territory similar to Go, but much simpler, to decide whether or not to sacrifice boxes to make a region smaller. Just this strategy was enough to get me to tier 2 of the Little Golem championship, but there I was thoroughly trounced by people who knew better the mathematical side of the game.
+
+<img src="files/Sprouts_pic1.png">
+The upper right, lower right, and middle are guaranteed to be chains. Can the middle and lower right be connected? Can the upper left be separated from the middle?
+
+<img src="files/Sprouts_pic2.png"> 
+Three chains are guaranteed. Right (blue) can prevent Left (red) from making a chain in the upper left, but Left can force several sacrifices in the process.
+
+ 
+
+In Sprouts I find it a bit harder, because even small regions can often be divided, but the same basic principle remains: visually divide the field into regions that are guaranteed to have a survivor. If there is a live spot inside of a bubble, there must eventually be a survivor in that bubble. There are a lot of simple patterns that turn up over and over, and with some practice you can learn which ones are locally good for one or the other player.
+
+<img src="files/Sprouts_pic3.png">
+Two Survivors are guaranteed: one outside the bubble, and one inside.
+
+Thinking about these games as visual-spatial games can give a strong foundation, so that you can get engaged with the games faster and more easily. Once you are thus engaged, learning the mathematical side to the games becomes less onerous, and from there the whole depth of the game is available for you to explore.</i>
+
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: A Visual-spatial approach to Sprouts and Dots and Boxes</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on May 10, 2012, 2:11:19 PM</div>
+    <div class="content">
+On May 10, 2:59 am, Nick Bentley <nickobe...@gmail.com> wrote:
+> *Here's a nice article*<http://www.boardgamestrategies.com/blog/a-visual-spatial-approach-to-...
+> about how to overcome the initial difficulties in learning Sprouts and Dots and Boxes
+
+Yes, very nice. Thanks Nick.
+
+b 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: A Visual-spatial approach to Sprouts and Dots and Boxes</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on May 10, 2012, 5:15:03 PM</div>
+    <div class="content">
+My pleasure. 
+
+I don't know if you're interested Bill, but I'd love it if you were willing post a strategy piece (even a short, thrown-together one) on one of your own games. I can get a lot of exposure for games through the site, so it might be worth your while. 
+    </div>
+  </div>
+
+</body>
+</html>

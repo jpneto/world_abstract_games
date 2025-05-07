@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">I have these 9 games for the contest so far. I'm I missing any?</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Dec 23, 2010, 8:40:47 PM</div>
+    <div class="content">
+Hi All,
+
+I'll post an official games list with links and instructions later,
+after the day is out, but I just want to mention the ones I've got so
+far to make sure I'm not missing any. Here are the games I know of:
+
+Abeo
+Arrello
+Devil's Advocate
+Implo
+Kitaran
+Mortars
+Pilf
+Travicus
+Verto
+
+Please point me to contest games I haven't listed here.
+
+Best,
+Nick    
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: I have these 9 games for the contest so far. I'm I missing any?</div>
+    <div class="author">Joshua</div>
+    <div class="timestamp">Posted on Dec 24, 2010, 12:06:46 AM</div>
+    <div class="content">
+You're missing mine, Deadcell, but that's because I just posted it.
+
+<a href="https://web.archive.org/web/20110214094803/https://messeya.posterous.com/deadcell">http://messeya.posterous.com/deadcell</a>
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: I have these 9 games for the contest so far. I'm I missing any?</div>
+    <div class="author">superslacker</div>
+    <div class="timestamp">Posted on Dec 24, 2010, 7:32:58 AM</div>
+    <div class="content">
+Can we sign up to be a voter or is it only for people who have entered
+the contest?
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: I have these 9 games for the contest so far. I'm I missing any?</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Dec 24, 2010, 3:36:03 PM</div>
+    <div class="content">
+As long as you're a member of this forum, and you play each contest
+entry at least once, you can vote. I'm about to post the game links
+plus instructions, in a about 20 minutes, so stay tuned. 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: I have these 9 games for the contest so far. I'm I missing any?</div>
+    <div class="author">JWentu</div>
+    <div class="timestamp">Posted on Dec 24, 2010, 4:33:55 PM</div>
+    <div class="content">
+Hi
+I tryed to enter the group to submit a game of mine but i received the mail that confirms that my subscription to the group has been accepted only today. Am I on time to submit my game ?
+It is called Isaac and you can find it here: http://boardgamegeek.com/boardgame/88113/isaac.
+If I am still on time, please send me the address where i can formally add the game to the contest.
+thank you very much
+
+Emiliano Wentu Venturini
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: I have these 9 games for the contest so far. I'm I missing any?</div>
+    <div class="author">JWentu</div>
+    <div class="timestamp">Posted on Dec 24, 2010, 4:41:37 PM</div>
+    <div class="content">
+oh ops, i am sorry, i just noticed my game isn't eligible for submission because it doesn't conform to the rules. sorry to have bothered you all but I just saw there was a game design contest and i though it was constraint-free :)
+
+well, good luck to the partecipants and i hope there will be more contests !
+bye !
+
+Wentu
+    </div>
+  </div>
+
+</body>
+</html>

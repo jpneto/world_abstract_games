@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Thoughts on how I might improve my best game</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Jul 30, 2014, 4:53:03 PM</div>
+    <div class="content">
+Improving a good game is a lot harder than improving a bad one, and I've been thinking about how to do it with one of my own games. Thought some of you might be interested. Here <a href="http://web.archive.org/web/20150922181821/http://nickbentleygames.wordpress.com/2014/07/30/can-my-best-game-design-be-improved-probably-can-i-improve-it-maybe/">it is</a>.
+
+<i>I have a game, called Catchup, debuting for iOS (both iPhone and iPad) on August 7.
+
+I’m just a TEENSY bit excited about it. If it sells well (oh please oh god please god please), we’ll develop the app further.
+
+Which begs the question (if I may jump the gun): what kind of improvements shall we make?
+
+Some won’t be related to the game itself, but we’ll also add options which change gameplay. That’s my purview, and I’m writing about it today because, as usual, I want a pretense to talk about game design.
+
+If there’s one thing I’ve come to believe about game design, it’s that every game, no matter how good, can be improved. There is always some way to make a game better.
+
+The difficulty is, as a game improves, the fraction of potential modifications which will further improve it plummets. It gets to be like looking for water in the Sahara. One characteristic of great game designers, which I try to emulate, is they keep looking longer than everyone else.
+
+It’s even harder to do for games which can be played at many skill levels. Some weaknesses only appear at high skill levels, which means the designer may not find those weaknesses without either achieving that skill level himself or finding someone who has.
+
+Having worked on Catchup for years, it’s become hard indeed to improve it. Nonetheless, I’ve got three possibilities to share. None have been tested enough, so they could all be wrong, but here they are.
+
+You’ll need to know something about the game’s rules to understand what I have to say. The following paragraph should suffice:
+
+Players take turns claiming hexes on a grid, and the player with the largest contiguous group of hexes when the board is full wins. The trick is every time you increase the size of the largest group on the board, your opponent gets to claim an extra hex on her turn, which makes her more powerful.
+
+A game of Catchup, in early mid-game<h3>#1 – An adjustment to the catchup mechanism</h3>This one I’m least sure about, as it’s the most fundamental. Catchup mechanisms (mechanisms which make the leading player weaker or trailing players stronger) are hard to implement. They have to be just the right strength. Catchup (the game) is built around a catchup mechanism, and it’s critical I get it right.
+
+There’s an additional difficulty: the “right” strength for the catchup mechanism may be different for experienced and inexperienced players. As they improve, players often learn to better exploit a catchup mechanism, making it effectively stronger. If it gets too much stronger, both players will each try to avoid triggering the catchup mechanism for as long as they can, which leads to a boring sort of waiting game.
+
+Now, I don’t know whether Catchup has that problem. I’ve played the game more than 1000 times, I’m the best player in the world, and it’s not a problem at my skill level. But I can see it might become an issue for players who become even more skilled. Here’s why:
+
+As the game is now, the catchup mechanism is triggered when a player increases the size of the largest group on the board.
+
+This makes it possible to take the lead without triggering the catchup mechanism, thanks to the tiebreak mechanism: if players’ largest groups at the end of the game are the same size, they compare their second-largest groups to see who wins.
+
+If your largest group is smaller than your opponent’s, you can sometimes enlarge your largest group to match the size of your opponent’s. This doesn’t trigger the catchup mechanism, but if your second-largest group is larger than your opponent’s at that time, you effectively take the lead!
+
+A good player can use this effect to “draft” – to stay neck-and-neck without triggering the catchup mechanism. If his opponent then triggers the catchup mechanism, he can take much stronger advantage of it: it becomes less of a catchup mechanism and more of a “leap out in front” mechanism.
+
+As I say, this doesn’t make the catchup mechanism too strong at my skill level or any level below it, but it could make it too strong at higher levels.
+
+My fix, if one turns out to be needed, is to trigger the catchup mechanism when a player increases or matches the size of the largest group. This would keep a trailing player from “drafting” as closely, and would thereby reduce the incentive to trail.
+
+Of course, this change might also make the catchup mechanism too weak for lower skill-levels, which means maybe we should present it as an advanced option.<h3>#2 – Different opening setup for larger boards</h3>Catchup is played only on a hex board with 61 spaces. On larger boards, the game’s opening turns are harder to understand, too hard. Can this be fixed?
+
+My proposed solution: when playing on a larger board, before each game, place a small number of “neutral” stones on randomly chosen spaces. These stones will not belong to either players’ groups, but will instead act as barricades. This would:
+
+1. shorten the opening.
+
+2. give players a strategic focus (how do you exploit those barricades to limit your opponent’s group size, and prevent your opponent from doing the same to you?)
+
+3. add variety. Each game would play out differently depending on the random setup.
+
+Because this would only apply to larger boards, we should present it as an advanced option as well.<h3>#3 – A handicapping system</h3>This is simplest modification and the one I’m most sure will improve the game.
+
+Like many luckless games exhibiting emergent complexity, skill matters a lot in Catchup. 
+
+You don’t want to feel like the outcome of a game is a foregone conclusion because your opponent is a little more or less experienced than you. My favorite fix (when adding luck isn’t an option) is to add a handicap system.
+
+Thankfully, unlike for many games of its kind, Catchup allows for a simple, clean, and adjustable handicap: before the game begins, the players agree to add a certain number of points to the weaker player’s score (i.e. her largest group size, but not the size of any of her other groups) at game’s end. Scores are then compared as normal.
+
+That’s it. If you like this stuff and want us to include it, by Jove look for Catchup in the app store on August 7, and please help us promote it by telling people you know about it. We’ll be grateful and will probably write Sonnets about you.</i>
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Thoughts on how I might improve my best game</div>
+    <div class="author">Steven W. Meyers</div>
+    <div class="timestamp">Posted on Jul 31, 2014, 12:37:15 AM</div>
+    <div class="content">
+I like the design of Catchup very much, but I do see one thing that might improve it.
+
+The "second-largest group" tiebreak is, in my opinion, artificial and distracting.  I recommend that a komi of .5 be given to the second player.  That way, the first player needs to outscore his opponent by one or more to win, and the second player needs to score evenly with his opponent or better to win.  This resolves ties in a way that it pretty fair (since there is, presumably, still somewhat of a first-player advantage despite the catchup mechanism).  It also removes the distraction of considering a second largest group and keeps the players' focus on the largest group.
+
+Steve
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Thoughts on how I might improve my best game</div>
+    <div class="author">João Pedro Neto</div>
+    <div class="timestamp">Posted on Jul 31, 2014, 9:44:08 AM</div>
+    <div class="content">
+Steven,
+
+Me and Bill Taylor have been playing some Morro and Catchup games with Nick's fractal tiebreak rule, and we found that it provides deepness and drama. It has the advantage to keep aji in those pieces that otherwise would be useless.
+
+A non-fractal variant of this rule, that we are also trying, is something like this:
+
+    The player with fewer groups on the board wins. If equal, the winner is whoever had the fewest at the last time they were unequal.
+
+This is a nice way to prevent draws and add tension to a game
+
+Also, we've been playing a progressive variant of Catchup, called Sabotage Malthus which is fun. Here's the rules with an initial move (check your fixed font):
+
+SABOTAGE MALTHUS (122/222 start o @ i3)
+================
+The game ends when the board is full or both consecutively pass;
+the player with the largest connected group (recursively) wins.
+
+The mover places stones of *either* colour on empty spaces;
+as many (unrestricted) per turn as he has groups size 2 or more.
+
+|  abcdefghijklmnopqrstuvwxy"""""" ___ O plays odd moves ___
+|        . . . . . . .         1.  h2 d8
+|       . O . . . . x .        2.  . . .
+|      . . o . . . x . .       3.
+|     . . . . . . . . . .      4.
+|    . . . . . . . . . . .     5.
+|   . . . . . . . . . . . .    6.
+|  . x x . . . . . . . o o .   7.
+|   . O . . . . . . . . . .    8.
+|    . . . . . . . . . . .     9.
+|     . . . . . . . . . .     10.
+|      . . o . . . x . .      11.
+|       . o . . . . x .       12.
+|        . . . . . . .        13.
+|  abcdefghijklmnopqrstuvwxy  14.
+
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Thoughts on how I might improve my best game</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Jul 31, 2014, 4:36:30 PM</div>
+    <div class="content">
+To corroborate Joao's point, I've also written a little about the tie-break here: 
+http://nickbentleygames.wordpress.com/2014/07/21/how-a-fractal-tiebreak-made-catchup-deeper/
+
+Joao: Sabotage Malthus = !!!!!!!!
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Thoughts on how I might improve my best game</div>
+    <div class="author">Steven W. Meyers</div>
+    <div class="timestamp">Posted on Jul 31, 2014, 7:11:27 PM</div>
+    <div class="content">
+I see Joao's point about the fractal tiebreak giving meaning to stones that otherwise would not have it.  I will be sure to be  conscious of this when I try out the app.
+
+Sabotage Malthus looks interesting.  Do you think it should be categorized as a misere game?
+
+Steve
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Thoughts on how I might improve my best game</div>
+    <div class="author">João Pedro Neto</div>
+    <div class="timestamp">Posted on Jul 31, 2014, 7:57:40 PM</div>
+    <div class="content">
+> Sabotage Malthus looks interesting.  Do you think it should be categorized as a misere game?
+
+Don't think so... The fact we can play opponent pieces (the Sabotage part) contributes to the size of the enemy groups, but if you use those moves to fuse two or more enemy groups into one, that means your opponent will have less moves in her subsequent turns.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Thoughts on how I might improve my best game</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Jul 31, 2014, 10:51:27 PM</div>
+    <div class="content">
+I've been trying to figure out how to make a functional "malthus", as you call it, game for a while. You beat me to it. 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Thoughts on how I might improve my best game</div>
+    <div class="author">Steven W. Meyers</div>
+    <div class="timestamp">Posted on Aug 7, 2014, 3:02:40 PM</div>
+    <div class="content">
+I bought the catchup app and played it three times.  Your programmer did a great job!  And the stats page is a nice touch.
+
+A couple of questions: 1) What's the highest ai level?  I just played against level 7.  2) I don't see the option to customize colors.  Is this ability unlocked after a certain number of wins?
+
+Steve
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Thoughts on how I might improve my best game</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Aug 7, 2014, 4:58:13 PM</div>
+    <div class="content">
+Answers:
+
+1. highest AI is 20. We put a bunch of super easy levels in to give mom,dad, and the kids something to do. Seasoned abstract gamers should start at ~13.
+
+2. main menu ---> options ---> colors
+    </div>
+  </div>
+
+</body>
+</html>

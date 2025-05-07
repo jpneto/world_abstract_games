@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">A testimonial for igGameCenter</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Aug 29, 2011, 6:01:51 PM</div>
+    <div class="content">
+Arty has done so much for me, us, and abstract games in general that I
+decided to burp up a glittering testimonial for igGameCenter. Spread
+it around and link to it if you'd like to help give iggc some
+publicity.
+
+<a href="https://web.archive.org/web/20130419025533/http://nickbentley.posterous.com/the-beauty-and-wonder-of-iggamecenter">http://nickbentley.posterous.com/the-beauty-and-wonder-of-iggamecenter</a>
+    </div>
+  </div>
+
+
+</body>
+</html>

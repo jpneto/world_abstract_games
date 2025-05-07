@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Ketchup 3.0 - The rules have changed, again, for the last time, except if they change again, but they won't</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Jun 28, 2011, 6:51:02 PM</div>
+    <div class="content">
+Reposted from my blog: http://nickbentley.posterous.com/ketchup-30
+
+I lately discovered how to make Ketchup, one of my best games, better.
+So now I'm posting my second major revision in as many years. First
+I'll describe the new rules, such as they are, and then discuss why
+Ketchup warms my pants and why I'm so happy about the new version.
+Here we go:
+
+Ketchup is a game for 2 players played with red and green stones on a
+hexhex5 board.
+
+Terminology
+*Group - a set of connected, like-colored stones on the board.
+*Group Size - the number of stones that a group contains. The smallest
+possible group has a size of 1.
+*To Drop - to place a stone on any empty space.
+
+Rules
+*The board begins empty. One player owns the red stones and the other
+owns the green stones.
+*Red begins by dropping a single stone.
+*Then, starting with Green, the players take turns. On his turn, a
+player drops 2 stones.
+*When a group of at least size 2 has formed, the nature of the turns
+change. From then on, on your turn, if your largest group is smaller
+than your opponent’s largest group, you must drop 3 stones. Otherwise
+you must drop 2 stones.
+*The game ends when the board is full. The player with the largest
+group wins. If the players’ largest groups are the same size, compare
+their second-largest groups, and so on, until you come to a pair which
+aren't the same size. Whoever owns the larger of the two wins.
+
+Note
+*Record the size of each player’s largest groups on a sheet of paper,
+as they’re formed. This will make it easier to think. A PDF is
+provided at the link at the top of this post, for paper and pencil
+play; it contains scoring columns where players can mark their largest
+groups.
+
+What's the big deal?
+If you're not me, maybe nothing, but I'm me so here I go
+pontificating. Ketchup was one of my better games even in its earlier
+incarnations. I was trying to design a game which is short,
+intuitive, unintimidating, addictive and deep. The difficulty with
+these criteria is that the last one is often in conflict with the
+first four. Deep games tend to be hard to figure out, and that
+quality can make them intimidating and not-addictive. But Ketchup
+avoids that trade-off better than most of my other games. There are
+two key reasons for this I think:
+
+*Negative Feedback: the leading player plays fewer stones than the
+trailing player. If players play quasi-randomly, as new players tend
+to do, the game often turns into a nail-biter because the trailing
+player tends to catch up. Mind you, because this is a perfect
+information game, it's not true negative feedback in the sense that it
+makes a weak player stronger. In fact, the main strategic dilemma of
+the game is in deciding when to take the lead and when to fall back,
+and skill and experience count for everything.
+
+*New players start having strategic ideas quickly. The reason this
+happens is that the win condition, "build the biggest group", has a
+natural, intuitive quality that our brains can easily generate
+thoughts around. So interesting ideas come easily. Importantly, these
+ideas are interesting even though they're nowhere near the final word
+on good play. The game is indeed pretty deep, and with practice you
+realize your initial ideas were wrong and you discard them for
+others. I've come to see this dynamic as key to creating games which
+are both deep and fun: you must be able to think of exciting
+possibilities right when you start playing (because that's fun), and
+yet those ideas must turn out to be wrong (because that's deep).
+
+But why did you change the rules?
+The last incarnation of Ketchup had a niggling issue which had irked
+me for a year. There was a rule prohibiting the players' largest
+groups from being the same size at any time during the game. The rule
+existed to ensure that the game would never end in a tie, but it
+created situations where certain moves were illegal. These
+restrictions were an extra cognitive burden that broke the flow of
+play without contributing to quality of play. So I started thinking
+about how to avoid them. After a while, I discovered a win condition
+that avoids ties more naturally, and which allowed me to drop the move
+restrictions. Two unexpected and happy byproducts of the new win
+condition was that it shortened the rules about about 20%, made them
+more intuitive, and I daresay made the game deeper without making it
+more intimidating or less fun.
+
+My rule is: if at the end of the game, the players' largest groups are
+the same size, you compare their second largest groups to see whose is
+bigger, and so on, until you come to a pair which aren't the same
+size. The player with the larger of the two wins. The cool thing
+about this rule is that, as long as there are an odd number of spaces
+on the board, there can never be a tie. In a list of the players'
+groups, ordered by size, you will always find at least one mismatched
+pair. I love that.
+
+Another thing I love about this rule is that if you have two players
+of equal skill, it won't be extremely uncommon for the players'
+largest groups to be the same size at the end of the game. The new
+rule creates a whole new subgame in this situation where the players'
+second- and third- largest groups matter. So you have to "play the
+whole board" more in order to win in those situations. But this only
+happens in *very* tense games that go neck and neck to the end. So
+this new subgame comes up only when you're already having a riveting
+experience. That's a perfect time for extra depth to rear it's
+head.
+
+But: I reserve the right to be wrong about everything. That's the
+delight and frustration of abstract games - they try to hide their
+true nature from you.    
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Ketchup 3.0 - The rules have changed</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Jul 3, 2011, 12:20:57 PM</div>
+    <div class="content">
+Hi Nick - very interested in-DEED to hear of your changes,
+as they follow very closely to what Joao and I have been playing
+for a little while, based on Ketchup, and which we called SAUCE.
+
+On Jun 29, 5:51 am, Nick Bentley <nickobe...@gmail.com> wrote:
+
+> Ketchup is a game for 2 players played with red and green stones
+> on a hexhex5 board.
+
+We also picked 5-hexhex, though I note it is quite a nontrivial
+game even on 3-hexhex!
+
+> *Red begins by dropping a single stone.
+
+Yep. 12* - standard equalizer for 2-move games.
+
+> *When a group of at least size 2 has formed, the nature of the turns
+> change. From then on, on your turn, if your largest group is smaller
+> than your opponent’s largest group, you must drop 3 stones. Otherwise
+> you must drop 2 stones.
+
+Very neatly worded.
+
+This is the point where we didn't fully change it, but I see your
+new rule is both more natural, less restrictive, and thus better.
+We still used the "not-equal-sizes" rule; but your reasons given
+below are very good. We will soon change, I'm sure!
+
+> What's the big deal?
+
+A very big deal indeed. Our sauce is already fun to play,
+but the new ketchup/sauce is even better. It is a really good game
+and seems almost like an other-civilizations-too game - very natural.
+
+> I was trying to design a game which is short,
+> intuitive, unintimidating, addictive and deep.
+
+All achieved; well done.
+
+> *Negative Feedback: the leading player plays fewer stones than the
+> trailing player.
+
+I'm a HUGE fan of the negative-feedback effect in games,
+as you may know. It never actually occurred to me before,
+but ketchup is indeed a good example of the effect.
+
+> *New players start having strategic ideas quickly.  The reason this
+> happens is that the win condition, "build the biggest group", has a
+> natural, intuitive quality that our brains can easily generate
+> thoughts around. So interesting ideas come easily.  Importantly, these
+> ideas are interesting even though they're nowhere near the final word
+> on good play.  The game is indeed pretty deep, and with practice you
+> realize your initial ideas were wrong and you discard them for
+> others.  I've come to see this dynamic as key to creating games which
+> are both deep and fun: you must be able to think of exciting
+> possibilities right when you start playing (because that's fun), and
+> yet those ideas must turn out to be wrong (because that's deep).
+
+A very astute summary, and may go some way towards a final
+determination
+of just what makes a game "deep".
+
+> There was a rule prohibiting the players' largest
+> groups from being the same size at any time during the game. The rule
+> existed to ensure that the game would never end in a tie, but it
+> created situations where certain moves were illegal. These
+> restrictions were an extra cognitive burden that broke the flow of
+> play without contributing to quality of play.
+
+All very good. I really like the new no-restriction rule.
+And, of course, it's always a big plus if some desired effect comes
+out of the simplest rules, rather than having to be artificially
+wedged into the rules themselves. And this is the case here.
+
+> My rule is: if at the end of the game, the players' largest groups are
+> the same size, you compare their second largest groups to see whose is
+> bigger, and so on, until you come to a pair which aren't the same
+> size.  The player with the larger of the two wins.
+
+Yes, we've been using this criterion in many similar games. It's
+good.
+
+> The cool thing
+> about this rule is that, as long as there are an odd number of spaces
+> on the board, there can never be a tie.
+
+That is indeed a very cool feature!!
+
+> The new
+> rule creates a whole new subgame in this situation where the players'
+> second- and third- largest groups matter.  So you have to "play the
+> whole board" more in order to win in those situations.
+
+Yes, this has never happened yet with Joao and myself, but I see
+by looking at a few 3hexhex jousts playing against myself,  that
+it can be quite common there! Neat.
+
+> But: I reserve the right to be wrong about everything.
+
+IMHO you're dead right about everything. You deserve some sort
+of prize for discovering this game! :-)
+
+> That's the
+> delight and frustration of abstract games - they try to hide their
+> true nature from you.
+
+Another astute comment!
+
+Keep up the good work, Nick.
+
+-- Beaming Bill 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Ketchup 3.0 - The rules have changed</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Jul 3, 2011, 6:59:25 PM</div>
+    <div class="content">
+Thanks Bill! Glad you like it.
+
+On Jul 3, 6:20 am, Bill Taylor <wfc.tay...@gmail.com> wrote:
+> Hi Nick - very interested in-DEED to hear of your changes,
+> as they follow very closely to what Joao and I have been playing
+> for a little while, based on Ketchup, and which we called SAUCE.
+
+You can't mention SAUCE and then not tell us the rules! That's cruel.
+
+> This is the point where we didn't fully change it, but I see your
+> new rule is both more natural, less restrictive, and thus better.
+> We still used the "not-equal-sizes" rule; but your reasons given
+> below are very good.  We will soon change, I'm sure!
+
+I'd like to play some more on hexhex4 before declaring that hexhex5 is
+the best for this version. One thing I'm pretty sure of is that the
+game suffers on boards larger than hexhex5.
+
+> A very big deal indeed.  Our sauce is already fun to play,
+> but the new ketchup/sauce is even better.  It is a really good game
+> and seems almost like an other-civilizations-too game - very natural.
+
+Wow, thanks. Although I have been tinkering with it for two years, so
+it doesn't exactly feel "discovered" from my point of view.
+
+> I'm a HUGE fan of the negative-feedback effect in games,
+> as you may know.  It never actually occurred to me before,
+> but ketchup is indeed a good example of the effect.
+
+Your enthusiasm for negative feedback has rubbed off. I've tried to
+design a whole bunch with it. Though it's turned out to be more
+difficult to use well than I'd hoped. The feedback can't be too
+strong or too weak and finding a set of rules that gets it right can
+be daunting. Also, the "power" of the feedback can change throughout
+the game, which can lead to situations where even if the feedback is
+the right strength at some points during a game, it because too strong
+or too weak as the game progresses, and leads to boring choices.
+
+> > I've come to see this dynamic as key to creating games which
+> > are both deep and fun: you must be able to think of exciting
+> > possibilities right when you start playing (because that's fun), and
+> > yet those ideas must turn out to be wrong (because that's deep).
+>
+> A very astute summary, and may go some way towards a final
+> determination of just what makes a game "deep".
+
+Incidentally, I think GO is a good illustrative example: when you
+first learn Go, all you can think about is trying to aggressively
+capture your opponent's groups...until you meet an opponent who lets
+you capture in exchange for positional advantage, and crushes you.
+Capturing aggressively right away is fun but also wrong.
+
+> Yes, we've been using this criterion in many similar games.  It's
+> good.
+
+Any whose rules you'd care to divulge here?
+
+> Yes, this has never happened yet with Joao and myself, but I see
+> by looking at a few 3hexhex jousts playing against myself,  that
+> it can be quite common there!   Neat.
+
+On hexhex5 with the current rules, it happens to me about 10%-20% of
+the time, but that's a very rough estimate based on a small sample.
+Also, the frequency may go up or down with experience.
+
+> IMHO you're dead right about everything.  You deserve some sort
+> of prize for discovering this game!   :-)
+
+I'll take it :)
+
+Thanks,
+Nick
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Ketchup 3.0 - The rules have changed</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Jul 4, 2011, 9:39:50 AM</div>
+    <div class="content">
+On Jul 4, 5:59 am, Nick Bentley <nickobe...@gmail.com> wrote:
+
+> You can't mention SAUCE and then not tell us the rules! That's cruel.
+
+Well, I more or less did! It's your latest version, but also
+retaining the no-equal-sizes rule. I didn't write it in full
+because I immediately saw your latest version was better.
+
+But you can keep the name "Sauce" if you like! :-)
+Or possibly "Chutney". ;-)
+
+> I'd like to play some more on hexhex4 before declaring that hexhex5
+> is the best for this version.
+
+Sensible.
+
+> One thing I'm pretty sure of is that the
+> game suffers on boards larger than hexhex5.
+
+What is the nature of the suffering? Is it merely that with
+so much space the whole thing becomes little more than a counting
+exercise, to determine the mathematically perfect "join-up" time?
+Or is there some other feature? Certainly I can see that if it is
+the former, it would remove the geometry of the game, rendering it
+rather sterile.
+
+> > and seems almost like an other-civilizations-too game - very natural.
+>
+> Wow, thanks.
+
+I'm quite serious about this. It joins with Go, Hex, Y, and a few
+others, that just seem to flow naturally from a single basic idea.
+
+> Although I have been tinkering with it for two years, so
+> it doesn't exactly feel "discovered" from my point of view.
+
+OC - saying "discovery" is just an in joke with me and Joao.
+I mean no insult to someone who feels he has been "constructing"
+like billy-oh!
+
+> Your enthusiasm for negative feedback has rubbed off.
+
+Glad to hear it! I remain convinced it is a great criterion.
+Though I can see that the general public might prefer games that
+have an avalanche of increasing domination once some floodgate
+has been broken. I suppose both sorts are worth their value.
+
+> I've tried to design a whole bunch with it.
+
+Now that you say that, it seems I recall your saying it before.
+If the basic forms are still on the secret list, you could write
+to me privately, to see if I can help out with the designs.
+
+>  The feedback can't be too strong or too weak
+
+Quite so.
+
+> and finding a set of rules that gets it right can be daunting.
+
+And OC it's always better if the feedback isn't blatantly visible
+in the rules, but rather flows from them naturally. (This is why
+I like the "Beat-It-Or_eat-It" game I described in rga long ago.)
+If Ketchup/Sauce has a tiny fault, it is that - the benefit
+to the behind-player is pretty blatant! But no matter.
+
+Incidentally I experimented with 3 vs 4 stones, rather than
+2 vs 3; but 2/3 seems better, as well as simpler.
+
+> Also, the "power" of the feedback can change throughout
+> the game, which can lead to situations where even if the feedback is
+> the right strength at some points during a game, it because too strong
+> or too weak as the game progresses,
+
+Yes, I can see that could be a major problem. One can only hope
+to get it right for the longest part of the game, and let the others
+fall out as they may.
+
+> > > I've come to see this dynamic as key to creating games which
+> > > are both deep and fun: you must be able to think of exciting
+> > > possibilities right when you start playing (because that's fun), and
+> > > yet those ideas must turn out to be wrong (because that's deep).
+>
+> > A very astute summary, and may go some way towards a final
+> > determination of just what makes a game "deep".
+>
+> Incidentally, I think GO is a good illustrative example:
+
+Yes, I think you have written about this before. Quite corect.
+A player must go through many levels with many changes of mind,
+before getting near the top. And OC, the things learned earlier
+must still be kept for later, to be used when appropriate!
+Go is supreme at this; though "Reversi" also has this feature.
+The only trouble with Reversi is, no matter what I learn about it,
+it still seems to be almost entirely random! :-(
+
+> > Yes, we've been using this criterion in many similar games.
+
+> Any whose rules you'd care to divulge here?
+
+No secrets, and I think Joao has most of them on his web-site.
+But I generally prefer to have a game well-tested, before publicizing
+it in newsgroups. But there will be some soon.
+
+>> [getting the largest groups equal]
+
+> On hexhex5 with the current rules, it happens to me about 10%-20% of
+> the time,
+
+I'm rather amazed. I've never seen it there (I think).
+
+> > IMHO you're dead right about everything.  You deserve some sort
+> > of prize for discovering this game!   :-)
+>
+> I'll take it :)
+
+I've got a lovely ascii-medal for you, but since they removed
+fixed-font, I can't be sure these pix come out any more. :-(
+
+-- Awarding William
+
+P.S. Don't forget to email me some of your neg-feedback ideas,
+if you want to. 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Ketchup 3.0 - The rules have changed</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Jul 5, 2011, 1:50:36 AM</div>
+    <div class="content">
+> Well, I more or less did!  It's your latest version, but also
+> retaining the no-equal-sizes rule.  I didn't write it in full
+> because I immediately saw your latest version was better.
+
+Ah. I see. It's cool that we were going in the same direction. Great
+minds blah blah blah.
+
+> What is the nature of the suffering?    Is it merely that with
+> so much space the whole thing becomes little more than a counting
+> exercise, to determine the mathematically perfect "join-up" time?
+> Or is there some other feature?  Certainly I can see that if it is
+> the former, it would remove the geometry of the game, rendering it
+> rather sterile.
+
+The reason it suffers on boards larger than hexhex5 is the same for my
+suspecting that it will be best on hexhex4. The rule change reduces by
+a little the incentive to take the lead, and so pushes the lead-
+changing portion of the game back. The reason it does this is that in
+the old version, you created illegal moves for your opponent when you
+took the lead, but in the new version you don't. In consequence, the
+opening phase of the game where neither player particularly wants the
+lead lasts a little longer. On big boards, it's too long for me.
+
+Incidentally, I just posted a new, related game that was partly a
+response to this issue:
+http://nickbentley.posterous.com/new-game-clots
+
+> Now that you say that, it seems I recall your saying it before.
+> If the basic forms are still on the secret list, you could write
+> to me privately, to see if I can help out with the designs.
+
+I will at some point. Joao has roped me back into thinking about games
+nonstop and I'm trying to put some limits on it. But part of my being
+roped-in involves some PBEM play of two negative-feedback n-in-a-row
+games, where you're penalized a bit when you build a row which is
+longer than any constructed prior to that point. I wrote about them
+here:
+
+http://nickbentley.posterous.com/two-attempts-at-a-more-strategic-n-in-a-row-g
+
+The first of them, Hedgerow, had way-too-strong negative feedback
+under the rules at the link above, but Joao has since come up with a
+really novel idea that seems, so far, to make it work. The second
+game, Morro you might like more, in particular because the negative
+feedback is subtle/ not-immediately obvious. That one seems to work
+well with the rules as originally written.
+
+> And OC it's always better if the feedback isn't blatantly visible
+> in the rules, but rather flows from them naturally.  (This is why
+> I like the "Beat-It-Or_eat-It" game I described in rga long ago.)
+> If Ketchup/Sauce has a tiny fault, it is that - the benefit
+> to the behind-player is pretty blatant!   But no matter.
+
+I waffle about this issue. If obvious negative feedback helps a new
+player to generate ideas for play that excite her, then sometimes I'm
+for obviousness. But I definitely sympathize with the "natural flow"
+idea. p.s. Beat-It-Or-Eat-It is awesome. You should post it here for
+posterity.
+
+> Incidentally I experimented with 3 vs 4 stones, rather than
+> 2 vs 3; but 2/3 seems better, as well as simpler.
+
+Me too. Same conclusion.
+
+> The only trouble with Reversi is, no matter what I learn about it,
+> it still seems to be almost entirely random!   :-(
+
+Heh. Reversi is your whipping post it seems.
+
+> > [getting the largest groups equal]
+> > On hexhex5 with the current rules, it happens to me about 10%-20% of
+> > the time,
+>
+> I'm rather amazed.  I've never seen it there (I think).
+
+But I thought you were playing with the no-equal-groups rule! How
+could you have seen it when largest groups can never be the same size?
+Do you mean you haven't seen it in other games with the same win
+condition? If so, did those games have negative feedback?
+
+> I've got a lovely ascii-medal for you, but since they removed
+> fixed-font, I can't be sure these pix come out any more.   :-(
+
+WaaaaWaaaa.
+
+> P.S.  Don't forget to email me some of your neg-feedback ideas,
+>       if you want to.
+
+Ok, but not right away.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Ketchup 3.0 - The rules have changed</div>
+    <div class="author">Xifeng</div>
+    <div class="timestamp">Posted on Jul 5, 2011, 4:39:51 AM</div>
+    <div class="content">
+>> And OC it's always better if the feedback isn't blatantly visible
+>> in the rules, but rather flows from them naturally.  (This is why
+>> I like the "Beat-It-Or_eat-It" game I described in rga long ago.)
+>> If Ketchup/Sauce has a tiny fault, it is that - the benefit
+>> to the behind-player is pretty blatant!   But no matter.
+>[...]
+
+> p.s. Beat-It-Or-Eat-It is awesome. You should post it here for
+> posterity.
+
+It is nearly identical to a Russian game, Svoyi Koziri.
+http://en.m.wikipedia.org/wiki?search=svoyi+koziri
+
+My limited experience with BIOEI was that it felt incomplete as a
+game, and seeing the more fleshed out rules on wiki gives me an idea
+as to why.
+
+--Tristan
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Ketchup 3.0 - The rules have changed</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Jul 6, 2011, 7:12:59 AM</div>
+    <div class="content">
+>> p.s. Beat-It-Or-Eat-It is awesome.
+
+Too kind.
+
+>> You should post it here for posterity.
+
+Maybe some time.
+
+> It is nearly identical to a Russian game,
+
+Yes, I first learnt it from a Russian emigree to England.
+That version is in turn based on a Russian peasant game,
+which has the same basic idea but endless horrible
+excrescences, as traditional peasant ganmes tend to do.
+(In particular, Skat and Duplekopf are truly revolting
+games, like Western Mah-Jong.)
+
+My version is a still further purification that does away
+with specialized trump suits. I used to like the effect
+of trumps too, but eventually came to realize that most
+of them were present in the pure (no-trump) game anyway.
+
+> My limited experience with BIOEI was that it felt incomplete as a
+> game, and seeing the more fleshed out rules on wiki gives me an idea
+> as to why.
+
+Interesting how it's different strokes for different folks,
+as always. My taste is *always* for "purification" in games.
+I vastly prefer it when fancy effects flow out from simple rules,
+rather than have them "built into" the rules themselves.
+
+OC folks' mileages will vary...
+
+-- Taintless Taylor 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Ketchup 3.0 - The rules have changed</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Jul 6, 2011, 8:10:23 AM</div>
+    <div class="content">
+Bill,
+
+Your question about why I feel Ketchup may need a smaller board got me
+thinking about the negative feedback. In particular, how it's a bit
+too strong early. And after thinking about it all day, it occurred to
+me that there may be yet another improvement to be made. Consider the
+following rules:
+
+1. The board begins empty. One player owns the red stones and the
+other owns the green stones.
+2. Red begins by dropping a single stone
+3. From then on, starting with Green, each player drops two stones on
+her turn.
+4. If, on your turn, you create or extend a group larger than any
+other on the board, your opponent may drop 3 stones instead of 2 on
+his next turn (and only on his next turn).
+5. The game ends when the board is full. The player with the largest
+group wins. If the players’ largest groups are the same size, compare
+their second-largest groups, and so on, until you come to a pair which
+aren't the same size. Whoever owns the larger of the two wins.
+
+Late in the game, the largest group will be extended nearly every
+turn, and these new rules will yield a game similar to that of the
+rules I posted at the top of the thread. But earlier in the game,
+with these new rules, taking the lead no longer means allowing your
+opponent to get a whole string of turns with extra stones, but instead
+gives him just one. This means there's incentive to extend the
+largest group earlier to try to secure a positional advantage. Also,
+these rules are even shorter and more understandable. I just tested
+it against myself twice, and it seems preferable. The feel is very
+much the same, but the midgame starts earlier. Yip. If after more
+testing the opinion persists, there may be a Ketchup 4.0. This is
+getting ridiculous, but there you have it.
+    </div>
+  </div>
+
+</body>
+</html>

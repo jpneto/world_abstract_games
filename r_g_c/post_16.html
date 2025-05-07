@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Y, again.</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Nov 27, 2010, 12:18:49 PM</div>
+    <div class="content">
+Just a quick update on the various formats of "Y".
+
+As noted, the alternating stones around the edges just results in
+exactly the same game as Y - not a new one. (I didn't acknowledge
+this earlier because Christian F was getting bent out of shape by
+that mild criticism of Havannah, and I didn't want to add fuel
+to the fire!)
+
+So it now seems that plain old "Y" can be re-formatted in no less
+than 3, count them, THREE, ways. And no doubt there can be others
+as well.
+
+Original style:-
+
+
+       .".      Task: connect the three sides.
+      . . .
+     . . . .
+    . . . . .   Corners need a special mention in the rules.
+   . . . . . .
+  : . . . . . :
+
+
+Bichromatic style:-
+
+      x . o
+     o . . x       Task: connect three of your original stones,
+    x . . . o      one from each line.
+   o . . . . x
+  x . . . . . o    Neither corners nor sides need a special mention.
+ o . . . . . . x
+  . . . . . . . 
+   x o x o x o
+
+
+       - . =
+      - . . =        Task: connect the three colors.
+     - . . . =
+    - . . . . =
+   - . . . . . =     Neither corners nor sides need a special mention.
+  - . . . . . . =
+   . . . . . . .
+    + + + + + +
+
+Which you prefer is completely a matter of taste, the game is identical in all cases.
+
+Bichromatic seems a bit ugly, though it has certain advantages;
+but I'd like to see physical boards or game sites try
+the trichromatic board - it could be very cute!
+Five colors in total, with a 6th for the unplayed cells.
+
+-- Boardly Bill    
+    </div>
+  </div>
+
+</body>
+</html>

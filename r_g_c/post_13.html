@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Definition of 'great games'.</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Nov 21, 2010, 12:05:21 PM</div>
+    <div class="content">
+Mark Thompson is the person, seemingly, who wrote
+"A definition of great games", somewhere on the net.
+
+Does anyone know where it is, or better yet, re-post a copy here
+please?
+
+b     
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Definition of 'great games'.</div>
+    <div class="author">João Neto</div>
+    <div class="timestamp">Posted on Nov 21, 2010, 12:29:26 PM</div>
+    <div class="content">
+The text can be read at
+http://www.thegamesjournal.com/articles/DefiningtheAbstract.shtml
+
+Cheers,
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Definition of 'great games'.</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Nov 22, 2010, 5:00:47 AM</div>
+    <div class="content">
+> The text can be read athttp://www.thegamesjournal.com/articles/DefiningtheAbstract.shtml
+
+Got it, THANKS! It's lonbger than I thought.
+Looking forward to a cuddly read tonite!
+
+b 
+    </div>
+  </div>
+
+</body>
+</html>

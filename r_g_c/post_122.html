@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Slightly revised game: Vimbre</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Jun 22, 2013, 3:51:45 PM</div>
+    <div class="content">
+I've made a slight simplification in the flipping rule of Vimbre. The new rule is shorter and easier to remember. It reads as follows:
+
+[A player can] flip one enemy stone which is sandwiched between two friendly stones adjacent to it on the same orthogonal line. This kind of move is illegal if said enemy piece isn't orthogonally adjacent to any empty point.
+
+The following is the only pattern where the new rule gives a different list of available moves than the old one:
+
+<img src='files/Vimbre.png'>
+
+The old rule allowed flipping a sandwiched enemy stone as long as not all the other points orthogonally adjacent to it were occupied by enemy stones. This means the marked white stone in the diagram above could be flipped, but such a move would hardly ever be useful. With the new rule, it's simply illegal.    
+    </div>
+  </div>
+
+</body>
+</html>

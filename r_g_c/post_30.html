@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Re: Phase II of Contest Begins - Games and Instructions</div>
+    <div class="author">superslacker</div>
+    <div class="timestamp">Posted on Dec 24, 2010, 4:15:17 PM</div>
+    <div class="content">
+With the holidays does anyone else think that 2 weeks might be too
+short of time to try all of these enough to come to a conclusion?
+That's 1 of each game per day if you exclude Christmas and New Years.
+I worry that the effort that went into the games would be shadowed by
+the lack of time that we have to play them all to an appropriate
+level.
+
+Daniel
+[who's traveling to Poland for New Years]
+
+On Dec 24, 4:45 pm, Nick Bentley <nickobe...@gmail.com> wrote:
+> Woohoo!  The entries for the game design contest are in!  We've got
+> 10.  I'm *very* eager to play and compare all these.  There are some
+> nice concepts in there.
+>
+> Below are links to all the games submitted to the contest.
+>
+> Abeo              http://goo.gl/0QXRM
+> Arrello           <a href="https://web.archive.org/web/20110214094712/https://nickbentley.posterous.com/33653960">http://goo.gl/7J9u6</a>
+> Deadcell          <a href="https://web.archive.org/web/20110214094803/https://messeya.posterous.com/deadcell">http://goo.gl/zuXTn</a>
+> Devil's Advocate  http://goo.gl/NP7gt
+> Implo             http://goo.gl/BHcbN
+> Kitaran           http://goo.gl/6kk55
+> Mortars           http://goo.gl/fLkcw
+> Pilf              http://goo.gl/8vi2B
+> Travicus          http://goo.gl/uKSSj
+> Verto             <a href="https://spielstein.com/games/verto">http://goo.gl/lOVlV</a>
+>
+> Notes:
+>
+> Even if you've already read the rules for a given game, read them
+> again before playing, as designers may have tweaked their rules since
+> you last read them.
+>
+> To be an eligible voter, you must a) be a member of this forum; and b)
+> play each of the contest entries in the "sandbox" at
+>
+> http://www.iggamecenter.com/
+>
+> There are three reasons voters must play at the ig game center:
+> --Arty Sandler has graciously offered to implement the winning game as
+> a prize, so the least we can do it go drive up traffic at his site.
+> --It'll make it easier to find opponents for playtesting if we all
+> test there.
+> --It'll make it easier to make sure voters have played all the games.
+> Speaking of which:
+>
+> Please take a screenshot of each game you play.  If some voter is
+> accused of not having played all the games, I'll ask the accused to
+> produce screenshots, in case the games in question are no longer in
+> the iggamecenter's memory banks.
+>
+> There will now be a two-week evaluation period (Dec 24 to Jan 6),
+> during which voters will have a chance to play the submitted games.
+>
+> Votes are due on or before Jan 6, 2011
+>
+> To vote, each voter will provide a list of the games ordered by
+> preference, from most preferred to least preferred.  The winner will
+> be determined by an instant runoff
+>
+> http://en.wikipedia.org/wiki/Instant-runoff_voting
+>
+> A designer's vote for his own game will not count.
+>
+> To voters: please send your votes to nickobento [at] gmail.com, with
+> "my vote" in the subject line.
+>
+> I'll announce the winner on January 7, 2011
+>
+> Finally, would anyone mind if I published the list of contest entrants
+> over at BGG with a request to come play them at the iggc sandbox?
+> (another good thing we can do for Arty)    
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Re: Phase II of Contest Begins - Games and Instructions</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Dec 24, 2010, 4:24:05 PM</div>
+    <div class="content">
+I'd be happy to extend it if others are cool with it. 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Re: Phase II of Contest Begins - Games and Instructions</div>
+    <div class="author">Zhang Dawei</div>
+    <div class="timestamp">Posted on Dec 24, 2010, 4:33:52 PM</div>
+    <div class="content">
+On 25/12/2010 00:15, superslacker wrote:
+> With the holidays does anyone else think that 2 weeks might be too
+> short of time to try all of these enough to come to a conclusion?
+> That's 1 of each game per day if you exclude Christmas and New Years.
+> I worry that the effort that went into the games would be shadowed by
+> the lack of time that we have to play them all to an appropriate
+> level.
+>
+
+Well, I am travelling back to the UK on 28 December, and will be busy
+there until 8 February, when I return to Beijing, Consequently I'm
+unlikely to have the time to play all the games anyway. So I won't be
+voting. However, my opinion, for what it's worth, is that extending the
+playing and evaluating period is not such a bad thing.
+
+One other point I'm still a bit wary of: I couldn't save the
+instructions anywhere other than in the filespace for this group, which
+I see is going to be suspended from some date in the middle of January.
+When I tried to save the game on the documents area of google, I got a
+Russian language interface that I just could not alter. Since I cannot
+understand Russian (it may as well be all Greek to me), I couldn't get
+any further with that. I'm not sure how that arose, other than some
+problem in the automatic detection of where one is posting from (I often
+make use of VPN software to circumvent China's rather overly-cautious
+Great Firewall, but removing that didn't seem to cause any difference. I
+may try it on the PC I have in the UK, but it would be nice to have some
+other means of storing documents on-line that can be made available to
+all. I may see if I can sort out something on one of the websites I run.
+
+Dawei
+-- 
+Zhang Dawei: Beijing, P.R.China.
+Please keep this email address confidential. It will
+remain valid for at least 2 weeks from data of email.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Re: Phase II of Contest Begins - Games and Instructions</div>
+    <div class="author">Matteo Perlini</div>
+    <div class="timestamp">Posted on Dec 24, 2010, 6:19:55 PM</div>
+    <div class="content">
+Nick, I agree about extending the play-testing period. 
+    </div>
+  </div>
+
+</body>
+</html>

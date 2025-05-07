@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Super-Pente</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Dec 29, 2011, 12:01:28 PM</div>
+    <div class="content">
+I  was struck by Nick's plea about moku-games:
+
+> All n-in-a-row games (that I know of) suffer from
+> some mixture of 4 problems:
+>
+> 1. not enough strategy (tactics dominate)
+> 2. draws
+> 3. imbalance
+> 4. the pylon problem
+
+Joao and I have been playing a game of our own creation
+for some time. This seems to be a good time to announce it.
+
+It addresses three of the four problems above.
+
+The one it fails to address is (1) - as tactics still dominate it,
+even more so! There is no strategy at all, though conceivably
+some artificial alterations to the rules could change that.
+However at the moment we love it because of its
+quick-fire rapid-change features.
+
+(2) draws - we have never had one, and I cannot see how
+one could ever occur without co-operation.
+
+(3) imbalance is corrected by the 12* move modifier, as so often.
+
+(4) the pylon problem, (the presence of "dead clusters" having no
+further real effect on the game), *simply no longer exists* !
+
+We call it "SUPER-PENTE", as that is what it most closely resembles,
+but another more descriptive name would be good.
+
+RULES ============================================
+
+The idea is simple. It is played on a Go board; (an infinite board in 
+theory, but that never goes down well, with the general public!)
+
+The goal is to make 4 (or more) in a row, (orthogonal or diagonal).
+The winner is whoever first achieves this.
+
+The move order is, one placement by the first player, which must be
+in the centre of the board; subsequently two placements per turn,
+*subject to the restriction* that the two stones must not be in
+the same ortho-or-diagonal line, whether adjacent or not.
+
+(The key idea:)
+
+If a line of 2 or more adjacent opponent stones become
+trapped between an existing stone and a newly-played stone,
+they are removed from the board. Stones are otherwise not moved.
+
+======================================= END RULES
+
+I could give some hints or example games, but it will be more fun
+for you to find them out for yourselves. The key features of
+the game are as mentioned above - surprising twists of advantage
+and fate as the game proceeds, very rapid execution of plans,
+and the like. Games are usually quite short.
+
+-- Breathless Bill     
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Super-Pente</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Jan 10, 2012, 8:59:36 PM</div>
+    <div class="content">
+Cool!
+
+But why 4 in a row instead of five? 
+    </div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">New game: Alpha</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Feb 14, 2013, 1:36:15 PM</div>
+    <div class="content">
+ALPHA
+
+Alpha is a game for two players: Black and White. It's played on the cells of a hexhex board, which is initially empty. Both players must have access to a sufficient number of black and white stones. 
+
+Black plays first, then turns alternate. On his turn, a player must place one stone of any color on an empty cell. The pie rule is used to make the game fair. This means that White will have the option, on his first turn only, to change sides instead of making a regular move. 
+
+The game ends when the board is full. A player's score is the product of the size of the largest group of his color and the number of distinct groups of his color in the final position. The player with the highest score wins. In case of a tie, White wins.
+
+Notes
+
+The win condition is similar to that of Nick Bentley's Produto (aka Product War), but results in a very different game. I think Nick's game was the first ever to have a final score calculated as the product of some variables.
+
+Alpha can also be played as a Mind Ninja subgame. In that case, the Mind Ninja protocol implies that Black wins ties instead of White. I think it's slightly preferable to award the win to White in case of a tie because the choice of bad first moves is usually very limited in this kind of games, and this tie-breaker makes all Black's first moves slightly worse.   
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: New game: Alpha</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Feb 14, 2013, 2:50:09 PM</div>
+    <div class="content">
+El jueves, 14 de febrero de 2013 14:36:15 UTC+1, Luis Bolaños Mures escribió:
+
+    I think Nick's game was the first ever to have a final score calculated as the product of some variables.
+
+I've just been privately told that this is false. Ta Yü, released in 1999, has this feature as well.
+
+But, of course, Alpha has more similarity with Produto than with Ta Yü. :)
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: New game: Alpha</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Feb 14, 2013, 6:03:01 PM</div>
+    <div class="content">
+I had no idea. Awesome. 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: New game: Alpha</div>
+    <div class="author">João Pedro Neto</div>
+    <div class="timestamp">Posted on Feb 15, 2013, 2:51:35 PM</div>
+    <div class="content">
+It seems that Alpha's main strategy is to maintain a big group and lots of isolated stones. Which of course is not that easy since the adversary will try to connect them. But the number of distinct groups is a really important part of the game
+
+Me and Bill have been playing some variants over the idea of parity -- which I don't recall where it started, perhaps with Nick's Odd game -- that reminds me of this concept. Let me post one of those with a sample game, which Bill won (use fixed size font, please)
+
+YUNEQUAL
+
+Players take turns placing one or two stones of either color on empty cells. On his first turn, Black can only place one stone. 
+At the end of each turn, the players must have a different number of groups on the board.
+Players can pass either or both moves, subject to the above.
+When both players fully pass in succession, the game ends. 
+The player with fewer groups on the board wins.
+
+Sample Game:
+
+    ___Jx_________Bo___
+ 1: ---  xg3   oi5  xm9
+ 2: oe1  xj2   xq5  xd8
+ 3: xj8  xi3   ol8  ok9
+ 4: xk7  xm7   oo5  on8
+ 5: xm5  xn6   op4  op6
+ 6: xo7  xl2   oi9  oh8
+ 7: om1  oa5   on2  og7
+ 8: xm3  xo3   oc3  od2
+ 9: xh6  xj6   oj4  og5
+10: xl4  ol6   of6  ok5
+11: xf4  oi1   oc5  od6
+12: xk1  oe9   od4  oc7
+13: ob4  ob6   of8  og1 & wins
+
+Final Position
+
+:  abcdefghijklmnopq     
+:      o O o x o        1
+:     o . . x x o       2
+:    o . x x . x x      3
+:   o o x . o x . o     4
+:  o o . o o o x o x    5
+:   o o o x x o x o     6
+:    o . o . x x x      7
+:     x O o x o o       8
+:      o . o o x        9
+:  abcdefghijklmnopq 
+
+Jx: 4 groups
+Bo: 3 groups 
+
+btw, the rules of Ta Yü are explained here http://youtu.be/NiXIMdjpC0M?t=30s
+[or http://www.boardgamegeek.com/file/download/3pohr9b6vq/Ta_Yu.doc]
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: New game: Alpha</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Feb 15, 2013, 3:41:54 PM</div>
+    <div class="content">
+Am I missing something or is Yunequal almost the exact same thing as Luis' Yodd? 
+
+http://boardgamegeek.com/boardgame/105173/yodd
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: New game: Alpha</div>
+    <div class="author">João Neto</div>
+    <div class="timestamp">Posted on Feb 15, 2013, 6:25:00 PM</div>
+    <div class="content">
+Oh! That's where it came from! :-)
+
+Sorry, Luis and Nick, for the mixed reference.
+
+JP 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: New game: Alpha</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Feb 15, 2013, 6:55:13 PM</div>
+    <div class="content">
+It happens to everybody!
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: New game: Alpha</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Feb 15, 2013, 7:13:47 PM</div>
+    <div class="content">
+No problem, João.
+
+Welcome to this forum, by the way. It would be nice to have an abstract game expert like you as a regular contributor here.
+    </div>
+  </div>
+
+</body>
+</html>

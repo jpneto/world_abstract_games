@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">New game: Veletas</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Nov 30, 2013, 6:08:29 PM</div>
+    <div class="content"><h3>VELETAS</h3>INTRODUCTION 
+
+Veletas is a drawless territory game for two players: White and Black. It’s played on the squares of a 10x10 square board, which is initially empty. Apart from the board, the necessary material comprises five red stones, a sufficient number of white and black blocks, three white markers and three black markers. 
+
+DEFINITIONS 
+
+A piece is a block, marker or red stone. 
+
+A group is a set of one or more like-colored, orthogonally adjacent blocks. The size of a group is the number of blocks in it. 
+
+An immobile red stone is a red stone that can’t make any legal move in the current position. 
+
+PLAY 
+
+White starts the game by placing two red stones on any squares of the empty board. Black answers by placing three red stones on empty squares. 
+
+From then on, the players take turns, starting with White. On his turn, a player can (but is not obliged to) move a red stone to an empty square in a straight orthogonal or diagonal line, without jumping over any other pieces. Then, the player must (compulsorily) place a block of his color on an empty square which is on the same straight orthogonal or diagonal line as the destination square of the moved red stone (or any red stone, if none was moved), with no other pieces in between along that line. 
+
+At this moment, if there are no immobile red stones on the board, the player’s turn ends. If there are any immobile red stones on the board, each one of them is replaced with a marker of the player who owns the biggest group orthogonally adjacent to it. If there is no such group or the biggest such groups of each color are the same size, the red stone is replaced with an enemy marker. Once placed, markers aren’t moved for the rest of the game. 
+
+The game ends when there are three markers of the same player on the board. That player wins. Draws are not possible. 
+
+8x8 VERSION 
+
+A reasonable game can be played on a small 8x8 board with three red stones instead of five. In this case, White places just one red stone on his first turn, and Black replies by placing the other two. The game ends when there are two markers of the same player on the board. That player wins. 
+
+ACKNOWLEDGEMENTS 
+
+The movement and shooting mechanism has been used before in Walter Zamkauskas' Amazons. Shooting friendly stones instead of neutral arrows is a feature of Corey Clark's Canvas.    
+    </div>
+  </div>
+
+</body>
+</html>

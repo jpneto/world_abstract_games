@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Perchance to Dream</div>
+    <div class="author">zickzack@gmail.com</div>
+    <div class="timestamp">Posted on Feb 3, 2012, 3:14:41 PM</div>
+    <div class="content">
+Last week, I had a strange dream. I was playing a game against
+Nick Bentley, and during the dream, the rules of the game unfolded.
+
+It is basically a variation of Sprouts. Yet, after moving, you may
+mark closed areas - namely, either one closed area with two
+marks or two areas with one mark. The one who has made the
+most marks at the end of the game wins. Some reconstruction
+after waking up indicates that is better to allow only to mark areas
+in which no further move is possible. And I am not yet decided, if
+a game ends if there are no moves possible anymore or if no
+marks can be left anymore.
+
+I am not saying this is a particularly good game. As a matter of
+fact, I do not like scoring games that much. I just wonder what
+it did in my dream. Ralf Gering wrote that one game came up
+while he was dozing after lunch. I guess there are more games
+like that out there.
+Benedikt    
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Perchance to Dream</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Feb 4, 2012, 4:29:16 PM</div>
+    <div class="content">
+I'm honored to have made it into your dream :)
+
+I have many dreams about games, but I almost never remember the rules
+upon waking. 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Perchance to Dream</div>
+    <div class="author">Xifeng</div>
+    <div class="timestamp">Posted on Feb 5, 2012, 2:17:09 AM</div>
+    <div class="content">
+> On Feb 3, 8:14 am, "zickz...@gmail.com" <zickz...@gmail.com> wrote:
+>> It is basically a variation of Sprouts. Yet, after moving, you may
+>> mark closed areas - namely, either one closed area with two
+>> marks or two areas with one mark. The one who has made the
+>> most marks at the end of the game wins. Some reconstruction
+>> after waking up indicates that is better to allow only to mark areas
+>> in which no further move is possible. And I am not yet decided, if
+>> a game ends if there are no moves possible anymore or if no
+>> marks can be left anymore.
+
+This is remarkably similar to something I worked on and abandoned
+during the development of Yusailo. I gave up on it because I thought
+it too similar to Sprouts, as I had played it (you make only one mark,
+in a region that you yourself close off.) Your rule may prove more
+interesting, and I rather do like scoring games. I will probably play
+around with this idea more.
+
+My own game Watchtower is based on a game I played in a dream; I don't
+think it's a particularly good game, but I'm pleased that I managed to
+reconstruct it remembering only how it played, and not what the rules
+were: <a href="https://web.archive.org/web/20130228070111/http://beautifulenigma.posterous.com/pages/thea">http://beautifulenigma.posterous.com/pages/thea</a>
+
+<i>Watchtower
+
+Watchtower is an abstract strategy game that I played in a dream. Upon waking, I remembered none of the 
+rules, only that it was a territory game that involved towers "seeing territory." Much thanks to Corey 
+Clark for helping me reconstruct it.
+
+Thea is played on a hexagonal grid of hexagons, like that used for Havannah, with stackable pieces of two 
+colors. 4 or 5 hexagons to a side seems like the right size for now, even that size can lead to very long 
+games, but the game is usually decided long before the board has been filled.
+
+The rules are fairly simple. On a turn, you have three choices:
+
+    Place a piece of your color on an empty space
+    Place a piece of your color onto any tower you control
+    Place a piece of your color onto any enemy tower that you threaten with a taller tower
+
+A tower threatens all the spaces that can be reached by moving away from it exactly the distance equal to 
+its height. These spaces lie on a hexagonal ring around the threatening tower. Note that a tower of 
+height one threatens the spaces around it, but cannot attack them because no enemy tower could be shorter.</i>
+    </div>
+  </div>
+
+</body>
+</html>

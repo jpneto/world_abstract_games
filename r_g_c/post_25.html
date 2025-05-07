@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Devil's Advocate - contest submission</div>
+    <div class="author">Andrew Juell</div>
+    <div class="timestamp">Posted on Dec 23, 2010, 7:14:10 PM</div>
+    <div class="content">
+Here's my submission for the contest...
+
+DEVIL'S ADVOCATE
+
+Basic rules:
+Players alternately place one stone at a time in an empty space on a
+board with an odd number of hexagonal cells. Normally, Black may only
+place white stones, while White may place either white or black
+stones. If the placement of a white stone completes one or more
+unbroken rows of four or more white stones, all stones in these rows
+flip to black. When the board is full, the player with more stones of
+their color on the board wins.
+
+Balancing stones:
+On most standard boards, White has a small but definite advantage.
+Rather than using boards which cannot easily be displayed in iggc's
+sandbox, it is suggested to give Black a limited number of black
+stones which may be played at any time during the game in place of
+their usual white stone. Though a 'pie-rule' arrangement can ensure
+that both players agree on the appropriate number of such stones, CPU
+self-play suggests the following setups as fair, and the 9x9x9 is
+particularly recommended.
+
+6x6x6 Black gets 5 black stones, white gets first move.
+7x7x7 Black gets 4 black stones and first move.
+8x8x8 Black gets 3 black stones, White gets first move.
+*9x9x9* Black gets 3 black stones, White gets first move.
+10x10x10 Black gets 2 black stones and first move.
+
+Notes: It's a bit on the tactical side for my own tastes, and I often
+found myself wishing I could tweak the rules of the contest rather
+than those of the the game. Even though they're effectively
+equivalent, I'd prefer to change the number of stones required for
+victory rather than adding the extra black stones. Of course it would
+be better still if the manual balancing weren't necessary at all, but
+the only boards I found which accomplished this were either
+ridiculously large, or involved wraparound which would be more easily
+visualized with more help than the sandbox readily offers. Note that
+once one accounts for the balancing stones, players may mark cells
+which can no longer be flipped as white, since Black may not play a
+black stone there, and White should never choose to.   
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Devil's Advocate - contest submission</div>
+    <div class="author"></div>
+    <div class="timestamp">Posted on </div>
+    <div class="content">
+I don't have much in the way of personal webspace, and I spent more
+time on the program than making pretty pictures, so I guess I'll just
+link back here, barring any objections.
+    </div>
+  </div>
+
+</body>
+</html>

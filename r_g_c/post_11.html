@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Corners and Ugliness, again. (1)</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on  Nov 18, 2010, 4:31:13 AM</div>
+    <div class="content">
+First about corners in Connection Games.
+
+It strikes me again, as others have observed long ago,
+that the standard basic games like Hex and Y do not even have
+*slightly* special corners, if the game is so re-formatted.
+
+So Hex, for example, 4x4, is just
+
+         x x x
+       . . . . o
+    o . . . . o
+   o . . . . o
+  o . . . .
+    x x x 
+
+with these pre-set stones; and the task being
+to join them up, in Atoll-like fashion.
+
+Similarly in Y, the board starts with three rims of neutral colors,
+
+     = . +
+    = . . +     the task being to connect your group to all
+   = . . . +    three neutral colors.
+  = . . . .
+     - - -
+
+So, in both, the game can be re-presented without actual change,
+in such a way as to avoid mentioning corners (or even sides!)
+altogether. Whether this is worthwhile is a purely aesthetic
+matter, but in some game servers the graphics would lend
+themselves to this quite well, I think.
+
+In Atoll, the game itself depends essentially on these pre-set
+edge colors being there, to help effect connections, a feature
+which adds that particular piquancy to the game that we fans love.
+
+And the fact that the pre-set rims is essential in Atoll,
+(and its higher-order extensions, as I mentioned once before),
+suggests that it really "ought to be there" in the two basic cases,
+Hex and Y, as well. From a mathematically inclusive PoV, at least.
+And perhaps from a pretty-graphics PoV as well, as I said.
+
+Removing any need to mention corners is thus just a helpful plus!
+
+-- Bridging Bill
+
+** Modern businessman: "So we finally turn the corner and
+** what do we see? - another corner!"     
+    </div>
+  </div>
+
+</body>
+</html>

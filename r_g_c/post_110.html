@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">General game systems</div>
+    <div class="author">Cameron Browne</div>
+    <div class="timestamp">Posted on Jan 7, 2013, 3:48:50 PM</div>
+    <div class="content">
+Hi All,
+
+I'd like to announce an upcoming special issue of the IEEE Transactions on Computational Intelligence and AI in Games (T-CIAIG) on "General Game Systems":
+http://csee.essex.ac.uk/tciaig/sis/ggs.pdf
+
+If you work on software for playing, evaluating and/or generating general games, we'd love to hear from you.
+
+Regards,
+Cameron
+_______________________________________________________________
+
+CALL FOR PAPERS
+
+General Game Systems
+
+
+IEEE Transactions on Computational Intelligence and AI in Games (T-CIAIG)
+
+Special issue: General Game Systems
+
+Special issue editors: Cameron Browne, Nathan Sturtevant and Julian Togelius
+
+
+General game playing (GGP) involves the development of AI agents for playing a range of games
+well, rather than specialising in any one particular game. Such systems have potential benets
+for AI research, where the creation of general intelligence remains one of the open grand challenges.
+
+GGP was rst proposed in the 1960s and became a reality in the 1990s with the Metagame system 
+for general Chess-like games. The specication of the game description language (GDL) and
+annual AAAI GGP competitions followed in the rst decade of this century, providing a platform
+for serious academic study into this topic. The recent advent of Monte Carlo tree search (MCTS)
+methods has allowed the development of truly competitive GGP agents, and there is exciting new
+research into applying GGP principles to general video games.
+
+The eld of general games research is now becoming fully rounded, with the development of
+complete general game systems (GGS) for playing, analysing and/or designing new games. These
+include not only GGP, but also any system that attempts to model a range of games; the denition
+is itself kept deliberately broad. The key feature of such systems is their generality, but the issue
+of representation remains an obstacle to true universality while they rely on formal descriptions
+of target domains.
+
+The purpose of this special issue is to draw together the various research topics related to AI and
+CI in general games, to give an indication of where the eld currently stands and where it is likely
+to head. It will explore questions such as: How good and how general are existing systems, and
+how good and how general can they become? What have we learnt about AI and CI from studying
+general games? How do we apply existing GGP expertise to general video games? We invite high
+quality work on any aspect of general games research in any genre of game -- digital or physical --
+including play, analysis and design. Topics include but are not limited to:
+
+* General game playing
+* General game description and representation
+* General game design and optimisation
+* Generalised Monte Carlo tree search (MCTS) approaches
+* Real-time, nondeterministic and imperfect information extensions to GGP
+* General video game playing
+* Framing issues and constraints on generality
+* Bridging the gap between academic and commercial applications
+
+Authors should follow normal T-CIAIG guidelines for their submissions, but identify their papers
+for this special issue during the submission process. Submissions should be 8 to 12 pages long,
+but may exceed these limits in special cases. Short papers of 4 to 6 pages are also invited. See
+http://www.ieee-cis.org/pubs/tciaig/ for author information.
+
+Deadline for submissions: May 3, 2013
+Notification of Acceptance: July 5, 2013
+Final copy due: October 4, 2013
+Publication: December 6, 2013
+    </div>
+  </div>
+
+</body>
+</html>

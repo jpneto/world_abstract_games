@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Dice by email?</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Mar 10, 2011, 5:50:33 AM</div>
+    <div class="content">
+Joao and I have recently been considering the possibility
+of playing such games as Backgammon, Einstein, and so forth,
+that need dice rolls to effect the moves.
+
+Can anyone think of a method?
+
+Possibilities might include...
+
+1) using trapdoor codes in some way;
+2) letting each player have a "hand" or "bank" of numbers;
+    that must be used up before being replenished;
+3) having the opponent have some input into the roll, in some way;
+4) using a public random number like the last digits in the daily
+    published temperature;
+5) something else?
+
+2 & 3 probably go too far away from the true effect of dice rolling,
+but might be of interest in their own right.
+
+4 would probably only work for people in the same area,
+and for players willing to post every day.
+
+1 seems fine if the details could be worked out.
+
+Can anyone help out with 5?
+
+-- Baffled Bill
+
+** Chance is merely the effect of ignorance on determinism.   
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Dice by email?</div>
+    <div class="author">Cameron Browne</div>
+    <div class="timestamp">Posted on Mar 10, 2011, 4:55:57 PM</div>
+    <div class="content">
+> Joao and I have recently been considering the possibility
+> of playing such games as Backgammon, Einstein, and so forth,
+> that need dice rolls to effect the moves.
+>
+> Can anyone think of a method?
+
+How about using a function of the digits in the time stamp on the
+email to the current mover's mail client? These should map easily to
+dice values and be indisputable.
+
+Using the hour and minute values would be insufficient as some
+"special" people would no doubt delay sending their emails until an
+exact time to give beneficial dice rolls, but the second values should
+be pretty random.
+
+So what mapping would work? Maybe something like:
+
+d1 = secs / 10 + 1; // range 1..6
+d2 = (secs / 10 + secs % 10) % 6 + 1; // range 1..6
+
+so your message received at "Date: 10 March 2011 16:59:23 CET" would
+yield d1 = 2+1 = 3 and d2 = (2 + 3) % 6 + 1 = 6, i.e. the dice roll
+{3, 6}.
+
+The d1 values should have a random distribution but the d2 values will
+have some bias, there may be better mappings.
+
+Cameron 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Dice by email?</div>
+    <div class="author">Mrraow</div>
+    <div class="timestamp">Posted on Mar 10, 2011, 5:05:38 PM</div>
+    <div class="content">
+You could always use a dice server to get impartial rolls:
+
+http://www.pbm.com/dice/
+
+-- 
+"The coffee tasted like something you never tasted before.  Skillfully blended with something you never wanted to taste again." - Chance Purdue
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Dice by email?</div>
+    <div class="author">Arty Sandler</div>
+    <div class="timestamp">Posted on Mar 11, 2011, 7:20:52 PM</div>
+    <div class="content">
+If you use the same random seeder (number of seconds) for both dice
+then the dice values won't be independent of each other. In fact you
+will randomly get one of the 10 possible pairs while you should have
+36 pairs. 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Dice by email?</div>
+    <div class="author">Cameron Browne</div>
+    <div class="timestamp">Posted on Mar 12, 2011, 5:42:00 PM</div>
+    <div class="content">
+On Mar 11, 8:20 pm, Arty Sandler <artyo...@gmail.com> wrote:
+> In fact you will randomly get one of the 10 possible pairs while you should have
+> 36 pairs.
+
+Eh? No there should be all 36 combinations. You might have
+misunderstood the functions I suggested.
+
+Cameron 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Dice by email?</div>
+    <div class="author">Arty Sandler</div>
+    <div class="timestamp">Posted on Mar 13, 2011, 4:51:42 PM</div>
+    <div class="content">
+Sorry, of course there will be more than 10 possible pairs :) Don't
+know what I was thinking about (may be about the last digit in
+"secs").
+
+But, still, in your functions d1 & d2 are not independent since they
+use the same seeder that doesn't map uniformly to 36 possible pairs.
+For example for d1=1 you have two "chances" to get d2=2 (sec=1 and
+sec=7) but only one chance to get d2=1 (sec = 6). 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Dice by email?</div>
+    <div class="author">Harald Korneliussen</div>
+    <div class="timestamp">Posted on Mar 14, 2011, 2:35:01 PM</div>
+    <div class="content">
+There are standard cryptographic ways of doing this, I remember
+reading about them in my old copy of "Applied Cryptography", though I
+can't remember the details :)
+
+A quick and dirty way of doing it: I choose a secret password, and
+generate a large list of random numbers in the range 1-6. I append
+these and send them through a cryptographic hash (one-way) function. I
+send you the hash, and ask you to choose the initial index ("split the
+deck"). Thereafter, each time you need to throw a die, I take the next
+number in my list starting from that index.
+
+Once the game is over, I send you my list and password. You can then
+run them through the hash function to verify that they were the ones
+used, and you can use any statistical test you care for to check that
+the numbers are indeed generated randomly.
+
+This only works when I have no interest in knowing what numbers you
+will roll beforehand; It works if I'm the croupier at a virtual casino
+(indeed, I'm suprised anyone spends money on a virtual casino without
+a guarantee of this sort!), but if we're playing backgammon against
+each other we need a slightly more sophisticated system: Then we need
+to both keep such lists, and combine the number on my list with the
+number on your list each time we need a fair die roll.
+
+Auditing the logs would be a bore, though ;) better to just handle
+this like they do at Rognlie's PBEM server: just trust s third party
+to roll fairly.
+    </div>
+  </div>
+
+</body>
+</html>

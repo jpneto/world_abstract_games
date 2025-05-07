@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Ko on hexagonal grids</div>
+    <div class="author">Cameron Browne</div>
+    <div class="timestamp">Posted on May 24, 2012, 7:22:48 PM</div>
+    <div class="content">
+Hi Everyone,
+
+It's recently come to my attention that ko does not apply to Go played on a hexagonal grid. 
+
+Can anyone point me to any reference that cites this fact (book, article, newsgroup post, etc)?
+
+Regards,
+Cameron    
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Ko on hexagonal grids</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on May 30, 2012, 9:48:44 PM</div>
+    <div class="content">
+I've noticed that, too, and I think longer cycles can never occur with sensible play, either, but I can't prove it.
+
+The same applies to Slither Go.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Ko on hexagonal grids</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on May 31, 2012, 1:53:02 PM</div>
+    <div class="content">
+On May 31, 8:48 am, Luis Bolaños Mures <luis.9.8...@gmail.com> wrote:
+
+> I've noticed that, too, and I think longer cycles can never occur with
+> sensible play, either, but I can't prove it.
+
+That's a very dangerous comment! "Sensible play" is very hard
+to define, even though we all think "we know it when we see it",
+like the US supreme court used to do with pornography.
+
+Certainly it's possible to conjure up repeated situations,
+by the brutal method of having someone fill up the board
+except for one space, have the other take them all,
+then repeat (with a few passes when necessary).
+
+But that's obviously not what Cam was meaning.
+
+Perhaps his definition could be, "a subset of the board,
+that contains a repeating situation, that remains so
+even when that subset is embedded into an infinite board
+with all other cells empty".
+
+But even that could possibly be worked around!
+
+-- Boardly Bill
+
+** There is just one Universal game of Go;
+** and each time we play, we are just
+** settling one small region of it. 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Ko on hexagonal grids</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Jun 7, 2012, 2:48:26 PM</div>
+    <div class="content">
+Just another cute little matter related to this.
+
+There are three types of regular board grids
+that go-like games could be played on,
+
+a: hexagonal;
+b: quadrilateral, (the standard type);
+c: triangular.
+
+c is little known, even among abstract gamers.
+It is easiest modelled by playing on the *intersections*
+of a hexagonal board, rather than in the (hexagonal) cells.
+
+In a great many ways, mathematically, case b is "halfway"
+between case a and case c.
+
+Concerning the matter of kos, this is also the case!
+
+In case a, kos cannot exist at all, as we are discussing.
+
+In case b, they crop up quite often, and can form
+a vital and interesting part of the game.
+
+In case c, they occur all over the place, at the drop of a hat,
+and make the game almost unplayable in its complexity.
+(Trust me on this, I've tried to play it!)
+
+So again, case b is midwway between the other two.
+
+That's very cute IMHO.
+
+-- Black-&-White Bill-&-William. 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Ko on hexagonal grids</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Jun 8, 2012, 8:22:56 PM</div>
+    <div class="content">
+It's interesting to note that most conceivable Go variants without crosscuts are soft-finite (finite with any remotely sensible play) as well:
+
+- Orcoon Go (hypothetical Go variant in which all the patterns mentioned throughout the Orcoon thread on r.g.a., including diagonal placements, are banned),
+- Konobi Go (Go with Konobi connectivity and placement restrictions),
+- Crossway Go (exactly what you're thinking)
+- and possibly Slither Go, too, as I said, even though the movement of pieces would complicate any proof.
+
+I find it rather amazing how the crosscuts inherent in non-trivalent grids are a problem both in Go variants (causing cycles) and connection games (causing deadlocks). 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Ko on hexagonal grids</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Jun 10, 2012, 8:05:02 AM</div>
+    <div class="content">
+On Jun 9, 7:22 am, Luis Bolaños Mures <luis.9.8...@gmail.com> wrote:
+
+> It's interesting to note that most conceivable Go variants without
+> crosscuts are soft-finite (finite with any remotely sensible play)
+> as well:
+
+Good point! I presume hard finite means there is an upper bound
+beyond
+which it is impossible to play longer than? Do you have a reference
+for these terms?
+
+It never occurred to me that all the non-Go games you mentioned
+can also be turned into Go variants - very cool observation!
+
+> even though the movement of pieces would complicate any proof.
+
+Actually, I think maybe not all that amount.
+
+> I find it rather amazing how [any] crosscuts inherent in
+> [such games] are a problem both in Go variants (causing cycles)
+> and connection games (causing deadlocks).
+
+Excellent point, again.
+
+And in fact, that's the *real* issue involved here. So, getting
+back to the original thread, it would be far more useful to prove
+that a game was ko-free IF AND ONLY IF it couldn't allow cross-cuts.
+
+The other is then a simple corollary, based on the trivial
+observation that cross-cuts can only occur (absent other rules)
+on boards with all-triangular regions. (Considering a region to be
+2-dimensional, bounded by the liberty-lines for the game
+in question; with plays occurring on the vertices.)
+
+And in fact there is ONLY ONE such board, locally speaking,
+which is the triangular board thus...
+
+    _\/__\/__\/__\/__\/_
+     /\  /\  /\  /\  /\
+    /__\/__\/__\/__\/__\ 
+    \  /\  /\  /\  /\  /
+    _\/__\/__\/__\/__\/_
+     /\  /\  /\  /\  /\
+
+As in ordinary Go, plays are on vertices.
+(In practice it tends to be played on hex boards
+with plays in the cells. The vertex-play system is
+more mathematically natural, though fully equivalent.)
+
+-- Triangular Taylor 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Ko on hexagonal grids</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Jun 10, 2012, 7:38:23 PM</div>
+    <div class="content">
+El domingo, 10 de junio de 2012 09:05:02 UTC+2, Bill Taylor escribió:
+
+    On Jun 9, 7:22 am, Luis Bolaños Mures <luis.9.8...@gmail.com> wrote:
+
+    > It's interesting to note that most conceivable Go variants without
+    > crosscuts are soft-finite (finite with any remotely sensible play)
+    > as well:
+
+    Good point!  I presume hard finite means there is an upper bound
+    beyond which it is impossible to play longer than?  
+
+ 
+Yes, it's a synonym of "theoretically finite". I also like to use the term "naturally finite" for those games which are hard-finite without the superko rule, like Hex. "Soft finite" is harder to conceptualize and there may be a subjective note to it, but refers to those games where any potentially cyclic move can be trivially proven to be a bad move. For example, a game on a chess board, with a white king on e1 and a black king on e8, without captures and with the goal of taking your king to the opponent's first row. On such a game, sideways and backward moves are trivially bad moves. But, of course, for many games, defining "trivial" is far from trivial...
+
+    Do you have a reference
+    for these terms?
+
+I don't, but I've come across them quite often in abstract games discussions.
+ 
+
+    the trivial observation that cross-cuts can only occur (absent other rules)
+    on boards with all-triangular regions, [with play] on vertices.
+
+It's actually the opposite: crosscuts are only impossible on boards with all-triangular regions.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Ko on hexagonal grids</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Dec 19, 2012, 8:28:40 AM</div>
+    <div class="content">
+On Sunday, June 10, 2012 8:38:23 PM UTC+2, Luis Bolaños Mures wrote:
+
+    "Soft finite" is harder to conceptualize and there may be a subjective note to it, but refers to those games where any potentially cyclic move can be trivially proven to be a bad move.
+
+Actually, this is not exactly correct. I'm no authority on the matter, but the proper definition, as far as I'm concerned, would be as follows:
+
+A game is soft finite if no position can be constructed where optimal play leads to a cycle.
+
+Of course, determining that a soft finite game is soft finite is usually much harder than determining that a hard finite game is hard finite, but that doesn't mean there's anything subjective to it.
+    </div>
+  </div>
+
+</body>
+</html>

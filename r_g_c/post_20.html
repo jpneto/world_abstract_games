@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">just want to say 'hello'</div>
+    <div class="author">Ralf Gering</div>
+    <div class="timestamp">Posted on Dec 19, 2010, 5:03:05 PM</div>
+    <div class="content">
+Hi,
+
+I'm Ralf the mancala enthusiast, but very much interested in every
+kind of abstracts.
+
+Well, I hope this is a friendly group without profanities and,
+promised, I'll try to behave myself too.
+
+It's snowing all the day here way up in the mountains, where I live in
+a very remote village. We never had so much snow before.
+
+... to stay on topic ... somehow I have to think at "Go in the Snow",
+an interesting work on Go in Tibet:
+
+<a href="https://web.archive.org/web/20110522104742/http://www.usgo.org/resources/downloads/go_in_tibet.pdf">http://www.usgo.org/resources/downloads/go_in_tibet.pdf</a>
+
+When I tried to find some ice age themed games I found these two
+(besides any Icehose games):
+
+Avalanche Chess. Your opinion?
+<a href="http://www.chessvariants.com/mvopponent.dir/avalanche.html">http://www.chessvariants.com/mvopponent.dir/avalanche.html</a>
+
+Glacier. Has anyone the rules of this Snowflake game, which is said to
+be quite good?
+<a href="https://boardgamegeek.com/boardgame/60698/snowflake">http://www.boardgamegeek.com/boardgame/60698/snowflake</a>
+
+---
+snowy    
+    </div>
+  </div>
+
+</body>
+</html>

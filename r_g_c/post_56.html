@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">More Morro</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Aug 6, 2011, 4:29:00 PM</div>
+    <div class="content">
+Reposted from blog:
+http://nickbentley.posterous.com/more-morro
+
+When I'm busy, I sometimes post rules to games I've invented without
+testing. The results usually lack...uh...any redeeming qualities.
+
+One such game, which I posted a few months ago, is called Morro, the
+product of my desire to design an N-in-a-row game which is strategic,
+drawless, and balanced (most N-in-a-row games are tactical and have
+problems either with imbalance or draws, and they also bore me)
+
+Against the odds, Morro has given me more food for thought than I
+expected it to. So now I bloviate. First the rules:
+
+Morro is a game for two players on a square grid (I recommend 7x7 to
+start) with white and black stones.
+
+Definitions:
+
+1. Row: any line of consecutively adjacent, like-colored stones. Rows
+may be oriented either orthogonally or diagonally. The length of a row
+is the number of stones in it.
+2. Drop: to place a stone on any empty space.
+
+Rules:
+
+1. To start, White drops a single stone.
+2. From then on, starting with Black, the players take turns. On your
+turn, you must drop a number of stones equal to the length of the
+longest row (of either color) on the board. If there aren't enough
+empty spaces left to do so, just fill up the board.
+3. When you create a row longer than any row created by your opponent
+up until that point, you become the leader.
+4. The game ends when the board is full, and the leader at that time
+wins.
+
+When I first posted the rules, I got several messages to the effect
+that this would probably be a dumb mess, and I agree that the rules
+sort of suggest as much on first glance. But it's not what it seems.
+
+What's it about?
+
+The first key to understanding Morro is recognizing that both players
+often have an incentive to avoid taking the lead, or build long rows.
+Why? Let's say you're the first player to build 2-in-a-row. Up till
+then, you and your opponent have been going along placing one stone
+per turn. But when you build a row of two, your opponent gets to place
+two stones on his next turn. Because he gets first crack at placing an
+extra stone, he now has a little material advantage. Every time you
+retake the lead, you give a little material advantage to your opponent
+(Morro's similar to my game Ketchup in this way). Of course, you have
+to take the lead sometime, so the material advantage you give away
+becomes increasingly subsidiary to positional issues as the game
+proceeds.
+
+So, what do you do in the early game instead of trying to take the
+lead? You place stones so that, in the endgame, your opponent won't be
+able to form long rows, but you will. I call this "clogging the
+lanes". It involves carefully spacing your own stones (for example,
+spacing your stones a chess knight's move away from each other seems
+to be important) and noting that the midpoint of each column and
+diagonal on the board is important: by placing a stone at the midpoint
+of a column you cut in half the longest row your opponent can build in
+that column.
+
+But then your opponent's stones get in the way and therein lies the
+game's interest.
+
+I hope this game turns out to be good, because some of it's formal
+features are nice. It's drawless, and I believe balanced even on tiny
+boards due to a cold element - the game is more about timing and
+position than about material. And the rules are simple.
+
+In one sense, the game is a success because it doesn't revolve around
+the same tactical look-ahead as other n-in-a-row games. That was my
+original motivation in designing it.
+
+On the other hand, the jury's out about another possible problem. It
+turns out that Morro is hard. Try figuring out who has a forced win on
+a 5x5 board to see what I mean. I still have no idea. I've discovered
+some useful concepts, like clogging the lanes and knight's-move
+spacing, but it could end up that Morro is like Othello, where the
+strategy is too obscure for it's own good.
+
+Time will tell. If I keep discovering more strategy as I play, this
+could end up being good. My intuition fails me presently.
+
+A note on negative feedback:
+
+I mentioned earlier that Morro is like my game Ketchup in that both
+feature negative feedback (when you take the lead, a little penalty
+comes along with it). For those interested in designing games with
+negative feedback, I think a comparison is illustrative. In 2 ways, I
+like Morro's negative feedback more than Ketchup's:
+
+1. The feedback mechanism isn't obvious - it's more "baked in" and
+less "added on". That may also be a problem, because the rules don't
+let on what the game is about, which makes people suspect that it's
+plain or stupid before playing. But this is true of all the games I
+love - they all hide themselves - so it's a problem I'd rather keep.
+The game that inspired me to design games was Hex, and I remember
+wondering, after reading the rules, how there could ever be a good
+game in there, and then I played it and I went slack-jawed in wonder
+at how wrong I was. I want to recreate that in my own games.
+
+2. You don't need a scoring track like in Ketchup to figure out how
+many stones to play. You know at a glance.
+
+At this point, I have much more confidence that Ketchup is a good
+game. If Morro turns out to be bad, it's negative feedback mechanism
+won't be at fault. Rather it'll be the win condition's fault.    
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: More Morro</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Aug 7, 2011, 2:23:15 AM</div>
+    <div class="content">
+Rules of an obvious N-in-a-row game which I guess must have been the
+first step towards Morro:
+
+1. To start, White drops a single stone.
+2. From then on, starting with Black, players drop two stones per
+turn.
+3. When you create a row longer than any row created by your opponent
+up until that point, you become the leader.
+4. The game ends when the board is full, and the leader at that time
+wins.
+
+On 6 ago, 17:29, Nick Bentley <nickobe...@gmail.com> wrote:
+> [...] to design an N-in-a-row game which is strategic,
+> drawless, and balanced (most N-in-a-row games are tactical and have
+> problems either with imbalance or draws, and they also bore me)
+
+The rules I suggest make for a balanced and drawless game, but still
+very tactical, and not much less boring than Connect6, for that
+matter. But I guess the main flaw of this is that it's pretty much
+decided when one player gets 6 in a row. For the losing player, the
+remaining moves must be kind of a sleep-inducing agony. Not great fun.
+
+Was this flaw the motivation for Morro's move protocol?
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: More Morro</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Aug 7, 2011, 3:24:17 PM</div>
+    <div class="content">
+Exactly right! The game you describe is similar to connect 6, except
+the game can go on long after it's decided, and that was my jumping-
+off point.
+
+The game you describe does have some advantages though. Among very
+high skill players, I've heard that connect6 is drawish, so it would
+probably be an improvement for them. They'd have to judge whether a
+six was possible for either player, and if not, try to be the first to
+5, so that's good. But I'm trying to design a strategic game, and this
+game didn't satisfy that criterion.
+    </div>
+  </div>
+
+</body>
+</html>

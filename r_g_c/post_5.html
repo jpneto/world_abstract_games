@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS -->
+
+  <div class="post">
+    <div class="subject">contest</div>
+    <div class="author"></div>
+    <div class="timestamp">Posted on Nov 6, 2010, 2:24:26 PM</div>
+    <div class="content">
+On Nov 4, 8:13 pm, Nick Bentley <nickobe...@gmail.com> wrote:
+> But there are many other possibilities. One that Bill Taylor
+> suggested long ago, but which I find fascinating, is a pattern-
+> completion game with the Hex-like properties of one unique winner when
+> the board is full, but where the pattern is LOCAL instead of GLOBAL,
+> as in Hex. By local I mean the pattern is not defined by anything
+> other than the relative arrangement of stones in the pattern. 4-in-a-
+> row is an example of a local pattern. The Hex pattern, on the other
+> hand, is global because it's definition makes reference to the edges
+> of the board.
+
+Still going from the possibility that a contest is organized, and the
+above theme is included, and my little brainwave complies with it,
+I'd like to notify those who care that I've changed the name from Whingi
+to "Lhexus": http://mindsports.nl/index.php/the-pit/lhexus-560
+    
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">Jackspritz</div>
+    <div class="timestamp">Posted on Nov 6, 2010, 10:28:51 PM</div>
+    <div class="content">
+Indeed the contest thread is moving here. I think we were still
+organizing the contest though. Nick was just sharing some potential
+themes for the contest but we hadn't really settled on anything.
+Lhexus takes the Symple theme in an interesting direction. I'm not
+sure how it accomplishes the design goal though. I believe that the
+creation of a single pattern is supposed to preclude the creation of a
+duplicate pattern. In Lhexus you try to create more of the patterns
+than your opponent. Maybe I don't understand the challenge properly
+though. As I mentioned this particular challenge is difficult to
+accomplish, let alone do well, so the number of entries would be
+pretty small I imagine. I'm leaning towards the stone recycling idea
+myself, however I worry that this would be unfair since it's been my
+pet project for 2 months now. I'm thinking maybe we should draw
+something completely out of left field to put everyone on an even
+playing field. Perhaps something odd like 'adapt a story into an
+abstract game'. This is something I'd never even consider since my
+approach to abstract design is very scientific. 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">christian</div>
+    <div class="timestamp">Posted on Nov 6, 2010, 11:05:48 PM</div>
+    <div class="content">
+On Nov 6, 11:28 pm, Jackspritz <schackow...@live.com> wrote:
+
+> Lhexus takes the Symple theme in an interesting direction. I'm not
+> sure how it accomplishes the design goal though. I believe that the
+> creation of a single pattern is supposed to preclude the creation of a
+> duplicate pattern.
+
+I'm not sure I understand your last sentece here. Bill mentions a
+'local' pattern, and the line, hex and triangle are local patterns. On
+the other hand, Bill mentions a full board at the end, and Lhexus
+definitely won't have that.
+
+Let's await further input. About the level playing field, that should
+be obvious. However, if the theme is chosen and Lhexus does meet its
+criteria, I'd like the jury to keep in mind that I made the game in an
+hour or so, _after_ reading the challenge.
+
+It's not that I had something on the shelf - the field was empty and
+quite level.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">Jackspritz</div>
+    <div class="timestamp">Posted on Nov 7, 2010, 12:57:49 AM</div>
+    <div class="content">
+How could I be so rude?
+I just want to say, welcome to the site! Great to have you here
+Christian.
+
+Maybe this will end up being the theme of the contest and if it is,
+I'm sure Lhexus will be recognized as an entry. Anyway this contest
+was Nick's idea so I'll let him figure out the details. 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">christian</div>
+    <div class="timestamp">Posted on Nov 7, 2010, 10:17:12 AM</div>
+    <div class="content">
+On Nov 7, 1:57 am, Jackspritz <schackow...@live.com> wrote:
+> How could I be so rude?
+> I just want to say, welcome to the site! Great to have you here
+> Christian.
+Thanks, and hello to everybody :)
+
+> Maybe this will end up being the theme of the contest and if it is,
+> I'm sure Lhexus will be recognized as an entry. Anyway this contest
+> was Nick's idea so I'll let him figure out the details.
+>
+I'm glad he started it regardless of the outcome because for me the
+outcome happened to be Lhexus, and I find that rewarding enough in
+itself, even if I possibly misunderstood the theme Bill suggested.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">christian</div>
+    <div class="timestamp">Posted on Nov 7, 2010, 10:28:30 PM</div>
+    <div class="content">
+On Nov 7, 11:17 am, christian <christ...@mindsports.nl> wrote:
+> I'm glad he started it regardless of the outcome because for me the
+> outcome happened to be Lhexus ...
+
+And it appears to have turned out nicely too :)
+Rules: http://mindsports.nl/index.php/the-pit/lhexus-560
+First game: http://mindsports.nl/cgi-bin/Arena/Serve.cgi?file=Lhexus1289152326.html
+
+Remember, valid configurations may not overlap: any stone may only be
+counted in ONE configuration.
+The counter just counts stones on the board because in case of a tie
+in the number of valid configurations, the player with the lesser
+number wins.
+
+P.S. I can't seem to upload a pict in my profile. I have a correct
+sized jpeg (RGB) 50x50, and the pop up box let's me select it but
+after 'upload' it gives a cancel/crop choice and displays an 'image
+question mark' saying presumably something like "hey I can't find
+that image I just had you select". Clicking 'crop picture' brings me
+back to where I started. Can anyone help?
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">Matteo Perlini</div>
+    <div class="timestamp">Posted on Nov 7, 2010, 10:39:35 PM</div>
+    <div class="content">
+I agree that we should to wait Nick's reply. After that we will be
+able to choose which kind of contest to do.
+
+Anyway we should think about the deadline too.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Nov 8, 2010, 5:29:28 AM</div>
+    <div class="content">
+OK, I seem to have lost the "Contest" concept during the changeover.
+
+1. Is the Contest thingy formalized yet?
+2. What are its parameters, or are we still discussing that?
+3. I take it Nick Bentley is organising it - sounds good.
+4. If it IS formalized, how do we enter.
+5. Whatever else I should've asked but forgot!
+
+TIA - wondering Willy. 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">christian</div>
+    <div class="timestamp">Posted on Nov 8, 2010, 8:50:40 AM</div>
+    <div class="content">
+On Nov 8, 6:29 am, Bill Taylor <w.tay...@math.canterbury.ac.nz> wrote:
+> 1. Is the Contest thingy formalized yet?
+> 2. What are its parameters, or are we still discussing that?
+> 3. I take it Nick Bentley is organising it - sounds good.
+> 4. If it IS formalized, how do we enter.
+
+No, yes, hopefully and I don't know.
+
+Anyway, Lhexus is a bit beyond entering, because we would have to
+consider it before a theme is established. So I'm happily withdrawing
+it, pleased as I am with te plain fact of finding it in the first
+place. I'll wait to see what comes out, and enter if the theme
+'strikes a chord' - maybe another game will be so kind as to drop
+by :) .
+
+P.S. Still no clue how to upload the profile pict.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">Jackspritz</div>
+    <div class="timestamp">Posted on Nov 8, 2010, 9:46:39 AM</div>
+    <div class="content">
+On Nov 8, 1:50 am, christian <christ...@mindsports.nl> wrote:
+> P.S. Still no clue how to upload the profile pict.
+
+I hate to say it Christian but I'm not sure how to help you. Owning
+the site doesn't make me an expert on it :D
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Nov 8, 2010, 2:28:48 PM</div>
+    <div class="content">
+Hi All,
+
+Apologies for being so slow to post. I was away from the interwebs
+over the weekend. Yes, we don't have a theme for the contest yet,
+although perhaps we could designate the theme so that Christian's game
+could qualify. I don't want to be the one who picks the theme all by
+myself however, because it should be something we're all interested
+in. It sounds like there's considerable interest in Bill's "local
+pattern" challenge, although in that case I don't think Christian's
+game would qualify, at least according to my understanding.
+
+The local-pattern challenge might not be suitable for another reason:
+it's difficult and there's a good chance that nobody will be able to
+design a game that satisfies it. I know I've dwelt fruitlessly on the
+problem for a while. So, it may be better to choose a constraint
+which is not so tough. All of the ideas that I initially proposed are
+pretty difficult, so here's another one.
+
+How about the following, which I shall call Design-a-Game-Less-Crappy-
+than-Othello-Using-Similar-Mechanisms?
+
+A game which satisfies the following constraints.
+
+2 players place must take turns placing differently colored stones on a board
+the stones are two-sided, and some in-game event(s) cause stones to flip 
+(win condition needn't be Othello win condition)
+
+This is nice and easy, and no doubt there's plenty of potential to
+design something preferable to Othello.
+
+Another challenge, and one for which Christian's game would qualify,
+would be a pattern-building game where there are multiple local-
+pattern win conditions.
+
+If you guys are agreeable to one of these, let me know. I'll choose
+the one that gets more interest in this thread and then I'll announce
+a deadline, say 3 weeks or a month later, anybody who wants can post
+an entry here in our new little forum, and then we'll use (condorcet?)
+voting to determine the winner.
+
+Best,
+Nick 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">christian</div>
+    <div class="timestamp">Posted on Nov 8, 2010, 3:28:15 PM</div>
+    <div class="content">
+On Nov 8, 3:28 pm, Nick Bentley <nickobe...@gmail.com> wrote:
+> It sounds like there's considerable interest in Bill's "local
+> pattern" challenge, although in that case I don't think Christian's
+> game would qualify, at least according to my understanding.
+
+That challenge was:
+"a pattern-completion game with the Hex-like properties of one unique
+winner when the board is full, but where the pattern is LOCAL instead
+of GLOBAL, as in Hex. By local I mean the pattern is not defined by
+anything other than the relative arrangement of stones in the
+pattern. 4-in-a-row is an example of a local pattern. The Hex
+pattern, on the other hand, is global because it's definition makes
+reference to the edges of the board."
+
+I understand that Lhexus doesn't qualify because of the multiple local
+patterns, so I assume it must be the completion of one? But what about
+the board being 'full'. Must such a game necessarily end with a full
+board. And if not, why doesn't 4-in-a-row qualify? (just as an
+example). I'm just trying to get the challenge straight.
+
+> The local-pattern challenge might not be suitable for another reason:
+> it's difficult and there's a good chance that nobody will be able to
+> design a game that satisfies it.
+
+"It's difficult" ... but isn't a challenge supposed to be, to qualify
+as 'challenge'?
+
+> How about the following, which I shall call Design-a-Game-Less-Crappy-
+> than-Othello-Using-Similar-Mechanisms?
+>
+> A game which satisfies the following constraints.
+>
+> 2 players
+> place must take turns placing differently colored stones on a board
+> the stones are two-sided, and some in-game event(s) cause stones to flip
+> (win condition needn't be Othello win condition)
+> This is nice and easy, and no doubt there's plenty of potential to
+> design something preferable to Othello.
+
+No doubt :), but it triggers another general question: do existing
+games qualify?
+Of course MacBeth is just as crappy as Othello, but Lotus would do
+nicely, not to mention Medusa.
+http://mindsports.nl/index.php/the-pit/macbeth-539
+http://mindsports.nl/index.php/the-pit/lotus-538
+http://mindsports.nl/index.php/the-pit/medusa-540
+
+> Another challenge, and one for which Christian's game would qualify,
+> would be a pattern-building game where there are multiple local-
+> pattern win conditions.
+
+Tayloring the challenge to fit the game would make the challenge
+appear unfair.
+
+cheers,
+
+christian
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">Jackspritz</div>
+    <div class="timestamp">Posted on Nov 8, 2010, 8:22:20 PM</div>
+    <div class="content">
+On Nov 8, 7:28 am, Nick Bentley <nickobe...@gmail.com> wrote:
+> How about the following, which I shall call Design-a-Game-Less-Crappy-
+> than-Othello-Using-Similar-Mechanisms?
+
+sounds fine to me :D
+
+On Nov 8, 8:28 am, christian <christ...@mindsports.nl> wrote:
+> No doubt :), but it triggers another general question: do existing
+> games qualify?
+> Of course MacBeth is just as crappy as Othello, but Lotus would do
+> nicely, not to mention Medusa.http://mindsports.nl/index.php/the-pit/macbeth-539http://mindsports.nl/index.php/the-pit/lotus-538http://mindsports.nl/index.php/the-pit/medusa-540
+
+I think it's only fair that each entry be designed for the contest.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Nov 8, 2010, 8:25:03 PM</div>
+    <div class="content">
+I concur. For me, the purpose of the contest is to spur us to become
+better game designers and to explore novel concepts, so I'd prefer a
+new-games-only policy.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">christian</div>
+    <div class="timestamp">Posted on Nov 8, 2010, 10:10:29 PM</div>
+    <div class="content">
+Ok, new and othelloish, but preferably better, will do ;-)
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">Jackspritz</div>
+    <div class="timestamp">Posted on Nov 9, 2010, 12:41:26 AM</div>
+    <div class="content">
+Oh just one other thing. I think the territory objective should be
+maintained.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">Xifeng</div>
+    <div class="timestamp">Posted on Nov 9, 2010, 4:28:40 AM</div>
+    <div class="content">
+So just to clarify, it doesn't have to be a combinatorial game? I'm
+new to this whole scene, so I'm gonna take a while to understand the
+culture.
+
+This is my favorite proposal so far.
+
+Thanks,
+Tristan
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">Jackspritz</div>
+    <div class="timestamp">Posted on Nov 9, 2010, 5:20:24 AM</div>
+    <div class="content">
+I may have made a mistake assuming Combinatorial was synonymous with
+abstract. I was required to use a name that differed from
+rec.games.abstract. rec.games.combinatorial didn't even work so I
+changed rec to recre and the rest is history. Anyway this is the same
+contest as we were discussing in rec.games.abstract. 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">Matteo Perlini</div>
+    <div class="timestamp">Posted on Nov 9, 2010, 11:09:08 AM</div>
+    <div class="content">
+On 9 Nov, 01:41, Jackspritz <schackow...@live.com> wrote:
+> Oh just one other thing. I think the territory objective should be
+> maintained.
+
+Can you formalize this objective?
+
+Anyway, some thoughts the contest:
+
+1. I would prefer to build the contest around a strategical objective
+(like territory).
+
+2. I think the minimum deadline should be 6 weeks.
+
+3. Do we vote the games just from an a priori point of view? Maybe we
+should judge the emergent gameplay too...
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">christian</div>
+    <div class="timestamp">Posted on Nov 9, 2010, 11:26:03 AM</div>
+    <div class="content">
+On Nov 9, 12:09 pm, Matteo Perlini <epicuru...@gmail.com> wrote:
+> 1. I would prefer to build the contest around a strategical objective
+> (like territory).
+That would open a lot more possible approaches, without excluding the
+othelloanian one.
+>
+> 2. I think the minimum deadline should be 6 weeks.
+Fine with me.
+>
+> 3. Do we vote the games just from an a priori point of view? Maybe we
+> should judge the emergent gameplay too...
+Obviously the entries should be playtested, but how indeed? We can't
+very well wait to see if a game proves itself over the decades. So
+what will be the procedure and who will be in the jury?
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">João Pedro Neto</div>
+    <div class="timestamp">Posted on Nov 9, 2010, 11:35:50 AM</div>
+    <div class="content">
+> Obviously the entries should be playtested, but how indeed? We can't
+> very well wait to see if a game proves itself over the decades. So
+> what will be the procedure and who will be in the jury?
+
+Group members could offer themselves to playtest and grade
+a small set of game entries (excluding their own submissions).
+
+Each game should have at least 3 or 4 players playtesting it.
+
+Grades should be simple, say, 1 (bad) to 5 (excellent)
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">Jackspritz</div>
+    <div class="timestamp">Posted on Nov 9, 2010, 12:16:04 PM</div>
+    <div class="content">
+On Nov 9, 12:09 pm, Matteo Perlini <epicuru...@gmail.com> wrote:
+> 1. I would prefer to build the contest around a strategical objective
+> (like territory).
+
+Personally I think both a territory objective (having more stones on
+the board at the end of the game) and the conversion capture method
+are reasonable requirements. The designs need to be in some decent
+range of each other for voters to be able to judge them with some
+objectivity. Let me put it this way, imagine judging a design contest
+in which Hex, Othello and Go were entries. I might even go so far as
+to opt to standardize the board options. I think the design
+requirements should pose a bit of a challenge on their own as well. If
+we didn't keep the conversion capture method, I would push for
+theoretical finiteness and no draws to be requirements in tandem with
+the territory objective. All this is just in the interest of making
+judging the contest as objective as possible. It doesn't have to be a
+complete popularity contest. :D
+
+On Nov 9, 4:26 am, christian <christ...@mindsports.nl> wrote:
+> Obviously the entries should be playtested, but how indeed? We can't
+> very well wait to see if a game proves itself over the decades. So
+> what will be the procedure and who will be in the jury?
+
+I think that the best option is we limit the board options to hex and
+square topologies and playtest each game in the sandbox at iggc.
+Alternatively we could use Google Docs giving us more freedom in terms
+of board topologies, but the downside is Google Docs is highly
+impractical compared to iggc's sandbox. I think the contestants should
+each have a vote with the proviso that they are not allowed to vote
+for their own game. Of course this could lead to vote 4 vote
+situations but I think we can all be held to the honor system. ;)
+Besides, I think the designers themselves will probably have some
+clear principals that they will judge the other games by, after 6
+weeks of slaving over a hot Go-Ban. :D
+
+btw Nick, besides bragging rights have you managed to set up anything
+promising in the way of prizes? 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">christian</div>
+    <div class="timestamp">Posted on Nov 9, 2010, 8:34:59 PM</div>
+    <div class="content">
+On Nov 9, 12:09 pm, Matteo Perlini <epicuru...@gmail.com> wrote:
+I think the minimum deadline should be 6 weeks.
+>
+And as I said, that's fine with me, but HERE IS MY ENTRY, new,
+othelloanian, territorial, no swap, no draw:
+
+http://mindsports.nl/index.php/the-pit/charyb-568
+
+Have fun (or I don't stand a chance ;-)
+
+christian
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">Jackspritz</div>
+    <div class="timestamp">Posted on Nov 9, 2010, 8:40:06 PM</div>
+    <div class="content">
+wow, this Symple idea has made you quite a force to be reckoned with
+Christian! Not that you weren't one already :D 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">christian</div>
+    <div class="timestamp">Posted on Nov 9, 2010, 9:08:59 PM</div>
+    <div class="content">
+On Nov 9, 9:40 pm, Jackspritz <schackow...@live.com> wrote:
+> this Symple idea ...
+
+Yes, Benedikt also saw immediately that it is a meta mechanism,
+applicable in 'territorial' themes, loosely defined.
+
+In Symple and Charyb it's either/or, which brings the element of
+timing into the equation. In Symple it results in a 'placement stage'
+and a 'growing stage' with an opaque tipping point area in between.
+In Charyb this division will likely emerge likewise. Symple's rules
+concerning connecting groups are somewhat more strict. Charyb doesn't
+need that because its changes are far more dramatic, outweighing such
+refinements (and a swap for that matter).
+Lhexus is different in that it employs both options in the same turn,
+and thus lacks the timing element of the other two.
+
+
+christian 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">christian</div>
+    <div class="timestamp">Posted on Nov 9, 2010, 9:40:15 PM</div>
+    <div class="content">
+On Nov 9, 10:08 pm, christian <christ...@mindsports.nl> wrote:
+> In Charyb this division will likely emerge likewise.
+
+Although ... not quite. The negative feedback of capture may result in
+so few groups (big as they may be) that placement is preferable, so a
+division between stages may be less emphatic.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Nov 9, 2010, 9:52:38 PM</div>
+    <div class="content">
+Ok, thanks for the feedback so far. It seems to me like the group's
+preferences regarding the contest constraints are:
+
+1. 2 players
+2. the game must include some flipping method.
+3. win condition is: most stones on the board when board is full wins
+
+And the other conditions:
+
+1. 6 weeks to deadline
+2. Evaluation period: why don't we say two weeks following submission
+deadline?
+3. Evaluation method. How about: Condorcet voting, you can't vote
+for your own game, and only people who have demonstrably played each
+of the submitted games on iggc sandbox during the evalution period may
+vote (I include this game designers get frustrated when people judge
+our games without actually playing them).
+4. Prize: maybe we write a collective review of the game on BGG? I
+suggest this because games that get reviews on BGG generally get a
+boost in visibility.
+5. One entry per person. I suggest this because the more games there
+are to evaluate, the more cumbersome this whole thing becomes. But
+let's say that you can revise your entry up to the deadline as much as
+you want, so that, for example, Christian can change his submission if
+he wants.
+
+Speaking of which: Christian, you are unusually productive for a
+"retired" designer. You threaten to become the Brett Favre of our
+little world (American sports reference, which you probably don't get
+because your both Dutch and probably not a big American Football fan.)
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">Jackspritz</div>
+    <div class="timestamp">Posted on Nov 9, 2010, 10:16:42 PM</div>
+    <div class="content">
+On Nov 9, 2:52 pm, Nick Bentley <nickobe...@gmail.com> wrote:
+them).
+> 4. Prize:  maybe we write a collective review of the game on BGG?  I
+> suggest this because games that get reviews on BGG generally get a
+> boost in visibility.
+
+LAAAAaaaaame! I'm sure we can get Arty Sandler and Aaron Dalton
+interested in programming the winning entry on their respective sites.
+What ever happened to thinking big? You were talking about Nestor
+publishing the winning entry before! I liked that Nick Bentley more
+than this new one :D. Did you contact him and he said he wouldn't?
+Maybe we should try to make a bigger deal about this contest...
+
+> Speaking of which: Christian, you are unusually productive for a
+> "retired" designer.  You threaten to become the Brett Favre of our
+> little world
+
+lol 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">christian</div>
+    <div class="timestamp">Posted on Nov 9, 2010, 10:18:43 PM</div>
+    <div class="content">
+On Nov 9, 10:52 pm, Nick Bentley <nickobe...@gmail.com> wrote:
+> Speaking of which: Christian, you are unusually productive for a
+> "retired" designer.  You threaten to become the Brett Favre of our
+> little world (American sports reference, which you probably don't get
+> because your both Dutch and probably not a big American Football fan.)
+
+Wikied him :)
+And yes, it occured to me that I have too many 'final whispers' than
+credibility concerning retirement would support, so I adapted and
+rearranged part of my essay. In the epilogue I've dedicated a
+paragraph to the problem:
+
+"Come November 2010 there was no denying: I may be able, someway
+sometime, to stop inventing games, but intentions and expectations to
+that effect don't seem to work very well. I don't hunt for games, but
+occasionally one gets too close, and when I smell prey I can't resist.
+There's no effort involved, no fumbling with pieces and boards, and no
+interference in my much appreciated daily routine, so who am I to
+intend, expect or complain?
+I'm a game whisperer, nolens volens."
+
+To be fair: I hunted this one :)
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">christian</div>
+    <div class="timestamp">Posted on Nov 10, 2010, 5:29:08 PM</div>
+    <div class="content">
+On Nov 9, 11:18 pm, christian <christ...@mindsports.nl> wrote:
+> To be fair: I hunted this one :)
+
+And 'this one' has been renamed "Charybdis" after the mythological
+monster that used to pester Odysseus during his Odyssey by creating
+annoying maelstroms.
+
+As a matter of routine, the game has been translated to the square
+plane, likewise restricting capture to the main directions, lest the
+maelstrom should engulf both players ;-) :
+http://mindsports.nl/index.php/the-pit/569-charyb-square
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Nov 10, 2010, 7:19:44 PM</div>
+    <div class="content">
+> LAAAAaaaaame! I'm sure we can get Arty Sandler and Aaron Dalton
+> interested in programming the winning entry on their respective sites.
+> What ever happened to thinking big? You were talking about Nestor
+> publishing the winning entry before! I liked that Nick Bentley more
+> than this new one :D. Did you contact him and he said he wouldn't?
+> Maybe we should try to make a bigger deal about this contest...
+
+Heh. Ok I've contacted Arty to see if he's interested. I'll write a
+review of the winner on BGG in any case, just because it sounds fun to
+me. I don't know Nestor. Can someone who knows Nestor contact him
+about this? (I don't know him)
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">christian</div>
+    <div class="timestamp">Posted on Nov 10, 2010, 7:39:41 PM</div>
+    <div class="content">
+On Nov 10, 8:19 pm, Nick Bentley <nickobe...@gmail.com> wrote:
+> Heh.   Ok I've contacted Arty to see if he's interested.  I'll write a
+> review of the winner on BGG in any case, just because it sounds fun to
+> me.  I don't know Nestor.  Can someone who knows Nestor contact him
+> about this?  (I don't know him)
+
+I contacted him in January via <submi...@nestorgames.com> to see if
+he might be interested in a havannah/hexade combination. The reply was
+somewhat disappointing:
+
+"Hi, Christian.
+
+I'm adding you to my friends page ;)
+I'm looking for games that cannot be played with the games I've
+already published. Do you have any?"
+
+I didn't quite get the wink and the "do you have any" , considering I
+had included a link to mindsports.nl ;)
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">Jackspritz</div>
+    <div class="timestamp">Posted on Nov 10, 2010, 7:59:21 PM</div>
+    <div class="content">
+Luckily, as far as I know, he has no games with double-sided tiles
+yet. I'll contact him. I don't know him either but I'm sure if the
+proposal seems interesting enough to him he'll do it, regardless of
+who contacted him with the idea 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Nov 10, 2010, 8:14:23 PM</div>
+    <div class="content">
+Ok, Arty's agreed to implement the winner on iggc. I think this is
+enough to get us started. If we get Nestor's agreement, that will be
+icing on the cake.
+
+In an earlier post I suggested that only the votes of people who
+demonstrably playtest all the games in the iggc sandbox will count.
+It occurs to me that this might not work if someone submits a game
+that can't be played in the sandbox, due to unusual topology or what
+have you.
+
+The simplest alternative is to let any member of this forum vote, and
+not worrying about verifying that folks have actually played the games
+they're rating. Plus, then the losers can console themselves by
+telling themselves that the voters neglected to actually play their
+games.
+
+Other suggestions? 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">christian</div>
+    <div class="timestamp">Posted on Nov 10, 2010, 8:28:49 PM</div>
+    <div class="content">
+On Nov 10, 8:59 pm, Jackspritz <schackow...@live.com> wrote:
+> Luckily, as far as I know, he has no games with double-sided tiles
+> yet. I'll contact him.
+
+He was a member of this group for one or two days, then disappeared
+from the list.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">christian</div>
+    <div class="timestamp">Posted on Nov 10, 2010, 8:37:48 PM</div>
+    <div class="content">
+On Nov 10, 9:14 pm, Nick Bentley <nickobe...@gmail.com> wrote:
+> The simplest alternative is to let any member of this forum vote, and
+> not worrying about verifying that folks have actually played the games
+> they're rating.
+
+I'd much prefer a 'sandbox solution', though I too don't see how the
+'not playable in the sandbox' issue can be resolved.
+But a voter just playing with his kids or with a neighbor, might
+easily miss aspects of a game that would reveal themselves under the
+scrutiny of a bunch of onlookers at iGGC, be it bugs or beauty.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Nov 10, 2010, 8:44:14 PM</div>
+    <div class="content">
+Hmmm. We could add a design constraint that the game must be playable
+in the sandbox. Anybody have an objection to that? 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">João Neto</div>
+    <div class="timestamp">Posted on Nov 10, 2010, 8:59:33 PM</div>
+    <div class="content">
+Dear all,
+
+Please, let the designers design and the playtesters playtest at will.
+We should not restraint imagination because of software limitations.
+
+Cheers,
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Nov 10, 2010, 9:05:48 PM</div>
+    <div class="content">
+Ok, no sandbox constraint then. Barring any creative suggestions,
+we'll just allow any member here to vote. 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">Matteo Perlini</div>
+    <div class="timestamp">Posted on Nov 10, 2010, 9:11:55 PM</div>
+    <div class="content">
+I would prefer no constraints too.
+
+Nick, now can you specify minutely all the conditions of the contest?
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">Jackspritz</div>
+    <div class="timestamp">Posted on Nov 10, 2010, 9:12:35 PM</div>
+    <div class="content">
+Joao, hex and square topologies are the most common ones anyway. I
+think the practicality of playtesting the games in the sandbox for the
+evaluation process far outweighs the limitation on the designers. I'm
+all for the games being compatible with the iggc sandbox because it
+will allow us to playtest the games in an organized and structured
+way. 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">Jackspritz</div>
+    <div class="timestamp">Posted on Nov 10, 2010, 9:17:23 PM</div>
+    <div class="content">
+and just to put this in perspective, I have been working with the
+Cairo tesselation http://web.me.com/paulscott.info/polyhedra/tessellations/other_tessellations/Cairovary.gif
+for some time now and I'd already reflected on some designs
+incorporating it for this contest. Even with restricting the board
+options to hex and square there's still a lot of room for creativity.
+We only have three constraints, territory objective, capture by
+conversion, and restricting the boards to hex and square topologies.
+Seems reasonable to me. 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">Matteo Perlini</div>
+    <div class="timestamp">Posted on Nov 10, 2010, 9:20:09 PM</div>
+    <div class="content">
+On Nov 10, 10:17 pm, Jackspritz <schackow...@live.com> wrote:
+> and just to put this in perspective, I have been working with the
+> Cairo tesselationhttp://web.me.com/paulscott.info/polyhedra/tessellations/other_tessel...
+> for some time now and I'd already reflected on some designs
+> incorporating it for this contest. Even with restricting the board
+> options to hex and square there's still a lot of room for creativity.
+
+Ok, I have changed my mind. I agree with you now.
+
+> We only have three constraints, territory objective, capture by
+> conversion, and restricting the boards to hex and square topologies.
+> Seems reasonable to me.
+
+Can you formalize "territory objective" and "capture by conversion"?
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">christian</div>
+    <div class="timestamp">Posted on Nov 10, 2010, 9:20:59 PM</div>
+    <div class="content">
+There may be another consideration: if Arty and Nestor are to be
+involved, what do we offer them? I think they'd expect us to take the
+contest seriously, so shouldn't we?
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">Jackspritz</div>
+    <div class="timestamp">Posted on Nov 10, 2010, 9:25:23 PM</div>
+    <div class="content">
+If we do allow games that are not practical to play in the iggc
+sandbox the play-testing process should be carried out in google docs
+for each game, even those that are practical to play in the sandbox.
+Otherwise people might be biased against the games that couldn't be
+played in the sandbox.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">Jackspritz</div>
+    <div class="timestamp">Posted on Nov 10, 2010, 9:27:24 PM</div>
+    <div class="content">
+Aren't we taking this seriously? I know I'm taking this very
+seriously :D 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">christian</div>
+    <div class="timestamp">Posted on Nov 10, 2010, 9:38:10 PM</div>
+    <div class="content">
+On Nov 10, 10:17 pm, Jackspritz <schackow...@live.com> wrote:
+> and just to put this in perspective, I have been working with the
+> Cairo tesselation ...
+
+So have I :)
+http://mindsports.nl/index.php/puzzles/tilings/391-pentiles?start=1
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">Jackspritz</div>
+    <div class="timestamp">Posted on Nov 10, 2010, 10:45:28 PM</div>
+    <div class="content">
+Matt has asked me to formalize the design constraints for this contest
+so I am going to do so now.
+
+Territory Objective: Very simple, the objective is to have more stones
+on the board at the end of the game.
+Capture by Conversion: stones convert to the opposite color during the
+gameplay by some mechanism
+Playable in the iggc sandbox: this means the board for your game must
+use a square or hexagonal tiling.
+
+of course all of this can be negotiated still. Let's just hope nobody
+is in the negotiating mood *pulls out crowbar* ;)
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">Arty Sandler</div>
+    <div class="timestamp">Posted on Nov 11, 2010, 1:01:30 AM</div>
+    <div class="content">
+Some constraints should be there, otherwise I can't promise to
+implement any winning game :)
+If someone comes with same crazy board topology as the Pex's one then
+I am not sure I will agree to code that. 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">Jackspritz</div>
+    <div class="timestamp">Posted on Nov 11, 2010, 1:43:27 AM</div>
+    <div class="content">
+Aaron Dalton said the same thing so I guess there's no room for
+negotiation. Not if most of us are interested in a prize. 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">Matteo Perlini</div>
+    <div class="timestamp">Posted on Nov 11, 2010, 1:38:56 PM</div>
+    <div class="content">
+On 10 Nov, 23:45, Jackspritz <schackow...@live.com> wrote:
+> Territory Objective: Very simple, the objective is to have more stones
+> on the board at the end of the game.
+> Capture by Conversion: stones convert to the opposite color during the
+> gameplay by some mechanism
+> Playable in the iggc sandbox: this means the board for your game must
+> use a square or hexagonal tiling.
+
+Ok, thanks for the clarification. :)
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">christian</div>
+    <div class="timestamp">Posted on Nov 11, 2010, 1:46:37 PM</div>
+    <div class="content">
+On Nov 9, 10:52 pm, Nick Bentley <nickobe...@gmail.com> wrote:
+> But let's say that you can revise your entry up to the deadline as much as
+> you want, so that, for example, Christian can change his submission if he wants.
+>
+Well ... I might just do that, just wait for a few hours till I've
+spilled my brain into a couple of graphics and rules :)
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">christian</div>
+    <div class="timestamp">Posted on Nov 11, 2010, 3:55:28 PM</div>
+    <div class="content">
+On Nov 11, 2:46 pm, christian <christ...@mindsports.nl> wrote:
+>... just wait for a few hours till I've spilled my brain into a couple of graphics and rules :)
+
+And so I did.
+I'm withdrawing Charybdis from the competition in favor of SYGO:
+http://mindsports.nl/index.php/the-pit/571
+
+The url will change shortly because I need Ed to do some menu stuff
+first.
+Mindsports will also feature an applet in the near future.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Nov 11, 2010, 4:13:30 PM</div>
+    <div class="content">
+Ok, it looks like we've got a good structure for our initial contest.
+I'll create a new post to initiate the contest, with all the details
+spelled out.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">camb</div>
+    <div class="timestamp">Posted on Nov 11, 2010, 4:13:30 PM</div>
+    <div class="content">
+Hi,
+
+>Luckily, as far as I know, he has no games with double-sided tiles
+>yet.
+The reason for this is not be so lucky - Nestor uses a standard laser
+cutter to cut the pieces and is not able to produce double sided
+pieces (yet).
+
+Cameron 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: contest</div>
+    <div class="author">Jackspritz</div>
+    <div class="timestamp">Posted on Nov 12, 2010, 9:25:04 AM</div>
+    <div class="content">
+I sadly discovered this last night. :( Sorry folks. Well
+implementation at two sites is a decent prize.
+
+Welcome to the site Cameron. Good to have you here 
+    </div>
+  </div>
+
+</body>
+</html>

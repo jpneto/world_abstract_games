@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Redefining the Abstract (in which I take Mark Thompson's famous essay to task a little bit)</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Sep 2, 2013, 4:24:20 PM</div>
+    <div class="content">
+Latest crap to have poured out of my brain: 
+
+<a href="http://web.archive.org/web/20140208073703/http://nickbentleygames.wordpress.com/2013/09/02/redefining-the-abstract/">http://nickbentleygames.wordpress.com/2013/09/02/redefining-the-abstract/</a>
+
+<i>If you're into abstract games and read the wondertubes, you've probably come across an article called "Defining the Abstract", by J. Mark Thompson.
+
+MarkThompsonWhenever anyone wants to link to an article about what an abstract game is, they link to Thompson's, and over time it's become the de facto reference for the entire internet regarding what it means for a game to be abstract.
+
+I'm writing to revisit the article because I have a niggle. My problem, however, isn't with Thompson's definition of the abstract, which is straightforward: abstract strategy games have little or no luck, little or no theme, etc.
+
+No, my problem is with the second part, where J. Mark Thompson tries to define what makes a game good. This is the essay's most famous section and the reason everyone links to it.
+
+(P.S. I love it when a person uses his initial for his first name but then spells out his middle name – it makes me intensely curious about what's hiding behind the initial. Jujubee? Jumbotron?)
+
+He says great abstract strategy games have four keystone qualities: Depth, Clarity, Drama, and Decisiveness. Here's what they mean, in his own words:
+
+Depth means “human beings are capable of playing at many different levels of expertise.”
+
+Clarity means “an ordinary human being, without devoting his career to it, can form a judgment about what is the best move in a given situation.”
+
+Drama means “it should be possible for a player to recover from a weaker position and still win the game.”
+
+Decisiveness means “it should be possible ultimately for one player to achieve an advantage from which the other player cannot recover.”
+
+Moreover he says these qualities exist in opposing pairs: if a game is too Deep it'll lack Clarity and if it's too Clear it'll lack Depth, so you need a nice balance of both. Likewise for Drama and Decisiveness.
+
+Ok, here's my niggle:
+
+<h3>Clarity should be replaced by Speciousness.</h3>
+Again, Clarity means “an ordinary human being, without devoting his career to it, can form a judgment about what is the best move in a given situation.” Why is that important? According to Thompson, if a game lacks Clarity, players will feel confused. Lacking a sense of direction and feeling incompetent, they won't have fun and they'll give up.
+
+I agree games should stimulate a sense of direction and competence in players. However, I don't think they should do so by making it easy(ish) to find the best move, or even a good one. As Thompson rightly points out, the easier it is for players to do so, the shallower a game will be. Tic-Tac-Toe is the ultimate example: a perfectly clear game that's perfectly boring because it's easy to find the best move. This is why Thompson puts Depth and Clarity in an opposing pair.
+
+In contrast, I think great games are unclear; they make it hard, really hard, to identify good moves, but they do something else to make up for it: they excite in the mind ideas for moves which seem good, but actually aren't. This has two important effects:
+
+1. it gives players the needed sense of direction and competence even when they're playing a deep game and in fact have no idea what they're doing.
+
+2. it sets players up to be surprised when they discover their initial ideas were wrong – in other words it creates Eureka moments, which are among the supreme joys of playing a good abstract game. This is only possible if a game stimulates compelling but ultimately incorrect ideas about how to play well.
+
+I call this quality “Speciousness” (I used to call it False Clarity until I realized there was a perfect word to describe the quality – Specious means “apparently good or right though lacking real merit; superficially pleasing or plausible“).
+
+The greatest games pull this trick over and over – just when you think you've learned everything, the scales fall from your eyes yet again, and yet again you realize the game isn't quite what you thought it was. And then, even after you know better, you're sometimes tempted to make suboptimal moves because they just feel so right. A classic example is the initial learning stages of Go, where players are often tempted to make captures too aggressively.
+
+Note that Speciousness doesn't conflict with Depth, as the idea of Clarity does. In fact, in the right circumstance, Speciousness contributes to Depth.
+
+What circumstance? Players must be able to overcome their initial, incorrect ideas about what makes for a good move if Speciousness is to have its proper effect. Otherwise players will get stuck at one level of understanding and the game will be shallow. So really the quality we're looking for should be called something like Conquerable Speciousness, but that's a mouthful so let's stick with one word and understand we're talking about a particular flavor of the thing.
+
+<h3>How can a game designer build Speciousness into a game?</h3>
+Thompson isn't a game designer, or in any case he didn't discuss how to design games with the properties he described. But since you're reading this at my game design blog, I guess I should. I could spend a lifetime writing about how to (try to) design the properties in Thompson's essay into games, but for now I'll just cover Speciousness, since it's the subject of this essay.
+
+I don't have a complete answer, but one thing that helps create Speciousness is the use of mechanisms that feel familiar to players. Two ways this can happen:
+
+1. Mechanisms can feel familiar because they're similar to mechanisms in well-known games everyone has played. Example: thanks to games like Connect4 and Tic-Tac-Toe, just about everyone has experience with the n-in-a-row objective. It feels familiar to us, and we therefore have ideas about how to pursue it. If you design a game with an n-in-a-row objective, but whose mechanisms are just different enough to make the strategy conflict with what players already know, you'll have created Speciousness. A great example of this Yavalath, an n-in-a-row game with one little twist that dramatically transforms what players need to do to win. Yavalath's Speciousness is a key reason it delights just about everyone, gamers and non-gamers alike from the get-go.
+
+2. Mechanisms can feel familiar because they embody what I call Intuitive Metaphors. These are mechanisms which demand modes of thought familiar not from games, but from real life. So, for example, the idea of chasing down and capturing something (the goal of Chess) is common not just in games, but in life. So too with surrounding something, as in Go.
+
+Side Note: I developed this idea while I was trying to understand why my most popular game, Catchup, seems to have wider appeal than my other games. I came to believe that one of the main reasons is that its goal is an Intuitive Metaphor. The goal is to build the biggest structure, and we're all accustomed to the ubiquitous cultural ideas that we should build things and that building big things is a worthy, status-raising endeavor (see: McMansions, or the entire life of Donald Trump). Build-Big is deeply embedded in our psyches, and as a result players feel a degree of comfort with Catchup, even if they've never played a game with that goal before. When you sit down to play you feel like you understand what's going on and what's being asked of you (until you find out that you don't – Speciousness!)
+
+Before I close, one last thing about Thompson's article. I think it left out one other important quality: balance, by which I mean that equally skilled players have equal(ish) chances of winning before the game starts. I don't have much to say about this but every abstract games player I've ever met prefers balance to imbalance, so I mention it for completeness' sake.
+
+So there you have it:
+
+J. Mark Thompson: "Great abstract strategy games have Depth, Clarity, Drama, and Decisiveness"
+
+N. Michael Bentley: "Great abstract strategy games have Depth, Specious Turn Options, Drama, Decisiveness, and Balance"</i>
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Redefining the Abstract (in which I take Mark Thompson's famous essay to task a little bit)</div>
+    <div class="author">Ralf Gering</div>
+    <div class="timestamp">Posted on Sep 2, 2013, 7:06:17 PM</div>
+    <div class="content">
+Impressive!
+
+Some other games, which are said to be very good, although they sometimes lack "clarity" are multi-lap mancalas such as Bao and Omweso. Experts love them because the outcome of moves can be far from clear - but lack of clarity does not mean that they are games of luck.  Another example might be checkers variants. Forced combinations can be very hard to foresee, if you are not a master.
+    </div>
+  </div>
+
+</body>
+</html>

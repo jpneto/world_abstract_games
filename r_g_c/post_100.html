@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Margo Basics</div>
+    <div class="author">Cameron Browne</div>
+    <div class="timestamp">Posted on Sep 24, 2012, 4:30:37 PM</div>
+    <div class="content">
+Hi,
+
+I'm pleased to announce the publication of Margo Basics:
+http://www.lulu.com/shop/cameron-browne/margo-basics/paperback/product-20407292.html
+
+Margo is essentially 3D Go in which marbles can stack upwards. It's my best game, and this book explains it through various examples, puzzles and annotated sample games.
+
+The electronic version is free for download:
+<a href="https://www.lulu.com/shop/cameron-browne/margo-basics/ebook/product-20407352.html?page=1&pageSize=4">http://www.lulu.com/shop/cameron-browne/margo-basics/ebook/product-20407352.html</a>
+
+The book is "pocket" size, which makes it convenient for pockets, game bags and small screens.
+
+Please grab a copy and have a read. If you'd like to try it out, just challenge me to a game on gamerz.net: http://www.gamerz.net/pbmserv/List.php?Margo [userid=camb]
+
+Regards,
+Cameron    
+    </div>
+  </div>
+
+
+</body>
+</html>

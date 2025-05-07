@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Y or Cross</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Aug 28, 2011, 6:40:20 AM</div>
+    <div class="content">
+Many people have wondered about a form of "Y" to be played on a Hexhex board.
+
+One possibility is OC merely to mark off three regions of the
+boundary, and play ordinary Y on that.
+
+|    b b b
+|   b . . . c    The boundary is surrounded by a multicolored ring
+|  b . . . . c   in three colours - Amber, Blue & Crimson. :)
+|   . . . . . c
+|  a . . . . c   The winner is whoever makes a group touching all
+|   a . . . c    3 colours - a , b , c .
+|    a a a
+
+That is fine, but is probably too close to ordinary Y to be interesting,
+and in any event doesn't really make use of the (global) hexagonal
+nature of the board.
+
+People want a Y-like game where the winning condition is to connect
+any 3 sides which are mutually non-adjacent (possibly including
+extra sides as well). This still has the no-double-win (non-racing)
+property, but doesn't have the no-ties property, alas. Various
+proposals have been made to account for this, mostly consisting of
+banning the possibility of making a "cross", a group crossing from any
+side to the directly opposite side, (which is the chief way of tieing
+the simpler version), unless in so doing one achieves an immediate Y.
+Cameron Bwrowne's "Cross" is a game of this type.
+
+Unfortunately, this is not a satisfactory solution to the problem,
+as Joao and I have found in a series of games. There is too much
+emphasis on "negative" or "cold" moves, as an emergent phenomenon.
+OC some people will like the appearance of this effect, as one can make
+tricky moves that play off on the opponent's inability to make some blocks
+which would involve making a direct cross. Also there is this horror...
+
+|     . . . .
+|    . . o . x      Here is an even worse situation.
+|   . o o . x .     o is clearly dominating the whole game,
+|  . . . o . x .    and only needs to touch on the north and
+|   x x . o . x     northwest edges to win, and x cannot stop either.
+|    . x . o o
+|     . x o .       BUT with crosses forbidden, o can never do either!
+|                   So, x will gradually fill in the boundary, and"win".
+
+We have considered various alternatives, such as allowing crosses
+but making it incumbent on the (first) crossing-maker to subsequently
+make a Y, or else his opponent wins (i.e. wins the eventual on-board
+tie).
+
+But though this avoids the "cold move" aspect of things, to some
+extent, it means the rules need cumbersome wording.
+
+Or so we thought, until it struck us that it can all be accomplished
+by the simple wording...
+
+(1) The WINNER is whoever makes a group connecting 3 non-adjacent
+sides, OR
+(2) otherwise whoever made the first opposite-sided touching group
+LOSES.
+
+This seems a very brief and natural way of stating a game-win
+criterion.
+It provides a discouragement to making a "cross", without forbidding
+it
+entirely (thus opening the door for cold-move play).
+
+What do people think?
+
+Note: it is still remotely possible to achieve an actual tie,
+with 4 parallel groups, such as...
+
+|   o o o
+|  x x x x (both now pass, passing is allowed any time - no cold moves!)
+| . . . . .
+|  o o o o
+|   x x x
+
+... but my feeling is that this is so incredibly unlikely that,
+if it did happen, the players both deserve one!
+
+-- Boardly Bill
+
+** CHESS - game of kings;    
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Y or Cross</div>
+    <div class="author">Cameron Browne</div>
+    <div class="timestamp">Posted on Aug 28, 2011, 10:43:12 PM</div>
+    <div class="content">
+Hi Bill,
+
+> Cameron Bwrowne's "Cross" is a game of this type.
+> Unfortunately, this is not a satisfactory solution to the problem,
+> as Joao and I have found in a series of games.  There is too much
+> emphasis on "negative" or "cold" moves, as an emergent phenomenon.
+
+You're just saying that because I beat you :)
+
+> (1) The WINNER is whoever makes a group connecting 3 non-adjacent
+> sides, OR
+> (2) otherwise whoever made the first opposite-sided touching group
+> LOSES.
+
+I considered this variant during the development of Cross but it
+seemed less interesting, being just another "positive connection" or
+connection race game with an added rule to decide deadlocks. The Cross
+rule of "win with a 3-connection but lose with a 2-connection" adds
+another element as there are competing aspects of positive and
+negative connection, i.e. a move that strengthens a 3-connection might
+also strengthen a 2-connection so there are careful decisions to be
+made with most moves.
+
+Another thing is that the Cross rule set (positive and negative
+connections) will make games longer and more involved than the rule
+set you suggest with strictly positive connections. With your rules,
+players will form a virtual connection and the game will end, whereas
+with Cross players can intrude into opponent's virtual connections and
+possibly break through them due to the threat of 2-connection, which
+can't be done in other connection games. The end result is that a
+greater percentage of the board will be used in the average game
+between experienced players than for most other connection games,
+which is a quality that I admire in Conhex, and deeper games can be
+played on smaller boards.
+
+You describe these virtual connection intrusions as "cold moves" but I
+see them as something much more interesting, they subvert the usual
+positive connection mechanism that I've seen in many, many games and
+make virtual connections assailable. This often throws up interesting
+surprises. Cross can get quite mind-bending even on smaller boards,
+which I believe constitutes a good return on depth versus rule
+simplicity.
+
+> **  CHESS - game of kings;
+Table tennis: the game of pings.
+
+Cameron 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Y or Cross</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Sep 18, 2011, 8:52:48 AM</div>
+    <div class="content">
+On Aug 29, 9:43 am, camb <cameron.bro...@btinternet.com> wrote:
+
+(1) WINNER to make a group connecting 3 non-adjacent sides,
+OR
+(2) otherwise LOSER made 1st opposite-sided touching group.
+
+> I considered this variant during the development of Cross but it
+> seemed less interesting,
+
+Did you do test games, in fact?
+Or play against yourself a bit?
+
+My little tests suggest there is still a cold-move element,
+but a mild amount, not the thoroughly confusing feature
+involved in full cross-prohibition.
+
+> The Cross rule of
+> "win with a 3-connection but lose with a 2-connection"
+> adds another element as there are competing aspects
+> of positive and negative connection,
+
+Far too many, in Joao's and my experience.
+And total lack of clarity. No move seems to be
+determinable as "good" or "bad". Now a bit of
+such a feature can be a good thing in a game,
+but Cross seems to have a vast amount of it.
+
+Ultimately it is OC merely a matter of taste, but we prefer
+a fair bit of clarity as opposed to random confusion,
+(which is why I don't much care for Reversi, either.)
+
+> > **  CHESS - game of kings;
+> Table tennis: the game of pings.
+
+Quoits - game of rings.
+
+-- Bill of blings. 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Y or Cross</div>
+    <div class="author">Cameron Browne</div>
+    <div class="timestamp">Posted on Sep 18, 2011, 8:20:51 PM</div>
+    <div class="content">
+Hi Bill,
+
+On Sep 18, 8:52 am, Bill Taylor <wfc.tay...@gmail.com> wrote:
+> Did you do test games, in fact?
+
+Yes.
+
+> Ultimately it is OC merely a matter of taste, but we prefer
+> a fair bit of clarity as opposed to random confusion
+
+If you play a bit more you might work out what's going on and pick up
+some of the strategy.
+
+Regards,
+Cameron 
+    </div>
+  </div>
+
+</body>
+</html>

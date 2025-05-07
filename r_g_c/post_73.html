@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">New game: Raindrops</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Nov 29, 2011, 2:48:24 AM</div>
+    <div class="content">
+Raindrops ruleset:
+
+https://docs.google.com/open?id=0B3gpl2WT8ufWZDYyNzRjYTYtY2UxOS00ZDk3LWJmZDMtMTJkNjQ4ZmI2YjEy
+
+Also in Spanish:
+
+https://docs.google.com/open?id=0B3gpl2WT8ufWMjU3ZDg4MjctYTk2NC00MjljLTkyZWItYzIxYTM2MjYzYTBh
+
+FWIW, I'm posting the rules here, too:
+
+
+RAINDROPS
+------------------
+
+Raindrops is a drawless connection game for two players: Black and
+White. It's played on the intersections (from now on points) of an
+even-sized square grid. The recommended size is between 8 and 12
+points per side. At the start of the game, the board is full of stones
+arranged in a checkered pattern.
+
+- Definitions
+
+In this rules, “adjacent” always means orthogonally adjacent. “Lines”
+can be horizontal or vertical.
+
+A unit is a singleton or group. A singleton is a piece with no
+adjacencies to like-colored pieces. A group is a set of like-colored,
+adjacent pieces.
+
+A unit is said to be engaged if it can join one or more friendly units
+or capture an enemy unit on a single turn, from the current board
+position.
+
+- Play
+
+Starting with Black, players take turns moving units of their own
+color, one unit per turn. All moves are along a single line, and to
+points which are either empty or occupied by enemy stones.
+
+Singletons slide any number of unoccupied points, like chess rooks.
+To move a group, you must take one of its pieces and place it on
+another point which is adjacent to the group, without splitting the
+group at any moment. You can keep re-arranging pieces from the group
+in this way as long as you want, but every moved piece must be placed
+adjacent to the previous one, in the same line and direction. The
+movement line must be one of the rows or columns already occupied by
+the group before the move. During the move, if you join another
+friendly unit which lies in the movement line, your turn ends. If you
+join a friendly unit which is not in the movement line, said unit can
+be rearranged along with the rest, always in the same line, while it
+is still your turn. (See examples in the link above.)
+
+When moving a unit, if you place a piece on a point occupied by an
+enemy piece, the entire enemy unit to which this piece belongs is
+removed from the board, and your turn ends.
+
+If you move an engaged unit, that must reduce the total number of
+groups on the board. If you move an unengaged unit, you must engage
+it. Passing is not allowed.
+
+- End of the game
+
+If, at the end of a turn, one of the players has only one unit on the
+board, that player wins. If both players have only one unit left, the
+last moving player wins.   
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: New game: Raindrops</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Nov 30, 2011, 6:58:03 PM</div>
+    <div class="content">
+Here's an elemental Raindrops puzzle for you:
+
+x . x . . . . .
+. . . . . . . .
+x . x . . . . .
+o . . . . . . .
+x o x . . . . .
+x x . . . . . .
+o . . . . . . .
+. . . . . . . .
+
+Black to play and win.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: New game: Raindrops</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Dec 5, 2011, 1:32:32 AM</div>
+    <div class="content">
+Now that you know Raindrops, just put it aside. It's fun, but it's
+just a gimmicky tactical vehicle. Here is the game I should have
+presented you in the first place:
+
+https://groups.google.com/group/recregamescombinatorial/browse_thread/thread/d96c7cf03479ddde?hl=es#
+
+It's still a drawless connection game, but it's far simpler and much
+more strategical than its predecessor. It also has an intriguing maze
+quality, reminiscent of Quoridor.
+    </div>
+  </div>
+
+</body>
+</html>

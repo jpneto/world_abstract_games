@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Does randomness in games limit skill?</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Jun 9, 2014, 3:18:07 PM</div>
+    <div class="content">
+I don't know, but that won't stop me from expressing an opinion. I think the question might be more complicated than it at first seems. Anyway I wrote a little about it here: <a href="http://web.archive.org/web/20150922124036/http://nickbentleygames.wordpress.com/2014/06/09/random-games-and-skill/">http://nickbentleygames.wordpress.com/2014/06/09/random-games-and-skill/</a>
+
+<i>Today I'm following-up on a twitter discussion I recently had with Kory Heath, inventor of the miraculous game-cum-teaching-tool Zendo, among others.
+
+The question under debate: does randomness in games limit skill?
+
+Kory, who voted nay, cited a talk by Magic: The Gathering designer Richard Garfield in which he uses a toy game called Rando-Chess to argue randomness doesn't limit skill.
+
+Rando-Chess is the same as normal Chess, except after the game is over, the players roll a die and if it comes up “1”, the winner becomes the loser and vice-versa. Though Rando-Chess has more randomness than Regular Chess, it has equal skill, since you can apply all your Chess knowledge to improve your chances of winning Rando-Chess. This seems to demonstrate randomness doesn't limit skill.
+
+I told Kory wasn't so sure. He asked where my doubts lay but I couldn't explain them without writing scores of tweets, so I told him I'd reply via blog. And Lo! I'm actually following through.
+
+Before I get to my argument, two caveats:
+
+1. I'm not sure what camp I'm in and my argument below could be bunk. I just want to explore the possibility that Garfield's argument papers over some complexity.
+
+2. For soon-to-be apparent reasons, my argument only applies to strategy games, by which I mean games whose first aim is to get players grappling with interesting strategy/tactics stuff in an attempt to win. It's not a universal argument about the role of randomness in games, or even in orthogames (the games about which Garfield made his claims).<h3>Randomness Limits Skill…Sometimes</h3>Let's start with the following claim: Rando-Chess is bad. Including randomness in the way Rando-Chess does makes the game worse than normal Chess (a claim Garfield himself makes in his talk).
+
+If I played Rando-Chess, and won the Chess game but lost on the die-roll, I'd be frustrated I outplayed my opponent but lost anyway on a single random event which negated in one instant all my prior decisions.
+
+If that's not frustrating enough for you, let's replace Rando-Chess with Super-Rando-Chess. In Super-Rando-Chess, we use a 100-sided die. If the die lands on any number from 1 to 49, the winner becomes the loser and vice-versa. All arguments that apply to Rando-Chess also apply to Super-Rando-Chess, and the two games are bad in the same way. One is just more bad in that way than the other.
+
+But why should it matter if these games are bad? The Rando-Chess' quality should have no bearing on the logic of Garfield's argument regarding skill, right? Alas, I think it might!
+
+What if, to make a good strategy game that includes randomness, it must be incorporated in such a way that it does limit skill? Below I explain why I think it could be true. My case consists of two contentions:
+
+<b>Contention #1: for randomness to make a strategy game better rather than worse, it must be difficult for a player to determine the respective extents to which random events and her own choices determine the outcome of each game.</b>
+
+Why? Imagine losing a game which conforms to this requirement. When you lose, since you're unsure what led your loss, instead of getting frustrated, you think about what you could have done differently, and to tease apart the factors involved. The game gets you thinking about strategy, which is the the point of a strategy game.
+
+On the other hand, if you know why you lost, you have the same problem as in Rando-Chess: when you lose due to some random event(s), you'll know it, and it'll be frustrating for the same reason Rando-Chess is frustrating: it negated your choices and you know it.
+
+This is why my argument only applies to strategy games: if strategy isn't the main focus of a game, the quality isn't necessarily hurt if randomness diminishes the importance of strategy. Many games focus more on the “thrill of finding out what happens”, to create a vivid story or a gambling atmosphere, etc, where that's the case. Contention #1 therefore doesn't apply there. 
+
+<b>Contention #2: the harder it is to distinguish the effects of your own choices from those of random events on a game's outcome, the harder it is to accrue skill.</b>
+
+The harder it is to know how your choices affected a game's outcome, the harder it is to know how to change them in the future, and thus the harder it is to improve. If I'm examining the choices I made in a game I lost, how do I know if I made bad choices or if I got unlucky? If I can't distinguish the effects of randomness from my own choices on the outcome, I'm stuck.
+
+As a result, the rate at which I can accrue skill is limited and that limits the ceiling on the skill I can reach for a game with the time I have to play and study it. The difference in skill between the best players and average players will not be as large as it is for games where it's easier to distinguish the effects of random events and choice, or for games without randomness.
+
+Put contentions #1 and #2 together, and you get this:
+
+<b>Good strategy games incorporate randomness such that it's hard to distinguish the effects of player choice vs. randomness, which limits the rate at which players can accrue skill, which limits skill. Ergo, randomness limits skill in good strategy games.</b>
+
+I wonder if Garfield would agree. There's another essay on the same topic where he says “The reward for skill depends on how much luck there is in a game…“, which suggests he might be open to my feedback-centric argument.
+
+Anyway I sense I haven't fully thought this through and may be problematic assumptions lurking. For example:
+
+Maybe knowing you got screwed by randomness isn't the problematic as I've claimed. Maybe I'm overgeneralizing from my own preferences. In fact, in Garfield says randomness should make you feel that, when you lose, you're unlucky, but when you win, it's due to skill. On the other hand, while that may be true for many sorts of players, I doubt it's true for strategy lovers. After all, it's this “knowing you got screwed” quality that makes Rando-Chess a bad game.
+
+Another assumption is, when I say skill, I'm referring to skill real humans can acquire in practice, not skill “in the game” but out of human reach. For example the best Chess engines now play more than 500 ELO points better than the best humans, and some of that extra skill may be impossible for humans to acquire. My contention #2 above doesn't apply to this sort of theoretical skill. Which kind of skill should we be talking about?
+
+If you can bring other such assumptions to light in the comments I'd be grateful.
+
+Side note: Everyone knows Reiner Knizia is one of the great game designers. What makes his games so good? One feature of many is they make it very hard to know where skill ends and luck begins. In fact Knizia's games inspired my idea that games should exhibit this quality. Tip o' the old hat to the master.</i>
+    </div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Mancala-style problem</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Oct 9, 2012, 7:50:26 AM</div>
+    <div class="content">
+Many years ago, there was a post to sci.math concerning a Mancala
+style situation. I don't recall whether or not the main query
+was fully answered, but I thought it worthwhile to post again.
+
+There are a fixed number of beads distributed into a number of
+cells arranged in a circle, and on any move, the player may pick up
+the contents of any inhabited cell and distribute them anticlockwise
+around the circle, one in each cell. If there are as many or more
+beads in the chosen cell than there are cells, the chosen cell is
+refilled as well, and distribution continues with extra beads
+going into the next several holes. (This is in distinction to all
+traditional Mancala games I know of, where the chosen cell is
+passed over and left empty - but the mathematical puzzle tries
+to allow for the possibility that any arrangement might be
+achieved by some move or other from some preceding position).
+OC if there are a huge number in the chosen cell, two or
+even more full circuits could be made.
+
+For ease of keyboarding, we write the cells in a line, with
+distribution from left to right, recalling that going out over
+the right-hand end means coming back in on the left. So e.g.
+
+3 4 - 7 1 (15 beads in 5 cells) would go to
+
+- 5 1 8 1 if the 1st pile was chosen,
+4 - 1 8 2 if the 2nd pile was chosen,
+5 5 1 1 3 if the 4th pile was chosen, and
+4 4 - 7 - if the 5th pile was chosen.
+
+The main query is:
+
+* Given any two distributions with k beads and n cells,
+* does there necessarily exist a sequence of moves that
+* takes the first position to the second?
+
+-- Boardly Bill
+
+Military history reveals that bad plan is often better than no plan,
+especially if the people on the other side think it is a good plan.    </div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Woohoo! Ketchup a Finalist in 1000 Year Game Design Challenge</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Dec 28, 2011, 5:38:37 PM</div>
+    <div class="content">
+Quick, self-aggrandizing note: Ketchup is a finalist in Daniel Solis'
+1000-Year Game Design Challenge, along with 6 other games, all of
+which look like they could be better than Ketchup.
+
+http://danielsolisblog.blogspot.com/2011/12/finalists-of-thousand-year-game-design.html
+
+So winning is probably still a long shot but who cares I'm awesome.    
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Woohoo! Ketchup a Finalist in 1000 Year Game Design Challenge</div>
+    <div class="author">Xifeng</div>
+    <div class="timestamp">Posted on Dec 28, 2011, 10:20:54 PM</div>
+    <div class="content">
+Woah, I did not expect Neighbors to make the cut, at all. I'm pretty
+sure Ketchup is the better game, and it definitely has a stronger
+community support, so I wish you luck.
+
+-- Tristan (who is also sometimes Xifeng)
+
+On Dec 28, 9:38 am, Nick Bentley <nickobe...@gmail.com> wrote:
+> Quick, self-aggrandizing note: Ketchup is a finalist in Daniel Solis'
+> 1000-Year Game Design Challenge, along with 6 other games, all of
+> which look like they could be better than Ketchup. 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Woohoo! Ketchup a Finalist in 1000 Year Game Design Challenge</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Dec 29, 2011, 12:21:49 AM</div>
+    <div class="content">
+On Dec 28, 3:20 pm, Tristan <rozencra...@gmail.com> wrote:
+> Woah, I did not expect Neighbors to make the cut, at all. I'm pretty
+> sure Ketchup is the better game, and it definitely has a stronger
+> community support, so I wish you luck.
+>
+> -- Tristan (who is also sometimes Xifeng)
+
+Thanks. I haven't played Neighbors so I can't compare. Pretty sweet
+that 2 of the 7 finalists are R.G.C. denizens. Represent!
+    </div>
+  </div>
+
+</body>
+</html>

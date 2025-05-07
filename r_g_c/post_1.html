@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS -->
+
+  <div class="post">
+    <div class="subject">first! boom</div>
+    <div class="author">Nick Bentley</div>
+    <div class="email"> </div>
+    <div class="timestamp">Posted on Nov 4, 2010, 8:01:08 PM</div>
+    <div class="content">
+Popping in to declare:
+
+1) Good idea, Corey; thanks for taking the responsibility of
+moderating.
+
+2) I'm excited about the prospect of thoughtful, non-hyperbolic, troll-
+free discussion here. I'm going to go home tonight and test a new
+game just so I can post here and get real feedback.
+
+May you all remain young and good-looking.
+    </div>  
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: first! boom</div>
+    <div class="author">Matteo Perlini</div>
+    <div class="email"></div>
+    <div class="timestamp">Posted on Nov 4, 2010, 8:26:11 PM</div>
+    <div class="content">
+Well said Nick.
+
+I am really happy about the creation of this place. Thanks Corey.
+    </div>
+  </div>
+  
+  <div class="post level-1">
+    <div class="subject">Re: first! boom</div>
+    <div class="author">Jackspritz</div>
+    <div class="email"></div>
+    <div class="timestamp">Posted on Nov 4, 2010, 8:33:35 PM</div>
+    <div class="content">
+Of course, it seemed obvious to me what to do. I'm just glad it's
+going as smoothly as I had hoped it would. Thanks for the support too
+guys! :) 
+    </div>
+  </div>
+  
+  <div class="post level-1">
+    <div class="subject">Re: first! boom</div>
+    <div class="author">Bill Taylor</div>
+    <div class="email"></div>
+    <div class="timestamp">Posted on Nov 6, 2010, 3:37:59 AM</div>
+    <div class="content">
+I too add in my good wishes, and heartfelt thanks.
+
+BTW, Corey-Jack, you may now please ignore my complaints about not being
+able to get here - it seemed to be a problem with our work computer,
+my home computer is doing it fine!
+
+To make this work, we need as many folk here as possible.
+To this end, I would like to advertise it a little, from time to time, on r.g.a.
+Would that be OK with you, Corey? And if so, then to THAT end,
+how can a member of the public most easily get on/get an invite?
+There should be some quick way they can just log-in, get a quick
+vetting by you, and have their first posts recorded. It would also
+be a good idea if members of the public could READ the group
+instantly and without vetting of any sort.
+
+Is there any chance of all that being available?
+
+In the meantime, to get things spinning on with some actual games,
+here is one that Joao and I came up with.
+I include a partially-played example as illustration.
+It appears to be the 8th instance we played.
+I seem to have won the first 7!
+
+If anyone wishes to challenge me (the world champ!) by email, please do so. :)
+(The board needn't be as big, OC, to start with.)
+
+SWEETHEART Y [B:7] game 8
+============
+Y, with the following modifier.
+
+On each turn the player plays a stone of his own, then (if possible)
+an opponent stone next to one of the opponent's last-played stones,
+then a stone of his own under group restriction.
+First turn is one stone only (no swap).
+
+                              _____Jx______  ______Bo______
+            .              1.   -- h12 --       k9 n10 f12
+           . .             2.  l12 p12 i9      j12 n12 r12
+          . . .            3.  k11 m9 i13      i11 l10 l8
+         . . . .           4.
+        . . . . .          5.
+       . . . . . .         6. >> infiltration along the whole border!
+      . . . . . . .        7. > nasty (as usual)
+     . . . X . . . .       8. NHOC!
+    . . o o x . . . .      9.
+   . . . . o o . . . .    10. These restricted multimove connection games
+  . . . o x . . . . . .   11. are endlessly intricate and fascinating.
+ . . x x o x o x x . . .  12.
+. . . . o . . . . . . . . 13.
+abcdefghijklmnopqrstuvwx
+___________________________________________
+
+Sorry for the board being squashed-up sideways - the usual mailer problem.
+
+Joao and I play a number of such move-modifiers.
+The "group restriction" referred to in the rules, means that the two friendly
+stones played in your turn must finish up in different connected-groups,
+a single stone also counting as a group, OC.
+
+This "Sweetheart Modifier" was one of our funnest ideas, though we
+haven't as yet extended it to many other games. The field is open!
+
+-- Beaming Bill 
+    </div>
+  </div>
+    
+  <div class="post level-1">
+    <div class="subject">Re: first! boom</div>
+    <div class="author">Jackspritz</div>
+    <div class="email"></div>
+    <div class="timestamp">Posted on Nov 7, 2010, 12:48:12 AM</div>
+    <div class="content">
+On Nov 5, 9:37 pm, Bill Taylor <w.tay...@math.canterbury.ac.nz> wrote:
+> I too add in my good wishes, and heartfelt thanks.
+
+Welcome Bill, glad you finally made it!
+
+On Nov 5, 9:37 pm, Bill Taylor <w.tay...@math.canterbury.ac.nz> wrote:
+> To make this work, we need as many folk here as possible.
+> To this end, I would like to advertise it a little, from time to time,
+> on r.g.a.
+
+I agree that we need as many members as we can get. There are still
+some hold-outs. Michael Howe for instance has a personal grudge
+against me for calling him Steere's hand-puppet. Understandable but no
+need to boycott this site. The best thing anyone who is currently a
+member of this site can do is to not post anything game-related on
+rec.games.abstract. That site needs to be completely deserted before
+we can build anew. I don't discourage anyone from spamming
+rec.games.abstract or trolling Steere, activities which I will
+continue to engage in, hehe. I'll give you the go-ahead to advertise
+the site but I think I got all the active posters from
+rec.games.abstract.
+
+> how can a member of the public most easily get on/get an invite?
+> There should be some quick way they can just log-in, get a quick
+> vetting by you, and have their first posts recorded.  It would also
+> be a good idea if members of the public could READ the group
+> instantly and without vetting of any sort.
+
+Yes, this is all stuff I have to figure out now. I'm trying to
+determine how I am going to organize the site but I was busy these
+past few days looking for potential members and making sure everybody
+made it here okay. I still have 10 outstanding invites that have yet
+to be accepted! *gasp*. I've invited members from other forums like
+the Yahoo abstracts group and BGG but most of them haven't made it
+here yet.
+
+Sweetheart Y is looks neat. Interestingly, as I recall, Matteo
+Perilini was messing around with a concept he called Hexxeh that
+sounds very similar. Hexxeh combined a game of Misere Hex and a game
+of normal Hex. Fairly simple compared to this but it just goes to show
+that great minds think alike :D. I'm guessing that this game's point
+was to improve on the parity of Y by introducing a cold element?
+
+Bill, I hate to say it, but the diagram you made is practically
+indecipherable! Maybe try some other method of making diagrams. I'll
+probably be using Google Docs myself. I used the "show original"
+option but there was still text interspersed with bits of the
+diagram. 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: first! boom</div>
+    <div class="author">Bill Taylor</div>
+    <div class="email"></div>
+    <div class="timestamp">Posted on Nov 7, 2010, 4:59:38 AM</div>
+    <div class="content">
+Quoting Jackspritz <schac...@live.com>:
+
+> The best thing anyone who is currently a
+> member of this site can do is to not post anything game-related on
+> rec.games.abstract.
+
+Not quite.
+We need to post titbits there, of the type that announces
+a new game, but gives no details of rules or diagrams or play,
+except the most general sort that says what type of game it is -
+altogether about half a paragraph; AND says that full details and
+discussion are on the recre-site. I think that is the way to get
+most people out of rga.
+
+> That site needs to be completely deserted before we can build anew
+
+I don't think rga is ever going to be clean - steere will haunt it
+for ever, checking in once in a while to make sure nothing
+gets past him. That guy is one sad cookie!
+
+> I don't discourage anyone from ... trolling Steere,
+
+It is my goal in life now.
+
+> I'll give you the go-ahead to advertise the site
+
+Sorry, confused - do you mean you are NOW giving us leave,
+or are you saying that you soon will be? And how
+should we refer to it; and what links will
+most easily allow newbies to join?
+
+> but I think I got all the active posters from rec.games.abstract.
+
+I hope so!
+
+> I've invited members from other forums like the Yahoo abstracts group and BGG
+
+Good. Sterling work!
+
+> Sweetheart Y is looks neat.
+
+Thanks. As I said, the sweetheart modifier (invented by Joao)
+can apply to almost any game, with suitable modifications.
+For example, one could even do it with chess - at each turn, you make
+a move of your own, make a move with the opponent's last-moved piece
+(if possible, else pass), then another move of your own, perhaps
+under the restriction that it cannot be the same piece as your first
+move of that turn. Actually - that sounds cool already!
+Must get Joao to give it a try!
+
+One nice thing about the sweetheart idea is that the final game
+record will usually look exactly like a regular game -
+just with weird play!
+
+> Hexxeh combined a game of Misere Hex and a game
+
+BTW - is Misere Hex any good? Anyone ever played it? It sounds
+like it would be scorchingly dependent on parity - a bit CGT-like.
+
+> Bill, I hate to say it, but the diagram you made is practically
+> indecipherable!
+
+I know I know! It's bloody Usenet - it used to work on fixed length
+font, and I had a huge library of pictures and diagrams that I could
+cut-&-paste. But then it changed to variable width and they are all
+useless now! I can still use them for email, OC.
+
+I can't even modify them on screen too well, as there isn't a perfect
+match between what you see and what you get now! Dammit!!
+
+I'll see what I can do.
+Let me just practise here and see what happens...
+
+|          .
+|        .   .
+|      .   X   .
+|    .   o   .   .
+|  .   .   O   x   x
+
+Does that come out I wonder...?...
+
+-- Trying Taylor
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: first! boom</div>
+    <div class="author">Jackspritz</div>
+    <div class="email"></div>
+    <div class="timestamp">Posted on Nov 7, 2010, 7:32:44 AM</div>
+    <div class="content">
+On Nov 6, 10:59 pm, W.Tay...@math.canterbury.ac.nz wrote:
+> Quoting Jackspritz <schackow...@live.com>:
+>
+> > The best thing anyone who is currently a
+> > member of this site can do is to not post anything game-related on
+> > rec.games.abstract.
+>
+> Not quite.
+> We need to post titbits there, of the type that announces
+> a new game, but gives no details of rules or diagrams or play,
+> except the most general sort that says what type of game it is -
+> altogether about half a paragraph; AND says that full details and
+> discussion are on the recre-site.   I think that is the way to get
+> most people out of rga.
+
+interesting idea, to wet people's appetites. It's up to everybody's
+individual discretion though. I personally think keeping that site
+free of games discussion is the best idea.
+
+> > That site needs to be completely deserted before we can build anew
+>
+> I don't think rga is ever going to be clean - steere will haunt it
+> for ever, checking in once in a while to make sure nothing
+> gets past him.   That guy is one sad cookie!
+
+Oh of course Steere will remain, but a lone poster talking to himself
+is my idea of deserted.
+
+> > I don't discourage anyone from ... trolling Steere,
+>
+> It is my goal in life now.
+>
+> > I'll give you the go-ahead to advertise the site
+>
+> Sorry, confused - do you mean you are NOW giving us leave,
+> or are you saying that you soon will be?  And how
+> should we refer to it; and what links will
+> most easily allow newbies to join?
+
+I'm just saying I don't need to have control over everyone. If you
+want to advertise this site elsewhere that's your choice. I'm just a
+bit dubious about how effective advertising in rec.games.abstract will
+be.
+
+> BTW - is Misere Hex any good?   Anyone ever played it?   It sounds
+> like it would be scorchingly dependent on parity - a bit CGT-like.
+
+I played many games of Misere Hex at iggamecenter. At first it seemed
+like a really interesting game but after 20 or so matches my
+impression is that it has a distinct lack of clarity and there doesn't
+seem to be any tangible way of securing an advantage. The strategies
+are that of an inverted Hex though, avoid creating bridges, play from
+the edge inward. The problem is definitely a lack of clarity, which
+can be expected, given that Hex involves a lot of reading ahead. All
+of a sudden you have to consider all the possible ways to avoid
+connection instead of the few ways you will be able to achieve it.
+Another annoying thing is the inevitable Nim situations, where both
+players will waste moves trying to avoid playing particular cells.
+These become more and more frequent with greater skill. I don't find
+that sort of gameplay very fun myself.
+
+> I can't even modify them on screen too well, as there isn't a perfect
+> match between what you see and what you get now!   Dammit!!
+>
+> I'll see what I can do.
+> Let me just practise here and see what happens...
+>
+> |          .
+> |        .   .
+> |      .   X   .
+> |    .   o   .   .
+> |  .   .   O   x   x
+>
+> Does that come out I wonder...?...
+
+better :D 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: first! boom</div>
+    <div class="author">Jackspritz</div>
+    <div class="email"></div>
+    <div class="timestamp">Posted on Nov 7, 2010, 11:21:32 AM</div>
+    <div class="content">
+Oh btw Bill, what's CGT?
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: first! boom</div>
+    <div class="author">Matteo Perlini</div>
+    <div class="email"></div>
+    <div class="timestamp">Posted on Nov 7, 2010, 10:43:57 PM</div>
+    <div class="content">
+On Nov 7, 1:48 am, Jackspritz <schackow...@live.com> wrote:
+> Sweetheart Y is looks neat. Interestingly, as I recall, Matteo
+> Perilini was messing around with a concept he called Hexxeh that
+> sounds very similar. Hexxeh combined a game of Misere Hex and a game
+> of normal Hex.
+
+Thanks Corey for mentioning Hexxeh. :)
+
+Bill, your game sounds interesting. Could you open a proper topic for
+discussing it?
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: first! boom</div>
+    <div class="author">Matteo Perlini</div>
+    <div class="email"></div>
+    <div class="timestamp">Posted on Nov 7, 2010, 10:46:04 PM</div>
+    <div class="content">
+On Nov 6, 4:37 am, Bill Taylor <w.tay...@math.canterbury.ac.nz> wrote:
+> It would also
+> be a good idea if members of the public could READ the group
+> instantly and without vetting of any sort.
+
+I totally agree. This would be really good for this group.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: first! boom</div>
+    <div class="author">Bill Taylor</div>
+    <div class="email"></div>
+    <div class="timestamp">Posted on Nov 8, 2010, 2:19:31 AM</div>
+    <div class="content">
+-> Oh btw Bill, what's CGT?
+
+"Combinatorial Game Thgeory", Conway style, a la "Winning Ways"
+
+A fascinating study, but more a topic in math than a real abstract-game
+concept. I too find them rather boring to play, though very intriguing
+to analyse.
+
+-- b
+    </div>
+  </div>
+
+
+</body>
+</html>

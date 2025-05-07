@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Ketchup Strategy Basics, Plus an Example Game</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Oct 27, 2011, 10:17:45 PM</div>
+    <div class="content">
+Just some strategy notes:
+
+<a href="https://web.archive.org/web/20130419024257/http://nickbentley.posterous.com/ketchup-strategy">http://nickbentley.posterous.com/ketchup-strategy</a>
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Ketchup Strategy Basics, Plus an Example Game</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Oct 29, 2011, 12:06:17 PM</div>
+    <div class="content">
+Thanks for the updates Nick - much appreciated.
+
+I must say I'm surprised at your report whereby
+a large proportion of games turned out to be
+equal on largest-sized groups! Joao and I have
+been playing it for a little while, and have never
+had a single one, nor had a game that even
+*threatened* to come down to that!
+
+So I deduce that you and your opponents must be playing
+a somewhat different approach from ours! - that it should
+happen so often with you. This is puzzling, as your games
+that were recorded on your site, (great graphics BTW!),
+seemed to start very similarly to ours.
+
+This makes me even more keen to play some email games with you,
+that might give us a chance to see what's what.
+
+Any chance of that?
+
+-- Baffled Bill
+    </div>
+  </div>
+
+</body>
+</html>

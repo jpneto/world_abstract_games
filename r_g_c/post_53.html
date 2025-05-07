@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Mastermind</div>
+    <div class="author">James Dow Allen</div>
+    <div class="timestamp">Posted on Jun 28, 2011, 11:30:04 AM</div>
+    <div class="content">
+I've been playing with Mastermind.
+One discovery: the 5-peg 7-color game can be solved with 6 guesses
+maximum, though none of the "standard" heuristics find a way to do
+it. Is this already known?
+
+Google Groups seems to have frozen its Usenet archive.
+I've no idea whether that's permanent, but since many Usenetters use
+the Google interface, that may increase the popularity of groups like
+this one.
+
+James   
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Mastermind</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Jul 2, 2011, 12:18:33 PM</div>
+    <div class="content">
+On Jun 28, 10:30 pm, James Dow Allen <jdallen2...@yahoo.com> wrote:
+> I've been playing with Mastermind.
+> One discovery: the 5-peg 7-color game can be solved with 6 guesses
+
+Is that allowing repeated colors, or disallowing?
+
+Does avyone know the figure for the "original" mastermind?
+(4 pegs, 10 colors, no repeats)
+
+-- Wondering William 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Mastermind</div>
+    <div class="author">Russ Williams</div>
+    <div class="timestamp">Posted on Jul 2, 2011, 3:10:00 PM</div>
+    <div class="content">
+Original Mastermind had 4 pegs and 6 colors, not 10 colors!
+It has a 5-guess algorithm discovered by Knuth according to:
+http://en.wikipedia.org/wiki/Mastermind_%28board_game%29
+
+Deluxe Mastermind had 5 pegs and 8 colors.
+
+cheers,
+russ
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Mastermind</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Jul 2, 2011, 3:34:36 PM</div>
+    <div class="content">
+On Jul 3, 2:10 am, Russ Williams <cxiomor...@gmail.com> wrote:
+
+> Original Mastermind had 4 pegs and 6 colors, not 10 colors!
+
+Ah - I see I was thinking of "Bulls and Cows", which your article
+references, and is much older though essentially the same,
+which has 4 and 10, no repeats.
+
+I recall we used to play it well before Mastermind was
+(ridiculously unnecessarily!) commercially produced.
+
+Cheers, Bill 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Mastermind</div>
+    <div class="author">James Dow Allen</div>
+    <div class="timestamp">Posted on Jul 4, 2011, 12:46:42 PM</div>
+    <div class="content">
+Repeated colors allowed. While Knuth's simple
+algorithm happens(*) to find the min max-depth (4,6)
+solution, it doesn't for the (5,7). Programmers
+might have fun developing a heuristic that does
+work (mine was brutish), And I'm curious if the
+result is new. (One finds lots of info on the (4,6)
+game on-line. For other games, not much.)
+
+(* - Knuth and other algorithms use lexicographic
+order as an arbitrary tie-breaker when choosing best clue.
+But some other arbitrary ti-breakers fail to minimize.)
+
+On Jul 2, 9:34 pm, Bill Taylor <wfc.tay...@gmail.com> wrote:
+> I recall we used to play it well before Mastermind was
+> (ridiculously unnecessarily!) commercially produced.
+
+Yes, some commercial sets are silly, but at least a
+Mastermind set has a little aesthetic appeal.
+Playing Battleship on a set is masochistically tedious,
+while paper and pencil is easy. Clue would be an exciting
+abstract game, if you didn't try to incorporate board
+and dice.
+
+BTW, I plan to create a Mastermind-playing webpage using
+Javascript's "Innerhtml." it will be my first real
+venture into Javascript. Wish me luck!
+
+James
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Mastermind</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Jul 6, 2011, 7:37:20 AM</div>
+    <div class="content">
+On Jul 4, 11:46 pm, James Dow Allen <jdallen2...@yahoo.com> wrote:
+
+> Repeated colors allowed.  While Knuth's simple
+> algorithm happens(*) to find the min max-depth (4,6)
+
+OK then. I deliberately haven't read the article, but I managed
+to outline a proof (to my own satisfaction) that (4,6)-no-repeats
+could be achieved in that minimum; now I will have to embark on
+the more tediously laborious repeats-allowable version. Damn!
+
+I generally don't like the repeats-allowed versions,
+for two reasons.
+
+1) I was introduced via "Bulls and Cows", where the no-repeat rule
+was standard, and developed cool pencil-and-paper techniques for
+playing well. So I selfishly dislike to change.
+
+2) The repeats-allowed version is much harder to keep track of
+during a pencil-&-paper game. And harder in a bad way - it just
+adds complications without adding much depth. And this is not
+merely subjective:- I found that the rules used by servers
+seem to be rather illogical - they are not purely numerical,
+but involve a certain "human-oriented" aspect. This is borne
+out by the fact that they are annoyingly difficult to program -
+it can be done, but a simpler purely-numerical rule would make
+it so much easier even to get a computer to *play* the game!
+
+So, I haven't done much on servers, though I consider myself
+one of the best (at no-repeats). BOOOOOOoooooooo....!!!
+
+> Clue would be an exciting abstract game,
+> if you didn't try to incorporate board and dice.
+
+Yes indeed! I think "Clue" is the American name for our "Cluedo";
+Colonel mustard, hammer, rope, conservatory etc - right?
+
+Cluedo is very clearly a pure card game (distantly similar to
+"Go Fish" or "Happy Families"), that has been filled out with
+commercial rubbish like a board and tokens of various types,
+wonderful for having something to actually *sell*, but revolting
+excrescences to us who prefer pure games over excressential ones.
+<copyright!> ;-)
+
+Pure Cluedo is simple, an interesting search game; one only needs
+to have (3 or) 4 suits, unsightedly conceal one of each, deal out
+the rest, and ask and show as in Cluedo. It is so "natural"
+a game that I keep trying to get urban peasants to try it out,
+without any success so far - they just LOVE their tokens!
+
+Though oddly, they are quite happy to play Happy Families with
+ordinary cards, which is also a serious intellectual multiplayer game.
+
+> BTW, I plan to create ... my first real
+> venture into Javascript.  Wish me luck!
+
+Good luck, bon chance, and mucho feliz! You are a hero! :)
+
+-- Board-game Bill 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Mastermind</div>
+    <div class="author">James Dow Allen</div>
+    <div class="timestamp">Posted on Jul 7, 2011, 8:55:23 AM</div>
+    <div class="content">
+On Jul 6, 1:37 pm, Bill Taylor <wfc.tay...@gmail.com> wrote:
+> I generally don't like the repeats-allowed versions,
+
+I've always assumed repeats add a nice complexity, but
+I've never played "Bulls and Cows." I used to play Jotto
+quite seriously, a Mastermind-like game where secrets and
+probes must all be English 5-letter words.
+
+> Yes indeed!  I think "Clue" is the American name for our "Cluedo";
+> Colonel mustard, hammer, rope, conservatory etc - right?
+
+Right. One draws inference from others' probes, but may be
+victimized by their "bluffing" so it might be a much deeper
+game than expected. I suggested it for a programming contest
+once, but was met with bafflement....
+
+> > BTW, I plan to create  ...  my first real
+> > venture into Javascript.  Wish me luck!
+>
+> Good luck, bon chance, and mucho feliz!
+
+It's ready for a first look: http://fabpedigree.com/james/mmind/
+
+It still needs some user-interface tuning, but is
+available for early bug reports!! :-)
+
+James
+(Please do not email the obsolete address shown in From.
+My address is jamesdowallen at gmail.com.)
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Mastermind</div>
+    <div class="author">James Dow Allen</div>
+    <div class="timestamp">Posted on Jul 7, 2011, 8:59:18 AM</div>
+    <div class="content">
+On Jul 7, 2:55 pm, James Dow Allen <jdallen2...@yahoo.com> wrote:
+
+> It's ready for a first look:
+>    http://fabpedigree.com/james/mmind/
+>
+> It still needs some user-interface tuning, but is
+> available for early bug reports!!  :-)
+
+And right off the bat I spot an obvious confusion.
+To get the computer to start querying, you click "Set your secret."
+the only "setting" you need actually do for your secret is to
+write it down on paper (where the computer can't see it!)
+
+James
+    </div>
+  </div>
+
+</body>
+</html>

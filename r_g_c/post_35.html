@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Extending the Judging Period for the Contest</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Jan 3, 2011, 3:15:29 PM</div>
+    <div class="content">
+Hi All,
+
+Seeing as that I've seen not terribly much testing activity on iggc
+(and frankly, I haven't played all the games yet myself, having failed
+to anticipate how little time I'd have to do so over the holidays),
+I've decided to extend the judging period for another three weeks. So
+you now have until January 24 to send me your votes.
+
+Better get on it, unless you want the contest to turn into Nick-picks-
+his-favorite-game-and-calls-it-the-winner (which, if it comes to that,
+is fine by me)
+
+Hope everyone had a nice holiday,
+Nick    
+    </div>
+  </div>
+
+</body>
+</html>

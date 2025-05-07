@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">New Game: Arrello</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Nov 16, 2010, 10:49:43 PM</div>
+    <div class="content">
+I've posted a new game over at my blog: http://nickbentley.posterous.com/33653960
+
+You may want to go to the blog to read the rules, because there are
+illustrated examples there which will clarify them (I'm not sure words
+alone do the trick). Nonetheless I describe the rules below as well.
+
+The game is a cousin of Othello (also known as Reversi), so I may
+submit to the abstract game design contest. Or not, depending on if I
+design anything better before the deadline.
+
+Note: I haven't played it enough to know that it's bug free, and as I
+play it I may find ways to refine and improve it, so the rules may
+change.
+
+The game emerged from issues I have with Othello, chiefly:
+
+* It's too tactical, and not strategic enough.
+* Players have limited options as to how to place their stones.
+
+Arrello is an attempt to avoid these problems.
+
+The name is a combination of the words "Arrow" and "Othello". I chose
+this name because the relationship between the stone you place and the
+stones you flip is similar to the relationship between an Amazon and
+an Arrow in the classic abstract game Amazons.
+
+As always, feedback, especially constructive criticism, is welcome.
+
+Arrello is a 2-player game played with two-sided stones (green on one
+side, red on the other), on a square grid with an odd number of
+cells. I recommend a 9x9 grid.
+
+Rules
+1. Players take turns. One player plays stones red-side up, the other
+plays stones green-side up.
+2. On your turn, you must place a stone of your color onto any empty
+space. If you place it (diagonally or orthogonally) adjacent to a
+same-color color stone, you may optionally flip opponent stone(s).
+Here are the rules for flipping:
+
+*You may flip any opponent stone or row of opponent stones which are
+in an unobstructed straight-line path (diagonal or orthogonal) from
+the stone that you just placed. See examples below for clarity.
+*If your opponent placed a stone non-adjacent to any same-color stones
+on his most recent turn, you may not flip it on your current turn
+(though you may flip it on later turns)
+
+3. The game ends when the board is full; the player with the majority
+of stones on the board wins.     
+    </div>
+  </div>
+
+</body>
+</html>

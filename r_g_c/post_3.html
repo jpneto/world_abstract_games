@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS -->
+
+  <div class="post">
+    <div class="subject">A group gift</div>
+    <div class="author">João Pedro Neto</div>
+    <div class="email"></div>
+    <div class="timestamp">Posted on Nov 8, 2010, 10:11:04 AM</div>
+    <div class="content">
+Hi all,
+
+Nice to be here, at this new home for the abstract landscape of games.
+
+I think this deserves something special and so, in the next link, you
+all may download a digitalized book made by Fred Horn and presented at
+the last Board Game Studies (in Paris).
+
+This book is a collection of articles from the late english magazine
+Games and Puzzles, concerning abstract games. A true rarity after more
+than 30 years.
+
+http://rapidshare.com/files/383774785/Lost_Treasures_from_Games___Puzzles.pdf
+
+Cheers,
+    
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: A group gift</div>
+    <div class="author">Nick Bentley</div>
+    <div class="email"></div>
+    <div class="timestamp">Posted on Nov 8, 2010, 2:30:08 PM</div>
+    <div class="content">
+This is great! Thanks so much Joao!
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: A group gift</div>
+    <div class="author">Jackspritz</div>
+    <div class="email"></div>
+    <div class="timestamp">Posted on Nov 8, 2010, 8:05:54 PM</div>
+    <div class="content">
+Thanks Joao, very interesting. Welcome to the group! 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: A group gift</div>
+    <div class="author">ickzack@gmail.com</div>
+    <div class="email"></div>
+    <div class="timestamp">Posted on Nov 8, 2010, 9:29:00 PM</div>
+    <div class="content">
+Fred Horn then. I had the pleasure of meeting him on this year's congress
+of game authors here in Göttingen. He introduced me to his game Fianco
+(http://homepages.di.fc.ul.pt/~jpn/gv/fianco.htm - note the uncanny resemblance
+to Dan Troyka's later game Breakthrough) as well as a variation on 4 in a row
+played with pieces made up of two cubes. He also gave a self-designed card
+set out to other designers, challenging us to come up with a game within a
+year.
+
+Later, I met Niek Neuwahl who has designed a large collection of three dimensional
+abstracts. It took me some time realise that he is the guy behind Aztec. To be
+precise, it did not dawn on me until I arrived at home (if you are reading this, Niek,
+sorry). As opposed to Fred, he also won at his own games always. 
+
+These two were islands in a sea of designers who where hoping to get publishers
+interested by sticking a theme onto their rarely stringent ideas. I talked with
+several of them and they told me that publishers demand first and foremost
+that there is a theme. Well, Fred and Niek did not care. There were a few others,
+but these two were entirely abstract.
+
+And that brings me to an observation. Christian Freeling, Fred Horn, Niek Neuwahl,
+and Kris Burm are Dutch respectively Dutch speaking. Why is there such a number
+of abstract designers speaking Dutch?
+
+I see two explanations:
+
+The Dutch are good at English (and German, I can assure you) which helps
+them to access a large market. For some time in my life I believed there were
+few, if any designers in Romanic countries. This belief is likely an effect of them
+not passing the language barrier (that used to include you, Joao, too).
+
+A second assumption is that Checkers is still going strong in the Dutch culture
+whereas other cultures moved on to supposedly higher and better games. Checkers
+is a simple, yet clever and deep game. The current market is looking for simple
+and clever games, if they have an obvious twist. The latter is missing in Checkers,
+but the Dutch are willing to cope. 
+
+Benedikt
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: A group gift</div>
+    <div class="author">christian</div>
+    <div class="email"></div>
+    <div class="timestamp">Posted on Nov 8, 2010, 10:50:13 PM</div>
+    <div class="content">
+On Nov 8, 10:29 pm, "zickz...@gmail.com" <zickz...@gmail.com> wrote:
+> And that brings me to an observation. Christian Freeling, Fred Horn, Niek Neuwahl, and Kris Burm are Dutch respectively Dutch speaking. Why is there such a number of abstract designers speaking Dutch?
+
+There's also Martin Medema (Atlantis, Explocus, conceived the concept
+of the China Labyrinth). Horn is an expert and collector, like you,
+Neuwahl doesn't sound very dutch, but I believe you, and Burm is only
+in it for the money (implying no value judgement, I just stopped at
+Gipf ;-)
+
+So that's 5, and I don't think it means anything. Certainly not in my
+case, because barring Martin they all might have lived on the moon
+(although I _think_ I met Horn once, far away in the last century).
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: A group gift</div>
+    <div class="author">Matteo Perlini</div>
+    <div class="email"></div>
+    <div class="timestamp">Posted on Nov 9, 2010, 8:12:06 AM</div>
+    <div class="content">
+Hi João, what a great gift!
+
+Thank you very much. :) 
+    </div>
+  </div>
+
+</body>
+</html>

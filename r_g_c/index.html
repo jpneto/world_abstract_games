@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>r.g.c Archive Index</title>
+  <style>
+    body {
+      font-family: Courier New, sans-serif;
+      padding: 20px;
+      font-size: 12px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid #bbb;
+      padding: 6px 10px;
+      text-align: left;
+      vertical-align: top;
+      font-size: 12px;
+    }
+    th {
+      <!--background-color: #f4f4f4;-->
+      cursor: pointer;
+      font-size: 14px;
+    }
+    th.sorted-asc::after {
+      content: " ↑";
+    }
+    th.sorted-desc::after {
+      content: " ↓";
+    }    
+    input[type="text"] {
+      font-family: Courier New;
+      width: 380px;
+      padding: 6px 10px;
+      margin-bottom: 10px;
+      font-size: 12px;
+    }
+    a {
+      color: #000000; <!-- #007bff; -->
+      text-decoration: none;
+      margin-right: 8px;
+      display: inline-block;
+      font-size: 12px;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    input[type="text"],
+    input[type="text"]:focus   
+    {
+         background: transparent;
+         <!--border: none;-->
+         outline-width: 0;
+    }    
+    
+  </style>
+</head>
+
+<body>
+  <h1>Recre.Games.Combinatorial Archive Index</h1>
+  
+	<p><font size="2">[May 2025]</font> <i>Added extra information to some posts, namely, included the content of mentioned articles from websites that, meanwhile, disappeared.</i></p>  
+  
+  <input type="text" id="searchInput" onkeyup="filterTable()"
+         placeholder="Search (!word for exclusion)">
+  <br>
+  <span id="list-length"></span> 
+  
+  <table id="dataTable">
+    <thead>
+      <tr>
+        <th onclick="sortTable(0)">Date</th>
+        <th onclick="sortTable(1)">Poster</th>
+        <th onclick="sortTable(2)">Subject</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Rows will be inserted here -->
+    </tbody>
+  </table>
+
+  <script>
+    const data = [
+          {
+            date: "Nov 4, 2010, 8:01:08 PM",
+            poster: "Nick Bentley",
+            url: "post_1.html",
+            subject: "first! boom"
+          },
+          {
+            date: "Nov 4, 2010, 8:01:08 PM",
+            poster: "Jackspritz",
+            url: "post_2.html",
+            subject: "Email notifications"
+          },
+          {
+            date: "Nov 8, 2010, 10:11:04 AM",
+            poster: "João Pedro Neto",
+            url: "post_3.html",
+            subject: "A group gift"
+          },
+          {
+            date: "Nov 10, 2010, 4:05:27 AM",
+            poster: "Bill Taylor",
+            url: "post_4.html",
+            subject: "Sweetheart Y"
+          },
+          {
+            date: "Nov 6, 2010, 2:24:26 PM",
+            poster: "christian",
+            url: "post_5.html",
+            subject: "contest"
+          },
+          {
+            date: "Nov 8, 2010, 10:27:14 AM",
+            poster: "João Pedro Neto",
+            url: "post_6.html",
+            subject: "Fixed fonts and a CGT-game example: Winerack"
+          },
+          {
+            date: "Nov 12, 2010, 10:09:18 AM",
+            poster: "Jackspritz",
+            url: "post_7.html",
+            subject: "Christian's fascinating design process"
+          },
+          {
+            date: "Nov 11, 2010, 5:04:07 AM",
+            poster: "Bill Taylor",
+            url: "post_8.html",
+            subject: "CORNERLESS Y & Y-VERSI"
+          },
+          {
+            date: "Nov 16, 2010, 10:49:43 PM",
+            poster: "Nick Bentley",
+            url: "post_10.html",
+            subject: "New Game: Arrello"
+          },
+          {
+            date: "Nov 18, 2010, 4:31:13 AM",
+            poster: "Bill Taylor",
+            url: "post_11.html",
+            subject: "Corners and Ugliness, again. (1)"
+          },
+          {
+            date: "Nov 21, 2010, 11:57:43 AM",
+            poster: "Bill Taylor",
+            url: "post_12.html",
+            subject: "Endless catalogue of Y's..."
+          },
+          {
+            date: "Nov 21, 2010, 12:05:21 PM",
+            poster: "Bill Taylor",
+            url: "post_13.html",
+            subject: "Definition of 'great games'."
+          },
+          {
+            date: "Nov 20, 2010, 11:51:34 AM",
+            poster: "Matteo Perlini",
+            url: "post_14.html",
+            subject: "Pilf - a possible contest submission"
+          },
+          {
+            date: "Nov 23, 2010, 8:17:07 PM",
+            poster: "Xifeng",
+            url: "post_15.html",
+            subject: "Kitaran"
+          },
+          {
+            date: "Nov 27, 2010, 12:18:49 PM",
+            poster: "Bill Taylor",
+            url: "post_16.html",
+            subject: "Y, again."
+          },
+          {
+            date: "Dec 2, 2010, 8:50:24 AM",
+            poster: "Zhang Dawei",
+            url: "post_17.html",
+            subject: "Game Isomorphisms (Was: Re: Y, again.)"
+          },
+          {
+            date: "Nov 17, 2010, 12:57:06 AM",
+            poster: "Phil Leduc",
+            url: "post_18.html",
+            subject: "Abeo - Contest Submission"
+          },
+
+          {
+            date: "Dec 12, 2010, 8:15:34 PM",
+            poster: "João Pedro Neto",
+            url: "post_19.html",
+            subject: "About some oldies"
+          },
+          {
+            date: "Dec 19, 2010, 5:03:05 PM",
+            poster: "Ralf Gering",
+            url: "post_20.html",
+            subject: "just want to say 'hello'"
+          },
+
+          {
+            date: "Dec 13, 2010, 11:45:35 PM",
+            poster: "Matteo Perlini",
+            url: "post_21.html",
+            subject: "AI for Ecalper"
+          },
+          {
+            date: "Dec 2, 2010, 12:21:08 PM",
+            poster: "Zhang Dawei",
+            url: "post_22.html",
+            subject: "Capture Mechanisms"
+          },
+
+          {
+            date: "Dec 21, 2010, 2:17:28 PM",
+            poster: "Nick Bentley",
+            url: "post_23.html",
+            subject: "possible contest rules adjustment: soliciting feedback."
+          },
+          {
+            date: "Dec 18, 2010, 4:50:53 PM",
+            poster: "Luis Bolaños Mures",
+            url: "post_24.html",
+            subject: "Radiolarians?"
+          },
+
+          {
+            date: "Dec 23, 2010, 7:14:10 PM",
+            poster: "Andrew Juell",
+            url: "post_25.html",
+            subject: "Devil's Advocate - contest submission"
+          },
+          {
+            date: "Nov 11, 2010, 5:02:12 PM",
+            poster: "Nick Bentley",
+            url: "post_26.html",
+            subject: "Official Abstract Game Design Contest #1 Rules and Restrictions"
+          },
+          {
+            date: "Dec 24, 2010, 12:04:51 AM",
+            poster: "Joshua",
+            url: "post_27.html",
+            subject: "Deadcell"
+          },
+          {
+            date: "Dec 20, 2010, 4:26:06 PM",
+            poster: "superslacker",
+            url: "post_28.html",
+            subject: "[new game] Charisma"
+          },
+          {
+            date: "Dec 23, 2010, 8:40:47 PM",
+            poster: "Nick Bentley",
+            url: "post_29.html",
+            subject: "I have these 9 games for the contest so far. I'm I missing any?"
+          },
+          {
+            date: "Dec 24, 2010, 4:15:17 PM",
+            poster: "superslacker",
+            url: "post_30.html",
+            subject: "Re: Phase II of Contest Begins - Games and Instructions"
+          },
+          {
+            date: "Dec 17, 2010, 11:50:23 AM",
+            poster: "Dieter Stein",
+            url: "post_31.html",
+            subject: "Verto - my entry to the contest"
+          },
+          {
+            date: "Dec 23, 2010, 9:19:01 PM",
+            poster: "Nick Bentley",
+            url: "post_32.html",
+            subject: "New Game: Swaparound"
+          },
+          {
+            date: "Dec 24, 2010, 6:02:24 PM",
+            poster: "Nick Bentley",
+            url: "post_33.html",
+            subject: "2nd Try: Contest Game Links and Instructions"
+          },
+          {
+            date: "Dec 18, 2010, 3:59:50 PM",
+            poster: "Luis Bolaños Mures",
+            url: "post_34.html",
+            subject: "Implo - Contest Submission"
+          },
+          {
+            date: "Jan 3, 2011, 3:15:29 PM",
+            poster: "Nick Bentley",
+            url: "post_35.html",
+            subject: "Extending the Judging Period for the Contest"
+          },
+          {
+            date: "Dec 27, 2010, 11:56:19 AM",
+            poster: "Dieter Stein",
+            url: "post_36.html",
+            subject: "Verto AI Applet"
+          },
+          {
+            date: "Nov 18, 2010, 4:34:02 AM",
+            poster: "Bill Taylor",
+            url: "post_37.html",
+            subject: "Corners and Ugliness, again. (2)"
+          },
+          {
+            date: "Jan 16, 2011, 4:22:28 PM",
+            poster: "Dieter Stein",
+            url: "post_38.html",
+            subject: "Verto for Zillions"
+          },
+          {
+            date: "Jan 20, 2011, 9:14:55 AM",
+            poster: "Dieter Stein",
+            url: "post_39.html",
+            subject: "New Game: Mixtour"
+          },
+          {
+            date: "Jan 21, 2011, 7:23:03 AM",
+            poster: "Dieter Stein",
+            url: "post_40.html",
+            subject: "Verto Rule Change"
+          },
+          {
+            date: "Jan 24, 2011, 7:25:14 PM",
+            poster: "Nick Bentley",
+            url: "post_41.html",
+            subject: "Hmmm. No votes recieved for contest. I guess requirements too stringent?"
+          },
+          {
+            date: "Feb 5, 2011, 5:02:31 PM",
+            poster: "James Dow Allen",
+            url: "post_42.html",
+            subject: "Goofspiel"
+          },
+          {
+            date: "Feb 23, 2011, 7:43:20 PM",
+            poster: "Cameron Browne",
+            url: "post_43.html",
+            subject: "Games that stretch MCTS"
+          },
+          {
+            date: "Mar 10, 2011, 5:50:33 AM",
+            poster: "Bill Taylor",
+            url: "post_45.html",
+            subject: "Dice by email?"
+          },
+          {
+            date: "Apr 7, 2011, 2:04:48 PM",
+            poster: "David E. Whitcher",
+            url: "post_46.html",
+            subject: "Feedback for new game"
+          },
+          {
+            date: "Apr 18, 2011, 6:41:02 PM",
+            poster: "Cameron Browne",
+            url: "post_47.html",
+            subject: "Call for Proverbs"
+          },
+          {
+            date: "May 12, 2011, 10:24:50 AM",
+            poster: "Cameron Browne",
+            url: "post_48.html",
+            subject: "Puzzle Design Survey"
+          },
+          {
+            date: "May 21, 2011, 1:36:05 PM",
+            poster: "Cameron Browne",
+            url: "post_49.html",
+            subject: "Special journal issue: Computational Aesthetics in Games"
+          },
+          {
+            date: "May 23, 2011, 1:52:49 PM",
+            poster: "João Pedro Neto",
+            url: "post_50.html",
+            subject: "On natural & artificial games"
+          },
+          {
+            date: "Jun 28, 2011, 6:51:02 PM",
+            poster: "Nick Bentley",
+            url: "post_51.html",
+            subject: "Ketchup 3.0 - The rules have changed, again"
+          },
+          {
+            date: "Jul 5, 2011, 1:27:52 AM",
+            poster: "Nick Bentley",
+            url: "post_52.html",
+            subject: "New Game: Clots"
+          },
+          {
+            date: "Jun 28, 2011, 11:30:04 AM",
+            poster: "James Dow Allen",
+            url: "post_53.html",
+            subject: "Mastermind"
+          },
+          {
+            date: "Jul 10, 2011, 1:45:17 PM",
+            poster: "Bill Taylor",
+            url: "post_54.html",
+            subject: "SQUIRM - a game with recursive size comparisons."
+          },
+          {
+            date: "Jul 11, 2011, 4:57:48 PM",
+            poster: "Nick Bentley",
+            url: "post_55.html",
+            subject: "Ketchup 4.0: I've changed the rules again. This is just stupid."
+          },
+          {
+            date: "Aug 6, 2011, 4:29:00 PM",
+            poster: "Nick Bentley",
+            url: "post_56.html",
+            subject: "More Morro"
+          },
+          {
+            date: "Aug 7, 2011, 6:36:41 PM",
+            poster: "Nick Bentley",
+            url: "post_57.html",
+            subject: "A question for everyone"
+          },
+          {
+            date: "Aug 12, 2011, 1:24:15 AM",
+            poster: "Nick Bentley",
+            url: "post_58.html",
+            subject: "Glorieta 2.0"
+          },
+          {
+            date: "Aug 22, 2011, 6:32:18 PM",
+            poster: "Nick Bentley",
+            url: "post_59.html",
+            subject: "Games of Interest from the 1000-Year Game Design Challenge"
+          },
+          {
+            date: "Aug 29, 2011, 6:01:51 PM",
+            poster: "Nick Bentley",
+            url: "post_60.html",
+            subject: "A testimonial for igGameCenter"
+          },
+          {
+            date: "Sep 6, 2011, 8:59:12 AM",
+            poster: "Cameron Browne",
+            url: "post_61.html",
+            subject: "Upcoming special journal issue on Computational Aesthetics in Games"
+          },
+          {
+            date: "Aug 28, 2011, 5:28:11 PM",
+            poster: "Luis Bolaños Mures",
+            url: "post_62.html",
+            subject: "New games: Yodd & Xodd"
+          },
+          {
+            date: "Aug 28, 2011, 6:40:20 AM",
+            poster: "Bill Taylor",
+            url: "post_63.html",
+            subject: "Y or Cross"
+          },
+          {
+            date: "Sep 18, 2011, 3:42:53 PM",
+            poster: "Bill Taylor",
+            url: "post_64.html",
+            subject: "REPORT ON 'KI'"
+          },
+          {
+            date: "Oct 4, 2011, 9:00:01 PM",
+            poster: "Steven Meyers",
+            url: "post_65.html",
+            subject: "Forms revised"
+          },
+          {
+            date: "Oct 27, 2011, 10:17:45 PM",
+            poster: "Nick Bentley",
+            url: "post_66.html",
+            subject: "Ketchup Strategy Basics, Plus an Example Game"
+          },
+          {
+            date: "Oct 30, 2011, 11:18:58 AM",
+            poster: "CDRodeffer",
+            url: "post_67.html",
+            subject: "11th Annual U-Con Tournament of Abstract Strategy Games"
+          },
+          {
+            date: "Nov 2, 2011, 6:01:28 PM",
+            poster: "Nick Bentley",
+            url: "post_68.html",
+            subject: "Zendo as a Tool for Teaching the Scientific Method"
+          },
+          {
+            date: "Oct 28, 2011, 2:31:48 PM",
+            poster: "Bill Taylor",
+            url: "post_69.html",
+            subject: "Slither"
+          },
+          {
+            date: "Nov 10, 2011, 9:39:35 PM",
+            poster: "Nick Bentley",
+            url: "post_70.html",
+            subject: "....in which Ketchup is likened to Bach's 'The Art of Fugue'"
+          },
+          {
+            date: "Nov 18, 2011, 3:22:07 PM",
+            poster: "Nick Bentley",
+            url: "post_71.html",
+            subject: "New Game: Spry"
+          },
+          {
+            date: "Nov 22, 2011, 11:10:08 AM",
+            poster: "Bill Taylor",
+            url: "post_72.html",
+            subject: "A new design idea in some recent games."
+          },
+          {
+            date: "Nov 29, 2011, 2:48:24 AM",
+            poster: "Luis Bolaños Mures",
+            url: "post_73.html",
+            subject: "New game: Raindrops"
+          },
+          {
+            date: "Nov 28, 2011, 11:28:49 AM",
+            poster: "Bill Taylor",
+            url: "post_74.html",
+            subject: "Bidding for moves."
+          },
+          {
+            date: "Dec 11, 2011, 8:11:16 PM",
+            poster: "Cameron Browne",
+            url: "post_75.html",
+            subject: "SP connectivity and ConHex"
+          },
+          {
+            date: "Dec 18, 2011, 5:57:52 PM",
+            poster: "zickzack@gmail.com",
+            url: "post_76.html",
+            subject: "Results Revisited"
+          },
+          {
+            date: "Dec 28, 2011, 5:38:37 PM",
+            poster: "Nick Bentley",
+            url: "post_77.html",
+            subject: "Woohoo! Ketchup a Finalist in 1000 Year Game Design Challenge"
+          },
+          {
+            date: "Dec 16, 2011, 11:40:44 PM",
+            poster: "Nick Bentley",
+            url: "post_78.html",
+            subject: "New Game: Breach (plus a discussion of the problems of n-in-a-row games)"
+          },
+          {
+            date: "Dec 30, 2011, 2:11:37 AM",
+            poster: "Xifeng",
+            url: "post_79.html",
+            subject: "Yusailo, or the hazards of continuous space"
+          },
+          {
+            date: "Dec 29, 2011, 12:01:28 PM",
+            poster: "Bill Taylor",
+            url: "post_80.html",
+            subject: "Super-Pente"
+          },
+          {
+            date: "Dec 5, 2011, 5:35:25 AM",
+            poster: "Luis Bolaños Mures",
+            url: "post_81.html",
+            subject: "New game: Ayu"
+          },
+          {
+            date: "Feb 3, 2012, 3:14:41 PM",
+            poster: "zickzack@gmail.com",
+            url: "post_82.html",
+            subject: "Perchance to Dream"
+          },
+          {
+            date: "Feb 10, 2012, 6:21:32 AM",
+            poster: "Steven W. Meyers",
+            url: "post_83.html",
+            subject: "Forms is on World of Abstract Games"
+          },
+          {
+            date: "Feb 13, 2012, 1:26:25 PM",
+            poster: "Cameron Browne",
+            url: "post_84.html",
+            subject: "How old is the ko rule?"
+          },
+          {
+            date: "Feb 27, 2012, 12:32:22 AM",
+            poster: "Nick Bentley",
+            url: "post_85.html",
+            subject: "New Game: Magnapoco"
+          },
+          {
+            date: "Feb 28, 2012, 5:48:06 PM",
+            poster: "Nick Bentley",
+            url: "post_86.html",
+            subject: "My Dream Book"
+          },
+          {
+            date: "Mar 4, 2012, 6:35:31 AM",
+            poster: "Bill Taylor",
+            url: "post_87.html",
+            subject: "Reversi with a neutral colour."
+          },
+          {
+            date: "Nov 24, 2011, 9:28:20 PM",
+            poster: "Cameron Browne",
+            url: "post_88.html",
+            subject: "The Shibumi Challenge"
+          },
+          {
+            date: "Apr 7, 2012, 6:52:08 PM",
+            poster: "Nick Bentley",
+            url: "post_89.html",
+            subject: "Employing the Concept of 'Economy' in Cephalopod Strategy"
+          },
+          {
+            date: "Apr 28, 2012, 6:06:05 AM",
+            poster: "Luis Bolaños Mures",
+            url: "post_90.html",
+            subject: "New game: Quentin"
+          },
+          {
+            date: "May 1, 2012, 7:24:00 AM",
+            poster: "Nick Bentley",
+            url: "post_91.html",
+            subject: "New Game: Shifty"
+          },
+          {
+            date: "May 9, 2012, 3:59:39 PM",
+            poster: "Nick Bentley",
+            url: "post_92.html",
+            subject: "A Visual-spatial approach to Sprouts and Dots and Boxes"
+          },
+          {
+            date: "May 19, 2012, 11:28:31 PM",
+            poster: "Nick Bentley",
+            url: "post_93.html",
+            subject: "New Game: Snype"
+          },
+          {
+            date: "Jun 23, 2012, 4:44:53 PM",
+            poster: "Nick Bentley",
+            url: "post_94.html",
+            subject: "New Game: Shello – An Attempt to Solve the Problems of Reversi/Othello"
+          },
+          {
+            date: "Jun 15, 2012, 1:30:55 AM",
+            poster: "Cameron Browne",
+            url: "post_95.html",
+            subject: "Fast connection tests"
+          },
+          {
+            date: "Jul 17, 2012, 3:48:15 PM",
+            poster: "Cameron Browne",
+            url: "post_96.html",
+            subject: "Ludi wins Humies gold"
+          },
+          {
+            date: "Aug 15, 2012, 4:34:59 AM",
+            poster: "Nick Bentley",
+            url: "post_97.html",
+            subject: "Ketchup version 5"
+          },
+          {
+            date: "Aug 12, 2012, 10:00:59 PM",
+            poster: "Nick Bentley",
+            url: "post_98.html",
+            subject: "Alak: In Depth Strategies and Tactics"
+          },
+          {
+            date: "May 9, 2012, 10:38:44 PM",
+            poster: "Luis Bolaños Mures",
+            url: "post_99.html",
+            subject: "New game: Brique"
+          },
+          {
+            date: "Sep 24, 2012, 4:30:37 PM",
+            poster: "Cameron Browne",
+            url: "post_100.html",
+            subject: "Margo Basics"
+          },
+          {
+            date: "May 9, 2012, 10:40:41 PM",
+            poster: "Luis Bolaños Mures",
+            url: "post_101.html",
+            subject: "New game: Vimbre"
+          },
+          {
+            date: "Oct 9, 2012, 7:50:26 AM",
+            poster: "Bill Taylor",
+            url: "post_102.html",
+            subject: "Mancala-style problem"
+          },
+          {
+            date: "Nov 7, 2012, 4:17:02 AM",
+            poster: "Bill Taylor",
+            url: "post_103.html",
+            subject: "Chess variant"
+          },
+          {
+            date: "Nov 7, 2012, 4:20:43 AM",
+            poster: "Bill Taylor",
+            url: "post_104.html",
+            subject: "Backgammon question"
+          },
+          {
+            date: "Nov 23, 2012, 7:16:24 PM",
+            poster: "Nick Bentley",
+            url: "post_105.html",
+            subject: "Revised Game: Glorieta 3.0"
+          },
+          {
+            date: "May 24, 2012, 7:22:48 PM",
+            poster: "Cameron Browne",
+            url: "post_106.html",
+            subject: "Ko on hexagonal grids"
+          },
+          {
+            date: "Dec 21, 2012, 2:27:55 AM",
+            poster: "Luis Bolaños Mures",
+            url: "post_107.html",
+            subject: "Slightly revised game: Brique"
+          },
+          {
+            date: "Dec 13, 2012, 5:14:37 AM",
+            poster: "Bill Taylor",
+            url: "post_108.html",
+            subject: "Chicken Y"
+          },
+          {
+            date: "Jan 2, 2013, 7:25:45 PM",
+            poster: "Nick Bentley",
+            url: "post_109.html",
+            subject: "How can abstract games achieve commercial success?"
+          },
+          {
+            date: "Jan 7, 2013, 3:48:50 PM",
+            poster: "Cameron Browne",
+            url: "post_110.html",
+            subject: "General game systems"
+          },
+          {
+            date: "Jan 16, 2013, 12:35:46 AM",
+            poster: "Luis Bolaños Mures",
+            url: "post_111.html",
+            subject: "Stoical Go"
+          },
+          {
+            date: "Dec 29, 2012, 10:44:13 PM",
+            poster: "Luis Bolaños Mures",
+            url: "post_112.html",
+            subject: "New game: Quench"
+          },
+          {
+            date: "Feb 7, 2013, 6:08:50 PM",
+            poster: "Steven W. Meyers",
+            url: "post_113.html",
+            subject: "Box-Off"
+          },
+          {
+            date: "Feb 12, 2013, 7:22:58 PM",
+            poster: "Nick Bentley",
+            url: "post_114.html",
+            subject: "New Game (under construction): Heatseekers"
+          },
+          {
+            date: "Feb 7, 2013, 11:49:55 AM",
+            poster: "Matteo Perlini",
+            url: "post_115.html",
+            subject: "New checker family game: Eximo"
+          },
+          {
+            date: "Feb 14, 2013, 1:36:15 PM",
+            poster: "Luis Bolaños Mures",
+            url: "post_116.html",
+            subject: "New game: Alpha"
+          },
+          {
+            date: "Feb 14, 2013, 7:58:12 AM",
+            poster: "Bill Taylor",
+            url: "post_117.html",
+            subject: "New game thoughts inspired by Nick"
+          },
+          {
+            date: "Apr 6, 2013, 5:33:17 AM",
+            poster: "Bill Taylor",
+            url: "post_118.html",
+            subject: "Y presentation formats"
+          },
+          {
+            date: "Apr 8, 2013, 9:45:56 AM",
+            poster: "Matteo Perlini",
+            url: "post_119.html",
+            subject: "Infinito: infinite strategies?"
+          },
+          {
+            date: "May 7, 2013, 6:48:11 PM",
+            poster: "Steven W. Meyers",
+            url: "post_120.html",
+            subject: "triangular BoxOff"
+          },
+          {
+            date: "Jun 5, 2013, 3:35:08 PM",
+            poster: "Nick Bentley",
+            url: "post_121.html",
+            subject: "Design Constraints for a Commercial Version of Catchup (for Kickstarter)"
+          },
+          {
+            date: "Jun 22, 2013, 3:51:45 PM",
+            poster: "Luis Bolaños Mures",
+            url: "post_122.html",
+            subject: "Slightly revised game: Vimbre"
+          },
+          {
+            date: "Jun 27, 2013, 5:49:54 PM",
+            poster: "Luis Bolaños Mures",
+            url: "post_123.html",
+            subject: "New game: Kopano"
+          },
+          {
+            date: "Jul 8, 2013, 4:35:07 PM",
+            poster: "Nick Bentley",
+            url: "post_124.html",
+            subject: "The Agony and Ecstasy of the Scoring Track"
+          },
+          {
+            date: "Aug 5, 2013, 1:58:01 PM",
+            poster: "Nick Bentley",
+            url: "post_125.html",
+            subject: "Abstract Strategy Games Online: The Definitive Guide (Help!)"
+          },
+          {
+            date: "Aug 19, 2013, 3:58:16 PM",
+            poster: "Nick Bentley",
+            url: "post_126.html",
+            subject: "Closest Possible Game of Catchup? Lowest Possible Winning Score?"
+          },
+          {
+            date: "Sep 2, 2013, 4:24:20 PM",
+            poster: "Nick Bentley",
+            url: "post_127.html",
+            subject: "Redefining the Abstract (in which I take Mark Thompson's famous essay to task a little bit)"
+          },
+          {
+            date: "Sep 30, 2013, 4:05:16 PM",
+            poster: "Nick Bentley",
+            url: "post_128.html",
+            subject: "Board Game Publishers are Doing it Wrong"
+          },
+          {
+            date: "Oct 14, 2013, 5:16:15 PM",
+            poster: "Nick Bentley",
+            url: "post_129.html",
+            subject: "An observation about why some people don’t like board games"
+          },
+          {
+            date: "Nov 30, 2013, 6:08:29 PM",
+            poster: "Luis Bolaños Mures",
+            url: "post_130.html",
+            subject: "New game: Veletas"
+          },
+          {
+            date: "Dec 2, 2013, 2:00:50 PM",
+            poster: "Nick Bentley",
+            url: "post_131.html",
+            subject: "Cat Herders: the Cat Herding Game of Herding Cats"
+          },
+          {
+            date: "Jan 21, 2014, 6:43:31 PM",
+            poster: "Steven W. Meyers",
+            url: "post_132.html",
+            subject: "luck in games of no luck"
+          },
+          {
+            date: "Apr 14, 2014, 3:11:48 PM",
+            poster: "Nick Bentley",
+            url: "post_133.html",
+            subject: "Ban the ban: essential game design advice (with examples)"
+          },
+          {
+            date: "May 2, 2014, 8:07:27 PM",
+            poster: "Luis Bolaños Mures",
+            url: "post_134.html",
+            subject: "New game: Whirlwind"
+          },
+          {
+            date: "May 12, 2014, 2:27:31 PM",
+            poster: "Nick Bentley",
+            url: "post_135.html",
+            subject: "The 100:10:1 method – the heart of my game design process"
+          },
+          {
+            date: "Jun 9, 2014, 3:18:07 PM",
+            poster: "Nick Bentley",
+            url: "post_136.html",
+            subject: "Does randomness in games limit skill?"
+          },
+          {
+            date: "Jul 30, 2014, 4:53:03 PM",
+            poster: "Nick Bentley",
+            url: "post_137.html",
+            subject: "Thoughts on how I might improve my best game"
+          },
+          {
+            date: "Oct 19, 2014, 12:51:18 PM",
+            poster: "Luis Bolaños Mures",
+            url: "post_138.html",
+            subject: "Ayu in the CodeCup challenge"
+          },
+          {
+            date: "Jan 16, 2015, 11:06:50 AM",
+            poster: "Cameron Browne",
+            url: "post_139.html",
+            subject: "New journal: Game & Puzzle Design (Call for Papers)"
+          },
+          {
+            date: "Aug 23, 2015, 3:53:03 AM",
+            poster: "Cameron Browne",
+            url: "post_140.html",
+            subject: "Game & Puzzle Design: Issue #1 out now"
+          },
+          {
+            date: "Jul 17, 2016, 10:48:27 PM",
+            poster: "Cameron Browne",
+            url: "post_141.html",
+            subject: "Game & Puzzle Design: New issue out"
+          },
+          {
+            date: "Jul 24, 2020, 4:53:25 PM",
+            poster: "Cameron Browne",
+            url: "post_142.html",
+            subject: "Ludii now officially released"
+          },
+          {
+            date: "Aug 11, 2021, 4:18:33 AM",
+            poster: "Bill Taylor",
+            url: "post_143.html",
+            subject: "Bill Taylor has died"
+          },
+          {
+            date: "Aug 25, 2021, 10:17:24 AM",
+            poster: "Cameron Browne",
+            url: "post_144.html",
+            subject: "Advances in Computer Games (ACG 2021)"
+          },
+          {
+            date: "Nov 9, 2021, 7:07:35 PM",
+            poster: "Cameron Browne",
+            url: "post_145.html",
+            subject: "ACG 2021 is almost here!"
+          },
+          {
+            date: "Feb 18, 2022, 4:13:51 PM",
+            poster: "Cameron Browne",
+            url: "post_146.html",
+            subject: "Ludii AI Competition 2022"
+          },
+        ]; 
+
+    let currentSort = {
+      column: -1,
+      direction: 'asc'
+    };
+
+    function populateTable() {
+      const tableBody = document.querySelector("#dataTable tbody");
+      tableBody.innerHTML = "";
+
+      data.forEach(item => {
+        const urls  = item.url.split(';').map(url => url.trim());
+        const names = item.subject.split(';').map(name => name.trim());
+
+        // Match links with their custom names
+        const linksHtml = urls.map((url, index) => {
+          const linkName = names[index] || "Visit"; // fallback if missing
+          return `<a href="${url}" target="_blank">${linkName}</a>`;
+        }).join('');
+
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${item.date}</td>
+          <td>${item.poster}</td>
+          <td>${linksHtml}</td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    function filterTable() {
+      const input = document.getElementById("searchInput").value.trim().toLowerCase();
+      const rows = document.querySelectorAll("#dataTable tbody tr");
+
+      if (input === "") {
+        // If search box is empty, show all rows
+        rows.forEach(row => row.style.display = "");
+        return;
+      }
+
+      const excludedTerms = input.split(" ").filter(term => term.startsWith("!")).map(term => term.slice(1).trim());
+      const includedTerms = input.split(" ").filter(term => !term.startsWith("!")).map(term => term.trim());
+
+      rows.forEach(row => {
+        const cells = row.querySelectorAll("td");
+        const rowText = Array.from(cells).map(cell => cell.textContent.toLowerCase()).join(" ");
+
+        // Check if the row contains any excluded terms
+        const containsExcluded = excludedTerms.some(term => rowText.includes(term));
+        if (containsExcluded) {
+          row.style.display = "none";
+          return;
+        }
+
+        // Check if the row contains all included terms
+        const matchesIncluded = includedTerms.every(term => rowText.includes(term));
+
+        if (matchesIncluded) {
+          row.style.display = "";
+        } else {
+          row.style.display = "none";
+        }
+      });
+      
+    }
+
+    function sortTable(columnIndex) {
+      const direction = currentSort.column === columnIndex && 
+                        currentSort.direction === 'asc' ? 'desc' : 'asc';
+      currentSort = { column: columnIndex, direction };
+
+      const sortedData = [...data].sort((a, b) => {
+        let valueA = a[Object.keys(a)[columnIndex]].toString().toLowerCase();
+        let valueB = b[Object.keys(b)[columnIndex]].toString().toLowerCase();
+
+        if (valueA < valueB) return direction === 'asc' ? -1 :  1;
+        if (valueA > valueB) return direction === 'asc' ?  1 : -1;
+        return 0;
+      });
+
+      // Update table after sorting
+      data.length = 0; // Clear the original array
+      data.push(...sortedData); // Push the sorted data
+
+      // Re-render the table
+      populateTable();
+
+      // Update sorting indicators
+      updateSortingIndicators(columnIndex, direction);
+    }
+
+    function updateSortingIndicators(columnIndex, direction) {
+      const headers = document.querySelectorAll("th");
+      headers.forEach((header, index) => {
+        header.classList.remove("sorted-asc", "sorted-desc");
+        if (index === columnIndex) {
+          header.classList.add(direction === 'asc' ? 'sorted-asc' : 'sorted-desc');
+        }
+      });
+    }
+
+    // Populate the table initially
+    populateTable();
+
+  </script>
+
+</body>
+</html>
+

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Verto - my entry to the contest</div>
+    <div class="author">Dieter Stein</div>
+    <div class="timestamp">Posted on Dec 17, 2010, 11:50:23 AM</div>
+    <div class="content">
+Hi and hello,
+
+I recently joined this group and Nick's contest just inspired me. I
+looked for my old Reversi board and played around a bit. Well, I don't
+know if this exists already, it seems too straightforward -- anyway
+here is my entry to the contest:
+
+Verto: http://spielstein.com/games/verto
+
+Thanks for listening,
+Dieter   
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Verto - my entry to the contest</div>
+    <div class="author">superslacker</div>
+    <div class="timestamp">Posted on Dec 17, 2010, 5:00:50 PM</div>
+    <div class="content">
+> Verto:http://spielstein.com/games/verto
+
+Nice concept! I look forward to trying it out.
+Where does the name come from?
+...and while I'm asking I've been curious about Volo's name as well.
+I imagine 'Vogel' but I'm sure.
+
+Thanks,
+Daniel
+[who will hopefully see you in Nürnberg if you're going]
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Verto - my entry to the contest</div>
+    <div class="author">Dieter Stein</div>
+    <div class="timestamp">Posted on Dec 17, 2010, 7:01:33 PM</div>
+    <div class="content">
+Hi Daniel,
+
+> Nice concept!  I look forward to trying it out.
+> Where does the name come from?
+> ...and while I'm asking I've been curious about Volo's name as well.
+> I imagine 'Vogel' but I'm sure.
+
+Thank you, Daniel,
+
+and, oh it's all Latin. My kids are both struggling with Latin at
+school and Papa is here to help :/
+So ... volare = to fly, volo = I fly
+vertere = to turn over, verto = I turn.
+
+"Vogel" seems to be an old German word.
+
+> [who will hopefully see you in Nürnberg if you're going]
+
+I'll be in Nürnberg too, and we should find some more time there
+(Essen's too noisy). Looking forward to meet you! I'll take a Volo
+board with me.
+
+Dieter 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Verto - my entry to the contest</div>
+    <div class="author">Zhang Dawei</div>
+    <div class="timestamp">Posted on Dec 18, 2010, 4:34:02 AM</div>
+    <div class="content">
+On 17/12/2010 19:50, spielstein wrote:
+> I recently joined this group and Nick's contest just inspired me. I
+> looked for my old Reversi board and played around a bit. Well, I don't
+> know if this exists already, it seems too straightforward -- anyway
+> here is my entry to the contest:
+>
+> Verto: http://spielstein.com/games/verto
+
+I know this may be difficult to understand, but this is almost the same
+as an entry I am preparing. I will endeavour to finish mine off today.
+But I think it is a strange coincidence. There are differences, and I
+will play on those. The capture mechanism, as I describe it, is a
+variation of the cannon in Xiang Qi, and my games is called "Mortars"
+and is described as being part of a family of games I call "Mortars and
+Screens". I briefly describe other games in the family, though some of
+them are more involved.
+
+I will send this entry as soon as I can as well as reply to earlier
+messages shortly afterwards: at the moment, other committments have
+meant getting the time to do this has been limited for me.
+
+-- 
+Zhang Dawei: Beijing, P.R.China.
+Please keep this email address confidential. It will
+remain valid for at least 2 weeks from data of email.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Verto - my entry to the contest</div>
+    <div class="author">Dieter Stein</div>
+    <div class="timestamp">Posted on Dec 18, 2010, 10:33:10 AM</div>
+    <div class="content">
+> I know this may be difficult to understand, but this is almost the same
+> as an entry I am preparing. I will endeavour to finish mine off today.
+> But I think it is a strange coincidence. There are differences, and I
+
+Hi Dawei,
+
+I understand this absolutely. As I said, I had an intuition that it
+may already exist somewhere.
+Now I'm curious about Mortars!
+
+Dieter
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Verto - my entry to the contest</div>
+    <div class="author">camb</div>
+    <div class="timestamp">Posted on Dec 18, 2010, 4:40:07 PM</div>
+    <div class="content">
+On Dec 18, 5:34 am, Zhang Dawei <yanhu.de.zh...@gmail.com> wrote:
+> I know this may be difficult to understand, but this is almost the same
+> as an entry I am preparing.
+
+Memes! There are game memes in the air :)
+
+The number of times a game idea occurs to different people around the
+same time is remarkable, and I suspect happens a lot more than is
+realised.
+
+The latest meme wave seems to be games with goals related to group
+size. I can only recall a handful of previous group-size games, but
+this year new ones seemed to suddenly pop up all over the place.
+
+Cameron 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Verto - my entry to the contest</div>
+    <div class="author">Dieter Stein</div>
+    <div class="timestamp">Posted on Dec 19, 2010, 12:08:47 PM</div>
+    <div class="content">
+I've added a small additional rule to Verto (http://spielstein.com/
+games/verto).
+
+-- Stones may only entered on corner spaces if there is another stone
+adjacent.
+(It follows from the other rules that this other stone must be an
+enemy stone.)
+
+Like in Reversi corners are special, but Verto needed some more work
+on this. Anyway, I think this exception rule does not lower the
+elegance factor of Verto (how high it may be :)
+
+Dieter
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Verto - my entry to the contest</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Dec 21, 2010, 6:03:36 PM</div>
+    <div class="content">
+I think it would be more elegant to make corners behave as edges, i.e.
+a stone there can be flipped by two enemy stones played on the
+adjacent squares. 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Verto - my entry to the contest</div>
+    <div class="author">Dieter Stein</div>
+    <div class="timestamp">Posted on Dec 22, 2010, 9:32:29 AM</div>
+    <div class="content">
+> I think it would be more elegant to make corners behave as edges, i.e.
+> a stone there can be flipped by two enemy stones played on the
+> adjacent squares.
+
+Nice idea, luigi!
+Anyway, I'm not so sure that this is more elegant. I'll stick to my
+solution as it is derived from the other constraint rules already in
+the game and it doesn't introduce a new capture pattern.
+
+Dieter
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Verto - my entry to the contest</div>
+    <div class="author">Dieter Stein</div>
+    <div class="timestamp">Posted on </div>
+    <div class="content">
+Hi,
+I've created an AI program for Verto. You can download it at
+
+http://spielstein.com/games/verto/verto.jar
+
+Version 0.1, very basic, for now only human (you) vs. the algorithm;
+programmed with Java and with much help and input I found at
+http://www.mcts-hub.net. -- Thank you, Cameron!
+
+Command line options:
+java -jar verto.jar <STRENGTH> <SHOW_LEGAL_MOVES>
+
+<STRENGTH> = 1..n: strength of the UTC algorithm
+<SHOW_LEGAL_MOVES> = true or false: display all legal moves
+
+Comments are welcome.
+Have fun!
+
+Dieter
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Verto - my entry to the contest</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Dec 26, 2010, 6:59:02 PM</div>
+    <div class="content">
+In fact, I'm wondering if a special rule for corner squares is
+necessary at all... After all, it can't be really that advantageous to
+place a piece there, since you won't be able to join more pieces to it
+until some enemy pieces are around.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Verto - my entry to the contest</div>
+    <div class="author">Dieter Stein</div>
+    <div class="timestamp">Posted on Dec 27, 2010, 12:19:50 AM</div>
+    <div class="content">
+> In fact, I'm wondering if a special rule for corner squares is
+> necessary at all...
+
+My plan was to avoid too obvious/defensive play: As you are safe in
+the corners, the first 4 moves of the players could be placing stones
+there. And I didn't want to end up with a Reversi setup (here: the
+corners preset).
+
+> After all, it can't be really that advantageous to
+> place a piece there, since you won't be able to join more pieces to it
+> until some enemy pieces are around.
+
+You won't gain territory on the board joining your stones, but rather
+by capture moves. So it can be advantageous to leave a stone in the
+corner safely waiting alone for the opponent to approach.
+
+Thanks, Luigi for your thoughts about the game, they are much
+appreciated.
+
+Dieter
+    </div>
+  </div>
+
+</body>
+</html>

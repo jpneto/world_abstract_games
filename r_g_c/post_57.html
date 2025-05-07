@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">A question for everyone</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Aug 7, 2011, 6:36:41 PM</div>
+    <div class="content">
+This forum is a bit dead no? To spice things up and out of curiosity,
+here's a question, of the desert island variety:
+
+Among games which
+
+1. ...were invented this century; and
+2. ...were not invented by you,
+
+Which is your desert island game?
+
+For me it would be Slither (aka Particle Bond). I can't believe it
+hasn't gotten more acclaim. All the formal beauty of Hex, but the
+connections break and reform in a totally arresting way as the game
+proceeds, leading to sudden changes of fortune and impossibly
+delightful tactics. No description can do it justice though. You have
+to play it to see.
+
+There are similar connections games on Hex boards, but they're not
+nearly as good as this square board game. The square board and
+orthogonal-only connections are key.     
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: A question for everyone</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Aug 9, 2011, 5:17:52 AM</div>
+    <div class="content">
+For me it would be Go. At the customs house in the not-so-desert
+island, I would hide it so that the agent doesn't confiscate it for
+being older than 1900.
+
+But, as there would be too much time to spare on a desert island, I'd
+take Realm too. I haven't played it, so my impressions are absolutely
+superficial, but I remember that when I first read the rules it seemed
+to me like a very original game, quite different from the typical
+abstract with all too familiar mechanics. It almost felt like a
+computer strategy game, if you know what I mean. I don't know if
+gameplay corresponds to these expectations, but it'd be fun to find
+out in those slow afternoons, between cleaning the straw shack and
+hunting a wild boar for dinner.
+
+Slither is great, but I usually prefer territory games to connection
+games. What about a mix between Slither and Reversi Go? The movement
+of pieces may well serve as a pretty natural eye-opener, just as the
+multiple drops in Sygo. Just off the top of my head.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: A question for everyone</div>
+    <div class="author">Xifeng</div>
+    <div class="timestamp">Posted on Aug 9, 2011, 8:28:23 AM</div>
+    <div class="content">
+On Aug 8, 9:17 pm, luigi <luis.9.8...@gmail.com> wrote:
+> For me it would be Go. At the customs house in the not-so-desert
+> island, I would hide it so that the agent doesn't confiscate it for
+> being older than 1900.
+
+I took him to mean less than 10 years old, since he said "this
+century" rather than "in the last century". I'm honestly having a hard
+time thinking of a game that young that has really captured my
+imagination (even Arimaa is from '99!). I think that of the games
+invented this century, or even in the last century, Cephalopod is the
+only one that has really held my attention, but I'm not convinced yet
+of its lasting merits, because it has some elements that I find
+troubling.
+
+> But, as there would be too much time to spare on a desert island, I'd
+> take Realm too. I haven't played it, so my impressions are absolutely
+> superficial, but I remember that when I first read the rules it seemed
+> to me like a very original game, quite different from the typical
+> abstract with all too familiar mechanics. It almost felt like a
+> computer strategy game, if you know what I mean.
+
+I was interested in it for the same reasons, but it appears to have an
+overwhelming 2nd move advantage, first player has won something like
+12% of the games on Super Duper. It's not exactly a profound sample,
+but I found that statistic discouraging, and I can see in the rules
+some things that would support such an imbalance.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: A question for everyone</div>
+    <div class="author">Russ Williams</div>
+    <div class="timestamp">Posted on Aug 9, 2011, 8:32:31 AM</div>
+    <div class="content">
+On Tue, Aug 9, 2011 at 9:28 AM, Tristan <rozen...@gmail.com> wrote:
+> I took him to mean less than 10 years old, since he said "this
+> century" rather than "in the last century".
+
+Then I'll say Homeworlds (from 2001; I enjoy it a lot, and then I'll
+have the pyramids to play many other combinatorial games as well! :)
+
+cheers
+russ
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: A question for everyone</div>
+    <div class="author">zickzack@gmail.com</div>
+    <div class="timestamp">Posted on Aug 10, 2011, 12:01:05 PM</div>
+    <div class="content">
+On 7 Aug., 19:36, Nick Bentley <nickobe...@gmail.com> wrote:
+
+> Among games which
+>
+> 1. ...were invented this century; and
+> 2. ...were not invented by you,
+
+> Which is your desert island game?
+
+The ideal desert island games are Mancalas. You do not have to
+take them with you, you can play them literally on the beach.
+Some worthy contenders from the Mancalas have been invented in
+the period mentioned, but when the game police is not watching,
+I would try to find somebody who I can teach Hawalis.
+
+Other than that, there are no desert island games, there is
+desert island equipment consisting of boards, stones, and what
+have you. The equipment gives the opportunity to play many
+games. I would not go for the hexboards that are so popular
+at the moment but rather for an old fashioned go-bang or even
+a checkered 10x10 board (after all, you can use them for games
+on smaller boards).
+
+The next question is what is meant with this century. If it
+means the last century spanning from the invention of Lasca
+to the games of 2011, my decision would be Hex. No single runner
+up comes even close. It is a breakthrough design with amazing
+gameplay - one of the best games in history.
+
+If "this century" is referring to 21st century, then it is
+not clear whether 2000 is part of the 20th century or the 21st.
+An old German law says that the century starts with the 00 year.
+So, if 2000 is part of the 21st century, I will go for Dameo.
+Dameo aims at no less than being the better Checkers and it
+succeeds.
+
+However, if 2000 is out, there are many fascinating games to
+choose from. Usually, they are pretty abstract even for abstracts.
+I would still go for another Freeling game from the Symple family,
+likely SyGo.
+
+
+> For me it would be Slither (aka Particle Bond). I can't believe it
+> hasn't gotten more acclaim.
+
+Slither is a very good game. If anything, it feels like too much
+of a fight. I did not expect to say that about a game, so it is
+quite a compliment.
+Benedikt
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: A question for everyone</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Aug 11, 2011, 1:10:30 AM</div>
+    <div class="content">
+Clearly, I should have been less ambiguous. Upside is that I have more
+answers now. FWIW, I meant 2000 till now, inclusive. 
+    </div>
+  </div>
+
+</body>
+</html>

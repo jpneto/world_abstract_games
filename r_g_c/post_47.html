@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Call for Proverbs</div>
+    <div class="author">Cameron Browne</div>
+    <div class="timestamp">Posted on Apr 18, 2011, 6:41:02 PM</div>
+    <div class="content">
+Dear Gamers,
+
+Do you have any good game proverbs that you'd like to share?
+
+Stephen Tavener and I are trying to collect the best ludisms for
+publication: http://www.cameronius.com/games/ludisms/
+
+Regards,
+Cameron    
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Call for Proverbs</div>
+    <div class="author">David E. Whitcher</div>
+    <div class="timestamp">Posted on Apr 18, 2011, 8:12:57 PM</div>
+    <div class="content">
+You can discover more about a person in an hour of play than in a year
+of conversation.
+
+Plato (427 BC - 347 BC) 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Call for Proverbs</div>
+    <div class="author">Xifeng</div>
+    <div class="timestamp">Posted on Apr 19, 2011, 8:18:25 AM</div>
+    <div class="content">
+"You can only get smarter by playing a smarter opponent."
+I know it through the film Revolver, there it's cited as "Fundamentals
+of Chess, 1883" but a cursory googling only turns up references back
+to the film.
+
+And one that circles around Go communities so much that nobody seems
+to know its origins: "Lose your first hundred games quickly."
+    </div>
+  </div>
+
+</body>
+</html>

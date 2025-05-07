@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Fast connection tests</div>
+    <div class="author">Cameron Browne</div>
+    <div class="timestamp">Posted on Jun 15, 2012, 1:30:55 AM</div>
+    <div class="content">
+Hi,
+
+Connection game programmers might be interested in this paper, hot off the presses:
+
+Paper: http://www.cameronius.com/cv/publications/browne-bpr.pdf
+
+Citation: http://ieeexplore.ieee.org/xpl/articleDetails.jsp?arnumber=6185647
+
+Regards,
+Cameron    
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Fast connection tests</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Jun 23, 2012, 4:50:01 PM</div>
+    <div class="content">
+This is awesome. Can I just leave my life behind and join your computational creativity group? I love my life, but you guys are living the dream.  
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Fast connection tests</div>
+    <div class="author">Cameron Browne</div>
+    <div class="timestamp">Posted on Jun 26, 2012, 1:49:10 PM</div>
+    <div class="content">
+> Can I just leave my life behind and join your computational creativity group? I love my life, but you guys are living the dream.  
+
+Ah, the glamorous and exciting life of the academic :)
+Though I must say that we do get to work on some interesting stuff in the CCG.
+
+Regards,
+Cameron
+    </div>
+  </div>
+
+</body>
+</html>

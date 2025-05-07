@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Upcoming special journal issue on Computational Aesthetics in Games</div>
+    <div class="author">Cameron Browne</div>
+    <div class="timestamp">Posted on Sep 6, 2011, 8:59:12 AM</div>
+    <div class="content">
+Hi,
+
+This is a reminder for the upcoming IEEE T-CIAIG special issue on
+Computational Aesthetics in Games. The deadline for submission is
+approaching...
+
+I hope that some of you might be interested in submitting papers on
+computational models for aesthetics in board games, so that they're
+amply represented amongst the expected video games submissions.
+
+Regards,
+Cameron
+
+==========================================
+
+** CALL FOR PAPERS **
+
+IEEE Transactions on Computational Intelligence and AI in Games (T-
+CIAIG)
+
+Special issue: Computational Aesthetics in Games
+
+Special issue editors:
+Cameron Browne, Georgios N. Yannakakis and Simon Colton
+
+========
+
+AI research seeks to optimise the performance of artificial agents in
+their given domains, and in the area of games this does not mean
+simply making stronger opponents. We do not increase the playerÊ¼s
+enjoyment of a game by beating them as quickly as possible, but by
+matching them at their level of expertise to engage them and provide
+an entertaining experience. While such aesthetic considerations are
+more difficult to quantify and measure than playing strength, they are
+becoming increasingly important as more consumer content becomes
+digitally created and tested.
+
+Computational aesthetics in games covers a range of aspects from
+visual presentation and the elegance of the underlying mechanics, to
+less tangible aspects such as player engagement and enjoyment; a good
+game will provide a rich player experience and afford sensual,
+visceral and/or intellectual stimulation. We are seeing the emergence
+of game telemetry as a growing research area and the development of
+increasingly sophisticated tools such as biostatistical indicators of
+user engagement, yet much work remains to be done to maximise the true
+entertainment potential that is now available to game and AI
+designers.
+
+The purpose of this special issue is to draw together the various
+aspects of computational aesthetics as they relate to AI in games, and
+to shed light on the relationship between game aesthetics and player
+satisfaction. It will explore questions such as: What exactly is
+beauty in a game? How do we measure this and use it to best effect?
+How do we make AIs more entertaining? We invite high quality work on
+any aspect of computational aesthetics in any genre of game,
+electronic or physical. Papers should be of a technical nature with
+claims backed up by experimental results or case studies. Topics
+include but are not limited to:
+
+* Modeling game aesthetics
+* Notions of creativity and beauty in game design and AI behaviour
+* Agent-based game aesthetics
+* Self-adaptation/tailoring of aesthetic models
+* Fitness (entertainment) functions for procedural content generation
+* Player experience/affect and adaptive AI response
+* Methods for verifying and interpreting aesthetic measurements and
+quality assurance
+* Player biases and the perceived value of automated vs handmade
+content
+* Game telemetry, user engagement, player immersion
+* Culture-driven aesthetics modelling
+* The relationship between games and art
+* Other aspects of AI in game playing contexts, e.g. generative mood
+music
+* Nonlinear game story scripting
+
+========
+
+Authors should follow normal T-CIAIG guidelines for their submissions,
+but clearly identify their papers for this special issue during the
+submission process. Seehttp://www.ieee-cis.org/pubs/tciaig/ for
+author information. Submissions should be between 8 and 12 pages long,
+but may exceed these limits in special cases. Extended versions of
+previously published conference/ workshop papers are welcome, but must
+be accompanied by a covering letter that explains the novel and
+significant contribution of the extended work.
+
+Deadline for submissions: October 28, 2011
+Notification of Acceptance: December 16, 2011
+Final copy due: March 9, 2012
+Publication: June 2012    
+    </div>
+  </div>
+
+</body>
+</html>

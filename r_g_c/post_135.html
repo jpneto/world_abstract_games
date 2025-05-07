@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">The 100:10:1 method – the heart of my game design process</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on May 12, 2014, 2:27:31 PM</div>
+    <div class="content">
+Here's a thing I wrote about how I design games, for those interested in methods: <a href="http://web.archive.org/web/20150429222114/https://nickbentleygames.wordpress.com/2014/05/12/the-100-10-1-method-for-game-design/">http://nickbentleygames.wordpress.com/2014/05/12/the-100-10-1-method-for-game-design/</a>
+
+<i>This is the second post of a series on practical game-design techniques. Here's <a href="http://web.archive.org/web/20150429222114/https://nickbentleygames.wordpress.com/2014/04/14/game-design-tip-prohibit-bans/">the first</a>.
+
+In my years designing games, my methods have evolved from Games-Randomly-Emerging-from-the-Inchoate-Chaos-of-my-Brain-Area to something resembling an honest-to-goodness, write-downable process. I've decided to share this process here, for four reasons:
+
+1. I've used it to create 3 of my 4 favorites among my own designs (Catchup, Stinker, and Cat Herders – Odd is the exception), which suggests it might have value.
+2. I haven't seen anything exactly like it.
+3. Writing about it will give me ideas for improving it.
+4. Pondering game design is one of the two great pleasures of my life (the other is spending time with my ladylove, who's just sort of discombobulatingly great to be around)
+
+I call it the 100:10:1 method. I'll start by describing it, then discuss why it helps me.<h3>The 100:10:1 Method</h3>It has three steps:
+
+Step 1 – I quickly write 100 short game concepts in a notebook. In less than a week. Even in one day. I don't give much thought to quality; I include whatever comes to mind, even if it's dumb, incomplete or violates physical law (I do include good ideas as well). I keep spitting out ideas especially after I feel “spent”.
+
+Here's an example I just pulled randomly from a notebook: “Mortals: pieces age as they move – they're dice and when a die moves, the pip count of its top face is reduced by one. When the top face is reduced to one pip, it dies.” This isn't even a whole game concept; just a mechanic around which a game could be built. Other examples describe themes, or problems I want to fix with other games, or ideas for combining my favorite aspects of multiple games into one, or just hallucinatory nonsense. I have no rules about what each concept should contain except it should tickle my fancy.
+
+Note: the exact number doesn't matter as long as it's a metric crap ton.
+
+Step 2 – Based on some selection criteria (which depend on my design goals and which I discuss below), I pick 10 of the 100 concepts and try to turn them into actual games. Just crude working versions. I work on all in parallel. This usually take six months to a year.
+
+Step 3 – I pick the most promising game of the 10 I've developed and playtest+polish it till I'm sure I can't improve it. Then I make a list of its weaknesses and improve it more. Then I'm done. The time required depends on how much patience I have in pursuit of perfection, the type of games involved, and how close I got to the mark in step 2. Here's the time I spent in step 3 for each of the three games mentioned above:
+
+Cat Herders : 1 year
+Stinker: 3 years
+Catchup: 4 years<h3>Why does the 100:10:1 method work?</h3>First I'll describe benefits of the individual steps and then some emergent benefits of the whole process.
+
+<b>Benefits of the individual steps</b>
+
+If you know about creative thinking theories, you'll see similarities pre-existing techniques – the 100:10:1 method works in part because it exploits their known benefits.
+
+This is particularly true of step 1, which embodies the classic brainstorming principle: to find a good idea, have a lot of ideas, and go past obvious ones by forcing ideas after you feel “all out”. It takes practice because we're used to stopping when we feel our ideas are exhausted. But it's a time-honored and well-tested way to break free from habitual thought patterns. When I do it right I get into an almost-stoned state where my thoughts scramble and bend in odd and original ways. I goose this effect by combining the technique with other formal techniques for disrupting normal thought-patterns, some of which I'll write about in the future.
+
+Step 1 offers another benefit: it's easier to get a feel for the promise of an idea when I have other ideas with which to compare it. Comparisons open otherwise unreachable avenues of critical thinking. By starting with 100 concepts, I start with a lot of fodder for comparison, which helps me better assess which to pursue.
+
+The benefits of step 2 can be understood by answering the question: “Why not just pick 1 idea instead of 10 from the initial 100 to develop?” i.e. “Why not just go from step 1 to step 3?” Three reasons:
+
+1. When I focus on one game, I can get attached to it, which makes it easy to delude myself about how good it is. When working on 10 games, I have no darlings.
+
+2. It keeps me from getting stuck. When I get stuck on a problem in one design (I always do), I work on another. Later, I return to the problem with new perspective and can often solve it. Going back and forth between 10 games, I always have at least one on which I can make progress. Also, I use ideas from one game to solve problems in another.
+
+3. Many of my initial ideas don't work like I thought they would once I develop them, so I have to develop them to judge them. Sometimes a single key rule change can change a bad game into a great one. Developing a bunch of games into rough form at once allows me to more quickly and accurately know where the real promise lies.
+
+Step 3 is just the latter phase of most designers' normal process: the polishing/refinement phase, where I scrutinize every detail for improvements. I'll write about the techniques I use in this step in future posts, but for now I'll remain silent about this step.
+
+<b>Emergent benefits of the whole process</b>
+
+There are benefits of this process beyond the benefits of the individual steps. By working through an end-to-end system like this, I can:
+
+1. stay focused, because I know exactly what I'm doing at any given moment. It's the difference between going to the gym with a specific plan vs. going to the gym with the vague notion of working out.
+
+2. focus on process rather than outcome. When I stop worrying about whether what I'm doing is good enough or worth the time, and concentrate instead on executing each step well, it frees me emotionally and allows for heightened creativity.
+
+3. practice, and capture the benefits of, what are often cast as exclusive modes of invention. Here's what I mean:
+
+People often describe invention as coming from two sources. I'll call one “problem solving” invention, and the other “imaginative” invention. The first means fixing problems in pre-existing things (in this case, games, game-types, or game-mechanics), and the second means making flights of fancy real.
+
+For game design, I don't think one is better than the other. Rather I think both work and work best when combined, because they have different strengths and weaknesses.
+
+“Problem solving” invention helps ensure a design is understandable (because it has precedent), and ensures a level of quality, but it can feel derivative. Imaginative invention is the source of more original/exciting stuff, but can produce weird, non-optimized things no one understands.
+
+The 100:10:1 method encourages the practice of both imaginative invention (particularly in step 1, because it's hard to write down 100 ideas quickly without following flights of fancy), and careful problem-solving invention (in steps 2 and 3).
+
+Moreover, my initial 100 ideas are usually a mix of “problem solving” ideas and “imaginative” ideas, and lining them all up together as I try to select 10 to develop allows me to better understand (again, through comparisons) which are worth pursuing.
+
+Many game inventors gravitate to one mode of thought or the other. I think we miss out by doing so. By formalizing the use of both I force myself to practice and hone my skill with both and combine their advantages. I'm a better inventor for it. In fact the more I practice them, the less distinct they become. They're being replaced by some chimeric mode I lack the language to describe.
+
+I wonder if this last benefit is why the 100:10:1 method works better for game design for me than for other kinds of invention: game design is an unusual, balanced mix of art and engineering that favors both modes. Other disciplines maybe aren't as much like that.<h3>Selection Criteria</h3>For most of my game-design life (~15 years), I've designed games for my own amusement, so my selection criterion following step 1 was just “what's interesting to me”. I love designing that way but it often fails to produce games of broad interest, because I have idiosyncratic tastes.
+
+That's no problem when I'm designing for myself and the few others who share my taste. Lately, however, I've started designing with commercial intent, so I've adjusted my selection criteria.
+
+First, “what's interesting to me” remains a key criterion. I can't design well unless I have enthusiasm/passion for the task.
+
+But an additional set of criteria have to do with what buyers will want from my game (which requires I first develop a clear picture of who I'm designing for). For example, I want to design games for casual players, so when I'm using the 100:10:1 method to that end, I select concepts with qualities they tend to like: simple, straightforward, intuitive rules, not too competitive-feeling, components at a reasonable price point, etc.
+
+An unanticipated side-benefit of including audience-related criteria is they help me to a) better appreciate game dynamics not in my wheelhouse; and as a result, b) make me a more sophisticated designer generally.
+
+For example, I adore competitive, interactive games, and have spent most of my time designing them. In designing other kinds of games, I've come to see the artistry of a well-done, non-competitive design, and further, I now know better how, and have more tools at my disposal, to adjust competitive feel.
+
+One more point about audience-related selection criteria: rules-of-thumb about what others want are of only limited use. When I'm selecting my 10 concepts to develop from the initial 100, I rely on such rules of thumb because they're all I have.
+
+But I don't really know what others want until I play prototypes with folks in my target group and get good feedback. The magic of great games is an emergent property of all their aspects combined, and it's not captured by descriptions of their separate parts. Therefore playtesting must be the ultimate arbiter, and I rely heavily on it starting at the end of step 2, and for all of step 3 of my process.
+
+Most designers know this, but how to playtest well is a critical and under-discussed subject about which I'll write at length in a future post (the way most designers do it leaves room for improvement, imo).
+
+Beyond audience-related selection criteria, I also use a “how hard it will be to produce a finished, polished design” criterion. Just as a novelist can waste years reaching for The Great American Novel, a game designer can be too ambitious.
+
+But! It's easy to be wrong about (and especially to underestimate) how hard it will be to produce a finished design. Even the simplest games can take years to polish. Nonetheless I still use this criterion because it helps me weed out concepts which portend obvious quagmires.
+
+For example, lately, I often think of game concepts which would require computational design assistance to complete, and thus custom software. While designing with commercial ends in mind, I've avoided these (though when I'm designing for personal learning, I do the opposite – someday when I get good enough at writing this kind of software, that will change).
+
+Finally, I don't combine all my criteria into any kind of formal metric. There's not enough predictive data after the first step to make formal metrics useful.
+
+Instead I think hard about each game in relation to each criterion, and then after a whole lot of such thinking I go with whatever my gut says. Picking right is an art that takes practice.<h3>More to come</h3>While the 100:10:1 method is the overarching framework of my design process, I use other techniques within it, and it wouldn't work as well as it does for me without them. So I've decided to write about those too. I have a bunch more posts planned to cover them.
+
+As mentioned, I have lots to say in particular about playtesting, but it'll be a while before I get to that one because it's the most ambitious post I've planned, and some of the practices I'll write about are still in development.</i>
+    </div>
+  </div>
+
+</body>
+</html>

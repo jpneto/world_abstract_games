@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">New game thoughts inspired by Nick</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Feb 14, 2013, 7:58:12 AM</div>
+    <div class="content">
+As people may know, I usually like to thoroughly
+play-test a game before releasing it into the wild.
+
+However, as Nick Bentley has inaugurated a policy
+of throwing out half-considered ideas, in order to
+jeep up discussion and cross-fertilization on them,
+I thought I'd try the same.
+
+I am also inspired by Nick's excellent theme of
+approximating negative feedback by having a game
+where one wins by finishing up with the largest
+connected group, while at the same time having
+rule-sets that otherwise encourage keeping groups
+as small as possible. Such games typically are
+fun to play, as Joao and I have found.
+
+So here is my idea:
+
+1: Hex-hex board (IMHO best for largest=group-wins)
+
+2: One stone played per turn in an empty cell.
+(Standard variations:- 12* modifier (for speed emails),
+Maybe use "Sabotage" modifier - i.e. may play opponent stones)
+
+3. (The key new rule) Instead of a placement, one may do:
+If two of one's own stones have an uninterrupted queen-move
+view of an opponent stone, they may kill it (by joint co-ordination,
+military style), AND all the group it is part of !!
+
+That very last point is what keeps the groups small for
+as long as poss. It is OC directly borrowed from Nick's
+last game idea. The idea of killing by co-ordination is part
+of Abbot's "Ultima" game, though not elsewhere AFAIK.
+
+Perhaps the game could be called "Triangulation".
+
+If anyone has any comments, or suggestions
+to make that might improve the game, please write in.
+Any of the above 3 points (or any others) are fair game!
+
+-- Bill of writes
+
+Said Hamlet to Ophelia
+I'll draw a sketch of thee.
+What kind of pencil shall I use?
+2B or not 2B?     
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: New game thoughts inspired by Nick</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Feb 14, 2013, 12:31:47 PM</div>
+    <div class="content">
+It seems prone to cycles on the face of it. Maybe you could have a rule that a player must place a permanent stone on the "triangulated" point after a capture. Whether that permanent stone should be friendly, neutral or enemy should be determined by playtesting.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: New game thoughts inspired by Nick</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Feb 14, 2013, 7:58:29 PM</div>
+    <div class="content">
+I agree with cycles comment. As soon as you introduce captures, a straight largest group win condition is probably not enough, because as the board fills captures get more likely so the board never gets fully full. The general concept is quite nice though, and reading about it is just the kind of response I was hoping for in reply to my half-baked ideas!
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: New game thoughts inspired by Nick</div>
+    <div class="author">Matteo Perlini</div>
+    <div class="timestamp">Posted on Feb 15, 2013, 11:55:11 AM</div>
+    <div class="content">
+I like the Luis' idea to replaced the "triangulated" point with a permanent stone.
+
+Nick, this could be the solution for your game too (I'm referring to our talk on bgg), making your game with one unitary winning condition.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: New game thoughts inspired by Nick</div>
+    <div class="author">João Neto</div>
+    <div class="timestamp">Posted on Feb 15, 2013, 3:21:22 PM</div>
+    <div class="content">
+> 2: One stone played per turn in an empty cell.
+> (Standard variations:- 12* modifier (for speed emails),
+> Maybe use "Sabotage" modifier - i.e. may play opponent stones)
+I would suggest an extra rule: the board starts empty and stones may
+be dropped onto empty hexs. This way there's no big groups at the
+beginning.
+
+There should also be some advantage of having groups. Perhaps
+the winner is the one with the largest group after something happen?
+(egs, captures % stones, reach the opposite edge)
+> 3. (The key new rule) Instead of a placement, one may do:
+> If two of one's own stones have an uninterrupted queen-move
+> view of an opponent stone, they may kill it (by joint co-ordination,
+> military style), AND all the group it is part of !!
+There is (at least) one game, Kefren, that uses the triangulate concept
+
+http://www.di.fc.ul.pt/~jpn/gv/kefren.htm
+
+but does not include group captures.
+> That very last point is what keeps the groups small for
+> as long as poss. It is OC directly borrowed from Nick's
+> last game idea. The idea of killing by co-ordination is part
+> of Abbot's "Ultima" game, though not elsewhere AFAIK.
+There's another that I know, called "Life, the Universe and Everything" :-)
+
+http://www.chessvariants.org/42.dir/life-and-everything.html
+
+Cheers, 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: New game thoughts inspired by Nick</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Feb 15, 2013, 3:38:42 PM</div>
+    <div class="content">
+I agree that it's a good idea and I'll explore it, with the caveat that I will try not to make my game too much like Bill's. For example, I'll keep my capture mechanism and leave triangulation for Bill's game. 
+
+On a side note: I did the first playtest of heatseekers last night, with six bowls, and it went surprisingly well. I'll definitely going to work on it, as I smell more blood than usual. A bunch of surprising tactics popped up immediately. Always a good sign. 
+
+ps I'm glad to see a little activity in this forum. It's tiring dealing with you know who in the other forum
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: New game thoughts inspired by Nick</div>
+    <div class="author">João Pedro Neto</div>
+    <div class="timestamp">Posted on Feb 15, 2013, 6:27:30 PM</div>
+    <div class="content">
+Are there any new games only announced at r.g.a. that you think deserve mention?
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: New game thoughts inspired by Nick</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Feb 15, 2013, 6:44:02 PM</div>
+    <div class="content">
+Yes, Corey Clark's Rampart, especially the Hex version. My first impressions could not have been better - if that impression holds with more play it could be a classic:
+
+http://www.boardgamegeek.com/boardgame/134259/hex-rampart
+
+I don't know why Corey didn't posted it here since he's the administrator of r.g.c.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: New game thoughts inspired by Nick</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Feb 17, 2013, 8:25:51 AM</div>
+    <div class="content">
+n Feb 14, 8:58 pm, Bill Taylor <wfc.tay...@gmail.com> wrote:
+
+> 3.  (The key new rule)  Instead of a placement, one may do:
+> If two of one's own stones have an uninterrupted queen-move
+> view of an opponent stone, they may kill it (by joint co-ordination,
+> military style), AND all the group it is part of !!
+
+Agreed this will probably lead to cycles.
+
+So perhaps the rule should be: rather than killing
+the group of the triangulated stone, it is reversed
+as in Reversi. Of course, a player may construct
+a group covering more than half the board - but that
+doesn't mean he has an automatic win then - it could be re-flipped!
+
+Thus an element of "opposition" enters - the last to flip
+the huge group wins the game!
+
+-- Boardly Bill 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: New game thoughts inspired by Nick</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Feb 18, 2013, 4:48:58 PM</div>
+    <div class="content">
+this is a good idea. would you mind if I experimented with this in my own game (i.e. heatseekers)? 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: New game thoughts inspired by Nick</div>
+    <div class="author">Dieter Stein</div>
+    <div class="timestamp">Posted on Feb 18, 2013, 4:58:16 PM</div>
+    <div class="content">
+Hi,
+
+disregarding the group winning condition and the placement only style, I used "triangulated" pieces already in Attangle.
+
+http://attangle.com/rules/official
+
+Here the two attacking pieces are moved, i.e. one of them is placed on top of the attacked piece and the other one (the "supporter piece") is taken back to the stock. This way the attacker, gaining a stronger position through the capture, is also weakened at the same time because he loses a piece already placed on the board. It's another game but regarding the capture mechanism we met here. Maybe it's helpful bringing your idea forward.
+
+Dieter
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: New game thoughts inspired by Nick</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Feb 19, 2013, 1:30:25 AM</div>
+    <div class="content">
+There's a  called Full Metal Planet which also uses triangulated capture, I believe: http://www.boardgamegeek.com/boardgame/20/full-metal-planete
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: New game thoughts inspired by Nick</div>
+    <div class="author">Dieter Stein</div>
+    <div class="timestamp">Posted on Feb 19, 2013, 7:06:45 AM</div>
+    <div class="content">
+I remember that I started with the generalized form where n pieces (from all visible paths) capture one; kind of star capture :)
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: New game thoughts inspired by Nick</div>
+    <div class="author">Russ Williams</div>
+    <div class="timestamp">Posted on Feb 19, 2013, 7:09:46 AM</div>
+    <div class="content">
+In Full Metal Planet, you do need 2 units both attacking a defender,
+but it is not "triangulated" capture as i understand that to be
+described earlier in this thread, in which one of the attackers is
+moved to occupy the defender's space and the other attacker is removed
+from play. Rather, in FMP the 2 attackers remain in their positions
+after shooting at and destroying the defender.
+
+Russ 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: New game thoughts inspired by Nick</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Feb 19, 2013, 1:30:25 AM</div>
+    <div class="content">
+Ah, thanks for the correction Russ
+    </div>
+  </div>
+  
+</body>
+</html>

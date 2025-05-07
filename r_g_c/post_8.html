@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">CORNERLESS Y & Y-VERSI</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Nov 11, 2010, 5:04:07 AM</div>
+    <div class="content">
+CORNERLESS Y
+============
+Corners have always been a slight annoyance in connection games;
+they are easily dealt with by overlapping the edges, of course,
+but it seems ever so slightly clumsy. Havannah grasps the nettle
+firmly and makes them a complete special case. Rather ugly, though.
+
+In Cornerless Y, the matter is solved by the opening layout,
+which also has its ugly side, but is quite cute nonetheless.
+
+The board size is flexible, (though can only be of one parity);
+the one shown below is much too small for real strategic play.
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+RULES
+-----
+The game is Y, with PIE rule, played on a Y board initialised thus:-
+
+           x o
+          o . x
+         x . . o
+        o . . . x
+       x . . . . o
+      o . . . . . x
+     x . . . . . . o
+    o . . . . . . . x
+   x . . . . . . . . o
+  o . . . . . . . . . x
+   x o x o x o x o x o
+_____________________________________________________________
+
+And that's it! It's somewhat of a marvel that this opening
+distribution guarantees a unique winner!
+
+-----------------------------------------------------------------
+
+Y-VERSI
+=======
+The same game, with the same opening layout, but including
+Reversi-style captures.
+
+RULES
+-----
+Board as above. Standard alternating play.
+
+Stones may be played on any vacant cell, and any lines of
+adjacent opponent stones pincered between the played stone
+and another friendly stone, are captured by colour-reversal.
+
+The game must continue until the board is full.
+_____________________________________________________________
+
+That last rule is crucial - a player may well get a Y-group
+partway through the game, but does not immediately win,
+and may indeed lose at the game end!
+
+Have fun!
+
+-- Beaming Bill     
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: CORNERLESS Y & Y-VERSI</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Nov 11, 2010, 5:25:56 PM</div>
+    <div class="content">
+I'm going to reveal myself to be an utter moron here, but: it looks to
+me that there's no difference between Y with this layout and standard
+Y. It looks like a corner stone connects two sides in both cases. Am
+I reading the diagram wrong? Or what am I missing? 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: CORNERLESS Y & Y-VERSI</div>
+    <div class="author">christian</div>
+    <div class="timestamp">Posted on Nov 11, 2010, 7:00:11 PM</div>
+    <div class="content">
+On Nov 11, 6:04 am, Bill Taylor <w.tay...@math.canterbury.ac.nz>
+wrote:
+> Corners have always been a slight annoyance in connection games;
+> they are easily dealt with by overlapping the edges, of course,
+> but it seems ever so slightly clumsy.  Havannah grasps the nettle
+> firmly and makes them a complete special case. Rather ugly, though.
+>
+You seem to argue that because they're a special case, it is ugly (or
+worse, rather ugly :) to treat them as such? I'm missing the logic
+here.
+Now if you were any good at havannah, say 1900+ on avarage at LG, you
+would know that the bridge is the soul of havannah.
+
+I'll take it as ignorance, with no offence intended and certainly not
+taken ;-)
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: CORNERLESS Y & Y-VERSI</div>
+    <div class="author">Jackspritz</div>
+    <div class="timestamp">Posted on Nov 13, 2010, 10:51:49 AM</div>
+    <div class="content">
+Christian, I think Bill is overly concerned with the complimentary win/
+loss quality and not gameplay. Indeed I don't really see any new
+gameplay implications in cornerless Y and it seems rather obvious that
+with each cell on the border having adjacencies to both colors that
+there will still only be one winner, nothing to marvel at. Havannah
+may not have the complimentary win/loss property and it may have races
+but it is a far superior GAME. Havannah has its own elegance with each
+of the winning conditions being an organic derivation of the others
+leading to some very interesting strategic possibilities. The elegance
+of Havannah is in its gameplay rather than its aesthetics. And the
+gameplay is really what matters- regardless of what us more indulgent
+designers might tell ourselves. ;) Bill what you've demonstrated with
+Cornerless Y is purely theoretical, as Nick Bentley pointed out and
+while it's interesting it cannot be compared to a standout game like
+Havannah. 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: CORNERLESS Y & Y-VERSI</div>
+    <div class="author">christian</div>
+    <div class="timestamp">Posted on Nov 13, 2010, 11:49:32 AM</div>
+    <div class="content">
+On Nov 13, 11:51 am, Jackspritz <schackow...@live.com> wrote:
+> Cornerless Y is purely theoretical, as Nick Bentley pointed out and
+> while it's interesting it cannot be compared to a standout game like
+> Havannah.
+I'm not concerned with that. Anyone may, for lack of inspiration, try
+to suck yet another game out of Y.
+
+What I'm concerned with is people not reading what they write, and not
+asking themselves what exactly they're saying.
+
+"Corners have always been a slight annoyance in connection games;
+they are easily dealt with by overlapping the edges, of course,
+but it seems ever so slightly clumsy. Havannah grasps the nettle
+firmly and makes them a complete special case."
+
+Corners _are_ a special case, as argued in the first sentence. I don't
+know what a _complete_ special case might mean. Is it because havannah
+excludes them from the edges? Y includes them in the edges. What's the
+difference: a choice must be made.
+Other than that, connercells are just as any other cell in Havannah,
+so what's the 'complete' (other than that it should be 'completely').
+
+And what about a reply in a forum where 'game related subjects are
+discussed in a polite and civil matter'? Till now I don't see much of
+that. Please Bill, explain your logic :)
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: CORNERLESS Y & Y-VERSI</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Nov 14, 2010, 6:16:29 AM</div>
+    <div class="content">
+On Nov 14, 12:49 am, christian <christ...@mindsports.nl> wrote:
+
+> Anyone may, for lack of inspiration, try
+> to suck yet another game out of Y.
+
+> And what about a reply in a forum where 'game related subjects are
+> discussed in a polite and civil matter'?
+
+Do I detect a slight conflict here?
+
+Anyway, it's obvious I've stepped on someone's toes,
+so I'll politely apologize and withdraw from this topic.
+
+Bill 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: CORNERLESS Y & Y-VERSI</div>
+    <div class="author">christian</div>
+    <div class="timestamp">Posted on Nov 14, 2010, 10:00:11 AM</div>
+    <div class="content">
+On Nov 14, 7:16 am, Bill Taylor <w.tay...@math.canterbury.ac.nz>
+wrote:
+> Do I detect a slight conflict here?
+>
+> Anyway, it's obvious I've stepped on someone's toes,
+> so I'll politely apologize and withdraw from this topic.
+>
+Shifting the focus from the content of a message to the way in which
+it is delivered is the oldest trick in the 'Great Book of applied
+Mediocrity' and the preferred refuge of the cowardly.
+And 'someone' has a name, Bill.
+
+christian freeling
+    </div>
+  </div>
+
+
+</body>
+</html>

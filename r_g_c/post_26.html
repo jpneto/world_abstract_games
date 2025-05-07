@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Official Abstract Game Design Contest #1 Rules and Restrictions</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Nov 11, 2010, 5:02:12 PM</div>
+    <div class="content">
+Welcome to Recre.Games.Combinatorial's first abstract game design
+contest.
+
+Game Design Constraints:
+1. Win Condition: winner is player with majority stones on board when
+board is full.
+2. Capture by Conversion: stones convert to the opposite color during
+the gameplay by some mechanism.
+3. Playable in the iggc sandbox: this means the board for your game
+must use a square or hexagonal tiling.
+4. Game should be for 2 players only.
+
+Contest Rules
+1. Each entrant may submit no more 1 game to the contest.
+2. Final entries are due on or before Dec 23rd
+3. If you submit your entry before then, you may modify it up until
+the due date.
+4. Any member of this forum may enter a design.
+5. Entrants: submit your game by sending a link to the final rules to
+nickobento [at] gmail.com. Do so even if you've posted the rules on
+this forum. I'll publish a list of links on this forum the day after
+the entries are due.
+6. Following the deadline, there will be a two-week evaluation period
+(Dec 23 to Jan 6), during which voters will have a chance to playtest
+the submitted games.
+7. To be an eligible voter, you must a) be a member of this forum;
+and b) play each of the contest entries in the iggc sandbox during the
+evaluation period at least once.
+8. Votes are due on or before Jan 6, 2011
+9. To vote, each voter will provide a list of the games ordered by
+preference, from most preferred to least preferred. The winner will
+be determined by an instant runoff (http://en.wikipedia.org/wiki/Instant-runoff_voting)
+10. To voters: please send your votes to nickobento [at] gmail.com
+11. I'll announce the winner on January 7, 2011
+
+Note: designers may vote for their own game (the election method will
+not be mucked up by this)    
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Official Abstract Game Design Contest #1 Rules and Restrictions</div>
+    <div class="author">christian</div>
+    <div class="timestamp">Posted on Nov 11, 2010, 5:29:45 PM</div>
+    <div class="content">
+n Nov 11, 6:02 pm, Nick Bentley <nickobe...@gmail.com> wrote:
+> Welcome to Recre.Games.Combinatorial's first abstract game design
+> contest.
+
+The entry of Christian Freeling: SYGO
+http://mindsports.nl/index.php/arena/sygo/
+
+For the record and for convenience:
+SYGO will be playable at mindsports.nl shortly.
+
+Email notification has been send to nickobento [at] gmail.com.
+
+Regards,
+christian
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Official Abstract Game Design Contest #1 Rules and Restrictions</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Nov 11, 2010, 7:53:17 PM</div>
+    <div class="content">
+One question: would anybody mind if I entered this contest, despite
+the fact that I'm running it? I've got several concepts rattling
+around in my head. If anyone is uncomfortable with it, speak up.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Official Abstract Game Design Contest #1 Rules and Restrictions</div>
+    <div class="author">Matteo Perlini</div>
+    <div class="timestamp">Posted on Nov 11, 2010, 7:54:59 PM</div>
+    <div class="content">
+Nick, I think you HAVE TO enter this contest. :) 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Official Abstract Game Design Contest #1 Rules and Restrictions</div>
+    <div class="author">João Neto</div>
+    <div class="timestamp">Posted on Nov 11, 2010, 8:20:56 PM</div>
+    <div class="content">
+The more the merrier :-)
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Official Abstract Game Design Contest #1 Rules and Restrictions</div>
+    <div class="author">Matteo Perlini</div>
+    <div class="timestamp">Posted on Nov 11, 2010, 8:21:40 PM</div>
+    <div class="content">
+On Nov 11, 6:02 pm, Nick Bentley <nickobe...@gmail.com> wrote:
+> Note: designers may vote for their own game (the election method will
+> not be mucked up by this)
+
+I would prefer designers cannot vote for their own games. There is no
+point to do that, and the objectivity is difficult.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Official Abstract Game Design Contest #1 Rules and Restrictions</div>
+    <div class="author">christian</div>
+    <div class="timestamp">Posted on Nov 11, 2010, 8:24:38 PM</div>
+    <div class="content">
+On Nov 11, 9:21 pm, Matteo Perlini <epicuru...@gmail.com> wrote:
+> I would prefer designers cannot vote for their own games. There is no
+> point to do that, and the objectivity is difficult.
+
+I agree, and please Nick do join :)
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Official Abstract Game Design Contest #1 Rules and Restrictions</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Nov 11, 2010, 8:40:20 PM</div>
+    <div class="content">
+On Nov 11, 3:21 pm, Matteo Perlini <epicuru...@gmail.com> wrote:
+
+> I would prefer designers cannot vote for their own games. There is no
+> point to do that, and the objectivity is difficult.
+
+The election method I'm using makes this not such a big deal. I
+encourage entrants to give their highest votes to their own games. If
+all entrants do so, then there won't be any effect at all.
+
+In the unlikely event that it causes some kind of problem, we'll just
+run the next contest differently. At the end of this contest, I'll
+review the vote distribution and solicit feedback from everyone, so
+that the second contest is more free of whatever difficulties arise in
+this one. Your patience is requested.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Official Abstract Game Design Contest #1 Rules and Restrictions</div>
+    <div class="author">Thomas</div>
+    <div class="timestamp">Posted on Nov 14, 2010, 7:15:34 AM</div>
+    <div class="content">
+Here is my entry:
+https://docs.google.com/document/d/1srFSg9giobPqJ1iyNAjjaf-i4N6OX-xDCHcTM2EDmcU/edit?hl=en&authkey=COLfw4UE#
+
+It's the first time I've tried this sort of thing. I hope someone has
+fun with it. the game will take only 30 turns for each player. Draws
+are not possible.
+
+Here's the text only version:
+
+Travicus
+tra – pull
+vicus – change
+
+Board and Pieces
+Travicus is played on an 8x8 board with white and black stones. The
+stones are placed on the board cells as in checkers or chess, and not
+on the intersections as in Go.
+
+The initial position has alternating colored stones in each of the 4
+corners. White stones at a1 and h8, black stones at a8 and h1.
+
+Objective
+The goal is to have more stones of your color on the board than your
+opponent has. The game ends when the board is full.
+
+Play
+The first player begins the game as white. When the second player
+takes his first turn, he may choose to change colors with white rather
+than moving.
+
+Each turn consists of 4 moves, some of which are optional:
+
+* The player may move one of his stones one space horizontally or
+vertically. Diagonal moves are not permitted. This first move is
+optional.
+* The player may again move one of his stones one space
+horizontally or vertically. This stone may be the same stone as the
+stone moved in step 1, but the player may choose to move a different
+stone. This second move is optional.
+* The player may move one of his stones one more time. Again, the
+player may move one of the stones that has already been moved, or a
+different stone. On this third move, the player may also pull, and
+thus capture, one or more of his opponent's stones. This third move is
+optional.
+* Finally, the player must place a new stone of his color on the
+board in any empty space. This fourth move is not optional.
+
+To capture an opponent's stone, a pull mechanism is used. All pulled
+pieces must be immediately adjacent, and in a straight line. If black
+is pulling, only the immediately adjacent white pieces are pulled.
+Once an empty cell, or another black piece is reached, the pulling
+effect ceases. To pull, one stone of the player's color is moved to an
+empty adjacent cell, and all of the opponent's pieces that were behind
+that stone are pulled one step forward. Once pulled, the opponent's
+stones are removed from the board and replaced with the pulling
+player's stones. If Othello like pieces are used, the pieces may be
+simply flipped to change their color. When pulling, there is not net
+gain or loss with respect to the total number of stones on the board,
+only the color of the pulled stones changes. The pulling stone stays
+the same color.
+
+When the board is full, if each side has an equal number of stones,
+white wins.
+
+© 2010
+Thomas Foy 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Official Abstract Game Design Contest #1 Rules and Restrictions</div>
+    <div class="author">Xifeng</div>
+    <div class="timestamp">Posted on Nov 18, 2010, 10:17:16 AM</div>
+    <div class="content">
+Here's mine, Alea Evangelion: <a href="https://web.archive.org/web/20110214094823/https://xifeng.posterous.com/new-as-yet--game">http://xifeng.posterous.com/new-as-yet--game</a>
+
+The title is a terrible, three-way, three-language pun. I picked it
+because the capture mechanic is kind of like Evangelism: one stone
+converts all the stones around it.
+
+The driving idea behind it was ko-fights in Go, though I can't know
+for sure that such phenomena will be as prolific here as I hope.
+Because of that inherently unstable phenomenon, there's a possibility
+you could find yourself repeating the same sequence of moves over and
+over again. In that case I've adopted a somewhat unorthodox
+provisional rule: you must play a different move that breaks the
+cycle, or continue spinning your wheels in stubborn defiance of the
+rules of fun.
+
+Enjoy,
+Tristan
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Official Abstract Game Design Contest #1 Rules and Restrictions</div>
+    <div class="author">superslacker</div>
+    <div class="timestamp">Posted on Dec 11, 2010, 3:08:40 AM</div>
+    <div class="content">
+Hi Nick. Thanks for making this contest. It's had me thinking a lot
+about flipping mechanics. I'm not a big fan of flipping games
+normally because they tend to feel a bit random for me. Of course I
+haven't tried them all (a gross understatement). I did however take
+some time to work on a flipping game which I'm in the end phases
+(hopefully!) of completing.
+
+So far I have a few working rule sets that I'm slowly play testing
+when I find time. I'd like to enter the contest, but I'm afraid that
+although my winning condition appears to suit the mechanics of play it
+doesn't fit the 1st requirement. The win for my game goes to the one
+who has the largest group. Can I enter it in the contest anyway or is
+that super important?
+
+- Daniel
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Official Abstract Game Design Contest #1 Rules and Restrictions</div>
+    <div class="author">ni...@maproom.co.uk</div>
+    <div class="timestamp">Posted on Dec 11, 2010, 8:01:32 PM</div>
+    <div class="content">
+Hi Daniel,
+
+In message
+<d7b308ad-3a00-40d3...@k22g2000yqh.googlegroups.com>,
+superslacker <anti...@me.com> writes
+
+
+>Hi Nick. Thanks for making this contest. It's had me thinking a lot
+
+Not me. I am subscribed to this Google Group, but have never posted to
+it, and am not involved in the abstract game contest.
+
+Nick
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Official Abstract Game Design Contest #1 Rules and Restrictions</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Dec 11, 2010, 9:16:34 PM</div>
+    <div class="content">
+I'm the Nick you're looking for! I think it best to keep a strict
+adherence to the contest rules as written. But you should post your
+game to this forum of course!
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Official Abstract Game Design Contest #1 Rules and Restrictions</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Dec 18, 2010, 4:28:41 PM</div>
+    <div class="content">
+Here are the rules of Implo, my entry to the contest:
+
+<a href="https://boardgamegeek.com/boardgame/327644/implo">https://docs.google.com/document/d/1Y4uDQmZvv-TS6JXFoA2a8mAE4SolBLNYDBbwaq3Z_r4/edit?hl=en&authkey=CNqV6tQD</a>
+
+I've also started a thread on it. You can comment there.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Official Abstract Game Design Contest #1 Rules and Restrictions</div>
+    <div class="author">Zhang Dawei</div>
+    <div class="timestamp">Posted on Dec 18, 2010, 5:19:09 PM</div>
+    <div class="content">
+I have just finished my entry for the game competition. I'm not sure how
+to make the file available to people, so I've just made it available on
+the files section of the group page on google. It is a pdf file called
+"mortars.pdf". The document is 7 pages long, but only the first 2.5
+pages are specifically about Mortars. The rest is a brief description of
+the Mortars and Screens family of games, of which Mortars is just one
+specific instance. The description of the family depends on you having
+read the rules for Mortars first.
+
+I wonder if the description of the Family of Games would be better off
+in a separate message, and I'm not sure where is best to make the file
+available. I am in China, and so the link to Google's suggestions didn't
+work since it points somewhere that appears to be behind the Great
+Firewall, and I can only access that using devious means 9or by going
+home to the UK, which I will be doing on 28 December for a month.)
+
+Although I have entered the competition, it may be that I am unable to
+take part in the judging, as I have major commitments when I am in the UK.
+
+best wishes
+
+Dawei.
+
+ps: replies to the replies to my previous messages will dribble out over
+the next few days now that I have some spare time.
+
+-- 
+Zhang Dawei: Beijing, P.R.China.
+Please keep this email address confidential. It will
+remain valid for at least 2 weeks from data of email.
+    </div>
+  </div>
+
+</body>
+</html>

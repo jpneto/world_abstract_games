@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Backgammon question</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Nov 7, 2012, 4:20:43 AM</div>
+    <div class="content">
+This must be well-known in bg circles,
+but I don't recall seeing it before.
+
+What is the maximum possible number of stones
+possible to have on the bar simultaneously?
+
+Is it any different if one insists that no stones have
+yet been borne off? (It seems unlikely to be different.)
+
+TIA. -- Wondering Willy     
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Backgammon question</div>
+    <div class="author">Maurizio De Leo</div>
+    <div class="timestamp">Posted on Nov 19, 2012, 12:18:22 PM</div>
+    <div class="content">
+Hi,
+
+I don't think this is very famous in backgammon circles, because it is a very unlikely possibility. However the maximum number of pieces on the bar (i.e. captured) is 15 and it happens when you capture all the pieces of the opponent. Of course it can happen that there are pieces of both players on the bar, but the total number can not increase.
+This is because you can only capture by reentering (if you have some piece on the bar you can't move other ones) so you will capture at most one opponent piece for each of yours which leave the bar.
+    </div>
+  </div>
+
+</body>
+</html>

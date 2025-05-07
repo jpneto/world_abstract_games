@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Abeo - Contest Submission</div>
+    <div class="author">Phil Leduc</div>
+    <div class="timestamp">Posted on Nov 17, 2010, 12:57:06 AM</div>
+    <div class="content">
+Hi all,
+ 
+Below is a link to a pdf version of the rules to my game Abeo. Abeo will be my submission into the game contest. There may be minor changes.
+ 
+Abeo means change (in form), according to the Latin to English translator at the University of Notre Dame. Abeo is my effort to change (hopefully improve) Othello by speeding up the game's openning (two drops possible per turn) and by reducing the multi-directional flip rule down to just one direction making analysis seem easier - there's actual more moves to cosider but they are easier to keep in your mind's eye. The single and double drops can also be useful during the end game.
+ 
+https://docs.google.com/viewer?a=v&pid=explorer&chrome=true&srcid=0B0211fegUGauN2VjODk4NGUtOWRiNy00MTk1LWI0NDQtZWRlYTkxNTlmN2Y5&hl=en&authkey=CImHthc
+ 
+This is my third attempt at distributing the rules to the group. My POP failed due to not being able to find the address?? I hope I can figure this thing out before the contest is over and all the good ideas are taken. :)
+ 
+Anyway, below is a text copy of the rules but without figures. I hope you all enjoy it and every game that you play is a close one.
+ 
+Thanks for taking the time to look over the rules.
+ 
+Phil (pled) Leduc
+ 
+================================================================================
+
+Abeo  copyright 2010 Phil Leduc
+
+Abeo is two-player abstract strategy game of area domination. Players take turns placing tokens in an attempt to convert opposing tokens and to control the largest area of the board.  
+
+The game of Abeo requires the following components and setup:
+
+· 61 two-sided tokens, one side dark colored and the other light colored; for example, red and yellow.
+· One 5 x 5 x 5 hexagonal game board with 61 cells.
+· The game board is empty at the beginning of the game.
+· The double-sided tokens are placed by the board in easy reach of both players.
+
+The dark player plays first, turns then alternate. A player may not pass a turn.
+
+On a turn, a player must place one token on any empty cell, own side up.
+
+Follow this placement, players have three options:
+
+1.     They may end their turn thus placing only one token.
+2.     They may place a second token on any empty cell, own side up. This ends their turn.
+3.     Lastly, they may convert (flip) an entire continuous line (no partial lines) of one or more opponent tokens to their own color provided these tokens meet the following conditions:
+
+  · The opponent tokens must be in line with the just placed token.
+  · The opponent tokens must be connected to each other; no empty cells or own tokens between them.
+  · The opposing line must be adjacent to or separated from the dropped token by zero or more empty cells. Own tokens between the dropped token and the opposing line of tokens block this option.
+
+When the line is converted, this ends the player's turn.
+
+The game ends, at the end of a player’s turn, if there are no more empty cells on the game board. The player with the most tokens on the board wins the game. Ties are not possible.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Abeo - Contest Submission</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Nov 17, 2010, 4:45:09 AM</div>
+    <div class="content">
+Great! We've already got 4 entries, more or less ensuring that this
+will be a real contest.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Abeo - Contest Submission</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Nov 18, 2010, 4:30:13 AM</div>
+    <div class="content">
+On Nov 17, 5:45 pm, Nick Bentley <nickobe...@gmail.com> wrote:
+
+> Great! We've already got 4 entries, more or less ensuring
+> that this will be a real contest.
+
+Yes, good news! Though the parameters of the competition
+are not really in my current sphere of interest. I too
+greatly look forward to seeing the full list, the testing,
+and the result.
+
+And though I won't be sending an entry, my chief
+collaborator Joao Neto will be, I know, and I am already
+enjoying play-testing variants of it with him.
+
+So, Go Games Go!
+
+-- Beaming Bill 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Abeo - Contest Submission</div>
+    <div class="author">Jackspritz</div>
+    <div class="timestamp">Posted on Nov 21, 2010, 12:51:28 PM</div>
+    <div class="content">
+Just some general maintenance. Reposting Phil's Abeo updates in the
+original topic.
+
+On Nov 20, 7:45 am, Phil Leduc <philleduc.p...@gmail.com> wrote:
+> Hi all,
+>
+> As a novice user of Goggle Documents, I sent a new  link to an updated copy
+> of the Abeo rules without any attached explanation. I apologize for any
+> confusion this may have caused. The update simply clarifies the spacing rule
+> and cleans up the second figure. (Changed "one" to "zero" to emphasize
+> adjacent lines of opponent tokens can be flipped.)
+>
+> Game on,
+> Phil Leduc
+
+
+On Nov 20, 7:19 am, philleduc.p...@gmail.com wrote:
+> I've shared a document with you:
+>
+> Abeo Rules.pdfhttps://docs.google.com/viewer?a=v&pid=explorer&chrome=true&srcid=0B0...
+>
+> It's not an attachment -- it's stored online at Google Docs. To open this  
+> document, just click the link above.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Abeo - Contest Submission</div>
+    <div class="author">Phil Leduc</div>
+    <div class="timestamp">Posted on Dec 10, 2010, 2:26:27 AM</div>
+    <div class="content">
+The link to the corrected Abeo rules is
+<a href="https://docs.google.com/viewer?a=v&pid=explorer&chrome=true&srcid=0B0211fegUGauMWZhZTQ4MGQtYmI4Ny00Mzc0LWI1YzAtYzE2NWE1MWEzNTAx&authkey=CNSk7sEC&hl=en">https://docs.google.com/viewer?a=v&pid=explorer&chrome=true&srcid=0B0211fegUGauMWZhZTQ4MGQtYmI4Ny00Mzc0LWI1YzAtYzE2NWE1MWEzNTAx&authkey=CNSk7sEC&hl=en</a>
+
+Phil 
+    </div>
+  </div>
+
+</body>
+</html>

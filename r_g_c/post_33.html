@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">2nd Try: Contest Game Links and Instructions</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Dec 24, 2010, 6:02:24 PM</div>
+    <div class="content">
+    My first attempt to post thread had two errors in it, and in trying to
+fix it I messed up the original thread (why are these forums so
+abjectly terrible?). Please refer to this thread from now on since
+the older one has one incorrect link to an outdated version of one of
+the games.
+
+Below are links to all the games submitted to the contest.
+
+Abeo              http://goo.gl/0QXRM
+Arrello           <a href="https://web.archive.org/web/20110214094712/https://nickbentley.posterous.com/33653960">http://goo.gl/7J9u6</a>
+Deadcell          <a href="https://web.archive.org/web/20110214094803/https://messeya.posterous.com/deadcell">http://goo.gl/zuXTn</a>
+Devil's Advocate  http://goo.gl/NP7gt
+Implo             http://goo.gl/BHcbN
+Kitaran           http://goo.gl/6kk55
+Mortars           http://goo.gl/fLkcw
+Pilf              http://goo.gl/8vi2B
+Travicus          http://goo.gl/uKSSj
+Verto             <a href="https://spielstein.com/games/verto">http://goo.gl/lOVlV</a>
+
+Notes:
+
+Even if you've already read the rules for a given game, read them
+again before playing, as designers may have tweaked their rules since
+you last read them.
+
+To be an eligible voter, you must a) be a member of this forum; and b)
+play each of the contest entries in the "sandbox" at
+
+http://www.iggamecenter.com/
+
+There are three reasons voters must play at the ig game center:
+--Arty Sandler has graciously offered to implement the winning game as
+a prize, so the least we can do it go drive up traffic at his site.
+--It'll make it easier to find opponents for playtesting if we all
+test there.
+--It'll make it easier to make sure voters have played all the games.
+Speaking of which:
+
+Please take a screenshot of each game you play. If some voter is
+accused of not having played all the games, I'll ask the accused to
+produce screenshots, in case the games in question are no longer in
+the iggamecenter's memory banks.
+
+There will now be a two-week evaluation period (Dec 24 to Jan 6),
+during which voters will have a chance to play the submitted games.
+
+Votes are due on or before Jan 6, 2011
+
+To vote, each voter will provide a list of the games ordered by
+preference, from most preferred to least preferred. The winner will
+be determined by an instant runoff
+
+http://en.wikipedia.org/wiki/Instant-runoff_voting
+
+A designer's vote for his own game will not count.
+
+To voters: please send your votes to nickobento [at] gmail.com, with
+"my vote" in the subject line.
+
+Your vote should be a ranked list of all the games, with your favorite
+game at the top and your least favorite at the bottom
+
+I'll announce the winner on January 7, 2011
+
+Finally, would anyone mind if I published the list of contest entrants
+over at BGG with a request to come play them at the iggc sandbox?
+(another good thing we can do for Arty)
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: 2nd Try: Contest Game Links and Instructions</div>
+    <div class="author">Matteo Perlini</div>
+    <div class="timestamp">Posted on Dec 24, 2010, 6:32:15 PM</div>
+    <div class="content">
+On Dec 24, 7:02 pm, Nick Bentley <nickobe...@gmail.com> wrote:
+> Finally, would anyone mind if I published the list of contest entrants
+> over at BGG with a request to come play them at the iggc sandbox?
+> (another good thing we can do for Arty)
+
+This is certainly a good idea. :-)
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: 2nd Try: Contest Game Links and Instructions</div>
+    <div class="author">Harald Korneliussen</div>
+    <div class="timestamp">Posted on Dec 25, 2010, 9:44:22 PM</div>
+    <div class="content">
+Is there any particular reason you prefer Instant Runoff to Condorcet?
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: 2nd Try: Contest Game Links and Instructions</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Dec 28, 2010, 3:14:11 PM</div>
+    <div class="content">
+whimsy + simplicity 
+    </div>
+  </div>
+
+</body>
+</html>

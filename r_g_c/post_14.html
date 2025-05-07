@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Pilf - a possible contest submission</div>
+    <div class="author">Matteo Perlini</div>
+    <div class="timestamp">Posted on Nov 20, 2010, 11:51:34 AM</div>
+    <div class="content">
+Hi,
+
+this is my potential candidate for the contest. I didn't playtest it
+properly so it is possible I will change the rules partially or even
+completely.
+
+
+* P I L F *
+
+<a href="https://web.archive.org/web/20110214094847/http://www.epicurus.altervista.org/pilf.htm">http://www.epicurus.altervista.org/pilf.htm</a>
+
+Pilf is played with two players, black and white, on a square board.
+The board size is arbitrary, but a normal size could be 8x8. The game
+requires two-sided pieces (as in Othello/Reversi), one side black
+coloured and the other white coloured.
+
+
+OBJECTIVE:
+When a player doesn't have any legal moves then the game is over. The
+winner is the player who has more pieces on the board.
+Draws are not possible on boards with odd sides.
+
+
+PLAY:
+Players move alternately, starting from the black player.
+
+There are two kinds of move:
+1. short placement: one piece is placed (horizontally, vertically or
+diagonally) adjacent to his own piece(s);
+2. long placement: one piece is placed in any cell not (horizontally,
+vertically or diagonally) adjacent to his own piece(s).
+
+In his own turn the player can choose between making two short
+placements or one long placement. Pass is not possible.
+
+After each short placement (not after the long placement), all
+opponent's pieces (horizontally, vertically or diagonally) adjacent to
+the destination square are flipped, changing their colour. Flipping is
+mandatory.    
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Posted on Pilf - a possible contest submission</div>
+    <div class="author">Matteo Perlini</div>
+    <div class="timestamp">Nov 23, 2010, 6:35:28 PM</div>
+    <div class="content">
+The game is quite changed:
+- the board is hexagonal;
+- just one move per turn;
+- placement or movement are possible.
+
+In this link there will be always the latest version of Pilf:
+http://www.epicurus.altervista.org/pilf.htm
+
+Anyway, I write the rules below.
+
+
+* P I L F *
+
+Pilf is played with two players, black and white, on a hexagonal
+board. The board size is arbitrary, but a normal size could be 7x7x7.
+The game requires two-sided pieces (as in Othello/Reversi), one side
+black coloured and the other one white coloured.
+
+OBJECTIVE:
+When the board is full then the game is over. The winner is the player
+who has more pieces on the board.
+
+PLAY:
+Players move alternately, starting from the black player. The pie rule
+is used to make the game fairer.
+
+In his own turn the player can choose between two different actions:
+1. placement: one piece is placed in any unoccupied cell;
+2. movement: one piece is moved to any adjacent unoccupied cell.
+
+After a movement (not after a placement), all opponent's pieces
+adjacent to the destination cell are flipped, changing their colour.
+Flipping is mandatory.
+    </div>
+  </div>
+
+</body>
+</html>

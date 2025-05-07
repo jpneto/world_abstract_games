@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Glorieta 2.0</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Aug 12, 2011, 1:24:15 AM</div>
+    <div class="content">
+I've developed a refined version of my game Glorieta. Instead of
+reposting here, I'm just sending you to the link, since you'll need to
+look at pictures to understand the rules and I don't know how to post
+pics here. Comments/criticisms?
+
+http://nickbentley.posterous.com/revised-game-glorieta-20    
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Glorieta 2.0</div>
+    <div class="author">Cameron Browne</div>
+    <div class="timestamp">Posted on Aug 12, 2011, 5:15:27 PM</div>
+    <div class="content">
+Hi Nick,
+
+Love it! The use of neutrals to allow overlapping loops is a nice
+idea.
+
+>So, I leave this as a challenge: find a way to give the players control of the neutrals
+>such that the neutrals end up spaced throughout the board with optimal play.
+
+Neutral pieces cannot be placed anywhere they'd be in line with
+another neutral piece along any of the three hexagonal axes? And if
+this is not sufficient then also the three axes that bisect them?
+
+Not allow neutrals to be placed adjacent to any other piece?
+
+I wondered about not counting loops if the cell distance between any
+two neutral cells that contribute to the loop is less than say
+three... but then of course players would deliberately play neutrals
+closer than three cells to spoil enemy loops, giving exactly the wrong
+result :)
+
+Ideally the spacing would come about as a side-effect of good play
+rather than an explicit rule but can't think of an elegant way to
+achieve this off-hand.
+
+Cameron 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Glorieta 2.0</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Aug 12, 2011, 7:29:18 PM</div>
+    <div class="content">
+> Love it! The use of neutrals to allow overlapping loops is a nice
+> idea.
+
+Thanks Cameron!
+
+> Neutral pieces cannot be placed anywhere they'd be in line with
+> another neutral piece along any of the three hexagonal axes? And if
+> this is not sufficient then also the three axes that bisect them?
+
+I hadn't thought of this one. Possible objection: I have something I
+call the "mom rule" - if describing the rule to my mom would result in
+a blank "I don't understand" look, then it's too obscure. Does this
+one break the mom rule?
+
+> Not allow neutrals to be placed adjacent to any other piece?
+
+I tried this one. Didn't seem to fix the problem. But I didn't test it
+extensively, so I could be wrong.
+
+> I wondered about not counting loops if the cell distance between any
+> two neutral cells that contribute to the loop is less than say
+> three... but then of course players would deliberately play neutrals
+> closer than three cells to spoil enemy loops, giving exactly the wrong
+> result :)
+
+...like most of the rules I invent.
+
+> Ideally the spacing would come about as a side-effect of good play
+> rather than an explicit rule but can't think of an elegant way to
+> achieve this off-hand.
+
+I'm similarly vexed. If the answer pops into your head, please post!
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Glorieta 2.0</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Aug 12, 2011, 7:44:13 PM</div>
+    <div class="content">
+It should also be noted that neutrals are general: they can be used to
+reduce the draw-margin in any pattern building game where the patterns
+are hard to make.
+
+So another question: what other patterns are worth trying out?
+Perhaps a connection game where the goal is to connect 4 (or 5 or even
+6) sides of a hex board? What else? Something whimsical? A smiley
+face? Etc?
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Glorieta 2.0</div>
+    <div class="author">Dieter Stein</div>
+    <div class="timestamp">Posted on Aug 13, 2011, 11:00:33 AM</div>
+    <div class="content">
+Thinking this to an end, this would lead to the other idea I'm
+struggling with for some time now. A connection game using "neutrals"
+only. Actually I'm was working with neutrals coming from that end, yet
+I mixed in colored pieces as a second step.
+
+Also, in this context, "Gygès" by Claude Leroy has to be mentioned
+here.
+
+- Dieter 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Glorieta 2.0</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Aug 13, 2011, 4:03:22 PM</div>
+    <div class="content">
+> Thinking this to an end, this would lead to the other idea I'm
+> struggling with for some time now. A connection game using "neutrals"
+> only.
+
+Argh. I wrote a reply but then appeared to be lost in cyberspace so
+now I'm trying again.
+
+I think that's an interesting challenge. Idea. A connection game with
+neutrals, where the neutrals have arrows on them point in some, but
+not all, possible directions (so, somewhere between 1 and 5 for a hex
+board, depending on what choice made for the best game. I assume all
+stones have the same number of arrows and are in fact identical)
+
+Adjacent stones are only considered connected if at least one points
+in the direction of the other with an arrow (or perhaps both stones
+must point toward each other?).
+
+So in this game, it's not just the placement of stones that matter,
+but also their rotation. Perhaps each turn can be: place a stone,
+rotate a stone.
+
+thoughts?
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Glorieta 2.0</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Aug 13, 2011, 4:05:17 PM</div>
+    <div class="content">
+Oh, and in case it wasn't clear, the game I propose is supposed to be
+a neutrals-only game, as you suggest. 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Glorieta 2.0</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Aug 13, 2011, 7:01:31 PM</div>
+    <div class="content">
+Actually, now that I think about it, the neutral-stones-with-arrows
+concept could be used to create a loop-forming game where one player
+tries to create a clockwise pointing loop and the other one tries to
+create a counter-clockwise loop
+
+Woah. Now I'm excited. I'm gonna test that out ASAP and report back.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Glorieta Example Game and Design Notes</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Mar 6, 2013, 5:46:44 PM</div>
+    <div class="content">
+Since the nature of this game isn't the easiest to grok from the rules, I've posted an example game. See <a href="https://web.archive.org/web/20140209081147/http://nickbentleygames.wordpress.com/2013/03/06/glorieta-example-game-design-notes/">here</a>. 
+
+<i>I’m posting to show off my abstract game Glorieta with an example match (click through slide show above) and commentary (below), because I’ve gotten fond of it and because the rules alone don’t fully convey how the game unfolds.
+
+In the game, 2 players compete to be the first to form a loop of stones on a hexagonally tiled board. This would be an impossible task except in each match, stones on board are slowly converted to neutral stones, owned by both players. As a result, the barriers to forming a loop gradually erode, and the player who most cleverly navigates the rubble completes a loop.
+
+Completing a loop, especially a big one, feels good to me. Like I’ve successfully threaded a bunch of needles in succession. Like I’m the most precise badass on the planet. Like I’m Inigo Montoya.
+
+In a normal connection game, you aim for a big target: a wall. Here you aim for the tail ends of chains of stones strewn about. I think the sense of “hitting a small target”, combined with having to overcome the minefield of your opponent’s short-loop threats, is where the feeling of precision comes from. There’s also something wholistically nice-feeling about completing a loop on a hex board, but I don’t know why. In addition, the many shapes and sizes of the winning loops lend a sense of variety.
+
+The example above was a match between two beginners with experience in connection games. We allowed take-backs (not shown), which means the match didn’t end in a short loop like it often does for beginners. It ended with a big cross-board loop.
+
+If you don’t want to go through the whole game, just look at the last 5 or 6 slides to see how the game ended. Note how the Blue player won by simultaneously making a short loop threat and a long loop threat, such that his opponent couldn’t defend both.
+
+It’s a good example because it illustrates how the neutral stones and perimeter spaces come into play in loop formation: the winning loop here utilized 5 neutral stones and 6 perimeter spaces, as you can see by looking at the last two slides. It’s also more advanced than a normal beginner match thanks to the take-backs.
+
+More on the Origin of Glorieta
+
+When I play a game, generally speaking, I like it when there’s a threat of a game-ending move throughout. I like the “sweating bullets” feeling that I get under such circumstances, and the possibility of both long and short matches adds to my sense of variety.
+
+It’s a little strange then, that I love connection games, because they generally don’t have that quality. They tend to be heavily strategic, and the threat of game-ending moves doesn’t arrive until many turns in. I like connection games for their wonderful strategy considerations, but I think I would like them even more if there were some short threats to contend with as well.
+
+A few years back, it occurred to me that a connection game where the goal is to form a loop might be different. The reason is that loops can come in a wide range of sizes. For example, on a hexagonally tiled board, a loop may be comprised of as few as 6 stones, or it can be a many-lobed monstrosity draped across the board, or anything in between.
+
+The existence of small loops allows for short threats, in principle. In fact, one game, Christian Freeling’s Havannah, employs them to this end, and it works beautifully.
+
+In Havannah, loops are a side dish, not the main course. There are two other goals in that game, which tend to be the focus, and a loop is what happens when you concentrate too much on them.
+
+So for a long time now, I’ve been trying to invent a game where loops are not only the main course, but the only course.
+
+There’s a problem though: depending on the board you use, loops are either too easy or too hard to form, so if you try to design a straightforward loop goal connection game, you either end up with a tactics-fest or a stalemate-fest.
+
+I’ve come up with several solutions to this problem, and Glorieta embodies one of my favorites so far.
+
+It’s a bit more “grand” than the games I typically design. These days I usually strive to make complexity hidden so that casual players won’t realize it’s there. Glorieta isn’t like that. You’re aware you’re playing something challenging. The game tree is both large and bushy, and it takes experience to reliably see the basic tactical threats.
+
+I’m interested in knowing what kind of first impression this game makes on you, if you look through the example game. I’m so deeply into these kinds of designs that I have no sense of what kind of impression they tend to make.</i>
+    </div>
+  </div>
+  
+</body>
+</html>

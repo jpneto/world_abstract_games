@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Slightly revised game: Brique</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Dec 21, 2012, 2:27:55 AM</div>
+    <div class="content">
+The core mechanic of Brique is that, whenever there's a pair of like-colored, diagonally adjacent stones parallel to the NE-SW diagonal, their owner must immediately connect them orthogonally by placing another friendly stone adjacent to both. If the diagonal pair is on dark squares, the connecting stone will be placed to the SE of it, and to the NW otherwise, so it's an automatic placement. 
+
+However, the original rules also required automatic placements to be made after certain edge placements which weren't part of any diagonal pair, which was subtly inconsistent with the above. 
+
+I've made a little change in the rules to remove this implication and make the game as organic as it should be. 
+
+The revised placement rule reads as follows: 
+
+After a placement, if the two escorts of one or more squares are occupied by friendly stones and said squares aren't occupied by friendly stones yet, the player must place a stone of his color on each one of them, removing, where appropriate, any enemy stones already placed there. Note that some squares on the edge of the board have only one escort or no escorts at all. These squares are not affected by this rule.
+
+I've updated both the <a href="http://www.boardgamegeek.com/boardgame/127189/brique">BoardGameGeek entry for the game</a> and the <a href="http://www.boardgamegeek.com/filepage/81562/official-brique-rules">PDF rule sheet</a>.
+
+On a different note, a possibly unobvious feature shared by Brique and Vimbre is that connections are permanent despite the captures, as they never split any groups.   
+    </div>
+  </div>
+
+</body>
+</html>

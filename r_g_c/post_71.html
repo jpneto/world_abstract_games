@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">New Game: Spry</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Nov 18, 2011, 3:22:07 PM</div>
+    <div class="content">
+Nothing too original here. Just another way to balance Y on a hexhex
+board. Don't know if it's any good. Haven't played it.
+
+<a href="https://web.archive.org/web/20120218141138/http://nickbentley.posterous.com/new-game-spry">http://nickbentley.posterous.com/new-game-spry</a>
+
+This just popped into my head uninvited while I'm trying to go to sleep and it won't leave. I'm posting it here in the hope that I can make it go away by doing so. 
+
+It's a way to solve a problem for a well-known win condition and an excuse to create another game on a colorful board I enjoy (the first was Swaparound). The game is called Spry, which is a contraction of the phrase "Spread Y". The problem is that if you play the game Y on a hexhex board, the center of the board is much more important than the periphery, especially on a small board. Spry is a way to fix that. 
+
+It's for two players, played with Black and White stones, on this board:
+Spry_board
+
+Note that the green part of the board is divided into concentric hexagonal rings of different shades. The central cell is considered a "ring" here as well.  
+
+Rules
+
+    The players take turns placing stones on the green area of the board.
+    On your turn, you may place a number of stones equal to the number of cells on one side of the innermost hexagonal ring on which you place a stone. You may also place fewer than that, but must place at least one. 
+    The first player to construct a group of stones which touches at least one yellow, blue, and red space wins. 
+
+Note #1: if you place in the center, you can place only one stone.
+
+Note #2: you don't have to place all your stones on the same ring. You can distribute them across rings however you want. It's just that the innermost ring on which you place a stone determines how many stones you can place.
+
+This game will go quickly so you probably need a board larger than the one pictured here. 
+
+There's nothing much original about this - it's really just a better, more rational way to use the concept of an earlier, not-great game of mine called Clots, to fix the center-vs-periphery problem for HexhexY.
+
+Note that the limit on the number of stones you can place is proportional to the total number of spaces on the innermost ring on which you place a stone. From a space-filling point of view, this may be the most rational way to balance the different regions of the board by varying the number of stones you place by location. Maybe. I haven't thought about it much.
+
+Whether it's a good game is another question. Goodnight.
+
+    </div>
+  </div>
+
+</body>
+</html>

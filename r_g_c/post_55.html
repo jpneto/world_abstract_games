@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Ketchup 4.0: I've changed the rules again. This is just stupid.</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Jul 11, 2011, 4:57:48 PM</div>
+    <div class="content">
+Reposted from blog:
+http://nickbentley.posterous.com/ketchup-40-ive-changed-the-rules-again-this-i
+
+For those who can manage to read about this game one more time without
+retching, but I've found what I believe is another refinement. I won't
+dwell on it, but I'm convinced it's better.
+
+The idea: instead of giving the trailing player an extra stone on each
+turn on which she trails, she now only gets an extra stone on turns
+after her opponent creates or extends the largest group on the board.
+The effect is to:
+
+1. Shorten and liven-up the early/midgame, since it creates an
+incentive to take the lead earlier (due to reduced negative feedback).
+2. Creates a more varied decision-space in the late game, since now a
+leading player has reason to occasionally avoid extending her largest
+group in the late game.
+3. Further shorten and clarify the rules.
+
+I can't believe how much thought I've ended up putting into this
+thing. I've learned that iterative design is nothing to scoff at. I
+used to want games to pop out of my brain whole. This game could
+*never* have popped out whole. The devil's in the details in ways I
+couldn't have seen without lots of play testing.
+
+Ok, the new rules:
+
+Ketchup is a game for two players, played with red and green stones on
+a hexhex5 or hexhex4 board.
+
+Terminology
+1. Group – a set of connected, like-colored stones on the board.
+2. Group Size – the number of stones that a group contains. The
+smallest possible group has a size of 1. The figure below shows three
+groups with sizes 1, 3, and 12.
+3. To Drop- to place a stone on any empty space.
+
+Rules
+1. The board begins empty. One player owns the red stones and the
+other owns the green stones.
+2. Red begins by dropping a single stone
+3. From then on, starting with Green, each player drops two stones on
+her turn.
+4. If, on your turn, you create or extend a group larger than any
+other on the board, your opponent may drop 3 stones instead of 2 on
+his next turn (and only on his next turn).
+5. The game ends when the board is full. The player with the largest
+group wins. If the players’ largest groups are the same size, compare
+their second-largest groups, and so on, until you come to a pair which
+aren't the same size. Whoever owns the larger of the two wins.
+
+Printable boards with scoring tracks for paper-and-pencil play
+available at link above.    
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Ketchup 4.0: I've changed the rules again. This is just stupid.</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Jul 12, 2011, 3:09:35 PM</div>
+    <div class="content">
+Incidentally, in versions where the two largest groups
+may be of equal size, (thus including this latest),
+there is a marginal COLD element in the game.
+
+Has that been noticed before?
+
+e.g. if both sides have equal largest groups,
+with no 2nd-largest group, (so the board is almost
+covered by the two huge blobs), and there are five
+empty cells, scattered along the boarder, touching
+both big lumps, then NO-ONE WANTS TO MOVE!
+
+If moving is compulsory, (which the rules don't
+make UTTERLY indisputable), then whoever moves
+increases his group by two, then the opponent
+increases his by three and WINS!!
+
+TA-DAH. Freezing cold situation.
+
+-- Boardish Bill
+
+** We need a game played on the surface of
+** a regular dodecahedron or icosahedron.
+** The physical board can be a polystyrene
+** sculpt, with stones being drawing pins
+** of various colours to stick in it!
+** After moving, the player tosses
+** the board to his opponent! 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Ketchup 4.0: I've changed the rules again. This is just stupid.</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Jul 12, 2011, 6:12:00 PM</div>
+    <div class="content">
+> Incidentally, in versions where the two largest groups
+> may be of equal size, (thus including this latest),
+> there is a marginal COLD element in the game.
+>
+> Has that been noticed before?
+>
+> e.g. if both sides have equal largest groups,
+> with no 2nd-largest group, (so the board is almost
+> covered by the two huge blobs), and there are five
+> empty cells, scattered along the boarder, touching
+> both big lumps, then NO-ONE WANTS TO MOVE!
+
+Yep! Although extreme cold situations like this don't come up in
+actual play (or at least I've never played a game where it happened),
+because cells adjacent to two oppositely colored big lumps are
+important and get claimed earlier. There are, however, situations with
+lesser degrees of coldness that pop up throughout.
+
+> If moving is compulsory, (which the rules don't
+> make UTTERLY indisputable)
+
+Moves must be compulsory for the game to resolve unambiguously
+(obviously), although perhaps I should allow for the option to add one
+stone instead of two? There is at least one situation where you must
+be able to add one stone instead of two, which is when there is only
+one space left on the board. For the sake of consistency, maybe it's
+best to allow for 1 or 2 stones per move at all times?
+
+Any thoughts on the consequences, good or bad, of allowing for single-
+stone drops? Do you think I should allow them?
+
+If so, rule 2 should read:
+
+"2. Red begins by dropping a single stone. From then on, starting with
+Green, each player must drop 1 or 2 stones on her turn."
+
+I'll change it if I can figure out whether it's a good idea.
+
+I also noticed another issue in the way I've worded the rules that may
+confuse people: it's not clear whether the first stone on the board
+counts as "the largest group". It shouldn't. To make this clear, the
+minimum group size should be changed to 2 instead of 1 in the
+"definitions". 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Ketchup 4.0: I've changed the rules again. This is just stupid.</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Jul 13, 2011, 8:05:54 AM</div>
+    <div class="content">
+On Jul 13, 5:12 am, Nick Bentley <nickobe...@gmail.com> wrote:
+
+> Moves must be compulsory for the game
+> to resolve unambiguously (obviously),
+
+I'm not sure this is obvious to me. It looks like another
+of those things that maybe "never seem to happen in preactice".
+
+If so, I generally prefer non-compulsory moving, just to make
+wording easier and to allow players slightly more choice and
+thus maybe more skill. Not hot about it though.
+
+> although perhaps I should allow for the option to add one
+> stone instead of two?
+
+Ditto. The more choice, the less compulsion/restriction,
+the better, and more natural, IMHO. Within reason, OC;
+it would not do for chess!
+
+-- Bitpicking Bill 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Ketchup 4.0: I've changed the rules again. This is just stupid.</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Jul 13, 2011, 12:25:43 PM</div>
+    <div class="content">
+> > Moves must be compulsory for the game
+> > to resolve unambiguously (obviously),
+>
+> I'm not sure this is obvious to me.  
+
+Well, only when the board is full can it be certain that at least one
+pair of opposing groups are not the same size. As you say, it may not
+matter in practice, but I like that draws are impossible, so I want to
+the board to inevitably fill.
+
+> > although perhaps I should allow for the option to add one
+> > stone instead of two?
+>
+> Ditto.  The more choice, the less compulsion/restriction,
+> the better, and more natural, IMHO.   Within reason, OC;
+> it would not do for chess!
+
+Ok. Done.
+    </div>
+  </div>
+
+</body>
+</html>

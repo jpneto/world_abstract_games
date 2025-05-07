@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Verto AI Applet</div>
+    <div class="author">Dieter Stein</div>
+    <div class="timestamp">Posted on Dec 27, 2010, 11:56:19 AM</div>
+    <div class="content">
+ Hi,
+the Verto AI Applet is available now at http://spielstein.com/games/verto/play
+
+Have fun!
+Dieter   
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Verto AI Applet</div>
+    <div class="author">JWentu</div>
+    <div class="timestamp">Posted on Dec 27, 2010, 12:17:05 PM</div>
+    <div class="content">
+Hi !
+I tried your Verto applet. The game seems interesting and i like it because there are some new concepts.
+The AI didn't seem very strong, i don't know if i was playing at a particularly low level. I reached a situation when it is my turn, there are only to possible squares where i can play (those with the tiny pale red dot) and in both places I would convert more than one Blu pieces. Therefore these moves are forbidden. I can't manage to play in other squares and i can't find a "pass" button. What am i doing wrong ?
+
+thankx !
+bye !
+
+Wentu
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Verto AI Applet</div>
+    <div class="author">Dieter Stein</div>
+    <div class="timestamp">Posted on Dec 27, 2010, 12:45:56 PM</div>
+    <div class="content">
+Hi,
+
+> The AI didn't seem very strong, i don't know if i was playing at a
+> particularly low level.
+
+It seems the AI plays not very strong in a browser context with
+reduced heap space. The Java application available at
+
+http://spielstein.com/games/verto/verto.jar
+java -jar verto.jar <STRENGTH>
+w/ <STRENGTH> = 1..n
+
+plays much stronger (depending on the power of the computer you're
+using).
+
+> I reached a situation when it is my turn, there are
+> only to possible squares where i can play (those with the tiny pale red dot)
+> and in both places I would convert more than one Blu pieces. Therefore these
+> moves are forbidden.
+
+The rules say you *may* play there. You only have to decide which
+stone to capture in a second step.
+
+> I can't manage to play in other squares and i can't
+> find a "pass" button. What am i doing wrong ?
+
+If you really must pass, just click a space.
+
+Dieter 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Verto AI Applet</div>
+    <div class="author">Dieter Stein</div>
+    <div class="timestamp">Posted on Dec 31, 2010, 3:15:24 PM</div>
+    <div class="content">
+Hi,
+there's a new and bugfixed Happy-New-Year-version of the Verto Applet
+available at
+
+http://spielstein.com/games/verto/play
+
+It's not so easy to beat the computer player now.
+
+Dieter 
+    </div>
+  </div>
+
+</body>
+</html>

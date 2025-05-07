@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Forms revised</div>
+    <div class="author">Steven Meyers</div>
+    <div class="timestamp">Posted on Oct 4, 2011, 9:00:01 PM</div>
+    <div class="content">
+Forms is now revised. The game is now more focused and strategic.
+Here are the rules:
+
+The game can be played on an m by n board where n is even. The set up
+is a full interspersed board, as in the game Clobber.
+
+e.g. a 4 by 4 board:
+
+BWBW
+WBWB
+BWBW
+WBWB
+
+The game is misere rather than regular. As you know, this means that
+the last person to move *loses*. This turns out to be crucial to
+making Forms work.. You win by forcing your opponent to capture all
+of your pieces.
+
+On your turn you can and must do exactly one of the following two
+things:
+
+1) capture an adjacent opponent's piece by replacement (You'll note
+that this is again the same as Clobber.)
+
+2) execute a "topologically invariant orthogonal slide" to an empty
+space. This mouthful is actually an easy concept to grasp
+intuitively. It basically means that you slide (via orthogonally
+adjacent empty spaces) as far as you want, combining any number of
+changes of direction that you want, such that you land on an empty
+space. Here's an illustration (E stands for empty space):
+
+WBEE
+EBEE
+EWEE
+BWWE
+
+Among the possible moves, the uppermost black piece may slide to the
+lowermost rightmost empty space, resulting in this position:
+
+EEEE
+EBEE
+EWEE
+BWWB
+
+Why the uppermost leftmost white piece is now missing will be
+explained shortly.
+
+When executing a type 1 move or a type 2 move, any pieces *of either
+or both sides* that are no longer connected to the orthogonally
+connected group (as reckoned by pieces of either or both sides) that
+the stone involved now belongs to, are removed from the board and are
+out of play, being effectively captured. A type 1 move --- an
+adjacent replacement capture of an opponent's piece --- can but does
+not have to remove an additional piece or pieces of either side. A
+type 2 move --- a slide to an empty space --- *must* remove one or
+more pieces of either or both sides. In the diagram above where the
+black piece has slid to the lowermost rightmost empty space, the
+uppermost leftmost white piece is now no longer part of the
+orthogonally connected group to which the slid black piece now
+belongs. Note that in such a removal (whether by a type 1 move or a
+type 2 move) the question of disconnection is reckoned *after* the
+move is completed. Temporary disconnection during the move does not
+result is removal. For example:
+
+EEEE
+EEEE
+WWEE
+BEEE
+
+Suppose the leftmost white stone slides to the empty space just to the
+right of the other white stone. (This results in immediate loss, but
+never mind that.) Only the black stone is removed. The other white
+stone stays because it was only temporarily disconnected from the
+sliding stone during the move. After the move it is still connected
+and therefore remains.
+
+If any of you get a chance to try it, please let me know what you
+think.
+
+Steve    
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Forms revised</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Oct 7, 2011, 12:38:47 PM</div>
+    <div class="content">
+A few questions about the rules, Steve.
+
+> The game can be played on an m by n board where n is even.
+
+Is there any special reason to disallow odd x odd? Other than
+ensuring they start with equal numbers, (which doesn't seemm
+all that vital from an equalization PoV, given sliding.)
+
+> is a full interspersed board, as in the game Clobber.
+
+Is Clobber just the same game but standard, (non-misere)?
+
+> The game is misere rather than regular.
+
+Is regular a bit too boring, or what?
+On 4x4 it could still be subtle. I guess on big boards
+it could become sudden-death trivial; but maybe it
+could still be playable with a no-kill-all rule
+(which would become disabled at the very end OC).
+
+> 2) execute a "topologically invariant orthogonal slide"
+
+Seems cumbersome. Why not call it just "a slide"?
+
+> When executing a type 1 move or a type 2 move, any pieces *of either
+> or both sides* that are no longer connected to the orthogonally
+> connected group (as reckoned by pieces of either or both sides) that
+> the stone involved now belongs to, are removed from the board and are
+> out of play, being effectively captured.
+
+That is a really cool capture technique. Well done!
+
+> If any of you get a chance to try it, please let me know what you
+> think.
+
+I'm sure we will. Have you played it much yourself?
+
+It strikes me that a winning strategy (at least on large-ish boards)
+might be to "try to win", in the sense of killing all one's
+opponent's pieces but one, to severely reduce his options.
+You yourself would always retain plenty of options, and
+this might make it easy for you to find the key move that
+suddenly reduces things to one piece each, which is a win for you.
+
+I have heard, for example, that the modern way to play
+misere chess is to try to capture ALL BUT ONE of the opposition
+player's pieces, that can then be led on a killing mission all
+around the board. This may be quite a common theme in misere
+games. I gather that Reversi and misere Reversi can look very
+similar right up to the last few moves.
+
+Can anyone here report on the misere chess/reversi situations?
+
+-- Take-off Taylor
+
+-- Boardly Bill 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Forms revised</div>
+    <div class="author">zickzack@gmail.com</div>
+    <div class="timestamp">Posted on Oct 7, 2011, 1:34:19 PM</div>
+    <div class="content">
+On Oct 7, 1:38 pm, Bill Taylor <wfc.tay...@gmail.com> wrote:
+
+> I have heard, for example, that the modern way to play
+> misere chess is to try to capture ALL BUT ONE of the opposition
+> player's pieces, that can then be led on a killing mission all
+> around the board.  This may be quite a common theme in misere
+> games.  I gather that Reversi and misere Reversi can look very
+> similar right up to the last few moves.
+
+In Suicide Checkers, there is an interesting exercise. The first
+player keeps all his men. The second player removes all men, just
+one on the back row must be left. If the Checkers variant has
+backwards capture, that makes it a win for the first player. If
+there is no backwards capture, as in English Draughts, some more
+rules, like an extra move at move 1 is needed to make it a win for
+the first player. He gets to sacrifice all his 12 pieces before his
+opponent can get rid of the one man.
+
+That pattern repeats in suicide elimination games. In general, there
+seems to be a rule that, if a misère game is meaningful (i.e. of a
+complexity somilar to that of the original game), then the strategy
+of the misère game is like that of the original*, unless it is related
+to the end of the game. I had a look at what CGT has to say about this,
+but so far I could not find anything which yields a more formal
+definition of that guideline.
+
+*Applied to Checkers: avoid zugzwang, generally have more pieces
+
+Here is a list with examples:
+http://boardgamegeek.com/geeklist/47480/a-company-of-misere-games
+
+As for Othello: Anti-Othello and Othello have the same strategy,
+in general you want to have less pieces than the opponent. This
+makes Othello opaque for some. Anti-Othello, on the other hand,
+is straightworward in this respect: as you want to have less pieces
+at the beginning of the game and less at the end. In Anti-Othello,
+however, you avoid taking corners like the plague,, the direct
+opposite of gameplay in Othello.
+
+I am not good at Dots and Boxes, but I would like ask interested
+players to check, if chains are equally important in misère Dots
+and Boxes. Secondly, is playing the edge a reasonable option in
+the opening of misère dots and boxes? I would see the latter as
+a wart, but then, here in Germany, Dots and Boxes is played with
+the edges filled in right from the beginning of the game.
+Benedikt
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Forms revised</div>
+    <div class="author">Steven Meyers</div>
+    <div class="timestamp">Posted on Oct 8, 2011, 6:32:47 AM</div>
+    <div class="content">
+On Oct 7, 7:38 am, Bill Taylor <wfc.tay...@gmail.com> wrote:
+> A few questions about the rules, Steve.
+>
+> > The game can be played on an m by n board where n is even.
+>
+> Is there any special reason to disallow odd x odd?  Other than
+> ensuring they start with equal numbers, (which doesn't seemm
+> all that vital from an equalization PoV, given sliding.)
+>
+
+No special reason.
+
+> > is a full interspersed board, as in the game Clobber.
+>
+> Is Clobber just the same game but standard, (non-misere)?
+>
+
+Revised Forms and Clobber share the same starting set-up and capture-
+adjacently-rule. But type 2 moves make the gameplay wildly
+different. I suppose it could be considered a variant of Clobber
+rather than its own game, but it's a stretch.
+
+> > The game is misere rather than regular.
+>
+> Is regular a bit too boring, or what?
+> On 4x4 it could still be subtle.  I guess on big boards
+> it could become sudden-death trivial; but maybe it
+> could still be playable with a no-kill-all rule
+> (which would become disabled at the very end OC).
+>
+
+My experience with the game so far is that the misere game is much
+more exciting. But do you think there would be any advantage to
+changing it to regular with a no-kill-all-rule (except at the very
+end)? Or is this really just the same as the misere game?
+
+> > 2) execute a "topologically invariant orthogonal slide"
+>
+> Seems cumbersome.   Why not call it just "a slide"?
+>
+
+To me "slide" sounds like just a rook move. I think it's best to
+describe the type 2 move explicitly. After it's understood, it can
+just be referred to as a slide.
+
+> > When executing a type 1 move or a type 2 move, any pieces *of either
+> > or both sides* that are no longer connected to the orthogonally
+> > connected group (as reckoned by pieces of either or both sides) that
+> > the stone involved now belongs to, are removed from the board and are
+> > out of play, being effectively captured.
+>
+> That is a really cool capture technique.  Well done!
+>
+
+Thank you. The previous version of Forms had that capturing mechanism
+as well.
+
+> > If any of you get a chance to try it, please let me know what you
+> > think.
+>
+> I'm sure we will.   Have you played it much yourself?
+>
+
+I've played it a fair amount, yes. I recommend playing it on a 4x4
+board a number of times before moving on to bigger boards.
+
+> It strikes me that a winning strategy (at least on large-ish boards)
+> might be to "try to win", in the sense of killing all one's
+> opponent's pieces but one, to severely reduce his options.
+> You yourself would always retain plenty of options, and
+> this might make it easy for you to find the key move that
+> suddenly reduces things to one piece each, which is a win for you.
+>
+
+As you say, maximizing your options relative to your opponent's is the
+basic strategy. In Forms that means obtaining and keeping control
+over key connections, so that the surviving portion of the board will
+always be a position favorable to you. 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Forms revised</div>
+    <div class="author">Steven Meyers</div>
+    <div class="timestamp">Posted on Oct 8, 2011, 6:40:35 AM</div>
+    <div class="content">
+Thanks for this very interesting information on misere games. I will
+have to consider what all this might mean for Forms' strategy.
+
+Steve 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Forms revised</div>
+    <div class="author">Steven Meyers</div>
+    <div class="timestamp">Posted on Oct 9, 2011, 2:51:38 AM</div>
+    <div class="content">
+Here's a sample 4 by 4 game to illustrate the game's mechanics:
+
+BWBW
+WBWB
+BWBW
+WBWB
+
+Black plays c2-d2, resulting in:
+
+BWBW
+WBWB
+BWEB
+WBWB
+
+White plays b4-a4, resulting in:
+
+WEBW
+WBWB
+BWEB
+WBWB
+
+Black plays a2-b2 (threatening b3-a3 immediate mate):
+
+WEBW
+WBWB
+EBEB
+WBWB
+
+White plays a3-b3 to avoid mate (note that the white piece at a4 has
+been abandoned/captured):
+
+EEBW
+EWWB
+EBEB
+WBWB
+
+Black plays b1-c1 (note that the white piece at a1 has been abandoned/
+captured):
+
+EEBW
+EWWB
+EBEB
+EEBB
+
+White has b3-a2 immediate mate but he doesn't see it. He plays c3-d3
+instead (note that the stones at b2 and b3 are abandoned/captured):
+
+EEBW
+EEEW
+EEEB
+EEBB
+
+Black misses d2-d3 immediate mate. He plays d2-c3 instead, which is
+almost as good (note that the stones at c1 and d1 are abandoned/
+captured):
+
+EEBW
+EEBW
+EEEE
+EEEE
+
+White plays d4-c4:
+
+EEWE
+EEBW
+EEEE
+EEEE
+
+Black plays c3-b4 mate (the stone at d3 is abandoned/captured):
+
+EBWE
+EEEE
+EEEE
+EEEE 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Forms revised</div>
+    <div class="author">Jackspritz</div>
+    <div class="timestamp">Posted on Oct 10, 2011, 10:52:31 AM</div>
+    <div class="content">
+On Oct 7, 5:38 am, Bill Taylor <wfc.tay...@gmail.com> wrote:
+> It strikes me that a winning strategy (at least on large-ish boards)
+> might be to "try to win", in the sense of killing all one's
+> opponent's pieces but one, to severely reduce his options.
+> You yourself would always retain plenty of options, and
+> this might make it easy for you to find the key move that
+> suddenly reduces things to one piece each, which is a win for you.
+
+Why do you seem to go out of your way to try to break games?
+Especially when the evidence for their being solved is so
+uncompelling? Run a damn bot if you can't program one or demonstrate
+some sort of algorithm stop being so antagonistic.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Forms revised</div>
+    <div class="author">Russ Williams</div>
+    <div class="timestamp">Posted on Oct 10, 2011, 11:04:25 AM</div>
+    <div class="content">
+That was antagonistic?
+
+2 sentences earlier he said:
+
+>> That is a really cool capture technique. Well done!
+
+It seemed a friendly message intended to give useful feedback, not at
+all antagonistic.
+
+To me, trying to break a game is no more "antagonistic" than a
+software tester trying to find program bugs or a proofreader looking
+through text for typos or a cryptographer trying to find flaws in a
+cryptography algorithm. If my game (program, text, algorithm,
+whatever) has a problem, I'd rather find out sooner than later.
+
+surprised,
+russ
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Forms revised</div>
+    <div class="author">Jackspritz</div>
+    <div class="timestamp">Posted on Oct 10, 2011, 11:24:58 AM</div>
+    <div class="content">
+Did you read the thread with the header "Report on Ki"? This seems to
+be becoming a pattern. I agree if you have an actual argument for why
+a game is broken you should tell the designer posthaste but look it's
+like he's grasping at straws. His reasoning for Form's brokenness is
+vague, like how misere games SEEM to play out in general and
+qualifying all of his statements with phrases like "might" or "strikes
+me". I dunno what it is. Maybe Bill is forlorn because he hasn't
+designed anything in a long while (been there), maybe he just likes to
+play devil's advocate but what it amounts to is antagonism in the
+sense that it's almost like jinxing a game, even though it has no
+effect on how the game plays, the intent is definitely questionable.
+I'll leave it at that. 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Forms revised</div>
+    <div class="author">zickzack@gmail.com</div>
+    <div class="timestamp">Posted on Oct 10, 2011, 12:08:52 PM</div>
+    <div class="content">
+It looks like a Holy War is coming up. In any case,
+I think "breaking games" is a service. As is any
+other reasonable work on the strategy of a game.
+
+I am quite annoyed with hit and run game invention
+- design is the wrong word - in general. There is
+the occasional ruleset which is so cool that it
+has mertit on its own. But most of the time it is
+not the ruleset, but the gameplay that establishes
+the value of a game and that is intrinsically linked
+the strategy and other features. In other words, I
+expect a game designer to tell me why I should play
+his game, and he should give the reasons for that
+in terms of gameplay. If not, then he does not care
+about his own game - and then, why should I?
+
+This group is for thinking aloud, too. I am aware
+of that. And I do not accuse Steven of hit and run
+design anyhow. But trying to establish the strategy
+of a game - and that includes, if it can be broken -
+is still a service.
+Benedikt 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Forms revised</div>
+    <div class="author">Steven Meyers</div>
+    <div class="timestamp">Posted on Oct 10, 2011, 5:42:26 PM</div>
+    <div class="content">
+Forms was loosely inspired by shogi. The game is not won by grinding
+things out. You win by maintaining offensive initiative, maneuvering
+for the right moment to strike. Because of the drop rule, the king in
+shogi is ultimately indefensible. Defensive plays are still useful
+--- but only for so long. Shogi gameplay is, more than anything,
+about attacking speed. I'm far from being an expert on shogi, but
+after years of playing it (as well as shogi variants that have the
+drop rule), this is the strong general impression I get.
+
+My hope with Forms was to bring the excitement of a checkmate game
+(and shogi's high excitement in particular) to a game of elimination.
+Again, you win not by grinding things out but by attacking faster than
+your opponent does. Defensive plays only stem the tide of your
+opponent's attack long enough to maneuver for a successful attack
+yourself. In Forms any opponent's piece or group of pieces can be
+considered a "king" and a target for checkmate. At least it was my
+hope to create this feel.
+
+If you guys get a chance to play it a few times on a 4 by 4 board, I'd
+be interested to know what your comments and impressions are.
+
+Steve 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Forms revised</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Oct 10, 2011, 5:49:05 PM</div>
+    <div class="content">
+I second Benedikt and Russ,
+
+Pointing out potential flaws is a good thing, as long as it's done in
+a spirit of helpfulness, and even if the point is vague (of course
+specificity is better, but not required).
+
+Games are like scientific hypotheses: you find the good ones by
+eliminating the bad ones.
+    </div>
+  </div>
+
+</body>
+</html>

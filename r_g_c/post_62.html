@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">New games: Yodd & Xodd</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Aug 28, 2011, 5:28:11 PM</div>
+    <div class="content">
+Yodd rules:
+
+<a href="files/Yodd.pdf">https://docs.google.com/viewer?a=v&pid=explorer&chrome=true&srcid=0B3gpl2WT8ufWZGQ4ZTVjYTAtY2YwNi00OWRkLWE2ZWItYjA1ZThjNGE5YjI0&hl=en_US</a>
+
+Xodd rules:
+
+<a href="files/Xodd.pdf">https://docs.google.com/viewer?a=v&pid=explorer&chrome=true&srcid=0B3gpl2WT8ufWYWNmZGY5YTgtNjIwZS00NTE4LTkxMzgtNzZmZWJmYzU2MWYz&hl=en_US</a>
+
+They are really the same game, only on different grids.    
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: New games: Yodd & Xodd</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Aug 29, 2011, 2:42:36 PM</div>
+    <div class="content">
+On Aug 29, 4:28 am, luigi <luis.9.8...@gmail.com> wrote:
+
+> Xodd rules:
+> https://docs.google.com/viewer?a=v&pid=explorer&chrome=true&srcid=0B3...
+
+Cool games, with a new winning criterion - excellent.
+
+Luigi - I was just wondering if you'd compared Xodd with
+(call it, say) Kodd, (for King-connection Xodd), wherein
+a group can involve diagonal connections as well?
+
+Did you do any test comparisons? Both connection ideas
+have their merits and demerits, I just wondered if you'd
+compared them.
+
+-- Bivalent Bill 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: New games: Yodd & Xodd</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Aug 29, 2011, 9:53:08 PM</div>
+    <div class="content">
+On 29 ago, 15:42, Bill Taylor <wfc.tay...@gmail.com> wrote:
+> Luigi - I was just wondering if you'd compared Xodd with
+> (call it, say) Kodd, (for King-connection Xodd), wherein
+> a group can involve diagonal connections as well?
+>
+> Did you do any test comparisons? Both connection ideas
+> have their merits and demerits, I just wondered if you'd
+> compared them.
+
+Thanks for commenting, Bill. I haven't tested Kodd, but I suspect it
+would be too easy to connect groups. Maybe even a trivial win for one
+of the players, more or less the same as in a Hex-like game on a
+square board with 8-connectivity.
+
+Also, I think it isn't good to have too few groups at the end of the
+game, because the better player will have a harder time showing his
+superiority. The game becomes more, say, "volatile".
+
+Anyway, if you ever do any "Kodd" tests, I'd love to read what you've
+found out.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: New games: Yodd & Xodd</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Sep 18, 2011, 8:30:44 AM</div>
+    <div class="content">
+On Aug 30, 8:53 am, luigi <luis.9.8...@gmail.com> wrote:
+> On 29 ago, 15:42, Bill Taylor <wfc.tay...@gmail.com> wrote:
+>
+> > Luigi - I was just wondering if you'd compared Xodd with
+> > (call it, say) Kodd, (for King-connection Xodd), wherein
+> > a group can involve diagonal connections as well?
+>
+> > Did you do any test comparisons?  Both connection ideas
+> > have their merits and demerits, I just wondered if you'd
+> > compared them.
+>
+> Thanks for commenting, Bill. I haven't tested Kodd, but I suspect it
+> would be too easy to connect groups.
+
+Maybe; it's interesting to note that kingwise-adjacency allows
+both players to have one huge group on the board, and indeed on
+smallish boards filled in at random this would be almost certain
+to happen! However, the odd-group rule forbids this, so it would
+be interesting to see what would happen. It may be that the game
+would become one of very local tactics as players tried to make
+or prevent tiny isolated groups, around the edges of a giant
+2-group ocean. In such a case parity would be king, and the game
+might have a similar feel to Dots-&-Boxes where that very feature
+is dominant for most of the game.
+
+> Maybe even a trivial win for one of the players,
+
+Possibly, especially if it is too easy to kill isolated groups,
+by joining them to the main ocean. It would be nice to find out.
+
+> Also, I think it isn't good to have too few groups at the end of
+> the game, because the better player will have a harder time
+> showing his superiority.
+
+Well, yes, but only if it is really easy to kill isolated bits.
+
+> The game becomes more, say, "volatile".
+
+I would call it volatile only if it turned out EASY to make isolated
+groups, as then no-one would have a real idea of the likely parity
+till near the end. That sounds a bit like Reversi, to most of us!
+And come to think of it, that would likely be the case with your
+own Xodd. There, it would be super-easy to lay down large numbers
+of easily-kept-isolated groups, and we would have that same
+confusion problem - lack of clarity.
+
+> Anyway, if you ever do any "Kodd" tests,
+> I'd love to read what you've found out.
+
+Indeed, now that we've chatted, it does sound interesting.
+I'll start one up with Joao. At the moment, we've just started
+a round of Yodd, and can't yet tell how it's going.
+
+Will keep folk posted!
+
+-- kiwibill (on various servers) 
+    </div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS -->
+
+  <div class="post">
+    <div class="subject">Christian's fascinating design process</div>
+    <div class="author">Jackspritz</div>
+    <div class="timestamp">Posted on Nov 12, 2010, 10:09:18 AM</div>
+    <div class="content">
+Christian Freeling made the error of posting game-related material to
+rec.bile.insults, a big no no. I'm going to mirror these posts
+describing his fascinating design process for Sygo here.
+
+> You see, discovering the symple mechanism, applying it first where I
+> found it, in the 'connection flavored'  Star theme embodied by Symple,
+> then progressing to the configuration theme with Lhexus and the
+> othelloanian territory theme with Charybdis ... at that point anybody
+> could have noticed its broad range of applications.
+>
+> So anybody could have thought ... "hey, what about Go?" ... and thus
+> could have come up with Sygo. In fact, when I realized it, the evening
+> of November 10th while walking the dogs (you guys should try that for
+> inspiration :) I felt a bit of a worry. The next day I immediately
+> could write the game down. The merger of the ideas involved suggested
+> its own solutions, rather than posing any problems. Thus a game was
+> born that, in so far as games are considered to have intrinsic value,
+> is more valuable than, say, Havannah.
+
+
+One of the most intelligent
+> summaries of what abstract games are about is "Defining the Abstract"
+> by J. Mark Thompson:http://www.thegamesjournal.com/articles/DefiningtheAbstract.shtml
+>
+> Allow me a quote:
+> "A good game should also have drama: it should be possible for a
+> player to recover from a weaker position and still win the game.
+> Victory should not be achievable in a single successful blow; the
+> suspense should continue through an extended campaign. Otherwise an
+> early disadvantage makes the remainder of the game uninteresting: the
+> doomed player rightly guesses that the puzzle he is trying to solve
+> has no solution and that thinking about it is futile. A game's drama
+> might be measured roughly by matching a strong player against a weak
+> player, and having them switch sides after the strong player achieves
+> an advantage. In a dramatic game the strong player will still have a
+> chance of winning. But the difficulty of defining "advantage" clearly
+> will make drama harder to measure than depth."
+>
+> Reflecting on this I think, yes, that's what's lacking in Symple, and
+> what you get an overdose of in Charybdis (while Lhexus is
+> inconsequential to begin with). They were singposts: Sygo was the sole
+> reason for the 'symple' vision to reveal itself.
+>
+> But you can only get there by whispering and listening closely to what
+> a game tries to convey. These are the kind of observations I'd rather
+> not post at r.g.c for fear of 'hijacking' threads. I was recently
+> accused of that at bgg (no comparison implied), for instance, by
+> someone who kept bothering me about a theme I wasn't really interested
+> in. And then Symple revealed itself and I got nasty accusations about
+> publishing it prematurely. Because inventors are not at liberty to do
+> with their games as the see fit, I suppose.
+>
+> I dislike that kind of response so I'm generally careful about posting
+> too much. But here I can, because the other posts make me look good,
+> almost regardless of what I write :)    
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Christian's fascinating design process</div>
+    <div class="author">christian</div>
+    <div class="timestamp">Posted on Nov 13, 2010, 3:40:45 PM</div>
+    <div class="content">
+On Nov 12, 11:09 am, Jackspritz <schackow...@live.com> wrote:
+
+> Christian Freeling made the error of posting game-related material to
+> rec.bile.insults, a big no no. I'm going to mirror these posts
+> describing his fascinating design process for Sygo here.
+
+Well, what did I tell you? Nobody cares. And if I had posted it
+myself, it would for some members just have been a confirmation of
+their idea that I'm a conceited old brat.
+
+I discovered the symple mechanism a month ago or so and made four
+games on it, six if you count translations, and four of these since
+Nick announced the contest.
+
+Are they all great games? No, not according to Mark Thompson's
+definition, to which I subscribe.
+
+Symple lacks drama, Charybdis has too much of it, Lhexus is
+inconsequential.
+
+But Sygo is another matter. I mowed the grass, put the ball on the
+penalty spot, removed the keeper and and said "hey guys, put 2 and 2
+together and you may have a great game.
+But no-one was paying attention, fortunately, so I could invent it
+myself before somebody else even saw the ball and the empty goal.
+
+I'm an annoyingly talented reclusive and I rub people the wrong way
+by doing what I do without much effort and without consulting,
+trying, testing, talking and the like. Well, let me shade that: on my return I
+did cooperate with Arty and David Bush, and I wasn't in the best of shapes
+back then. Next Query, which is actually the closest thing to 'square hex, went
+almost unnoticed.
+
+Yet when I hear members say that they need at least six weeks, or that
+they've been working on an idea 'for months', I can't help thinking "if you can't
+find it in a day, you won't find it in a month either".
+That's why I don't think much about games, usually. If I can't see my
+prey, I leave it, and go walking with the dogs. If I see it, I hunt it
+down. Bummer for the tedious diggers, but not my problem.
+
+And that's why I only post in reply, should that not already be clear
+from the lack of response your mirrored post about Sygo gets.
+    </div>
+  </div>
+
+
+</body>
+</html>

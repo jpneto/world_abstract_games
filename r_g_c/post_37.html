@@ -1,0 +1,1412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Corners and Ugliness, again. (2)</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Nov 18, 2010, 4:34:02 AM</div>
+    <div class="content">
+Corners and Ugliness, again. (2)
+===============================
+
+So now about the controversial term, "ugly", in games.
+
+It is a totally subjective matter of course, in games as in math.
+
+And there is no disputing matters of taste!
+
+This being so, it is a great pity that people might
+crash and burn over the use of this term. But the fact is,
+game designers AND game players frequently describe a game,
+or some particular feature of a game, as being "ugly".
+It is so common, that there might be some intersubjective
+feature to it, as much as there is in painting, for example,
+(which is almost none at all, these days!)
+
+So what could it mean? There is a nice list of game features
+that goes around, listing "drama" and various other features
+of games, that may contribute toward a game's excellence.
+I don't recall that "purity" or "simplicity" was one of its
+categories, but perhaps it should be? For example, almost
+anyone who has played Go for some time, and also many complete
+beginners, are tremendously impressed that a game of such
+drama and profundity can emerge from such an incredibly basic
+set of equipment, and almost as simple a set of rules.
+
+This is so common, again, that I feel many folk regard
+*simplicity* as one of the contributing features of excellence
+in games. Almost all those of a mathematical bent, I guess,
+but many others as well.
+
+There are many the other way too, OC, many who love a bit
+of ornamnental complexity for its own sake. This is VERY
+common in commercial themed games, OC, but also in many
+commercial abstract ones as well. It is less common,
+but still seen in some abstract public-domain games as well.
+
+A classic case, OC, THE classic case, is chess.
+Chess, in various geographical variants, is tremendously
+popular all around the world. Not a designer game, OC,
+but a historical one, and one whose mixture of complexity
+and depth is a major contributing feature of its popularity.
+
+Still, suppose we had a world without chess, but still with
+all other board, card, and other games. Perhaps Checkers; or
+maybe Go, might hold pride of place in games in the West as well
+as in the East. Now suppose in such a world, some game designer
+came up with the rules of modern chess - including 2-step pawns,
+en passant, castling and its prohibitions, variable promotion,
+stalemate - the full catastrophe! Such a game and its
+inventor would almost be laughed out of court! The complaints
+about the large number of piece types, the ad hoc rulings,
+the whole sorry mess, would make it and him an object of
+ridicule for quite some time.
+
+OC it may well still happen that it would attract a sect of
+faithful devotees, who would slowly increase, spread the word,
+write strategy books, set up clubs and tournaments, and have
+it finally achieve a place in the world that it enjoys today.
+
+But that seems fantasticaly unlikely. Most likely it would fade
+away quickly, leaving few ripples in the abstract game world.
+And this would be due to its seen-to-be unnecessary complexity.
+It would probably be seen as a crazy rip-off of commercial
+ideas with neither the simplicity of most designer games,
+nor the realism of true battle-simulation games.
+
+Essentially, complexity for its own sake, is a poor thing.
+
+Thus I feel that if the essential idea of a new game can be
+instantiated with as few extra complications as possible,
+then that is a good thing. And I suspect that a large part,
+perhaps the larger part, of the abstract game world would agree.
+
+Unnecessary complexity is one of those things that contributes,
+however slightly, towards "ugliness", whatever that may be.
+
+-- Bill of basics.
+
+** CHESS - game of kings;
+** GO - king of games.     
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Corners and Ugliness, again. (2)</div>
+    <div class="author">Xifeng</div>
+    <div class="timestamp">Posted on Nov 18, 2010, 8:50:10 AM</div>
+    <div class="content">
+I think that if a game maintains clarity, any amount of complexity is
+acceptable. Chess of course, and its kin from around the world (Shogi
+makes Chess look elegant) but also Arimaa and maybe others I can't
+think of right now. Meanwhile most combinatorial games are very simple
+and elegant, but utterly lack clarity.
+
+Stretching a bit, there are quite a few non-abstract strategy games
+with a great deal of complexity, that still maintain quite a lot of
+clarity. I'd get laughed right out of here if I said which, but there
+are some very complex games out there with incredible clarity and
+sufficient depth to maintain a robust community for more than a
+decade.
+
+If the complexities are easy to grasp on an intuitive level, then they
+don't appear as complexities from a strategic point of view. This is
+true of Hex's shared corners and Havannah's special corners both. It's
+true of Arimaa's pushing rule, and also Taasen's completely different
+pushing rule.
+
+My own belief is that the strategic properties of a game are
+infinitely more important than the mathematical properties. One might
+read the rule-sheet for a few minutes, and admire the elegance, but
+such pleasures are fleeting next to the endless discoveries waiting in
+the strategic realm. One does not spend a lifetime studying the rules
+of Go, but the strategies. The two are intimately connected: good
+rules and good games often go hand in hand. But it's correlation,
+there are many counterexamples to rule out causation.
+
+-- Tristan 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Corners and Ugliness, again. (2)</div>
+    <div class="author">Harald Korneliussen</div>
+    <div class="timestamp">Posted on Nov 18, 2010, 9:19:18 AM</div>
+    <div class="content">
+On Nov 18, 5:34 am, Bill Taylor <wfc.tay...@gmail.com> wrote:
+
+> Still, suppose we had a world without chess, but still with
+> all other board, card, and other games.  Perhaps Checkers; or
+> maybe Go, might hold pride of place in games in the West as well
+> as in the East.  Now suppose in such a world, some game designer
+> came up with the rules of modern chess - including 2-step pawns,
+> en passant, castling and its prohibitions, variable promotion,
+> stalemate - the full catastrophe!      Such a game and its
+> inventor would almost be laughed out of court!  The complaints
+> about the large number of piece types, the ad hoc rulings,
+> the whole sorry mess, would make it and him an object of
+> ridicule for quite some time.
+
+I think this is an idea peculiar to abstract game feinschmeckers like
+ourselves. As you said, complexity with aestethic as opposed to
+gameplay purpose, as well as "inelegant" complexity for subtle
+gameplay purposes, doesn't seem to bother most players. It's not just
+chess. Look at all the rulings about triple ko and similar in Japanese
+Go rules.
+
+People who go ahead and publish an abstract game without seeking
+permission/education from our clique first (and they are still the
+majority!) also don't appear seriously bothered by exceptions for
+gameplay or "theme". Kamisado, for instance, isn't exactly free of
+them.
+
+Although _this_ community is prone to laugh at such highly
+idiosyncratic games, that doesn't mean the world laughs at them.
+
+I think I can I understand the motivation for designers who add lots
+of nooks and crannies to their games. They set their own stamp on it,
+they can truly call it their own. Truly fundamental games, however,
+like Hex, don't really belong to their inventors, much like physics
+doesn't belong to Newton.
+
+Some designers seem to want to be the Newtons (or Einsteins) of
+abstract games. Some would rather be the Michelangelo, or maybe the
+Bach. Others seem more like Andy Warhol. I won't laugh at any of them,
+and I don't see it as my job to judge any particular approach as less
+worthy - though I do have my own tastes in games. 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Corners and Ugliness, again. (2)</div>
+    <div class="author">Jackspritz</div>
+    <div class="timestamp">Posted on Nov 18, 2010, 10:08:23 AM</div>
+    <div class="content">
+I wouldn't call Go mathematically elegant due to the superko rule. Go
+might be a great game and its patterns might be of mathematical
+interest but a game that uses the Ko rule in such a fundamental way
+isn't what I would call "mathematically elegant". Oust is
+mathematically elegant. It makes clever use of the dots and boxes
+metarule, you must end your turn with a move that does not improve
+your position immediately. This allows the tempo to shift in a game
+with a capture mechanism that on its own would make for a trivial and
+dull experience. It doesn't simply say "don't do that", it is encoded
+in the board-state (smaller groups cannot capture larger ones). That
+is my idea of mathematical elegance. To call a game which relies on
+the player's faculties of memorization mathematically elegant seems
+like an oversight to me. Not trying to get on anybody's nerves, I'm an
+advocate of Go. It's infinitely more worthy of praise than Chess and
+by the standards of an ancient game it's quite impressive. I just
+don't find the rules of Go are very intricate, the superko rule is a
+fix-all. I think Hex is the most mathematically elegant game and I
+can't understand how any part of that game could be considered "ugly",
+least of all the corners. I can only think of one slightly ugly rule
+in modern Hex and that's the pie rule.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Corners and Ugliness, again. (2)</div>
+    <div class="author">zickzack@gmail.com</div>
+    <div class="timestamp">Posted on Nov 18, 2010, 12:31:50 PM</div>
+    <div class="content">
+The usual critique of Chess has been issued. And as so often,
+it fits almost any game from the Chaturanga family, easily the
+most played family by one or two orders of magnitude. It
+indicates that something is being overlooked here.
+
+But let me first switch from Chess to Shogi. Shogi is like
+Chess, just more complicated, and an excellent game to boot.
+There are people who argue it is the best boardgame of all.
+It is a game that has grown naturally. While some of the rules
+such as the particularly contrived tie-breaker rule - a rule
+that is hardly needed because Shogi rarely ends in a draw in
+the first place - is the palpable consequence of purposeful
+design, the game has evolved over the centuries. Rules and
+pieces were added, adapted, or dropped because it changed
+gameplay for the better. Further, as an evolved game, you
+know what you get. There are no bugs anymore, only documented
+features.
+
+If we contrast that with modern designer games, we see major
+differences. Few, if any, designer games have been playtested
+seriously. The are full of undocumented features. One of the most
+feared features today (this is partly a fashion, too) is that a
+game is drawish. For that reason, many designers come up with
+games that are draw proof by design.
+
+I do not say they are wrong. Nobody wants to be embarassed,
+but there may be wortwhile games with draws, too. Further.
+elegance in rules may not be a substitute for superior
+gameplay.
+
+Another modern trend is the adaptation of certain meta-rules.
+Some in order to balance a game, such as the pie rule. Some in
+order to prevent ties, the super-ko rule being one of them.
+And if one of these meta-rules does not work, it is quite
+likely that the game is abandoned.
+
+
+First case in point: the pie rule. As far as I know, neither
+Piet Hein nor John Nash (who is attributed with re-inventing
+Hex) cared to balance the game. That is bad design. It was Alex
+Randolph who introduced the pie rule. And since the pie rule
+worked in Hex, people transferred it to other games, but they
+forgot to check its effect. Have a look at Y. The Y-board
+has not got different kinds of corners as the Hex board
+has, and it shows more symmetries. That greatly reduces
+the number of different unswapped opening moves. Yet, many
+designers even try to balance games by the pie rule on the
+even more symmetric hexhex grid.
+
+Second case in point, the superko rule. The problem is
+aggravated by their being more than one possible superko
+rule, one more subtle and refined than the other. While
+Go is still a game in search of a ruleset, let us have a
+look at Chess. In Chess, threefold repetition gives draws.
+Despite complaints about the number of Chess rules, Chess
+players get them right, with the exception of this one. The
+rule is namely that it must be the same position with the
+same player to move in all three cases. And that is often
+overlooked. Given that the repetition rules of Shogi, Xianqqi
+(both games would be very drawish, if repetition of positions
+were a draw), or Go are far more complicated than the Chess
+rules, it is likely good for Go that the situations arise
+rarely. But then, they still have to be covered by rules.
+
+It is not that a game is bad when it has the superko rule,
+but it is a mixed blessing. There is no perfect game and no
+perfect design. It is important to keep that in mind when
+judging the games of others.
+
+And lastly, many designers come up with scalable games and
+overlook that choosing the right board size is part of game
+design. Quite a lot of them, possibly with the hidden agenda
+of inventing the next Go, go over the top and choose board
+sizes that make their games overlong and even more opaque.
+
+
+In all cases, playtesting would have been a solution. But for
+more designers design is a mental process, hardly related to
+the playing of actual games. Just as so many design programming
+languages without ever writing an interpreter or compiler or
+even progrmming in them.
+
+I offer two positive examples: Christian Freeling's recent game
+of Symplex has an innovative and elegant balancing mechanism,
+fine tuned to fit the game. It is almost as good as the game
+itself. In order to find that solution, it helped to play
+the game and develop strategies.
+
+The other example is Bill Taylor's Slime Trail. A game so
+simple and ingenious that it is hard to imagine school boys
+and girls have not played it for ages. And it is tricky.
+Yet, at face value, it has a drawing problem. It is easy to
+create closed pockets which let the game end without result.
+
+If you do play the game, you see two options to solve that:
+1. Pockets allow a finite number of moves only anyway. So,
+forget goals or pockets. Last one to move wins. What you
+get is basically Dan Troyka's Blue Nile.
+2. Forbid to move into a closed pocket. Bang. No draws
+possible, and the game shines.
+
+
+So, my point is that playtesting helps a lot to improve a
+game. Even at the cost of formal elegance of the ruleset.
+Elegance is a somewhat superficial standard anyway.
+Benedikt
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Corners and Ugliness, again. (2)</div>
+    <div class="author">camb</div>
+    <div class="timestamp">Posted on Nov 18, 2010, 4:14:14 PM</div>
+    <div class="content">
+Dear Cornerphobes,
+
+I don't see the corners of a Hex/Y board as inelegant; that's just the
+way the board is.
+
+Also, I don't see the need to clarify that "corners belong to both
+players" as many people do. The aim is to connect the sides, the
+corner cells are just conduits through which this may be achieved as
+per any other cell.
+
+The only ways that corners might be perceived as inelegant (IMO) are
+the strategic: they are wasted space that players do not usually
+venture into (the acute corners especially), and the aesthetic: Hex/Y
+boards are buggers to stack on a bookshelf :)
+
+Schensted & Titus tried to address the issue of wasted space by
+"rounding" their revised Y board so that the corners are "closer" to
+the centre, and Antonow succeeded with his clever combination of rules
++ unique tiling for Conhex.
+
+Regards,
+Cameron 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Corners and Ugliness, again. (2)</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Nov 19, 2010, 1:19:46 AM</div>
+    <div class="content">
+> The usual critique of Chess has been issued. And as so often,
+> it fits almost any game from the Chaturanga family,
+
+Yes, the whole family is in the same boat.
+
+> easily the most played family by one or two orders of magnitude.
+
+Possibly. I'm not sure how statistics could ever be collected,
+but I would hazard that Go or the Checkers family might win.
+
+Almost every western family introduces checkers to their kids,
+but only a (large) minority to chess. Difficult question.
+
+> It indicates that something is being overlooked here.
+
+Oh of course! I tried to indicate that in my post - what is
+being overlooked is the centuries, even millenia of enculturation
+that long-standing games acquire. Huge libraries of good play,
+of history, clubs of devotees in every town, high-prize competitions,
+the whole shebang. Once a game has acquired all this, (like chess
+in the West and Go in the East), it tends to self-perpetuate,
+and gathers momentum regardless of the other more intrinsic
+features of the game. Backgammon is similar, (and of even
+greater antiquity!), but there are few others beyond Chess and Go.
+One game to dominate each ecumene! - the west, the middle-east,
+and the far east - Chess, Backgammon and Go.
+
+> But let me first switch from Chess to Shogi. Shogi is like
+> Chess, just more complicated, and an excellent game to boot.
+> There are people who argue it is the best boardgame of all.
+
+I'm sure you're right. My problem with Shogi is very specific,
+and I am far from alone in it - almost everyone else I've talked to
+about Shogi has the same complaint - the physical pieces!
+
+At least one of the fun (though peripheral) things about chess
+is the wonderful 3D pieces, both classic and variations.
+Just to pick them up is a treat, and they are visually attractive.
+But in Shogi (and Xiang Chi) all we have is flat discs with writing
+on them! What a bore. And for a westerner, untrained in decoding
+characters, they take a long time to learn and are a very distracting
+irritation to the main game things. I am baffled as to why
+the international Shogi community has never bothered to construct
+Shogi pieces, perhaps something akin to chess pieces - though not too
+close to them, if the powers are fairly different. These, and their
+powers, could be learned in 20 seconds, without cultural dissonance.
+No-one is asking the Japanese to use them, but it would be a huge
+step toward making the game far better known in the west!
+
+More comments later.
+
+Bill 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Corners and Ugliness, again. (2)</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Nov 19, 2010, 1:35:07 AM</div>
+    <div class="content">
+On Nov 19, 1:31 am, "zickz...@gmail.com" <zickz...@gmail.com> wrote:
+
+> If we contrast that with modern designer games, we see major
+> differences. Few, if any, designer games have been playtested
+> seriously.
+
+Hear hear! There are far too many - most, even - game designers
+who bother to playtest at all, many even do not bother to play ANY
+games any more. It is a severe blow to credibility, IMHO,
+like a composer who never listened to any other music!
+
+Joao Neto and myself have an ongoing habit of thoroughly playtesting
+and altering-as-needed games, by email. I keep suggesting it here,
+but no-one seems to want to. And occasionally some games,
+which looked good on paper, have to be completely discarded
+as boring, unplayable, or whatever. Anyway, they are all
+thoroughly tested before being released into the wild!
+
+> I do not say they are wrong ... ...
+> but there may be wortwhile games with draws, too.
+
+I agree. Games without draws are fun and dramatic, but games with
+draws being at least possible, can be charming too. It can be a great
+pleasure to play a tough, hard-fought game against a good opponent,
+out to a draw. But the draws must not be too common, IMHO, we don't
+want them as an ascape from a bad position, but as a rare result of
+hard and equal play. No more than (say) 5% would be my preference.
+But the exact amount is a highly subjective taste, of course.
+Chess and Checkers are far too riddled with draws.
+
+> So, my point is that playtesting helps a lot to improve a game.
+
+Absolutely-bootly! Couldn't agree more. Please write to me
+privately if you want to start up some mutual play-testing of games
+by email! Anyone else, feel free to do the same!
+
+-- Board-tester Bill 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Corners and Ugliness, again. (2)</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Nov 19, 2010, 1:50:00 AM</div>
+    <div class="content">
+camb <cameron.bro...@btinternet.com> wrote:
+
+> I don't see the corners of a Hex/Y board as inelegant;
+> that's just the way the board is.
+
+I agree completely! As I said in my post, the appearance of
+special corners in Hex and Y is merely imaginary, once it is
+realised that mere re-formatting removes the special properties
+completely. And even makes it prettier! So my earliest remarks
+are completely over-ridden by my later ones. Of course,
+Havannah corners are another story completely, and, as always,
+it's a matter of taste as to whether they are cool or cold.
+
+> Also, I don't see the need to clarify that "corners belong to both
+> players" as many people do. The aim is to connect the sides, the
+> corner cells are just conduits through which this may be achieved
+> as per any other cell.
+
+Very true! They needn't be mentioned in the rules at all,
+as I noted, and even sides needn't be mentioned!
+
+> and the aesthetic: Hex/Y
+> boards are buggers to stack on a bookshelf :)
+
+LOL!! True. We need special games-shelves that somehow
+could accommodate varying shapes. Somebody should research that! ;-)
+
+> Schensted & Titus tried to address the issue of wasted space by
+> "rounding" their revised Y board so that the corners are "closer" to
+> the centre,
+
+Another option is to make the board topologically different,
+so then a different (but very similar) game, say, "Circular Y".
+
+    a a a
+  a . . . c     Winner's group touches a, b and c, as before.
+ a . . . . c
+  . . . . . c
+ b . . . . c
+  b . . . c
+    b b b
+
+-- Wrap-around Willy 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Corners and Ugliness, again. (2)</div>
+    <div class="author">Harald Korneliussen</div>
+    <div class="timestamp">Posted on Nov 19, 2010, 7:23:39 AM</div>
+    <div class="content">
+On Nov 19, 2:19 am, Bill Taylor <wfc.tay...@gmail.com> wrote:
+> On Nov 19, 1:31 am, "zickz...@gmail.com" <zickz...@gmail.com> wrote:
+>
+> Almost every western family introduces checkers to their kids,
+> but only a (large) minority to chess.  Difficult question.
+
+I'm not so sure about this. I for one never learned draughts as a
+child, only chess. Should we take a poll?
+
+> My problem with Shogi is very specific,
+> and I am far from alone in it - almost everyone else I've talked to
+> about Shogi has the same complaint - the physical pieces!
+
+They serve a gameplay purpose in Shogi, since they need to be turned
+over. Replacing with a piece from outside the board is less practical.
+
+Also, I must say, the Chinese and Japanese characters may be
+intimidating, but they're not an obstacle to anything but the most
+casual play. I played my first game of Xiangqi without any deliberate
+attempts at memorization (it was over the board, not computer). It
+didn't cause problems for either me or my opponent. If you asked me to
+draw what the elephant looks like, I'd be in trouble. Even identifying
+a Xiangqi piece picked at random might be tricky where I'm at now! But
+when the pieces are on the board, it's not a problem. The logic of the
+game clears up any doubts I might have.
+
+All Xiangqi boards I have seen also have "western"-style images on the
+back side of the pieces. I don't think that has made much difference
+to the game's popularity in the west.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Corners and Ugliness, again. (2)</div>
+    <div class="author">zickzack@gmail.com</div>
+    <div class="timestamp">Posted on Dec 2, 2010, 5:22:14 PM</div>
+    <div class="content">
+On 19 Nov., 02:19, Bill Taylor <wfc.tay...@gmail.com> wrote:
+
+> Possibly.  I'm not sure how statistics could ever be collected,
+> but I would hazard that Go or the Checkers family might win.
+
+It is hard to find a game that competes with Chess in the number
+of games played. The only competitor seems to be Xiangqi. The
+sources I read agree on that Xiangqi is the game of the people
+(at least as long people means Han), whereas Go is played by an
+elite. With Chess and Xiangqi alone, the Chaturanga family should
+take the top place. Yet, the many local variants from Japan to
+Ethiopia add to that number.
+
+Other games families I'd expect to see on the top places are Mancala,
+n-in-a-row (especially when we lump them together with Morris games),
+and Checkers. Go should come after that. But of course, that is
+relative. Go is a great game with an old tradition and many players.
+
+I admit there is guesswork involved. And the guesswork points to a
+problem: how little scientific work is done when it comes to
+boardgames.
+Has anyone got an idea how to encourage anthropologists to do serious
+work in that field?
+
+
+> I'm sure you're right.  My problem with Shogi is very specific,
+> and I am far from alone in it - almost everyone else I've talked to
+> about Shogi has the same complaint - the physical pieces!
+
+Same here. Representation matters on many different levels. For
+one, Xiangqi could likely become the game of the people because
+sets were cheap. In Europe, however, Chess would not take off
+before the Second Industrial Revolution introduced mass produced
+Chess sets. Until then, Checkers was the game of the people, and,
+in some regions, still is. But then, as Harald pointed out, Shogi
+would hardly have been invented with European Chess sets as a
+base. With sets like those of Xiangqi, it comes naturally.
+
+Another level on which representation matters can be seen in
+Hex. Modern designers know that it pays to think about boards
+and grids, and publishers see that some of these games sell.
+But up to 1942, a board consisting of an, er, square of hexagons
+were practically unheard of. Hence, noone come up with Hex.
+
+As for the rest, the discussion has brought up so many
+interesting points, most of which are off topic. They
+should come up in the future again. When I delete or
+do not answer, it is out of agreement mostly. There is
+one exception. You implicitly mentioned an article about
+the Three Games (Go, Chess, Backgammon). That article is
+one of the worst I know. Not your fault, of course.
+Benedikt 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Corners and Ugliness, again. (2)</div>
+    <div class="author">Zhang Dawei</div>
+    <div class="timestamp">Posted on Dec 2, 2010, 5:54:23 PM</div>
+    <div class="content">
+On Thu, 2 Dec 2010 09:22:14 -0800 (PST)
+"zick...@gmail.com" <zick...@gmail.com> wrote:
+> [...]
+
+> It is hard to find a game that competes with Chess in the number
+> of games played. The only competitor seems to be Xiangqi. The
+> sources I read agree on that Xiangqi is the game of the people
+> (at least as long people means Han), whereas Go is played by an
+> elite. With Chess and Xiangqi alone, the Chaturanga family should
+> take the top place. Yet, the many local variants from Japan to
+> Ethiopia add to that number.
+
+I'll reply to messages replying to me tomorrow (it is past midnight
+here, and I wasn't intending to write more this evening.) However, I
+thought I'd just add an observation amplifying something written about
+Xiang Qi, above.
+
+Since myself and my family moved to China from the UK, I have been
+slightly surprised at how frequently one sees ordinary people,
+road workers, and so on, playing Xiang Qi (often with a small
+group of people watching them) on the streets of many Chinese towns at
+various times during the day and evening. I have even seen quite a few
+cafes which people seem to routinely visit for light refreshment as
+well as playing board games (Xiang Qi, Chinese versions of Nine Man's
+Morris, Mahjong, and games that look a bit like Stratego as well,
+though they aren't that). I have not seen Go (or Wei Qi, as they
+call it in China, being played much at all in public.) Now, although the
+Han are the most populous of the 57 ethnic groups within China, I have
+certainly seen many people I doubt were Han playing it (within my
+wife's family, many people play Xiang Qi, and her family are Tujia,
+rather than Han). I think it probably is still true that the majority
+of Chinese playing Xiang Qi are members of the Han ethnic group, but
+that may just because they are the dominant ethnic group, but in-laws
+of mine who play it tell me that many more people, certainly not just
+Han play it nowadays.
+
+The key thing that struck me, however, is just how often one sees it
+played in the streets by ordinary people who, if they were in, say, the
+UK, one would hardly see or expect that many similar people would know
+how to play chess. Furthermore, the extent to which other ordinary
+people are happy to sit and watch people play the games, discussing
+the moves between each other and so on, is also much greater. It sounds
+elitist, but I do think there is a difference here between the two
+cultures. I think partloy it is because Chinese society still values
+education and reasoning ability. And to be good at something is a
+reason for honest admiration in others, which sometimes contrasts with
+the anti-intellectualism I have seen and experienced in the UK.
+
+Of course, sets are available for very small amounts of money, even by
+Chinese salary standards, and some of the sets I have seen being used
+were obviously hand-made. The Chinese seem to play many different board
+games in the open much more frequently than I have seen in the UK, and
+all sections of society play them (including a very complicated card
+game, a bit like bridge, which I keep on learning a little of, and then
+forgetting in between playing it, and which is extremely popular in
+Hunan Province.) As far as I know, there may well be many games being
+played out there that few of us in the West know about.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Corners and Ugliness, again. (2)</div>
+    <div class="author">zickzack@gmail.com</div>
+    <div class="timestamp">Posted on Dec 2, 2010, 6:23:51 PM</div>
+    <div class="content">
+n 2 Dez., 18:54, Zhang Dawei <yanhu.de.zh...@gmail.com> wrote:
+
+[Several deletions]
+
+> I have even seen quite a few
+> cafes which people seem to routinely visit for light refreshment as
+> well as playing board games (Xiang Qi, Chinese versions of Nine Man's
+> Morris, Mahjong, and games that look a bit like Stratego as well,
+> though they aren't that). I have not seen Go (or  Wei Qi, as they
+> call it in China, being played much at all in public.)
+
+The games resembling Stratego are Lu Zhan Jun Qi and variants,
+I presume. As for Go not being played in public, can it be that
+it comes from Go being played by elites? There used to be times
+in Chinese history when it was better not to announce that one
+might belong to what was perceived as an elite. That mindset could
+live on.
+
+For me, the most intriguing part of your article is the reference
+to Chinese Morris games. I'd like to shower you with questions.
+http://www.boardgamegeek.com/thread/590466/what-are-the-rules-really-any-chinese-willing-to-h
+gives you an idea what to expect.
+
+> As far as I know, there may well be many games being
+> played out there that few of us in the West know about.
+
+Let us hope antropologists can be bothered to write down rules
+and to do that correctly - in some distant future.
+Benedikt
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Corners and Ugliness, again. (2)</div>
+    <div class="author">João Neto</div>
+    <div class="timestamp">Posted on Dec 2, 2010, 8:26:30 PM</div>
+    <div class="content">
+> Another level on which representation matters can be seen in
+> Hex. Modern designers know that it pays to think about boards
+> and grids, and publishers see that some of these games sell.
+> But up to 1942, a board consisting of an, er, square of hexagons
+> were practically unheard of. Hence, noone come up with Hex.
+
+This is not correct, at least in Western Europe. Several board games from the 19th century had hexagonal tilings (eg, Jeu du Congo; Agon aka Queen's Guards) 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Corners and Ugliness, again. (2)</div>
+    <div class="author">zickzack@gmail.com</div>
+    <div class="timestamp">Posted on Dec 3, 2010, 6:32:41 PM</div>
+    <div class="content">
+On 2 Dez., 21:26, João Pedro Neto <j...@di.fc.ul.pt> wrote:
+
+> This is not correct, at least in Western Europe. Several board games
+> from the 19th century had hexagonal tilings (eg, Jeu du Congo; Agon aka
+> Queen's Guards)
+
+I am aware of the fact that there were boards with hexagons.
+Since you can build them from coins of the same size, that
+is not too surprising. However, building a "square board"
+from hexes, as I explicitly mentioned, is quite an unlikely
+thing to do.
+
+Maybe you mean something else. Hex does not require a square
+board. In theory, it could be played on other layouts, too,
+and still be balanced by one or multi-move swap protocols. Is
+that what you referred to?
+Benedikt
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Corners and Ugliness, again. (2)</div>
+    <div class="author">João Neto</div>
+    <div class="timestamp">Posted on Dec 4, 2010, 3:24:23 PM</div>
+    <div class="content">
+I interpreted that you were talking about hex boards in general. The rhombus format of the board of Hex, afaik, is indeed original. 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Corners and Ugliness, again. (2)</div>
+    <div class="author">James Dow Allen</div>
+    <div class="timestamp">Posted on Jan 5, 2011, 7:04:04 AM</div>
+    <div class="content">
+On Nov 18 2010, 11:34 am, Bill Taylor <wfc.tay...@gmail.com> wrote:
+> came up with the rules of modern chess - including 2-step pawns,
+> en passant, castling and its prohibitions, variable promotion,
+> stalemate - the full catastrophe!
+
+Perhaps the history is unknown, but it seems likely to me that
+the pawn and castling rules evolved carefully over decades and
+have been tested for centuries! This is different from complexity
+for the sake of complexity in a new design.
+
+Speaking of ko: Hasbro has a new version of Connect-4
+("Connect-4 Popout") where repetition is not only possible,
+but becomes best strategy after a fairly well-played opening.
+(Yet Hasbro's rules don't mention the possibility!)
+
+I'm new to this group, and hope to learn here, as I do enjoy
+abstract games. Unfortunately, the abstract games that
+intrigue me most are the VERY simple, almost trivial ones! :-)
+
+(BTW, I use a throwaway e-mail for Google Groups; my "real"
+email address is jamesdowallen c/o gmail.)
+
+James Dow Allen
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Corners and Ugliness, again. (2)</div>
+    <div class="author">Ralf Gering</div>
+    <div class="timestamp">Posted on Jan 5, 2011, 4:36:55 PM</div>
+    <div class="content">
+> Bill Taylor <wfc.tay...@gmail.com> wrote:
+> > came up with the rules of modern chess - including 2-step pawns,
+> > en passant, castling and its prohibitions, variable promotion,
+> > stalemate - the full catastrophe!
+>
+> Perhaps the history is unknown, but it seems likely to me that
+> the pawn and castling rules evolved carefully over decades and
+> have been tested for centuries! This is different from complexity
+> for the sake of complexity in a new design.
+> James Dow Allen
+
+I agree with you, Mr Allen.
+
+BTW, the rules of Bao la Kiswahili might also appear to be overly
+complicated, but they too have "evolved carefully" over centuries and
+are like a wonderful masterpiece, when "tested" in a game.
+
+The rules of many traditional games are like the grammatics of human
+languages, not like artificial and created ones, but more like those
+which have been developed as a communal and subconcious effort.
+
+KingKong 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Corners and Ugliness, again. (2)</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Jan 7, 2011, 4:52:29 AM</div>
+    <div class="content">
+> > > came up with the rules of modern chess - including 2-step pawns,
+> > > en passant, castling and its prohibitions, variable promotion,
+> > > stalemate - the full catastrophe!
+>
+> > Perhaps the history is unknown, but it seems likely to me that
+> > the pawn and castling rules evolved carefully...
+
+Not carefully, but in fits and starts and reverses and so forth,
+like most natural games and languages.
+
+> > ...over decades and have been tested for centuries!
+
+Well, not really. In 1851, when the rules were first fully
+finalised for the great international tournmanet involving
+Staunton and Andersenn, the previous situation had been that
+there were (still!) noticeable variants played throught Europe,
+especially involving the stalemate rule, and the tournament organisers
+sorted it all out for the first time. Even the FIDE iteself didnt
+exist till 1920 or so!
+
+> > This is different from complexity
+> > for the sake of complexity in a new design.
+
+Oh yes, quite so, which was my whole point, really.
+
+Natural games tend to be "ugly". That is what the population at large
+seems to like. They would rather play the somewhat silly-frilled
+games like Euchre and 500 than the more streamlined and elegant
+(though still defective) Contract bridge. And in Germany, in
+particular,
+there are some *truly* obnoxious rummy variants called "Dublekopf"
+and the like, that are more frills than meat! (Rather like
+Western-polluted Mah Jong). By and large the same applies with
+board games. It is a pity, but we have to live in the world as is,
+and just try to carve out a pleasant corner for ourselves.
+
+> The rules of many traditional games are like the grammatics of human
+> languages, not like artificial and created ones, but more like those
+> which have been developed as a communal and subconcious effort.
+
+Exactly so, and this can be seen as either a strength or a weakness,
+depending on one's point of view.
+
+-- Boardly Bill 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Corners and Ugliness, again. (2)</div>
+    <div class="author">jfpierce</div>
+    <div class="timestamp">Posted on Jan 7, 2011, 6:27:38 AM</div>
+    <div class="content">
+Isn't referring to complexity as 'ornamental' stacking the deck a bit?
+I'd say that the complexity in the whole chess family serves the
+purpose of making the games play better. What's ornamental about it?
+This is no different than the added complexity in go. A 6.5 point komi
+fits my definition of an 'ugly' rule very well. But so what? It makes
+the game better.
+
+I also don't think that modern abstract game players are as adverse to
+complex rules as you make them out to be. While the rules for Arimaa
+are not as complex as chess, they're hardly minimalist, and the game
+has done remarkably well. 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Corners and Ugliness, again. (2)</div>
+    <div class="author">Xifeng</div>
+    <div class="timestamp">Posted on Jan 7, 2011, 7:44:18 AM</div>
+    <div class="content">
+I think that a chief virtue of Mark Thompson's criteria is that for
+the most part they examine the actual experience of playing the game,
+rather than the superficial qualities like material and rules. Of the
+six criteria he gave, it's the four regarding the game-play experience
+that are thought of first. The two that treated rules can be removed,
+and you only get a stronger aesthetic standard, not a weaker one,
+because it encompasses all the games it encompassed before (perfect-
+information two-player games) and also games that were previously
+excluded, but fit the four major criteria: Bridge, Backgammon, a
+really excellent series of theme-games called Fantasy Strike, and many
+others.
+
+On Jan 6, 8:52 pm, Bill Taylor <wfc.tay...@gmail.com> wrote:
+> Natural games tend to be "ugly".  That is what the population at large
+> seems to like.  They would rather play the somewhat silly-frilled
+> games like Euchre and 500 than the more streamlined and elegant
+> (though still defective) Contract bridge.
+
+In my experience, Bridge is quite a lot more popular than Euchre, but
+it may be a regional thing. Nevertheless, while I generally find long
+perfect-play sequences troubling, I find they each have their own
+beauty: Euchre's speed and clarity, like five swift punches; Bridge's
+variety and the mind-reading element.
+
+I find your approach short-sighted. Chess is a beautiful game, The Ko
+rule has been called ugly and inelegant, yet without it there are no
+ko-fights, which are one of the most dramatic (in the literary sense)
+parts of Go.
+
+> > The rules of many traditional games are like the grammatics of human
+> > languages, not like artificial and created ones, but more like those
+> > which have been developed as a communal and subconcious effort.
+>
+> Exactly so, and this can be seen as either a strength or a weakness,
+> depending on one's point of view.
+
+Shakespeare didn't write in Lojban. He used the least-elegant member
+of the least-elegant family of languages. Again I insist: results are
+what matter.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Corners and Ugliness, again. (2)</div>
+    <div class="author">zickzack@gmail.com</div>
+    <div class="timestamp">Posted on Jan 7, 2011, 11:53:14 AM</div>
+    <div class="content">
+On 7 Jan., 05:52, Bill Taylor <wfc.tay...@gmail.com> wrote:
+
+> Well, not really.  In 1851, when the rules were first fully
+> finalised for the great international tournmanet involving
+> Staunton and Andersenn, the previous situation had been that
+> there were (still!) noticeable variants played throught Europe,
+> especially involving the stalemate rule, and the tournament organisers
+> sorted it all out for the first time.  Even the FIDE iteself didnt
+> exist till 1920 or so!
+
+And in what way does that invalidate that the Chess rules
+evolved out of their impact on the game? Do you assume that
+only one set of rules could and should have survived?
+
+How do you explain Go then, the game that has the biggest number
+of rulesets and among them the ugliest and most baroque ones for
+any game?
+
+
+>  And in Germany, in particular,
+> there are some *truly* obnoxious rummy variants called "Dublekopf"
+> and the like, that are more frills than meat!
+
+Doppelkopf is not even distantly related to Rummy by any means, and
+the family of card games it comes from is much older. Anyway, in order
+to understand the rules of Doppelkopf, you must understand the game.
+
+
+The Chinese rules of Go have been hailed as elegant. However, they
+require you to count every field on an already overlarge board which
+is stupid thing to do and a showcase in how not to write rules. The
+AGA rules tried to make up for this, but they could not, likely
+because
+they were designed by comitee, and they left behind a mess. The latter
+lack elegance, the former are too elegant for their own sake.
+Benedikt
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Corners and Ugliness, again. (2)</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Jan 9, 2011, 4:44:28 AM</div>
+    <div class="content">
+On Jan 7, 7:27 pm, jfpierce <jfpie...@gmail.com> wrote:
+
+> Isn't referring to complexity as 'ornamental'
+> stacking the deck a bit?
+
+Oh, no, I think you missed my point, which I obviously didn't make
+clear enough.
+
+By referring to "ornamental complexity", I meant to imply that
+there was also a kind of "intrinsic complexity", which might well
+be a very good thing! (It might also not, of course.)
+
+For example, most keen players insist that Go is one of the most
+profoundly complex games to play and learn, though its rules
+are almost as simple as could be.
+
+Chess has great complexity of play and learning too,
+though its rules are clearly substantially more complex,
+and even somewhat "ornamental", though most fans tend to regard
+this as a "good thing" BECAUSE it leads to complexity of play.
+
+OTOH, Monopoly, for example, has huge complexity of rules and
+board set-up, but is fairly simple-minded to play, even play well.
+Backgammon is somewhere in between these various extremes,
+on both counts.
+
+I'm sure we all agree that complexity of play, *especially*
+in regard to the *depth* of emergent phenomena in play,
+is a major plus in serious board games. However, ornamental
+complexity is no use for its own sake, (though the general
+public love it), but only if it contributes to depth of play.
+
+It does in chess, but not in Monopoly, and is unneeded in Go.
+
+"All other things being equal" (as if they ever could be),
+ornamental complexity is worthless, even counter-productive,
+*except* to the general public, who like bells and whistles
+for their own sake.
+
+I hope my viewpoint is somewhat clearer and less repulsive
+to you, now?
+
+-- Boardly Bill 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Corners and Ugliness, again. (2)</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Jan 9, 2011, 4:51:05 AM</div>
+    <div class="content">
+"zickz...@gmail.com" <zickz...@gmail.com> wrote:
+
+> Do you assume that
+> only one set of rules could and should have survived?
+
+No, indeed not! They could have gone any of many different ways,
+and we should have been left with largely the same strength of game.
+That was my whole original point about chess rules, really.
+No doubt there are many ways it could be improved even now,
+and lead to even deeper tactics and strategy, but will never happen,
+because of the weight of societal momentum.
+
+OTOH, Go is "the way it is" largely because it "has to be" that way -
+any significant change would make it an completely different game.
+
+> How do you explain Go then, the game that has the biggest number
+> of rulesets and among them the ugliest and most baroque ones for
+> any game?
+
+It does indeed, but the oft-quoted Tromp-Taylor rules make
+this ultra-simple, really.
+
+> Doppelkopf is not even distantly related to Rummy by any means,
+
+Oh? Don't you have to collect groups of cards?
+
+> the family of card games it comes from is much older.
+
+And vile.
+
+-- Bill of writes. 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Corners and Ugliness, again. (2)</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Jan 9, 2011, 5:14:12 AM</div>
+    <div class="content">
+On Jan 7, 8:44 pm, Tristan <rozencra...@gmail.com> wrote:
+
+> I think that a chief virtue of Mark Thompson's criteria is that for
+> the most part they examine the actual experience of playing the game,
+
+That is indeed a good thing.
+
+> rather than the superficial qualities like material and rules.
+
+I would not dismiss them so airily as being "superficial".
+Those things are fairly intrinsic to a game, though more basic,
+less of an emergent phenomenon.
+
+> In my experience, Bridge is quite a lot more popular than Euchre,
+> but it may be a regional thing.
+
+Yes, no doubt. The same holds when trying to compare (say)
+chess with checkers. It's hard to see how significant data
+could ever be collected.
+
+> Nevertheless, while I generally find long
+> perfect-play sequences troubling,
+
+I'm not sure quite what you mean by this - could you elaborate,
+please?
+
+> I find they each have their own beauty: Euchre's speed and clarity,
+
+Yes, I agree! It's a game that MUST be played fast.
+
+Though the clarity would be improved by the disappearance
+of the "bowers" phenomenon, which is an archetypical example
+of a socially-evolved game feature. (Not saying it's
+good or bad, just a bit unclear for learners.)
+
+> Bridge's variety and the mind-reading element.
+
+The more-basic Whist also has this to an extent, but bridge
+has it in an exquisitely-developed form, never yet equalled,
+in spite of occasional attempts. It could still be better
+by being simpler, though. The scoring, in particular,
+is grotesque!
+
+> I find your approach short-sighted. Chess is a beautiful game,
+
+De gustibus non est disputandum.
+
+I too like to play it from time to time, it's great fun to play
+and to analyse, though I would never call it beautiful.
+
+> The Ko rule has been called ugly and inelegant,
+
+It has; wrongly IMHO. If seen in the context
+of the general meta-rule of *super-ko* -
+no repeat position (applicable to almost any game),
+then it might be seen as quite elegant, in fact!
+
+> Again I insist: results are what matter.
+
+I agree; but we might disagree on how these are to be assessed?
+Mere popularity might not be so hot.
+What say you on this point?
+
+-- Wondering Willy 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Corners and Ugliness, again. (2)</div>
+    <div class="author">zickzack@gmail.com</div>
+    <div class="timestamp">Posted on Jan 9, 2011, 4:01:26 PM</div>
+    <div class="content">
+On Sun, Jan 9, 2011 at 5:51 AM, Bill Taylor <wfc.t...@gmail.com>
+wrote:
+
+> That was my whole original point about chess rules, really.
+> No doubt there are many ways it could be improved even now,
+> and lead to even deeper tactics and strategy, but will never happen,
+> because of the weight of societal momentum.
+
+I agree here. Though I feel it telling in practice that most Chess
+variants (not: traditional games from the Chaturanga family) leave
+the impression of being pointless.
+
+
+> OTOH, Go is "the way it is" largely because it "has to be" that way -
+> any significant change would make it an completely different game.
+..
+> It does indeed, but the oft-quoted Tromp-Taylor rules make
+> this ultra-simple, really.
+
+The core ideas of Go are clear and simple, but they are surprisingly
+difficult to put into a complete and practical ruleset.
+
+However, Go has been marketed in the West as having three (or
+even two) rules only. Imagine that. For those in the know, the bluff
+has been called. In order to somehow live up to this standard, and
+since most like mathematical elegance (I in particular am a sucker
+for it), axiom, pardon, rulesets have been developed that strive to
+have as few rules as possible.
+
+Yet, as the saying goes: as simple as possible, but not any simpler.
+Go is a game, not a mathematical exercise, and practicability is
+more important than superficial elegance.
+
+The so called Chinese rules have been mentioned. Yes, they look
+simple, although it turned out that they beg questions. Three
+without capturing, an abundance of ways to interpret super-ko,
+or even suicide come to mind.
+
+However, the Chinese rules and their descendants require you to
+count every single field on the board, as already mentioned. The
+Japanese rules are far more efficient (and less prone to errors)
+there. Further, if you play into your own territory in order to
+protect it against threats, the Japanese rules subtract a point
+for it. If what you did was cowardice, you just have been punished.
+The Chinese rules may or may not punish you for that. The same
+pattern appears when you place stones in opposing territory.
+
+To put it bluntly: a bug, not a feature. Failure.
+
+At the price of a few extra rules, that failure could have
+been turned into success. The AGA rules show how. The Chinese
+rules overrate elegance.
+
+
+When it comes to the AGA rules, I think leaving the choice
+between territory and area scoring is ok as long as territory
+is the default and both players must agree in order to
+override it. Arguably, the AGA rules even deal with "three
+without capturing" implicitly. So, superko is the potential
+wart that is left. Again, I think the Japanese approach dealing
+with triple kos, where neither player yields, as no contest or
+even a draw is superior.
+
+And hey, I could do what so many have done and propose a new
+ruleset. As if Just Another Ruleset would make it simpler. In
+fact, each additional ruleset makes it more complicated. The
+situation becomes even worse because some rulesets add extras
+like suicide, most likely motivated by the designer wishing to
+leave a mark on the history of Go. What a nuisance.
+
+So, I am back to my old observation: how come that Chess is
+mentioned when it comes to complicated or even ornamental
+rules? Why not Xiang Qi or Shogi? And why not Go, the famous
+game from Japan?
+
+And when it comes to games with elegant rules, why do we hear
+from Go when there are Y and Connect6? What about Tic Tac Toe?
+
+
+Go is a great game. But certain myths need not be perpetuated.
+As a side note: is it not funny that the Chess world would
+happily agree on a single set of rules, while the rulesets for
+Go, a game supposed to be more elegant and ancient, proliferate
+and all sets miss the mark somehow?
+
+>> Doppelkopf is not even distantly related to Rummy by any means,
+> Oh? Don't you have to collect groups of cards?
+
+A trick tacking game from the same family as Sheepshead/Schafskopf
+and Skat. Replacing the latter as national card game. Arguably more
+rules, but conceptually simpler. 4 players, generally, the players
+with the second highest trumps play against the other two. Other
+scenarios are possible, like solo games of which only the solo
+player knows. One task is to find out who your partners are. Beyond
+the scope of this group.
+
+>> the family of card games it comes from is much older.
+> And vile.
+
+One of my favorites. Kids understand the rules, a telling feature.
+Benedikt
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Corners and Ugliness, again. (2)</div>
+    <div class="author">Xifeng</div>
+    <div class="timestamp">Posted on Jan 11, 2011, 9:33:35 AM</div>
+    <div class="content">
+On Jan 8, 9:14 pm, Bill Taylor <wfc.tay...@gmail.com> wrote:
+> On Jan 7, 8:44 pm, Tristan <rozencra...@gmail.com> wrote:
+>
+> > I think that a chief virtue of Mark Thompson's criteria is that for
+> > the most part they examine the actual experience of playing the game,
+>
+> That is indeed a good thing.
+>
+> > rather than the superficial qualities like material and rules.
+>
+> I would not dismiss them so airily as being "superficial".
+> Those things are fairly intrinsic to a game, though more basic,
+> less of an emergent phenomenon.
+
+As a colorblind person I'd compare them to the use of color in
+painting: Rothko notwithstanding, they are generally tools toward a
+purpose, and great art has been made with both limited and varied
+palates. Or to return to the earlier analogy of language: great poetry
+is written in elegant languages like Chinese and Japanese, but also in
+clumsy languages like English. Chess, like English, is full of
+redundancies and exceptions, and things we wish were not a part of it,
+but it is the language that gave us the poetry of Fischer and
+Kasparov. I too prefer Issa to Shakespeare, but it would be folly to
+project my lack of understanding as being founded on the ugliness of
+English poetry.
+
+> > In my experience, Bridge is quite a lot more popular than Euchre,
+> > but it may be a regional thing.
+>
+> Yes, no doubt.  The same holds when trying to compare (say)
+> chess with checkers.  It's hard to see how significant data
+> could ever be collected.
+>
+> > Nevertheless, while I generally find long
+> > perfect-play sequences troubling,
+>
+> I'm not sure quite what you mean by this - could you elaborate,
+> please?
+
+Only that in playing Euchre I've often known for sure what the best
+play was, and that the local bridge column carries out perfect-play
+analysis, often all 13 tricks, and even sometimes into the bidding. In
+general I'm leery of any game where perfect-play can be determined so
+casually. My own Kitaran has been something of a negative example in
+this regard, which has taught me to better appreciate such tactical
+combos, but also can be chalked up to people insisting upon the
+smallest variant, where branching plunges low into the single digits
+during the end-game.
+
+> > I find they each have their own beauty: Euchre's speed and clarity,
+>
+> Yes, I agree!  It's a game that MUST be played fast.
+>
+> Though the clarity would be improved by the disappearance
+> of the "bowers" phenomenon, which is an archetypical example
+> of a socially-evolved game feature.  (Not saying it's
+> good or bad, just a bit unclear for learners.)
+
+About as unclear as the knight's threat-area. I don't think that
+bothered me after the first game I played, it's very easy to adjust
+to. I found the down-cards a bit more daunting, but even they aren't
+too hard to account for, and throw in a bit of excitement when a
+missing bower completely upsets a hand, for example.
+
+> > I find your approach short-sighted. Chess is a beautiful game,
+>
+> De gustibus non est disputandum.
+>
+> I too like to play it from time to time, it's great fun to play
+> and to analyse, though I would never call it beautiful.
+
+What other game provides such variety of motion while also offering
+such depth of strategy? LoA sacrifices clarity for its variety-of-
+motion, but still can't touch the rook-bishop-knight relationship.
+Pieces in chess manage to be distinct and of differing values in a way
+orthogonal to positional value, but without resorting to declared
+values a la Arimaa.
+
+> >  Again I insist: results are what matter.
+>
+> I agree; but we might disagree on how these are to be assessed?
+
+In the experience of playing. Just as music can only be assessed by
+listening, and not by reading the score; just as films can only be
+assessed by watching, not by sparring with the gaffer. If playing the
+game reveals bottomless wonders, who cares how they got there? If we
+seek bottomless wonders of our own, we would do well to learn from
+whence the came, but when that turns into judging the source of those
+wonders rather than the wonders themselves, we have hopelessly cut
+ourselves off from the very thing that makes our art wonderful.
+
+> Mere popularity might not be so hot.
+> What say you on this point?
+
+"Mere" popularity is the closest we're ever going to get to anything
+"intersubjective." I've struggled my whole life with the perceived
+imbalance between what I like and what everyone else likes: how much
+better my life could be, if only I liked Harry Potter! But I'm not the
+sort who can confine anything to the weekend, so I'm attracted to
+different aesthetics than just about anyone I know. But I can't deny
+the beauty that compels millions of people, among them people I
+greatly respect, only acknowledge that it is a sort of beauty I have
+little interest in.
+
+Thus, another virtue of Thompson's criteria is that they build upon
+the established greatness of the great games, and make predictions
+based on that. While they reflect and affirm a certain ambivalence
+around Chess and Draughts, they also affirm the virtues of those
+games, and importantly they do not contradict empirical findings. One
+can discount the opinion of the unwashed masses only at the risk of
+becoming an embittered soul who sits in the dark talking to one's
+self.
+
+,
+Tristan
+    </div>
+  </div>
+
+</body>
+</html>

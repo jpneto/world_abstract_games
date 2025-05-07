@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">possible contest rules adjustment: soliciting feedback.</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Dec 21, 2010, 2:17:28 PM</div>
+    <div class="content">
+In the contest rules, I've specified that designers may, and in fact
+should, vote for their own designs during the voting period. I've
+received objections from designers who are not comfortable doing so,
+however, and I am wondering if it wouldn't be better to prohibit
+designers voting for their own games. I'd like to change this rule,
+but I'll only do it if there are no objections to it.
+
+So, if you have objections, speak up. Otherwise, I'll change it.
+
+Best,
+
+Nick-the-not-entirely-wise   
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: possible contest rules adjustment: soliciting feedback.</div>
+    <div class="author">luis....@gmail.com</div>
+    <div class="timestamp">Posted on Dec 21, 2010, 5:52:39 PM</div>
+    <div class="content">
+On 21 dic, 15:17, Nick Bentley <nickobe...@gmail.com> wrote:
+> I am wondering if it wouldn't be better to prohibit
+> designers voting for their own games.  I'd like to change this rule,
+
+Oh, please, change it! I was about to start a thread on it before I
+saw this one. I have submitted a game to the contest, but I don't have
+access to the Internet at home right now, and I won't be able to
+playtest the rest of the games, so I won't be an elligible voter.
+Allowing to vote one's own game punishes games from designers who
+can't be voters.
+
+> Nick-the-not-entirely-wise
+
+You're already wise enough, indeed!
+    </div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Endless catalogue of Y's...</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Nov 21, 2010, 11:57:43 AM</div>
+    <div class="content">
+In a previous thread, I wrote (as an afterthought):-
+_______
+
+Another option is to make the board topologically different,
+then have a different (but very similar) game, say, "Circular Y".
+
+   a a a
+ a . . . c     Winner's group touches a, b and c, as before.
+a . . . . c
+. . . . . c
+b . . . . c
+ b . . . c
+   b b b
+_______
+
+In fact, I think I wrote about these in my earlier article on HEX-Y
+to r.g.a. of many years ago, (when that was still a viable option).
+
+As the game is completely impartial, (especially with PIE),
+it doesn't really matter WHAT physical shape the board is,
+so long as it is combinatorially the same, i.e. marked into
+three regions along the sides, and trivalent internally.
+
+So we could have, "SQUARE Y"...
+
+   a a a a a a a a
+b . . . . . . . . . c
+ b . . . . . . . . c
+b . . . . . . . . . c    Winner is a connected group
+ b . . . . . . . . c     touching all three letters.
+b . . . . . . . . . c
+ b . . . . . . . . c
+b . . . . . . . . . c
+ b . . . . . . . . c     [Assuaging the bookcase storing problem!]
+b . . . . . . . . . c
+   b b b b c c c c
+
+...or various length-ratios of RECTANGULAR Y.
+
+Note that the a, b, c regions need not be symmetric or even have
+the same length of cells. Here is PENTANGULAR Y:-
+
+     b . a
+    b . . a
+   b . . . a
+  b . . . . a
+ b . . . . . a
+b . . . . . . a
+ . . . . . . .
+c . . . . . . c
+ c . . . . . c
+  c . . . . c
+     c c c
+
+And so on. Mix and match, garnish and season to taste!
+
+Be Y's and play many Y's, people... ;-)
+
+-- Wittering Willie    
+    </div>
+  </div>
+
+</body>
+</html>

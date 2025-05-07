@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">An observation about why some people don’t like board games (and how to cure them of that terrible affliction)</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Oct 14, 2013, 5:16:15 PM</div>
+    <div class="content">
+I've been asking people who don't like board games why they feel that way, and I've learned some things, so <a href="http://web.archive.org/web/20161118152504/https://nickbentleygames.wordpress.com/2013/10/14/an-observation-about-why-some-people-dont-like-board-games-and-how-to-cure-them-of-that-terrible-affliction/">I wrote about it</a>. 
+
+This isn't about combinatorial games specifically, but it's relevant to anyone designing combinatorial games because these sorts of games seem to suffer especially acutely from some from the problems I discuss in the essay. 
+
+Curious to know if designers are aware of these issues and design with an eye toward them.    
+
+<i>As a hopeless board games nutcase, I have a hard time understanding how anyone, ANYONE, can avoid being compelled, as if by some behemoth unseen force, to spend every waking minute of their lives thinking about, playing, and designing table games.
+
+Being an inquisitive nutcase, about two years ago I began looking for people who claim not to like board games (as if that were possible hahaha no seriously that’s not possible) and asking them about why. I’ve learned some things which may be of interest to anyone keen to cultivate new game partners or expand the game market. Notably, there appears to be one dominant factor in turning people off board games. Ready for it?
+
+Folks who dislike board games care more about board games than than the rest of us
+
+What I mean is, those who dislike board games invest themselves more heavily in their outcomes, to such an extent that their identities are affected. When they lose, they feel they’ve endured a public demonstration of their ineptitude. When they win, they feel they’ve subjected their opponents to the same.
+
+Game outcomes influence such folks’ sense of themselves, their social status, and the social status of others. That’s stressful.
+
+I call this Over-investment Syndrome and a strong majority of the haters I’ve spoken to have it, which has surprised me.
+
+But now that I’ve thought about it, it makes a tiny bit of sense. Board games may be the most intimate kind of games. The players are in the same room, at the same table, looking right at each other, as one eviscerates the others. It’s like that scene from Saving Private Ryan where the American and the German are wrestling on the ground and the German manages to get on top and slowly sinks a knife into the American’s chest over his whimpering pleas to stop. By the way don’t click that link unless you’re the opposite of squeamish.
+
+There appears to be two distinct types of sufferers:
+
+Type 1: these sufferers dislike competition generally, in games and life, because it feels like a needless kind of one-upmanship, which inevitably and pointlessly makes someone feel bad. A lot of women seem to fall into this category.
+
+Type 2: these sufferers (mostly men) are the opposite: they’re not opposed to competition, and even relish it, but they don’t want to unleash the competitive beast in an endeavor which seems to them unreal or unimportant. My dad is the canonical example: he’s one of the most competitive people on Earth, and secretly believes everyone is out to screw him and that his only recourse is vigorous preemptive screwing (which sounds bad but he’s actually awesome). He’s like “Why agonize over a mere game when I can go out and fight someone to the death in real life?”
+
+How to cure Over-investment Syndrome?
+
+Now, you may argue: “Why should you want to cure it? Let people do what they will. No one likes a missionary, especially one on a dumb mission” Or at least that’s what the hemisphere of my brain that’s always trying to save me from myself whispers just before I shut it down like I’m a dolphin. I’ve no idea why I should care but I do. Let’s roll with it.
+
+First, it’s important to make sure your subject does in fact suffer from this malady. Although it’s a common problem, there are other reasons people fail to play board games, notably:
+
+1. The subject has never played board games before and so doesn’t have any opinion about them at all, or maybe thinks they’re just for kids.
+
+2. The subject thinks there’s something unseemly about them. She suspects they’re a disreputable indulgence. I’m guessing this is a byproduct of the Protestant Ethic which has so greatly shaped our culture, and I’m not sure it’s wrong (I shudder to contemplate how much more I could do for the world if I spent as much time designing say, better solar panels, as I do designing games; alas I don’t know how to pick my obsessions).
+
+So ask your subject questions about how playing games makes her feel. Maybe even present the three factors I’ve described. and ask which description fits her best (one thing I’ve learned, however, is you won’t always get an honest answer, because some people don’t want to cop to the embarrassing idea that game outcomes affect their sense of themselves. You’ll have to be subtle. The best option, if possible, is to try playing a game with your subject. If losing makes her agitated/sullen, you have your diagnosis).
+
+Assuming your subject does suffer from Over-investment Syndrome, then what?
+
+Answers:
+
+1. If strategy isn’t important to you, play party games.
+
+2. If strategy is important to you, play co-operative games, like Pandemic, where everyone wins or loses together.
+
+3. If strategy is important to you but you don’t like cooperative games, suggest a game which feels like “multiplayer solitaire”, like Fits.
+
+All three genres avoid triggering Over-investment Syndrome to one extent or another (and I’ll wager that they all owe at least some of their popularity to that fact).
+
+Note, you won’t be playing these kinds of games with your subject forever, and that shouldn’t be your goal. The best cure for Over-investment syndrome, in my experience, is simply to get someone to play games a lot. The more someone plays, the less invested she’ll feel in the outcome of any one play. She’ll realize that the outcome is insignificant and forgotten as soon as the next game starts.
+
+For hard cases, you might consider a progression: start with party games, move to cooperative games, then multiplayer solitaire, then whatever you want.
+
+4. If you can get into a conversation about the nature of games and the appeal they hold for you, try telling your subject this: when you take your turn, don’t think of the purpose as to beat your opponent. The purpose is to present to your opponent an interesting, challenging puzzle for her to mull. You’re really taking turns gifting puzzles to each other.
+
+5. Buy a game you think you will be terrible at, introduce it to your subject, and resolve to play it only with her and never anyone else. Handicap if necessary or otherwise set things up so that your opponent will win more than you. Losing is harder than winning and you, as a game-lover, don’t mind losing nearly as much as your game-resistant subject. So find a game where you will be forced to struggle and your opponent will thrive. Then be sure not to ever, ever get upset about losing. If you ever seem less than perfectly sanguine about losing, it’ll reinforce in your subject that idea that there’s something real at stake.
+
+I have a brilliant friend with whom I played games early in my obsession, and for years, without telling me, he made it his goal not to win, but to lose as narrowly as possible without my discovering his intent. Nearly every play was a barn burner and I came out on top more often than not and I think I owe much of my obsession to that experience.
+
+Of course I was a bit embarrassed when he later told me what he was up to, but he needn’t have told me, especially because as I improved it got to the point where he no longer needed to try to make it narrow. It just happened because we were evenly matched. He could have just seamlessly transitioned to playing with normal intent. That’s an ideal script for turning someone onto games and I urge you to give it a try.
+
+6. Finally, whatever else you do, proceed slowly and never press your case. Again, no one likes a missionary.</i>
+    </div>
+  </div>
+
+</body>
+</html>

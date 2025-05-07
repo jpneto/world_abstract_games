@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">The Shibumi Challenge</div>
+    <div class="author">Cameron Browne</div>
+    <div class="timestamp">Posted on </div>
+    <div class="content">
+Hi,
+
+I'm pleased to announce the Shibumi Challenge:
+http://www.boardgamegeek.com/geeklist/75022/the-shibumi-challenge-geeklist
+
+The aim is to design the best possible game for the Shibumi set
+(http://www.mogal.ai/shibumi/) by Jan 31.
+
+Prizes include a deluxe Samurai edition and two Ninja editions.
+
+Regards,
+Cameron    
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: The Shibumi Challenge</div>
+    <div class="author">Cameron Browne</div>
+    <div class="timestamp">Posted on Jan 3, 2012, 6:57:54 AM</div>
+    <div class="content">
+Hi again,
+
+The Shibumi Challenge is now half over (it runs until Jan 31).
+
+Here is an article that gives some more details about the Challenge
+and the motivation behind it: 
+
+<a href="https://boardgamegeek.com/blog/1/blogpost/6931/ai-game-design-the-shibumi-challenge">http://www.boardgamegeek.com/blogpost/6931/ai-game-design-the-shibumi-challenge</a>
+
+I hope to see some entries from some of you!
+
+Regards,
+Cameron 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: The Shibumi Challenge</div>
+    <div class="author">Cameron Browne</div>
+    <div class="timestamp">Posted on Mar 16, 2012, 1:38:27 AM</div>
+    <div class="content">
+Hi,
+
+The Challenge is now over and the prize winners have been decided - congratulations Matt Green! There was a good turnout of 45 games from 22 designers, the best of which are described in the Shibumi Rule Book: http://www.lulu.com/product/paperback/shibumi-rule-book/18940123
+
+This is a full-colour, professionally bound book describing the system and the best Shibumi games so far, including the Challenge prize winners and several other of our favourite entries.
+
+You can also download the rule book for free as a low resolution .pdf. This is suitable for browsing on small screens, but the printed version is much nicer: 
+<a href="https://boardgamegeek.com/filepage/219217/shibumi-rules-in-english">http://www.mogal.ai/shibumi/a5-shibumi-v1.1-low.pdf</a>
+
+Please keep submitting new game ideas, they might make it into the next edition.
+
+Regards,
+Cameron
+    </div>
+  </div>
+
+</body>
+</html>

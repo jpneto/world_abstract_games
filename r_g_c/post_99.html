@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">New game: Brique</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on May 9, 2012, 10:38:44 PM</div>
+    <div class="content">
+ BRIQUE
+
+Introduction
+
+Brique is a drawless connection game for two players: Black and White. It's played on the squares of a checkered board, which is initially empty. The top and bottom edges of the board are colored black; the left and right edges are colored white.
+
+Definitions
+
+. b .
+b a c
+. c .
+
+If 'a' is a light square, the 'b' squares are its escorts.
+If 'a' is a dark square, the 'c' squares are its escorts.
+
+Play
+
+Black plays first, then turns alternate. On his turn, a player must place one stone of his color on an empty point.
+
+After a placement, if all the escorts of one or more squares are occupied by friendly stones and said squares aren't occupied by a friendly stone yet, the player must place a stone of his color on each one of them, removing, where appropriate, any enemy stones already placed there. Note that some squares on the edge of the board only have one escort.
+
+The game is won by the player who completes a chain of orthogonally adjacent stones of his color touching the two opposite board edges of his color. Draws are not possible.
+
+Pie rule
+
+The pie rule is used in order to make the game fair. This means that White will have the option, on his first turn only, to change sides instead of making a regular move.
+
+Notes
+
+Two like-colored, diagonally adjacent stones parallel to the NE-SW diagonal are always connected through a common neighbor in Brique, so, as in Hex, each square has actually six neighbours, and the board behaves like a rhombus, with one diagonal twice as shorter as the other. Needless to say, however, Brique is not isomorphic to Hex.    
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: New game: Brique</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Aug 21, 2012, 3:57:38 AM</div>
+    <div class="content">
+The <a href="http://www.boardgamegeek.com/filepage/81562/official-brique-rules">Brique PDF rule sheet</a> is now available for download.
+    </div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Results Revisited</div>
+    <div class="author">zickzack@gmail.com</div>
+    <div class="timestamp">Posted on Dec 18, 2011, 5:57:52 PM</div>
+    <div class="content">
+The subject was supposed to be "draws revisited", but then I
+realised that the scope of this article goes beyond that.
+
+Assume we want to compare the strength of players in a
+tournament, and let us assume the game played ends in a
+win or loss, with equal chances for either player - assuming
+they have the same playing strength. Then, the information
+(defined as negentropy) provided by a result is one bit.
+
+
+Compare this to a game where there is more granularity in the
+result, such as win, loss, or draw, with the results being equally
+likely between players of equal strength. Then, the results of this
+game provide more information which can be used to grade
+playing strength more quickly (or more exactly).
+
+
+The case in point is Chess. According to chessgames.com,
+the percentages for White wins, draw, and Black wins are
+36.81, 36.5, and 26.69 respectively (in 2008). The information
+content of such a result is almost 1.6 bit -- 57% more information
+from a game than in the previous example.
+
+
+It should be pointed out that the Chess results do not only
+contain more information, they also contain a bias since
+White wins more often than Black. Usually, this bias is
+circumvented by letting players play a reasonable number
+of games with a fair share of White and Black each.
+
+
+It is possible to increase the information contained in a result
+by allowing for even more results. One might expect that
+scoring games - think Go or Othello - do this. But interestingly,
+the degree of success is rarely taken into account. Maybe the
+complex rules for the promotion of professional Go players can
+be seen as this. Another. more convincing case is found in
+Backgammon where the doubling cube allows for different
+values of a game.
+
+
+I have two questions:
+
+
+1. Does anyone know an abstract played in tournaments where
+the results yield more information than in Chess?
+2. Are there other abstracts plaed in tournaments with a wider
+range of results?
+
+
+There was an approach to score Chess games on a scale of 0
+to 10. Checkmate was 10 points, draw 5, and other values
+being assigned to "baring the king", stalemate, and so on. It
+died a merciful death and does not count.
+Benedikt    
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Results Revisited</div>
+    <div class="author">Russ Williams</div>
+    <div class="timestamp">Posted on Dec 18, 2011, 5:52:17 PM</div>
+    <div class="content">
+On Sun, Dec 18, 2011 at 6:44 PM, zick...@gmail.com <zick...@gmail.com> wrote:
+> The case in point is Chess. According to chessgames.com, the
+> percentages for White wins, draw, and Black wins are 36.81, 36.5,
+> and 26.69 respectively (in 2008). The information content of such a
+> result
+> is almost 1.6 bit - 57% more information from each game than in the
+> previous example.
+
+Interesting point!
+
+> It is possible to increase the information contained in a result by
+> allowing
+> for even more results. One might expect that scoring games - think
+> Go or Othello - do this. But interestingly, the degree of success is
+> rarely
+> taken into account.
+
+I have always heard (and believed to be true) that (at least in the
+case of go) the margin of victory doesn't really give useful
+information, and that's why it's not used.
+
+I.e. if the game involves lots of small fights (or an utterly peaceful
+game of each player fencing off half the board) then the resulting
+scores will typically be close.
+
+If the game involves a giant all-or-nothing capturing race that
+ensures one player or the other will lose a huge group, then the
+resulting scores will not be close. But that doesn't mean that the
+winner played incredibly better than the loser. It just means the
+particular game evolved into an all-or-nothing fight in which a tiny
+miscalculation can have much more drastic consequences than in a game
+with only small fights.
+
+cheers,
+russ
+    </div>
+  </div>
+  
+  <div class="post level-1">
+    <div class="subject">Re: Results Revisited</div>
+    <div class="author">zickzack@gmail.com</div>
+    <div class="timestamp">Posted on Dec 18, 2011, 6:11:09 PM</div>
+    <div class="content">
+On Dec 18, 6:52 pm, Russ Williams <cxiomor...@gmail.com> wrote:
+
+> I have always heard (and believed to be true) that (at least in the
+> case of go) the margin of victory doesn't really give useful
+> information, and that's why it's not used.
+
+[Different kinds of play or playing style lead to different scores]
+
+Thank you for the examples! I actually wonder, if the percentages
+of results in Chess are an artifact. I mean, if there is a "force"
+at work that kind of draws the results to the maximum entropy - as
+far as the practical bias allows this. And if that force is mistaken
+for Good Chess Strategy.
+Benedikt
+    </div>
+  </div>
+  
+</body>
+</html>

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Infinito: infinite strategies?</div>
+    <div class="author">Matteo Perlini</div>
+    <div class="timestamp">Posted on Apr 8, 2013, 9:45:56 AM</div>
+    <div class="content">
+It is for two years that I sometimes dream about an uncomputable game. How should this game be? Is such a thing even possible? I think from a theoretical point of view it is possible, but, how?
+
+This is my holy grail. (I have another holy grail other than this one, but another thread on it... :) )
+
+How... I decided to not consider Gödel, so I pick the other, and simpler, way: a game with a game-tree of infinite width. A game with an unlimited number of moves per turn, but with a finite number of turns.
+I don't think this kind of game is uncomputable, but it is the closest as I could get.
+
+Of course it is not enough to have an unlimited number of moves in principle, it should be interesting and valuable to have this potential infinity at disposal. So the game needs intense playtesting to check the actual infinitude.
+
+The game is Infinito and the rules are inspired by Nick's Heatseekers.
+
+<h3>Infinito</h3>
+
+Infinito is a two-player game, played on a square board. One player owns the black stones, the other player owns the white stones. Grey neutral stones are needed.
+
+Each player has an infinite number of stones with an unique natural number printed on them: 0, 1, 2, 3, and so on...
+
+Players move alternately, starting with the player controlling the white stones. Each turn consists of two actions, performed in this order:
+
+1. Optional move: you can move a stone exactly as a Queen’s moves in Chess, i.e. any number of cells horizontally, vertically or diagonally.
+If your stone ends its move next to one enemy stone whose value is less than your stone, and your stone wasn’t next to that enemy stone to start its move, replace any friendly stone – but the stone just moved – on the board with a neutral grey stone with “∞” printed on it. In one move you can end up close to more enemy stones whose value are less than your stone, in that case you replace your stones with neutral stones for each of those stones.
+When you remove your stones from the board, those stones will be available for future placements.
+
+2. Compulsory placement: you must place a stone onto any empty space.
+
+The game ends when the board is full, whoever has the least sum of his values wins.    
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Infinito: infinite strategies?</div>
+    <div class="author">João Neto</div>
+    <div class="timestamp">Posted on Apr 8, 2013, 11:55:07 AM</div>
+    <div class="content">
+You don't need infinite number of moves.
+
+Setup: a mapping M between positive integers and Turing machines
+
+1. On each turn, a player states a number n such that it is less than
+the number
+
+2^x0 . 3^x1 . 5^x2 . 7^x3 ...
+
+given by previous xi numbers (x0=1)
+
+2. If the opponent cannot prove that for a certain input I, the machine
+M(n) stops or enters an infinite cycle, the player wins.
+
+It is far from interesting, but it is uncomputable :-)
+
+You could add a rule stating that each number 'n' must always be a
+different one than the ones played in previous matches (except for the
+first two turns) 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Infinito: infinite strategies?</div>
+    <div class="author">Maurizio De Leo</div>
+    <div class="timestamp">Posted on Apr 8, 2013, 2:35:02 PM</div>
+    <div class="content">
+Some discussion about this game is ongoing at BGG,
+
+<a href="http://www.boardgamegeek.com/thread/956310/an-infinite-game-infinito/page/1">http://www.boardgamegeek.com/thread/956310/an-infinite-game-infinito/page/1</a>
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Infinito: infinite strategies?</div>
+    <div class="author">Cameron Browne</div>
+    <div class="timestamp">Posted on Apr 8, 2013, 6:05:15 PM</div>
+    <div class="content">
+Here is an another slant on non-computable games:
+http://xkcd.com/1002/
+
+Cameron
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Infinito: infinite strategies?</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Apr 9, 2013, 6:08:53 AM</div>
+    <div class="content">
+On Apr 8, 10:55 pm, João Pedro Neto <j...@di.fc.ul.pt> wrote:
+
+> Setup: a mapping M between positive integers and Turing machines
+>
+> 1. On each turn, a player states a number n such that it is less than
+> the number
+>
+>   2^x0 . 3^x1 . 5^x2 . 7^x3 ...
+>
+> given by previous xi numbers (x0=1)
+>
+> 2. If the opponent cannot prove that for a certain input I, the machine
+> M(n) stops or enters an infinite cycle, the player wins.
+
+With the greatest respect, I must observe that this game is
+under-defined, as it stands. The problem is the "prove", OC.
+No system of logic/math is stated within which proofs
+must take place - proofs just don't exist "in the air".
+
+Even assuming some really simple system is given, (say PA),
+there is the further practical problem for players and
+(especially!) referees, that a given proof may be so complex
+that none of those present can work out in a reasonable time
+whether a move is legal or not. OC all abstract games must
+have time restraints to be played successfully, but these
+do NOT typically include referee time!
+
+The problem of underdefinition is always with us, OC, especially
+for "party games" of the type mentioned in Camb's xkcd cartoon.
+Calvinball, Mao, and so forth are not and probably cannot
+be made into serious tournament games, (though it would be fun
+to see it tried!), even ignoring the "physical" aspect of games
+with racquets, balls etc, which adds a further layer of
+inapplicability as regards this group.
+
+Without severe restrictions on the notion of "rule", even such
+games as Mao and Eleusis will be undefined, and I suspect
+the restrictions would need to be so severe as to destroy
+the "spirit of the game".
+
+But as Nerdy Party games they are great, natch.
+
+> You could add a rule stating that each number 'n' must always be a
+> different one than the ones played in previous matches (except for the
+> first two turns)
+
+And this sort of thing changes it further from a single-shot game,
+to a game lasting a whole lifetime; which could also be said
+of games like Diplomacy, where the matter of "whom to trust"
+looms large, and is a function of all previous playings.
+
+-- Cold Watering William
+
+** My computer beat me at chess,
+** but it was no match for me at kick-boxing! 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Infinito: infinite strategies?</div>
+    <div class="author">Matteo Perlini</div>
+    <div class="timestamp">Posted on Apr 9, 2013, 1:04:54 PM</div>
+    <div class="content">
+João, interesting concept, but I would stay with "real" game. :-) 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Infinito: infinite strategies?</div>
+    <div class="author">Matteo Perlini</div>
+    <div class="timestamp">Posted on Apr 9, 2013, 1:11:40 PM</div>
+    <div class="content">
+Hi Cameron,
+
+thanks for the link, but I'm interested in abstract game. ;-) 
+    </div>
+  </div>
+
+</body>
+</html>

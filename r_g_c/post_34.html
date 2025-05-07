@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Implo - Contest Submission</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Dec 18, 2010, 3:59:50 PM</div>
+    <div class="content">
+This is my candidate for the game contest:
+
+---------
+I M P L O
+---------
+
+by Luis Bolaños Mures
+
+
+Implo is an original territory game for two players: Black and White.
+It is played on the intersections of a square board, which is
+initially empty. The suggested size is 19x19, as in Go, but any others
+are also possible. There are two kinds of stones of each color: pawns
+and kings. Draws and cycles are not possible in this game.
+
+For a comfortable play on a physical board, you can use stones with
+one white and one black side. Half the stones show some symbol on the
+black side, and half the stones show it on the white side. These
+represent black and white kings, respectively.
+
+DEFINITIONS
+
+In this rules, "adjacent" always means "orthogonally adjacent". A
+group is a set of like-colored, adjacent stones. A group can contain
+pawns, kings or both. A pawn is dead when it belongs to a group with
+no empty intersections adjacent to it. A dead group is a group with
+one or more dead pawns. Alpha is the color of the last played stone,
+which need not be the player's color. Beta is the color which is not
+alpha.
+
+PLAY
+
+Starting with Black, players take turns placing one stone of ANY color
+on an empty intersection. After a placement, if there are no dead
+pawns, the turn ends. If there are any dead pawns:
+
+a) All the beta dead pawns become alpha kings. This is called
+"flipping".
+
+b) All the alpha pawns in the groups adjacent to the beta dead groups
+are removed from the board.
+
+c) If there are any alpha dead groups at this moment, a) and b) are
+repeated with colors inverted, i.e., all the pawns in the alpha dead
+groups become beta kings, and all the beta pawns in the groups
+adjacent to the alpha dead groups are removed.
+
+A player can pass his turn at any moment. When both players pass in
+succession, the game ends.
+
+OBJECTIVE
+
+At the end of the game, the player with the most stones (pawns and
+kings) of his color on the board wins. In case of a tie, the player
+who passed first during the game wins.
+
+SAMPLE POSITIONS
+
+x -> black stone
+# -> black king
+o -> white stone
+@ -> white king
+
+- Position #1:
+
+o x . . x
+o . x . .
+x . . x .
+x x . x .
+. . . . .
+
+Black places a black pawn on b4, flipping the two white pawns (which
+become black kings) and removing five black pawns plus the played
+pawn:
+
+# . . . x
+# . . . .
+. . . x .
+. . . x .
+. . . . .
+
+- Position #2:
+
+. . # # .
+x # o x x
+. x @ . .
+. . x . .
+x # x o x
+
+White places a black pawn on d3, flipping the white pawn (which
+becomes a black king) and removing seven black pawns plus the played
+pawn:
+
+. . # # .
+. # # . .
+. . @ . .
+. . . . .
+. # . o x
+
+Please note that the black pawns on a1 and a4 are also removed. Pawns
+and kings of the same color, if adjacent, are all part of the same
+group. The black pawn on e1 is not removed because it does not belong
+to any group adjacent to the flipped pawn's group.
+
+- Position #3:
+
+. . o o .
+o @ # # o
+. . # # #
+. o o o #
+. . . . o
+
+White places a white pawn on b3. None of the black stones are flipped,
+because they are all kings. Thus, as there are no dead black groups,
+the pawns in the surrounding white groups are not removed:
+
+. . o o .
+o @ # # o
+. o # # #
+. o o o #
+. . . . o
+
+COMMENTS
+
+Implo is a game similar to Go in that players try to surround enemy
+groups in order to score points. In Implo, however, the groups which
+succeed in the battle get corrupted by vanity and die, whereas the
+defeated (surrounded) enemy groups are not only kept alive by their
+captors, but converted into invincible soldiers to their service.
+Also, as players can use stones of both colors, they can take
+advantage of their own losses by joining the opponent's attacking
+groups into one. This way, they are forced to finish their charge
+together and die en masse.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Implo - Contest Submission</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Dec 29, 2010, 5:57:59 PM</div>
+    <div class="content">
+Some people seems to find it a bit difficult to understand the rules
+of Implo as they are worded now. They are very simple, though, so I
+must be blamed for not having been able to explain them properly. To
+make them clearer, it may be useful to summarize the three basic
+concepts used in this game:
+
+a) Captures proceed as in Go, except that surrounded groups are not
+removed, but flipped to show the opposing color. (Also, still as in
+Go, dead stones of the opposite color to the played stone are flipped
+first. Then, if any stones of the played color remain dead, they are
+flipped the same way.)
+
+b) When such flippings are made, all the groups surrounding the
+flipped group(s) are removed.
+
+c) To prevent cycles, any stone on the board can only be flipped once.
+Once it is flipped, it can't be removed from the board, too. Flipped
+stones are called kings.
+
+I've added the above text to the rules file. The game rules are still
+exactly the same, so I hope this doesn't break the contest rules.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Implo - Board size change</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Jan 28, 2011, 6:01:30 PM</div>
+    <div class="content">
+In another thread, Tristan complained that an Implo game, even on a
+9x9 board, takes too long. He's absolutely right. In the rules, I
+suggested a 19x19 board, which is monstruous. I would like to change
+it to, say, 7x7 or 8x8, but I'm not sure if it's allowed at this stage
+of the contest. In my particular game, board size is not a rule but
+just a suggestion, so maybe it's all right...
+
+What do you think, Nick?
+    </div>
+  </div>
+  
+</body>
+</html>

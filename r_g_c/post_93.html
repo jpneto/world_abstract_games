@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">New Game: Snype</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on May 19, 2012, 11:28:31 PM</div>
+    <div class="content">
+Should be working, resisting, made this: 
+
+<a href="https://web.archive.org/web/20140211014810/http://nickbentleygames.wordpress.com/2012/05/19/new-game-snype/">http://nickbentleygames.wordpress.com/2012/05/19/new-game-snype/</a>
+
+<i>This game represents progress on a problem I’ve been working on for a long time: to improve the gameplay of The Game of Y, especially when it’s played on a hexhex board, my favorite of all regular tilings. Y has what is regarded by many as one of the most beautiful win conditions, but gameplay falls flat for me, on account of the supreme importance of the center of the board, which limits the effective branch factor and opportunities for creative moves. This is true for me even on the “modified topology” boards which are supposed to address the issue.
+
+I’ve taken a bunch of stabs at solving this problem, and I’ve posted a couple (see here and here). Snype, I’m betting, will be better than my earlier attempts. I say this even though I haven’t played it – I’m willing to go out on a limb because Snype resides in a region of game-space I understand well.
+
+As always, I’ll start with the rules and then explain why they are the way they are.
+
+Snype is a game for 2 players, played with black and white stones, on this initially empty board (actually, you should play on a board larger than this. This is just for illustration. 7 cells on a side is good):
+
+<img src="files/Snype-board1.png">
+
+Rules
+
+  • To begin, one player places a white stone on any empty space, and the other player decides whether to play as White or Black.
+  • From then on, starting with Black, the players take turns. A turn consists of two actions, which may be performed in any order:  1) place a stone of your color on any numbered empty space; and 2) optionally, move a stone in a straight line, any number of spaces up to the number on the space from which it starts, so that it lands on an empty numbered space. No jumping allowed.
+  • The game ends when one player creates a connected group of stones which is adjacent to at least one blue, one yellow and one red space. He wins.
+
+What’s the deal?
+
+The inspiration for Snype starts with the game Slither. Slither has a similar “place a stone, move a stone” turn protocol, except in Slither you can only move a stone one space. This protocol has turned out to be magnificent for connection games because it improves their weakest feature, tactics, while leaving intact the strategic contours which make connection games great in the first place. It also dramatically increases the meaningful branch factor.
+
+So I wondered: is there a way to solve the center-problem of Y by employing a modified version of the 'place and move' turn protocol? The answer was obvious: make center stones weaker by giving them less freedom to move. And so Snype was born.
+
+One open question is whether the pie rule is sufficient for balancing the game. There’s a good chance it won’t be. I don’t think I’ll be able to deal with this issue, if it is an issue, until I’ve playtested the game a bunch, so for now it remains an open question.</i>
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: New Game: Snype</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on May 22, 2012, 3:45:21 PM</div>
+    <div class="content">
+On May 20, 10:28 am, Nick Bentley <nickobe...@gmail.com> wrote:
+
+> Should be working, resisting, made this:
+>
+> http://nickbentleygames.wordpress.com/2012/05/19/new-game-snype/
+
+Looks pretty good! I'm sure Joao and I will playtest it
+soon, in our regular email games.
+
+We are also testing another game idea on the same board,
+with the same Y-goal, but with a different way to try to
+de-emphasize the centre. The idea is to make the more
+central cells more valuable, by assigning them "costs",
+typically a number from 1 to 3; 3 in the centre rings,
+1 on the outside rings. Then, a turn is to place
+1, 2, 3 or 4 stones, on cells with total value 4.
+
+There are a few other wrinkles too. The best-seeming
+of our trial versions has been extensively tested,
+and seems to be fun and skillful.
+
+It may well be that your game is even better, however.
+Can hardly wait to try it!
+
+-- Boardly Bill 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: New Game: Snype</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on May 30, 2012, 9:55:11 PM</div>
+    <div class="content">
+El martes, 22 de mayo de 2012 16:45:21 UTC+2, Bill Taylor escribió:
+
+    We are also testing another game idea on the same board,
+    with the same Y-goal, but with a different way to try to
+    de-emphasize the centre.  The idea is to make the more
+    central cells more valuable, by assigning them "costs",
+    typically a number from 1 to 3; 3 in the centre rings,
+    1 on the outside rings.  Then, a turn is to place
+    1, 2, 3 or 4 stones, on cells with total value 4.
+
+This is very similar to Nick's Spry, which trades a bit of flexibility for improved clarity. I'm not sure which one is better, though.
+    </div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Radiolarians?</div>
+    <div class="author">luis....@gmail.com</div>
+    <div class="timestamp">Posted on Dec 18, 2010, 4:50:53 PM</div>
+    <div class="content">
+As an abstract games fan, I'm really curious to know the rules of
+Corey Clark's Radiolarians, a game he has mentioned sometimes as being
+already "finished".
+
+Clark, why don't you share it with us? Even if it is not as good as
+the elegant Particle Bond, it's always nice to read about your new
+designs...    
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Radiolarians?</div>
+    <div class="author">superslacker</div>
+    <div class="timestamp">Posted on Dec 21, 2010, 4:21:10 AM</div>
+    <div class="content">
+> As an abstract games fan, I'm really curious to know the rules of
+> Corey Clark's Radiolarians, a game he has mentioned sometimes as being
+> already "finished".
+
+I've seen it played and it looks pretty interesting.
+
+> Clark, why don't you share it with us? Even if it is not as good as
+> the elegant Particle Bond,
+
+Who says it's not?
+
+I'm also curious to see the rules written out.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Radiolarians?</div>
+    <div class="author">Jackspritz</div>
+    <div class="timestamp">Posted on Dec 21, 2010, 7:10:54 AM</div>
+    <div class="content">
+On Dec 20, 9:21 pm, superslacker <antiw...@me.com> wrote:
+> Who says it's not?
+
+trust me, it's not ;)
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Radiolarians?</div>
+    <div class="author">luis....@gmail.com</div>
+    <div class="timestamp">Posted on Dec 21, 2010, 5:55:47 PM</div>
+    <div class="content">
+On 21 dic, 05:21, superslacker <antiw...@me.com> wrote:
+> I've seen it played and it looks pretty interesting.
+
+Do you mean at the igGameCenter sandbox?
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Radiolarians?</div>
+    <div class="author">luis....@gmail.com</div>
+    <div class="timestamp">Posted on Dec 21, 2010, 5:56:52 PM</div>
+    <div class="content">
+Why not? (Yes, I am trying to fool you into revealing something about
+the game :-) )
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Radiolarians?</div>
+    <div class="author">superslacker</div>
+    <div class="timestamp">Posted on Dec 22, 2010, 3:41:12 AM</div>
+    <div class="content">
+> Do you mean at the igGameCenter sandbox?
+
+Yes.
+    </div>
+  </div>
+
+</body>
+</html>

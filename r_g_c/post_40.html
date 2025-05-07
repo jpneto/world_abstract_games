@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Verto Rule Change</div>
+    <div class="author">Dieter Stein</div>
+    <div class="timestamp">Posted on Jan 21, 2011, 7:23:03 AM</div>
+    <div class="content">
+Hi,
+
+playing around with Luis' Verto Zillions implementation (which is very
+nice), especially with the variant "Positional Verto" turned on, I
+found that compulsory captures are something the game actually doesn't
+need. In fact, the positional variant is the better game. I thought
+about this variant before, but somehow the Reversi/Checkers scheme of
+compulsion forced me into that direction.
+
+Okay, this won't affect the contest, the now old, submitted version is
+object of your evaluation. But beyond that, the standard rules will
+now go *without* compulsory captures. It is still mandatory to make
+all possible captures, but you still won't have to follow the maximum
+path.
+
+I'll change the Applet soon.
+
+Have a nice day,
+
+Dieter    
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Verto Rule Change</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Jan 28, 2011, 5:28:34 PM</div>
+    <div class="content">
+I'm glad that my Zillions script has been useful to you to gain more
+insights into your game. If I understand correctly, the new standard
+variant is Positional Verto with the requirement to capture at least
+one stone when possible. If so, that would be a bit trickier to
+implement with Zillions, but I'll try anyway.
+
+When playing Verto, I also realized that it was a bit too tactical,
+and that there were too many forced sequences right from the
+beginning; hence the obvious positional variant included in the
+Zillions script. A possible inconvenient I've glimpsed in my limited
+experience with Positional Verto is that scores tend to be too tight,
+or at least much tighter than in the former standard rules. Not sure
+whether that's a bad thing, though. 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Verto Rule Change</div>
+    <div class="author">Dieter Stein</div>
+    <div class="timestamp">Posted on Jan 29, 2011, 10:08:59 AM</div>
+    <div class="content">
+> If I understand correctly, the new standard
+> variant is Positional Verto with the requirement to capture at least
+> one stone when possible. If so, that would be a bit trickier to
+> implement with Zillions, but I'll try anyway.
+
+No, it's still: capture as long as you can. However, you need not take
+the maximum capture path. The only change is the removal of compulsory
+captures. It's just the positional variant as you implemented it.
+
+> When playing Verto, I also realized that it was a bit too tactical,
+> and that there were too many forced sequences right from the
+> beginning; hence the obvious positional variant included in the
+
+Yes, I even would say that original Verto with compulsory capture is
+flawed. Normally I do extensive play-testing with computer programs
+(not Zillions btw) and face to face games with my play-testing
+"staff". For the contest it seems I delivered sloppy work because I
+felt pushed.
+
+> Zillions script. A possible inconvenient I've glimpsed in my limited
+> experience with Positional Verto is that scores tend to be too tight,
+> or at least much tighter than in the former standard rules. Not sure
+> whether that's a bad thing, though.
+
+I've already changed the applet at http://spielstein.com/games/verto/play
+(and there will be a mobile (Android) app soon). My experience is, the
+scoring is more tight, yet far from resulting 40-41 all the time.
+
+Dieter
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Verto Rule Change</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Jan 29, 2011, 2:44:55 PM</div>
+    <div class="content">
+On 29 ene, 11:08, spielstein <spielst...@gmail.com> wrote:
+> > If I understand correctly, the new standard
+> > variant is Positional Verto with the requirement to capture at least
+> > one stone when possible. If so, that would be a bit trickier to
+> > implement with Zillions, but I'll try anyway.
+>
+> No, it's still: capture as long as you can. However, you need not take
+> the maximum capture path. The only change is the removal of compulsory
+> captures. It's just the positional variant as you implemented it.
+
+Fine, no changes needed then, other than turning Positional Verto into
+the main variant. I'll submit that to the Zillions pages shortly.
+    </div>
+  </div>
+
+</body>
+</html>

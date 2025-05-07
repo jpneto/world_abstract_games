@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">My Dream Book: 10 top games from the last 12 years, with 30-40 pages of strategy for each.</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Feb 28, 2012, 5:48:06 PM</div>
+    <div class="content">
+Hey all. Just some musing.
+
+<a href="https://web.archive.org/web/20130419014801/http://nickbentley.posterous.com/my-dream-book">http://nickbentley.posterous.com/my-dream-book</a>
+
+What do you think of this idea?  
+
+<i>Abstract games are at their best when players take the time to learn and share strategy, and though we're in the middle of an abstract-game-design renaissance, even some of the best modern abstracts remain strategic mysteries. 
+
+So I have this dream: a book featuring 10 of the best abstract games designed this millenium, with say, 30-40 pages worth of strategy discussion for each.
+
+How to choose the 10? If it were up to me, I'd limit the candidates to games without chance, and I'd focus on games with good "architecture", meaning games which are finite (or likely soft-finite), balanced, decisive, conceptually "unified", and with the simplest of rules and equipment. 
+
+The only game that would be a lock for inclusion for me is Slither. Hex Oust should probably also be in there, along with Arimaa, and Tzaar, IMO the one profound game from the Gipf Project. I'd love to include Quoridor as well, but sadly the published version is from 1997, and there's an unpublished version which predates that by decades. 
+
+Beyond that I don't know. No doubt there'd be a lot of arguing about which games should be included. I can already hear my fellow designer Mark Steere groaning about Tzaar. 
+
+It would take a loooooong time to put together such a book, because there would have to be an effort to develop strategy for each game before writing anything, and most of the games don't have much recorded strategy (except for Arimaa, which already has its own whole book, and Hex Oust, which has a little online strategy guide to start from). Perhaps the effort could be made in collaboration, with the designers and best players of each game contributing the ideas, and the author/editor focusing on presentation and language.   
+
+If I were writing the book, I'd also include one of my own games even if it doesn't deserve to be there; if I'm going to the trouble I'm gonna reward myself for it. (Self-Indulgent Bonus Chapter, I'd call it)
+
+Anyway this is all a daydream because I don't know how to frame the idea to attract a wide audience. It's not worth pursuing without a plan to solve that problem. I'd love to get suggestions in the comments about how to do it. 
+
+One thing of which I'm certain: I'd make sure the language was uber-understandable and non-technical. I'd make sure that an uninformed 14-year-old could read it without breaking a sweat. I wouldn't go deep into strategy esoterica, but rather focus on the big, defining concepts for each game.
+
+I'd also make it funny because there's never a reason not to be funny. 
+
+Perhaps the book could be launched in conjunction with a year-long tournament with prizes for the winners at the end, administered through the igGameCenter. The designers of the featured games could be asked to contribute to the prize-hopper to defray costs.  
+
+On the off chance that this post generates a lot of interest, I might get serious about exploring the possibility, so if you're interested, let me and world know in the comments.</i>  
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: My Dream Book: 10 top games from the last 12 years, with 30-40 pages of strategy for each.</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Feb 29, 2012, 3:36:24 AM</div>
+    <div class="content">
+Sounds like a wonderful idea.
+
+I'd read it.
+
+And if the strategy ideas were extensive and helpful, I'd even buy it.
+
+BTW, you'll never get anywhere close to agreement of what should go in it!
+
+-- Boardly Bill
+
+P.S. I think you can ignore Steere's opinions on this as on most else... 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: My Dream Book: 10 top games from the last 12 years, with 30-40 pages of strategy for each.</div>
+    <div class="author">Jackspritz</div>
+    <div class="timestamp">Posted on Mar 5, 2012, 4:06:18 AM</div>
+    <div class="content">
+On Feb 28, 8:36 pm, Bill Taylor <wfc.tay...@gmail.com> wrote:
+> P.S.  I think you can ignore Steere's opoinions on this
+>       as on most else...
+
+Well I think he's probably going to select the games himself and he
+already said he'd probably include Hex Oust, a Mark Steere game (and
+my favorite game).
+    </div>
+  </div>
+
+</body>
+</html>

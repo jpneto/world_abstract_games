@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS -->
+
+  <div class="post">
+    <div class="subject">Email notifications</div>
+    <div class="author">Jackspritz</div>
+    <div class="email"></div>
+    <div class="timestamp">Posted on Nov 9, 2010, 6:05:46 AM</div>
+    <div class="content">
+I'm sorry if you've been getting a ton of emails notifying you about
+posts in this group. If you haven't figured it out, click "edit my
+membership" and you will see an option to turn emails off. 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Email notifications</div>
+    <div class="author">superslacker</div>
+    <div class="email"></div>
+    <div class="timestamp">Posted on Nov 9, 2010, 6:13:50 AM</div>
+    <div class="content">
+And just incase you're getting emails, somehow managed to lose the
+link to the site and having fruitless efforts of finding it through
+any kind of search engine request, here it is
+http://groups.google.com/group/recregamescombinatorial
+
+...not that anyone's that unorganized ;) 
+    </div>
+  </div>
+
+
+</body>
+</html>

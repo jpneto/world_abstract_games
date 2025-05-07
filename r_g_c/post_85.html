@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">New Game: Magnapoco</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Feb 27, 2012, 12:32:22 AM</div>
+    <div class="content">
+This one's for Corey Clarke, who's been on me to post some of my
+unpublished designs. I designed this one with him in mind.
+
+<a href="https://web.archive.org/web/20130419015345/http://nickbentley.posterous.com/new-game-magnapoco">http://nickbentley.posterous.com/new-game-magnapoco</a>
+
+<i>I've got a battalion of game designs in the pooper, which I'm usually too lazy to post here, but my friend and fellow game designer Corey Clark is goading me to make some public, so here I go.
+
+Because Corey is the one encouraging me, the first game I'm posting is one I designed for him. Corey likes games with cold elements (which means situations arise in which you'd rather pass than take your turn) and he likes square grids. This game has both.   
+
+Magnapoco is a game for 2 players, played with black and white stones on this board:
+
+Magnapoco_board
+
+You can play on larger grids (they must have an odd number of spaces), but I recommend starting with the one above (7x7). Good players will swiftly graduate to 9x9. 
+
+Before the game begins, one player takes ownership of the white stones and the other takes ownership of the black. Also, place 2 white and 2 black stones on the board, like so: 
+
+Magnapoco_start
+
+Definition
+
+A group is a collection of orthogonally connected like-colored stones on the board. A single stone is considered a group as well. 
+
+Rules 
+
+    To begin, white places a single stone on any empty intersection.
+    From then on, starting with black, players take turns. On your turn, you must place 1 or 2 stones onto any empty intersections. Passing isn't allowed. 
+    The game ends either when one player has fewer than 2 groups on the board (in which case she loses), or when the board is full. In the latter case, the player whose smallest group is largest wins. If the players' smallest groups are the same size, compare their second smallest groups, and so on, until you come to a pair which aren't the same size. Whoever owns the larger of the two wins.
+
+Notes
+
+    If you have multiple groups of the same size, they're considered separately.  What I mean is: let's say you have two groups of size = 1. In that case, your smallest group is considered to be of size = 1, and your second-smallest group is also considered to be of size = 1. 
+    I doubt the first rule is necessary, because of the coldness (there are times when you don't want to add two stones to the board), but it satisfies my sense of symmetry to include it.
+    I don't know if the starting setup I've chosen is best. I won't have sufficient understanding to know for sure until I've played many more games. 
+
+What is Magnapoco about? 
+
+I'll give you the overall gist and you can discover the rest. You want to create, ideally, two large groups without being forced to connect them together, while trying to force your opponent to make small groups in small territories. Sounds easy right?
+
+[EDIT] - Magnapoco can be played on a hex board as well, and it may even turn out to be better there if edge-play gets to be too important on the square board. But for now my suspicion is that the square board is better.</i>
+    </div>
+  </div>
+
+</body>
+</html>

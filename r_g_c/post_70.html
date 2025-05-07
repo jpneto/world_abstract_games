@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">....in which Ketchup is likened to Bach's "The Art of Fugue"</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Nov 10, 2011, 9:39:35 PM</div>
+    <div class="content">
+I'm super-happy about this and want to share it with my game designer
+friends. A Ketchup player wrote a ridiculously way review of Ketchup,
+wherein indeed he likened the game to "The Art of Fugue"
+
+http://ludocracynow.tumblr.com/post/12601409238/ketchup-a-review#disq...
+
+I get reviews for my games so infrequently that I would have been
+perfectly happy just to have a negative one. To get one like that is
+just pudding.    
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: ....in which Ketchup is likened to Bach's "The Art of Fugue"</div>
+    <div class="author">Jackspritz</div>
+    <div class="timestamp">Posted on Nov 11, 2011, 6:41:26 PM</div>
+    <div class="content">
+Congrats Nick you've made it to the big time! Ketchup is a great
+example of architecture at its finest. 
+    </div>
+  </div>
+
+</body>
+</html>

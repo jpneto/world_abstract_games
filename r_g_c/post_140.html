@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Game & Puzzle Design: Issue #1 out now</div>
+    <div class="author">Cameron Browne</div>
+    <div class="timestamp">Posted on Aug 23, 2015, 3:53:03 AM</div>
+    <div class="content">
+Hi,
+
+I'm pleased to announce that issue #1 of Game & Puzzle Design is now out: <a href="http://gapdjournal.com/issues/">http://www.gapdjournal.com/issues</a>
+
+Copies can be purchased individually through the links on the above page, or via subscription: http://www.gapdjournal.com/subscribe
+
+If you'd like to contribute an article to issue #2 (soft deadline September 30) then please follow the submission guidelines: http://www.gapdjournal.com/submit
+
+I hope you enjoy it! 
+
+Regards,
+Cameron    
+    </div>
+  </div>
+
+</body>
+</html>

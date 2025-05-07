@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">How old is the ko rule?</div>
+    <div class="author">Cameron Browne</div>
+    <div class="timestamp">Posted on Feb 13, 2012, 1:26:25 PM</div>
+    <div class="content">
+Hi All,
+
+I'm interested in knowing how long the ko rule has been used in Go.
+This includes any form of ko or superko in any form of the game.
+
+So far I've not been able to find any documented evidence prior to
+1920, though some players seem to think that ko/superko has been used
+for centuries if not thousands of years.
+
+Can anyone shed any light on this, or point me to the relevant person
+or literature?
+
+Thanks,
+Cameron    
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: How old is the ko rule?</div>
+    <div class="author">zickzack@gmail.com</div>
+    <div class="timestamp">Posted on Feb 13, 2012, 2:19:34 PM</div>
+    <div class="content">
+On Feb 13, 2:26 pm, camb <cameron.bro...@btinternet.com> wrote:
+
+> I'm interested in knowing how long the ko rule has been used in Go.
+> This includes any form of ko or superko in any form of the game.
+
+There is Tibetan Go which is supposed to be an archaic
+form of Go. In Tibetan Go, you may not recapture on a
+field where one of your stones has been captured in the
+last turn. The difference to the modern Ko rule is that
+it applies to the capture of more than one stone, too -
+no "eternity" in the sense of the modern Ko rule.
+
+I cannot remember any source stating when the transition
+took place.
+Benedikt
+    </div>
+  </div>
+
+</body>
+</html>

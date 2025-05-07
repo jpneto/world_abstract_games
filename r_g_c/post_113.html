@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Box-Off</div>
+    <div class="author">Steven W. Meyers</div>
+    <div class="timestamp">Posted on Feb 7, 2013, 6:08:50 PM</div>
+    <div class="content">
+I was unable to figure out how to create a new topic, so I'm posting this in reply form.
+
+I've invented a solitaire game called Box Off.  The standard size for it is 8x6, and the standard number of different kinds of tiles is 3 --- black, white and yellow.  A different size can be used (for instance, 10x8), and also a different number of kinds of tiles can be used (for instance, 4 different kinds of tiles --- black, white, yellow and green.
+
+Here are the rules:  Tiles are randomly laid out on the board to start the game.  The object is to clear all the tiles off the board.  Two same-colored tiles can be removed if they share an otherwise empty rectangle.  Here are some examples on a 4x4 board:
+
+_ _ _ _
+_ b b _
+_ _ _ _
+_ _ _ _
+
+In the above diagram, the two black tiles can be removed because they form a 2x1 rectangle.
+
+_ _ _ _
+w _ _ _
+_ _ _ _
+w _ _ _
+
+In the above diagram, the two white tiles may be removed because they form the ends of an otherwise empty 1x3 rectangle.  (If there were a tile between them --- including a white tile --- they could not be removed.)
+
+_ _ _ y
+_ _ _ _
+_ _ _ _
+_ y _ _
+
+In the above diagram, the two yellow tiles may be removed because they form the corners of an otherwise empty 3x4 rectangle.  If there were any other tiles within that rectangle --- including yellow tiles --- they could not be removed.
+
+Here's an example game on a 6x3 board:
+
+b b w b b w
+b y y y w b
+y w w w y y
+
+The two white tiles at b1 and c1 are removed:
+
+b b w y y w
+b y y y w b
+y _ _ w y y
+
+Then the two black tiles at a2 and a3 are removed:
+
+_ b w b b w
+_ y y y w b
+y _ _ w y y
+
+Then the two yellow tiles at a1 and b2 are removed:
+
+_ b w b b w
+_ _ y y w b
+_ _ _ w y y
+
+Then the two yellow tiles at c2 and d2 are removed:
+
+_ b w b b w
+_ _ _ _ w b
+_ _ _ w y y
+
+Then the two black tiles at d3 and e3 are removed:
+
+_ b w _ _ w
+_ _ _ _ w b
+_ _ _ w y y
+
+Then the two white tiles at c3 and d1 are removed:
+
+_ b _ _ _ w
+_ _ _ _ w b
+_ _ _ _ y y
+
+Then the two yellow tiles at e1 and f1 are removed:
+
+_ b _ _ _ w
+_ _ _ _ w b
+_ _ _ _ _ _
+
+At this point nothing else can be done.  The remaining black an white tiles interfere with each other.  But the initial position could have been solved, had not a mistake been made.  Do you see the mistake?    
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Box-Off</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Feb 7, 2013, 8:22:49 PM</div>
+    <div class="content">
+Looks interesting. Can all starting positions be solved?
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Box-Off</div>
+    <div class="author">Steven W. Meyers</div>
+    <div class="timestamp">Posted on Feb 7, 2013, 8:53:13 PM</div>
+    <div class="content">
+No, not all starting positions can be solved.  Generally speaking, the more different colors of stones there are, the less likely it is that it can be solved.  Also the *smaller* the board size, the less likely it is that it can be solved (this is because there are fewer options to work your way out of jams).
+
+Indeed the basic strategy is to identify problem areas and plan ahead so as to resolve those problem areas.  If you just mindlessly pull adjacent matches in the beginning, you will soon find yourself with an unsolveable position.
+
+One interesting thing to note is that the game is topologically invariant, even though a rectangle is considered.  This is because "an otherwise empty rectangle" really means that all path-permutations involving two directions must be clear.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Box-Off</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Feb 8, 2013, 5:11:27 PM</div>
+    <div class="content">
+> One interesting thing to note is that the game is topologically invariant, even though a rectangle is considered.
+
+Does this just mean that it can be played on any tesselation, or is there a deeper meaning to it?     </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Box-Off</div>
+    <div class="author">Steven W. Meyers</div>
+    <div class="timestamp">Posted on Feb 8, 2013, 6:50:46 PM</div>
+    <div class="content">
+It means that things don't have to be in straight lines --- any shape will do.  In Box Off an otherwise empty rectangle is considered, meaning that all paths between two stones involving two directions must be clear.  For instance, in order for Stone A to reach Stone B, it might go up two, left one, up one, left three; as long as it reaches Stone B by a path involving up and left, it is valid.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Box-Off</div>
+    <div class="author">João Pedro Neto</div>
+    <div class="timestamp">Posted on Feb 15, 2013, 2:29:12 PM</div>
+    <div class="content">
+Seems quite original, but I don't know much about puzzles. Probably if there is not a similar zrf made by Karl Scherer (*), then it's original :-)
+
+The only thing I don't like is the random setup, which indeed does not guarantee a solution.
+
+Two possible computational projects:
+
+* An algorithm to create solvable setups - perhaps not that hard, you could apply a set of patterns that could be mixed together to shuffle the tiles
+
+* Or, an algorithm to solve a puzzle (or find that it's unsolvable, and is not obvious that it really can be done in polynomial time), and so a random setup generator could be filtered by it, to provide solvable positions
+
+One way to turn it into a game is to provide the same setup to 2+ players and find who is able to make it with less moves (and within the same number of moves, the one that solved it in less time).
+
+Anyway, nice one!
+
+(*) http://www.zillions-of-games.com/cgi-bin/zilligames/submissions.cgi?searchauthor=2 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Box-Off</div>
+    <div class="author">Steven W. Meyers</div>
+    <div class="timestamp">Posted on Feb 16, 2013, 5:20:03 PM</div>
+    <div class="content">
+You're quite right that there's no guarantee of a solution.  Lately I've been playing it on a 12 by 8 board with 4 different kinds of tiles, and I've been solving it about 75 percent of the time.  Of course I'm not playing perfectly; if I had to guess I'd say maybe 95 percent of these positions are solvable.
+
+I think it's extremely unlikely that an algorithm to detect Box Off solvability could be written in polynomial time.  It would almost certainly have to be in exponential time.  (For those unfamiliar with complexity theory, an exponential time problem means that there is no efficient algorithm for it.)
+
+In terms of adapting Box Off to a 2-player game, positions will always be solved in the same number of moves, since two stones are removed with each move.  There still could be a time competition, but I try to keep time out of games as much as possible :)  I haven't thought of a way to transform Box Off into a 2-player game with direct interaction.
+
+Steve
+    </div>
+  </div>  
+
+  <div class="post level-1">
+    <div class="subject">Re: Box-Off</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Feb 16, 2013, 7:35:12 PM</div>
+    <div class="content">
+El sábado, 16 de febrero de 2013 18:20:03 UTC+1, Steven W. Meyers escribió:
+
+    In terms of adapting Box Off to a 2-player game, positions will always be solved in the same number of moves, since two stones are removed with each move.  There still could be a time competition, but I try to keep time out of games as much as possible :)  I haven't thought of a way to transform Box Off into a 2-player game with direct interaction.
+
+Well, that seems immediately possible:
+
+<i>There are black and white tiles. Each player owns the tiles of one color and can only remove tiles of that color. If a player can't move on his turn, he loses.</i>
+    </div>
+  </div>  
+  
+  <div class="post level-1">
+    <div class="subject">Re: Box-Off</div>
+    <div class="author">Steven W. Meyers</div>
+    <div class="timestamp">Posted on Feb 16, 2013, 9:49:52 PM</div>
+    <div class="content">
+That would indeed work.  However the game could not start with a checkered set-up because there would be no possible moves (because there would be no adjacent same-colored tiles).  But a random set-up  would work, if the players don't mind an element of chance.
+    </div>
+  </div>  
+  
+  <div class="post level-1">
+    <div class="subject">Re: Box-Off</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Feb 17, 2013, 12:14:26 AM</div>
+    <div class="content">
+Maybe this quasi-checkered set-up would work:
+
+x x o o x x o o
+o o x x o o x x
+x x o o x x o o
+o o x x o o x x
+x x o o x x o o
+o o x x o o x x
+x x o o x x o o
+o o x x o o x x
+    </div>
+  </div>  
+  
+  <div class="post level-1">
+    <div class="subject">Re: Box-Off</div>
+    <div class="author">Steven W. Meyers</div>
+    <div class="timestamp">Posted on </div>
+    <div class="content">
+That particular set-up won't work, because neither player can be prevented from pulling all his tiles.  But perhaps some other non-random set-up would work.
+    </div>
+  </div>  
+  
+  <div class="post level-1">
+    <div class="subject">Re: Box-Off</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Feb 17, 2013, 2:38:47 AM</div>
+    <div class="content">
+Oh, right. What was I thinking of.
+    </div>
+  </div>  
+  
+  <div class="post level-1">
+    <div class="subject">Re: Box-Off</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Feb 17, 2013, 8:37:34 AM</div>
+    <div class="content">
+On Feb 17, 10:49 am, "Steven W. Meyers" <raidingfal...@gmail.com>
+wrote:
+
+> > *There are black and white tiles. Each player owns the tiles of one color
+> > and can only remove tiles of that color. If a player can't move on his
+> > turn, he loses.*
+>
+> That would indeed work.  However the game could not start with a checkered
+> set-up because there would be no possible moves (because there would be no
+> adjacent same-colored tiles).
+
+AFAICS a sure-fire system would be to start with a rectangle
+with a space in the middle. Then any starting position
+will be able to remove. However, there might still be
+unmovable positions later. Usually would.
+
+> But a random set-up  would work, if the
+> players don't mind an element of chance.
+
+I suspect a somewhat random set-up is unavoidable.
+Anyway, it'd be more fun - it's still a game of
+pure skill otherwise.
+
+Anyway, it's a great game mechanic!
+I'm still researching the Solitaire version - I'll report
+back when I have sufficient data.
+
+-- Bedazzled Bill 
+    </div>
+  </div>  
+  
+  <div class="post level-1">
+    <div class="subject">Re: Box-Off</div>
+    <div class="author">Steven W. Meyers</div>
+    <div class="timestamp">Posted on Feb 17, 2013, 4:03:21 PM</div>
+    <div class="content">
+Thanks for the compliment.  I'll be interested to see your results and comments to the solitaire version.  Remember, the *smaller* the board that you choose, the more difficult on average it is going to be, due to reduced opportunities to work your way out of jams. (Also of course the more different kinds of tiles you use, the harder it is.)   I recommend a 12 by 8 board with 4 different kinds of tiles as a good standard version of the game.
+
+Steve
+    </div>
+  </div>  
+
+  <div class="post level-1">
+    <div class="subject">Re: Box-Off</div>
+    <div class="author">Steven W. Meyers</div>
+    <div class="timestamp">Posted on Mar 30, 2013, 8:03:17 PM</div>
+    <div class="content">
+Greg Schmidt has written a very nice freeware program for BoxOff.  The URL is http://www.freewarefiles.com/BoxOff_program_85505.html
+    </div>
+  </div>  
+
+</body>
+</html>

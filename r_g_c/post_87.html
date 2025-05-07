@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Reversi with a neutral colour.</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Mar 4, 2012, 6:35:31 AM</div>
+    <div class="content">
+It doesn't seem to have appeared here before,
+but it's very worthwhile. Phil Carmody wrote:
+
+>>>>
+Has it been suggested before? Like reversi, except that you
+flip over sequences of both your opponent's colour and the
+neutral ones. The latter turn to your own colour, the former,
+to neutral.
+
+Quick implementation here:
+http://87.119.183.129/perl/Preversi/PreversiCgi.pl?action=newgame
+(The reversi engine it's based on is pretty poor and buggy, but
+I've fixed it up enough that if you click randomly you might lose.
+
+Phil
+<<<<
+
+It looks like a very good game to me. It smooths out
+the huge point-count swings present in the basic game,
+(that will be either a plus or minus depending on you PoV),
+and otherwise seems to have very similar tactics & strategy.
+
+The implementation is also very cool, and fairly intelligent
+as a computer player.
+
+I congratulate Phil and recommend the game!
+
+-- Boardly Bill
+
+** All our games are part of one huge abstract game;
+** and when you finish playing one, it is just settling
+** one small region of this giant board.     
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Reversi with a neutral colour.</div>
+    <div class="author">João Neto</div>
+    <div class="timestamp">Posted on Mar 4, 2012, 6:28:18 PM</div>
+    <div class="content">
+It is not a new variant. Its first name, afaict, is Desdemona and
+here's an implementation for Zillions:
+
+<a href="http://www.zillionsofgames.com/cgi-bin/zilligames/submissions.cgi?do=show;id=308">http://www.zillionsofgames.com/cgi-bin/zilligames/submissions.cgi?do=show;id=308</a>
+
+Nice graphics thou,
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Reversi with a neutral colour.</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Mar 6, 2012, 10:02:26 AM</div>
+    <div class="content">
+On Mar 5, 7:28 am, j...@di.fc.ul.pt wrote:
+> It is not a new variant. Its first name, afaict, is Desdemona and
+> here's an implementation for Zillions:
+
+Quite right. This has been brought to my attention otherwise.
+Silly me.
+
+-- Bird-brained Bill
+    </div>
+  </div>
+
+</body>
+</html>

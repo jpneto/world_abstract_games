@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">New Game: Breach (plus a discussion of the problems of n-in-a-row games)</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Dec 16, 2011, 11:40:44 PM</div>
+    <div class="content">
+blah blah blah:
+
+<a href="https://web.archive.org/web/20130419021542/https://nickbentley.posterous.com/new-game-breach">http://nickbentley.posterous.com/new-game-breach</a>
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: New Game: Breach (plus a discussion of the problems of n-in-a-row games)</div>
+    <div class="author">Steven W. Meyers</div>
+    <div class="timestamp">Posted on Dec 17, 2011, 7:22:05 PM</div>
+    <div class="content">
+On Dec 16, 6:40 pm, Nick Bentley <nickobe...@gmail.com> wrote:
+> blah blah blah:
+>
+> http://nickbentley.posterous.com/new-game-breach
+
+Nick said:
+
+"The lack of strategy is the most difficult issue to fix so I start
+with that. Morro creates strategy through negative feedback. Negative
+feedback here refers to a penalty for taking the lead or getting
+closer to the win condition. In Morro, when you take the lead, your
+opponent gets a stone advantage.
+
+It's the opposite of "the rich get richer" dynamic. With negative
+feedback "the rich get poorer": sometimes taking the "lead" is a bad
+idea. As a result the players have to take the long view and play
+toward the endgame, rather than focus just on taking the lead. Voila.
+Strategy."
+
+Your thoughts about the relationship between negative feedback and
+possible increased strategy are interesting. It occurs to me that
+your comments might also be relevant to games where significant parts
+of the board are cold, such as most Checkers variants, as well as my
+revised version of Forms. I will have to think further about this.
+
+Steve
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: New Game: Breach (plus a discussion of the problems of n-in-a-row games)</div>
+    <div class="author">Jackspritz</div>
+    <div class="timestamp">Posted on Dec 18, 2011, 1:04:46 AM</div>
+    <div class="content">
+On Dec 17, 12:22 pm, "Steven W. Meyers" <raidingfal...@gmail.com>
+
+
+> Your thoughts about the relationship between negative feedback and
+> possible increased strategy are interesting.  It occurs to me that
+> your comments might also be relevant to games where significant parts
+> of the board are cold, such as most Checkers variants, as well as my
+> revised version of Forms.  I will have to think further about this.
+>
+> Steve
+
+This is just about the most fundamental aspect of modern abstract game
+design. Introducing an element of coldness to a game is the only way
+to truly obscure turn order advanatage in a completely symmetric
+abstract.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: New Game: Breach (plus a discussion of the problems of n-in-a-row games)</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Dec 18, 2011, 11:21:02 AM</div>
+    <div class="content">
+> This is just about the most fundamental aspect of modern abstract game
+> design.
+
+Certainly an important one.
+
+> Introducing an element of coldness to a game is the only way
+
+> to truly obscure turn order advantage
+
+But it must be coldness in sub-goals, like Morro, not coldness
+in moves, which I find very distasteful, at least in games
+which have a clear achievement goal.
+
+-- Bold Bill
+
+** There is just one giant universal game,
+** and each time we play an abstract,
+** we are settling one small region of it.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: New Game: Breach (plus a discussion of the problems of n-in-a-row games)</div>
+    <div class="author">zickzack@gmail.com</div>
+    <div class="timestamp">Posted on Dec 18, 2011, 5:06:13 PM</div>
+    <div class="content">
+On Dec 18, 2:04 am, Jackspritz <schackow...@live.com> wrote:
+
+> Introducing an element of coldness to a game is the only way
+> to truly obscure turn order advanatage in a completely symmetric
+> abstract.
+
+Is that so? I am inclined to believe it, but I would like to see
+a compelling argument.
+
+Games which are trivially drawn, such as Tic Tac Toe, are an
+exception to the rule. Many other games have been proved to
+be a draw, but usually the first player has an advantage in
+practical play. My question is now whether all the non-trivial
+games in which the first player does not have (much of) an
+advantage have cold aspects to them?
+Benedikt
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: New Game: Breach (plus a discussion of the problems of n-in-a-row games)</div>
+    <div class="author">Jackspritz</div>
+    <div class="timestamp">Posted on Dec 19, 2011, 3:21:40 AM</div>
+    <div class="content">
+hehe, you got me, TECHNICALLY, still without coldness its a first
+player win until its a perfect draw. Now I have entertained this idea
+of a deep strategic game where at the very top echelon of grandmasters
+the gameplay results in a perfect draw. Nick described this as a
+"grail" of abstract game design for him and I agree it would be quite
+a feat to design such a game. However, let's be realistic, you'd have
+to possess supernatural prescience that would make the prescience of
+Christian Freeling look like a groundhog seeing its shadow. With our
+current limited understanding of how abstracts work this is a chimera
+but the other thing is I'm skeptical the draw margin is even
+necessary. Let's say this very small draw margin were to be
+reconsolidated into a first or second player advantage, we would still
+have a very balanced game but one that is more decisive, at the very
+least then its just a matter of taste. I wouldn't personally prefer
+one over the other, like I said I don't hate games with draws.
+
+Its pretty obvious how zugzwang obscures turn order advantage. If
+there are turns where you're compelled to reduce the value of your own
+position, the opponent's initiative isn't the only factor hindering
+your pursuit of the objective therefore even with perfect play the
+game may result in a second player win.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: New Game: Breach (plus a discussion of the problems of n-in-a-row games)</div>
+    <div class="author">Steven W. Meyers</div>
+    <div class="timestamp">Posted on Dec 19, 2011, 7:02:10 AM</div>
+    <div class="content">
+What's the difference between coldness in a sub-goal and coldness in a
+move?
+
+Steve
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: New Game: Breach (plus a discussion of the problems of n-in-a-row games)</div>
+    <div class="author">Cameron Browne</div>
+    <div class="timestamp">Posted on Dec 19, 2011, 7:59:11 PM</div>
+    <div class="content">
+On Dec 19, 1:21 pm, Jackspritz <schackow...@live.com> wrote:
+> Now I have entertained this idea
+> of a deep strategic game where at the very top echelon of grandmasters
+> the gameplay results in a perfect draw. Nick described this as a
+> "grail" of abstract game design for him and I agree it would be quite
+> a feat to design such a game.
+
+Isn't this already true of Checkers? For most players the game
+produces a result, but for a perfect player (e.g. Chinook) then the
+game is a draw against other perfect players. This may not be true of
+human grandmasters as they're not quite perfect players.
+
+I don't know your opinion of Checkers, but it strikes me that such a
+tendency towards drawishness is not necessarily a good thing in a
+game.
+
+Cameron
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: New Game: Breach (plus a discussion of the problems of n-in-a-row games)</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Dec 20, 2011, 12:18:14 AM</div>
+    <div class="content">
+The "grail" I mentioned to Corey is a game with one single drawn
+state; i.e. a single draw node on the game tree, which would be
+reached with perfect play.
+
+In principle it's possible to construct a game like this, for example
+by arbitrarily designating a single state in the "perfect play" path
+of a no-draws game. You can do it on a small hex board for example,
+but I'm not looking for something so artificial.
+
+So add the constraint that the single draw node has to have something
+natural about it. Not that I even know what that means. Maybe some
+kind of visual symmetry?
+
+Anyway, checkers obviously isn't an example.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: New Game: Breach (plus a discussion of the problems of n-in-a-row games)</div>
+    <div class="author">Jackspritz</div>
+    <div class="timestamp">Posted on Dec 20, 2011, 1:39:43 AM</div>
+    <div class="content">
+Precisely, Checkers isn't good enough, you can get draws at low level
+play you can get them at high level play in this hypothetical game you
+can only get a draw between very experienced players and this draw
+margin is otherwise not going to come up in practice.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: New Game: Breach (plus a discussion of the problems of n-in-a-row games)</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Dec 29, 2011, 11:06:22 AM</div>
+    <div class="content">
+On Dec 19, 8:02 pm, "Steven W. Meyers" <raidingfal...@gmail.com>
+wrote:
+> On Dec 18, 6:21 am, Bill Taylor <wfc.tay...@gmail.com> wrote:
+>
+> > > Introducing an element of coldness to a game is the only way
+> > > to truly obscure turn order advantage
+>
+> > But it must be coldness in sub-goals, like Morro, not coldness
+> > in moves, which I find very distasteful, at least in games
+> > which have a clear achievement goal.
+
+> What's the difference between coldness in a sub-goal and coldness in a
+> move?
+
+Well, that immediate remark was in response to a comment about Morro,
+which is a good example. Because of the sub-goal negative feedback,
+it is often a good diea NOT to make a new longest line, so that's
+what I'd call coldness in subgoal, as one does eventually want
+to make the longest line!
+
+But OC there's never coldness in moves in Morro - it's always
+good to have another move, one never wants to pass.
+
+And that, BTW, makes an excellent definition of coldness in moves,
+without any fancy talk about values and so forth: if one NEVER
+wants to pass, it is a hot game, if one would sometimes want
+to pass, it has a cold element.
+
+-- Torrid Taylor
+
+** If you can't stand the heat, play Nim games. 
+    </div>
+  </div>
+
+</body>
+</html>

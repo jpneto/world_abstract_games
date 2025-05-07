@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">The Agony and Ecstasy of the Scoring Track</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Jul 8, 2013, 4:35:07 PM</div>
+    <div class="content">
+Some game design nerdery for you this morning: 
+
+The Agony and Ecstasy of the Scoring Track
+
+<i>I have an ambivalent relationship with scoring tracks. There are few elements of board game design I simultaneously both like and dislike as much. Because I can’t afford a therapist for this kind of thing, I’ve decided to work out my issues here on this screen you’re reading here. Nitty-gritty game design soliloquy coming at you.
+
+Among hobbyist table games, scoring tracks are everywhere. I think there are two reasons for this, one good, one bad, and they account entirely for my mixed feelings.
+
+First the good. The wonderful great supreme thing about scoring tracks is that they make concrete and visually clear the players’ relative standing – and so make the race to win feel more “real”. They boost clarity and tension. The value of scoring tracks are illustrated most clearly, I think, in racing games, like Formula De, which are often comprised of little but fancy scoring tracks.
+
+Empirical testing corroborates this view: in my playtesting, players give higher marks to a game when it includes a scoring track than when scores are tracked by other means (recording numbers on paper, accumulating items worth points, etc).
+
+So it’s no surprise scoring tracks are in wide use. But this isn’t the only reason. There’s another, seedy-underbelly-type reason: scoring tracks are the great enablers of Point Salads (games where you can earn points in a bunch of different conceptually unrelated ways), and Point Salads are often a crutch for ad-hoc, visionless game design. The result is a lot of bland games.
+
+Before you retort, allow me to elaborate on this point:
+
+The personalities of games are strongly defined by the Thing-You-Need-To-Do-In-Order-To-Win. In Chess, it’s all about attacking the King. In Basketball, it’s all about getting the ball in the hoop. The goal is the unifying theme around which the universe of a game orbits – it dictates all the other rules of the game and thereby creates the game’s personality. There may be many ways to pursue the goals in Chess and Basketball, but nonetheless there is only one goal in each, and it’s distinct from that of other games.
+
+Let’s imagine a world in which basketball was designed differently. Let’s say you get points not just for putting the ball in the hoop, but also for making at least 7 passes on a single possession, and also for dribbling at least 14 times, and maybe for high-fiving all your other teammates while in possession of the ball, or making one of your opponents’ players fall down. This is the Point Salad version of basketball. Let’s call it Bunchofdifferentstuffsketball.
+
+How would Bunchofdifferentstuffsketball feel compared to Basketball? Some might like that you have to weigh the value of all these different sources of points against one another, in light of your skill in pursuing each goal. But I don’t think I’d like this as much as I like basketball, because it would feel like a hodgepodge. It would also have more complicated rules, not only to describe the many goals but also to rule on a whole set of edge cases/loopholes/possible infractions which would result.
+
+If there were many other sports which all took a similar approach, each sport would lose some of the special character that make it its own unique thing.
+On the other hand, maybe you could make a silly movie about it.
+
+On the other hand, maybe you could make a silly movie about it.
+
+That, I argue, is how many games with scoring tracks are being designed. When you play, you can do a little bit of this, a little bit of that, but why? What do all the bits have to do with anything? I have no idea. And it feels like 50 other games that take the same approach.
+
+It bears mentioning: many games with scoring tracks don’t fall victim to Bunchofdifferentstuffitis – scoring tracks aren’t inherently bad, they just seem to encourage bad tendencies in certain game designers. A number games with unified central concepts deploy scoring tracks because those concepts happen to be multifaceted and incremental.
+
+My favorite example of this is Ingenious, which has several different scoring tracks, each representing your progress in pursuing the same goal in each of several different piece-colors. The player who has advanced farthest along the scoring track on which she’s made the least progress at the end is the winner.
+The game Ingenious
+
+The game Ingenious
+
+Ingenious, by the way, is far deeper than most players realize, and it’s magical: it’s a deep game casual players can play for fun, blissfully unaware of the hairy strategy which serious study would reveal (the hairiness of which starts with rack management and gets more hirsute from there). In that sense it approaches an important and rarely-achieved ideal for abstract games – I wish I’d invented it.
+
+In an example closer to home, my most popular game, Catchup, has a scoring track, but the game nonetheless has a single goal.
+
+I wish abstract game designers would make more games with scoring tracks. Thanks to their obsession with conceptual unity, such designers are predisposed to using scoring tracks in the right way, and I’ve no doubt there are a bunch of great, undiscovered game concepts requiring scoring tracks. It’s a little-explored area of abstract game design space (even if it’s way over-explored in other game genres), so there might be some stupendous ideas which aren’t hard to find there.</i>
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: The Agony and Ecstasy of the Scoring Track</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Jul 9, 2013, 2:50:01 PM</div>
+    <div class="content">
+On Tuesday, July 9, 2013 3:35:07 AM UTC+12, Nick Bentley wrote:
+
+Well, I looked at your examples, but I'm still not sure
+that I understand what a scoring track actually IS.
+
+It seems to be a mere device for conveniently
+summarizing some aspect of the game,
+to save the players having to work out
+the situation at the start of every turn.
+And thus, not actually part of
+the essential rules of the game.
+
+Is that a correct understanding?
+
+Perspiring minds want to know!
+
+-- Boardish Bill
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: The Agony and Ecstasy of the Scoring Track</div>
+    <div class="author">Xifeng</div>
+    <div class="timestamp">Posted on Jul 9, 2013, 11:37:54 PM</div>
+    <div class="content">
+On Tue, Jul 9, 2013 at 6:50 AM, Bill Taylor <wfc.t...@gmail.com> wrote:
+
+    It seems to be a mere device for conveniently
+    summarizing some aspect of the game, 
+    to save the players having to work out
+    the situation at the start of every turn.
+    And thus, not actually part of 
+    the essential rules of the game.
+
+    Is that a correct understanding?
+
+Correct in the same sense that a board and pieces conveniently summarize the state of any other game. Wait since when is representation not an essential part of game design? This is representation on the abstract level, we aren't even talking about implementation here. For a big example, cribbage boards come in all shapes and sizes, but from a functional point of view they are identical. One could represent the same information through numbers on paper or beans in a cup, but part of the total impression that is "cribbage" is a board with pegs in it.
+
+-Tristan
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: The Agony and Ecstasy of the Scoring Track</div>
+    <div class="author">Russ Williams</div>
+    <div class="timestamp">Posted on Jul 10, 2013, 7:55:34 AM</div>
+    <div class="content">
+There's an important difference between:
+
+a score board for a game like Catchup or Xodd, which merely summarizes
+(redundantly but often conveniently) the current board state "to save
+the players having to work out the situation at the start of every
+turn",
+
+and:
+
+a score board (or written notes or collected beans or whatever) in a
+game like Cribbage, where the current "board state" (e.g. seeing what
+cards are currently in play) does not suffice to know the score,
+because the score depends on an accumulation of points earned from
+past events which are no longer visible, and so the score would be
+impossible for the players to work out at the start of every turn.
+
+Russ 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: The Agony and Ecstasy of the Scoring Track</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Jul 10, 2013, 2:00:28 PM</div>
+    <div class="content">
+On Wednesday, July 10, 2013 6:55:34 PM UTC+12, Russ Williams wrote:
+
+    There's an important difference between:
+
+    a score board for a game like Catchup or Xodd,  ...
+
+    and:
+
+    a score board (or written notes or collected beans or whatever) in a
+    game like Cribbage,  ...
+
+
+Obviously the score is a vital and essential part
+of the game.  I'm not sure whether you're saying...
+
+(a) a cribbage board is essentially the same as a score kept on paper
+or (b) in some way different.
+
+I presume (a).    If so, then the issue of cribbage boards is
+beside the point.  (Though as a cultural/traditional matter,
+it's nice to fiddle with one, along with all the standard
+comments like "15-2 and the rest won't DO".
+
+In a similar way to that last, it's nicer to play Go
+with firm clicking stones and a resounding board,
+than on screen. 
+
+But the OP was asking - (I presume) - is it good
+or bad to have e.g.
+
+1) current score-estimations in a Go game, made by computer;
+2) current group-size status in Xodd;
+3) current race-status in Backgammon.
+
+The purist in me says NO to all; but the realist in me
+says YES to cases like 2 & 3, where the player COULD
+work it out himself by a trivial public algorithm, (counting!);
+but NO to cases like 1 where some definite higher-level
+knowledge is being imported into the play of the game.
+
+What do others think?
+
+-- Wondering Willy
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: The Agony and Ecstasy of the Scoring Track</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Jul 10, 2013, 9:12:08 PM</div>
+    <div class="content">
+I have a similar feeling as Bill. The purist in me doesn't love them, but I get better responses in playtesting when I include them. They have psychological effects that appear to improve players' experiences while playing. (For reference, my playtesters are strategically minded - i.e. they play to win - but they aren't designers or fanatics like most of us here in this forum). 
+    </div>
+  </div>
+
+</body>
+</html>

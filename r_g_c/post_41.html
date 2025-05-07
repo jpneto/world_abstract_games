@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Hmmm. No votes recieved for contest. I guess requirements too stringent?</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Jan 24, 2011, 7:25:14 PM</div>
+    <div class="content">
+Well, the deadline for the flipping-game contest has come and gone
+without a single vote received. Probably my fault. It appears nobody
+wanted or had time to play the games. Unless anyone has an idea for
+salvaging the contest, I'm inclined to declare that we're all
+winners... because that's what worked in preschool.    
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Hmmm. No votes recieved for contest. I guess requirements too stringent?</div>
+    <div class="author">Zhang Dawei</div>
+    <div class="timestamp">Posted on Jan 24, 2011, 10:10:19 PM</div>
+    <div class="content">
+On 24/01/2011 19:25, Nick Bentley wrote:
+> Well, the deadline for the flipping-game contest has come and gone
+> without a single vote received. Probably my fault. It appears nobody
+> wanted or had time to play the games. Unless anyone has an idea for
+> salvaging the contest, I'm inclined to declare that we're all
+> winners... because that's what worked in preschool.
+
+Well, I have been out of action since the deadline, and will not be in a
+position to even try out any of the games for another two weeks (long
+complicated story). However, if anyone tried my submission (Mortars) and
+has any comments, I'd welcome them because that was the first game I
+have ever "invented", and when I got the basic idea for it, I saw that a
+whole family of games suddenly became possible at the same time. I chose
+the one that seemed easiest to describe, though I found a greater
+drawing towards the Screens variant (as it is more wide-ranging and
+possibly surprising in its effects as I conceived them to be.)
+
+So, as a newbie at this sort of stuff, I was hoping for any kind of
+criticism (such as the rules being too long and complicated, or the game
+being too complicated, or both).
+
+-- 
+Zhang Dawei: Beijing, P.R.China.
+Please keep this email address confidential. It will
+remain valid for at least 2 weeks from data of email.
+    </div>
+  </div>
+  
+  <div class="post level-1">
+    <div class="subject">Re: Hmmm. No votes recieved for contest. I guess requirements too stringent?</div>
+    <div class="author">Xifeng</div>
+    <div class="timestamp">Posted on Jan 25, 2011, 12:00:52 AM</div>
+    <div class="content">
+I've played about half the games, but it was hard getting matches. I
+wanted to play them all, but it was not feasible.
+
+Kitaran is obviously the best out of the bunch. It scales nicely, is
+balanced, has great clarity, balances strategy and tactics equally,
+and the infinite problem turned out to be an illusion.
+
+Deadcell was my favorite of the rest that I played. A fun little brawl
+with what felt like a lot of potential.
+
+Pilf was quite fun. Lots of securing territory then invading. It felt
+very similar to Hexxagon, though.
+
+Arrello was colder than a minesota winter. Not something I'm fond of,
+but cold games seem popular around these parts. The strategy of trying
+to secure lines is a fun one, trying to secure parity isn't so fun.
+Bonus points for being really clear, though.
+
+Verto kind of made me angry, I felt like I had very little choice in
+what I could do, and even with the placement restriction it felt too
+easy to clump up in the center.
+
+Implo took too long, we did not finish on the 9x9 board. I can't
+believe the instructions suggest 19x19.
+
+I'm sorry I couldn't play the rest of the games. 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Hmmm. No votes recieved for contest. I guess requirements too stringent?</div>
+    <div class="author">Harald Korneliussen</div>
+    <div class="timestamp">Posted on Jan 25, 2011, 10:07:52 AM</div>
+    <div class="content">
+I don't blame you. I have always thought sitting down and actually
+studying a game intently (let alone ten, and someone else's at that)
+is more work than coming up with a plausible game idea.
+
+Perhaps you should have been more clear that doing the evaluation part
+was a requirement to submitting a game to the competition - because
+then you'd have less games, and it would be more feasible to play them
+all.
+
+Kudos to Tristan for making a good effort!
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Hmmm. No votes recieved for contest. I guess requirements too stringent?</div>
+    <div class="author">Jackspritz</div>
+    <div class="timestamp">Posted on Jan 28, 2011, 2:37:07 AM</div>
+    <div class="content">
+I am sincerely sorry to everyone for not posting in so long. I'm also
+sorry how your contest turned out Nick. I nearly played all the
+entries all I had left was Mortars and Implo. You can blame the
+restrictions on me. When I was planning to enter I thought that having
+games with different objectives would be hard to compare. Also the
+sandbox seemed like a good system to test the games with and I figured
+that entries not play-testable in it would be ignored for the most
+part anyway. All in all and I mean not to offend, I think the quality
+of the entries was rather mediocre which may have something to do with
+the poor turn out but let's face it, people are pretty lazy. I suspect
+the spite contest (just kidding) at Rec.games.abstract will fair
+better with all its star power although I don't see any standout
+entries for it either. Monkey Queen looked good but since its original
+conception it has since turned into an all-out tweakfest, something
+you'd expect especially Steere to avoid. My possible entry seems
+rather strong in comparison although I have some work to do on it yet.
+I am quite suspicious of Mark's motives in pressing me to enter
+something in the stacking game contest. While he drew me in with chum-
+talk about the prestige of winning the contest I can't help but feel
+he just wants me to enter the contest thus causing me to concede that
+Rec.games.abstract is a valuable and functional forum on which to
+discuss abstract games. While I'm not entirely convinced of this Mark
+certainly has reduced the frequency of his rants, which used to be a
+daily affair. Ultimately I am entering the stacking contest because it
+has given me the impetus to flesh out a concept I came up with 5
+months ago.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Hmmm. No votes recieved for contest. I guess requirements too stringent?</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Jan 28, 2011, 5:53:07 PM</div>
+    <div class="content">
+On 25 ene, 01:00, Tristan <rozencra...@gmail.com> wrote:
+
+> Implo took too long, we did not finish on the 9x9 board. I can't
+> believe the instructions suggest 19x19.
+
+You're absolutely right. I underestimated the stone recycling ratio. I
+knew the longest game could be very long, but didn't suspect that
+normal games could be soooo long. I guess the standard board could be
+7x7 to 9x9. May I ask how many moves per side did you play on that 9x9
+game?
+
+Anyway, I have an improvement on this game, which I will make public
+when the contest is ended so that it doesn't confuse the voters (if
+any :-) ). It's a little rule change, but I think the strategic
+component of the game will be fairly improved.
+
+On the absence-of-voters problem, I would've been glad to try the
+games, but as I told Nick, I don't have access to the Internet at home
+right now, so it's complicated. I hope people gets interested so that
+we can finally have a winner.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Hmmm. No votes recieved for contest. I guess requirements too stringent?</div>
+    <div class="author">Xifeng</div>
+    <div class="timestamp">Posted on Jan 29, 2011, 7:26:00 AM</div>
+    <div class="content">
+On Jan 28, 9:53 am, luigi <luis.9.8...@gmail.com> wrote:
+
+> You're absolutely right. I underestimated the stone recycling ratio. I
+> knew the longest game could be very long, but didn't suspect that
+> normal games could be soooo long. I guess the standard board could be
+> 7x7 to 9x9. May I ask how many moves per side did you play on that 9x9
+> game?
+
+40 moves each, then my friend had to leave. We had 12 kings on the
+board at that point, and very few pawns, so there was still a very
+long way to go.
+
+I'm still willing to finish testing and submit my votes, if Nick will
+accept them, but I believe the way the rules are, if I voted that
+would virtually guarantee Kitaran would not win (since I can't vote
+for it.)
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Hmmm. No votes recieved for contest. I guess requirements too stringent?</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Jan 29, 2011, 2:49:43 PM</div>
+    <div class="content">
+On 29 ene, 08:26, Tristan <rozencra...@gmail.com> wrote:
+> On Jan 28, 9:53 am, luigi <luis.9.8...@gmail.com> wrote:
+>
+> > You're absolutely right. I underestimated the stone recycling ratio. I
+> > knew the longest game could be very long, but didn't suspect that
+> > normal games could be soooo long. I guess the standard board could be
+> > 7x7 to 9x9. May I ask how many moves per side did you play on that 9x9
+> > game?
+>
+> 40 moves each, then my friend had to leave. We had 12 kings on the
+> board at that point, and very few pawns, so there was still a very
+> long way to go.
+
+OK, maybe 7x7 is a more apropriate board size, then.
+    </div>
+  </div>
+
+</body>
+</html>

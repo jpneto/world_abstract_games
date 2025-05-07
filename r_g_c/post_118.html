@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Y presentation formats</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Apr 6, 2013, 5:33:17 AM</div>
+    <div class="content">
+This is an almost-repost from 2.5 years ago,
+on various presentation formats for "Y".
+
+It seems that plain old "Y" can be re-formatted
+in no less than 3, count them, THREE, ways.
+And no doubt there can be others as well.
+
+Original style:-
+
+     .".      Task: connect the three sides.
+    . . .
+   . . . .
+  . . . . .   Corners need a special mention in the rules.
+ . . . . . .
+: . . . . . :
+_______________________
+
+Bichromatic style:-
+
+     x . o
+    o . . x      Task: connect three of your original stones,
+   x . . . o     one from each line.
+  o . . . . x
+ x . . . . . o   Neither corners nor sides need a special mention.
+o . . . . . . x
+ . . . . . . . o
+  x o x o x o
+_______________________
+
+Trichromatic style:-
+
+     - . =
+    - . . =       Task: connect the three colors.
+   - . . . =
+  - . . . . =
+ - . . . . . =    Neither corners nor sides need a special mention.
+- . . . . . . =
+ . . . . . . .
+  + + + + + +
+_______________________
+
+Which you prefer is completely a matter of taste,
+the game is identical in all cases.
+
+Bichromatic seems a bit ugly, though it has certain advantages;
+but I'd like to see physical boards or (ESPECIALLY!) game sites
+try the trichromatic board - it could be very cute!
+Five colors in total, with a 6th for the unplayed cells.
+
+-- Boardly Bill     
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Y presentation formats</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Apr 7, 2013, 2:44:50 AM</div>
+    <div class="content">
+I prefer the trichromatic board, as it's the one that makes it clear how to generalize the game to other boards. Plus colors are pretty. 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Y presentation formats</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Apr 7, 2013, 6:20:47 AM</div>
+    <div class="content">
+On Apr 7, 1:44 pm, Nick Bentley <nickobe...@gmail.com> wrote:
+
+> I prefer the trichromatic board, as it's the one that makes it clear
+> how to generalize the game to other boards. Plus colors are pretty.
+
+Both good points!
+
+And you're very right about pretty. :)
+
+- b 
+    </div>
+  </div>
+
+</body>
+</html>

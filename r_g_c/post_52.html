@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">New Game: Clots</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Jul 5, 2011, 1:27:52 AM</div>
+    <div class="content">
+Normally I copy posts from my blog to this forum, but this one has
+figures which are hard to describe, so this time I'll just refer you
+to the original post:
+
+<a href="https://web.archive.org/web/20130419022727/http://nickbentley.posterous.com/new-game-clots">http://nickbentley.posterous.com/new-game-clots</a>
+
+In short: I've got a new game called Clots which I designed while
+thinking about the weaknesses of my game Ketchup.   
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: New Game: Clots</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Jul 6, 2011, 7:50:18 AM</div>
+    <div class="content">
+On Jul 5, 12:27 pm, Nick Bentley <nickobe...@gmail.com> wrote:
+
+> http://nickbentley.posterous.com/new-game-clots
+
+Looks good! I'll have to start up some email games
+with Joao, to try to find the best sizes and sections etc.
+
+I was intrigued to note that you were partially inspired
+by Steere's horrible "Fractal" board, (which would have
+been better named Escher, BTW, but no matter).
+The sections idea is a much better way to "sludge up"
+the centre, however.
+
+Indeed, as you note, it is more of a rule *modifier*,
+than a rule in itself - most games, perhaps even chess
+or Go, can use it, because in most games it is an advantage
+to bag the centre first. So, great new modifier!
+
+-- Boardly Bill 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: New Game: Clots</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Jul 6, 2011, 8:17:52 AM</div>
+    <div class="content">
+Thanks,
+
+Mind you, I'm not sure it works, but it's something to play with
+anyway. I agree that fractal is not so good. I played it a couple of
+times and it felt awkward. Like many of his games, the concept is
+neat, but the experience of playing is not. 
+    </div>
+  </div>
+
+</body>
+</html>

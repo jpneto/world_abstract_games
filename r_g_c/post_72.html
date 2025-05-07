@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">A new design idea in some recent games.</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Nov 22, 2011, 11:10:08 AM</div>
+    <div class="content">
+I have noticed a trend in new games' rules, that I rather like.
+I don't suppose it is anything *really* new, but it shows up
+rather particularly in a couple of new games, where it shines out.
+
+The two games exemplifying this trend are Slither and Yodd.
+
+And the feature that tickles me is this - in both these games,
+there is a rule that prevents draws, and that could have been left
+to the end of the game to enforce, in order to have its effect.
+But in both games the draw-preventing end-of-game rule is deemed
+to operate right throughout the game. This is excellent in that
+it makes the rules more uniform and simple, and introduces
+intriguing restrictions throughout the whole play, which can
+be used for tactical effect.
+
+In Yodd, the winner is the player who finally ends up with
+the fewest separate groups. The rule to prevent draws is that
+the players must finish up with an ODD combined total number of
+groups; and to ensure this obtains at the end, the rule is that
+it must obtain after *every* turn during the game. Cool!
+
+In Slither, a rectangular version of Hex, draws are circumvented
+by disallowing the final chain to have a diagonal-only connection
+within it, and similarly to the above, this is most easily
+achieved by insisting that after *every* turn there are
+no such connections.
+
+As I say, I rather like these "pre-emptive" anti-draw rules,
+especially the simplifying fact that they are applied even
+well before they are needed. Double cool!
+
+If there are any other games with the same flavour, it would be
+nice to here about them.
+
+-- Boardly Bill    
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: A new design idea in some recent games.</div>
+    <div class="author">Russ Williams</div>
+    <div class="timestamp">Posted on Nov 22, 2011, 11:25:20 AM</div>
+    <div class="content">
+On Tue, Nov 22, 2011 at 12:10 PM, Bill Taylor <wfc.t...@gmail.com> wrote:
+> As I say, I rather like these "pre-emptive" anti-draw rules,
+> especially the simplifying fact that they are applied even
+> well before they are needed. Double cool!
+>
+> If there are any other games with the same flavour, it would be
+> nice to here about them.
+
+Original Ketchup worked that way: the goal is to have the largest
+group at the end, and it is illegal to place stones so that your
+largest group is equal to the opponent's largest group.
+
+The new improved Ketchup 4.0 (perhaps sadly from your point of view)
+changed that so that making a group equal in size to the opponent's
+largest group is legal, and so ties in the largest groups are
+possible, and they are resolved by looking at each player's next
+largest group, and so on. :)
+
+cheers
+russ
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: A new design idea in some recent games.</div>
+    <div class="author">zickzack@gmail.com</div>
+    <div class="timestamp">Posted on Nov 22, 2011, 12:45:29 PM</div>
+    <div class="content">
+On 22 Nov., 12:10, Bill Taylor <wfc.tay...@gmail.com> wrote:
+
+> I have noticed a trend in new games' rules, that I rather like.
+> I don't suppose it is anything *really* new, but it shows up
+> rather particularly in a couple of new games, where it shines out.
+
+It is a funny coincidence. Last week, I was reminded me of Nick's
+question of what the best abstracts of this decade are and his
+later remark that we have seen some very good designs recently.
+
+I checked my own mental list, it consisted of Unlur, Oust,
+Slither, Symple, and Xodd*. Then, I noticed that Connect6 is
+missing. It is not any way as old as it might be. And there
+is a pattern.
+
+In the course of history, abstract games have shied away
+from any attempt at conflict simulation. The overwhelming
+numbers of abbstracts boiled down to "I move, you move, I
+move, you move..." - I will call that IMYV. There are many
+abstracts in which you may not even pass.
+
+Granted, some of the best games work that way, but that is
+not all can build great games on. When we look at the games,
+we see that Unlur begins with a contract phase. That goes
+beyond "I move, you move".
+
+Connect6 applies one of the most obvious diversions from
+the IMYV, namely the 1-2-2... pattern to one of the oldest
+families of games. And bingo, we have a winner. One of the
+goals was to achieve balance with simple means. And yes,
+Connect6 is balanced (caveat: 1-2-2... does NOT automatically
+balance games) Among other things, Connect6 is more twisted
+than in n-in-a-row games usually are. I like this because
+I missed it in other games from the family.
+
+Oust uses another known idea - you capture, you must move
+again - coming from Dots and Boxes (historically another
+strike of genius) - to a cold game and gets something very
+good again.
+
+Slither looks at a simple task - avoiding crosscuts - and
+solves it by allowing more than one action per move. The
+result, a connection game with movement and where you fill
+in a board, is pretty close to the holy grail of game design.
+
+Symple came out the interest in *Star, one of the few abstracts
+which were deigned also with an eye to multi-move patterns. The
+result is more a protocol than a game (SyGo is likely better).
+Corey and I tested, if the protocol can be applied to Hex, and
+it worked fine.
+
+Xodd mixes two ideas, the 1-2-2... pattern and shared pieces.
+The point is not to be fancy. To the contrary, it is essential
+for the game. Very nice.
+
+Add Ketchup and Chain Lightning to the list, and it is hard to
+not see the pattern. IMYV is not all there is. Protocols are
+as important as board sizes and grids.
+
+
+There is a second pattern however. Quite a lot of these games
+were developed in the "vicinity" of Iggamecenter. When we include
+the other online gaming sites for abstracts, what else is left
+but to say "Thank you" to their programmers?
+Benedikt
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: A new design idea in some recent games.</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Nov 22, 2011, 6:18:08 PM</div>
+    <div class="content">
+> There is a second pattern however. Quite a lot of these games
+> were developed in the "vicinity" of Iggamecenter. When we include
+> the other online gaming sites for abstracts, what else is left
+> but to say "Thank you" to their programmers?
+
+Ketchup was invented at iggc. I was playing other games and chatting
+with Arty one day, the idea occurred to me, and then we went to the
+sandbox to test it.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: A new design idea in some recent games.</div>
+    <div class="author">João Neto</div>
+    <div class="timestamp">Posted on Nov 22, 2011, 7:46:47 PM</div>
+    <div class="content">
+This reminds me a bit of McLuhan's "The medium is the message".
+
+A similar thing happened when the Zillions of Games community developed.
+Many games appeared, back then, that were friendly to ZoG programming.
+
+When such a specific medium for abstract games becomes popular, I
+suppose it is to be expected that certain flavors of games (some of
+those easier to model at that medium) also become more popular.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: A new design idea in some recent games.</div>
+    <div class="author">zickzack@gmail.com</div>
+    <div class="timestamp">Posted on Nov 24, 2011, 5:16:09 PM</div>
+    <div class="content">
+On 22 Nov., 20:46, João Pedro Neto <j...@di.fc.ul.pt> wrote:
+
+> When such a specific medium for abstract games becomes popular, I
+> suppose it is to be expected that certain flavors of games (some of
+> those easier to model at that medium) also become more popular.
+
+There are many instances of this principle at work. The first
+abstract
+board games were without board - think Nine Men's Morris - because
+the
+concept of a board had yet to be developed.
+
+Another instance is the difference in representation of pieces for
+Chaturanga family games between the West and the East. In the West,
+pieces had different physical shapes (which add to the appeal, I
+think, but I digress. On the other hand, good pieces were expensive
+which confined Chess to certain classes). In the East, symbols on
+physically similar items were were used, making pieces more readily
+available. And it paved the way for Shogi's drops.
+Benedikt
+    </div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">On natural & artificial games</div>
+    <div class="author">João Pedro Neto</div>
+    <div class="timestamp">Posted on May 23, 2011, 1:52:49 PM</div>
+    <div class="content">
+How can we use the terms natural/artificial for games, in general?
+
+One way to look at this is to relate naturalness to simplicity. Simple
+games like Hex, Tic Tac Toe or, perhaps, Go, seem almost like
+discoveries, rather than inventions. But the fact that Hex was only
+"discovered" in the 1940s does give us pause to ponder. Simplicity is
+culturally dependent, just as are more obvious or trivial things -
+e.g. the positional numerical system, or the moral statement "slavery
+is wrong" -- which were not so in the past.
+
+Another way to look at this is using History. Games, or game concepts,
+that seem to be invented independently are, at least, cognitively
+attractive to humans. Perhaps they are cognitively attractive to
+conscious beings in general, and so, they may even exist in alien
+cultures. Some examples of those are race games, or Tic Tac Toe/Gomoku
+variants. Possibly, seed games, Mancalas, also belong here. So, a
+natural game would be an instance of one of these archetypal game
+concepts. Of course, as usual, the frontier is blurred. Bao is a very
+complicated Mancala game. Overly baroque variants can hardly be seen
+as natural. Shall we include Checkers/Alquerque or Chess games? And
+how many add-ons can a game include and still be considered a natural
+one?
+
+A third way to try to make sense of this separation between natural
+and artificial, is to look into the game's history.
+
+Games like Chess, Go, Mancala and Checkers have evolved through
+centuries, absorbing gaming experience into their progressive
+adaptable rules. As in biological natural selection, these games are
+more like species, with their life trees, their historical
+compromises, their multiple branches (cultural instead of biological).
+So, in this case, every game started in one or more human minds, in
+some raw artificial state, and was tested in a social environment.
+Like most species, most games must have become extinct quite quickly.
+But a few were able to adapt to the cultural intricacies of the
+memetic landscape of its inventors. And then, when society changed,
+games also changed, like any adaptable, flexible population of
+organisms. Of course, the analogy only goes so far. Unlike fossils, if
+they are rediscovered, games can be brought back and enjoy a new life
+eventually under new clothes. (The Game of Ur, and Senet, with their
+reconstructed rules, are famous examples).
+
+Just as for the concept of species, we might differ our final
+judgement about our recent games. Perhaps Hex will have a biography
+(it already has thriving children, like Y). Game inventors,
+nowadays, have an immense set of game ideas and, like alchemists, they
+try to mix them, mould them into new games. Most of those, as in the
+past, will become extinct and never get beyond being artificial
+concepts. Others, because they say something to generations of
+players, will be carried along with our evolving society and will
+start to have a biography. They will, slowly and in unexpected ways,
+become natural concepts.    
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: On natural & artificial games</div>
+    <div class="author">Xifeng</div>
+    <div class="timestamp">Posted on May 24, 2011, 6:18:24 AM</div>
+    <div class="content">
+> A third way to try to make sense of this separation between natural
+> and artificial, is to look into the game's history.
+>
+> Games like Chess, Go, Mancala and Checkers have evolved through
+> centuries, absorbing gaming experience into their progressive
+> adaptable rules.
+
+This is the only one that makes sense to me. In my mind all games are
+artificial, because they are made, but if an argument is to be made
+that one is more natural than another, one that has formed through
+accretions and incremental changes has a better claim than one that
+springs fully formed from the head of Christian Freeling.
+
+I find it amusing that what we call "natural simplicity" is anything
+but. A Mozart symphony or a section of Mandelbrot has a very pleasing
+order to it, one that only appears in artificial things, though it
+appeals to us in a very natural feeling way. Only nature is capable of
+the kind of complexity we see in weather systems and digestive systems.
+    </div>
+  </div>
+
+</body>
+</html>

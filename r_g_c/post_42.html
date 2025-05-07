@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Goofspiel</div>
+    <div class="author">James Dow Allen</div>
+    <div class="timestamp">Posted on Feb 5, 2011, 5:02:31 PM</div>
+    <div class="content">
+I want to call group's attention to new results in the game of
+Goofspiel,
+shown by Glen Rhoads recently in the sci.math group. The thread
+is titled descriptively "Goofspiel: New results"
+
+Glen uses a heuristic mentioned in a key prior paper:
+Sheldon Ross, "Goofspiel - The Game of Pure Strategy"
+Unfortunately the Web version of that paper that I found is
+pay-per-view so I don't know what that heuristic is! :-(
+
+James    
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Goofspiel</div>
+    <div class="author">Xifeng</div>
+    <div class="timestamp">Posted on Feb 6, 2011, 12:33:52 AM</div>
+    <div class="content">
+Interesting read. I don't really understand what is meant by "pure
+strategy," that could imply a grand conceptual game like Go, but even
+less tactical, or it could imply a game that can be won through a
+purely mathematical strategy like the ones he describes. Of course for
+human players such an "optimal" mathematical strategy would be sub-
+optimal, since it wouldn't be able to exploit sub-optimal play. It
+isn't immediately obvious whether one can exploit sub-optimal play
+with an adaptive strategy though, so maybe that's what is meant?
+
+It looks very similar to David Sirlin's game Yomi, Glen Rhoads even
+describes the same human-generated strategies that Sirlin described.
+The rules are quite a lot simpler in Goofspiel than Yomi, and there is
+less randomness, but in exchange the value of the cards is so explicit
+that I wonder if there's room for unclear valuation, a key part of
+what makes Yomi work as a game.
+
+I think that both games raise the important point that hidden
+information and randomness are not always detrimental to the strategic
+depth of a game.
+
+Regards,
+Tristan 
+    </div>
+  </div>
+
+</body>
+</html>

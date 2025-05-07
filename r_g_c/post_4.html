@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS -->
+
+  <div class="post">
+    <div class="subject">Sweetheart Y</div>
+    <div class="author">Bill Taylor</div>
+    <div class="email"></div>
+    <div class="timestamp">Posted on Nov 10, 2010, 4:05:27 AM</div>
+    <div class="content">
+In response to a request to post our new game in fixed-font format, here we go...
+
+It is a game that Joao and I came up with, based on Joao's
+intriguing new idea of the "Sweetheart Modifier".
+("Move modifier" is our term for meta move,
+as mentioned in another thread. e.g. progressive, 1222, etc).
+
+I include a partially-played example as illustration.
+It appears to be the 8th instance we played.
+I seem to have won the first 7!
+
+If anyone wishes to challenge me (the world champ!) by email,
+please do so. :)
+
+(The board needn't be as big, OC, to start with.)
+
+SWEETHEART Y [B:7] game 8
+============
+Y, with the following modifier.
+
+On each turn the player plays a stone of his own, then (if possible)
+an opponent stone next to one of the opponent's last-played stones,
+then a stone of his own under group restriction.
+First turn is one stone only, (no swap).
+
+:abcdefghijklmnopqrstuvwx
+             .              1.
+            . .             2.
+           . . .            3.
+          . . . .           4.
+         . . . . .          5.
+        . . . . . .         6.
+       . . . . . . .        7.
+      . . . x . . . .       8.
+     . . o o x . . . .      9.
+    . . . . o o . . . .    10.
+   . . . o x . . . . . .   11.
+  . . x x o x o x x . . .  12.
+ . . . . o . . . . . . . . 13.
+:abcdefghijklmnopqrstuvwx
+
+   _x_____o_____x_    _o_____x_____o_
+1. ---   ---   h12    k9    f12   n10
+2. l12   i9    p12    j12   r12   n12
+3. k11   i13   m9     i11   l8    l10
+
+Comment after B2:
+
+>> infiltration along the whole border!
+
+These restricted multimove connection games are endlessly
+intricate and fascinating.     
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Sweetheart Y</div>
+    <div class="author">christian</div>
+    <div class="email"></div>
+    <div class="timestamp">Posted on Nov 10, 2010, 11:19:58 AM</div>
+    <div class="content">
+On Nov 10, 5:05 am, Bill Taylor <w.tay...@math.canterbury.ac.nz> wrote:
+
+> On each turn the player plays a stone of his own, then (if possible)
+> an opponent stone next to one of the opponent's last-played stones,
+> then a stone of his own under group restriction.
+
+I haven't followed the emergence of this game. Can you clarify "under
+group restriction"?
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Sweetheart Y</div>
+    <div class="author">Bill Taylor</div>
+    <div class="email"></div>
+    <div class="timestamp">Posted on Nov 10, 2010, 12:46:27 PM</div>
+    <div class="content">
+> I haven't followed the emergence of this game. Can you clarify "under
+> group restriction"?
+
+Sorry - my boo-boo; it was in the original post that got mangled.
+
+"Group restriction" just means that the two stones
+you place during your turn, must end the turn still
+as part of separate groups - a group being
+a set of same-colour stones connected by recursive
+adjacency. (This includes a single stone.)
+
+-- B 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Sweetheart Y</div>
+    <div class="author">Nick Bentley</div>
+    <div class="email"></div>
+    <div class="timestamp">Posted on Nov 10, 2010, 7:27:35 PM</div>
+    <div class="content">
+Bill: can you comment on how it *feels* to play with this modifier, as
+compared to other drop schemes? I'm having a tough time knowing
+without playing. 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Sweetheart Y</div>
+    <div class="author">Bill Taylor</div>
+    <div class="email"></div>
+    <div class="timestamp">Posted on Nov 11, 2010, 3:02:33 AM</div>
+    <div class="content">
+On Nov 11, 8:27 am, Nick Bentley <nickobe...@gmail.com> wrote:
+
+> Bill: can you comment on how it *feels* to play with
+> this modifier, as compared to other drop schemes?
+
+OK, I'll answer a slightly different question from what you asked.
+
+I'll comment, not on the sweetheart itself, but on the simpler
+modifier of 12222... (i.e. 12* in finite language notation),
+as applied WITH GROUP RESTRICTION to CONNECTION games.
+
+So this would cover 12* Hex, 12* Y, 12* Atol, and so on;
+the varieties are almost endless.
+
+We have found that the 12*-restricted, which was
+originally introduced more as just an equaliser,
+(with the restriction inserted to prevent mindless extensions
+of walls from Switzerland to the sea!), has appeared with
+a strange and exciting dynamic all of its own!
+
+The diamond connection, x . . is still completely viable
+with the restriction, . . x .
+so the games still look & feel quite a bit like plain connections,
+BUT there is a 2nd-order effect, whereby these cannot be
+endlessly chained.
+
+For example, in this group,     . . . . . . . . .
+which would be unbreakable       . x . . . . . .
+in regular connections,           . . x . . . .
+is no longer so in 12*, even       . . . x . .
+under group restriction.            . . . . .
+
+. . . . . . . . . Clearly O can place his 2 stones as shown,
+ . x o . . . . .  and X cannot protect both diamonds!
+  . . x o . . .   This leads to all sorts of dynamic
+   . . . x . .    tussles as the two players try to
+    . . . . .     balance attack, defense, and extension
+in various different ways - there are
+often two or three different battles going on simultaneously,
+unlike usually just the one in regular connection games.
+
+I strongly recommend just playing a few rounds of plain Y,
+with 12* group-restricted, to get the feel of it.
+
+Remember - I'm always up for email games with anyone
+who wants to try! I'm all in favour of playing these things,
+not just designing them! 12* restricted connection games are FUN.
+
+> I'm having a tough time knowing without playing.
+
+Wouldn't we all! Again I repeat there is no substitute
+for actual play. Surely folk have a few minutes per day
+to spare for some email games?!
+............
+
+As to the Sweetheart modifier specifically, it has all
+the joys of the above, with some extra, rather more minor
+wrinkles, involved in trying to get the best worth from
+your opponent's forced gift to you. The adjacency rule is
+crucial here, otherwise gifts could be just shoved away
+uselessly into sharp corners.
+
+-- Boardly Bill 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Sweetheart Y</div>
+    <div class="author">Nick Bentley</div>
+    <div class="email"></div>
+    <div class="timestamp">Posted on Nov 11, 2010, 9:51:25 PM</div>
+    <div class="content">
+> Wouldn't we all! Again I repeat there is no substitute
+> for actual play. Surely folk have a few minutes per day
+> to spare for some email games?!
+
+I would, but I learned that I prefer playing in real time. I find
+play by email to be frustratingly slow. Maybe I can change? 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Sweetheart Y</div>
+    <div class="author">Jackspritz</div>
+    <div class="email"></div>
+    <div class="timestamp">Posted on Nov 11, 2010, 11:00:29 PM</div>
+    <div class="content">
+Bill if you're interested in playing a game, create an account at
+www.iggamecenter.com and we can play in the sandbox. You don't even
+need to register, you just need a nickname and a password. It's
+realtime too. 
+    </div>
+  </div>
+
+
+</body>
+</html>

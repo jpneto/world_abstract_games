@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Kitaran</div>
+    <div class="author">Xifeng</div>
+    <div class="timestamp">Posted on Nov 23, 2010, 8:17:07 PM</div>
+    <div class="content">
+My submission is now named Kitaran. The most recent rules will always
+be at <a href="https://web.archive.org/web/20110214094823/https://xifeng.posterous.com/new-as-yet--game">http://xifeng.posterous.com/new-as-yet--game</a>
+
+This is only my second game to make it this far in the development
+cycle (I've played it a few times and had a lot of fun). As such, I'm
+new to a lot of the emotions that surround making a game. It's almost
+like something alive: I may have invented the rules, but I had very
+little idea what kind of game those rules would create. So I have a
+kind of irrational love for it.
+
+On a turn, you may place a stone of your color on an empty space, or
+you may flip all the enemy stones adjacent to one of your stones
+already on the board. You may not flip a stone that was flipped on
+your opponent's most recent turn, or one that was placed on that turn.
+If you cannot flip all of the stones surrounding a piece, you may not
+use that piece to flip any stones. But any stone may be the center of
+a conversion. When the board is full, the game ends immediately. The
+player with the most stones wins. You may not pass. If one player is
+determined to have an advantage, players may agree on a komi before
+they begin.
+
+I've taken a slightly different route from most designers I've
+followed. I was not interested in making a mathematically elegant
+game; I am not concerned that it is not theoretically finite. I have
+tried to instill my own values in this game, but like a child, it has
+its own nature that may turn out quite different from what I expected.
+So far it is going in the directions I hoped: the yin-yang cycle is
+reflected in both old-young and firm-yielding forms at different
+levels of abstraction, it feels very clear, and there's a distinct
+feel of motion. Even should it become degenerate in the future,
+learning it and playing it will be a rewarding experience until then.
+
+Best luck to everyone,
+Tristan    
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Kitaran</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Nov 23, 2010, 8:43:11 PM</div>
+    <div class="content">
+> So I have a kind of irrational love for it.
+
+I get an "irrational love" for many of the new designs I try out. It
+slows me down because I have to play it a bunch and then sit around
+for a week until I can evaluate it without the haze of irrational love
+clouding my judgement. I wish it would go away!
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Kitaran</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Nov 23, 2010, 8:45:40 PM</div>
+    <div class="content">
+Also, I see you're using posterous! I love posterous. Glad to see
+others using it.
+
+In the meantime, one unanticipated negative for me in electing to run
+this design contest is that I probably shouldn't comment on the
+submissions (although I already did comment on one before realizing
+that I shouldn't). Sad face.
+    </div>
+  </div>
+
+</body>
+</html>

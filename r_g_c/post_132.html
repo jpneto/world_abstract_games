@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">luck in games of no luck</div>
+    <div class="author">Steven W. Meyers</div>
+    <div class="timestamp">Posted on Jan 21, 2014, 6:43:31 PM</div>
+    <div class="content">
+It's assumed that in 2-player games of perfect information, there is no element of luck.  But is this true? We can all agree that from a purely mathematical standpoint, there is no luck whatsoever.  But is there another kind of luck involved in the game?
+
+I believe that there is a small element.  The luck occurs from a practical standpoint, in the actual playing of a game.  Consider a move in a game of Hex.  You place a stone on a certain hexagon based on certain deductions that you've made about helping you connect your sides.  But suppose, say three moves later, you realize that your move was actually very good for other reasons that you had not seen.  In some real sense you got lucky.
+
+It should be remembered, though, that any element of luck averages out tremendously over time, so that your overall performance over many games played involves almost no luck at all.
+
+Steve   
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: luck in games of no luck</div>
+    <div class="author">João Pedro Neto</div>
+    <div class="timestamp">Posted on Jan 22, 2014, 10:25:56 AM</div>
+    <div class="content">
+Hi Steve, 
+
+Yes, and you also might get lucky if your opponent in a tournament is feeling bad because he ate spoiled food at lunch :-)  It seems impossible to escape these type of events, not because they are games but because reality is messy and knocks at every door. 
+
+Anyway a match can be won by some lucky movement but for that to happen the players must be somewhat balanced and, as you say, it still averages out. 
+
+Games with random elements can also have this averaging out feature with many levels of expertise, like Backgammon. The same happens with some games with hidden information, like Bridge. Both are also very good games. These might be even harder to design than perfect information games. 
+
+ps: Backgammon could be seen as a perfect-information game because its probability distribution is known and it's not that complex, we are not sure what the exact outcome will be but we can plan accordingly. Also, can hidden information be just a label for games with such complex probability distribution that most people prefer no to think on those terms? :-)
+
+pps: Curiously, both Backgammon and Bridge seem even more abstract than Chess which has its analogy of warfare and social classes. But "abstract games" usually means perfect information games. Labels... 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: luck in games of no luck</div>
+    <div class="author">Cameron Browne</div>
+    <div class="timestamp">Posted on Jan 22, 2014, 8:10:00 PM</div>
+    <div class="content">
+Hi Steve,
+
+    It's assumed that in 2-player games of perfect information, there is no element of luck...   But is this true?
+
+David Parlett has written on the topic: <a href="https://web.archive.org/web/20120225105820/http://www.davidparlett.co.uk/gamester/chanceskill.html">http://www.davidparlett.co.uk/gamester/chanceskill.html</a>
+
+Regards,
+Cameron
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: luck in games of no luck</div>
+    <div class="author">Steven W. Meyers</div>
+    <div class="timestamp">Posted on Jan 23, 2014, 5:18:13 AM</div>
+    <div class="content">
+This is a very good article, but he doesn't make the observation that luck can manifest as making the right move for the wrong reasons.
+ 
+Steve
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: luck in games of no luck</div>
+    <div class="author">Steven W. Meyers</div>
+    <div class="timestamp">Posted on Jan 23, 2014, 5:28:33 AM</div>
+    <div class="content">
+It's interesting that you think hidden information games may be even harder to design that perfect information games. I'd never considered this, but I do agree that Backgammon and Bridge are subtle games that require great skill.
+ 
+Steve
+    </div>
+  </div>
+
+</body>
+</html>

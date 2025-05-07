@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Slither</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Oct 28, 2011, 2:31:48 PM</div>
+    <div class="content">
+Does anyone have any ideas about a good strategy for Slither?
+
+I've been playing it for a while, but still have no ideas about it,
+it almost seems as random as Reversi!
+
+Any comments much appreciated.
+
+-- Bill the dill.     
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Slither</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Oct 29, 2011, 6:51:31 PM</div>
+    <div class="content">
+I have some ideas but I have a losing record so I'm not sure they're
+any good. There's a player at iggc who goes by the handle Maraaca,
+who, with a record of 41-3, is far and away the best Slither player. I
+would love to convince him to write about his approach. Does anyone
+know this fellow or how to contact him? 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Slither</div>
+    <div class="author">Steven Meyers</div>
+    <div class="timestamp">Posted on Oct 29, 2011, 11:05:19 PM</div>
+    <div class="content">
+Presumably some of the strategies for other connection games apply to
+Slither (e.g. place your pieces efficiently, don't commit too soon,
+control the center). The slither move adds a new aspect, though. It
+seems to me to serve two functions: 1) it gives the opportunity to
+"correct" slight tactical errors 2) it allows you to build a dynamic
+rather than static attack. The logical implications of function #2 is
+that you have more attacking options to work with, as well as an
+increased ability to "sacrifice" pieces (i.e. force your opponent to
+close off certain potential connections) in building an attack.
+
+Steve 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Slither</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Nov 1, 2011, 10:54:38 AM</div>
+    <div class="content">
+As a tactical matter, I've noticed that it is usually
+a bad thing to put two of your own stones in
+alignment with one space between them. This invites
+the opponent to wedge in between, and it is theen usually
+diffi cult to impossible (depending on what's nearby)
+to get you stones connected again!
+
+So in extending from a stone into new(ish) territory,
+it pays to stretch to 2 spaces in between, if you
+want to stay in the same line.
+
+Any other useful tips?
+
+- Boardly Bill
+
+P.S. It IS a damn cool game!
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Slither</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Nov 4, 2011, 9:55:36 PM</div>
+    <div class="content">
+On Nov 1, 4:54 am, Bill Taylor <wfc.tay...@gmail.com> wrote:
+> As a tactical matter, I've noticed that it is usually
+> a bad thing to put two of your own stones in
+> alignment with one space between them.  This invites
+> the opponent to wedge in between, and it is theen usually
+> diffi cult to impossible (depending on what's nearby)
+> to get you stones connected again!
+
+This has always seemed like an *easy* thing to do. Since you can move
+one of your two original stones diagonally in the direction of the
+other, and then add a stone to make a corner between them. Am I
+missing something? 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Slither</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Nov 9, 2011, 6:43:37 PM</div>
+    <div class="content">
+Maybe he's referring to two groups of arbitrary size, rather than two
+stones:
+
+. . . . . . .
+. . . . . . .
+x x x o x x x
+. . . . . . .
+. . . . . . .
+
+If you...
+
+> move
+> one of your two original stones diagonally in the direction of the
+> other, and then add a stone to make a corner between them.
+
+. . . . . . .
+. . . . . . .
+x x . o x x x
+. . . x x . .
+. . . . . . .
+
+The two groups are still disconnected, and I doubt that there is a
+forced local sequence which connects them.
+    </div>
+  </div>
+
+</body>
+</html>

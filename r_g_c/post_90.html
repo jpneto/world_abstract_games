@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">New game: Quentin</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Apr 28, 2012, 6:06:05 AM</div>
+    <div class="content">
+Quentin entry on BGG:
+
+<a href="http://www.boardgamegeek.com/boardgame/124095/quentin   ">http://www.boardgamegeek.com/boardgame/124095/quentin</a>
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Revised game: Quentin</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on May 15, 2012, 5:20:53 AM</div>
+    <div class="content">
+I've made a little change in the Quentin rules to make better use of the board while keeping the game drawless. In the revised version, a region is only a territory if all the points in it are adjacent to at least _two_ stones (instead of one in the first version). This effectively reduces the average territory size by half and makes counting easier.
+
+It may seem that territories are now harder to spot, but actually the opposite is true, since, with this rule, they must always form a straight or zigzag line one point wide, without any ramifications. Also, territories crawling along an edge can't be bigger than two points, and corner points can't be part of any territory bigger than themselves.
+
+You can even take advantage of the fact that most points in a territory are sandwiched by exactly two stones to speed up counting: if those two stones belong to different players, they needn't be counted. This wasn't often possible in the previous version because of the wider and more capricious territory shapes. 
+    </div>
+  </div>
+  
+</body>
+</html>

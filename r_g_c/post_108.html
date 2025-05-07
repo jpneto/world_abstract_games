@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Chicken Y</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Dec 13, 2012, 5:14:37 AM</div>
+    <div class="content">
+ There have been many attempts to find a nice version of Hex/Y
+to play on a hex-hex board, where the winning criterion is to make
+a group connecting three sides that are all mutually adjacent.
+(It doesn't matter if the group joins 4, 5 or 6 sides, as long
+as three of them are mutually non-adjacent.) This is a nice
+criterion as regards the "no pure racing" goal, in that both
+players cannot be simultaneously in a winning position.
+
+It is not so good regarding non-drawing, however, as it is
+easy and common for both sides to make a group connecting
+two opposite sides, which ensures a tie.
+
+Most of the differences between the variants revolve around dealing
+with this phenomenon. And most, even all, of them, while often
+very playable, do not result in a game that is very close to
+the basic Hex or Y games. Often they have extra features that
+are fascinating in themselves, and make good games, but just
+not close to the originals. This is an ongoing problem!
+
+Here is another attempt at the matter, which has resulted in yet
+another game which is (I hope) good in itself, but not very close
+to the originals. It is quite simple, and introduces the "chicken"
+element seen in Unlur and similar games.
+
+It is very simple.
+
+---
+CHICKEN Y: Played on a completely regular hex-hex board.
+
+Players alternately place 1, 2 or 3 black stones anywhere on
+the board. At any time, rather than place any stones, a player
+may announce "I take black", play no stone of either colour,
+and then the game continues with his opponent playing the first
+white stone, from which they play black and white alternately.
+
+If the taker makes a black group touching three non-adjacent
+sides, he wins. If this not has happened before the game ends,
+the non-taker, white, wins. The game ends when the board is full,
+or when black has made a winning group.
+---
+
+So only one player is charged with making a winning group,
+the other merely has to prevent him. These asymetric games
+are often fun. The Y-maker is determined by the chicken method
+of making it more and more likely that black will win.
+
+The 1- , 2- or 3-optional element of placement is
+
+(1) to speed up the start a little, and
+(2) to prevent any "opposition" effects appearing in the opening.
+
+Happy gaming!
+
+-- Board-minded Bill    
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Chicken Y</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Dec 13, 2012, 7:50:56 PM</div>
+    <div class="content">
+Hah. This is one of those why-didn't-I-think-of-it games. I suggest that it may solve another problem as well: the problem of center dominance, which is my biggest complaint about all Y games. The chicken mechanism will force players to drop the stones during the bid away from the center of the board, which should make the center weaker and other areas stronger. If so, this could be a *very* good game indeed. 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Chicken Y</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Dec 15, 2012, 1:21:54 PM</div>
+    <div class="content">
+On Dec 14, 8:50 am, Nick Bentley <nickobe...@gmail.com> wrote:
+
+> Hah. This is one of those why-didn't-I-think-of-it games.
+
+Too kind, too kind. :-)
+
+> I suggest that it
+> may solve another problem as well: the problem of center dominance, which
+> is my biggest complaint about all Y games. The chicken mechanism will force
+> players to drop the stones during the bid away from the center of the
+> board, which should make the center weaker and other areas stronger.
+
+That is a very good point, which hadn't occurred to me. Nice.
+
+> If so, this could be a *very* good game indeed.
+
+I hope so.
+
+So, anyone for an email game?
+
+-- Board-fiend Bill 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Chicken Y</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Dec 16, 2012, 12:56:41 AM</div>
+    <div class="content">
+Nothing new under the sun:
+
+<a href="Nothing new under the sun:
+
+https://groups.google.com/forum/?fromgroups=#!topic/rec.games.abstract/e_LJIUHhqNc">https://groups.google.com/forum/?fromgroups=#!topic/rec.games.abstract/e_LJIUHhqNc</a>
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Chicken Y</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Dec 18, 2012, 2:30:12 AM</div>
+    <div class="content">
+Also, isn't Cameron Browne's Cross better than that anyway? They're both similar to Unlur, but Cross gets rid of the chicken element, so it's closer to Hex and Y.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Chicken Y</div>
+    <div class="author">zickzack@gmail.com</div>
+    <div class="timestamp">Posted on Dec 18, 2012, 11:31:37 AM</div>
+    <div class="content">
+With due respect to Cameron, Unlur is clearly the better game.
+
+Cross suffers from the same weakness every other game with a one move
+swap and too many symmetries does, namely limited openings. Compare
+this to Unlur, with its many options and strategies in the Chicken
+phase. Note that a many move swap protocol could not achieve this.
+And there is a unforeseeable twist in the
+openings coming directly from the draw preventing rule that
+fulfilling the opponent's winning condition without fulfilling your
+own loses the game: check the V opening.
+Benedikt 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Chicken Y</div>
+    <div class="author">Cameron Browne</div>
+    <div class="timestamp">Posted on Dec 18, 2012, 9:59:17 PM</div>
+    <div class="content">
+Hi,
+
+
+    Cross suffers from the same weakness every other game with a one move
+    swap and too many symmetries does, namely limited openings.
+
+
+Ummm... that covers a lot of games :)  I don't think this is really an issue.
+
+However, there is a problem with Cross which Bill and Joao pointed out in this newsgroup a while ago. Unfortunately it's possible to achieve positions in which a critical cell can develop that constitutes a losing move for both players, so the game goes cold as players fill the rest of the board until forced to make the fatal move. Shame :(
+
+Regards,
+Cameron
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Chicken Y</div>
+    <div class="author">zickzack@gmail.com</div>
+    <div class="timestamp">Posted on Dec 18, 2012, 11:03:58 PM</div>
+    <div class="content">
+On Dec 18, 10:59 pm, camb <cameron.bro...@btinternet.com> wrote:
+
+>> Cross suffers from the same weakness every other game with a one move
+>> swap and too many symmetries does, namely limited openings.
+
+> Ummm... that covers a lot of games :)
+
+Yes, although I would not call them games, but rulesets.
+
+Everybody and his dog jumped by the no draws, please, and if it
+needs balance, I'll have the pie rule, thank you, bandwagon. And
+hexhex boards look so cool!
+
+That gave us many rulesets, but it is not game design.
+Benedikt 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Chicken Y</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Dec 19, 2012, 8:15:15 AM</div>
+    <div class="content">
+On Tuesday, December 18, 2012 10:59:17 PM UTC+1, camb wrote:
+
+> However, there is a problem with Cross which Bill and Joao pointed out in this newsgroup a while ago. Unfortunately it's possible to achieve positions in which a critical cell can develop that constitutes a losing move for both players, so the game goes cold as players fill the rest of the board until forced to make the fatal move. Shame :(
+
+Are those positions (cold wars, as you call them) possible in Unlur as well? If so, could you show an example? 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Chicken Y</div>
+    <div class="author">Cameron Browne</div>
+    <div class="timestamp">Posted on Dec 19, 2012, 10:18:47 PM</div>
+    <div class="content">
+> Are those positions (cold wars, as you call them) possible in Unlur as well? If so, could you show an example? 
+
+I wondered about that myself. But the two games are subtly different:
+
+Unlur:
+White Y = win for Black
+White L = win for White
+Black Y = win for Black
+Black L = win for White
+
+Cross:
+White Y = win for White
+White L = win for Black
+Black Y = win for Black
+Black L = win for White
+
+i.e. in Unlur the players have different goals (relative to absolute colour), whereas in Cross both players have identical goals (relative to their own colour).
+
+So I don't think that the exact cases that will be a problem in Cross will also be problems in Unlur.
+
+Cameron
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Chicken Y</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Dec 20, 2012, 12:48:51 AM</div>
+    <div class="content">
+On Tuesday, December 18, 2012 12:31:37 PM UTC+1, zick...@gmail.com wrote:
+
+    On Dec 18, 3:30 am, Luis Bolaños Mures <luis.9.8...@gmail.com> wrote:
+    > Also, isn't Cameron Browne's Cross better than that anyway? They're both
+    > similar to Unlur, but Cross gets rid of the chicken element, so it's closer
+    > to Hex and Y.
+
+    With due respect to Cameron, Unlur is clearly the better game.  
+
+    Cross suffers  from the same weakness every other game with a one move
+    swap and too many  symmetries does, namely limited openings.
+
+I didn't mean that Cross was better than Unlur, but that Cross was possibly better than the suggestion of Bill and mine. As far as I'm concerned, whether it is or not depends on how often cold wars arise, but, then again, the very fact that they're possible is a conceptual problem in itself.
+
+As for limited openings, I don't think they're a problem at all, since the branching factor is broadened as soon as the symmetry is broken.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Chicken Y</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Dec 21, 2012, 11:31:04 AM</div>
+    <div class="content">
+Perhaps it's time to mention that Joao and I have been playing *yet another* variant of
+hexhex Y, in fact a variant of Cross. It was invented to try to sort out the cold war
+aspect of Cross, which it has done, but only at the cost of introducing an element that is
+even further away from the basic hex-connection game such as Hex or Y.
+
+The new idea is that a player MAY make a cross, (i.e. between two opposite parallel sides),
+without making a Y also, PROVIDED that when he does, he immediately removes some other stone of
+his colour that destroys the cross. So "death cells" which are the bane of standard Cross, can be played in without immediate loss. The removal is part of the same turn, and can only be done for the purpose
+of releasing a cross.
+
+It is conceivable that a game may never end, due to no further solo stones being added as both add-&-subtract stones endlessly, but so far we have never seen this happen.
+
+And though it is no longer a simple connection game in the style of Hex and Y and Atoll, it has fascinating wrinkles of its own that make it a very worthwhile game.
+In particular the corner cells become very much more significant, even though they have no special
+features by the rules, other than their usual property of belonging to two adjacent sides.
+So far we have been playing on very small boards, but it is already very difficult to
+analyse in any depth.
+
+We recommend it.
+
+-- Bent-board Bill 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Chicken Y</div>
+    <div class="author">zickzack@gmail.com</div>
+    <div class="timestamp">Posted on Dec 28, 2012, 5:57:53 PM</div>
+    <div class="content">
+On Dec 20, 1:48 am, Luis Bolaños Mures <luis.9.8...@gmail.com> wrote:
+
+> As for limited openings, I don't think they're a problem at all, since the
+> branching factor is broadened as soon as the symmetry is broken.
+
+Limited openings are a problem. Imagine for instance - to
+overstate the point, but just by a little - that Chess were
+balanced by giving White b4 as the first move. It does not
+help that Chess branches after that. A lot or even most of
+Chess would be lost.
+
+On a strongly symmetric board, there are few distinct first
+moves, and there are even less when you consider the pie
+rule. Then, in many games, there are few good answers left
+to these few first moves - usually there are obvious strong
+moves. It gets worse when the first player has not so many
+options as his answer in turn. Many of these games have the
+first two or three moves staged. And the worst thing is that
+the staged succession of moves may leave little variety in
+strategic ideas.
+
+
+As for Unlur having a cold aspect, that is why you may not
+play the edge during the bidding stage. I am still impressed
+by how quickly Jorge looked through that.
+Benedikt 
+    </div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Capture Mechanisms</div>
+    <div class="author">Zhang Dawei</div>
+    <div class="timestamp">Posted on Dec 2, 2010, 12:21:08 PM</div>
+    <div class="content">
+As some of you may have guessed, I have a slight lull in teaching
+before exam scripts are in and I have to mark them. So, I can spend
+some time submitting suitable things to this list and doing other
+things.
+
+I have been looking at some of the submissions for the contest, mainly
+to work out how to submit an entry myself (it will be my first such
+submission and the first game I have ever designed and made public, in
+fact, but that is the subject of a later message). What I write could
+be old hat to everyone here, in which case, my apologies, but even
+if it is not, just see this as an attempt to sort out some things in my
+own mind by speaking out about them in the hope that my errors can be
+identified and corrected by you all.
+
+I've been struck by a difference in the methods by which captures are
+brought about. In the rules, the term "Capture Mechanism" is used to
+describe the Conversion requirement, but it seems to me that there
+are two distinct components that can be viewed as happening in sequence
+(even though sometimes they don't), and both components need to be
+brought about in order for a piece or pieces to be captured. The
+example of "conversion" would be just an example of the second kind of
+component.
+
+Suppose we have a game in which pieces are placed on a board. Player A
+plays a piece, and where that piece is played means that some of Player
+B's pieces are capable of being captured.
+
+In the case of the competition, they are captured by conversion (i.e.,
+Player B's captured pieces are converted into Player A's pieces.)
+However, in order to know which pieces are converted, we need to
+identify which pieces are directly in the "immediate-threat zone" (a
+term I am inventing for what I mean here, and which I will shorten to
+ITZ), and it is those which are then converted. I think it matters to
+distinguish the ITZ from what the competition calls the capture
+mechanism (shortened to CM), as in some games, capturing is not
+compulsory, so we can have pieces that are in the ITZ which do not
+then set in train the CM against them (i.e., they are not then
+automatically captured.)
+
+In the competition, the CM must be conversion, but the identification of the
+ITZ can be seen to be quite varied amongst the current entries (and I
+hope to present an entry which uses another way of identifying the
+ITZ which has not been used at all up to now.)
+
+So, possible ways of identifying, specifying, and describing ITZ might
+include "leaping over pieces", "encirclement", "pulling",
+"encroachment", and "custodianship" (as used in versions of the Tafl
+family of games) are all different ways of specifying and identifying
+an ITZ which can then set in train the various CMs, resulting in
+captures, like removal from play, conversion, enslavement (a word I use
+to describe the kind of capture used in Laska, because I don't know if
+there is a specific word for what happens in Laska), and so on.
+
+As I said at the start, perhaps this has been discussed before, and I'm
+just ignorant of it all, but it does seem to me to be useful to
+distinguish between what I am calling the ITZ and the CM
+components, which together form what could be called the capturing
+process.
+
+Now, why might it be useful? I can see xx possible reasons:
+
+a) Using ITZ and CM along with other features or elements of a game
+would allow us an easy way of indexing games that might lead onto a
+more formalized categorization scheme of them. That way, if certain
+kinds of results, or types of game-play, say, were seen to be
+associated with certain of these categorizations, we would certainly
+begin to know something more about games that would be an almost deeper
+understanding of them in a different way than might exist at the moment.
+
+b) It might help us define variations of common themes in game design
+which might lead to novel variations being identified of games which
+could lead to other interesting consequences. So, we might take a
+specific game, and just alter the ITZ component and see what effect
+that has on game-play, or do the same with the CM, or other features
+could be systemically varied: e.g, change a square tessellation for the
+basic board to a hexagon tessellation, or even a triangle tessellation,
+or we could concentrate on varying the size of the board (these last
+two kinds of variation are often seen, in my opinion).
+
+c) Because of the kind of person I am, and the kind of professional
+wqork I have concentrated on, I think it would be fun to try to
+abstract the form of games like this so that systematic variations could
+be tried to what happens as a result.
+
+It seems to me that a good first step might be to just come out with a
+list of all ITZs and CMs that have been used in games just to get an
+initial view of the "landscape" we are working within.
+
+Now, how much of what I have written is garbage? I'm sure there should
+be problems with some of it.    
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Capture Mechanisms</div>
+    <div class="author">Harald Korneliussen</div>
+    <div class="timestamp">Posted on Dec 2, 2010, 2:11:30 PM</div>
+    <div class="content">
+Far from garbage in my opinion. The taxonomy you've sketched seems
+more useful than many I've seen.
+
+I don't know if you've seen it, but the idea of generalized twists
+that can be applied to many games, is something many people in this
+group (read: the old r.g.a) have experimented with. I think it was
+Joao who came up with the term "mutators".
+
+<a href="https://jpneto.github.io/chess_variants/mutators.htm">http://homepages.di.fc.ul.pt/~jpn/cv/mutators.htm</a>
+
+But in my opinion, the question, "Is this game better with mutator X?"
+is almost always too subjective that one can be said to gain very much
+knowledge from trying out different ones. Maybe if you play hundreds
+of games with each variant... but even then, the knowledge and habits
+from previous closely related variants you've tried is likely to
+interfere with honest evaluation. This shouldn't be a problem for
+designers who are content with letting "the way be the goal", but as
+any kind of "scientific" process for developing better abstracts, I'm
+sceptical of it.
+
+Just a question to the organizer: Is it so that the only capturing
+type in the competition game must be conversion, or would it be
+possible to submit a game that had both a conversion capture and a
+removal capture? 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Capture Mechanisms</div>
+    <div class="author">zickzack@gmail.com</div>
+    <div class="timestamp">Posted on Dec 2, 2010, 4:42:21 PM</div>
+    <div class="content">
+On 2 Dez., 13:21, Zhang Dawei <yanhu.de.zh...@gmail.com> wrote:
+
+> So, possible ways of identifying, specifying, and describing ITZ might
+> include "leaping over pieces", "encirclement", "pulling",
+> "encroachment", and "custodianship" (as used in versions of the Tafl
+> family of games) are all different ways of specifying and identifying
+> an ITZ which can then set in train the various CMs, resulting in
+> captures, like removal from play, conversion, enslavement (a word I use
+> to describe the kind of capture used in Laska, because I don't know if
+> there is a specific word for what happens in Laska), and so on.
+
+As a side note, the capturing mechanism of Lasca originated in a
+traditional Russian game called Bashnya or Stolbovye Shashki, the
+latter meaning Column Shashki*. The mechanism can be used in other
+games from the Checkers family, too, and for the resulting games
+the label Column Checkers has been established. I'd call the process
+"to columnify".
+
+*Shashki is the Russian variant of Checkers
+
+You compare capturing in Lasca to enslavement, maybe quoting a
+Lasker biographer. That is misleading in so far as the captured
+stones are a burden to their capturer, although they have some
+tactical uses for the capturing side. I think the best term is
+"to take captive".
+
+
+Shashki knows other mutators, too. Poddavki (misère) is one
+of them, Stavropol (shared pieces) another - by the way, I
+am interested in what Zèrtz aficionados think of Stavropol
+Checkers. Since misère Stavropol is basically Stavropol
+itself, that gives six games: Shashki, Shashki Poddavki,
+Column Shashki, Column Shashki Poddavki, Stavropol Shashki,
+and Stavropol Column Shashki.
+
+Some of these games see tournament play since centuries, and
+some - namely give-away Column Shashki and Stavropol Column
+Shashki - are still open for reseach. If one rates the influence
+of zugzwang on game play, then Column Shashki Poddavki is the
+coldest game, next is Shashki Poddavki, followed closely by
+Shashki, and Column Shashki takes fourth place. The other two
+games hardly show any zugzwang at all.
+
+Even if there were a pattern, then I would doubt it could be
+transferred to other games which allow the same mutators,
+as long as these games do not belong to the Checkers family.
+
+
+Another example is misère play. Traditional diagonal Checkers
+variants enforce advancement of the stones: men must move
+forwards. In give-away play, that creates a fascinating
+dilemma which generally awards material superiority. Turkish
+and Armenian Checkers allow side-movement, and their give-away
+variants are pointless. Looking at modern designer variants,
+one would assume that give-away play works when they enforce
+forwards movement. For Croda, it seems to be true. In Dameo,
+a game based on Croda, it is wrong, however. Give-away Dameo
+can hardly be considered a challenging game.
+
+
+I think it would take a lot of insider knowledge to make
+the mutator charts work, even if they existed. Nonetheless,
+I like the idea
+Benedikt    
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Capture Mechanisms</div>
+    <div class="author">João Neto</div>
+    <div class="timestamp">Posted on Dec 2, 2010, 9:24:36 PM</div>
+    <div class="content">
+> I've been struck by a difference in the methods by which captures are
+> brought about. In the rules, the term "Capture Mechanism" is used to
+> describe the Conversion requirement, but it seems to me that there
+> are two distinct components that can be viewed as happening in sequence
+> (even though sometimes they don't), and both components need to be
+> brought about in order for a piece or pieces to be captured. The
+> example of "conversion" would be just an example of the second kind of
+> component.
+
+I agree that it's useful to distinguish these two different ludemes: the capture range (your ITZ) and the capture mechanism. Thinking about it, there are not that many variations upon both concepts (considering the number of abgames out there, anyway).
+
+The ITZ usually is king, wazir, ferz, rook, bishop or queen-range, perhaps due the influence that Chess has, which might be a direct consequence of the limitation of square boards (and hex boards has even less variation which some, me included, tend to see as a positive thing). In fact, Chess depth seems to be a direct consequence of the fine balance between the armies' ITZ (with only one capture mode: by replacement if we momentarily forget the recent en-capture patch). Check Piececlopedia @ http://www.chessvariants.org for a *lot* of different ideas
+
+The capture mechanism seems even more constricted, at least when talking about the classics: local captures like replacement, jumping-over and custodian, or global ones like in Go (I'm probably forgetting some obvious ones). Fanorona capture by withdrawal seems a strange (and unique?) mutation and Othello-like conversion is a relatively new idea. (*)
+
+Ludemes/mutators typically attached to capture are iteration (get an extra move after each capture) and some kind of restriction such as a mandatory status for capture (critical to the Checkers family) or Ko's (for Go).
+
+Recent ideas worth mentioning (i.e., those I remember):
+
+*Stacking games provide new ways to look at captures, especially the concept of reversible captures (lower stones at a stack may still be recovered) and piece demotion (well, not exactly capture...).
+* Bill Taylor created a whistling capture, some years ago, that, afaik, was a new concept (cf. http://sagme.blogspot.com/2006/06/monochromatic-whistling_09.html).
+* Cyclic captures (scissor-paper-rock style), eg, http://sagme.blogspot.com/search?q=TRICOLEUR+
+* Some chess variants use captures where the capturing piece absorbs the powers of the captured which is adequate for games with lots of different ITZ's like Chess. So here is an idea for game designers to dynamically change their range captures during a match (hmm, isn't that what promotion is all about?).
+
+Anyone has more examples?
+
+João
+
+(*) Curiously, *not* having captures (like in Hex) may be seen as a captured-related ludeme. I wonder how old that is?
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Capture Mechanisms</div>
+    <div class="author">Jackspritz</div>
+    <div class="timestamp">Posted on Dec 2, 2010, 11:37:42 PM</div>
+    <div class="content">
+On Dec 2, 2:24 pm, João Pedro Neto <j...@di.fc.ul.pt> wrote:
+> Anyone has more examples?
+
+I believe Ki uses a unique capturing mechanism.
+http://www.boardgamegeek.com/boardgame/82945/ki. Here stones are
+captured when they are adjacent to more enemy stones than friendly
+ones.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Capture Mechanisms</div>
+    <div class="author">Xifeng</div>
+    <div class="timestamp">Posted on Dec 3, 2010, 6:59:41 AM</div>
+    <div class="content">
+I think such a schema would be a very good way to index a collection
+of games, alongside Christian Freeling's use of win-condition.
+
+I'm skeptical of the value of deliberately permuting said categories,
+though. It's an easy way to create a lot of games, any one of which
+could take between years and centuries to properly analyze. I'd like
+to see more balance than we have now, where a few games have huge
+literatures and most games have none. Hikaru-no-Hex would be a nice
+start.
+
+On Dec 2, 1:24 pm, João Pedro Neto <j...@di.fc.ul.pt> wrote:
+
+> Anyone has more examples?
+
+Arimaa's fixed ITZ's are a fairly new invention, aren't they? Also
+immobilization might be seen as a temporary capture mechanic akin to
+conversion.
+
+> Othello-like conversion is a relatively new idea.
+
+Is Othello's on-board conversion really that big of a novelty from
+Shogi's off-board conversion? Admittedly Shogi's capture mechanic is
+something of a novelty.
+
+En-passant can be generalized to attacks-of-opportunity; a friend of
+mine played a chess variant in which the king could make such a
+capture any time a piece passed through its threat-area.
+
+Perhaps in addition to ITZ and CM there is also the non-capture change
+that accompanies a capture: placement in Go and Cephalopod, movement
+in chess etc., or no change beside capture, as in my game Kitaran.
+
+Regards,
+Tristan
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Capture Mechanisms</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Dec 7, 2010, 11:08:00 AM</div>
+    <div class="content">
+On Dec 3, 3:11 am, Harald Korneliussen <vinterm...@gmail.com> wrote:
+
+> Far from garbage in my opinion. The taxonomy you've sketched
+> seems more useful than many I've seen.
+
+Yes indeed; a full taxonomy of both capture forms and
+vulnerability zones would be cool.
+
+> I think it was Joao who came up with the term "mutators".
+
+Yep, a good term for a good concept.
+
+> But in my opinion, the question,
+> "Is this game better with mutator X?"
+> is almost always too subjective
+
+Yes indeed, as is almost every question about good and better,
+concerned with games. "De gustibus non est disputandum."
+
+Of course, it is very helpful to identify categories of comparison,
+such as clarity, depth, drama, etc etc, but in the end even to
+decide which of two games is "better" in some specific category,
+is subjective - at best one might hope for widespread agreement,
+but seldom gets even that.
+
+> the knowledge and habits
+> from previous closely related variants you've tried is likely
+> to interfere with honest evaluation.
+
+Actually not so much, in our experience. It does at the very start,
+yes, but Joao and I have found that we might discern the important
+aspects of the new game rather quickly. Still, it's very hard
+to tell if you're on the right track, without a substantial group
+of players, of different strategic habits.
+
+> but as any kind of "scientific" process for developing
+> better abstracts, I'm skeptical of it.
+
+Quite rightly! The term "science" hardly applies at all to
+such a human-oriented study, any more than it does to literature
+or art or history. Game playing is *slightly* more objective
+in that at least there are statistics of wins vs losses,
+but one can't deduce a huge amount from those.
+
+Anyway, some nice points raised, Harald.
+
+- Bill
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Capture Mechanisms</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Dec 7, 2010, 11:28:39 AM</div>
+    <div class="content">
+On Dec 3, 10:24 am, João Pedro Neto <j...@di.fc.ul.pt> wrote:
+
+> Recent ideas worth mentioning (i.e., those I remember):
+
+> * Bill Taylor created a whistling capture, some years ago,
+> that, afaik, was a new concept
+(cf.http://sagme.blogspot.com/2006/06/monochromatic-whistling_09.html)
+
+Thanks for the plug, Joao!
+
+Yes, this was one of my most-chuffing inventions, and this gives me
+a chance to release it further into the wild. It came about by
+thinking about Abbott's Ultima, with its many types of capture,
+many mentioned here already - replacement, jumping, custodian,
+withdrawing, immobilizing (an honorary "capture"), and
+the unmentioned and never-used-again co-ordination i.e. capturing
+a piece by co-ordinating it with the capturing piece and the king,
+the king acting like a "spotter" to give the capturer the proper
+range.
+
+This plethora of capture styles impressed me, and once I got under
+way designing, it was my goal to invent another type of my own.
+The second input came when a backgammon opponent once rolled
+a couple of numbers that singly and in combination landed almost
+on but didn't actually hit all of my several blots I'd had to leave.
+"Phew, whistling round his ears!!" he cried. The remark impressed me.
+
+I remembered that remark for ages, and so when I came to look for
+a new capturing mechanism, the idea and term "whistling" came
+back to me. If a rook-like piece whistled past an opponent piece
+as close as it could but *without* actually hitting it, it captured
+it by "whistling" - rather like a drive-by shooting!
+The capturing piece has to both start and finish non-adjacent
+to the target piece.
+
+. b .
+A . . . (the board is locally hex)
+
+A, moving to the right, can capture b if it lands in the rightmost
+cell shown, or further to the right, but not by landing in the 2nd
+rightmost place. Similarly, it could have started anywhere out to
+the left, though not in the 2nd-leftmost place.
+
+There is another, more regular capture, when attacker and target
+are adjacent, one can capture the other by a simple replacement,
+like chess kings.
+
+Thus there are two distinct forms of capture, which is another
+unusual feature of the game, though far from unique OC.
+
+For full details of the game see Joao's reference above;
+we have found it quite playable, and as usual, if anyone wants
+to start an email game, just write in reply and let me know!
+
+-- Bill 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Capture Mechanisms</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Dec 7, 2010, 11:51:45 AM</div>
+    <div class="content">
+On Dec 3, 10:24 am, João Pedro Neto <j...@di.fc.ul.pt> wrote:
+
+> * Cyclic captures (scissor-paper-rock style),
+> eg,http://sagme.blogspot.com/search?q=TRICOLEUR+
+
+Another one of my proud inventions! This game is like HEXX,
+in that pieces can grow into an adjacent empty cell, or jump into
+a not-quite adjacent empty cell. The difference from Hexx comes
+in that each player has three types of pieces, one has A, B, C,
+and the other a, b, c. Such as might be Artillery, Boot-soldiers,
+and Cavalry; artillery can beat infantry by pounding them from
+a distance, infantry can beat cavalry with numbers and pikes
+(or later, rifles), but cavalry can beat artillery by sweeping
+round fast behind them and cutting them to pieces. Top generals
+like Napoleon are said to have won many battles, even with weaker
+overall numbers, by carefully getting the right arm facing its
+own inferior. I've always been fascinated by the appearance
+of these "inconsistent triangles" in real life.
+
+So in Tricouleur, A beats b beats C beats a beats B beats c beats A.
+
+If a moved piece lands adjacent to an enemy piece of the SAME type,
+the target gets merely wiped out. But if a mover of the superior
+type to the target lands next to it, it *converts* it to a friendly
+piece of the same type as the mover, as in standard Hexx.
+
+This gives a rather more dynamic game of careful manouvering,
+than the rather brutal one-type conversion of Hexx itself.
+
+There is also the vital strategic goal of not getting all of one
+colour lost, as this leaves one at a severe strategic disadvantage.
+The colours, naturally, are Amber, Blue and Crimson! ;-)
+
+Full details at the above address. As always, I'm on the look-out
+for email games, just drop me a line.
+___________
+
+> * Some chess variants use captures where the capturing piece absorbs
+> the powers of the captured
+
+Cool! This is different from, though reminiscent of,
+Abbott's "Chameleon", which can capture in the same mode
+as it's target. Two Chameleons cannot harm each other!
+Joao's piece is more like a Boarding Party than a Chameleon, OC! :)
+
+> (*) Curiously, *not* having captures (like in Hex) may be seen as
+> a captured-related ludeme.
+
+An amusing extension, rather in the same way as that a square is
+also ("technically") a rectangle, though not in common parlance!
+
+-- Beaming Bill 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Capture Mechanisms</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Dec 7, 2010, 11:57:43 AM</div>
+    <div class="content">
+On Dec 3, 12:37 pm, Jackspritz <schackow...@live.com> wrote:
+
+> I believe Ki uses a unique capturing mechanism.
+> http://www.boardgamegeek.com/boardgame/82945/ki.
+> Here stones are captured when they are adjacent to
+> more enemy stones than friendly ones.
+
+Interesting idea! Sounds a little like a similar
+rule from "Diplomacy" - a themed game that I always thought
+seemed like more fun than it actually was.
+
+But there are many devotees, of course. De gustibus...
+
+-- Broad-minded Bill 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Capture Mechanisms</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Dec 7, 2010, 12:12:20 PM</div>
+    <div class="content">
+On Dec 3, 7:59 pm, Tristan <rozencra...@gmail.com> wrote:
+
+> I'd like to see more balance
+> than we have now, where a few games have
+> huge literatures and most games have none.
+
+Amen!
+
+> Arimaa's fixed ITZ's are a fairly new invention,
+
+How do these work, exactly?
+
+> Also immobilization might be seen as
+> a temporary capture mechanic akin to conversion.
+
+I always thought that was a cute idea, Abbott says it
+is a very powerful piece! It's a bit like a guy
+holding the victim pinned while someone else beats
+the crap out of him! Very nasty.
+
+> En-passant can be generalized to attacks-of-opportunity; a friend
+> of mine played a chess variant in which the king could make such
+> a capture any time a piece passed through its threat-area.
+
+VERY cute! I'd like to try that.
+
+It reminds me of a game invented by a chess expert,
+at my college a long time ago when I was a student.
+He thought it might make a good handicap system for Chess,
+an otherwise rather unworkable idea for chess, really.
+
+The idea was that a king could move like a queen,
+EXCEPT THAT it could not do this to make a capture,
+and also could never pass over an intervening space
+if that space was en prise by an opponent piece;
+rather similar to the castling exceptions in standard chess.
+
+This leaves the major part of any chess game unchanged,
+because no king is going to be out in wide open spaces;
+but leaves the endgame quite different, so would make
+a good addition to the weaker player - the stronger
+would almost have to win before the endgame -
+he couldn't just cruise it.
+
+They played a fair few games of it, then it seemed to disappear.
+
+Pity.
+
+-- Bygone Bill 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Capture Mechanisms</div>
+    <div class="author">jfpierce</div>
+    <div class="timestamp">Posted on Dec 20, 2010, 7:50:57 AM</div>
+    <div class="content">
+'Capture mechanisms' seems to cover at least three different aspects,
+as I see it:
+
+*piece mechanics (what can a piece do on it's turn)
+*interaction area (what pieces, if any are affected by this mechanic)
+*manner of interaction (in what way does this move affect other
+pieces?)
+
+While this may need to be expanded, all of the ways I can think of in
+which pieces interact with other pieces can be covered with these
+three factors.
+For example, look at jumping. In checkers, jumping leads to the
+capture of the jumped piece. In chinese checkers, pieces are jumped,
+but the jumped piece is unaffected. In this case the mechanic is the
+same, but the interaction area, and by extension the manner of the
+interaction are different. In Yinsh, jumped pieces are converted.
+Yinsh and checkers have the same jumping mechanic (more or less), and
+the interaction area is roughly the same, but the manner of the
+interaction is different. In Xiangqi, the cannon jumps pieces, but it
+is the piece beyond the jumped piece that is captured. In this case
+Checkers and Xiangqi share a mechanic and a manner of interaction, but
+the interaction area differs.
+
+Some interesting cases of piece interaction:
+*A promoted king in Kokusai Sannin can make an 'illuminated capture'.
+If any piece is within it's range of movement, it can capture the
+piece without actually making the movement.
+
+*Dou Shou Qi (aka jungle aka animal chess) has a nice blend between
+hierarchical captures and a rock-paper scissor mechanic. It also has
+ITZ's provided by both the pieces and the board itself. 
+    </div>
+  </div>
+
+  
+</body>
+</html>

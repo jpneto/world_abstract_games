@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">New journal: Game & Puzzle Design (Call for Papers)</div>
+    <div class="author">Cameron Browne</div>
+    <div class="timestamp">Posted on Jan 16, 2015, 11:06:50 AM</div>
+    <div class="content">
+Call for Papers
+
+Game & Puzzle Design
+
+ http://www.cameronius.com/gapd
+
+Game & Puzzle Design is a new peer-reviewed print journal publishing high quality work on all aspects of game and puzzle design. The journal aims to bring together designers and researchers from a variety of backgrounds, to foster a deeper understanding of games and facilitate the creation of new high quality games and puzzles. We are particularly interested in the intersection between traditional and digital game design, and the points at which these disciplines converge and diverge.
+
+Submissions may pertain to any type of game or puzzle – abstract, physical, printed, digital, etc. – but should focus on underlying mechanics or gameplay rather than visual design. The emphasis will be on traditional games and puzzles, although submissions on digital games are also welcome, especially where links are drawn between traditional and digital design approaches. 
+
+Examples of suitable topics include, but are not limited to:
+
+• Case studies of games and puzzles showing key aspects of design.
+• Analyses of new games and puzzles from a design perspective.
+• Good design practices, their generalisation and application.
+• Computational methods for automated game analysis and design.
+• The psychology of play and the aesthetics of design.
+• Design grammars and the vocabulary of game design.
+• Reuse of known design principles in new contexts.
+• Design issues in implementing digital versions of traditional games.
+• Patterns/antipatterns that lead to good/bad designs.
+• Distinguishing clones and variants from new games.
+• Intellectual property issues related to authorship in game design.
+• Designing for one, two or more players.
+
+Submissions should be of high technical quality, and rigorous but suitable for both technical and non-technical readers. We encourage submissions from designers of any background, not just academics. Submissions can be any length from 1-12 pages, with shorter articles welcome, but must focus on aspects of design relevant to games and/or puzzles. 
+
+The journal will also host a number of regular columns. If you would like to run a regular column, please provide an outline of the topic and summaries of the first few potential instalments. 
+
+The journal is now open for submissions, with the first issue due to be published in June 2015. 
+
+Please send submissions in .pdf format to: camb...@gmail.com
+
+Further details can be found at: http://www.cameronius.com/gapd
+
+Sponsored by the Queensland University of Technology (QUT), School of Electrical Engineering and Computer Science, and Division of Research and Commercialisation.
+
+Regards,
+Cameron Browne
+Editor-in-Chief    
+    </div>
+  </div>
+
+</body>
+</html>

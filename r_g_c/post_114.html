@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">New Game (under construction): Heatseekers</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Feb 12, 2013, 7:22:58 PM</div>
+    <div class="content">
+I was telling Corey about this idea I had the other day, and it was hard to convey it in the tiny iggc chat window while Corey was chatting back at me, so I wrote it up. It's still just an idea, but it seems reasonably original and I hope to playtest soon. 
+
+<a href="https://web.archive.org/web/20140212164745/http://nickbentleygames.wordpress.com/2013/02/12/new-game-heatseekers/">http://nickbentleygames.wordpress.com/2013/02/12/new-game-heatseekers/</a>
+
+<i>A favorite pastime among abstract game designers is to invent games entirely in our heads, without playtesting. This practice doesn’t always result in good games (to say the least), but it’s a great way to shape and test one’s understanding of fundamentals.
+
+I do it all the time, and I thought I’d share one with my free time today. The idea comes from my desire to make abstract games with large game trees,  but which feel coherent, simple, exciting, not arbitrary, and not discombobulating. I’ve no idea if the following game achieves any of those goals (except it does have a large game tree), but here goes:
+
+The Rules
+
+The game is for two players with white and black stones on a hex grid or a square grid (playtesting would determine which is best). One player owns the black stones, the other owns the white.
+
+Each player has a number of small bowls in front of him, and each bowl contains stones. All the stones in a given bowl have the same integer printed on them. All the stones in the first bowl have “1″ printed on them, all the stones in the second bowl have “2″, and so on.
+
+I don’t know how many bowls there should be, but this number is critical to the quality of the game and should be found through playtesting. More on that below.
+
+Players take turns. Each turn consists of two actions, which must be performed in the following order:
+
+    You MAY move a stone already on the board by a Chess Queen’s move. If your stone ends its move next to an enemy stone whose value is exactly one less than your stone, and your stone wasn’t next to that enemy stone to start its move, remove the enemy stone, and any other enemy stones in the group of which it’s a part, from the board. If a move results in multiple possible captures, the moving player must pick one to make. Note: your “1″ stones can capture the highest-numbered stones of your enemy (i.e. capture is circular). Captured stones are returned to the opponent after counting. 
+    You MUST place a stone from any bowl onto any empty space.
+
+The game ends either when a player has captured X enemy stones (X is a number to be determined by playtesting, along with a consideration below), in which case he wins, or when when the board is full, in which case whoever has the largest group on the board wins (or second largest group if largest groups are same size, and so on…) 
+
+Note the two win conditions create conflicting incentives: you want to keep your groups small to avoid losing them to big captures, but you want to keep your groups big in case the board fills up and you need the largest group to win.
+
+Let’s consider how game-play changes depending on the number of bowls a player has:
+
+If each player has two bowls, then captures will be very common, and the game will always end when one player has captured X stones of the other.
+
+If each player has some very large number of bowls, say 100 (unrealistic, but this is just for illustration), then neither player will ever capture enemy stones, and the board will always end full.
+
+Somewhere between those two extremes, the game will end about half the time on one win condition and half the time on the other, which balances the conflicting incentives to make big groups and make small groups.
+
+The number of bowls need for that depends on how you set X above (the number of stones needed to capture to win), so that gives you some freedom to keep the number of bowls reasonable if needed. I think a good target would be around 6 bowls. You can also reduce the number of bowls needed by restricting movement power to something with less range than a Queen’s move.
+
+I’m not sure whether the win condition is the best, but a range of different win conditions are possible, so there’s some flexibility to play with there. I’ll discuss this later if it turns out, with playtesting, that an alternative win condition is better.
+
+There is also an open question regarding what happens when you move one of your stones adjacent to an enemy stone which could capture it. Is your stone captured in that case or not? As the rules are now, the implication is that your stone is safe, because a stone can only capture an enemy stone when it moves. And for now I think it should be that way because it limits the number of captures, and therefore limits the number of bowls needed to otherwise limit capture. But not certain without playtesting.</i>
+    </div>
+  </div>
+
+</body>
+</html>

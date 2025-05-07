@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">New game: Ayu</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Dec 5, 2011, 5:35:25 AM</div>
+    <div class="content">
+New game: AYU
+=============
+
+AYU is a misère combinatorial game with the look of a connection game.
+
+Definitions
+-----------
+
+In this rules, "adjacent" always means "orthogonally adjacent".
+
+A unit is a singleton or group. A singleton is a piece
+with no adjacencies to like-colored pieces. A group is a
+set of like-colored, adjacent pieces.
+
+Play
+----
+
+The game is played on the intersections (points) of an odd-sized
+square board. 11x11 is suggested as the standard size. At the start of
+the game, Black and White pieces are arranged in the following
+pattern:
+
+. x . x . x . x . x .
+o . o . o . o . o . o
+. x . x . x . x . x .
+o . o . o . o . o . o
+. x . x . x . x . x .
+o . o . o . o . o . o
+. x . x . x . x . x .
+o . o . o . o . o . o
+. x . x . x . x . x .
+o . o . o . o . o . o
+. x . x . x . x . x .
+
+Black plays first, then turns alternate. On each turn, players must do
+one of the following actions:
+
+a) Move a friendly singleton to an adjacent empty point.
+b) Take a piece from a friendly group and place it on a different
+empty point adjacent to the same group, without splitting it at any
+moment.
+
+Every move must reduce the distance between the moved unit and the
+closest friendly unit. The distance between two units is the shortest
+path of adjacent empty points between them, i.e. the number of
+consecutive moves one would need to join them.
+
+If a player can't make a move on his turn, he _wins_. This usually
+occurs when said player has joined all his pieces in a single group.
+Draws and cycles are not possible.    
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: New game: Ayu</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Dec 5, 2011, 6:56:40 AM</div>
+    <div class="content">
+Here is a sample Ayu game:
+
+http://gc1.iggamecenter.com/gm.php?sid=230207&lang=en
+
+(The link will expire in one week, I think.)
+
+As you can see, "misère combinatorial" is just a theoretical way of
+categorizing the game, and has little to do with the way it truly
+unfolds. For all practical purposes, Ayu's behaviour is that of a pure
+connection game in the Lines of Action spirit.
+
+As a curiosity, there is a minor, truly combinatorial Ayu variant in
+which players must join two or more groups on every turn, and whoever
+can't move loses.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: New game: Ayu</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Dec 8, 2011, 5:49:40 AM</div>
+    <div class="content">
+On 5 dic, 06:35, luigi <luis.9.8...@gmail.com> wrote:
+> b) Take a piece from a friendly group and place it on a different
+> empty point adjacent to the same group, without splitting it at any
+> moment.
+
+I've made a minimal change in this rule to allow for a higher move
+freedom. The rule is now as follows:
+
+"b) Take a piece from a friendly group and place it on a different
+
+empty point adjacent to the same group. All stones which were joined
+in a single group before the move must remain joined after the move."
+
+This allows groups to be split momentarily during a turn. It's only
+relevant in rare occasions, but details are important.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: New game: Ayu</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Jan 14, 2012, 6:43:03 PM</div>
+    <div class="content">
+Ayu rule sheet, with diagrams: 
+
+<a href="http://boardgamegeek.com/filepage/74662/official-ayu-rules">http://boardgamegeek.com/filepage/74662/official-ayu-rules</a>
+    </div>
+  </div>
+
+</body>
+</html>

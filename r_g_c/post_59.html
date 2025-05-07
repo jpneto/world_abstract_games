@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Games of Interest from the 1000-Year Game Design Challenge</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Aug 22, 2011, 6:32:18 PM</div>
+    <div class="content">
+Though I *should* be working or something, I couldn't help but wade
+through all the entries at the 1000-Year Game Design Challenge and
+pick out the ones that caught my eye. Links to the games and comments
+at the link below.
+
+<a href="https://web.archive.org/web/20130419034356/http://nickbentley.posterous.com/games-of-interest-from-the-1000-year-game-des">http://nickbentley.posterous.com/games-of-interest-from-the-1000-year-game-des</a>    
+    </div>
+  </div>
+
+</body>
+</html>

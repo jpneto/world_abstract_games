@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Ayu in the CodeCup challenge</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Oct 19, 2014, 12:51:18 PM</div>
+    <div class="content">
+My game Ayu is the subject of this year's CodeCup programming challenge. Anyone interested can participate. The submission period is open until January 10th. The challenge is to create the best possible Ayu-playing bot.
+
+So far the game itself is looking pretty robust. In the latest test competition, if my counting was right, White and Black won the exact same number of games each, from a total of 582 games played. There have been no draws so far and I'd be really surprised if one occurred later. In fact, whether they're possible at all from the official starting position (no matter how weird the moves required to that effect can be), and, if they are, whether two players trying to win would play the game to a draw from the critical position at the start of the cycle, are still both open questions.
+
+The top bots are destroying the opposition, by the way. The winner only lost 3 out of 52 games this time around (2 out of 42 in the double round robin), and the second-placed, 5 (3 in the double round robin), with no bots having a positive score against either of them. The latter also holds for the third-placed bot.    
+    </div>
+  </div>
+
+</body>
+</html>

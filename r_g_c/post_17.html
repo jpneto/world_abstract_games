@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Game Isomorphisms (Was: Re: Y, again.)</div>
+    <div class="author">Zhang Dawei</div>
+    <div class="timestamp">Posted on Dec 2, 2010, 8:50:24 AM</div>
+    <div class="content">
+Bill wrote:
+
+> Just a quick update on the various formats of "Y".
+>
+> As noted, the alternating stones around the edges just results in
+> exactly the same game as Y - not a new one. (I didn't acknowledge
+> this earlier because Christian F was getting bent out of shape by
+> that mild criticism of Havannah, and I didn't want to add fuel
+> to the fire!)
+>
+> So it now seems that plain old "Y" can be re-formatted in no less
+> than 3, count them, THREE, ways. And no doubt there can be others
+> as well.
+
+The surface equivalence of these three variations of an underlying game
+is, of course, not unknown in general. As Bill probably knows, given his
+job and position, they are a visible sign of what we might (informally)
+call "game isomorphism" (though it may have a different name that I am
+unaware of). The terminology I have used (isomorphism) is taken from a
+field of mathematics, and, for all its probable deficiencies, the
+article from wikipedia probably gives a sense of what is meant by it
+(see http://en.wikipedia.org/wiki/Isomorphism ). (As an aside, as an
+amateur mathematician in this particular area, though more of a
+professional in other areas, I often wondered whether "functor" might
+also be used in this context, though I think I have used the
+conventional term in the sense it has been conventionally used, such
+as in describing scientific models of apparent empirical facts, and so
+on.)
+
+I've always been interested in these kinds of discovered relationships
+between different games in this entire area, and have read about some
+of the isomorphisms that work of JH Conway, and material found in the
+Winning Ways volumes and its related topics, that I always enjoy
+reading. There can obviously be a "depth" to the kind of abstractions
+needed to be able to uncover the isomorphisms, and I imagine that the
+ones Bill mentions in his message I'm replying to are more towards the
+"surface" than some others could be. I'm thinking of another known game
+isomorphism.
+
+The unfamiliar game which is an isomorph of a much more
+familiar game is the one in which one has two players who alternate in
+playing turns. Each turn involves declaring a ordered couple of two
+integers selected from the set {1, 2, 3}. The constraint is that once
+announced, an ordered couple *cannot* be announced again. The winner is
+the one who immediately satisfies one of the following conditions from
+the set of ordered couples they have announced:
+
+(a) the same integer occupies the same position in the ordered couple
+three times (eg, <1, 2>, <1, 3>, and <1, 1> would win, as would <3, 2>,
+<1, 2>, and <2, 2>.)
+
+(b) the sum of the two integers in 3 ordered couples must be 4 (i.e.,
+<1, 3>, <2, 2>, and <3, 1> would win)
+
+(c) The player manages to announced the three ordered couples in which
+the first element of the couple is the same integer as the second
+element (i.e., <1, 1>, <2, 2>, and <3, 3> would win)
+
+Now, the topic I am writing about will have alerted many to try to
+search for the more well-known isomorph of this game, but I wonder if
+one were not so alerted how readily people would discover what it is.
+
+These two games (one I've given, and one I have not) also are
+interesting because one seems trivially easy to play, whereas the other
+seems more difficult, unless one knows the trick of "translating", or
+mapping (to informally use the corresponding mathematical term) from
+the difficult one to the trivially easy one. The difference in ability
+to play may be brought about by many things, but one may be a
+difference in sheer familiarity. However, as a professional
+mathematical psychologist, it is intriguing to me both from a
+mathematical modelling point of view, and a psychological view, in
+terms of cognitive ability. We get something similar in
+Applied Mathematics, I suspect, where I recall it was always tricky to
+solve differential equations the way I was taught in secondary school,
+but once I had taught myself Laplace Transform Theory (in order to
+prove something for my PhD thesis), they became much more easy in
+general: so what was difficult in one form was transformed, using
+mathematically proven isomorphisms, into another form that was more
+easy to solve. In this case, one can almost prove why it might be easy
+to solve these in one form and not so easy in another. Most of my
+professional theoretical work has been concerned with showing that
+theories and models people think are equivalent are, in fact not, or
+that theories or models that people have thought were not equivalent,
+are in fact equivalent, which highlights the more general problem of
+not being able to recognise the isomorphisms, which is a related area.
+
+Going back to abstract games, I recall that a few games that seemed to
+be different on the surface were in fact the same (versions of Nim-like
+games), as described in the Winning Ways books and the work of JH
+Conway.
+
+It seems to me that a lot of good work could be done in trying to
+identify more isomorphisms amongst abstract games, though this
+will probably require mathematical abilities in order to do it
+rigorously and well. But in so doing it, it might lead to a greater
+insight into the underlying "root game" or "canonical game" which one
+chooses to use as the basic game to illustrate the core game (and the
+problem of why one might be chosen to occupy such a role is also
+interesting). I know it isn't discovering new games, but it could be
+part of this, and I wonder how many people have thought along similar
+lines to myself in this respect?
+
+ps: 1. Sorry for the very long message: my first one to this group, and
+much better suited here than in the domain of prima-donnas one seems to
+have on the usenet group).
+
+2. How many people have now discovered what the much more well-known
+isomorph to the game I described above is, and how did they solve the
+problem of which one it was, I wonder?
+
+3. Note the extremely lax way in which one might be tempted to point
+out the self-reflexive nature of this message: I tried to not be
+rigorously mathematical in my description of the relationships between
+the games, but I did try to be accurate. So, in one very lax way, I was
+trying to produce an isomorph to my dimly perceived mathematical
+structure of equivalence between certain games, but it had to be an
+isomorph in a form that was more readily understandable by people
+without having to know much mathematics.
+
+-- 
+ZHANG Dawei: Beijing, PR China (native BrEng Speaker)
+Please keep above email address confidential. It will remain valid
+for a minimum of 2 weeks from the date of this message.    
+    </div>
+  </div>
+
+
+</body>
+</html>

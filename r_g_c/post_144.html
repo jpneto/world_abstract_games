@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Advances in Computer Games (ACG 2021)</div>
+    <div class="author">Cameron Browne</div>
+    <div class="timestamp">Posted on Aug 25, 2021, 10:17:24 AM</div>
+    <div class="content">
+ Dear Colleagues,
+ 
+I'm pleased to announce that the deadline for submission to ACG 2021 is being extended to 20 September. Please do submit your interesting work. There will no further extensions to this deadline.
+
+The Advances in Computer Games conference (ACG 2021) will be held online this year over 23–25 November 2021 (https://icga.org/?page_id=3086). ACG is an internationally renowned conference that publishes computer-based studies of games. Its history goes back to the inaugural event held in Edinburgh in 1975, making this the longest ongoing game AI conference. 
+ 
+This year’s ACG will have a special track on The History of Computer Studies of Games. In addition to new work, we invite submissions that provide historical context or otherwise highlight key developments in game-playing programs and computer-based game studies over the decades. 
+ 
+Keynote speakers will include: 
+• David Silver (Google DeepMind) 
+• Michael Bowling (University of Alberta) 
+• Mark Lefler (Komodo, Zillions of Games) 
+ 
+Conference attendance to view all talks will be free. 
+ 
+Topics of interest include, but are not limited to: 
+• The current state of game-playing programs for classic and modern board games, card games, puzzles, virtual/casual/video games, etc. 
+• General game playing. 
+• Artificial intelligence and machine learning for games. 
+• The history of computers in game-based research. 
+• New theoretical developments in game-related research. 
+• New and enhanced algorithms for search and knowledge acquisition. 
+• Automated game design and evaluation. 
+• Social aspects of computer games. 
+• Scientific contributions produced by the study of games. 
+• Cognitive research of how (and why) humans play games and puzzles. 
+• Capture and analysis of game data. 
+____________________________________________________
+ 
+Submission 
+ 
+Papers must be written in English and can be up to 10 pages in length (including references). 
+ 
+Please conform to the LNCS style (https://www.springer.com/gp/computer-science/lncs/conference-proceedings-guidelines). 
+LaTeX preferred; an Overleaf template is available. 
+ 
+Submit a PDF version of your paper via EasyChair (https://easychair.org/conferences/?conf=acg2021). 
+____________________________________________________
+ 
+Dates 
+ 
+• Submission due: 20 September 2021 
+• Notification due: 18 October 2021 
+• Final version due: 8 November 2021 
+• ACG 2021: 23–25 November 2021 
+____________________________________________________
+ 
+Program Co-Chairs 
+ 
+• Cameron Browne, Maastricht University, The Netherlands 
+• Akihiro Kishimoto, IBM Research, Tokyo, Japan 
+____________________________________________________
+ 
+Program Committee 
+ 
+• Yngvi Bjornsson, Reykjavik University, Iceland 
+• Bruno Bouzy, Paris Descartes University, France 
+• Tristan Cazenave, LAMSADE Université Paris Dauphine PSL CNRS, France 
+• Lung-Pin Chen, Tunghai University, Taiwan 
+• Siang Yew Chong, School of Computer Science, University of Nottingham, Malaysia 
+• Chao Gao, University of Alberta, Canada 
+• Reijer Grimbergen, Tokyo University of Technology, Japan 
+• Michael Hartisch, University of Siegen, Germany 
+• Chu-Hsuan Hsueh, Japan Advanced Institute of Science and Technology (JAIST), Japan 
+• Ryan Hayward, University of Alberta, Canada 
+• Hiroyuki Iida, Japan Advanced Institute of Science and Technology (JAIST), Japan 
+• Eric Jacopin, CREC Saint-Cyr, France 
+• Nicolas Jouandeau, Paris8 University, France 
+• Tomoyuki Kaneko, University of Tokyo, Japan 
+• Sylvain Lagrue, Université de Technologie de Compiègne (UTC), France 
+• Diego Perez Liebana, Queen Mary University of London (QMUL), UK 
+• Shun-Shii Lin, National Taiwan Normal University, Taiwan 
+• Martin Mueller, University of Alberta, Canada 
+• Mike Preuss, Universiteit Leiden, The Netherlands 
+• Abdallah Saffidine, University of New South Wales (UNSW), Australia 
+• Spyridon Samothrakis, University of Essex, UK 
+• Jonathan Schaeffer, University of Alberta, Canada 
+• Nathan Sturtevant, University of Alberta, Canada 
+• Ruck Thawonmas, Ritsumeikan University, Germany 
+• Michael Thielscher, University of New South Wales (UNSW), Australia 
+• Jonathan Vis, Universiteit Leiden, The Netherlands 
+• Mark Winands, Maastricht University, The Netherlands 
+• Ting Han Wei, National Chiao Tung University, Taiwan 
+• I-Chen Wu, National Chiao Tung University, Taiwan 
+• Shi-Jim Yen, National Dong Hwa University, Taiwan 
+• Kazuki Yoshizoe, RIKEN Center for Advanced Intelligence Project (AIP), Japan
+____________________________________________________
+ 
+Regards,
+Cameron
+ 
+ACG 2021: https://icga.org/?page_id=3086   
+    </div>
+  </div>
+
+</body>
+</html>

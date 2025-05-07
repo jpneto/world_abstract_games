@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Ban the ban: essential game design advice (with examples)</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Apr 14, 2014, 3:11:48 PM</div>
+    <div class="content">
+A post I wrote about what has proven to be one of the most useful guidelines in my game design efforts: <a href="http://web.archive.org/web/20221225235910/https://www.nickbentley.games/game-design-tip-prohibit-bans/">http://nickbentleygames.wordpress.com/2014/04/14/game-design-tip-prohibit-bans/</a>  
+
+<i>If you've read the rules to more than 3 board games, you've probably read a rule phrased like so: “You may not [take some action]“.
+
+Why do such rules exist? The most common reason is, during play-testing, the designer discovered players want to take an action that would hurt the experience – for example, a too-powerful action every player would take every turn if allowed. The most obvious fix is to ban it.
+
+Banning an action is usually a bad solution. Here I explain why and what to do instead.
+
+A player's actions never come from nowhere – they usually originate in the rules. What I mean is: rules create a “space of permissible actions” in players' minds, and the actions they want to take are inside it. When a player wants to do something bad for play, it's because the rules suggest she can.
+
+As evidence, consider: for any game, there are countless not-explicitly-banned actions players could take but don't. For example most games don't ban switching sides whenever you want, lighting the board on fire, or flipping it. But no one does (except 10-year-olds and the guy below), because nothing in the rules suggests them.
+
+So. If players want to do something they shouldn't, it must be inside the space of permissible actions. And when you ban it, you send a mixed signal: that the action should be inside the space of permissible actions, except it isn't. This makes a game hard to learn (when new players make the same illegal move over and over) and hard for players to find flow during play (because they're always checking to see if what they want to do is legal).
+
+If bans were the only solution, they'd be a necessary evil. Happily, there are usually other solutions to not only fix the problem, but improve your design even further.
+
+The exact solution depends on the problem's specifics, but often it's about incentives. Specifically, an action is so powerful, all players would take it all the time if allowed. This common case is an especially good opportunity to ban the ban, because it gives you a chance not only to allow more options and cut cognitive overhead, but to create an effect essential for a great strategy game: speciousness.
+
+Speciousness is a term I use to describe the way good strategy games trick you into thinking bad moves are good. Speciousness means apparently <a href="http://web.archive.org/web/20221225235910/http://dictionary.reference.com/browse/speciousness">good or right though lacking in real merit</a>. You can <a href="http://web.archive.org/web/20221225235910/https://nickbentley.games/2013/09/02/redefining-the-abstract/">read a discussion of speciousness here</a>, but here's the short version:
+
+If you're trying to design a strategy game of any depth, you face a dilemma: you don't want players to feel lost in a strategic fog (because that I-have-no-idea-what-to-do feeling is discouraging), but nor do want want them to easily know what makes for a good move (because then the game will lack depth and surprise). How do you avoid both problems at once? Answer: you tempt players into making moves that feel more right than they actually are – that's speciousness.
+
+One way to do this is to include turn options which feel natural and powerful to the players, but turn out to have some cost.
+
+You see where I'm going. If players repeatedly want to make a too-powerful move, rather than ban it, impose a cost. You'll not only fix the problem and expand the space of options, you'll also create speciousness (even if you can't create speciousness, it's still a good idea to avoid bans for the reasons given above, but speciousness is icing on the cake).
+
+To make these ideas clear, I'll describe examples from my own games. The first illustrates how replacing a ban with a cost creates speciousness, and the others show how ban-lifting can apply in other circumstances.<h3>Case Study #1 – Catchup</h3>A game of Catchup, in early mid-game
+
+Catchup is a neat case, because it deploys the advice above twice over.
+
+First, the game's central mechanic is to impose a cost on what would otherwise be the clear best move-type.
+
+It's a simple abstract stone-placement game where the goal is to build the largest connected group of stones on the board. The obvious thing to do is to connect your stones in a clump in the center of board, because it both grows your own largest group and cuts your opponent off from stretching her largest group across the board. The game would be broken if there were nothing more to it.
+
+Early on, I tried various conditional bans to prevent clumping – that is, you could only enlarge your groups under certain conditions – for example you could only make a large group by connecting together small groups of a certain size, etc. These schemes all failed.
+
+Then I hit on an idea: you can place your stones wherever, whenever they want, but if you increase the size of the largest group on the board, your opponent gets an extra stone on her next turn. That's the price you pay for making a strong move. It created a temptation: you really want to enlarge your biggest group because it's the goal of the game, it's right there for the taking and it just feels right, but if you do, the extra stone you give your opponent will hurt. Speciousness.
+
+Even after that rule was in place, there was another ban in those early versions: to prevent frequent ties, players were banned from placing stones such that their largest groups were the same size. Here I'd banned a move not because it was too strong, but because it created a structural problem. Like most bans, it complicated the rules and forced players to repeatedly check whether their intended moves were legal.
+
+Eventually, I realized I could lift the ban by using tie breaks: specifically, if the players' groups are the same size when the game ends, they compare their second-largest groups, and so on until they come to a pair which aren't the same size. Whoever owns the larger wins.
+
+This had a profound effect: it made ties impossible, simplified the rules, made play smoother, and to my surprise, dramatically deepened the game (for reasons too complex to discuss here). It turned Catchup into one of my proudest achievements. It also reinforced the value of lifting bans.<h3>Case Study#2 – Stinker</h3>I like this example because Stinker isn't even a strategy game – it's a party game and the design goal is laughter, yet the advice above applies – an indication of how general it is.
+
+Each player has a jumble of letter tiles (like Scrabble tiles). Each round, a prompt is read aloud and each player races to form a response to that prompt with her letter tiles. A judge decides which response is best each round, and that response gets points. It's like a cross between Bananagrams and Apples to Apples.
+
+Early versions had a ban: players weren't allowed to make responses using fewer than 20 tiles. I'd made this rule because players form their responses under time pressure, which encouraged them to make short responses with few letters. If players only make short responses, the game is less funny.
+
+But the ban also made the game harder by forcing players to count their tiles while responding, and to fit answers within strict length constraints. It only worked for word-lovers and crossword enthusiasts, but I wanted a game for a broad audience.
+
+Eventually I took my own advice and allowed players to use any number of letter tiles, but I changed the scoring rules to compensate. Each round's winner no longer gets a fixed number of points; instead she gets a point for each letter in her response, which encourages long responses and neutralizes the time-pressure incentive to make short ones.
+
+Players now make responses of a variety of lengths, depending on their proclivities, skill, and available letters, and the game is a schmillion times better for it. Stinker's now one of my favorites among my designs, and players of many stripes routinely go wild for it.<h3>Exception to the Rule</h3>There may be rare occasions where banning is the right choice. Usually only in simple designs without other sources of cognitive overhead, so players have enough mental space to grapple with a ban.
+
+A good example is Yavalath, a game built almost entirely around a single banned move: it's a simple abstract n-in-a-row game where you win if you make a row of 4 but lose if you make a row of 3.
+A 3-player game of Yavalath
+A 3-player game of Yavalath
+
+Because the entire game is built around the banned 3-in-a-row, the banned move has the attentional spotlight to itself and the cognitive overhead it introduces feels less like a distraction and more like the game itself.
+
+But that's about as far as that goes. Unless you're designing an austere abstract game like Yavalath and a ban is its centerpiece, you'll improve your design by lifting bans. If you're designing a Euro-type game, for example, you should almost certainly ban the ban.</i>
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Ban the ban: essential game design advice (with examples)</div>
+    <div class="author">zickzack@gmail.com</div>
+    <div class="timestamp">Posted on Apr 14, 2014, 4:41:47 PM</div>
+    <div class="content">
+Hello all,
+
+
+Good to see some traffic. I do not mean to be nitpicking, but I think the approach you have in mind is hard to define. For instance in Go, taking back in a ko is banned. There are several ways/rules which achieve that, usually with the same effect. These bans allow for ko-fights, one of the most interesting ideas in Go.
+
+Yes, Go-players have to check, if their moves are legal, and I know one pretty decent individual who never understood the rule. Yet, the reward of the rule lies in the way the ban is achieved. Maybe you want to say "do not ban without reward"?
+   Benedikt
+    </div>
+  </div>
+  
+  <div class="post level-1">
+    <div class="subject">Re: Ban the ban: essential game design advice (with examples)</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Apr 14, 2014, 5:24:04 PM</div>
+    <div class="content">
+Derp. I replied to Zick but inadvertantly made it a private reply. Zick: if you reply, could you paste in what I wrote to your reply?
+    </div>
+  </div>
+  
+  <div class="post level-1">
+    <div class="subject">Re: Ban the ban: essential game design advice (with examples)</div>
+    <div class="author">zickzack@gmail.com</div>
+    <div class="timestamp">Posted on Apr 14, 2014, 5:46:43 PM</div>
+    <div class="content">
+Here you go:
+
+# I certainly agree that Ko fights are good, though Mark Steere's Redstone has proven to me
+# that you can get rid of banned moves in Go (and thus eliminate Ko fights), and end up with
+# a fabulous game. So even in the case of Go's banned move, which is one of the "best" banned
+# moves I know, I feel ambivalent.
+
+Redstone is a reasonable game as a proof of concept. Compared to Go, however, it clearly loses.
+Eliminating ko-fights from Go is not a good idea. There is no point in turning a brilliant game
+into a reasonable one for the price of "rules aestheticism".
+
+In general, I see an undue focus on rules issues as opposed to gameplay. The latter takes work,
+of course.
+    </div>
+  </div>
+  
+  <div class="post level-1">
+    <div class="subject">Re: Ban the ban: essential game design advice (with examples)</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Apr 14, 2014, 7:36:56 PM</div>
+    <div class="content">
+    Redstone is a reasonable game as a proof of concept. Compared to Go, however, it clearly loses.
+    Eliminating ko-fights from Go is not a good idea. There is no point in turning a brilliant game
+    into a reasonable one for the price of "rules aestheticism".
+
+    In general, I see an undue focus on rules issues as opposed to gameplay. The latter takes work,
+    of course.
+
+To be clear, I'm not a "rules aesthete". Gameplay matters to me above all and I only value the "ban the ban" heuristic because it's proven helpful to me in improving play experience. I wouldn't value it at all otherwise. Likewise, I like Redstone not because it has cleaner rules so much as because I think it's a fascinating game in it's own right - it may not have Ko fights, but it has other interesting stuff instead. 
+    </div>
+  </div>
+  
+</body>
+</html>

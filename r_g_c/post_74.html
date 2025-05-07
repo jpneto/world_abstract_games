@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Bidding for moves.</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Nov 28, 2011, 11:28:49 AM</div>
+    <div class="content">
+I just came across an old article of mine from rec.games.go,
+while sorting through old files. It was about "Bidding Go".
+Maybe I'll update and post it here in due course, but I was
+wondering about bidding-for-moves in general.
+
+The idea is, OC, that moves on the board do not necessarily
+alternate between the two players, but that in each turn, they bid for
+the right to move, the higher bidder giving the other that many
+units to the other, and then moving. It really only applies to games
+where one typically wins by a measurable whole-number amount,
+so that the size of the bids has some significance. It can hardly
+apply
+to out-and-out battle games like chess and checkers, which are
+purely win/loss/draw. (This means that bid-allowable games have
+an automatic "handicap" option as well, as in golf!)
+
+Go, is, OC, the ultimate and prime example of a biddable game.
+The win is not merely a win, but a win by a certain amount of
+territory. So a player who wins on the board might still lose
+over all, if he has spent much more than his opponent on bids.
+
+My question really is, I guess, what other games are near this idea?
+
+Other standard games that have a "countable winning margin",
+include Reversi, Backgammon and Wari. What else?
+
+There are a number of recently composed games here the winner
+is the one who finishes up with the largest connected group,
+or perhaps with the longest moku-line. These would appear to be
+of this type, as the difference in sizes is a clear, observable,
+integer amount, amenable to bidding-unit comparison. This would
+be even more so if the currently popular "recursive scoring",
+(whereby if the biggest groups are equal the 2nd-biggest
+are looked at and so forth), were extended appropriately.
+Maybe triple points for the biggest, double for the second,
+single for the third, or whatever seems appropriate.
+[note:] This multi-scoring option could also be played in
+the alternating game OC, not just the bidding version.
+
+What other games are like this? At a pinch, I suspect connection
+games could be, Hex Y etc, where the winning "score" is the number
+of extra moves it would take the loser to connect, counted just
+before the last move were made. A bit artificial, but possible.
+
+Any other known games that have a "countable winning margin"?
+
+-- Bid-em-up Bill    
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Bidding for moves.</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Nov 28, 2011, 5:15:44 PM</div>
+    <div class="content">
+> Any other known games that have a "countable winning margin"?
+star and *star come to mind
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Bidding for moves.</div>
+    <div class="author">Cameron Browne</div>
+    <div class="timestamp">Posted on Nov 29, 2011, 4:35:47 PM</div>
+    <div class="content">
+> Any other known games that have a "countable winning margin"?
+
+Omega: score is the multiple of your group sizes. Calculating all
+possible scores looks like it may be combinatorially explosive for
+larger board sizes, but Nestor has a nice proof that the maximum score
+is given by having all groups as close to size 3 as possible.
+
+Cameron
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Bidding for moves.</div>
+    <div class="author">Dieter Stein</div>
+    <div class="timestamp">Posted on Nov 29, 2011, 11:21:42 PM</div>
+    <div class="content">
+> Any other known games that have a "countable winning margin"?
+
+Abande has an original scoring rule.
+
+- Dieter
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Bidding for moves.</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Nov 30, 2011, 12:59:03 AM</div>
+    <div class="content">
+On 28 nov, 12:28, Bill Taylor <wfc.tay...@gmail.com> wrote:
+> What other games are like this? At a pinch, I suspect connection
+> games could be, Hex Y etc, where the winning "score" is the number
+> of extra moves it would take the loser to connect, counted just
+> before the last move were made. A bit artificial, but possible.
+
+Lines of Action and my own Raindrops (just released) can be included
+in this category.
+
+Raindrops ruleset:
+
+https://docs.google.com/viewer?a=v&pid=explorer&chrome=true&srcid=0B3gpl2WT8ufWZDYyNzRjYTYtY2UxOS00ZDk3LWJmZDMtMTJkNjQ4ZmI2YjEy&hl=en_US&pli=1
+
+> It really only applies to games
+> where one typically wins by a measurable whole-number amount,
+> so that the size of the bids has some significance. It can hardly
+> apply
+> to out-and-out battle games like chess and checkers, which are
+> purely win/loss/draw.
+
+In checkers, you could count the number of pieces the winner has at
+the end of the game.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Bidding for moves.</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Dec 5, 2011, 9:37:53 PM</div>
+    <div class="content">
+On 30 nov, 01:59, luigi <luis.9.8...@gmail.com> wrote:
+> On 28 nov, 12:28, Bill Taylor <wfc.tay...@gmail.com> wrote:
+>
+> > What other games are like this?  At a pinch, I suspect connection
+> > games could be, Hex Y etc, where the winning "score" is the number
+> > of extra moves it would take the loser to connect, counted just
+> > before the last move were made.  A bit artificial, but possible.
+>
+> [...] my own Raindrops (just released) can be included
+> in this category.
+
+Better yet, Ayu:
+
+https://groups.google.com/group/recregamescombinatorial/browse_thread/thread/845d50506a6451fd?hl=es#
+    </div>
+  </div>
+
+</body>
+</html>

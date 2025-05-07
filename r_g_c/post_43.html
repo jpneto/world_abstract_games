@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Games that stretch MCTS</div>
+    <div class="author">Cameron Browne</div>
+    <div class="timestamp">Posted on Feb 23, 2011, 7:43:20 PM</div>
+    <div class="content">
+Hi,
+
+I'm doing a bit of work on Monte Carlo Tree Search (MCTS) which is a
+new AI approach for move planning in games. The algorithm behaves
+differently for games with different characteristics - some games are
+well suited to it while some resist it - and I'm interested in finding
+the outliers.
+
+Can anyone suggest games of reasonable complexity that exhibit the
+following properties:
+
+1. Unusually slow to calculte legal moves for a given position.
+2. Unusually slow to apply a move to a given board state.
+3. Fast to find Nth legal move (e.g. Gomoku).
+4. Slow to find Nth legal move (e.g. Triskelion?).
+5. Fast to perform short lookahead (e.g. 2 ply) on a given position
+(e.g. Gomoku again).
+6. Slow to perform short lookahead on a given position.
+7. Unusually low branching factor.
+8. Unusually high branching factor.
+9. Long move sequences for either player (e.g. Chinese Checkers).
+10. Delayed reward, i.e. positional strength not clear until the end
+of the game (e.g. Omega, maybe Othello?).
+11. Immediate reward, i.e. immediate positional evaluation is a good
+indication of who will win.
+12. Random playouts give good estimate of who will win.
+13. Random playouts give poor estimate of who will win.
+14. Games in which a win or loss is never far away, i.e. high ratio of
+leaf nodes in the search tree (Palago?).
+15. Games in which a win or loss is very remote at the beginning but
+gets closer as the game progresses (Hex?).
+
+Basically any game that will affect the performance of MCTS/UCT by its
+very nature.
+
+Thanks,
+Cameron     
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Games that stretch MCTS</div>
+    <div class="author">zickzack@gmail.com</div>
+    <div class="timestamp">Posted on Feb 25, 2011, 9:33:02 AM</div>
+    <div class="content">
+There are several games that come to mind. Connect6 has
+a high branching factor by common standards, but it also
+has many leaf nodes. Since most fields with a certain
+distance to the action do not matter, the search tree
+can be trimmed easily by algorithms that go beyond MCTS.
+On the other hand, it might also be possible to play in
+a way that spreads out, thereby negating the effect
+somewhat.
+
+Pilare by Jorge Arrausi shows branching factors well
+beyond those of Connect6 once players start to grow
+stacks. Tall stacks mark the criss of the game, however,
+and they usually indicate that the the end is close.
+
+Unlur by the same author has a contract stage. I wish
+good luck to everyone who is going to program that using
+MCTS. He will need it.
+
+Symple by Christian Freeling has a kind of contract
+stage, too. After that, ridiculously high branching
+factors can and will appear. In real games, 10^12 or
+10^15 are possible. Yet, that stage is easy on the
+human mind.
+
+
+In general, I wonder how games with a setup or contract
+stage will fare under MCTS. Nine Men's Morris, for instance,
+should be tractable.
+Benedikt
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Games that stretch MCTS</div>
+    <div class="author">Harald Korneliussen</div>
+    <div class="timestamp">Posted on Feb 28, 2011, 7:36:54 PM</div>
+    <div class="content">
+Thinking about the first two, I guess any game that exhibits them to
+any degree will be hard to play for humans also... unless the reason
+it's slow to calculate is that there are a lot of moves, obviously.
+Games where a move consists of many "sub-moves" in sequence, such as
+Arimaa, I think may pose a challenge. Especially if the order of the
+sub-moves can matter (as they can in Arimaa) you can easily get a
+combinatorial explosion of moves.
+
+It's easy to modify a game to have fiendishly large branching factor.
+27x27 hex where players place five stones per move, for instance. I
+doubt it will hold much for humans over regular Hex, but it'd be
+interesting to know how well a MCTS program handles it.
+
+Lines of action, played on a huge board, with multiple sub-moves per
+turn will give you a nice combinatorial explosion.
+
+One game where there is a big branching factor and calculating legal
+moves isn't trivial (well, less trivial than Hex anyway) is Punct.
+But it's more of a hassle for the programmer than for the program :)
+
+How do you plan to measure the strength of the programs in one game
+compared to another? Especially if there are a lack of human players,
+can't it get pretty difficult?
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Games that stretch MCTS</div>
+    <div class="author">Cameron Browne</div>
+    <div class="timestamp">Posted on Mar 2, 2011, 12:22:13 PM</div>
+    <div class="content">
+Thanks for the input guys.
+
+zickzack: I don't see the problem with Unlur-style contracts. They're
+just another move available to the player on certain turns.
+
+Harald:
+> It's easy to modify a game to have fiendishly large branching factor.
+> 27x27 hex where players place five stones per move, for instance. I
+> doubt it will hold much for humans over regular Hex, but it'd be
+> interesting to know how well a MCTS program handles it.
+
+I think most programmers would break five submoves per turn into five
+subsequent moves by the same player. Perhaps not so good from a
+theoretical perspective - it's much better strategically to consider
+all moves in a turn as one strategic "lump" - but it works in
+practice, as Greg Schmidt can attest (e.g. his Axiom Omega player). So
+five-moves-per-turn 27x27 Hex would reduce to a branching factor
+similar to Go, at which MCTS excels.
+
+> How do you plan to measure the strength of the programs in one game
+> compared to another? Especially if there are a lack of human players,
+> can't it get pretty difficult?
+
+Yes, this gets difficult especially since most of my research will
+involve newly invented games that have never been played before and
+for which no yardsticks for AI strength exist. But there are ways to
+get a ballpark estimate: play the MCTS AI firstly against a random
+player and secondly against a flat Monte Carlo player. The results
+will give some indication of the relative success of each of the three
+AI types.
+
+Luckily the strength of the AI is not the goal here. All I need is an
+AI that will put a game through its paces, exercise its rule set and
+provide a challenge for human testers. MCTS should be sufficient in
+most cases, provided that I can identify degenerate game types that
+trouble it.
+
+Cameron 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Games that stretch MCTS</div>
+    <div class="author">Maurizio De Leo</div>
+    <div class="timestamp">Posted on Mar 3, 2011, 8:38:13 AM</div>
+    <div class="content">
+I <a href="files/examples_of_games.xls">attach</a> a table with my proposed examples.
+Some of the category are not overly clear (for example in "long
+sequence" by one player do forced move count ?) but most of the
+examples should be quite fitting.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Games that stretch MCTS</div>
+    <div class="author">Cameron Browne</div>
+    <div class="timestamp">Posted on Mar 3, 2011, 9:19:05 AM</div>
+    <div class="content">
+Hi,
+
+For games with unusually high branching factors several people have
+suggested games with multipart moves (Arimaa, Amazons, Omega, Five-
+stones-per-move Hex, etc). However, such multipart moves would
+typically be programmed by breaking them down into their individual
+submoves which reduces the branching factor to something reasonable.
+
+Instead, I'm looking for games in which players must choose one atomic
+move out of many choices. For example, a game played on a 19x19 Go
+board initially full of pieces in which players take turns moving any
+pieces to any other cell (empty or occupied). This game would have a
+branching factor starting at 181*180 = 32,580 for the first single
+move.
+
+Are there any real examples like this?
+
+Cameron 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Games that stretch MCTS</div>
+    <div class="author">Cameron Browne</div>
+    <div class="timestamp">Posted on Mar 3, 2011, 9:58:27 AM</div>
+    <div class="content">
+> This game would have a branching factor starting at 181*180 = 32,580
+> for the first single move.
+
+Oops, I mean a branching factor of 361*360 = 129,960.
+
+Cameron 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Games that stretch MCTS</div>
+    <div class="author">João Neto</div>
+    <div class="timestamp">Posted on Mar 3, 2011, 10:07:16 AM</div>
+    <div class="content">
+Games using the Neutral mutator slowly get higher branching factors,
+just like you mentioned.
+
+Cf. <a href="http://sagme.blogspot.com/search?q=Neu">http://sagme.blogspot.com/search?q=Neu</a>
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Games that stretch MCTS</div>
+    <div class="author">Cameron Browne</div>
+    <div class="timestamp">Posted on Mar 3, 2011, 10:20:17 AM</div>
+    <div class="content">
+> Games using the Neutral mutator slowly get higher branching factors,
+> just like you mentioned.
+> Cf.http://sagme.blogspot.com/search?q=Neu
+
+Thanks Nestor but those are still multipart moves, i.e. more than one
+stone is added/modified by the mover each turn.
+
+What I'm really looking for is a game with an unusually high branching
+factor in which the many moves cannot be split into multiple submoves.
+
+Cameron 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Games that stretch MCTS</div>
+    <div class="author">João Neto</div>
+    <div class="timestamp">Posted on Mar 3, 2011, 10:34:01 AM</div>
+    <div class="content">
+Hi Camb,
+
+I was the one that sent the email :-)
+
+The multipart move is not relevant to this discussion. The main idea is
+that with an increasing number of neutral stones, the number of possible
+swap moves increases.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Games that stretch MCTS</div>
+    <div class="author">Russ Williams</div>
+    <div class="timestamp">Posted on Mar 3, 2011, 10:34:25 AM</div>
+    <div class="content">
+I'm confused why your Go variant couldn't be also viewed as a
+multipart move, like how you say Arimaa can be broken down into
+submoves for AI algorithm purposes.
+I.e. first you choose one of your pieces, then you choose another
+cell. So you have "reasonable branching factor" again and 2 plies for
+a move.
+Why would that work for Arimaa but not your Go variant?
+
+cheers
+russ
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Games that stretch MCTS</div>
+    <div class="author">Cameron Browne</div>
+    <div class="timestamp">Posted on Mar 3, 2011, 10:53:07 AM</div>
+    <div class="content">
+> I was the one that sent the email :-)
+
+Sorry, getting my game designers mixed up.
+
+> The multipart move is not relevant to this discussion. The main idea is
+> that with an increasing number of neutral stones, the number of possible
+> swap moves increases.
+
+But none of the moves are actual swaps, they're described in terms of
+flips and can be broken down into flip submoves, i.e. submove A = flip
+a piece of one colour, submove B = flip a piece of the other colour.
+
+For that matter I guess just about *any* type of move can be broken
+down into component submoves, e.g. each Chess move could be described
+as submove A = remove a friendly piece, submove B = place it somewhere
+else.
+
+Hmmm... must... think...
+
+Cameron 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Games that stretch MCTS</div>
+    <div class="author">Cameron Browne</div>
+    <div class="timestamp">Posted on Mar 3, 2011, 11:00:09 AM</div>
+    <div class="content">
+On Mar 3, 11:34 am, Russ Williams <cxiomor...@gmail.com> wrote:
+> I'm confused why your Go variant couldn't be also viewed as a
+> multipart move, like how you say Arimaa can be broken down into
+> submoves for AI algorithm purposes.
+> I.e. first you choose one of your pieces, then you choose another
+> cell. So you have "reasonable branching factor" again and 2 plies for
+> a move.
+> Why would that work for Arimaa but not your Go variant?
+
+I guess it all boils down to how a move is defined. Stephen Tavener
+suggests that when you get down to it there are only really three
+atomic move operations to consider:
+1. Add something.
+2. Remove something.
+3. Modify something.
+All moves can be constructed from combinations of these operations.
+
+Any advances on these three?
+
+Cameron 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Games that stretch MCTS</div>
+    <div class="author">zickzack@gmail.com</div>
+    <div class="timestamp">Posted on Mar 3, 2011, 11:50:59 AM</div>
+    <div class="content">
+On Thu, Mar 3, 2011 at 10:19 AM, camb <cameron...@btinternet.com>
+wrote:
+
+> For games with unusually high branching factors several people have
+> suggested games with multipart moves (Arimaa, Amazons, Omega, Five-
+> stones-per-move Hex, etc). However, such multipart moves would
+> typically be programmed by breaking them down into their individual
+> submoves which reduces the branching factor to something reasonable.
+
+
+That sounds like a good approach for the games listed, but I doubt
+it works for Pilare. Neither do I see how it would work for Symple
+where the decision is to either place a stone or to grow all groups.
+The multimove part or the placing part need to be evalued on their
+respective merits. Maybe, maybe an advanced UCT player has an answer
+to this, but I do not hold my breath to see one.
+
+As for Unlur, the contract phase can be programmed indeed. But a
+bad contract spells doom. At least, it will hamper the game of the
+computer player. Similar arguments hold for other games with a kind
+of contract.
+
+But then, maybe I misunderstood you and playing strength is not
+an issue.
+Benedikt
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Games that stretch MCTS</div>
+    <div class="author">zickzack@gmail.com</div>
+    <div class="timestamp">Posted on Mar 3, 2011, 11:46:37 AM</div>
+    <div class="content">
+On Mon, Feb 28, 2011 at 8:36 PM, Harald Korneliussen
+<vinte...@gmail.com> wrote:
+
+> It's easy to modify a game to have fiendishly large branching factor.
+> 27x27 hex where players place five stones per move, for instance. I
+> doubt it will hold much for humans over regular Hex, but it'd be
+> interesting to know how well a MCTS program handles it.
+
+Yes, it is easy to design a multi-move game with a high branching
+factor. I guess few people would play them for another reason than
+a short phase of curiosity. Because of that, I have restricted myself
+to games I know to work. These games are usually more than a
+multi-move version of another game.
+Benedikt
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Games that stretch MCTS</div>
+    <div class="author">Harald Korneliussen</div>
+    <div class="timestamp">Posted on Mar 3, 2011, 12:01:16 PM</div>
+    <div class="content">
+On Mar 2, 1:22 pm, camb <cameron.bro...@btinternet.com> wrote:
+
+> Harald:
+>
+> > It's easy to modify a game to have fiendishly large branching factor.
+> > 27x27 hex where players place five stones per move, for instance. I
+> > doubt it will hold much for humans over regular Hex, but it'd be
+> > interesting to know how well a MCTS program handles it.
+>
+> I think most programmers would break five submoves per turn into five
+> subsequent moves by the same player. Perhaps not so good from a
+> theoretical perspective - it's much better strategically to consider
+> all moves in a turn as one strategic "lump" - but it works in
+> practice, as Greg Schmidt can attest (e.g. his Axiom Omega player). So
+> five-moves-per-turn 27x27 Hex would reduce to a branching factor
+> similar to Go, at which MCTS excels.
+
+I'm not sure it will work in practice for _all_ games. It depends on
+how much individual moves from the same player interact with each
+other, change the utility of each other. To clarify: If doing A is
+bad, doing B is bad, doing C is bad and doing D is bad, does it follow
+that doing A,B,C and then D will usually be bad? The less often it is,
+the more I think "lumping" will hurt. I think it will be lot less
+often true in 5-moves-per-turn Hex than in, for instance, Arimaa. (I
+am not familiar with Omega).
+
+But anyway, this reminded me of something: GF1, the Gipf playing
+program, was pretty tough, but if you left a line of four gipf pieces
+on the board, it would use a lot of time per move (and probably play
+awfully if it searched for a fixed time rather than fixed ply). The
+reason being that in gipf, when you form a line of four, you can
+choose whether to remove any gipf piece in it or not. Four gipf pieces
+just left there would force it to consider every combination of
+removals, for every move it looked at, for both players.
+That could possibly have been pruned away or handled more gracefully
+by GF1 :) But in general, this idea, "remove any or all of these N
+pieces" can give a nice combinatorial explosion (probably one that
+MCTS handles OK, but nonetheless).
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Games that stretch MCTS</div>
+    <div class="author">Harald Korneliussen</div>
+    <div class="timestamp">Posted on Mar 3, 2011, 12:25:44 PM</div>
+    <div class="content">
+On Mar 3, 12:00 pm, camb <cameron.bro...@btinternet.com> wrote:
+> On Mar 3, 11:34 am, Russ Williams <cxiomor...@gmail.com> wrote:
+>
+> > I'm confused why your Go variant couldn't be also viewed as a
+> > multipart move, like how you say Arimaa can be broken down into
+> > submoves for AI algorithm purposes.
+> > I.e. first you choose one of your pieces, then you choose another
+> > cell. So you have "reasonable branching factor" again and 2 plies for
+> > a move.
+> > Why would that work for Arimaa but not your Go variant?
+>
+> I guess it all boils down to how a move is defined.
+
+That shouldn't really matter, should it? The question is when
+"multiple moves per turn" makes things more complicated and when it
+does not. You could even split up the basic chess move in two:
+
+1. Decide which piece should no longer be standing where it stands.
+2. Decide where that piece should now stand.
+
+Thinking in this way may even be beneficial: sometimes the primary
+benefit from moving a piece is having it in its new position,
+sometimes it is not having it where it used to be. But a chess program
+that first decided which piece to pick up (just from considering which
+piece is least wanted where it is), then where to put it down, would
+probably not be very competitive :)
+
+So for at least some games, we can expect that viewing sub-moves as
+one will be necessary to play well.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Games that stretch MCTS</div>
+    <div class="author">Cameron Browne</div>
+    <div class="timestamp">Posted on Mar 3, 2011, 12:31:43 PM</div>
+    <div class="content">
+> That sounds like a good approach for the games listed, but I doubt
+> it works for Pilare. Neither do I see how it would work for Symple
+> where the decision is to either place a stone or to grow all groups.
+> The multimove part or the placing part need to be evalued on their
+> respective merits. Maybe, maybe an advanced UCT player has an answer
+> to this, but I do not hold my breath to see one.
+Perhaps the UCT player does not need to be so advanced. If the choice
+is between placing a stone and growing a stone then the same process
+can be used, it's just that growing a stone means that the next move
+remains with the player to grow another stone... then another... etc.
+
+Treating a set of growths as a single compound would obviously be
+better strategically, but for games where this becomes combinatorially
+infeasible then there is always the fallback position of breaking the
+move down into submoves even though this may result in a mixture of
+complete (e.g. placement) and partial (e.g. growth) moves at each
+branching point.
+
+> As for Unlur, the contract phase can be programmed indeed. But a
+> bad contract spells doom. At least, it will hamper the game of the
+> computer player. Similar arguments hold for other games with a kind
+> of contract.
+So there will be an optimal time to select the contract just as there
+will be an optimal cell to place a piece each turn. I think the same
+process can be applied to both.
+
+> But then, maybe I misunderstood you and playing strength is not
+> an issue.
+Playing strength is an issue but not the ultimate goal. The AI only
+needs to be strong enough to make reasonable moves, not challenge the
+world champion.
+
+Cameron 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Games that stretch MCTS</div>
+    <div class="author">Harald Korneliussen</div>
+    <div class="timestamp">Posted on Mar 3, 2011, 12:32:59 PM</div>
+    <div class="content">
+On Mar 3, 12:54 pm, "zickz...@gmail.com" <zickz...@gmail.com> wrote:
+
+> Yes, it is easy to design a multi-move game with a high
+> branching factor. I guess few people would play them for
+> another reason than a short phase of curiosity.
+
+Hey, _most_ games are only played for a short phase of curiosity, even
+by the designer! ;) 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Games that stretch MCTS</div>
+    <div class="author">Cameron Browne</div>
+    <div class="timestamp">Posted on Mar 3, 2011, 12:38:47 PM</div>
+    <div class="content">
+> I'm not sure it will work in practice for _all_ games. It depends on
+> how much individual moves from the same player interact with each
+> other, change the utility of each other. To clarify: If doing A is
+> bad, doing B is bad, doing C is bad and doing D is bad, does it follow
+> that doing A,B,C and then D will usually be bad?
+This is true if each move is considered in isolation, but UCT will
+take into account the continuations of each move. The question is
+whether the first submove of any given compound move will be visited
+enough times that the full sequence of submoves will give a reliable
+estimate.
+
+So if submoves A, B, C and D are bad in isolation but their
+combination is actually the optimal move this is a worst case that
+will trouble UCT initially but it should find the correct result given
+enough time.
+
+Can you suggest any game in which this occurs naturally?
+
+Cameron 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Games that stretch MCTS</div>
+    <div class="author">zickzack@gmail.com</div>
+    <div class="timestamp">Posted on Mar 3, 2011, 3:26:25 PM</div>
+    <div class="content">
+On 3 Mrz., 13:38, camb <cameron.bro...@btinternet.com> wrote:
+
+> So if submoves A, B, C and D are bad in isolation but their
+> combination is actually the optimal move this is a worst case that
+> will trouble UCT initially but it should find the correct result given
+> enough time.
+
+> Can you suggest any game in which this occurs naturally?
+
+I think that is a feature of many multi-move games. In Sygo,
+another game from the Symple family, A, B, C, and D can be
+moves that cut off a group from connecting to other ones. When
+all four moves are needed to kill that group, it fits the
+description above.
+
+There is another feature of multi-move games that comes into
+play here. Assume n is the number of submoves per turn with n
+fixed. Assume further that you have a winning threat for which
+you need m submoves. If your opponent manages to play threats
+which you have to answer with o > n - m submoves, then you will
+not be able to execute that threat. The pattern can be mutual,
+turning into a kind of Ko fight. Craige Schensted calls it
+Limbo: http://ea.ea.home.mindspring.com/*DoubleStar.html.
+Combine that with the pattern above and it gets really hard
+for MCTS, I guess. UCT should do better.
+Benedikt
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Games that stretch MCTS</div>
+    <div class="author">Larry Wheeler</div>
+    <div class="timestamp">Posted on Mar 3, 2011, 4:22:32 PM</div>
+    <div class="content">
+For MCTS, how you break down the moves can have drastic effects on the probabilities. For example, if you divide pawn promotion in chess into (1) promotion to queen, and (2) under-promotion, and then further break down (2) into rook, bishop and knight, the results will be quite different from giving all four choices equal probability. So how you present the choices does matter. On the other hand, a human or computer, trying to optimize, could adjust the search depth for different kinds of choices, so how you break it down isn't so crucial.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Games that stretch MCTS</div>
+    <div class="author">Cameron Browne</div>
+    <div class="timestamp">Posted on Mar 4, 2011, 3:52:36 PM</div>
+    <div class="content">
+Hi Larry,
+
+One of the beauties of MCTS is that its search is asymmetric and
+automatically adapts to fit the search space; more promising lines of
+play are investigated more deeply than less promising lines of play.
+So this might address the point you mention.
+
+Cameron 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Games that stretch MCTS</div>
+    <div class="author">Larry Wheeler</div>
+    <div class="timestamp">Posted on Mar 7, 2011, 3:04:59 PM</div>
+    <div class="content">
+Hi Cameron,
+
+Sorry, I spoke out of ignorance. I'll have to look at the algorithm when I get a chance.
+
+Larry
+    </div>
+  </div>
+
+</body>
+</html>

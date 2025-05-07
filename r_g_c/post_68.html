@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Zendo as a Tool for Teaching the Scientific Method</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Nov 2, 2011, 6:01:28 PM</div>
+    <div class="content">
+5 years ago I wrote an essay about a game called Zendo and posted it
+to boardgamegeek.com. Because it's one of the more important things
+I've written about games, I've been periodically editing it for years
+(boardgamegeek tells me that I've edited it 48 times). It's now
+different and better than it was when I first posted it, but it's also
+buried deep in the bowels of the site where few see it. So I've
+decided to republish it at my blog with additional modifications.
+Enjoy:
+
+<a href="https://web.archive.org/web/20130419023705/http://nickbentley.posterous.com/zendo-as-a-tool-for-teaching-the-scientific-m">http://nickbentley.posterous.com/zendo-as-a-tool-for-teaching-the-scientific-m</a>
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Zendo as a Tool for Teaching the Scientific Method</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Nov 3, 2011, 5:34:11 PM</div>
+    <div class="content">
+Good essay. One of the basic problems of our society is that we never
+quite learn how to think, nor do we seem to understand why it's so
+important. I wish every mother, father and school teacher read your
+essay and started to tackle this issue.
+
+> The facts are fish. Don't give your kid a fish. Teach her
+> how to fish.
+
+Amen.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Zendo as a Tool for Teaching the Scientific Method</div>
+    <div class="author">João Neto</div>
+    <div class="timestamp">Posted on Nov 3, 2011, 9:19:03 PM</div>
+    <div class="content">
+Nowadays, with the internet, there are many resources about critical
+thinking, and also some good books about it (eg, Morrow's "Workbook for
+Arguments") But these resources are focused mainly for adults. I don't
+know if there are some to use/play with children.
+
+I wish I was able to find a list of nice and provocative questions that
+could be (in)validated with simple experiments that kids could come up
+with. Let me give you a very simple eg:
+
+"A marble's color influences the time it takes to move through water"
+
+This hypothesis could be presented to a kid, where he would need to come
+up with some method to confirm it or invalidate it. Trying to solve the
+problem would help to understand, in a practical way, many things about
+the scientific method (and could be a good excuse to teach the children
+lots of stuff).
+
+A good list should, imho, focus on measurements (and its errors),
+predictions, estimations, classifications, you name it.
+
+Zendo does seems a nice game to simulate the scientific method (must try
+it). However, and this may sound just nomenclature, let me add something.
+
+When the Universe "creates a law", what we really have is the statement
+of a new problem. Scientists can only create hypothesis given a
+problem, and an hypothesis is basically a "educated guess in standby"
+about that problem, which then induces a set of experiments in order to
+confirm/refute it. After those experiments the scientist is more or less
+confident to propose a thesis (no longer hypo-), a theory, a model of
+the problem. And then we will see if the Universe has something to say :-)
+
+Two things:
+
+* A theory is a model, and so, always a projection, an approximation.
+Can that idea be included in an advanced Zendo ruleset? Perhaps if the
+Universe could only find a c.e.g much more complex that the tried
+experiments, the game result would be a tie...
+
+* The Universe could create a set of related laws or problems of
+progressive complexity, which would produce a certain number of rounds
+before the game was finished. The winning thesis could not contradict
+the previous ones (usually, scientific models of similar problems should
+not mutually contradict themselves). These might provide some
+restrictions on hypothesis making (the well educated guesses are now a
+product of previous experiments and known models) but could, eventually,
+produce the reformulation of previous theories to conform with new and
+more complex data. This would be something like a "paradigm shift".
+
+Anyway, it's a very nice text, Nick. Congrats!
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Zendo as a Tool for Teaching the Scientific Method</div>
+    <div class="author">Harald Korneliussen</div>
+    <div class="timestamp">Posted on Nov 4, 2011, 10:07:07 AM</div>
+    <div class="content">
+Interesting read. I like inductive games. I'm sure there are many more
+great inductive games waiting to be discovered.
+    </div>
+  </div>
+
+</body>
+</html>

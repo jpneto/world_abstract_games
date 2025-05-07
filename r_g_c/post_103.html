@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Chess variant</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Nov 7, 2012, 4:17:02 AM</div>
+    <div class="content">
+This is an inquiry about a chess variant, which is only barely
+a variant, but enough of one to warrant posting here rather than
+the chess group.
+
+It involves two matters -
+
+1: that chess openings are too standardized,
+2: that white has too big an advantage.
+
+My idea is, that to deal with (1) the players start by arranging
+their back rows to suit themselves. This is far from a new idea,
+and as usual, it would be proper to insist that bishops start on
+both colours, and castling be eliminated as unnecessary.
+
+It so happens, that this can be done so as to partially deal with
+(2) as well, which I've not seen suggested before, and seems cool.
+
+The plan would be, fo white to put all his back row on wherever
+he likes, (subject to the above), AND THEN black puts all his on.
+After both placements, white starts and they play as usual.
+(Without castling, as I noted.)
+
+This gives black the opportunity to adjust his own placements
+to deal with white's positionings - get his bishops/rooks to
+line up with the opponent king, place his own king safely, etc.
+
+Now my query is, what do people think of this counter-advantage
+to black? It must obviously be SOME advantage back to black.
+Would it be enough to counteract white's 1st-move advantage?
+Would it be more than enough, so that black would now be ahead?
+If so, what would be a proper reduction - say 4 placements by
+white, then 4 by black, then 4 and 4 again. Or what?
+
+I invite any chess players here, (i.e. almost all of you),
+to give your opinions on this mater. I would love to hear them!
+
+-- Boardly Bill
+
+** There is only one giant board game in the universe,
+** and whenever we play a game, we are just settling
+** one small region of it.    
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Chess variant</div>
+    <div class="author">João Neto</div>
+    <div class="timestamp">Posted on Nov 7, 2012, 10:51:04 AM</div>
+    <div class="content">
+I asked a friend of mine, Carlos Santos, with a ELO ~2300 about it and
+this is his answer:
+
+2: that white has too big an advantage. <i>(Not so big...)</i>
+
+My idea is, that to deal with (1) the players start by arranging
+their back rows to suit themselves. This is far from a new idea,
+and as usual, it would be proper to insist that bishops start on
+both colours, and castling be eliminated as unnecessary.
+
+<i>(Fisher Random Chess uses the same idea. However, Fisher invented a rule 
+to allow castling rule. And this is importante if we think about chess nature. Chess is a
+better and richer game with the castling rule.)</i>
+
+It so happens, that this can be done so as to partially deal with
+(2) as well, which I've not seen suggested before, and seems cool.
+
+The plan would be, fo white to put all his back row on wherever
+he likes, (subject to the above), AND THEN black puts all his on.
+After both placements, white starts and they play as usual.
+(Without castling, as I noted.)
+
+This gives black the opportunity to adjust his own placements
+to deal with white's positionings - get his bishops/rooks to
+line up with the opponent king, place his own king safely, etc.
+
+Now my query is, what do people think of this counter-advantage
+to black? It must obviously be SOME advantage back to black.
+
+<i>(My guess is that black will have some advantage. If, i can chose the
+placement of my pieces after my opponent, with my knowledge about
+standard chess, i guess, after some experiments, i will take advantage
+with the choice.)
+
+When i have time, i will experiment.
+Best, Carlos</i>
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Chess variant</div>
+    <div class="author">zickzack@gmail.com</div>
+    <div class="timestamp">Posted on Nov 7, 2012, 12:41:46 PM</div>
+    <div class="content">
+On Nov 7, 5:17 am, Bill Taylor <wfc.tay...@gmail.com> wrote:
+
+> The plan would be, fo white to put all his back row on wherever
+> he likes, (subject to the above), AND THEN black puts all his on.
+> After both placements, white starts and they play as usual.
+> (Without castling, as I noted.)
+
+That is a rule Schmittberger described in "New Rules For Classic
+Games". Do not worry about re-inventing, for me, it is the most
+convincing variant where you can arrange the setup position.
+
+Schmittberger discusses extra-rules such as "no two bishops
+on fields on the same color", yet adds that he dropped the
+rule, because no sane person did it anyhow. He discusses typical
+setup positions then. If memory serves they are with the rooks
+in the center, bishops on the corners, and the king next to a
+bishop. Since both players strive for a similar setup, it shows
+that White's practical advantage persists to a degree.
+
+Ordinary Chess comes with the weakness on f7 (yes, and that
+on f2). I think the vulnerable king position in the opening
+is one of the sources from which White's better chances stem.
+A free setup might mitigate that.
+Benedikt 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Chess variant</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Nov 8, 2012, 1:19:08 AM</div>
+    <div class="content">
+On Nov 8, 1:41 am, "zickz...@gmail.com" <zickz...@gmail.com> wrote:
+
+> > The plan would be, fo white to put all his back row on wherever
+> > he likes, (subject to the above), AND THEN black puts all his on.
+> > After both placements, white starts and they play as usual.
+> > (Without castling, as I noted.)
+>
+> That is a rule Schmittberger described in
+> "New Rules For Classic Games". ...for me, it is the most
+> convincing variant where you can arrange the setup position.
+
+Glad to hear it! I tend to agree.
+
+> Schmittberger discusses extra-rules such as "no two bishops
+> on fields on the same color", yet adds that he dropped the
+> rule, because no sane person did it anyhow.
+
+Good point! Why bother indeed? Most would not make them
+the same colour, and why not allow the possibility of two
+homo-bishops. (I'm sure there are precedents in the church...)
+
+On the subject of which: I recall hearing long ago, I think
+at high school, that there was a top-class game in which
+there WERE two such bishops, by promotion. It sounds more
+like a puzzle, on 2nd thoughts. A player had to promote
+a pawn, couldn't make it a queen or rook (due to stalemate?),
+so made it a bishop, then soon after trapped an opponent
+rook in the corner with two adjacent supporting bishops, (!)
+and went on to win the remaining endgame. Does anyone
+else ever recall seeing such a thing?
+
+Speaking of unnecessary rules, I was struck by this comment
+of Carlos Santos (relayed by Joao):
+
+> And this is important if we think about chess nature.
+> Chess is a better and richer game with the castling rule.
+
+Yes OC, but only because of the king's vulnerable starting
+position. There's no intrinsic glamour about castling -
+if anything it's a necessary evil. This already makes
+me suspicious about Santos' opinions. He probably likes
+the stalemate rules too!! c)-: (vomit smiley)
+
+> He discusses typical setup positions then.
+> If memory serves they are with the rooks in the center,
+> bishops on the corners, and the king next to a bishop.
+
+Interesting. There is obviously room for debate,
+experimentation and fun. Better for chess!
+
+I would have guessed rooks in the centre, bishops adjacent
+in one corner, and king in the other corner next to the queen.
+A lot would depend on black or white, and especially on
+what white did first, for black.
+
+> Since both players strive for a similar setup, it shows
+> that White's practical advantage persists to a degree.
+
+So not altogether; and...
+
+> Ordinary Chess comes with the weakness on f7 (yes, and that
+> on f2). I think the vulnerable king position in the opening
+> is one of the sources from which White's better chances stem.
+> A free setup might mitigate that.
+
+Very good points. It would be interesting to see some stats
+on whether black or white won most, but I expect it hasn't
+been played enough for that yet.
+
+>    Benedikt
+
+Nice to hear from you!
+
+-- Beaming Bill
+
+** Nobody has the right to "not be offended". 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Chess variant</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Nov 10, 2012, 2:54:57 PM</div>
+    <div class="content">
+On Wednesday, November 7, 2012 5:17:02 AM UTC+1, Bill Taylor wrote:
+
+> The plan would be, fo white to put all his back row on wherever
+> he likes, (subject to the above), AND THEN black puts all his on.
+> After both placements, white starts and they play as usual.
+
+Arimaa uses this exact same rule and the question of whether White or Black (Gold or Silver, in this case) has the advantage has been discussed quite often on the Arimaa forums. The general consensus among the best players, stats in hand, seems to be that this rule makes for a well balanced game with no meaningful advantage for either side.
+
+There's no guarantee that this rule would balance chess to the same extent, but I think it's a great idea anyway.
+    </div>
+  </div>
+
+</body>
+</html>

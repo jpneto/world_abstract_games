@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">How can abstract games achieve commercial success?</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Jan 2, 2013, 7:25:45 PM</div>
+    <div class="content">
+Chew on this:
+
+http://nickbentleygames.wordpress.com/2013/01/02/how-can-abstract-games-find-commercial-success/
+
+Comments?  
+
+<i>I’ve fallen asleep thinking about abstract games every night for more than a decade, and I’ve designed several hundred such games, the rules for which fill out bundles of notebooks I keep in my garage.
+
+Having spent such a colossal portion of my waking life designing abstract games, I’ve long wished there were a way to monetize some of this work. I revisit the challenge periodically, and often end up frustrated. Most commercially successful games aren’t abstract, most abstract games remain unpublished, and most which are published struggle commercially.
+
+Nonetheless there are exceptions. In this post I focus on two commercially successful abstract games, Blokus and Pentago, and the lessons they may offer
+
+I’ve been studying these two because I see both everywhere: game stores, book stores, toy stores, big box stores, novelty shops and even drug stores carry them, across the US. Both are traditional, luckless, themeless games with simple rules, and each has sold more than a million copies, making them among the best-selling  board games of any kind.
+
+Why do these games succeed so spectacularly where others fail? Research and contemplation has led me to believe the following factors are critical:
+
+Hustle - First, as with any product, the most critical among the many critical factors is probably old-fashioned salesmanship and hustle. Generally speaking, products don’t cut through the noise of the marketplace unless they have someone behind them willing to press and press and press their appeal to all prospective buyers. Obvious though this may be, many games don’t have that kind of support. Blokus and Pentago do, or at least did.
+
+Brand Focus – Both Blokus and Pentago, in their rise to commercial success, were published by companies that treated each game as its own brand, and published only that game. Many publishers think of themselves as the brand, publish many games, and treat those games as extensions of the brand. I don’t think this works well to maximize the success of any particular game. Focus is critical. The company should be built around the game, not the other way around. This is how it was for Blokus and Pentago. A company called Sekkoia was formed for the sole purpose of selling Blokus, and a company called Mindtwister was formed for the sole purpose of selling Pentago. Note that things later changed for both games, but only after commercial liftoff: Blokus was sold to Mattel, and Mindtwister started publishing other games/toys, though they still seem to put far more resources into Pentago than any other game.
+
+Short Play Time - The game should be short. Pentago takes 5 minutes to play, and Blokus takes 20. Consumers apply a different standard to abstract games than they do to other kinds of games, in this respect. I’m not sure why, but here’s my best guess: abstract games are mentally taxing, and most people only enjoy mental taxation in short bursts.
+
+Quality Threshold – A game must satisfy some minimum level of quality: it must be enjoyable to play for some sufficiently broad group of people. I emphatically don’t believe a game must be among the best of its kind to succeed commercially. I’ve no doubt you can find many other abstract games that would beat Blokus or Pentago in head-to-head “taste tests” (assuming equally appealing sets of components; more on that below). My claim is corroborated by the abstract game ratings at boardgamegeek.com. There are many games with higher average ratings than both Blokus and especially Pentago there. This isn’t to say abstract games don’t have to be good to succeed. Both Blokus and Pentago are, in their own ways, excellent. But they aren’t the very best. The idea that quality doesn’t matter  beyond a certain point is an important one for game designers like me to bear in mind. I spend most of my time trying to create the Best Game Ever Designed. But for commercial purposes, some of this focus wasted.
+
+Form Factor! – The most overlooked item on this list. I hereby coin Bentley’s law: the more minimal an abstract game is, the more care must be put into making its physical aesthetic absolutely drool- and coffeetable-worthy. Minimalism is hard to do well, but it can be amazing (ask any Apple product designer). Both Blokus and Pentago have excellent product design. Both have eye-catching color schemes, for example, and both have pieces which snap into place on board, which makes the games look neat and ordered in play (a feature many of the most commercially successful abstract games seem to have – see Abalone or Othello for example). Of course, one constraint here is that the amazing form factor has to be achieved at a reasonable price point.
+
+The practical corollary to Bentley’s law is simple: don’t publish an abstract game without hiring a top-notch product designer. Few who publish abstract games do so, because it’s expensive and the cost seems too risky given the commercial record of abstract games. But if Bentley’s law is true, failure is partly the result of poor product design, so the choice to skimp on design could be self-defeating.  Note Pentago has been through several design revisions (I count three wood versions and two plastic versions, not including the multiplayer versions), and widespread commercial success didn’t come until after revision. How do you know if a game has the right form factor? Answer: the Coffeeshop Test. Set the game up in a coffee shop and if people play it, unprompted, you’re good to go. Otherwise go back to the drawing board.
+
+Novel Components – a game must feature some physical components which feel novel to the average consumer. Consumers must feel like they’re getting something new, and that they’re getting some kind of toy in addition to a game. Novelty is key for getting attention (says this Neurobiologist). Blokus has clear acrylic polyominoes which snap into place, and Pentago has that neat twisting board. The average consumer has seen neither of these things in any other game, and both have a pinch of “wow” factor when you first behold them.
+
+I believe commercial success is only possible when an abstract game has every one of the above factors working in its favor.  If any one is missing, the game will never be among the best-selling board games. There may be one exception: it may be that an extraordinary form factor can overcome the need for novel components, because a beautiful form can itself act as a kind of novelty. But we should take care not to fool ourselves when our games aren’t physically novel enough.
+
+There’s one other factor which, while not as critical as the above, probably also helps:
+
+Familiar References – a game can be described as related to something else with which buyers are already familiar. For example, you can tell a person that Blokus is “like Tetris”, and she’ll instantly know it’s about fitting polyominoes together. Or you can tell her that Pentago is “like tic-tac-toe, except the board twists”, and she’ll know she’s in for an n-in-a-row game.
+
+This kind of reference-to-the familiar is probably important in successfully pitching product pickers at retail chains. Most retail gatekeepers don’t know or care about games per se; they care about whether they can sell widgets. For that reason, familiar references can help them feel comfortable with a product. This is my speculation anyway.
+Where does this leave me?
+
+Only one of my games has proven the right kind of appeal: Catchup. It’s the only one non-gamers eagerly request. It also passes the shortness test, clocking in at 15-20 minutes.
+
+However, it’s weak on two points: the physical components aren’t novel enough, and it’s hard to describe it as related to something else with which the consumer is already familiar.  I think the only circumstance under which I would consider publication is if I could create a physical form that passes the Coffeeshop Test with flying colors. I have some ideas about how to do it, but it’s a pretty stiff challenge.
+
+[Update] Stiff challenge or no, I’ve decided to work toward a Kickstarter for Catchup. We’ll see how it goes.
+Are there published games which could do better if they were promoted differently?
+
+If my analysis above is correct, then yes. I think there are a bunch of games with commercial potential but in the interest of brevity I’ll focus on just a couple: the games of Kris Burm, from the GIPF project. His games are already commercially successful relative to most abstracts, but they haven’t reached the rarefied air of Blokus or Pentago, and I think at least one of them could. His games are short, one or two of them do very well on the Coffeeshop Test, and I they handily beat Blokus or Pentago in head-to-head “taste tests”.
+
+I think this games have fallen short in the Hustle and Brand Focus categories. Kris Burm is a better game designer than a salesman, and no one has yet built a company focused solely on one game of his.
+
+The game I would choose to build a company around is Yinsh. Even in its current incarnation it does well on the Coffeeshop Test (though I think it could do even better with the help of more product design – I would keep the pieces as they are but redesign the board), its rings have a novel, toy-like feel, and it can be described in terms of familiar references: “Othello crossed with Tic-Tac-Toe”.
+Questions for readers
+
+What have I gotten wrong in my analysis? What have I missed?
+
+What abstract games, published or unpublished, have the potential to be (more) commercially successful, and why?</i>  
+    </div>
+  </div>
+
+</body>
+</html>

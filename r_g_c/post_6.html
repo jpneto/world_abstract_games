@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS -->
+
+  <div class="post">
+    <div class="subject">Fixed fonts and a CGT-game example: Winerack</div>
+    <div class="author">João Pedro Neto</div>
+    <div class="email"></div>
+    <div class="timestamp">Posted on Nov 8, 2010, 10:27:14 AM</div>
+    <div class="content">
+About the fixed font problem:
+
+"You can also change the font to fixed-width when you view any thread
+or individual message. To do so, just click the "More options" link in
+the colored bar at the top of the page. Next, click on the "Fixed
+text" link. Once you click on this link, all messages will be
+displayed in a fixed-width font until you click "Proportional text" to
+change them back."
+
+The owner of the group may also (they say) make the entire group a
+fixed font group. I strongly advise the owner to do so, so we can
+share our pretty ascii boards :-)
+
+About CGT, a game must have the following properties:
+
+a) Two players in alternate single-move turns
+b) Perfect Information (no random devices, no hidden info)
+c) All branches of the game tree are finite (ie, no matter the move
+sequence, even if the game had a pass option, the game always ends).
+d) The last player to move wins the game (there's also a misère
+version, where the last mover loses)
+
+Here is a nice CGT game which no one was able to analyse (so far),
+called WInerack:
+
+WINERACK 20
+===========
+The setup is a row of 20 bottles.
+
+A bottle is available if it doesn't support any other bottle.
+
+A move is picking an available bottle and place it over two adjacent
+bottles at the same level. However, a moved bottle must always move to
+a higher position.
+
+Last one to move, wins.
+
+Sample position (remember to 'fix' the font)
+
+o o o o o o o o o o o o o o o o o o o o
+a b c d e f g h i j k l m n o p q r s t     
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Fixed fonts and a CGT-game example: Winerack</div>
+    <div class="author">Harald Korneliussen</div>
+    <div class="timestamp">Posted on Nov 8, 2010, 3:01:09 PM</div>
+    <div class="content">
+Winerack is an impartial game (with normal play convention), so it
+should be possible to apply the Sprague-Grundy theorem. Anyone here
+understand it well enough to do that? :-)
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Fixed fonts and a CGT-game example: Winerack</div>
+    <div class="author">João Pedro Neto</div>
+    <div class="timestamp">Posted on Nov 8, 2010, 3:36:11 PM</div>
+    <div class="content">
+yeap, it's an impartial game but really hard to analyse (eg, a
+winerack game does not seem to split into sums of games).
+
+I would recommend that interested people read about impartial games,
+imho it's the easiest area in CGT and a good entry point.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Fixed fonts and a CGT-game example: Winerack</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Nov 9, 2010, 5:26:18 AM</div>
+    <div class="content">
+Can Joao or anyone else help me with this one please.
+
+On Nov 8, 11:27 pm, João Pedro Neto <sonho...@gmail.com> wrote:
+> About the fixed font problem:
+>
+> "You can also change the font to fixed-width when you view any thread
+> or individual message. To do so, just click the "More options" link in
+> the colored bar at the top of the page. Next, click on the "Fixed text" link.
+
+This is presumably in Windows, because none of the above seems
+to apply on my work computer.
+
+It is running on a Unix background, using Mozilla, and the top line
+of the display says things like
+
+File Exit View Go Bookmarks Tools Window Help
+
+Does anyone here have that set-up? How do I get fixed font
+on that system?
+
+TIA -- Bothered Bill 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Fixed fonts and a CGT-game example: Winerack</div>
+    <div class="author">Jackspritz</div>
+    <div class="timestamp">Posted on Nov 9, 2010, 5:44:45 AM</div>
+    <div class="content">
+On Nov 8, 3:27 am, João Pedro Neto <sonho...@gmail.com> wrote:
+> The owner of the group may also (they say) make the entire group a
+> fixed font group. I strongly advise the owner to do so, so we can
+> share our pretty ascii boards :-)
+
+done
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Fixed fonts and a CGT-game example: Winerack</div>
+    <div class="author">Jackspritz</div>
+    <div class="timestamp">Posted on Nov 9, 2010, 5:49:09 AM</div>
+    <div class="content">
+although I have to ask if anyone is bothered by the new aesthetic. I
+don't like it myself but if I'm the only one I'll leave it like this.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Fixed fonts and a CGT-game example: Winerack</div>
+    <div class="author">Harald Korneliussen</div>
+    <div class="timestamp">Posted on Nov 9, 2010, 9:14:57 AM</div>
+    <div class="content">
+On Nov 9, 6:49 am, Jackspritz <schackow...@live.com> wrote:
+
+> although I have to ask if anyone is bothered by the new aesthetic. I
+> don't like it myself but if I'm the only one I'll leave it like this.
+
+You can still change it back to proportional text in the options tab
+for yourself only, can't you?
+
+I did try to look at winerack with the help of a webpage about CGT,
+and I found out pretty quickly that you are right, João. When you move
+the first bottle, you split the row in two ... the problem comes when
+you split one row, in two, but move the bottle to a third. And when
+you combine rows at higher levels.
+
+This is slightly OT for combinatorial games, but I see the seed of a
+lovely eurogame mechanism in winerack.
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Fixed fonts and a CGT-game example: Winerack</div>
+    <div class="author">rjn</div>
+    <div class="timestamp">Posted on Nov 12, 2010, 5:26:07 PM</div>
+    <div class="content">
+We (=Richard Hoshino, Paul Ottaway and myself) looked at Winerack when
+played as a partizan game using red wine and white wine bottles, in
+the start position they alternate. Left moves the white wine and Right
+the red wine bottles. We haven't been able to answer the basic
+question, a puzzle really: given n white wine bottles in a row, how
+many moves does Left have? (He wants the maximum number of moves.) We
+conjecture that using a greedy algorithm works (moving a bottle the
+least number of levels) but that can lead to a situation where a
+bottle is lifted to many levels whereas this can be avoided by being
+less than greedy at an earlier stage.
+
+Richard Nowakowski
+    </div>
+  </div>
+
+</body>
+</html>

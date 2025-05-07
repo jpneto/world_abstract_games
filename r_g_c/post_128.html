@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Board Game Publishers are Doing it Wrong</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Sep 30, 2013, 4:05:16 PM</div>
+    <div class="content">
+<a href="http://web.archive.org/web/20140306115547/http://nickbentleygames.wordpress.com/2013/09/30/board-game-publishers-are-doing-it-wrong/">Essay on my evolving thoughts on board game publishing. Warning: more about the business of games than about games per se.</a>
+
+<i>I’ve been getting interest from game publishers, which has lead me to study the game industry/market. Now I’ve got thoughts about what publishers are doing right and wrong in their efforts to sell games, and this essay is about one of those. Fair warning: it’s about business strategy rather than games, per se. 
+
+Bear in mind I’ve not worked in the game publishing industry. If my thinking is naive, please correct me. I’m happy to trade embarrassment for wisdom. 
+
+As I now understand things, there are two facts about the board games market that strongly shape its dynamics:
+
+Fact #1 - The lifecycle of a board game which has crossed over into mass market success is very long.
+
+As Eric Hautemont, CEO of Days of Wonder says (in this talk):
+
+    …the big difference is how long they last. To put some things in perspective, the best selling board game today, in terms of number of units sold, if not profit, is still a game called “Monopoly,” which was the best selling title back in 1935. Now that’s kind of like if Errol Flynn was making more money this year than Brad Pitt. Or if Cole Porter was outselling Lady Gaga…
+
+This means there’s a gold ring available for any company that can achieve mass-market success: large, self-sustaining annual sales in perpetuity, without a huge marketing layout. Settlers of Catan has achieved this, for example, as has Ticket to Ride.
+
+But this also means only a minuscule fraction of published games reach mass market success. The reason such games have long life cycles is that the non-gamer public only has so much attention for games and most of that attention is on games they already know. Non-gamers don’t like learning rules and have emotional attachments to games they already know. They generally talk about and play these games only, which spreads them further, which is why the sales of best-sellers are self-sustaining. These same factors which encourage long life-cycles create a tall barrier to entry for new games, which keeps the total number of mass-market successes low.
+
+Furthermore, games that don’t reach mass-market success are weak business. Board games have thin margins and you need economies of scale to make them profitable. In addition, a game without sufficient mass-market penetration is far less likely to be sustained by word of mouth, which means you have to market it, which cuts further into what little margin you have. From a profit point of view, most board games aren’t worth continued publication.
+
+Fact #2 - The board game market is saturated.
+
+Boardgamegeek’s database has around 100,000 games in it, and they’re not all dreck. Large and increasing numbers of published games are good, and they’re all competing for our limited attention.
+
+So, if you’re a board game publisher, you’re competing in a saturated market that only admits a minuscule number of games into the charmed circle of mass-market success, and your business will be toil and trouble unless you get admitted to that circle. What do you do? Well, aim for mass-market success. But how?
+
+Let’s start by trying to answer the question: what’s the difference between games that achieve mass market success and those that don’t? The answer might provide guidance.
+
+It seems obvious that, whatever the answer, quality isn’t enough, and is probably best thought of as a prerequisite rather than a determining factor. This is true both in board games and every other saturated market. Are Lady Gaga or Miley Cyrus among the best, most mind-blowing musicians you’ve ever heard? Are they even in the top 50? Are Monopoly or Connect4 the best games you’ve ever played? Yet all are massive best-sellers. Surely you need some level of quality in your core product to compete, but beyond that quality isn’t decisive.
+
+<h3>If quality isn’t enough, what else do you need?</h3>
+Consider the curious case of Bananagrams, the best-selling new word game of the millennium. Huge, perennial best-seller.
+
+The game is a slightly tweaked version of an old public domain game called Pick Two. There’s nothing original about it, and before it was sold as Bananagrams, the game wasn’t nearly as popular.
+
+How did it get so huge? Well, there are two differences between Pick Two and Bananagrams:
+
+1. Bananagrams has a funny name and is packaged in a canvass banana. Bananagrams has a cool brand.
+
+2. Bananagrams has a company behind it, who promote it and push to get it in the public eye. In fact, that company depends on the continued success of Bananagrams for it’s survival, because, though it publishes other games, Bananagrams is responsible for the lion’s share of its revenue.
+
+I don’t think this is a fluke. I’ve come to believe Bananagrams embodies the core difference between a mass-market evergreen game and all the others, at least for recently published games (because of their long life cycle, some current bestsellers found mass market success by different means in earlier times, when the market was different). The recent mass market successes all have this in common:
+
+1. Strong brands
+
+2. Companies that invest heavily in promoting those brands, or have otherwise found some way to get them broadly into the public eye (such as by winning the Spiel des Jahres).
+
+This is reflected, for example, in the large number of recent best-selling board games that rose to success while published by companies focused entirely (or almost entirely) on that game. Bananagrams, Blokus, Pentago, Set, and Wits and Wagers, to name just a few recent evergreen bestsellers, all fall into this category. When your company’s survival depends on a single game, you push it harder and more creatively than you can if it’s just one game in a line-up.
+
+Besides one-game companies, there’s another kind of company that produces a lot of bestsellers: 800 pound Gorillas, like Hasbro. Companies with so much money they can do heavy brand investment for more than one game.
+
+Either way, it comes down to whether you can create an awesome brand and somehow create enough awareness for it that it can rise above 10,000 competing games and get some real mass-market awareness.
+
+This isn’t surprising. Heavy, focused brand investment is critical in every other saturated market too. Lady Gaga may not be the greatest musician in the world, but she she has a unique, attention-getting brand and she’s one of the best promoters alive.
+
+Important Note: in the board games market, brands are attached to games, not to publishers. Mass-market consumers (i.e. non-gamers) don’t know or care who published a game. They only care about the game itself. Which brings me to my next point:
+
+<h3>What are game publishers doing?</h3>
+If you want to be Lady Gaga, you have to POUR yourself into creating a brand and doing everything you can to promote that brand. You have to create broad and lasting market awareness for yourself, because without that, you have no chance of overcoming the tough barriers to mass-market success (which, remember, is really the only place worth being if you’re a board game publisher).
+
+I can think of a dozen game publishers off the top of my head, however, who produce lots of games and spread their resources over all of them. In a saturated market this is a bad strategy. By spreading their resources out in this way, they make it harder for any of their games to achieve the broad consumer awareness required for mass-market success. It’s like rolling a thousand-sided die and hoping a particular number will come up.
+
+I suspect publishers do this for two (maybe three) reasons:
+
+1. Twenty years ago (or even 10) the market was much less saturated and you could more easily succeed by publishing a bunch of different games concurrently. Companies are operating on old assumptions.
+
+2. Publishers erroneously think of themselves as the brand, and not their games. Probably because they started out selling to gamers, who are different from mass-market consumers in that, for them, the company can be the brand.
+
+3. Maybe they’re happy just selling to gamers? This means they’re happy scraping by. As a gamer, of course I love that so many companies cater to me, but if I were on the other side of the transaction I doubt I’d be satisfied.
+
+Anyway here’s what all those companies should do: eliminate all but their top-selling games from their lineups, and put everything into promoting the few that make the cut. Make a few products amazing and then do everything you can to make sure the whole world knows about them and thinks of them fondly, and get them into every conceivable retail outlet. That’s how you compete in a saturated market.
+
+I want to make a distinction here. I’m not arguing companies should refrain from publishing new games. I’m arguing they should kill games that aren’t among their most promising, thereby keeping the total in publication small and their resources concentrated. I’m arguing for severe Darwinian selection.
+
+In addition, once a company has at least one game in the magic circle of mass-market success, then it may be ok to branch out, because, as mentioned, maintaining that success once you have it isn’t nearly hard as getting it in the first place, which frees up resources. Hasbro can do this, for example. Most companies aren’t in that position.
+
+I believe even a company like Days of Wonder, one of the multi-game publishers that understands what to do in a saturated market (they only publish one game a year, they put a ton of resources behind each, and make excellent, in-house digital versions for each to help mass-market consumers get over their inhibitions about learning new rules – and their sales show it: a “failure” for them still sells 20,000 copies), even they could benefit by more aggressive product-killing, because a number of their games have little chance of getting to that self-sustaining point where they spread by themselves.
+
+If I were Days of Wonder, in addition to publishing one game a year, I’d start killing games. I’d kill a bunch up front and then one game a year thereafter, to keep the total in publication stable. Or at least I’d set some kind of sales threshold: if a game doesn’t achieve a certain sales growth number by a certain point, kill it, because it’s unlikely to get into the magic circle where it spreads itself.
+
+This strategy isn’t new. It’s proven valuable in other saturated markets, even for large companies that already enjoyed broad brand awareness. For example, famously, it’s the strategy Steve Jobs adopted for Apple on his return to the company in the 1990s, which lead to one of greatest turnaround stories in the history of corporations. Jobs killed almost all of Apple’s product line. They went from 350 products to 10, but those 10 were a) great; b) sexy; and c) promoted everywhere.
+
+Of course, the success of this strategy depends on how effectively you can use the resources you free up by killing products to either:
+
+a) accelerate the market uptake of those remaining (which means creative, aggressive marketing, something at which many publishers don’t excel, and which seems difficult to do for games generally (here’s a good article about some of the difficulties) – it also means redesigning your product occasionally to improve the degree to which it sells itself – see Mindtwister, for example, which has redesigned its big hit Pentago more times than I can count); or
+
+b) develop new games which are more likely to penetrate the mass-market than the ones you’ve killed.
+
+…and you have to make sure the games you push are really good. If you only bet on one horse, it had better be a fast horse.
+
+Even though this strategy isn’t new, it’s grossly underutilized in the board games industry. Maybe a few publishers will happen by this article and change things up. If you’re one, and it turns out I’m right, you’re welcome and hire me. If I’m wrong, well, that’s what happens when you listen to some random guy from the internet.</i>
+    </div>
+  </div>
+
+</body>
+</html>

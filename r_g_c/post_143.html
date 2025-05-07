@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Bill Taylor has died</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Aug 11, 2021, 4:18:33 AM</div>
+    <div class="content">
+Hello group members
+
+I am Mark Taylor, Bill's son. 
+
+I'm sorry to inform you that my father died on Tuesday the 27th July from a heart attack. I'm currently going through his online correspondence to inform people who are out of our local family and friends circle.
+
+He was a member of many group such as this and they always brought him a lot of enjoyment.
+
+Kind Regards
+
+Mark Taylor    
+    </div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Puzzle Design Survey</div>
+    <div class="author">Cameron Browne</div>
+    <div class="timestamp">Posted on May 12, 2011, 10:24:50 AM</div>
+    <div class="content">
+Hi,
+
+I'm doing a puzzle design survey as part of my current research
+project.
+This involves doing some puzzles and answering questions about them:
+
+http://www.mcts.ai/survey1/
+
+Please run the survey if you have time. All feedback appreciated!
+
+Cameron     
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Puzzle Design Survey</div>
+    <div class="author">Cameron Browne</div>
+    <div class="timestamp">Posted on May 20, 2011, 2:21:01 PM</div>
+    <div class="content">
+Hi,
+
+Many thanks to those of you who participated in last week's puzzle
+design survey. I received over 500 responses within three days -
+sterling effort!
+
+For those who are interested, here is a report that explains what the
+experiment was all about:
+http://www.mcts.ai/survey1/browne-better-puzzles-5.pdf
+
+This is a draft of a chapter for an upcoming book so subject to
+change. Please let me know if you have any comments.
+
+Regards,
+Cameron 
+    </div>
+  </div>
+
+</body>
+</html>

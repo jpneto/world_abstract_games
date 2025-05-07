@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">New game: Kopano</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Jun 27, 2013, 5:49:54 PM</div>
+    <div class="content">
+Here's another square board connection game. This one is similar to Konobi, but has much greater clarity and simpler tactics. It's also colder. Rules: 
+
+KOPANO
+
+Introduction
+
+Kopano is a drawless connection game for two players: Black and White. It’s played on the intersections (points) of a square board, which is initially empty. The suggested size is between 9x9 and 15x15. The top and bottom edges of the board are colored black; the left and right edges are colored white. "Kopano" is the Twana word for "connection". 
+
+Definitions 
+
+Two like-colored stones are strongly connected if they are orthogonally adjacent to each other, and weakly connected if they are diagonally adjacent to each other without sharing any strongly connected neighbor. Note that two stones of different colors are never considered to be connected. 
+
+A chain is a set of (weakly or strongly) connected stones. 
+
+Play 
+
+Starting with Black, the players take turns placing stones of their own color on empty points of the board, one stone per turn. 
+
+It's illegal to place a stone on a point where it makes a weak connection unless placing an enemy stone on that same point would also make a weak connection. Also, as in Crossway, it's illegal to form a crosscut, i.e. a 2x2 pattern of stones consisting of two weakly connected Black stones and two weakly connected White stones. 
+
+If a player can't make a move on his turn, he must pass. Passing is otherwise not allowed. There will always be a move available to at least one of the players. 
+
+The game is won by the player who completes a chain of his color touching the two opposite board edges of his color. Draws are not possible. 
+
+Pie rule
+
+The pie rule is used in order to make the game fair. This means that White will have the option, on his first turn only, to change sides instead of making a regular move. 
+
+Notes 
+
+BGG entry: http://www.boardgamegeek.com/boardgame/144342/kopano. A sample game is available there, as well as a script to play the game with the Zillions of Games program.    
+    </div>
+  </div>
+
+</body>
+</html>

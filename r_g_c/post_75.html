@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">SP connectivity and ConHex</div>
+    <div class="author">Cameron Browne</div>
+    <div class="timestamp">Posted on Dec 11, 2011, 8:11:16 PM</div>
+    <div class="content">
+Hi,
+
+Here is the connectivity graph of the visible balls in a fully packed
+5x5 square pyramid:
+http://www.boardgamegeek.com/image/1174727/shibumi
+
+This graph is trivalent, i.e. no more than three balls meet around any
+intersection. This property allows the formation of connections
+without fear of deadlock, much as connection games on the hexagonal
+grid (e.g. Hex and Y) avoid deadlock.
+
+The dual of this graph is equivalent to the ConHex board!
+http://www.boardgamegeek.com/image/1174726/shibumi
+
+This appears to be one of those happy mathematical coincidences.
+
+Cameron   
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: SP connectivity and ConHex</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Dec 18, 2011, 11:25:12 AM</div>
+    <div class="content">
+On Dec 12, 9:11 am, camb <cameron.bro...@btinternet.com> wrote:
+
+> The dual of this graph is equivalent to the ConHex board!
+
+Speaking of duality, there is a cute example here:
+
+the 3x3 tictactoe board with toroidal glueing of edges,
+.... is SELF-DUAL!
+
+I always think this fact could andd should become
+the key to a wonderful little abstract.
+
+-- Toroidal Taylor
+    </div>
+  </div>
+
+</body>
+</html>

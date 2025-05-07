@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">New game: Quench</div>
+    <div class="author">Luis Bolaños Mures</div>
+    <div class="timestamp">Posted on Dec 29, 2012, 10:44:13 PM</div>
+    <div class="content">
+QUENCH
+
+Introduction 
+
+Quench is a series of finite Go variants with banned or restricted group creation subsequent to captures. Area scoring is used, and suicide of any number of stones is not allowed. The ko and superko rules are not used. All other Go rules apply unless otherwise specified. 
+
+Play 
+
+The variants are sorted from most to least different from Go. 
+
+Variant #1 
+
+Once a player makes a capture for the first time, that player can’t create any more groups for the rest of the game. 
+
+Variant #2 
+
+Once a player makes a capture for the first time, that player must perform exactly one of the following actions on every following turn for the remainder of the game: 
+
+- Pass.
+- Place one stone of his color without creating any group.
+- Place one stone of his color so that it joins two or more groups and another one so that it creates a new group, in that order.
+
+Variant #3 
+
+When a player makes his first capture, he must place a coin next to himself, tails up. From then on, the following rules apply: 
+
+- When a player joins two or more groups, he must place his coin heads up. 
+- When a player creates a new group, he must place his coin tails up. 
+- A player’s move can only create a new group if his coin is heads up at the start of his turn. 
+
+Variant #4 
+
+Just like variant #3, except that the coins are placed heads up when they’re introduced. 
+
+Author's notes 
+
+These variants are very different from Go, but I wonder how they compare to it in terms of depth. Once a player makes a capture, the game becomes easier than Go, but before that point there's a difficult strategic dilemma between capturing enemy groups in exchange for reduced move options thereafter and preserving your flexibility by letting threatened enemy groups escape. Also, the disincentive to make the first capture in variant #1 seems to be strong enough as to delay it for the most part of the game. When it finally happens, it's a turning point comparable to the choosing of colors in Unlur and Mind Ninja, but without the unequal goals.
+
+Variants #2 to #4 make for a more challenging post-capturing phase by allowing players to create a new group every time they join two or more of their existing groups. This adds another strategic layer to the pre-capturing phase as well. Since having good prospects of joining some of your groups is crucial to success in the second phase, your play during the first phase must be adjusted accordingly. The dilemma is served again: there's an increased incentive to create many groups, but that also means more vulnerable groups.    
+    </div>
+  </div>
+
+</body>
+</html>

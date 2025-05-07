@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Yusailo, or the hazards of continuous space</div>
+    <div class="author">Xifeng</div>
+    <div class="timestamp">Posted on Dec 30, 2011, 2:11:37 AM</div>
+    <div class="content">
+I've done about all I can for this game, by which I mean my only play-
+tester gave up in disgust, so I figure it's as ready for release as it
+will ever be.
+
+As far as I know, Sprouts is the only significant abstract played in
+continuous space. It is a good game, I suspect even a great game, but
+the strategy is terribly obscure and the tactics even more-so. Yusailo
+is my attempt in this under-represented genre, and also a good
+illustration of why it is so under-represented.
+
+The most basic rules are the same as Sprouts: you begin with some
+number of spots; every move is a line from one spot to another, with a
+new spot on that line. No spot may be connected to more than 3 other
+spots.
+
+In Yusailo, every spot is owned by one player or the other; call them
+X and O if you like. You must start a move at one of your own spots,
+but the line can end anywhere, and then the new spot is also one of
+your own spots. If your move causes the spot that you *end* on to
+become a "dead spot" -- causes it to be connected to 3 other spots --
+then you must move again from the new spot. If you cannot finish a
+move, then you lose; this means that before you start a move, you must
+find a spot that has only 1 or 0 connections for you to end your move
+on.
+
+The start position is any number of spots for each player, I usually
+use between 5 and 7, but the opportunity for handicap games and ad-hoc
+balancing should be obvious: just have a different number of Xs and
+Os.
+
+A property of both Yusailo and Sprouts is that every move -- and every
+game -- has an infinite number of topologically equivalent
+representations. There is a notation for both that condenses all
+equivalent drawings into a single position, so it's entirely possible
+to re-draw a position if it gets too complicated. In some cases
+though, the simplest drawing of a position can be quite complex and
+awkward. Because of the chain-move mechanic in Yusailo, what would be
+a simple loop in Sprouts can become a tangled nest of links.
+
+My goal was to make a pen-and-paper game that could be learned more
+quickly than either Sprouts or Dots and Boxes, and would take less set-
+up than Dots and Boxes. I think I have achieved that, but it takes a
+particular mind-set to play. It's a game that at the very least
+demands good sportsmanship from all parties.
+
+For some illustrations and examples, see <a href="https://web.archive.org/web/20130512201926/http://xifeng.posterous.com/yusailo-tactics">http://xifeng.posterous.com/yusailo-tactics</a>
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Yusailo, or the hazards of continuous space</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Dec 30, 2011, 6:08:22 AM</div>
+    <div class="content">
+I'm also interested in games like these. I'll try this one when I have
+some time.
+
+I know a few other games in this genre but I don't know any with the
+ownership of spots. I like that idea.
+
+There's a good book called "Gladstones Games to Go" which has a number
+of interesting abstracts, including 2 sprouts-like games:
+
+Sprouts Plus: instead of spots you have plus-signs and you're allowed
+to make a connection to each arm of each plus sign (4 connections per
+"spot"). Believe it or not this game doesn't go on forever.
+
+Looperman: start with an array of dots, take turns drawing loops whose
+perimeter runs through 1 or 2 dots. No loops may cross or touch. last
+mover wins (variant: last mover loses). 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Yusailo, or the hazards of continuous space</div>
+    <div class="author">Jackspritz</div>
+    <div class="timestamp">Posted on Dec 30, 2011, 8:54:31 AM</div>
+    <div class="content">
+On Dec 29, 7:11 pm, Tristan <rozencra...@gmail.com> wrote:
+> I've done about all I can for this game, by which I mean my only play-
+> tester gave up in disgust
+
+ahh!!!!! Come on that's not fair. I gave up on google docs in disgust,
+not the game. Yusailo seems like a brilliant game so far but I can't
+deal with the finicky docs interface for a game like this. Sometimes I
+would need to draw a line several times over to make my move.
+    </div>
+  </div>
+
+</body>
+</html>

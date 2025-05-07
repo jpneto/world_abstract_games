@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">[new game] Charisma</div>
+    <div class="author">superslacker</div>
+    <div class="timestamp">Posted on Dec 20, 2010, 4:26:06 PM</div>
+    <div class="content">
+Hey All,
+
+Nick's contest inspired me to think about flipping games so I had a go
+at it. Unfortunately It doesn't fit the first requirement, but was
+none the less an interesting exploration.
+
+<a href="https://boardgamegeek.com/boardgame/89096/charisma">http://siteswapgeneration.com/games/Charisma/</a>
+
+I suppose it fits in Cameron's current meme observation :)
+Quite a few people helped with playtesting, ideas, and inspirations.
+
+A sample game can be found here at the iggamecenter sandbox:
+http://www.iggamecenter.com/gm.php?aid=17417&sid=157248&code=LONERU376
+
+I hope to see a game at some point with 2 people at a high level of
+strategy playing each other! If all works out right then there should
+be quite a bit of drama in the game since comebacks were worked into
+the design.
+
+- Daniel    
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: [new game] Charisma</div>
+    <div class="author"></div>
+    <div class="timestamp">Posted on Dec 24, 2010, 3:43:28 PM</div>
+    <div class="content">
+I added it to Arty's list of proposed games at iggc.
+Now it just needs a bunch of thumbs up (hint/wink/nudge).
+<a href="http://www.boardgamegeek.com/geeklist/43699/item/1509156#item1509156">http://www.boardgamegeek.com/geeklist/43699/item/1509156#item1509156</a>
+    </div>
+  </div>
+
+</body>
+</html>

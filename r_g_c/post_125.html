@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">Abstract Strategy Games Online: The Definitive Guide (Help!)</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Aug 5, 2013, 1:58:01 PM</div>
+    <div class="content">
+Hey All,
+
+I've been working up this guide that I've long wished existed, and I'm hoping you'll let me know if there's something I should add to make it more authoritative/complete: 
+
+<a href="https://web.archive.org/web/20140208080628/http://nickbentleygames.wordpress.com/2013/08/05/abstract-strategy-games-online-guide/">Abstract Strategy Games Online: The Definitive Guide</a>
+
+Apologies in advance for anything important I've missed. 
+
+Nick
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Abstract Strategy Games Online: The Definitive Guide (Help!)</div>
+    <div class="author">Cameron Browne</div>
+    <div class="timestamp">Posted on Aug 8, 2013, 10:07:02 AM</div>
+    <div class="content">
+Hi Nick,
+
+Great work on compiling the guide for online game resources, that's potentially very useful. 
+
+==================================================
+
+These might be worth adding:
+
+1. The Games Journal: http://www.thegamesjournal.com
+This is an online archive of articles about abstract games, all freely available. It hasn't been updated since 2005 but contains some of the best writing on games, including Thompson's classic "Defining the Abstract".
+
+2. Lost Treasures from Games & Puzzles: 
+https://rapidshare.com/#!download|817p3|383774785|Lost_Treasures_from_Games___Puzzles.pdf|33085|0|0|1|referer-9C3C4EE35D7D7BD05AECE02C5AF90FA4
+This is a (large) .pdf that contains photocopies of the more interesting pages of the Games & Puzzles magazine from the 1970s, compiled by Fred Horn. It contains 167 pages of new game ideas, great fun to flip through, just goes to show that there isn't much that hasn't been discovered before. A lot of recent games are probably rediscoveries of ideas included in this collection.
+
+==================================================
+
+You might also consider a link to the game-related pages at the US Patent Office site, where you can find interesting things that authors may not otherwise publicly announce. I had fun trawling through the "Games: Path forming" patents looking for things to include in the connection games book.
+
+It's also fascinating to see how the USPO split the games class into its various sub-categories, giving a very practical classification scheme for games. Comparing the (practical) USPO classification to existing (theoretical) classifications could be an interesting little side-project in itself sometime.
+
+Class 273: Amusement Devices: Games
+http://www.uspto.gov/web/patents/classification/uspc273/sched273.htm
+
+Schedule 236: Board Games, Pieces, or Boards Therefor
+http://www.uspto.gov/web/patents/classification/uspc273/defs273.htm#C273S236000
+
+Schedule 292: Card or Tile Game, Cards or Tiles Therefor
+http://www.uspto.gov/web/patents/classification/uspc273/defs273.htm#C273S292000
+
+Schedule 148R: Games Accessories:
+http://www.uspto.gov/web/patents/classification/uspc273/defs273.htm#C273S148000
+
+Schedule 153R: Puzzles:
+http://www.uspto.gov/web/patents/classification/uspc273/defs273.htm#C273S153000
+
+==================================================
+
+These fora may or may not be relevant:
+
+1. Nestor has a discussion forum related to nestorgames and games in general, though it doesn't get much traffic:
+http://nestorgames.freeforums.org/index.php
+
+2. LinkedIn has a "Board games and game design" discussion group, which is reasonably active:
+http://www.linkedin.com/groups/Board-games-game-design-1159637/about
+However, most of the posts I've seen there so far have been of the "I have a great game idea! How do get it published?" variety rather than much in-depth discussion of games.
+
+==================================================
+
+…and don't be too dismissive of poor old gamerz.net :)
+
+"Gamerz – Ancient turn-based site boasting many prominent abstract game designers as members, and plenty of games."
+
+Quite a few people including myself still use it daily, it provides a great play-by-email service for a lot of games that can't be played elsewhere.
+
+==================================================
+
+Regards,
+Cameron
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: Abstract Strategy Games Online: The Definitive Guide (Help!)</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Aug 8, 2013, 4:09:58 PM</div>
+    <div class="content">
+Hey Cameron,
+
+Wow. Thanks for all these links. I've just glanced over them and added the one sure-fire inclusion: the Games and Puzzles Magazine PDF, which is now threatening to derail my day :)
+
+I'll look over the other ones when I have a bit more time early next week. 
+
+I guess I "ancient" is too pejorative. I'll change the description so it doesn't sound like I'm poopooing. 
+    </div>
+  </div>
+
+</body>
+</html>

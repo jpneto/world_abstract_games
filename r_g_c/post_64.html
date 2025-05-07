@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">REPORT ON 'KI'</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Sep 18, 2011, 3:42:53 PM</div>
+    <div class="content">
+REPORT ON "KI"
+
+This is a play-tester's report on KI, which was introduced here
+some little while ago. Joao and I have played a few games
+of this, and have found it to be broken, sadly.
+
+It seems to have been designed with a view to making a Go-like
+game, and initially it seemed to have succeeded. The board is
+standard square, and the playing of pieces as in Go,
+with these being the key rules of difference:
+
+========================================
+A player controls a space when he owns a majority of the stones
+orthogonally adjacent to the space, with a minimum of two.
+If the space is occupied by his opponent, the enemy stone
+is removed from play.
+
+If a space is surrounded by an equal number of stones of
+both colors, it is a legal placement for either player.
+
+It is forbidden for a player to place a stone on a space
+controlled by his opponent, even to make a capture.
+========================================
+
+Alas, we eventually discovered that these rules allow that
+square patterns like this...
+. . . .
+. o o .
+. o o .
+. . . . are completely untouchable!
+
+Quite un-Go-like, and in any event rather game-crippling;
+as it is almost impossible for black to stop white doing this
+in any internal space that is about 5x5 in size, perhaps smaller.
+
+To me, this vulnerability of large groups destroys whatever
+interest the game might have had. As I say, this is a pity,
+as it seemed like a good idea to begin with.
+
+Again, this is largely a matter of taste, and it may be that
+it is still an interesting game on small boards, perhaps 9x9.
+
+-- kiwibill     
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: REPORT ON 'KI'</div>
+    <div class="author">Jackspritz</div>
+    <div class="timestamp">Posted on Sep 18, 2011, 8:43:25 PM</div>
+    <div class="content">
+BIll I have considered this, Ki certainly does need a sizable board to
+have any kind of merit but it is not fundamentally flawed, although
+obviously it doesn't have the greatest parity because it is has no
+coldness. The thing is one has to reconcile creating secure structures
+with generating influence over the board. Focussing in on attempting
+to create these squares during the game is a good way to lose because
+in the meantime the opponent will be creating structures that while
+not as secure, create a larger territorial advantage. When Ki is
+played on an 11x11 board it can be deceptively deep. The strategy for
+winning Ki is to spread your resources out as thin as possible to
+create more influence over the board without losing significant plots
+of territory. An experienced Go player on iggc who ultimately
+convinced me to release Ki, tuerda, demonstrated that sacrifices are
+an important strategic device in Ki. Well whatever he was doing it
+allowed him to win on a fairly consistent basis playing second. It was
+also tuerda who was the first to mention that the gameplay was very
+similar to that of Go. All this said, Ki is the simplest application
+of a new capture mechanism, it is completely hot and there is an
+obvious first move advantage and therefore I wouldn't be surprised if
+it could be easily solved however it is really a concept game. The
+Reason I released Ki is because it is a game at all, which is
+surprising given the minimal ruleset and fundamental hotness. I was
+just planting my flag in some undiscovered territory here. I wouldn't
+even want to see Ki implemented on any game sites at least until
+extensive analysis and play testing was done. As for this unassailable
+formation of stones being Un-Go-Like are you aware of groups with 2
+eyes in Go? How is this any different? Besides if unassailable
+formations didn't exist Ki would be cylcic. But thanks for taking an
+interest. 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: REPORT ON 'KI'</div>
+    <div class="author">Xifeng</div>
+    <div class="timestamp">Posted on Sep 18, 2011, 10:14:45 PM</div>
+    <div class="content">
+On Sun, Sep 18, 2011 at 7:42 AM, Bill Taylor <wfc.t...@gmail.com> wrote:
+
+> Alas, we eventually discovered that these rules allow that
+> square patterns like this...
+>  . . . .
+>  . o o .
+>  . o o .
+>  . . . .       are completely untouchable!
+>
+> Quite un-Go-like, and in any event rather game-crippling;
+> as it is almost impossible for black to stop white doing this
+> in any internal space that is about 5x5 in size, perhaps smaller.
+>
+> To me, this vulnerability of large groups destroys whatever
+> interest the game might have had.  As I say, this is a pity,
+> as it seemed like a good idea to begin with.
+
+So often, someone finds a dominant tactic in a game and says "well,
+that about wraps it up for that game." It's so common there's a name
+for it, First-Order Optimal strategy. (FOO strategy)
+
+FOO strategies are easy to hold up as an excuse not to play a game,
+but they almost always have counter-strategies that are less obvious.
+Think of the chain-rule in Dots, a classic FOO strategy that seems
+airtight until the first time you get nibbled.
+
+Go of course has the checkerboard strategy, which can similarly be
+beaten by spreading out across the board and securing larger
+territories. Almost every game has FOO strategies that turn out not to
+be broken after all.
+
+Regards,
+Xifeng
+    </div>
+  </div>
+
+</body>
+</html>

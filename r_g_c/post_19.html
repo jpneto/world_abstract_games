@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">About some oldies</div>
+    <div class="author">João Pedro Neto</div>
+    <div class="timestamp">Posted on Dec 12, 2010, 8:15:34 PM</div>
+    <div class="content">
+I found lots of scanned rule sets from the games archive site at
+<a href="https://web.archive.org/web/20130411080719/http://www.gamearchives.org/rules/">http://www.gamearchives.org/rules/</a>
+
+I discovered some games that I was searching (cf. list
+<a href="https://jpneto.github.io/world_abstract_games/unknown.htm">http://homepages.di.fc.ul.pt/~jpn/gv/unknown.htm</a>), namely Checkorete,
+Onino and Stax.
+
+There are a lot of games there but since abstract games, for quite
+some time, are named with strange words (I wonder if there's some
+reason for that?) I was able to get some interesting rules. If you
+like, search the page for Contack, Hexagons, Kimbo and Pegity.
+
+If you find others, please tell.    
+    </div>
+  </div>
+
+</body>
+</html>

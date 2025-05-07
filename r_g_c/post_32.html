@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Thread</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button id="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+
+<script>
+  function toggleDarkMode() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    const isDark = body.classList.toggle('dark-mode');
+
+    // Save preference
+    localStorage.setItem('prefers-dark', isDark);
+
+    // Update button label
+    button.textContent = isDark ? '🔆' : '🌙 ';
+  }
+
+  // On page load, apply saved preference and label
+  window.onload = function() {
+    const prefersDark = localStorage.getItem('prefers-dark') === 'true';
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+
+    if (prefersDark) {
+      body.classList.add('dark-mode');
+      button.textContent = '🔆';
+    } else {
+      button.textContent = '🌙';
+    }
+  };
+</script>
+
+<!-- POSTS, entries can also have a <div class="email"></div> -->
+
+  <div class="post">
+    <div class="subject">New Game: Swaparound</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Dec 23, 2010, 9:19:01 PM</div>
+    <div class="content">
+This popped into my head last night. I haven't tested it (as is so
+often the case these days), so it may be more an illustration of an
+interesting concept rather than a good game (but who knows!). Plus it
+also has a colorful board. So check it out.
+
+<a href="https://web.archive.org/web/20110214094505/https://nickbentley.posterous.com/new-game-swaparound">https://nickbentley.posterous.com/new-game-swaparound</a>
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: New Game: Swaparound</div>
+    <div class="author">Bill Taylor</div>
+    <div class="timestamp">Posted on Dec 27, 2010, 4:39:45 AM</div>
+    <div class="content">
+Sorry Nick, I didn't quite follow the swap rule.
+
+Is the rule that a swap can be done on ANY turn in the game,
+provided that it follows a move in a new most-interior ring?
+
+- bill
+
+P.S. That really IS a festive board! :-) 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: New Game: Swaparound</div>
+    <div class="author">jfpierce</div>
+    <div class="timestamp">Posted on Dec 27, 2010, 11:43:00 PM</div>
+    <div class="content">
+Can't say much without having played it, but the underlying idea (as I
+see it), that better spaces on the board should be more difficult to
+get, is a good one. In that respect, it reminds me a bit of conhex and
+aronda. Also like aronda, play would likely proceed from the outside
+in.
+
+The issue I see with swaparound seems to be that while there is the
+potential to change colors five times, I'm guessing it would probably
+only happen once or twice, in which case it just amounts to a player
+getting to go twice in a row. And what if someone plays the first move
+in the center? Then after a swap, you're just playing Y on a different
+board.
+
+Still, it's an interesting idea and I'd like to see how it actually
+plays. 
+    </div>
+  </div>
+
+  <div class="post level-1">
+    <div class="subject">Re: New Game: Swaparound</div>
+    <div class="author">Nick Bentley</div>
+    <div class="timestamp">Posted on Dec 28, 2010, 3:13:16 PM</div>
+    <div class="content">
+Bill: answer to your question: yes. So, there is a maximum of 5 total
+swaps on a hexhex5 board. My experience is that games where you
+switch sides more than once are opaque, which is why it's probably not
+a good game. Still haven't played it though.
+
+jfpierce: right. The idea was to make central moves balanced with
+outside moves. In this case, probably too balanced.
+
+If someone plays that first move in the center, they're not playing
+very well. That's a devastating move in this game and would surely be
+swapped.
+    </div>
+  </div>
+
+
+</body>
+</html>
