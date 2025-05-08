@@ -157,7 +157,62 @@ hexgv2diag("3,7,4,.x./.hh./xhhh;/.hhhhx/whhhhhx/.hhhhw/.hhh./....");
 <p><font size="3" face="Arial">There is a ZRF to play
 <a href="zrfs/linearPente.zip">Linear
 Pente</a> with <a href="http://www.zillionsofgames.com">Zillions</a>.</font></p>
+
+<p><font size="4" face="Arial"><strong><a name="super_pente"></a>SUPER-PENTE</strong></font></p>
+<p align="left"><font size="3" face="Arial">This 2010 variant was proposed by 
+Bill Taylor and João Neto:</font></p>
+<ul>
+	<li>
+	<p align="left"><font face="Arial">Unlimited board (but a 19x19 should be 
+	fine)</font></p></li>
+	<li>
+	<p align="left"><font face="Arial">Move sequence is 12*, but the two stones 
+	cannot be placed in the same orthogonal or diagonal line</font></p></li>
+	<li>
+	<p align="left"><font face="Arial">If a line of two or more stones of the 
+	same colour become trapped by a newly-played and an existing stone of the 
+	other colour, they are removed.</font></p></li>
+	<li>
+	<p align="left"><font face="Arial">Wins the first to make a ortho/diag line 
+	of four or more stones. [making 5 in-a-row is too hard with this ruleset]</font></p>
+	</li>
+</ul>
+<p><font face="Arial">Some sample matches:</font></p>
+<blockquote>
+	<p><font face="Courier New">j&nbsp;k&nbsp;l&nbsp;m&nbsp;n&nbsp;o&nbsp;p&nbsp;q&nbsp;r&nbsp;s&nbsp;t&nbsp;u&nbsp;v&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Bx&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Jo<br>
+	.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;--------------<br>
+	.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;--&nbsp;p7&nbsp;&nbsp;&nbsp;o6&nbsp;q7<br>
+	.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;r7&nbsp;n7&nbsp;&nbsp;&nbsp;r6&nbsp;o8<br>
+	.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;x&nbsp;o&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;3&nbsp;&nbsp;&nbsp;p8&nbsp;o5&nbsp;&nbsp;&nbsp;q4&nbsp;p10<br>
+	.&nbsp;.&nbsp;.&nbsp;x&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;X&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;4&nbsp;&nbsp;&nbsp;s5&nbsp;n9&nbsp;&nbsp;&nbsp;r3&nbsp;q5<br>
+	.&nbsp;.&nbsp;.&nbsp;.&nbsp;:&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;x&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;5&nbsp;&nbsp;&nbsp;q3&nbsp;p5&nbsp;&nbsp;&nbsp;n5&nbsp;q7<br>
+	.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;:&nbsp;.&nbsp;x&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;6&nbsp;&nbsp;&nbsp;q6&nbsp;m4&nbsp;&nbsp;&nbsp;p7&nbsp;s8<br>
+	.&nbsp;.&nbsp;.&nbsp;.&nbsp;x&nbsp;.&nbsp;:&nbsp;o&nbsp;x&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;7&nbsp;&nbsp;&nbsp;q8&nbsp;r4&nbsp;&nbsp;&nbsp;resign<br>
+	.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;o&nbsp;.&nbsp;X&nbsp;.&nbsp;o&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;8<br>
+	.&nbsp;.&nbsp;.&nbsp;.&nbsp;x&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;9<br>
+	.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;o&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;10<br>
+	.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;11<br>
+	.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;12<br>
+	.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;13</font></p>
+	<p><font face="Courier New">j&nbsp;k&nbsp;l&nbsp;m&nbsp;n&nbsp;o&nbsp;p&nbsp;q&nbsp;r&nbsp;s&nbsp;t&nbsp;u&nbsp;v&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Bx&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Jo<br>
+	.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;--------------<br>
+	.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;--&nbsp;p6&nbsp;&nbsp;&nbsp;p5&nbsp;o7<br>
+	.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;n6&nbsp;p7&nbsp;&nbsp;&nbsp;m8&nbsp;q9<br>
+	.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;o&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;3&nbsp;&nbsp;&nbsp;l8&nbsp;o6&nbsp;&nbsp;&nbsp;m6&nbsp;p8:<br>
+	.&nbsp;.&nbsp;.&nbsp;x&nbsp;X&nbsp;x&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;4&nbsp;&nbsp;&nbsp;m7&nbsp;r10&nbsp;&nbsp;p6&nbsp;k9<br>
+	.&nbsp;o&nbsp;.&nbsp;.&nbsp;o&nbsp;o&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;5&nbsp;&nbsp;&nbsp;l6&nbsp;p4&nbsp;&nbsp;&nbsp;m9&nbsp;n6:<br>
+	.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;o&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;6&nbsp;&nbsp;&nbsp;m7&nbsp;o6:&nbsp;&nbsp;o5&nbsp;n8<br>
+	.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;7&nbsp;&nbsp;&nbsp;q5&nbsp;m10:&nbsp;k5:o3<br>
+	.&nbsp;.&nbsp;.&nbsp;.&nbsp;o&nbsp;.&nbsp;.&nbsp;o&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;8&nbsp;&nbsp;&nbsp;o4&nbsp;p7:&nbsp;&nbsp;r6&nbsp;q8&nbsp;&nbsp;<br>
+	.&nbsp;o&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;9&nbsp;&nbsp;&nbsp;m4&nbsp;p12&nbsp;&nbsp;n5&nbsp;q11&nbsp;<br>
+	.&nbsp;.&nbsp;.&nbsp;x&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;x&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;10&nbsp;&nbsp;&nbsp;n4&nbsp;&amp;&nbsp;wins&nbsp;next&nbsp;<br>
+	.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;o&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;11<br>
+	.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;x&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;12<br>
+	.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;13</font></p>
 </blockquote>
+<p>&nbsp;</p>
+</blockquote>
+<p>&nbsp;</p>
 <hr>
 </body>
 </html>
