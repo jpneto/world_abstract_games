@@ -83,6 +83,7 @@
       <li>connection - connect two or more board areas</li>
       <li>dispersal - separate all pieces</li>
       <li>elimination -  remove all enemy pieces</li>
+<!--      <li>emplacement - place all stones on the board</li>  -->
       <li>looping - pieces must form a closed path</li>
       <li>mancala - sowing game</li>
       <li>moku - make a N in-a-row</li>
@@ -115,8 +116,10 @@
       <li>custodian - capture pieces in-between</li>
       <li>dagger - player has the option of extra move(s)</li>
       <li>demotion - pieces can be downgraded</li>
-      <li>drop - pieces can be placed on the board</li>
+      <li>dice - use dice as pieces</li>
+      <li>drop - pieces can be placed on the board</li>
       <li>enclosure - surround something</li>
+      <li>exchange-capture - jump a friend and lands an enemy capturing it</li>
       <li>explode - pieces explode and destroy neighbors</li>
       <li>gravity - game uses or simulates weight and/or fall of pieces</li>
       <li>group - groups of connected pieces have relevance</li>
@@ -135,6 +138,7 @@
       <li>multiple-move - moves can be repeated in the same turn</li>
       <li>multiple-jump - jumps can be repeated in the same turn</li>
       <li>neutral - use neutral pieces</li>
+      <li>own-capture - possible to capture friendly pieces</li>
       <li>phalanx - a line of pieces can move together</li>
       <li>pie - balancing rule is included</li>
       <li>pivot - move by orbiting pieces, use of pivots</li>
@@ -4765,7 +4769,7 @@
       },
       {
         year: 2000,
-        name: "Quax",
+        name: "Quax, Stymie",
         author: "Bill Taylor",
         type: "connection",
         features: "pie,drop",
@@ -6573,15 +6577,415 @@
         link: "https://sagme.blogspot.com/2025/04/atrio.html,https://boardgamegeek.com/boardgame/24679",
         linkNames: "Sagme,BGG"
       },
+      {
+        year: 2006,
+        name: "3verse", // ★★☆☆☆
+        author: "Jean M",
+        type: "stalemate",
+        features: "drop,",
+        boardType: "8x8",
+        link: "modern_rules/2006_3verse.pdf,http://nomignolov.wikidot.com/3verse-rules",
+        linkNames: "WAG,1"
+      },
+      {
+        year: 2006,     // ★★☆☆☆
+        name: "Agility",
+        author: "Fred Horn",
+        type: "moku",
+        features: "drop",
+        boardType: "misc",
+        link: "https://boardgamegeek.com/boardgame/27628/agilidade",
+        linkNames: "BGG"
+      },
+      {
+        year: 2006,
+        name: "Alea",  
+        author: "Mauro Giorgi",
+        type: "moku,pattern",
+        features: "dice,move,capture,stack",
+        boardType: "8x8",
+        link: "modern_rules/2006_Alea_FdA38.pdf",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2006,   // ★★★☆☆
+        name: "Anti-Grid",
+        author: "David McCord",
+        type: "elimination,stalemate",
+        features: "slide,custodian",
+        boardType: "2x6x6",
+        link: "modern_rules/2006_Anti-Grid.pdf,https://boardgamegeek.com/boardgame/25389",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2006,   
+        name: "Attangle",
+        author: "Dieter Stein",
+        type: "pattern",
+        features: "stacks,drop,slide,capture",
+        boardType: "hexhex5",
+        link: "modern_rules/2006_Attangle.pdf,https://boardgamegeek.com/boardgame/24525",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2006,
+        name: "BounceQuad",
+        author: "Mats Winther",
+        type: "moku,stalemate",
+        features: "setup,drop,slide,bounce",
+        boardType: "8x8",
+        link: "https://www.zillions-of-games.com/cgi-bin/zilligames/submissions.cgi?do=show;id=1180",
+        linkNames: "ZoG"
+      },
+       {
+        year: 2006,
+        name: "Bouncers",
+        author: "Mats Winther",
+        type: "elimination",
+        features: "slide,bounce,approach",
+        boardType: "8x8",
+        link: "https://www.zillions-of-games.com/cgi-bin/zilligames/submissions.cgi?do=show;id=1167",
+        linkNames: "ZoG"
+      },
+      {
+        year: 2006,
+        name: "Celtis",   // ★★★☆☆
+        author: "Chiaki Murata",
+        type: "moku",
+        features: "tiles,drop",
+        boardType: "hexhex8",
+        link: "https://boardgamegeek.com/boardgame/32417",
+        linkNames: "BGG"
+      },
+      {
+        year: 2006,
+        name: "Cephalopod",
+        author: "Mark Steere",
+        type: "score",
+        features: "dice,drop,capture",
+        boardType: "5x5",
+        link: "modern_rules/2006_Cephalopod.pdf,https://boardgamegeek.com/boardgame/22790/",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2006,
+        name: "Commoners' Checkers",
+        author: "K. Franklin",
+        type: "elimination,stalemate",
+        features: "move,promotion,short-jump,multiple-jump",
+        boardType: "8x8",
+        link: "https://www.zillions-of-games.com/cgi-bin/zilligames/submissions.cgi?do=show;id=1339",
+        linkNames: "ZoG"
+      },
+      {
+        year: 2006,
+        name: "Copolymer",
+        author: "Mark Steere",
+        type: "hexhex6",
+        features: "score",
+        boardType: "drop,multiple-capture",
+        link: "modern_rules/2006_Copolymer.pdf,https://boardgamegeek.com/boardgame/23447",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2006,
+        name: "Crusade Promotion",
+        author: "Keith Carter",
+        type: "capture",
+        features: "setup,stack,move,promotion",
+        boardType: "9x9",
+        link: "https://www.zillions-of-games.com/cgi-bin/zilligames/submissions.cgi?do=show;id=1168",
+        linkNames: "ZoG"
+      },
+      {
+        year: 2006,
+        name: "Esagek",
+        author: "Claudio Gelosa",
+        type: "position,capture",
+        features: "rotate,move,short-jump,swap",
+        boardType: "misc",
+        link: "modern_rules/2006_Esagek_FdA_41.pdf,https://boardgamegeek.com/boardgame/25246",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2006,
+        name: "Flying Swordsmen",
+        author: "Daniel Solis",
+        type: "traversal",
+        features: "stack,move,short-jump,flip,capture",
+        boardType: "2x8x8",
+        link: "modern_rules/2006_Flying_Swordsmen.html,https://boardgamegeek.com/boardgame/31478",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2006,
+        name: "Generals",
+        author: "Keith Carter",
+        type: "royal",
+        features: "stack,slide,promotion",
+        boardType: "9x9",
+        link: "https://www.zillions-of-games.com/cgi-bin/zilligames/submissions.cgi?do=show;id=1340",
+        linkNames: "ZoG"
+      },
+      {
+        year: 2006,
+        name: "Glak",
+        author: "Adam Kałuża",
+        type: "score",
+        features: "setup,place,move,+",
+        boardType: "24x4x4",
+        link: "modern_rules/2006_Glak.pdf,https://boardgamegeek.com/boardgame/24231",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2006,
+        name: "HopperDame",
+        author: "Mats Winther",
+        type: "elimination",
+        features: "move,short-jump,multiple-jump,promotion,exchange-capture",
+        boardType: "10x10",
+        link: "https://www.zillions-of-games.com/cgi-bin/zilligames/submissions.cgi?do=show;id=1164",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2006,
+        name: "King's Valley",
+        author: "Mitsuo Yamamoto",
+        type: "position,stalemate",
+        features: "slide",
+        boardType: "5x5",
+        link: "2006_King's_Valley.zip,https://boardgamegeek.com/boardgame/86169",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2004,
+        name: "Kruzno",
+        author: "Mark Palko",
+        type: "elimination",
+        features: "move,short-jump,multiple-jump",
+        boardType: "hexhex6",
+        link: "modern_rules/2006_Kruzno.jpg,https://boardgamegeek.com/boardgame/26873",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2006,
+        name: "Kuado",
+        author: "Arte Ludens Publ.",
+        type: "pattern",
+        features: "multiple-drop,tiles",
+        boardType: "none",
+        link: "https://boardgamegeek.com/boardgame/29674",
+        linkNames: "BGG"
+      },
+      {
+        year: 2006,
+        name: "Kwintie",
+        author: "Fred Horn",
+        type: "moku",
+        features: "tiles,drop",
+        boardType: "1x9",
+        link: "modern_rules/2006_Kwintie.pdf,https://boardgamegeek.com/boardgame/86275",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2006,
+        name: "Lanko",
+        author: "Andrzej Korczak, Krystyna Landowska",
+        type: "score",
+        features: "move,short-jump,multiple-jump",
+        boardType: "circular",
+        link: "modern_rules/2006_Lanko.pdf,https://boardgamegeek.com/boardgame/27804",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2006,
+        name: "Last Man Forward",
+        author: "Ingo Althöfer",
+        type: "position",
+        features: "move,range,replacement,own-capture",
+        boardType: "8x8",
+        link: "https://www.zillions-of-games.com/cgi-bin/zilligames/submissions.cgi?do=show;id=2155",
+        linkNames: "ZoG"
+      },
+      {
+        year: 2006,
+        name: "Loom",
+        author: "Daniel Solis",
+        type: "pattern,stalemate",
+        features: "drop",
+        boardType: "8x8",
+        link: "modern_rules/2006_Loom.html,https://boardgamegeek.com/boardgame/31472",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2006,
+        name: "Oshi",
+        author: " Tyler Bielman",
+        type: "capture",
+        features: "phalanx,push-off",
+        boardType: "5x5",
+        link: "modern_rules/2006_Oshi.pdf,https://boardgamegeek.com/boardgame/23935",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2006,
+        name: "Papagra",
+        author: "Nick Bentley",
+        type: "score",
+        features: "group,multiple-drop,removal",
+        boardType: "hexhex7,6",
+        link: "modern_rules/2006_Papagra.pdf,https://boardgamegeek.com/boardgame/26565",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2006,
+        name: "PlanQuadrat",
+        author: "Ulrike and Manfred Kapp",
+        type: "territory",
+        features: "tiles,drop,slide",
+        boardType: "8x8",
+        link: "modern_rules/2006_PlanQuadrat.pdf,https://boardgamegeek.com/boardgame/25722",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2006,
+        name: "Rekushu",
+        author: "John Herr",
+        type: "score,pattern",
+        features: "drop",
+        boardType: "12x12",
+        link: "modern_rules/2006_Rekushu.html,https://boardgamegeek.com/boardgame/39149",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2006,
+        name: "Ren",
+        author: "Aristides Mytaras",
+        type: "score,pattern",
+        features: "drop,capture,demotion",
+        boardType: "8x8",
+        link: "modern_rules/2006_Ren.pdf,https://boardgamegeek.com/boardgame/23673",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2006,
+        name: "Robotory",
+        author: "Susumu Kawasaki",
+        type: "score",
+        features: "drop,move,reserve",
+        boardType: "hexhex3,3,4",
+        link: "modern_rules/2006_Robotory.pdf,https://boardgamegeek.com/boardgame/38275/robotory",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2006,
+        name: "Tomoko",
+        author: "Tom Wuytack",
+        type: "pattern",
+        features: "setup,push-off",
+        boardType: "5x5",
+        link: "modern_rules/2006_Tomoko.pdf,https://boardgamegeek.com/boardgame/27713",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2006,
+        name: "Triplexity",
+        author: " Kate Jones, Martin Samuel",
+        type: "moku",
+        features: "stack,drop,move",
+        boardType: "none",
+        link: "modern_rules/2006_Triplexity.pdf,https://boardgamegeek.com/boardgame/25015",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2006,
+        name: "Slipe",
+        author: "Satake Naofumi",
+        type: "position",
+        features: "slide",
+        boardType: "5x5",
+        link: "https://boardgamegeek.com/boardgame/346819",
+        linkNames: "BGG"
+      },
+      {
+        year: 2025,
+        name: "Pond",
+        author: "David Rose",
+        type: "score",
+        features: "drop,move,promotion",
+        boardType: "4x4",
+        link: "modern_rules/2005_Pond.pdf,https://boardgamegeek.com/boardgame/398331",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2005,
+        name: "Fjords",
+        author: "Franz-Benno Delonge",
+        type: "score",
+        features: "setup,tiles,drop,enclosure",
+        boardType: "none",
+        link: "modern_rules/2005_Fjords.pdf,https://boardgamegeek.com/boardgame/15511",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2005,
+        name: "Simpei",
+        author: " Shimpei Takahashi",
+        type: "moku",
+        features: "drop,move,custodian,reposition",
+        boardType: "misc",
+        link: "modern_rules/2005_Simpei.pdf,https://boardgamegeek.com/boardgame/19540,http://web.archive.org/web/20130312022347/http://mrbass.org/boardgames/abstractstrategy/simpei/",
+        linkNames: "WAG,BGG,1"
+      },
+      {
+        year: 2005,
+        name: "Witch Stones",
+        author: "Justin D. Jacobson",
+        type: "score",
+        features: "setup,removal,neutral,color4",
+        boardType: "9x9",
+        link: "modern_rules/2005_Witch_Stones.pdf,https://boardgamegeek.com/boardgame/20517",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2005,
+        name: "Dicefest",
+        author: "Jim and Jon David Faeth",
+        type: "traversal",
+        features: "dice,setup,move,rotate,capture",
+        boardType: "8x8",
+        link: "modern_rules/2005_Dicefest.pdf,https://boardgamegeek.com/boardgame/20938",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2004,
+        name: "Santorini",
+        author: "Gord!",
+        type: "position",
+        features: "stack,setup,drop,move",
+        boardType: "5x5",
+        link: "modern_rules/2004_Santorini.pdf,https://boardgamegeek.com/boardgame/9963",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2004,
+        name: "Trist",
+        author: "Lloyd Krassner",
+        type: "pattern",
+        features: "tiles",
+        boardType: "none",
+        link: "https://boardgamegeek.com/boardgame/38184",
+        linkNames: "BGG"
+      },
       /*
       {
-        year: NaN,
+        year: 2007,
         name: "",
         author: "",
         type: "",
         features: "",
         boardType: "",
-        link: "",
+        link: "modern_rules/.pdf",
         linkNames: "WAG,BGG"
       },
       */
