@@ -128,7 +128,7 @@
       <li>intrusion/intervention - capture pieces at left/right (inverse of custodian)</li>
       <li>jump - other jumps</li>
       <li>long-jump - jump more than one piece in line</li>
-      <li>los - uses line-of-sight</li>
+      <li>los - uses line-of-sight or orthogonal empty path</li>
       <li>ko - no repeated position rule is included</li>
       <li>magnetic - attract/repulse pieces</li>
       <li>merge - two or more pieces merge into one</li>
@@ -2141,7 +2141,7 @@
         name: "Forms",
         author: "Steven Meyers",
         type: "stalemate",
-        features: "group,move,replacement",
+        features: "group,move,los,replacement",
         boardType: "8x8",
         link: "forms.htm,https://boardgamegeek.com/boardgame/36917",
         linkNames: "WAG,BGG"
@@ -2861,7 +2861,7 @@
         name: "Hobbes",
         author: "Dan Troyka",
         type: "royal",
-        features: "move,replacement,push,pull",
+        features: "move,replacement,push,pull,los",
         boardType: "5x5",
         link: "hobbes.htm,https://boardgamegeek.com/boardgame/63802",
         linkNames: "WAG,BGG"
@@ -4924,7 +4924,7 @@
         type: "score",
         features: "move,short-jump,multiple-jump,replacement",
         boardType: "8x7",
-        link: "reverso",
+        link: "reverso.htm",
         linkNames: "WAG"
       },
       {
@@ -5929,7 +5929,7 @@
       },
       {
         year: 2002,
-        name: "vanakriget",
+        name: "Vanakriget",
         author: "Markus Salo",
         type: "traversal",
         features: "drop,move,short-jump,multiple-jump",
@@ -6582,7 +6582,7 @@
         name: "3verse", // ★★☆☆☆
         author: "Jean M",
         type: "stalemate",
-        features: "drop,",
+        features: "drop",
         boardType: "8x8",
         link: "modern_rules/2006_3verse.pdf,http://nomignolov.wikidot.com/3verse-rules",
         linkNames: "WAG,1"
@@ -7089,67 +7089,157 @@
       },
       {
         year: 2007,
-        name: "",
-        author: "",
-        type: "",
-        features: "",
-        boardType: "",
-        link: "modern_rules/.pdf",
+        name: "Palisade",
+        author: "Mark Steere",
+        type: "score",
+        features: "drop,enclosure,capture",
+        boardType: "19x19",
+        link: "modern_rules/2007_Palisade.pdf,https://boardgamegeek.com/boardgame/30518",
         linkNames: "WAG,BGG"
       },
       {
         year: 2007,
-        name: "",
-        author: "",
-        type: "",
-        features: "",
-        boardType: "",
-        link: "modern_rules/.pdf",
+        name: "Ponte del Diavolo",
+        author: "Martin Ebel",
+        type: "score",
+        features: "group,tiles,setup,pie,drop,+",
+        boardType: "12x12",
+        link: "modern_rules/2007_Ponte_del_Diavolo.pdf,https://boardgamegeek.com/boardgame/27172/",
         linkNames: "WAG,BGG"
       },
       {
         year: 2007,
-        name: "",
-        author: "",
-        type: "",
-        features: "",
-        boardType: "",
-        link: "modern_rules/.pdf",
+        name: "Quindo",
+        author: "P. Zelmire",
+        type: "elimination",
+        features: "move,range,removal,long-jump,flip",
+        boardType: "11x11",
+        link: "modern_rules/2007_Quindo.pdf",
+        linkNames: "WAG"
+      },
+      {
+        year: 2007,
+        name: "Rush",
+        author: "Mark Steere",
+        type: "score",
+        features: "multiple-drop",
+        boardType: "19x19",
+        link: "modern_rules/2007_Rush.pdf,https://boardgamegeek.com/boardgame/29796",
         linkNames: "WAG,BGG"
       },
       {
         year: 2007,
-        name: "",
-        author: "",
-        type: "",
-        features: "",
-        boardType: "",
-        link: "modern_rules/.pdf",
+        name: "Saikoro",
+        author: "Paul Edels",
+        type: "stalemate",
+        features: "dice,move,range,replacement",
+        boardType: "8x8",
+        link: "modern_rules/2007_Saikoro.htm,https://boardgamegeek.com/boardgame/27813",
         linkNames: "WAG,BGG"
       },
       {
         year: 2007,
-        name: "",
-        author: "",
-        type: "",
-        features: "",
-        boardType: "",
-        link: "modern_rules/.pdf",
+        name: "Shout 7",
+        author: "Colin Leamon",
+        type: "moku",
+        features: "drop,phalanx,push,capture,neutral",
+        boardType: "hexhex7",
+        link: "modern_rules/2007_Shout7.pdf",
+        linkNames: "WAG"
+      },
+      {
+        year: 2007,
+        name: "Sicic",
+        author: " Jean Manuel Morales",
+        type: "pattern",
+        features: "drop,slide",
+        boardType: "2x8x8",
+        link: "modern_rules/2007_Sicic.pdf,https://boardgamegeek.com/boardgame/88220",
         linkNames: "WAG,BGG"
       },
       {
         year: 2007,
-        name: "",
-        author: "",
-        type: "",
-        features: "",
-        boardType: "",
-        link: "modern_rules/.pdf",
+        name: "Spartan Skaki ",
+        author: "L. Lynn Smith",
+        type: "position,royal",
+        features: "move,psuh,short-jump,replacement",
+        boardType: "9x9",
+        link: "https://www.zillions-of-games.com/cgi-bin/zilligames/submissions.cgi?do=show;id=1521",
+        linkNames: "ZoG"
+      },
+      {
+        year: 2007,
+        name: "Taiji",
+        author: "Néstor Romeral Andrés",
+        type: "score",
+        features: "polyominoes,drop",
+        boardType: "11x11",
+        link: "modern_rules/2007_Taiji.pdf,https://boardgamegeek.com/boardgame/31926",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2007,
+        name: "Teiglith",
+        author: "Cameron Browne",
+        type: "stalemate",
+        features: "move,stack,share",
+        boardType: "7x7",
+        link: "2007_Teiglith.gif,https://boardgamegeek.com/boardgame/33768",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2007,
+        name: "Territories",
+        author: "Corné van Moorsel",
+        type: "score",
+        features: "setup,drop,enclosure",
+        boardType: "8x8",
+        link: "modern_rules/2007_Territories.pdf,https://boardgamegeek.com/boardgame/30286/",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2007,
+        name: "Tortuga",
+        author: "Vincent Everaert",
+        type: "position,stalemate",
+        features: "move,short-jump,multiple-jump,demotion",
+        boardType: "hexhex4",
+        link: "modern_rules/2007_Tortuga.pdf,https://boardgamegeek.com/boardgame/27938",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2007,
+        name: "Trid",
+        author: "Rafal Kowalski",
+        type: "royal,position",
+        features: "move,slide,short-jump,replacement",
+        boardType: "hextri3",
+        link: "modern_rules/2007_Trid.pdf,https://boardgamegeek.com/boardgame/33699",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2007,
+        name: "Yangsh",
+        author: "Aart van Essen",
+        type: "capture",
+        features: "setup,drop,slide,short-jump",
+        boardType: "8x8",
+        link: "modern_rules/2007_Yangsh.pdf,https://boardgamegeek.com/boardgame/41167",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2007,
+        name: "Yavalath",
+        author: "Cameron Browne",
+        type: "move",
+        features: "drop",
+        boardType: "hexhex5",
+        link: "modern_rules/2007_Yavalath.pdf,https://boardgamegeek.com/boardgame/33767",
         linkNames: "WAG,BGG"
       },
       /*
       {
-        year: 2007,
+        year: 2008,
         name: "",
         author: "",
         type: "",
