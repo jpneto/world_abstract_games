@@ -72,14 +72,21 @@
   </style>
 </head>
 
+<!-- 
 <body background = "back-wood3.jpg">
-<!-- <body background = "back-wood3.jpg" onload="sortTable(1)"> -->
+-->
+<body background = "back-wood3.jpg" onload="sortTable(1)"> 
 
   <h1>World of Abstract Games Database</h1>
   
   <details>
-     <summary>Info about this page</summary>
-     <p>This table features minimalist abstract games typically using limited material types and regular, grid-based boards. It focuses primarily on modern designs from the 21st century. Over the coming years, Sagme's blog will continue to publish weekly posts on older abstract games, which will gradually be added to this collection. It also includes occasional entries for variants of classic games like Chess, <a href="checkers.htm" target="_blank">Checkers,</a> Mancala, or <a href="https://boardgamegeek.com/blog/16342/go-variants.htm">Go</a>.</p>
+     <summary>About this page</summary>
+     <blockquote>
+     <p>The following table mainly features minimalist abstract games: typically using limited material types and regular, grid-based boards. It focuses primarily on modern designs from the 21st century. Over the coming years, Sagme's blog will continue to publish weekly posts on older abstract games, which will gradually be added to this collection.
+     <!--The table also includes occasional entries for variants of classic games like Chess, <a href="checkers.htm" target="_blank">Checkers,</a> Mancala, or <a href="https://boardgamegeek.com/blog/16342/go-variants.htm">Go</a>.-->
+     </p>
+     The columns are sortable. The next search box allows users to select rows having (or not having) certain strings, and also to include data ranges. For eg, "8x8 >1999 <2005 !BGG" will select all games played on a 8x8 grid between [2000,2004] not indexed at BGG (BoardGameGeek).
+     </blockquote>
   </details>
   
   <details>
@@ -7882,6 +7889,46 @@
         features: "drop,pie",
         boardType: "hexhex7",
         link: "modern_rules/2009_Cross.pdf,https://boardgamegeek.com/boardgame/59668",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2002,
+        name: "ConHex",
+        author: "Michail Antonow",
+        type: "connection",
+        features: "drop",
+        boardType: "misc",
+        link: "modern_rules/2002_ConHex.pdf,https://boardgamegeek.com/boardgame/10989",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2003,
+        name: "Yinsh",
+        author: "Kris Burm",
+        type: "capture",
+        features: "setup,drop,long-jump,flip",
+        boardType: "hexhex6",
+        link: "modern_rules/2003_Yinsh.pdf,https://boardgamegeek.com/boardgame/7854",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2005,
+        name: "Pünct",
+        author: "Kris Burm",
+        type: "connection",
+        features: "tiles,drop,slide,long-jump,rotate",
+        boardType: "hexhex9",
+        link: "modern_rules/2005_Punct.pdf,https://boardgamegeek.com/boardgame/19764",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2001,
+        name: "Hive",
+        author: "John Yianni",
+        type: "royal",
+        features: "drop,move,long-jump,+",
+        boardType: "none",
+        link: "modern_rules/2001_Hive.pdf,https://boardgamegeek.com/boardgame/2655",
         linkNames: "WAG,BGG"
       },
       /*
