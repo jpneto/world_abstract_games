@@ -107,7 +107,7 @@
       <li>repetition - (avoid) repeat the board position</li>
       <li>royal - checkmate/capture a royal piece</li>
       <li>stalemate - be the last to move</li>
-      <li>score - collect points</li>
+      <li>score - collect points or max some criteria</li>
       <li>territory - area control</li>
       <li>traversal - all pieces in a designated area</li>
       <li>unification - group all pieces</li>
@@ -139,7 +139,7 @@
       <li>group - groups of connected pieces have relevance</li>
       <li>group-move - pieces of the same group move together</li>
       <li>grow - pieces grow from/to a pattern</li>
-      <li>intrusion/intervention - capture pieces at left/right (inverse of custodian)</li>
+      <li>intrusion - capture pieces at left/right (inverse of custodian)</li>
       <li>jump - other jumps</li>
       <li>long-jump - jump more than one piece in line</li>
       <li>los - uses line-of-sight or orthogonal empty path</li>
@@ -1772,7 +1772,7 @@
       {
         year: 1995,
         name: "Diffusion",
-        author: "Greg van Patten",
+        author: "Gregory K. Van Patten",
         type: "elimination",
         features: "setup,drop,ceapture,ko",
         boardType: "8x8",
@@ -3603,12 +3603,12 @@
       {
         year: NaN,
         name: "Migration",
-        author: "Greg van Patten",
+        author: "Gregory K. Van Patten",
         type: "stalemate",
         features: "move",
         boardType: "8x8",
-        link: "migration.htm,Ludii",
-        linkNames: "WAG,BGG,https://ludii.games/details.php?keyword=Migration"
+        link: "migration.htm,https://ludii.games/details.php?keyword=Migration",
+        linkNames: "WAG,Ludii"
       },
       {
         year: 2000,
@@ -5647,7 +5647,7 @@
         author: "L. Lynn Smith",
         type: "stalemate",
         features: "drop,slide,wall",
-        boardType: "oct4",
+        boardType: "hexoct4",
         link: "thrall.htm",
         linkNames: "WAG"
       },
@@ -5716,7 +5716,7 @@
         name: "Towers",
         author: "Peter Aronson",
         type: "capture,position,stalemate",
-        features: "slide,ko,custodian,intervention",
+        features: "slide,ko,custodian,intrusion",
         boardType: "8x8",
         link: "towers2.htm,https://boardgamegeek.com/boardgame/87449",
         linkNames: "WAG,BGG"
@@ -8129,6 +8129,236 @@
         features: "tiles,drop,enclosure",
         boardType: "misc",
         link: "modern_rules/2003_1Stein_and_Co.pdf,https://boardgamegeek.com/boardgame/8965",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2010,
+        name: "Abeo",
+        author: "Phil Leduc",
+        type: "score",
+        features: "drop,los,flip",
+        boardType: "hexhex5",
+        link: "modern_rules/2010_Abeo.pdf",
+        linkNames: "WAG"
+      },
+      {
+        year: 2010,
+        name: "Alea Evangelion",
+        author: "Xifeng",
+        type: "score",
+        features: "9x9",
+        boardType: "drop,flip,ko",
+        link: "modern_rules/2010_Alea_Evangelion.pdf",
+        linkNames: "WAG"
+      },
+      {
+        year: 2010,
+        name: "Amoeba",
+        author: "Masahiro Nakajima",
+        type: "royal,stalemate",
+        features: "stack,move,sow",
+        boardType: "hexhex4",
+        link: "modern_rules/2010_Amoeba.pdf,https://boardgamegeek.com/boardgame/143387",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2010,
+        name: "Arrello",
+        author: "Nick Bentley",
+        type: "score",
+        features: "drop,flip,los",
+        boardType: "7x7",
+        link: "modern_rules/2010_Arello.pdf,https://boardgamegeek.com/boardgame/132192",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2010,
+        name: "Bamogo",
+        author: "Peer Sylvester",
+        type: "connection",
+        features: "drop,swap",
+        boardType: "4x4",
+        link: "modern_rules/2010_Bamogo.pdf,https://boardgamegeek.com/boardgame/85993",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2010,
+        name: "Bløctagøns",
+        author: "Daniel Shultz",
+        type: "connection",
+        features: "drop",
+        boardType: "oct11x11",
+        link: "modern_rules/2010_Bloctagons.pdf,https://boardgamegeek.com/boardgame/77486",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2010,
+        name: "Byg",
+        author: "Nick Bentley",
+        type: "score",
+        features: "group,multiple-drop",
+        boardType: "hexhex5",
+        link: "modern_rules/2010_Byg.pdf,https://boardgamegeek.com/boardgame/85454",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2010,
+        name: "Bypass",
+        author: "Raymond Gallardo",
+        type: "score",
+        features: "drop,wall",
+        boardType: "hexhex3",
+        link: "modern_rules/2010_Bypass.pdf,https://boardgamegeek.com/boardgame/75816",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2010,
+        name: "Cage",
+        author: "Mark Steere",
+        type: "elimination",
+        features: "move,short-jump,multiple-jump",
+        boardType: "10x10",
+        link: "modern_rules/2010_Cage.pdf,https://boardgamegeek.com/boardgame/72202",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2010,
+        name: "Canvas",
+        author: "Corey Clark",
+        type: "connection",
+        features: "pie,group,slide,drop,wall",
+        boardType: "hexhex7",
+        link: "modern_rules/2010_Canvas.pdf,https://boardgamegeek.com/boardgame/81703",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2010,
+        name: "Charisma",
+        author: "Daniel Shultz",
+        type: "score",
+        features: "group,drop,slide,approach,flip",
+        boardType: "hexhex7",
+        link: "modern_rules/2010_Charisma.pdf,https://boardgamegeek.com/boardgame/89096",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2010,
+        name: "Chain Lightning",
+        author: "Andrew Juell",
+        type: "connection",
+        features: "asymmetric,multiple-drop",
+        boardType: "19x19",
+        link: "https://boardgamegeek.com/boardgame/72312",
+        linkNames: "BGG"
+      },
+      {
+        year: 2010,
+        name: "Crosshairs",
+        author: "Stephen Tavener",
+        type: "elimination",
+        features: "setup,move,rotate,removal,los,shoot",
+        boardType: "hexhex6",
+        link: "modern_rules/2010_Crosshairs.pdf,https://boardgamegeek.com/boardgame/78093",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2010,
+        name: "Deadcell",
+        author: "Joshua Conroy",
+        type: "score",
+        features: "drop,neutral,flip",
+        boardType: "hexhex6",
+        link: "modern_rules/2010_Deadcell.html",
+        linkNames: "WAG"
+      },
+      {
+        year: 2010,
+        name: "Devil's Advocate",
+        author: "Andrew Juell",
+        type: "score",
+        features: "asymmetric,drop,flip",
+        boardType: "hexhex9",
+        link: "modern_rules/2010_Devil_Advocate.pdf,https://boardgamegeek.com/boardgame/94713",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2010,
+        name: "Ecalper",
+        author: " Matteo Perlini",
+        type: "score",
+        features: "pie,multiple-drop,flip",
+        boardType: "hexhex7",
+        link: "modern_rules/2010_Ecalper.pdf,https://boardgamegeek.com/boardgame/83787",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2010,
+        name: "Flume",
+        author: "Mark Steere",
+        type: "score",
+        features: "drop,multiple-drop",
+        boardType: "7x7",
+        link: "modern_rules/2010_Flume.pdf,https://boardgamegeek.com/boardgame/67080",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2010,
+        name: "Freedom",
+        author: " Veljko Cirovic, Nebojsa Sankovic",
+        type: "score",
+        features: "drop",
+        boardType: "10x10",
+        link: "modern_rules/2010_Freedom.pdf,https://boardgamegeek.com/boardgame/100480",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2010,
+        name: "Gate",
+        author: "Gregory K. Van Patten",
+        type: "position,stalemate",
+        features: "move,rotation,removal,multiple-move",
+        boardType: "5x5",
+        link: "modern_rules/2010_Gate.html,https://boardgamegeek.com/boardgame/67381",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2010,
+        name: "Genitri",
+        author: "Falco Müller",
+        type: "score",
+        features: "tiles,drop,wall",
+        boardType: "hextri7",
+        link: "modern_rules/2010_Genitri.zip,https://boardgamegeek.com/boardgame/75997",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2010,
+        name: "Hello Dolly!",
+        author: "Pak Cormier",
+        type: "capture",
+        features: "setup,slide,intrusion",
+        boardType: "hextri5",
+        link: "modern_rules/2010_Hello_Dolly!.pdf,https://boardgamegeek.com/boardgame/104164",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2010,
+        name: "Hexabrae",
+        author: "Martijn Althuizen",
+        type: "pattern",
+        features: "tiles,drop,rotate,move,enclosure",
+        boardType: "hexhex5",
+        link: "modern_rules/2010_Hexabrae.pdf,https://boardgamegeek.com/boardgame/84948",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2010,
+        name: "Inversion",
+        author: "Zack Lasner",
+        type: "score",
+        features: "drop,flip",
+        boardType: "hexhex5",
+        link: "modern_rules/2010_Inversion.pdf,https://boardgamegeek.com/boardgame/81034",
         linkNames: "WAG,BGG"
       },
       /*
