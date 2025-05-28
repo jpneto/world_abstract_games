@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>20th Century Canon</title>
+  <style>
+    body {
+      font-family: Courier New, sans-serif;
+      padding: 20px;
+      font-size: 12px;
+    }
+    table {
+      width: 66%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid #bbb;
+      padding: 6px 10px;
+      text-align: left;
+      vertical-align: top;
+      font-size: 12px;
+    }
+    th {
+      /* background-color: #f4f4f4; */
+      cursor: pointer;
+      font-size: 14px;
+    }
+    th.sorted-asc::after {
+      content: " ↑";
+    }
+    th.sorted-desc::after {
+      content: " ↓";
+    }    
+    input[type="text"] {
+      font-family: Courier New;
+      width: 380px;
+      padding: 6px 10px;
+      margin-bottom: 10px;
+      font-size: 12px;
+    }
+    input[class="bgg"] {
+      width: 28px;
+      padding: 5px 6px;
+      margin-bottom: 10px;
+      font-size: 12px;
+    }
+    input[class="google"] {
+      width: 112px;
+      padding: 5px 6px;
+      margin-bottom: 10px;
+      font-size: 12px;
+    }
+    a {
+      color: #000000; /* #007bff; */
+      text-decoration: none;
+      margin-right: 8px;
+      display: inline-block;
+      font-size: 12px;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    input[type="text"],
+    input[type="text"]:focus   
+    {
+         background: transparent;
+         /* border: none; */
+         outline-width: 0;
+    }    
+    .half-width {
+      width: 70%;
+      margin: 0 auto; /* optional: centers the div horizontally */
+      background-color: #f4f4f4; /* optional: just for visibility */
+      padding: 1em;
+    }    
+  </style>
+</head>
+
+<!-- 
+<body background = "back-wood3.jpg">
+-->
+<body background = "back-wood3.jpg" onload="sortTable(0)"> 
+
+<h1>WAG's 20th Century Canon of Abstract Games</h1>
+
+<details>
+   <summary>About this page</summary>
+     
+<div class="half-width">      
+<p>The number of published games is immense. As an example, BGG indexes around 5000 board games just on the Abstract Strategy category. Interested players might feel overwhelmed and, in deciding to pick something to play, will certainly miss many good games out there that they would probably prefer to experience.</p> 
+
+<p>This list proposes a 20th century canon of abstract games for two players. Abstract games are defined as being deterministic and all game information is available to each player when deciding to move. This excludes random elements, hidden information, but also simultaneous turns.</p> 
+
+<p>To filter even more, I decided to not consider close variants of classical games, with a big exception for Checkers. Why this exception? Checkers have seen dramatic developments over the 20th century, with games that are objectively better than most traditional variants, and some of those deserve to be in this list. The same cannot be said, imho, about Chess and Go.</p> 
+
+<p>The list is the result of choosing games that are in two or more of the following categories: (a) were culturally or commercially relevant, (b) successfully applied new ludemes or rule interactions, (c) have above-average depth or drama, (d) are fun to play.</p> 
+
+<p>The list tries to find some balance in the number of games per decade, accepting the fact that  average game quality increases with time. Later decades do include more games, but I'm more demanding about newer games.</p>
+
+<p>The list mixes classic board games, that most people expect to appear in a canon like this, and more obscure games that deserve to be more well-known. The goal is to provide something worthwhile to beginners, veteran players, and game designers.</p> 
+
+<p>Notes: (a) some dates are estimates, (b) games labeled with two stars would make my Top10, (c) games with one star stand out a bit more than the others.</p>
+</div><br>
+</details>
+
+  
+  <input type="text" id="searchInput" onkeyup="filterTable()"
+         placeholder="Search (!word for exclusion, >year <year for ranges)" autofocus>
+  <br>
+  <span id="list-length"></span> 
+  
+  <table id="dataTable">
+    <thead>
+      <tr>
+        <th onclick="sortTable(0)">Year</th>
+        <th onclick="sortTable(1)">Game</th>
+        <th onclick="sortTable(2)">Author(s)</th>
+        <th onclick="sortTable(3)">Top Games</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Rows will be inserted here -->
+    </tbody>
+  </table>
+
+  <script>
+    const data = [
+          {
+            year: "1909",
+            game: "Suffragetto ",
+            url: "https://boardgamegeek.com/boardgame/127685",
+            author: "Women's Social & Political Union",
+            star: ""
+          },
+          {
+            year: "1911",
+            game: "Laska",
+            url: "https://boardgamegeek.com/boardgame/6862",
+            author: "Emanuel Lasker",
+            star: ""
+          },
+          {
+            year: "1930",
+            game: "Camelot",
+            url: "https://boardgamegeek.com/boardgame/5251",
+            author: "George S. Parker",
+            star: ""
+          },
+          {
+            year: "1942",
+            game: "Hex",
+            url: "https://boardgamegeek.com/boardgame/4112",
+            author: "Piet hein",
+            star: "★★"
+          },
+          {
+            year: "1943",
+            game: "Tobac",
+            url: "https://boardgamegeek.com/boardgame/30066",
+            author: "Milton Bradley Publ.",
+            star: ""
+          },
+          {
+            year: "1947",
+            game: "Qubic",
+            url: "https://boardgamegeek.com/boardgame/13714",
+            author: "Don Cornish, Howard Moore, Rolfe Pottberg",
+            star: ""
+          },
+          {
+            year: "1950",
+            game: "Kropki",
+            url: "https://boardgamegeek.com/boardgame/26067",
+            author: "Uncredited",
+            star: ""
+          },
+          {
+            year: "1953",
+            game: "Pentominoes ",
+            url: "https://boardgamegeek.com/boardgame/154934",
+            author: "Solomon W. Golomb",
+            star: ""
+          },
+          {
+            year: "1953",
+            game: "Y",
+            url: "https://boardgamegeek.com/boardgame/5242",
+            author: "Charles Titus, Craige Schensted",
+            star: "★★"
+          },
+          {
+            year: "1954",
+            game: "Pathfinder",
+            url: "https://boardgamegeek.com/boardgame/9612",
+            author: "William I. Barton",
+            star: ""
+          },
+          {
+            year: "1956",
+            game: "Troke",
+            url: "https://boardgamegeek.com/boardgame/1993",
+            author: "James Brunot, Arpad Rosti",
+            star: ""
+          },
+          {
+            year: "1960",
+            game: "Bridg-It",
+            url: "https://boardgamegeek.com/boardgame/11052",
+            author: "David Gale, Robert H. Goetz",
+            star: ""
+          },
+          {
+            year: "1962",
+            game: "Twixt",
+            url: "https://boardgamegeek.com/boardgame/949",
+            author: "Alex Randolph",
+            star: "★"
+          },
+          {
+            year: "1963",
+            game: "Epaminondas",
+            url: "https://boardgamegeek.com/boardgame/7338",
+            author: "Robert Abbott",
+            star: "★"
+          },
+          {
+            year: "1963",
+            game: "Focus",
+            url: "https://boardgamegeek.com/boardgame/789",
+            author: "Sid Sackson",
+            star: ""
+          },
+          {
+            year: "1965",
+            game: "Castello",
+            url: "https://boardgamegeek.com/boardgame/116215",
+            author: "Carl Renström",
+            star: ""
+          },
+          {
+            year: "1969",
+            game: "Lines of Action",
+            url: "https://boardgamegeek.com/boardgame/3406",
+            author: "Claude Soucie",
+            star: "★★"
+          },
+          {
+            year: "1960",
+            game: "Stapeldammen II",
+            url: "https://boardgamegeek.com/boardgame/124716",
+            author: "Tim ter Kuile",
+            star: "★"
+          },
+          {
+            year: "1970",
+            game: "Scalino",
+            url: "https://boardgamegeek.com/boardgame/12305",
+            author: "Peter Pallat",
+            star: "★"
+          },
+          {
+            year: "1970",
+            game: "Snort",
+            url: "https://boardgamegeek.com/boardgame/151888",
+            author: "Simon Norton",
+            star: ""
+          },
+          {
+            year: "1972",
+            game: "Soccolot",
+            url: "https://www.zillions-of-games.com/cgi-bin/zilligames/submissions.cgi?do=show;id=802",
+            author: "David Wilson",
+            star: ""
+          },
+          {
+            year: "1974",
+            game: "Connect Four",
+            url: "https://boardgamegeek.com/boardgame/2719",
+            author: "Ned Strongin, Howard Wexler",
+            star: ""
+          },
+          {
+            year: "1974",
+            game: "Intermedium",
+            url: "https://boardgamegeek.com/boardgame/8215",
+            author: "Matt Crispis",
+            star: ""
+          },
+          {
+            year: "1975",
+            game: "Cul-de-Sac",
+            url: "https://boardgamegeek.com/boardgame/2559",
+            author: "Philip Slater",
+            star: "★★"
+          },
+          {
+            year: "1975",
+            game: "Guerilla",
+            url: "https://boardgamegeek.com/boardgame/8216",
+            author: "David Wells",
+            star: "★"
+          },
+          {
+            year: "1976",
+            game: "Tower of Power",
+            url: "https://boardgamegeek.com/boardgame/27161",
+            author: "Michael Baldwin",
+            star: ""
+          },
+          {
+            year: "1977",
+            game: "Pente",
+            url: "https://boardgamegeek.com/boardgame/1295",
+            author: "Tom Braunlich, Gary Gabrel",
+            star: "★★"
+          },
+          {
+            year: "1978",
+            game: "Neutron",
+            url: "https://boardgamegeek.com/boardgame/6978",
+            author: "Robert A. Kraus",
+            star: ""
+          },
+          {
+            year: "1979",
+            game: "Cathedral",
+            url: "https://boardgamegeek.com/boardgame/",
+            author: "Robert P. Moore",
+            star: "★★"
+          },
+          {
+            year: "1980",
+            game: "Havannah",
+            url: "https://boardgamegeek.com/boardgame/2759",
+            author: "Christian Freeling",
+            star: "★★"
+          },
+          {
+            year: "1980",
+            game: "Trax",
+            url: "https://boardgamegeek.com/boardgame/748",
+            author: "David L. Smith",
+            star: "★"
+          },
+          {
+            year: "1980",
+            game: "Virus Wars",
+            url: "https://boardgamegeek.com/boardgame/68214",
+            author: "Uncredited",
+            star: ""
+          },
+          {
+            year: "1982",
+            game: "Domain",
+            url: "https://boardgamegeek.com/boardgame/754",
+            author: "Claude Duvernay",
+            star: ""
+          },
+          {
+            year: "1983",
+            game: "Le Manipulateur",
+            url: "https://boardgamegeek.com/boardgame/310233",
+            author: "Jacques Fradkine",
+            star: ""
+          },
+          {
+            year: "1985",
+            game: "Chase",
+            url: "https://boardgamegeek.com/boardgame/316",
+            author: "Tom Kruszewski",
+            star: "★★"
+          },
+          {
+            year: "1985",
+            game: "Gyges",
+            url: "https://boardgamegeek.com/boardgame/10527",
+            author: "Claude Leroy",
+            star: ""
+          },
+          {
+            year: "1985",
+            game: "Lancelot",
+            url: "https://boardgamegeek.com/boardgame/5380",
+            author: "Roland Siegers",
+            star: ""
+          },
+          {
+            year: "1986",
+            game: "Scala",
+            url: "https://boardgamegeek.com/boardgame/11368",
+            author: "José Diaz",
+            star: ""
+          },
+          {
+            year: "1987",
+            game: "Abalone",
+            url: "https://boardgamegeek.com/boardgame/526",
+            author: "Michel Lalet, Laurent Levi",
+            star: ""
+          },
+          {
+            year: "1987",
+            game: "Irensei",
+            url: "https://boardgamegeek.com/boardgame/48871",
+            author: "Uncredited",
+            star: "★"
+          },
+          {
+            year: "1987",
+            game: "Maritim",
+            url: "https://boardgamegeek.com/boardgame/1390",
+            author: "Reinhold Wittig",
+            star: ""
+          },
+          {
+            year: "1988",
+            game: "Amazons",
+            url: "https://boardgamegeek.com/boardgame/2125",
+            author: "Walter Zamkauskas",
+            star: "★★"
+          },
+          {
+            year: "1988",
+            game: "Ataxx",
+            url: "https://en.wikipedia.org/wiki/Ataxx",
+            author: "Dave Crummack, Craig Galley",
+            star: ""
+          },
+          {
+            year: "1988",
+            game: "Palanquée",
+            url: "https://boardgamegeek.com/boardgame/158208",
+            author: "Ludovic Robillard",
+            star: ""
+          },
+          {
+            year: "1991",
+            game: "Posit",
+            url: "https://boardgamegeek.com/boardgame/186367",
+            author: "Shinichi Tobita",
+            star: "★★"
+          },
+          {
+            year: "1991",
+            game: "Quarto",
+            url: "https://boardgamegeek.com/boardgame/681",
+            author: "Blaise Muller",
+            star: ""
+          },
+          {
+            year: "1991",
+            game: "Susan",
+            url: "https://boardgamegeek.com/boardgame/26135",
+            author: "Stephen Linhart",
+            star: ""
+          },
+          {
+            year: "1992",
+            game: "Billabong",
+            url: "https://boardgamegeek.com/boardgame/464",
+            author: "Eric Solomon",
+            star: "★"
+          },
+          {
+            year: "1992",
+            game: "Fibonacci",
+            url: "https://boardgamegeek.com/boardgame/695",
+            author: "Thomas Naylor",
+            star: ""
+          },
+          {
+            year: "1992",
+            game: "Hexade",
+            url: "https://boardgamegeek.com/boardgame/21025",
+            author: "Christian Freeling",
+            star: ""
+          },
+          {
+            year: "1993",
+            game: "Slimetrail",
+            url: "https://boardgamegeek.com/boardgame/31467",
+            author: "Bill Taylor",
+            star: ""
+          },
+          {
+            year: "1993",
+            game: "Pylos",
+            url: "https://boardgamegeek.com/boardgame/1419",
+            author: "David G. Royffe",
+            star: ""
+          },
+          {
+            year: "1993",
+            game: "Tanbo",
+            url: "https://boardgamegeek.com/boardgame/6492",
+            author: "Mark Steere",
+            star: ""
+          },
+          {
+            year: "1993",
+            game: "Char",
+            url: "https://boardgamegeek.com/boardgame/14679",
+            author: "Frank Bechter",
+            star: ""
+          },
+          {
+            year: "1995",
+            game: "Aboyne",
+            url: "https://boardgamegeek.com/boardgame/32350",
+            author: "Paul Sijben",
+            star: ""
+          },
+          {
+            year: "1995",
+            game: "Andantino",
+            url: "https://boardgamegeek.com/boardgame/11893",
+            author: "David L. Smith",
+            star: ""
+          },
+          {
+            year: "1996",
+            game: "Avalam Bitaka",
+            url: "https://boardgamegeek.com/boardgame/9092",
+            author: "Philippe Deweys",
+            star: ""
+          },
+          {
+            year: "1996",
+            game: "Gipf",
+            url: "https://boardgamegeek.com/boardgame/527",
+            author: "Kris Burm",
+            star: ""
+          },
+          {
+            year: "1997",
+            game: "Mutternland",
+            url: "https://boardgamegeek.com/boardgame/1051",
+            author: "Hartmut Witt",
+            star: "★"
+          },
+          {
+            year: "1997",
+            game: "Squirm",
+            url: "https://jpneto.github.io/world_abstract_games/squirm.htm",
+            author: "Bryce Wilcox",
+            star: ""
+          },
+          {
+            year: "1998",
+            game: "Through the Desert",
+            url: "https://boardgamegeek.com/boardgame/503",
+            author: "Reiner Knizia",
+            star: ""
+          },
+          {
+            year: "1999",
+            game: "*Star",
+            url: "https://boardgamegeek.com/boardgame/11997",
+            author: "Craige Schensted",
+            star: "★"
+          },
+          {
+            year: "1999",
+            game: "Octi",
+            url: "https://boardgamegeek.com/boardgame/450",
+            author: "Don Green",
+            star: ""
+          },
+          {
+            year: "1999",
+            game: "Trellis",
+            url: "https://boardgamegeek.com/boardgame/23233",
+            author: "Steven Meyers",
+            star: ""
+          },
+          {
+            year: "1999",
+            game: "Zèrtz",
+            url: "https://boardgamegeek.com/boardgame/528",
+            author: "Kris Burm",
+            star: "★★"
+          },
+/*
+          {
+            year: "19",
+            game: "",
+            url: "https://boardgamegeek.com/boardgame/",
+            author: "",
+            star: ""
+          },
+*/          
+        ];  // ★☆
+
+    let n_filtered = data.length;
+    
+    let currentSort = {
+      column: -1,
+      direction: 'asc'
+    };
+
+    function populateTable() {
+      const tableBody = document.querySelector("#dataTable tbody");
+      tableBody.innerHTML = "";
+
+      data.forEach(item => {
+        const urls  = item.url.split(',').map(url => url.trim());
+        const names = item.game.split(',').map(name => name.trim());
+
+        // Match links with their custom names
+        const linksHtml = urls.map((url, index) => {
+          const linkName = names[index] || "Visit"; // fallback if missing
+          return `<a href="${url}" target="_blank">${linkName}</a>`;
+        }).join('');
+
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td style="text-align: center;">${item.year}</td>
+          <td>${linksHtml}</td>
+          <td>${item.author}</td>
+          <td>${item.star}</td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    function filterTable() {
+      const input = document.getElementById("searchInput").value.trim().toLowerCase();
+      const rows = document.querySelectorAll("#dataTable tbody tr");
+
+      if (input === "") {
+        // If search box is empty, show all rows
+        rows.forEach(row => row.style.display = "");
+        n_filtered = data.length;
+        document.getElementById("list-length").textContent = 
+           "Total Games: " + n_filtered + "/" + data.length;        
+        return;
+      }
+
+      const excludedTerms = input.split(" ").filter(term => term.startsWith("!")).map(term => term.slice(1).trim());
+      const greaterThanTerms = input.split(" ").filter(term => term.startsWith(">")).map(term => parseInt(term.slice(1).trim(), 10));
+      const lessThanTerms = input.split(" ").filter(term => term.startsWith("<")).map(term => parseInt(term.slice(1).trim(), 10));
+      const includedTerms = input.split(" ").filter(term => !term.startsWith("!") && !term.startsWith(">") && !term.startsWith("<")).map(term => term.trim());
+
+      let count_filter = 0;
+      rows.forEach(row => {
+        const cells = row.querySelectorAll("td");
+        const rowText = Array.from(cells).map(cell => cell.textContent.toLowerCase()).join(" ");
+        const rowYear = parseInt(cells[0].textContent.trim(), 10);
+
+        // Check if the row contains any excluded terms
+        const containsExcluded = excludedTerms.some(term => rowText.includes(term));
+        if (containsExcluded) {
+          row.style.display = "none";
+          return;
+        }
+
+        // Check if the row year is greater than any specified in the search
+        const matchesGreaterThan = greaterThanTerms.every(term => rowYear > term);
+
+        // Check if the row year is less than any specified in the search
+        const matchesLessThan = lessThanTerms.every(term => rowYear < term);
+
+        // Check if the row contains all included terms
+        const matchesIncluded = includedTerms.every(term => rowText.includes(term));
+
+        if (matchesIncluded && matchesGreaterThan && matchesLessThan) {
+          row.style.display = "";
+          count_filter += 1
+        } else {
+          row.style.display = "none";
+        }
+      });
+      
+      n_filtered = count_filter;
+      document.getElementById("list-length").textContent = 
+          "Total Games: " + n_filtered + "/" + data.length;
+
+    }
+
+    function sortTable(columnIndex) {
+      const direction = currentSort.column === columnIndex && 
+                        currentSort.direction === 'asc' ? 'desc' : 'asc';
+      currentSort = { column: columnIndex, direction };
+
+      const keyMap = ["year", "game", "author", "star"];
+      
+      const sortedData = [...data].sort((a, b) => {
+        let valueA = a[keyMap[columnIndex]].toString().toLowerCase();
+        let valueB = b[keyMap[columnIndex]].toString().toLowerCase();
+
+        if (columnIndex === 0) {         // If sorting by year (numeric)
+          if (isNaN(valueA)) return  1;  // leave NaN at the end of the table
+          if (isNaN(valueB)) return -1;
+          valueA = parseInt(valueA, 10);
+          valueB = parseInt(valueB, 10);
+        }
+
+        if (valueA < valueB) return direction === 'asc' ? -1 :  1;
+        if (valueA > valueB) return direction === 'asc' ?  1 : -1;
+        return 0;
+      });
+
+      // Update table after sorting
+      data.length = 0; // Clear the original array
+      data.push(...sortedData); // Push the sorted data
+
+      // Re-render the table
+      populateTable();
+
+      // Update sorting indicators
+      updateSortingIndicators(columnIndex, direction);
+    }
+
+    function updateSortingIndicators(columnIndex, direction) {
+      const headers = document.querySelectorAll("th");
+      headers.forEach((header, index) => {
+        header.classList.remove("sorted-asc", "sorted-desc");
+        if (index === columnIndex) {
+          header.classList.add(direction === 'asc' ? 'sorted-asc' : 'sorted-desc');
+        }
+      });
+    }
+
+    // Populate the table initially
+    populateTable();
+    
+    // Show total number of games at the top of the page
+    document.getElementById("list-length").textContent = 
+        "Total Games: " + n_filtered + "/" + data.length;
+  </script>
+
+</body>
+</html>

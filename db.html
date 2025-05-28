@@ -11674,7 +11674,47 @@
         link: "modern_rules/1994_Cim.pdf,https://boardgamegeek.com/boardgame/256681",
         linkNames: "WAG,BGG"
       },
-     /*
+      {
+        year: 1990,
+        name: "Ex*Pion",
+        author: "Jean-Pierre Cassoly",
+        type: "elimination",
+        features: "move,push,custodian",
+        boardType: "11x11",
+        link: "modern_rules/1990_Ex_Pion.pdf,https://boardgamegeek.com/boardgame/31775",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 2010,
+        name: "Mirador",
+        author: "Andrew Perkis",
+        type: "connection",
+        features: "tiles,drop",
+        boardType: "27x27",
+        link: "https://boardgamegeek.com/boardgame/65822,https://www.abstractgames.org/mirador.html",
+        linkNames: "BGG,1"
+      },
+      {
+        year: 1994,
+        name: "Triune",
+        author: "Jeff Koke",
+        type: "elimination",
+        features: "move,promotion,demotion,replacement",
+        boardType: "8x8",
+        link: "modern_rules/1994_Triune.jpg,https://boardgamegeek.com/boardgame/66649",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: 1960,
+        name: "Stapeldammen II",
+        author: "Tim ter Kuile",
+        type: "score",
+        features: "stack,short-jump,multiple-jump",
+        boardType: "10x10",
+        link: "https://boardgamegeek.com/boardgame/124716",
+        linkNames: "BGG"
+      },
+    /*
       {
         year: 2020,
         name: "",
@@ -11794,9 +11834,14 @@
                         currentSort.direction === 'asc' ? 'desc' : 'asc';
       currentSort = { column: columnIndex, direction };
 
+      //TODO: should be more stable, but it is not working for the last two columns
+      //const keyMap = ["year", "name", "author", "type", "features", "boardType", "link"];      
+      
       const sortedData = [...data].sort((a, b) => {
         let valueA = a[Object.keys(a)[columnIndex]].toString().toLowerCase();
         let valueB = b[Object.keys(b)[columnIndex]].toString().toLowerCase();
+        //let valueA = a[keyMap[columnIndex]].toString().toLowerCase();
+        //let valueB = b[keyMap[columnIndex]].toString().toLowerCase();
 
         if (columnIndex === 0) { // If sorting by year (numeric)
           if (isNaN(valueA)) return  1;  // leave NaN at the end of the table
