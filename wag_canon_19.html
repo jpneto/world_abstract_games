@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>19th Century Canon</title>
+  <style>
+    body {
+      font-family: Courier New, sans-serif;
+      padding: 20px;
+      font-size: 12px;
+    }
+    table {
+      width: 66%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid #bbb;
+      padding: 6px 10px;
+      text-align: left;
+      vertical-align: top;
+      font-size: 12px;
+    }
+    th {
+      /* background-color: #f4f4f4; */
+      cursor: pointer;
+      font-size: 14px;
+    }
+    th.sorted-asc::after {
+      content: " ↑";
+    }
+    th.sorted-desc::after {
+      content: " ↓";
+    }    
+    input[type="text"] {
+      font-family: Courier New;
+      width: 380px;
+      padding: 6px 10px;
+      margin-bottom: 10px;
+      font-size: 12px;
+    }
+    input[class="bgg"] {
+      width: 28px;
+      padding: 5px 6px;
+      margin-bottom: 10px;
+      font-size: 12px;
+    }
+    input[class="google"] {
+      width: 112px;
+      padding: 5px 6px;
+      margin-bottom: 10px;
+      font-size: 12px;
+    }
+    a {
+      color: #000000; /* #007bff; */
+      text-decoration: none;
+      margin-right: 8px;
+      display: inline-block;
+      font-size: 12px;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    input[type="text"],
+    input[type="text"]:focus   
+    {
+         background: transparent;
+         /* border: none; */
+         outline-width: 0;
+    }    
+    .half-width {
+      width: 70%;
+      margin: 0 auto; /* optional: centers the div horizontally */
+      background-color: #f4f4f4; /* optional: just for visibility */
+      padding: 1em;
+    }    
+  </style>
+</head>
+
+<body background = "back-wood3.jpg" onload="sortTable(0)"> 
+
+<h1>WAG's 19th Century Canon of Abstract Games</h1>
+
+  <details>
+     <summary>About this page</summary>
+     <div class="half-width">      
+     <p>The list follows the same criteria of the <a href="https://jpneto.github.io/world_abstract_games/wag_canon.html">20th century Canon.</a></p>
+     <p>note: I would include Bizingo in this canon, but I consider it an apocryphal game from the 20th century</p>
+     </div>
+  </details>
+ 
+  <input type="text" id="searchInput" onkeyup="filterTable()"
+         placeholder="Search (!word for exclusion, >year <year for ranges)" autofocus>
+  <br>
+  <span id="list-length"></span> 
+  
+  <table id="dataTable">
+    <thead>
+      <tr>
+        <th onclick="sortTable(0)">Year</th>
+        <th onclick="sortTable(1)">Game</th>
+        <th onclick="sortTable(2)">Author(s)</th>
+        <th onclick="sortTable(3)">Top Games</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Rows will be inserted here -->
+    </tbody>
+  </table>
+
+  <script>
+    const data = [
+          {
+            year: "1883",
+            game: "Reversi",
+            url: "https://boardgamegeek.com/boardgame/2389",
+            author: "John W. Mollett, Lewis Waterman",
+            star: "★★"
+          },
+          {
+            year: "1884",
+            game: "Halma",
+            url: "https://boardgamegeek.com/boardgame/38950",
+            author: "George Howard Monks",
+            star: "★★"
+          },
+          {
+            year: "1889",
+            game: "Dots and Boxes",
+            url: "https://boardgamegeek.com/boardgame/17106",
+            author: "Edouard Lucas",
+            star: "★"
+          },
+          {
+            year: "1875",
+            game: "Bashnya",
+            url: "https://boardgamegeek.com/boardgame/36550",
+            author: "Unknown",
+            star: "★★"
+          },
+          {
+            year: "1842",
+            game: "Agon",
+            url: "https://boardgamegeek.com/boardgame/5168",
+            author: "McLoughlin Bro. Publ",
+            star: ""
+          },
+          {
+            year: "1889",
+            game: "Brax",
+            url: "https://boardgamegeek.com/boardgame/12694",
+            author: "Frederic Denham",
+            star: ""
+          },
+          {
+            year: "1800",
+            game: "Conspirateurs",
+            url: "https://boardgamegeek.com/boardgame/60707",
+            author: "Unknown",
+            star: "★"
+          },
+          {
+            year: "1887",
+            game: "Chivalry",
+            url: "https://boardgamegeek.com/boardgame/117864",
+            author: "George S. Parker",
+            star: ""
+          },
+          {
+            year: "1898",
+            game: "Leapfrog",
+            url: "https://boardgamegeek.com/boardgame/35722",
+            author: "H. J. R. Murray",
+            star: "★"
+          },
+          {
+            year: "1892",
+            game: "Lightning",
+            url: "https://boardgamegeek.com/boardgame/35528",
+            author: "Harry A. Doty",
+            star: ""
+          },
+          {
+            year: "1874",
+            game: "Congo",
+            url: "https://boardgamegeek.com/boardgame/99361",
+            author: "Charles Watilliaux",
+            star: "★"
+          },
+          {
+            year: "1870",
+            game: "Blockade",
+            url: "https://boardgamegeek.com/boardgame/153708",
+            author: "Nicholas Weyde",
+            star: ""
+          },
+          {
+            year: "1892",
+            game: "Kastellet",
+            url: "https://boardgamegeek.com/boardgame/156220",
+            author: "Henry Croome Smith",
+            star: "★"
+          },
+          {
+            year: "1864",
+            game: "Hexagonia",
+            url: "https://boardgamegeek.com/boardgame/153683",
+            author: "John Jaques Publ.",
+            star: ""
+          },
+          {
+            year: "1870",
+            game: "Pontoons",
+            url: "https://boardgamegeek.com/boardgame/159235",
+            author: "John Jaques Publ.",
+            star: ""
+          },
+          {
+            year: "1893",
+            game: "Lanrick",
+            url: "https://boardgamegeek.com/boardgame/",
+            author: "Lewis Carroll",
+            star: ""
+          },
+          {
+            year: "1890",
+            game: "Do-it-yourself Draughts",
+            url: "https://sagme.blogspot.com/2025/04/diy-draughts.html",
+            author: "Walter Sanders",
+            star: ""
+          },
+/*
+          {
+            year: "18",
+            game: "",
+            url: "https://boardgamegeek.com/boardgame/",
+            author: "",
+            star: ""
+          },
+*/          
+        ];  // ★☆
+
+    let n_filtered = data.length;
+    
+    let currentSort = {
+      column: -1,
+      direction: 'asc'
+    };
+
+    function populateTable() {
+      const tableBody = document.querySelector("#dataTable tbody");
+      tableBody.innerHTML = "";
+
+      data.forEach(item => {
+        const urls  = item.url.split(',').map(url => url.trim());
+        const names = item.game.split(',').map(name => name.trim());
+
+        // Match links with their custom names
+        const linksHtml = urls.map((url, index) => {
+          const linkName = names[index] || "Visit"; // fallback if missing
+          return `<a href="${url}" target="_blank">${linkName}</a>`;
+        }).join('');
+
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td style="text-align: center;">${item.year}</td>
+          <td>${linksHtml}</td>
+          <td>${item.author}</td>
+          <td>${item.star}</td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    function filterTable() {
+      const input = document.getElementById("searchInput").value.trim().toLowerCase();
+      const rows = document.querySelectorAll("#dataTable tbody tr");
+
+      if (input === "") {
+        // If search box is empty, show all rows
+        rows.forEach(row => row.style.display = "");
+        n_filtered = data.length;
+        document.getElementById("list-length").textContent = 
+           "Total Games: " + n_filtered + "/" + data.length;        
+        return;
+      }
+
+      const excludedTerms = input.split(" ").filter(term => term.startsWith("!")).map(term => term.slice(1).trim());
+      const greaterThanTerms = input.split(" ").filter(term => term.startsWith(">")).map(term => parseInt(term.slice(1).trim(), 10));
+      const lessThanTerms = input.split(" ").filter(term => term.startsWith("<")).map(term => parseInt(term.slice(1).trim(), 10));
+      const includedTerms = input.split(" ").filter(term => !term.startsWith("!") && !term.startsWith(">") && !term.startsWith("<")).map(term => term.trim());
+
+      let count_filter = 0;
+      rows.forEach(row => {
+        const cells = row.querySelectorAll("td");
+        const rowText = Array.from(cells).map(cell => cell.textContent.toLowerCase()).join(" ");
+        const rowYear = parseInt(cells[0].textContent.trim(), 10);
+
+        // Check if the row contains any excluded terms
+        const containsExcluded = excludedTerms.some(term => rowText.includes(term));
+        if (containsExcluded) {
+          row.style.display = "none";
+          return;
+        }
+
+        // Check if the row year is greater than any specified in the search
+        const matchesGreaterThan = greaterThanTerms.every(term => rowYear > term);
+
+        // Check if the row year is less than any specified in the search
+        const matchesLessThan = lessThanTerms.every(term => rowYear < term);
+
+        // Check if the row contains all included terms
+        const matchesIncluded = includedTerms.every(term => rowText.includes(term));
+
+        if (matchesIncluded && matchesGreaterThan && matchesLessThan) {
+          row.style.display = "";
+          count_filter += 1
+        } else {
+          row.style.display = "none";
+        }
+      });
+      
+      n_filtered = count_filter;
+      document.getElementById("list-length").textContent = 
+          "Total Games: " + n_filtered + "/" + data.length;
+
+    }
+
+    function sortTable(columnIndex) {
+      const direction = currentSort.column === columnIndex && 
+                        currentSort.direction === 'asc' ? 'desc' : 'asc';
+      currentSort = { column: columnIndex, direction };
+
+      const keyMap = ["year", "game", "author", "star"];
+      
+      const sortedData = [...data].sort((a, b) => {
+        let valueA = a[keyMap[columnIndex]].toString().toLowerCase();
+        let valueB = b[keyMap[columnIndex]].toString().toLowerCase();
+
+        if (columnIndex === 0) {         // If sorting by year (numeric)
+          if (isNaN(valueA)) return  1;  // leave NaN at the end of the table
+          if (isNaN(valueB)) return -1;
+          valueA = parseInt(valueA, 10);
+          valueB = parseInt(valueB, 10);
+        }
+
+        if (valueA < valueB) return direction === 'asc' ? -1 :  1;
+        if (valueA > valueB) return direction === 'asc' ?  1 : -1;
+        return 0;
+      });
+
+      // Update table after sorting
+      data.length = 0; // Clear the original array
+      data.push(...sortedData); // Push the sorted data
+
+      // Re-render the table
+      populateTable();
+
+      // Update sorting indicators
+      updateSortingIndicators(columnIndex, direction);
+    }
+
+    function updateSortingIndicators(columnIndex, direction) {
+      const headers = document.querySelectorAll("th");
+      headers.forEach((header, index) => {
+        header.classList.remove("sorted-asc", "sorted-desc");
+        if (index === columnIndex) {
+          header.classList.add(direction === 'asc' ? 'sorted-asc' : 'sorted-desc');
+        }
+      });
+    }
+
+    // Populate the table initially
+    populateTable();
+    
+    // Show total number of games at the top of the page
+    document.getElementById("list-length").textContent = 
+        "Total Games: " + n_filtered + "/" + data.length;
+  </script>
+
+</body>
+</html>
