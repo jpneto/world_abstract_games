@@ -125,6 +125,7 @@
       <li>ball - special neutral stone that's transported, catch-the-flag games</li>
       <li>bounce - pieces bounce at the edge or in other pieces</li>
       <li>budget - players decide where to spend their turn budget</li>
+      <li>chain - pieces are chained together</li>
       <li>chain-reaction - an action might provoke more similar actions</li>
       <li>choice - adversary can restrict player's choices</li>
       <li>colorN - needs N piece colors (default is two colors of one/two types)</li>
@@ -149,6 +150,7 @@
       <li>los - uses line-of-sight or orthogonal empty path</li>
       <li>ko - no repeated position rule is included</li>
       <li>magnetic - attract/repulse pieces</li>
+      <li>marble - pieces as spheres used in 3D structures </li>
       <li>merge - two or more pieces merge into one</li>
       <li>momentum - movement is transferred between pieces</li>
       <li>move - pieces move</li>
@@ -7613,7 +7615,7 @@
         name: "Akron",
         author: "Cameron Browne",
         type: "connection",
-        features: "drop",
+        features: "drop,marble",
         boardType: "8x8",
         link: "modern_rules/2002_Akron.pdf,https://boardgamegeek.com/boardgame/10889",
         linkNames: "WAG,BGG"
@@ -7623,7 +7625,7 @@
         name: "Margo",
         author: "Cameron Browne",
         type: "score",
-        features: "drop,enclosure,capture",
+        features: "drop,enclosure,capture,marble",
         boardType: "6x6",
         link: "modern_rules/2006_Margo.pdf,https://boardgamegeek.com/boardgame/24923",
         linkNames: "WAG,BGG"
@@ -8383,7 +8385,7 @@
         name: "Pylos",
         author: "David G. Royffe",
         type: "position",
-        features: "drop,move,remove,reserve",
+        features: "drop,move,remove,reserve,marble",
         boardType: "4x4",
         link: "modern_rules/1993_Pylos.pdf,https://boardgamegeek.com/boardgame/1419",
         linkNames: "WAG,BGG"
@@ -14837,6 +14839,106 @@
         boardType: "misc",
         link: "modern_rules/1993_Double_Morphus.pdf,https://boardgamegeek.com/boardgame/11540",
         linkNames: "WAG,BGG"
+      },
+      {
+        year: 1968,
+        name: "Astroblitz",
+        author: "The Game Crafter",
+        type: "position",
+        features: "move,short-jump,multiple-jump",
+        boardType: "misc",
+        link: "https://sagme.blogspot.com/2025/06/from-chivalry-to-lancer.html,https://boardgamegeek.com/boardgame/6815",
+        linkNames: "Sagme,BGG"
+      },
+      {
+        year: 1973,
+        name: "Lancer",
+        author: "The Game Crafter",
+        type: "position",
+        features: "move,short-jump,multiple-jump",
+        boardType: "misc",
+        link: "https://sagme.blogspot.com/2025/06/from-chivalry-to-lancer.html,https://boardgamegeek.com/boardgame/2691",
+        linkNames: "Sagme,BGG"
+      },
+      {
+        year: 1999,
+        name: "Eclipse, Ball and Chain Game",
+        author: "Gerardo Iula, Mirko Marchesi",
+        type: "stalemate",
+        features: "move,pivot,jump,chain",
+        boardType: "hexsq9,7",
+        link: "https://sagme.blogspot.com/2025/06/chain-games.html,https://boardgamegeek.com/boardgame/11542",
+        linkNames: "Sagme,BGG"
+      },
+      {
+        year: 1976,
+        name: "Dyade",
+        author: "Bütehorn Spiele Publ.",
+        type: "elimination",
+        features: "move,capture,pivot,chain",
+        boardType: "11x8",
+        link: "https://sagme.blogspot.com/2025/06/chain-games.html,https://boardgamegeek.com/boardgame/17441",
+        linkNames: "Sagme,BGG"
+      },
+      {
+        year: 2018,
+        name: "Pivot",
+        author: "Dekel Noy",
+        type: "moku",
+        features: "drop,move,chain",
+        boardType: "10x10",
+        link: "https://sagme.blogspot.com/2025/06/chain-games.html,https://boardgamegeek.com/boardgame/266299",
+        linkNames: "Sagme,BGG"
+      },
+      {
+        year: 1969,
+        name: "LogiQuad Game System",
+        author: "John H. Geiger",
+        type: "score",
+        features: "drop,marble",
+        boardType: "6x6",
+        link: "https://sagme.blogspot.com/2025/06/the-logiquad-game-system.html,https://boardgamegeek.com/boardgame/2208",
+        linkNames: "Sagme,BGG"
+      },
+      {
+        year: 1985,
+        name: "Upper Hand, Pyramids",
+        author: "Margalith Akavya",
+        type: "placement",
+        features: "drop,marbles,neutral",
+        boardType: "5x5",
+        link: "https://sagme.blogspot.com/2025/06/the-logiquad-game-system.html,https://boardgamegeek.com/boardgame/4545",
+        linkNames: "Sagme,BGG"
+      },
+      {
+        year: 2018,
+        name: "Mosaic",
+        author: "Margalith Akavya",
+        type: "placement",
+        features: "drop,marbles,neutral",
+        boardType: "7x7",
+        link: "https://sagme.blogspot.com/2025/06/the-logiquad-game-system.html,https://boardgamegeek.com/boardgame/252063",
+        linkNames: "Sagme,BGG"
+      },
+      {
+        year: 2011,
+        name: "Shibumi",
+        author: "Cameron Browne",
+        type: "game system",
+        features: "marbles",
+        boardType: "4x4",
+        link: "https://boardgamegeek.com/boardgame/135270",
+        linkNames: "BGG"
+      },
+      {
+        year: 1992,
+        name: "Le Jeu des Temples",
+        author: "Laurent Escoffier",
+        type: "position",
+        features: "tiles,drop,move",
+        boardType: "10x10",
+        link: "https://sagme.blogspot.com/2025/06/the-game-of-temples.html,http://jeuxstrategieter.free.fr/Jeu_des_temples_presentation.php",
+        linkNames: "Sagme,1"
       },
    /*
       {
