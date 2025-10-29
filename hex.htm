@@ -42,7 +42,11 @@ hexgv2diag("1,11,1,./../.../..../...../....../......./......../........./.......
 		<li><font size="3"
         face="Arial"><b>TURN</b> - On each turn, each player drop one friendly
             stone in an empty
-            cell.</font></li>
+            cell.</font><ul>
+		<li><font face="Arial"><b>PIE RULE</b>: In the first turn, the second 
+		played can decide to swap colors.</font></li>
+		</ul>
+    	</li>
 		<li><font size="3" face="Arial"><b>GOAL
             </b>- The first player (say, Black) is to form a unbroken chain of 
 		stones that connects the SE and&nbsp; NW sides of the board, while the 
@@ -311,7 +315,6 @@ Jade</a> but with clearer goals.</i></font></p>
 		17&nbsp;J10&nbsp;Q7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I7&nbsp;&nbsp;R6<br>
 		18&nbsp;resign</font></p>
 	</blockquote>
-	<p>&nbsp;</p>
 	<p><a name="3connection"></a><font face="Arial">A more interesting variant 
 	is 2016's <b>3-CONNECTION</b> also proposed by Taylor and Neto:</font></p>
 	<ul>
@@ -400,9 +403,65 @@ Jade</a> but with clearer goals.</i></font></p>
 	</blockquote>
 	<p><font face="Arial">Neto and Taylor playtested this mutator with Y and 
 	Chess with nice results.</font></p>
-	<p>&nbsp;</p>
+	<p><a name="identicon"></a><font face="Arial"><b>
+	<a href="https://boardgamegeek.com/thread/1695662/hex-variant-identicon">
+	Identicon</a></b> is a 2016 game designed by Hu Man Bin. It is played on a 
+	11x11 Hex board, with one neutral stone, and 120 markers where each set of 
+	twelve are labeled from 1 to 10. The setup places the neutral stone at the 
+	center, and the markers are placed randomly in the remaining empty hexes. On 
+	his turn, each player picks five markers with the same label and replaces 
+	them with stones of their color. A player wins by connecting their 
+	respective opposite sides, as usual.</font></p>
+	<p><a name="cut_thrust"></a><font face="Arial"><b>
+	<a href="https://boardgamegeek.com/thread/1891667/article/27554997#27554997">
+	Cut and Thrust</a></b> is a 2017 game by Craig Duncan and Bill Taylor: <i>
+	WHITE wins by kingwise connecting any 2-opposite sides, playing one stone on 
+	each turn. BLACK wins by preventing this, playing two stones on each turn, 
+	which may not end in the same kingwise-connected group. So, Black must 
+	orthogonally connect all 4 sides.</i></font></p>
+	<p><font face="Arial">Here are two sample games played by the authors:</font></p>
+	<blockquote>
+		<p><font face="Courier New">a&nbsp;b&nbsp;c&nbsp;d&nbsp;e&nbsp;f&nbsp;g&nbsp;h&nbsp;i&nbsp;j&nbsp;k&nbsp;l&nbsp;m&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OOO&nbsp;&nbsp;&nbsp;XXX&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OOO&nbsp;&nbsp;&nbsp;XXX<br>
+		.&nbsp;.&nbsp;x&nbsp;x&nbsp;x&nbsp;.&nbsp;x&nbsp;o&nbsp;x&nbsp;x&nbsp;x&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;1.&nbsp;g7&nbsp;&nbsp;&nbsp;&nbsp;i4&nbsp;&nbsp;i7&nbsp;&nbsp;&nbsp;&nbsp;15.&nbsp;e3&nbsp;&nbsp;&nbsp;&nbsp;e2&nbsp;&nbsp;h12<br>
+		x&nbsp;x&nbsp;.&nbsp;o&nbsp;x&nbsp;x&nbsp;x&nbsp;.&nbsp;x&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;2.&nbsp;i6&nbsp;&nbsp;&nbsp;&nbsp;j5&nbsp;&nbsp;h7&nbsp;&nbsp;&nbsp;&nbsp;16.&nbsp;d2&nbsp;&nbsp;&nbsp;&nbsp;a2&nbsp;&nbsp;i12<br>
+		.&nbsp;.&nbsp;.&nbsp;.&nbsp;o&nbsp;.&nbsp;x&nbsp;.&nbsp;.&nbsp;o&nbsp;x&nbsp;o&nbsp;.&nbsp;&nbsp;&nbsp;3.&nbsp;h6&nbsp;&nbsp;&nbsp;&nbsp;c6&nbsp;&nbsp;l6&nbsp;&nbsp;&nbsp;&nbsp;17.&nbsp;l1l&nbsp;&nbsp;&nbsp;d1&nbsp;&nbsp;k12<br>
+		x&nbsp;x&nbsp;.&nbsp;.&nbsp;.&nbsp;o&nbsp;.&nbsp;x&nbsp;.&nbsp;x&nbsp;o&nbsp;x&nbsp;.&nbsp;&nbsp;&nbsp;4.&nbsp;k7&nbsp;&nbsp;&nbsp;&nbsp;d7&nbsp;&nbsp;l7&nbsp;&nbsp;&nbsp;&nbsp;18.&nbsp;m13&nbsp;&nbsp;&nbsp;c1&nbsp;&nbsp;m13<br>
+		.&nbsp;x&nbsp;.&nbsp;.&nbsp;.&nbsp;o&nbsp;x&nbsp;.&nbsp;x&nbsp;x&nbsp;o&nbsp;x&nbsp;.&nbsp;&nbsp;&nbsp;5.&nbsp;l10&nbsp;&nbsp;&nbsp;h4&nbsp;&nbsp;e8&nbsp;&nbsp;&nbsp;&nbsp;19.&nbsp;l13&nbsp;&nbsp;&nbsp;e1&nbsp;&nbsp;g6<br>
+		.&nbsp;.&nbsp;x&nbsp;.&nbsp;.&nbsp;o&nbsp;x&nbsp;o&nbsp;o&nbsp;x&nbsp;o&nbsp;x&nbsp;.&nbsp;&nbsp;&nbsp;6.&nbsp;f4&nbsp;&nbsp;&nbsp;&nbsp;g5&nbsp;&nbsp;k10&nbsp;&nbsp;&nbsp;20.&nbsp;f6&nbsp;&nbsp;&nbsp;&nbsp;b2&nbsp;&nbsp;a4<br>
+		.&nbsp;.&nbsp;.&nbsp;x&nbsp;.&nbsp;.&nbsp;o&nbsp;x&nbsp;x&nbsp;x&nbsp;o&nbsp;x&nbsp;.&nbsp;&nbsp;&nbsp;7.&nbsp;f5&nbsp;&nbsp;&nbsp;&nbsp;b5&nbsp;&nbsp;k11&nbsp;&nbsp;&nbsp;21.&nbsp;k6&nbsp;&nbsp;&nbsp;&nbsp;k3&nbsp;&nbsp;l5<br>
+		.&nbsp;.&nbsp;.&nbsp;.&nbsp;x&nbsp;.&nbsp;.&nbsp;o&nbsp;.&nbsp;o&nbsp;o&nbsp;x&nbsp;.&nbsp;&nbsp;&nbsp;8.&nbsp;h8&nbsp;&nbsp;&nbsp;&nbsp;f9&nbsp;&nbsp;k9&nbsp;&nbsp;&nbsp;&nbsp;22.&nbsp;k5&nbsp;&nbsp;&nbsp;&nbsp;i1&nbsp;&nbsp;l4<br>
+		.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;x&nbsp;.&nbsp;.&nbsp;o&nbsp;x&nbsp;x&nbsp;o&nbsp;.&nbsp;&nbsp;&nbsp;9.&nbsp;l9&nbsp;&nbsp;&nbsp;&nbsp;j7&nbsp;&nbsp;l8&nbsp;&nbsp;&nbsp;&nbsp;23.&nbsp;j3&nbsp;&nbsp;&nbsp;&nbsp;j1&nbsp;&nbsp;j4<br>
+		.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;x&nbsp;o&nbsp;.&nbsp;.&nbsp;x&nbsp;o&nbsp;.&nbsp;&nbsp;10.&nbsp;k8&nbsp;&nbsp;&nbsp;&nbsp;j9&nbsp;&nbsp;g10&nbsp;&nbsp;&nbsp;24.&nbsp;k4&nbsp;&nbsp;&nbsp;&nbsp;g1&nbsp;&nbsp;k1<br>
+		.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;x&nbsp;o&nbsp;x&nbsp;.&nbsp;x&nbsp;o&nbsp;.&nbsp;&nbsp;11.&nbsp;j8&nbsp;&nbsp;&nbsp;&nbsp;j6&nbsp;&nbsp;l12&nbsp;&nbsp;&nbsp;25.&nbsp;h1&nbsp;&nbsp;&nbsp;&nbsp;g2&nbsp;&nbsp;i2<br>
+		.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;x&nbsp;x&nbsp;x&nbsp;.&nbsp;x&nbsp;x&nbsp;o&nbsp;&nbsp;12.&nbsp;i9&nbsp;&nbsp;&nbsp;&nbsp;b4&nbsp;&nbsp;i11&nbsp;&nbsp;&nbsp;26.&nbsp;l3&nbsp;&nbsp;&nbsp;&nbsp;resign<br>
+		.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;o&nbsp;x&nbsp;&nbsp;13.&nbsp;h10&nbsp;&nbsp;&nbsp;g3&nbsp;&nbsp;g11&nbsp;&nbsp;<br>
+		a&nbsp;b&nbsp;c&nbsp;d&nbsp;e&nbsp;f&nbsp;g&nbsp;h&nbsp;i&nbsp;j&nbsp;k&nbsp;l&nbsp;m&nbsp;&nbsp;14.&nbsp;h11&nbsp;&nbsp;&nbsp;f2&nbsp;&nbsp;g12&nbsp;&nbsp;<br>
+		<br>
+		<br>
+		a&nbsp;b&nbsp;c&nbsp;d&nbsp;e&nbsp;f&nbsp;g&nbsp;h&nbsp;i&nbsp;j&nbsp;k&nbsp;l&nbsp;m&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OOO&nbsp;&nbsp;&nbsp;XXX&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OOO&nbsp;&nbsp;&nbsp;&nbsp;XXX<br>
+		.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;1.&nbsp;&nbsp;&nbsp;g7&nbsp;&nbsp;&nbsp;&nbsp;f6&nbsp;&nbsp;h8&nbsp;&nbsp;&nbsp;&nbsp;15.&nbsp;b13&nbsp;&nbsp;&nbsp;&nbsp;l2&nbsp;&nbsp;d6<br>
+		.&nbsp;.&nbsp;x&nbsp;o&nbsp;x&nbsp;x&nbsp;x&nbsp;x&nbsp;x&nbsp;x&nbsp;x&nbsp;x&nbsp;.&nbsp;&nbsp;&nbsp;2.&nbsp;&nbsp;&nbsp;h6&nbsp;&nbsp;&nbsp;&nbsp;g5&nbsp;&nbsp;i2&nbsp;&nbsp;&nbsp;&nbsp;16.&nbsp;d5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;e4&nbsp;&nbsp;e6<br>
+		.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;o&nbsp;o&nbsp;x&nbsp;o&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;3.&nbsp;&nbsp;&nbsp;i5&nbsp;&nbsp;&nbsp;&nbsp;c9&nbsp;&nbsp;j3&nbsp;&nbsp;&nbsp;&nbsp;17.&nbsp;g4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;e2&nbsp;&nbsp;h5<br>
+		.&nbsp;.&nbsp;.&nbsp;.&nbsp;x&nbsp;x&nbsp;o&nbsp;x&nbsp;x&nbsp;o&nbsp;.&nbsp;.&nbsp;x&nbsp;&nbsp;&nbsp;4.&nbsp;&nbsp;&nbsp;h3&nbsp;&nbsp;&nbsp;&nbsp;h2&nbsp;&nbsp;h4&nbsp;&nbsp;&nbsp;&nbsp;18.&nbsp;i3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c2&nbsp;&nbsp;f2<br>
+		x&nbsp;.&nbsp;.&nbsp;o&nbsp;x&nbsp;o&nbsp;x&nbsp;x&nbsp;o&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;5.&nbsp;&nbsp;&nbsp;e8&nbsp;&nbsp;&nbsp;&nbsp;f8&nbsp;&nbsp;i4&nbsp;&nbsp;&nbsp;&nbsp;19.&nbsp;d2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a8&nbsp;&nbsp;f4<br>
+		.&nbsp;.&nbsp;o&nbsp;x&nbsp;x&nbsp;x&nbsp;.&nbsp;o&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;6.&nbsp;&nbsp;&nbsp;f7&nbsp;&nbsp;&nbsp;&nbsp;a7&nbsp;&nbsp;c8&nbsp;&nbsp;&nbsp;&nbsp;20.&nbsp;f5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;e5&nbsp;&nbsp;m4<br>
+		x&nbsp;.&nbsp;.&nbsp;x&nbsp;.&nbsp;o&nbsp;o&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;7.&nbsp;&nbsp;&nbsp;d10&nbsp;&nbsp;&nbsp;d9&nbsp;&nbsp;a11&nbsp;&nbsp;&nbsp;21.&nbsp;resign<br>
+		x&nbsp;.&nbsp;x&nbsp;.&nbsp;o&nbsp;x&nbsp;.&nbsp;x&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;8.&nbsp;&nbsp;&nbsp;e9&nbsp;&nbsp;&nbsp;&nbsp;c11&nbsp;a9<br>
+		x&nbsp;.&nbsp;x&nbsp;x&nbsp;o&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;9.&nbsp;&nbsp;&nbsp;c10&nbsp;&nbsp;&nbsp;a10&nbsp;a13<br>
+		x&nbsp;.&nbsp;o&nbsp;o&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;10.&nbsp;&nbsp;&nbsp;c6&nbsp;&nbsp;&nbsp;&nbsp;d7&nbsp;&nbsp;a5<br>
+		x&nbsp;o&nbsp;x&nbsp;x&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;11.&nbsp;&nbsp;&nbsp;j4&nbsp;&nbsp;&nbsp;&nbsp;g2&nbsp;&nbsp;k2<br>
+		x&nbsp;.&nbsp;o&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;12.&nbsp;&nbsp;&nbsp;k3&nbsp;&nbsp;&nbsp;&nbsp;d13&nbsp;f13<br>
+		x&nbsp;o&nbsp;x&nbsp;x&nbsp;.&nbsp;x&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;13.&nbsp;&nbsp;&nbsp;c12&nbsp;&nbsp;&nbsp;c13&nbsp;d11<br>
+		a&nbsp;b&nbsp;c&nbsp;d&nbsp;e&nbsp;f&nbsp;g&nbsp;h&nbsp;i&nbsp;j&nbsp;k&nbsp;l&nbsp;m&nbsp;&nbsp;14.&nbsp;&nbsp;&nbsp;b11&nbsp;&nbsp;&nbsp;j2&nbsp;&nbsp;a12</font></p>
+		<blockquote>
+			<p><i><font face="Arial">In Game 1, Black can&#39;t stop White from 
+			connecting in the NE, which will eventually give White a north-south 
+			winning connection along the eastern edge. In Game 2, White can&#39;t 
+			stop Black from eventually making a SW-NE ortho-connection of all 
+			four sides.</font></i></p>
+		</blockquote>
+	</blockquote>
 </blockquote>
-<p>&nbsp;</p>
 <hr>
 </body>
 </html>
