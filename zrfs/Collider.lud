@@ -1,0 +1,208 @@
+// 20210426 works on 1.1.17
+// TODO. Restrict movement of neutral pieces that changed colour on previous turn
+// TODO. Add tie breaker
+// TODO. Add proper description and classification
+
+(game "Collider"
+
+    (players 2)
+
+    (equipment
+        {
+            (board (square <Board:size>))
+
+	    (piece "Disc" Each 
+	      (or
+		(do
+   		  (move
+    		    (from)
+    		    (to (sites LineOfSight Farthest at:(from)))
+                  )
+                  ifAfterwards: (and
+			(is Enemy
+     			  (who
+       			  at:(ahead
+                              (last To)
+                              (directions Cell from:(from) to:(last To))
+                             )
+                           )
+			)
+			(not (is Next
+     			  (who
+       			  at:(ahead
+                              (last To)
+                              (directions Cell from:(from) to:(last To))
+                             )
+                           )
+			))
+ 		  )
+
+		  ( then (and
+				  ( promote (last To) (piece "Disc") Next )
+				  ( promote ( ahead (last To) (directions Cell from:(last From) to:(last To)) ) (piece "Disc") Next )
+			 )
+		  )
+
+                )
+		(do
+   		  (move
+    		    (from)
+    		    (to (sites LineOfSight Farthest at:(from)))
+                  )
+                  ifAfterwards: 
+			(is Next
+     			  (who
+       			  at:(ahead
+                              (last To)
+                              (directions Cell from:(from) to:(last To))
+                             )
+                           )
+			)
+
+		  ( then (and
+				  (promote (last To) (piece "Counter") )
+				  (promote ( ahead (last To) (directions Cell from:(last From) to:(last To)) ) (piece "Counter") )
+			 )
+		  )
+
+                )
+	      )
+	    )    
+
+
+
+	    (piece "Counter" Shared 
+	      (or
+		(do
+   		  (move
+    		    (from)
+    		    (to (sites LineOfSight Farthest at:(from)))
+                  )
+                  ifAfterwards: 
+			(is Mover
+     			  (who
+       			  at:(ahead
+                              (last To)
+                              (directions Cell from:(from) to:(last To))
+                             )
+                           )
+			)
+ 		
+
+		  ( then (and
+				  ( promote (last To) (piece "Disc") Next )
+				  ( promote ( ahead (last To) (directions Cell from:(last From) to:(last To)) ) (piece "Disc") Next )
+			 )
+		  )
+
+                )
+		(do
+   		  (move
+    		    (from)
+    		    (to (sites LineOfSight Farthest at:(from)))
+                  )
+                  ifAfterwards: 
+			(is Next
+     			  (who
+       			  at:(ahead
+                              (last To)
+                              (directions Cell from:(from) to:(last To))
+                             )
+                           )
+			)
+
+		  ( then (and
+				  ( promote (last To) (piece "Disc") Mover )
+				  ( promote ( ahead (last To) (directions Cell from:(last From) to:(last To)) ) (piece "Disc") Mover )
+			 )
+		  )
+
+                )
+	      )
+	    )
+
+
+
+
+        }
+    )
+
+ 
+
+   (rules
+
+        (start
+            { 
+            (place "Disc1" (difference (union (sites Top) (sites Bottom)) (sites Corners)))
+            (place "Disc2" (difference (union (sites Right) (sites Left)) (sites Corners)))
+            }
+        )
+
+        (play (or
+                (forEach Piece)
+		(forEach Piece Shared)
+		
+		(then 
+                   (and 
+                     (set Score P1 (count Sites in:(sites Occupied by:P1)))        
+                     (set Score P2 (count Sites in:(sites Occupied by:P2)))
+                   )
+                )	
+
+
+	      )
+
+        )
+
+        (end
+            (if
+                (no Moves Next)
+		(byScore)
+            )
+        )
+
+    )
+
+)
+
+(option "Board Size" <Board> args:{ <size> } {
+	(item "6x6" <6> "The game is played on a 6x6 board.")
+	(item "7x7" <7> "The game is played on a 7x7 board.")
+	(item "8x8" <8> "The game is played on a 8x8 board.")
+})
+
+(metadata
+
+    (info
+        {
+        (description "Collider is... ")
+        (rules "On your turn you MOVE one of the pieces of your colour OR one of the neutral pieces.
+- The movement should be Queen like: an horizontal, vertical or diagonal straight line.
+- The moved piece MUST collide with a piece of ANOTHER colour, ending its movement.
+- These two pieces are REPLACED by two pieces of the third other colour.
+- The game ends when a player can not make any move. The winner is the player with the most pieces of they colour on the board.")
+        (source "<a href=\"https://boardgamegeek.com/thread/2634374/new-game-collider\" target=\"_blank\" class=\"style1\" style=\"color: #0000EE\" />BGG</a>")
+        (version "1.1.17")
+        (classification "-")
+        (author "Enrique Blasco Arnandis")
+        (credit "Enrique Blasco Arnandis")
+        (date "2021")
+        }
+    )
+
+
+    (graphics
+        {
+	    (piece Colour "Counter" fillColour:(colour Yellow))
+            (board Style Chess)
+        }
+    )
+)
+
+
+
+
+
+
+
+
