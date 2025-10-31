@@ -1,0 +1,253 @@
+
+// Pack-It by Phil Leduc 05-2025 ***********************************************
+
+(game "Pack-It" 
+    (players 2) 
+    (equipment { 
+        (board (<Board:Size>)) 
+        (piece <Board:Piece> Each)
+        (piece <Board:Piece> Neutral)
+    }) 
+
+    (rules 
+        (start {
+            (set Score P1 0)
+            (set Score P2 0)
+        })
+
+        (play
+            (if (and <Setup:OnOff> (< (count Moves) <Setup:NeutralCount> ) )
+                // Set up by placing four neutral pieces.
+                (move Add (piece (id <Board:Piece> Neutral)) (to (sites Empty) level: 0))
+                // Game Play
+                // Place a piece to act as the center of packet
+                (move Add
+                    (piece (id <Board:Piece> Mover))
+                    (to (sites Empty) level: 0) 
+                    (then
+                        (and {
+                            (addScore Mover 1)
+                            // Place pieces around center piece if empty or opponent occupied
+                            (forEach Site
+                                (sites Around (last To) <Board:Direction>)
+                                // If enemy piece adjacent to center piece, replace it with neutral piece
+                                (if ("IsEnemyAt" (site))
+                                    (and 
+                                        {
+                                        (remove (site))
+                                        (add (piece (id <Board:Piece> Neutral)) (to (site)))
+                                        (addScore Next -1)
+                                        }
+                                    )
+                                    // If empty, place another piece adjecent to center piece
+                                    (if (is Empty (site))
+                                        (and 
+                                            {
+                                            (add (piece (id <Board:Piece> Mover)) (to (site)))
+                                            (addScore Mover 1)
+                                            }
+                                        )
+                                    )
+                                )
+                            )
+                            // When board is full, add komi to 2nd player's score.
+                            (if (is Full)
+                                (and {
+                                    (addScore P2 <Board:Komi>)
+                                    (note "Komi of <Board:Komi> has been added to the second player's score")
+                                    (note "Second player wins if tie occurs")
+                                }
+                                )
+                            )
+                        } )
+                    ) 
+                )
+            ) 
+        ) 
+
+        (end 
+            { 
+            // Komi has already been added to 2nd player's score, highest score wins.
+            // Second player wins if scores are tied. 
+            (if (and (is Full)  (> (score P1) (score P2)))  (result P1 Win) )
+            (if (and (is Full) (<= (score P1) (score P2)))  (result P2 Win) )
+            }
+        )
+    )
+)
+
+// * ------------------------------------------------------------------------------
+
+(option "Setup" <Setup> args:{ <OnOff> <NeutralCount> }
+    {
+    (item "No neutral pieces*"
+        <False>
+        <0>
+        "No initial neutral pieces"
+    )*
+    (item "Four neutral pieces"  
+        <True>
+        <4>
+        "Four initial neutral pieces"
+    )
+    }
+)
+
+(option "Board" <Board> args:{ <Size> <Piece> <Scale> <Komi> <Direction> }
+    {
+    (item "Hex 6"  
+        <hex 6>
+        <"hex">
+        <1.2>
+        <3>
+        <Orthogonal>  
+        "Hex-hex size 6"
+    )
+    (item "Hex 6 Clipped"  
+        <remove (hex 6) cells:{0 5 40 50 85 90}>  
+        <"hex">  
+        <1.2>
+        <3>  
+        <Orthogonal>  
+        "Hex-hex size 6 Clipped"
+    )
+    (item "Hex Limping 5-6"  
+        <hex Limping 5>  
+        <"hex">
+        <1.2>
+        <3>  
+        <Orthogonal>  
+        "Hex Limping size 5-6"
+    )
+    (item "Hex 7*"  
+        <hex 7>  
+        <"hex">  
+        <1.2>
+        <3>  
+        <Orthogonal>  
+        "Hex-hex size 7"
+    )*
+    (item "Hex 7 Clipped"  
+        <remove (hex 7) cells:{0 6 57 69 120 126}>  
+        <"hex">  
+        <1.2>
+        <3>  
+        <Orthogonal>  
+        "Hex-hex size 7 Clipped"
+    )
+    (item "Hex Limping 6-7"  
+        <hex Limping 6>  
+        <"hex">  
+        <1.2>
+        <3>  
+        <Orthogonal>  
+        "Hex Limping size 6-7"
+    )
+    (item "Hex 8"  
+        <hex 8>  
+        <"hex">  
+        <1.2>
+        <3>  
+        <Orthogonal>  
+        "Hex-hex size 8"
+    )
+    (item "Hex 8 Clipped"  
+        <remove (hex 8) cells:{0 7 77 91 161 168}>  
+        <"hex">  
+        <1.2>
+        <3>  
+        <Orthogonal>  
+        "Hex-hex size 8 Clipped"
+    )
+    (item "Hex Limping 7-8"  
+        <hex Limping 7>  
+        <"hex">  
+        <1.2>
+        <3>  
+        <Orthogonal>  
+        "Hex Limping size 7-8"
+    )
+    (item "Square 10 Adjacent"  
+        <square 10>  
+        <"Square-alt1"> 
+        <0.7>
+        <4>  
+        <Adjacent>  
+        "Square size 10"
+    )
+    (item "Square 9 Orthogonal"  
+        <square 9>  
+        <"Square-alt1">  
+        <0.7>
+        <2>  
+        <Orthogonal>  
+        "Square size 9"
+    )
+    (item "Square 9 Diagonal"  
+        <square 9>  
+        <"Square-alt1">  
+        <0.7>
+        <2>  
+        <Diagonal>  
+        "Square size 9"
+    )
+    (item "Triangle 10"  
+        <tri 10>  
+        <"hexE">  
+        <1.2>
+        <2>  
+        <Orthogonal>  
+        "Triangle size 10"
+    )
+    }
+)
+
+// * ------------------------------------------------------------------------------
+
+
+(metadata 
+    
+    (info
+        {
+        (description "Pack-It is a print-n-play game for two with players trying to occupy the most cells of the board by placing a symmetrical pattern. The standard board a is hex-hex-7 and standard pattern is a hex-hex-2.  On a turn, a player places a piece on any empty cell, then places pieces on all adjacent empty cells and replaces all opponent pieces adjacent to the initial cell with neutral pieces. A player scores a point for every owned piece on the board. When all cells are occupied, a komi is given to the second player to balance the game and resolve ties. The player with the highest score wins.
+        
+        The ruleset can be applied to various regualr tessellations. Boards of various sizes and shapes, and symmetrical patterns are available using the Options menu.
+        ")
+
+        (rules "Pack-It is played on a hex-hex-7 board. Players decide who will play first. Turn alternate, no passing.
+            
+        Each turn, a player attempts to populate a hex-hex-2 shape covering 7 cells. A player must place a piece on any empty cell to act as the center of the hex-hex-2 pattern. Then a piece is placed on each empty adjacent cell, and each adjacent opponent piece is replaced with a neutral piece.
+        
+        The goal of the game is to have more pieces on the board that your opponent when the board is full. The second player is given a komi of 3.5 to adjust their piece count.        
+        ")
+        (source "<a href=\"https://sites.google.com/site/theowlsnest02/home/pack-it\" target=\"_blank\" class=\"style1\" style=\"color: #0000EE\" />The Owl's Nest - Pack-It</a>")
+        (version "1.3.14")
+        (classification "board/space/territory")
+        (date "05-2025")
+        (author "Phil Leduc")
+        (credit "Phil Leduc")
+    }
+    )
+
+    (graphics {
+
+        (board Colour Phase0 (colour 78 205 186 235))
+        (board Background fillColour:(colour 26 83 98 235) edgeColour:(colour 26 83 98 235))
+        (board Colour InnerEdges (colour Grey))
+        (board Colour OuterEdges (colour Grey))
+        (board StyleThickness InnerEdges 0.5)
+        (board StyleThickness OuterEdges 0.7)
+
+        (player Colour P1 (colour 247 255 247 255))
+        (player Colour P2 (colour 255 107 107 235))
+        (player Colour Neutral (colour 26 83 98 235))
+
+        (piece Scale <Board:Piece> <Board:Scale>)
+    })
+
+    (ai (heuristics (score)))
+    // (ai 
+    //     "Pack-It_ai"
+    // )
+    
+)

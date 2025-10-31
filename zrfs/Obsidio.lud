@@ -1,0 +1,455 @@
+
+// * Obsidio by Phil Leduc January 2025 **********************************************
+
+// CanPlace2ndToken allows the Mover to place a second token but only to a LOS cell
+// that is orthogonal to a target tile.
+// The adjacency option enables or disables the ability to place the second token
+// adjacent to the first token placed by the Mover.
+(define "CanPlace2ndToken"
+    (can Move
+        (move Add
+            (piece (id "square" Mover)) 
+            (to 
+                <Adjacency:OnOff>
+                if:(= 1 (% (to) 2))
+            )
+        )
+    )
+)
+
+// Claimable cells are target tile cells that have 4 or more Mover tokens adjacent to it.
+(define "IsClaimableSite"
+    (>= (count Sites in:(intersection (sites Around (#1)) (sites Occupied by:Mover))) 4)
+)
+
+// MoreClaimableTiles returns true is the Mover has one or more target cells remaining that
+//  have 4 or more Mover tokens adjacent. These cells can be claimed on the current player turn.
+(define "MoreClaimableTiles"
+    (not 
+        (all Sites (sites Occupied by:Neutral) 
+            if:(< (count Pieces Mover in:(sites Around (site))) 4 ) 
+        ) 
+    )
+)
+
+(define "SetNextMoveType"
+    // Determine if next player has a LOS or free placement move.
+    (if (> (count Sites in:(intersection (sites Around #1) (sites Empty))) 0) 
+        // If LOS placement is possible, Next player can chain place a token.
+        (set Var "MoveType" 3)
+        // Else LOS is not possible, so next player can freely place a token.
+        (set Var "MoveType" 1)
+    )
+)
+
+(define "MorphLastMoveToken"
+    (if (>= (var "LastToSite") 0)
+        // change previous square to disc
+        (add (piece (id "disc" #1)) (to (var "LastToSite") (apply (remove (var "LastToSite")))))
+        (if (>= (var "TargetSite") 0)
+            (add (piece (id <Theme:TargetSVG> Prev)) (to (var "TargetSite") (apply (remove (var "TargetSite")))))
+        )
+    )
+)
+
+(define "ClaimTargetTile"
+    // Claim a target tile instead of placing a token
+    (move Add
+        (piece (id "Sieged" Mover)) 
+        (to (sites Occupied by:Neutral)  
+            if:("IsClaimableSite" (to))
+            (apply (remove (to)))
+        )
+        (then
+            (and {
+                (addScore Mover 1)
+                ("AddToHand" <Theme:TargetSVG> Mover 0)
+
+                ("MorphLastMoveToken" Prev)
+                (set Var "LastToSite" -1)
+                // if Mover can claim another tile, give Mover a chance to claim it or pass.
+                // First, save last To site value which may become undefined (-1) when Pass is selected.
+                (set Var "TargetSite" (last To))
+                (if ("MoreClaimableTiles")
+                    (and
+                        (set Var "MoveType" 4)
+                        (moveAgain)
+                    )
+                    // Otherwise let Next player move
+                    ("SetNextMoveType" (last To))
+
+                )
+            })
+        )
+    )       
+)
+
+(define "SetupFor2ndTokenOrNextPlayer"
+    // If placement was orthogonal (has odd cell index) 
+    // to a target tile, check if possible to play another token.
+    (if (= 1 (% (last To) 2))
+        (if ("CanPlace2ndToken" (last To))
+            // It is possible to place a 2nd token.
+            (and
+                (set Var "MoveType" 2) // Mover can chain a 2nd token.
+                (moveAgain)
+            )
+            // Else, it is not possible to place a 2nd token so check
+            // if -Next- player can place a LOS token
+            ("SetNextMoveType" (last To))
+        )
+        // Else placement was not orthogonal to a 
+        // target tile so next player will get to place a 
+        // token or possibly claim a target tile.
+        ("SetNextMoveType" (last To))
+    )
+)
+
+(define "FreePlace1stToken"
+    // Move type 1: Freely place a token OR claim a target tile.
+    (or {
+        (move Add
+            (piece (id "square" Mover)) 
+            (to (sites Empty)) 
+            (then 
+                (and {
+                    "SetupFor2ndTokenOrNextPlayer"
+                    ("MorphLastMoveToken" Prev)
+                    (set Var "LastToSite" (last To))
+                })
+            )
+        )
+        // Mover has a free placement, but instead decides to claim a target tile.
+        "ClaimTargetTile"
+    })
+)
+
+(define "LOSPlace1stToken"
+    // Place a Line Of Sight or claim a target tile.
+    (or 
+        (move Add
+            (piece (id "square" Mover)) 
+            (to 
+                (sites LineOfSight Empty at: #1)
+            )
+            (then 
+                (and {
+                    "SetupFor2ndTokenOrNextPlayer"
+                    ("MorphLastMoveToken" Prev)
+                    (set Var "LastToSite" (last To))
+                })
+            )
+        )
+        // Claim a target tile instead of placing a LOS token
+        "ClaimTargetTile"
+    )
+)
+
+(define "Place2ndToken"
+    // Place a second token orthogonal to a target tile
+    (move Add
+        (piece (id "square" Mover)) 
+        (to 
+            // Allow adjacent 2nd token using (sites LineOfSight Empty at:(last To)) OR
+            // Disable adjacent placement using
+            //  (difference (sites LineOfSight Empty at:(last To)) (sites Around (last To)))
+            <Adjacency:OnOff>
+            if:(= 1 (% (to) 2))
+        )
+        (then
+            (and {
+                ("SetNextMoveType" (last To))
+                ("MorphLastMoveToken" Mover) 
+                (set Var "LastToSite" (last To))
+            })
+        )
+    )
+)
+
+// e.g., (add (piece (id "Wrench" P2)) (to (handSite P2 2)) count:1)
+(define "AddToHand"
+    (add (piece (id #1 #2)) (to (handSite #2 #3)) count:1)
+)
+
+
+// NoteInfo is not currently in use, but is an excellent way to get site and count
+// information.
+// (define "NoteInfo"
+//     (and {
+//         (note "Neutral sites and count of Mover pieces around each neutral site")
+//         (note
+//             (sites Occupied by:Neutral)
+//         )
+//         (forEach Site (sites Occupied by:Neutral)
+//             (if (>= (count Pieces Mover in:(sites Around (site)) 4))
+//                 (note (site)) 
+//             )
+//         )    
+//     })
+// )
+
+// ***********************************************
+
+(game "Obsidio" 
+    (players 2) 
+    (equipment { 
+        (board (square <Board:bsize>))
+
+        (hand Each size:1)
+
+        (piece "square" Each) 
+        (piece "disc" Each) 
+        (piece "disc" Neutral)
+
+        (piece "Sieged" Each) 
+        (piece "Sieged" Neutral)
+
+        (piece <Theme:TargetSVG> Each)
+        (piece <Theme:TargetSVG> Neutral) 
+    }) 
+
+    (rules 
+        (start {
+            (set Score Each 0)
+            (place <Theme:Neutral0>  <Board:ttsites>) 
+
+            (set Score P1 0)
+            (set Score P2 0)
+
+            (place <Theme:TargetSVG> "Hand" count:0)
+            // (place "castle_alt1"  (handSite P1)   count:0) 
+            // (place "castle_alt2"  (handSite P2)   count:0)
+
+
+        })
+
+        (play 
+            (or {
+                // Move type 1: Freely place a token OR claim a target tile.
+                (if (<= (var "MoveType") 1)
+                    "FreePlace1stToken"
+                )
+
+                // Move type 2: Chain place a second token using LOS
+                (if (= (var "MoveType") 2)
+                    "Place2ndToken"
+                )
+
+                // Chain (LOS) place a token OR claim a target tile.
+                (if (= (var "MoveType") 3)
+                    ("LOSPlace1stToken" (last To))
+                )
+
+                // Claim another target tile or pass
+                (if (= (var "MoveType") 4)
+                    // If subsequent target tile selected.
+                    // Note last To will be equal to -1 (undefined), if pass is selected
+                    (if (!= -1 (last To))
+                        (or
+                            // Claim another target tile
+                            "ClaimTargetTile"
+                            // Pass, postpone claiming target tiles.
+                            (move Pass)
+                        )
+                        // Pass was selected, last To is undefined. will need to use var TargetSite
+                        // to recover previous last To value.
+                        (
+                            // If there are any empty cells around the last To site
+                            (if (> (count Sites in:(intersection (sites Around (var "TargetSite")) (sites Empty))) 0)
+                                // Allow the Next player to make a LOS 1st token placement
+                                ("LOSPlace1stToken" (var "TargetSite"))
+                                // Else, allow the Next player to freely place a 1st token.
+                                ("FreePlace1stToken" (var "TargetSite"))
+                            ) 
+                        )
+                    )
+                )
+            })
+        )
+        
+        (end {
+            // If Mover has claimed a majority of target tiles, Mover wins. 
+            (if (>= (count Pieces Mover in:<Board:ttsites>) <Board:goal>)  (result Mover Win))
+            // If all target sites are claimed and no plater has a majority, 
+            // the Mover (last to claim a target tile) wins.
+            (if (= 0 (count Sites in:(sites Occupied by:Neutral)))  (result Mover Win))
+        })
+    )
+)
+
+// *****************************************************
+
+(option "Board Setup" <Board> args:{ <bsize> <ttsites> <goal> } 
+    {
+    (item   "3x3"  
+            <3>
+            <(sites {4})>       
+            <1>  
+            "Board dimensions 3x3, 2 players, majority goal is 1.")
+    (item   "5x5" 
+            <5>
+            <(sites {6 8  16 18})>       
+            <3>  
+            "Board dimensions 5x5, 2 players, majority goal is 3.")
+    (item   "7x7" 
+            <7>
+            <(sites {8 10 12  22 24 26  36 38 40})>       
+            <5>  
+            "Board dimensions 7x7, 2 players, majority goal is 5.")
+    (item   "9x9*" 
+            <9>
+            <(sites {10 12 14 16  28 30 32 34  46 48 50 52  64 66 68 70})>       
+            <9>  
+            "Board dimensions 9x9, 2 players, majority goal is 9.")*
+    (item   "11x11" 
+            <11>
+            <(sites {12 14 16 18 20  34 36 38 40 42  56 58 60 62 64  78 80 82 84 86  100 102 104 106 108})>       
+            <13>  
+            "Board dimensions 11x11, 2 players, majority goal is 13.")
+    }
+)
+
+(option "Diagonal Adjacency" <Adjacency> args:{ <OnOff> }
+    {
+    (item   "On" 
+            <(sites LineOfSight Empty at:(#1))>
+            "Diagonal placement of a 2nd piece adjacent to 1st placed piece is enabled."
+    )
+    (item   "Off*" 
+            <(difference (sites LineOfSight Empty at:(#1)) (sites Around (last To)))>
+            "Diagonal placement of a 2nd piece adjacent to 1st placed piece is disabled."
+    )*
+    }
+)
+
+(option "Component Theme" <Theme> 
+    args: {<PhaseC0> <PhaseC1>  <Player1> <Stroke1> <Player2> <Stroke2> <Neutral> <StrokeN> <TargetSVG> <Neutral0>}
+
+    {
+        (item "Siege" 
+            <(colour "#ced4da")> <(colour "#ffffff")>
+            <(colour "#2274a5")> <(colour "#2274a5")> 
+            <(colour "#c81d25")> <(colour "#c81d25")>
+            <(colour "#ced4da")> <(colour "#909090")>
+            <"castle_alt"> <"castle_alt0"> 
+            "Siege Master Game Theme"
+        )
+        (item "Spring" 
+            <(colour "#f0f3bd")> <(colour "#ffffff")> 
+            <(colour "#05668d")> <(colour "#c0bfbc")> 
+            <(colour "#02c39a")> <(colour "#c0bfbc")> 
+            <(colour "#ffffff")>  <(colour "#c0bfbc")>
+            <"dove"> <"dove0"> 
+            "Spring Theme"
+        )
+        (item "Summer" 
+            <(colour "#fad58e")> <(colour "#ffffff")> 
+            <(colour "#780116")> <(colour "#780116")> 
+            <(colour "#db7c26")> <(colour "#db7c26")> 
+            <(colour "#f7b538")> <(colour "#f7b538")> 
+            <"sun"> <"sun0"> 
+            "Summer Theme"
+        )
+        (item "Autumn" 
+            <(colour "#e9c46a")> <(colour "#ffffff")> 
+            <(colour "#264653")> <(colour "#2a9d8f")> 
+            <(colour "#e76f51")> <(colour "#f4a261")> 
+            <(colour "#f4e0b2")> <(colour "#cdab8f")> 
+            <"leaf"> <"leaf0"> 
+            "Autumn Theme"
+        )
+        (item "Winter*" 
+            <(colour "#cfe0c3")> <(colour "#ffffff")> 
+            <(colour "#1f363d")> <(colour "#1f363d")> 
+            <(colour "#40798c")> <(colour "#40798c")> 
+            <(colour "#ffffff")> <(colour "#ffffff")> 
+            <"flower"> <"flower0"> 
+            "Winter Theme"
+        )*
+        (item "Holiday" 
+            <(colour "#b2e6e3")> <(colour "#fdfdff")> 
+            <(colour "#26a269")> <(colour "#26a269")> 
+            <(colour "#e01b24")> <(colour "#e01b24")>
+            <(colour "#ffffff")> <(colour "#ffffff")>
+            <"starOutline"> <"starOutline0"> 
+            "Holiday Theme"
+        )
+    }
+)
+
+(metadata 
+    
+    (info
+        {
+        (description "Obsidio is a majority-control, abstract strategy board game for two players. The game is scalable and can be played on any n x n checkerboard where n is odd and greater than 5: 7, 9 (default) and 11 are recommended. The board has a maximum number of uniformly distributed target tiles such that each of these target tiles has 8 empty adjacent cells.
+        
+        On a turn, a player may place one token diagonally adjacent to target tiles or two tokens orthogonally adjacent to two mutually exclusive pairs of target tiles. In addition, when possible, each placed token must have a line of sight (LOS) to the last placed token. A series of placement can terminate because there are no LOS sites available or if a player chooses to claim one or more target tiles. Target tiles can only be claimed if 4 or more owned tokens were previously placed adjacent to each of the target tiles. The first to claim a majority of the board's target cells wins the game. If a tie occurs, the last to claim a target tile wins."
+        )
+
+        (rules "Players choose who will play first. The first player may place a token on any empty space. From then on, if possible, players must place tokens that have a line of sight, LOS, to the last placed token. Otherwise, the player is free to place on any empty cell. The first play of the game may consist of placing one token, or two LOS tokens. The pie rule may be invoked after the first player's first turn. Player turns then alternate. 
+        
+        On a turn, a player may perform one of three actions: 
+        1. On a turn, a player may place one token diagonally adjacent to a target cell, a 'darker' cell.
+        2. Place two tokens orthogonally adjacent to two mutually exclusive pairs of target cells, two white cells. If the player is unable to place the second token using LOS, the second placement is skipped. (In this Ludii script, a game option can be used to allow two placements adjacent to a single target cell.) 
+        3. A player may claim any number of target tiles provided he or she has 4 or more tokens adjacent to each of the target tiles. The first player to claim a majority of the target tiles wins the game. If the game has an even number of target tiles and the game ends in a tie, the player who claimed the last target tile wins.
+
+        To learn the game, it is recomended the Ludii's Show Legal Moves feature (alt-M) is enabled. Player scores indicate the number of target tiles claimed by each player. Ludii's Cycle Players feature (alt-R) can be used to implement the pie rule."
+        ) 
+
+        // (source "<a href=\"https://boardgamegeek.com/boardgame/73091/Obsidio\" target=\"_blank\" class=\"style1\" style=\"color: #0000EE\" />BGG</a>")
+        (version "1.3.13")
+        (classification "board/space/territory")
+        (credit "Phil Leduc")
+        (author "Phil Leduc")
+        (date "12-01-2024")
+        }
+    )
+
+    (graphics {
+        (board Style Chess)
+        (board Colour Phase0 <Theme:PhaseC0>)
+        (board Colour Phase1 <Theme:PhaseC1>)
+
+        (piece Scale P1 "disc" 0.70)
+        (piece Scale P2 "disc" 0.70)
+        (piece Scale P1 "square" 0.62)
+        (piece Scale P2 "square" 0.62)
+        (piece Rotate P1 "square" degrees:45)
+        (piece Rotate P2 "square" degrees:45)
+
+        (player Colour P1 <Theme:Player1>)
+        (player Colour P2 <Theme:Player2>)
+        (player Colour Neutral <Theme:Neutral>)
+
+        (piece Colour P1 "square" strokeColour:<Theme:Stroke1>)
+        (piece Colour P2 "square" strokeColour:<Theme:Stroke2>)
+        (piece Colour P1 "disc" strokeColour:<Theme:Stroke1>)
+        (piece Colour P2 "disc" strokeColour:<Theme:Stroke2>)
+        (piece Colour P1 <Theme:TargetSVG> strokeColour:<Theme:Stroke1>)
+        (piece Colour P2 <Theme:TargetSVG> strokeColour:<Theme:Stroke2>)
+        (piece Colour Neutral <Theme:TargetSVG> strokeColour:<Theme:StrokeN>)
+
+        (piece Rename  piece:"Sieged" <Theme:TargetSVG>)
+        (piece Colour P1 "Sieged" strokeColour:<Theme:Stroke1>)
+        (piece Colour P2 "Sieged" strokeColour:<Theme:Stroke2>)
+        (piece Foreground "Sieged" 
+            image:"square"
+            // fillColour:(colour Green) 
+            edgeColour:<Theme:StrokeN>
+            scale:0.62
+            rotation:45 
+        )
+
+
+    })
+
+    // (ai 
+    //     "Obsidio_ai"
+    // )
+    (ai
+        (bestAgent "Alpha-Beta")
+        (heuristics 
+            (score)
+        )
+    )
+)

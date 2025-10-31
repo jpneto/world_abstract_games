@@ -1,0 +1,298 @@
+// * Astralis by Phil Leduc 2021, scripted 2025
+
+(define "SetShipDirection"
+    (set Rotation (to (last To)) (mapEntry "ShipDirection" Mover) previous:False next:False )
+ )
+
+(define "MoveShip"
+    (move Slide
+        (from (from) level:(level))
+        Adjacent 
+        (between 
+            (range 1 Infinity)
+                if:(and {
+                    (!= (what at:(between) level:1) (id "Ball" Next )  )
+                    (!= (what at:(between) level:1) (id "Shogi_blank" Next )  )
+                    (!= (what at:(between) level:0) (id "Shogi_blank" Next )  )
+                } )
+        )
+        (to (to))
+        (then 
+            (and {
+                "SetShipDirection"
+                (moveAgain)
+            })
+        )
+    )
+)
+
+(define "AddPlanet"
+    (move Add 
+        (piece (id "hex" Mover) )
+        (to (sites Around (last To)) level:0 if:(is Empty (to)) )
+        (then 
+            (and {
+                (addScore Mover 1)
+                (add 
+                    (piece (id "Ball" Mover) ) 
+                    (to (last To) level:1)
+                )
+                "AddZonesOfControl"
+                <Bonus:OnOff>
+                
+            } )
+        )
+    )
+)
+
+(define "AddZonesOfControl"
+    (forEach Site
+        (sites Around (last To))
+        // If site is empty or has a ship at level 0,
+        // add mover's control type at level 0. Note if present, ship goes to level 1!
+        (if (or {(is Empty (site)) 
+                 (= (what at:(site) level:0) (id "Shogi_blank" Mover )) 
+                 (= (what at:(site) level:0) (id "Shogi_blank" Next ))
+            })
+            (and 
+                {
+                    (apply (add (piece (id "hex" Mover)) (to (site) level:0)) )
+                    (addScore Mover 1)
+                }
+            )
+            // If site has opponent control hex with or without a ship present
+            // add a Neutral hex under the ship. The opponent's score goes down.
+            (if (= (what at:(site) level:0) (id "hex" Next )) 
+                (and {
+                    (apply (add (piece (id "hex" Neutral)) (to (site) level:0 (apply (remove (site) level:0))))  )
+                    (if (is Mover P1) 
+                        (addScore P2 -1)
+                        (addScore P1 -1)
+                    )
+                })
+            )
+        )
+    )
+)
+
+(define "EmptySitesAroundPlanet"
+    (intersection (sites Around (last To)) (sites Empty) )
+)
+(define "OldandNewMoverHexes"
+    (union (sites Occupied by:Mover) ("EmptySitesAroundPlanet"))
+)
+
+(define "ClaimBonusHexes"
+    (forEach Site (intersection (sites Distance Adjacent from:(last To) (exact 2)) (sites Empty) )
+        // If ring at distance 2 from placed planet has any empty hexes, check if they are surrounded by Mover's hexes.
+        // If all sites around a ring site are Mover sites or in empty sites around last planet placed.
+        (if (all Sites (sites Around (site)) if:(is In (site) ("OldandNewMoverHexes")))
+            (and {
+                (note "Bonus site - site surrounded by Mover sites")(note (site))
+                (add (piece (id "hex" Mover)) (to (site) level:0))
+                (add (piece (id "Ball" Mover)) (to (site) level:1))
+                (addScore Mover 1)
+            })
+        )
+    )
+) 
+
+(define "NextSitesAroundPlanet"
+    (intersection (sites Around (last To)) (sites Occupied by:Next) )
+)
+(define "ContestedHexes"
+    (union (sites Occupied by:Neutral component:"hex") ("NextSitesAroundPlanet"))
+)
+
+(define "CountAdjacentNextHexes"
+    (count Sites in:(intersection (sites Around (site)) (sites Occupied by:Next component:"Ball") ))
+)
+
+(define "ClaimContestedSites"
+    (forEach Site (intersection (sites Distance Adjacent from:(last To) (exact 2)) (sites Occupied by:Next) )
+        // If ring at distance 2 from placed planet has any empty hexes, check if they are surrounded by Mover's hexes.
+        // If all sites around a ring site are Mover sites or in empty sites around last planet placed.
+        (if (all Sites (sites Around (site)) if:(is In (site) ("ContestedHexes")))
+            (and {
+                (note "Defeated site - site surrounded by contested sites")(note (site))
+                ((apply (remove (site) level:1)))
+                ((apply (remove (site) level:0)))
+                (add (piece (id "hex"  Mover)) (to (site) level:0))
+                (add (piece (id "Ball" Mover)) (to (site) level:1))
+                (addScore Mover 1)
+                (addScore Next -1)
+                (forEach Site (sites Around (site))
+                    (if (= ("CountAdjacentNextHexes") 1)
+                        (and {
+                            (apply (remove (site) level:0))
+                            (add (piece (id "hex" Mover)) (to (site) level:0))
+                            (addScore Mover 1)
+                        })
+                    )
+                )
+            })
+        )
+    )
+) 
+
+//------------------------------------------------------------------------------
+
+(game "Astralis"  
+    (players 2)  
+    (equipment { 
+        (board <Board:Type> ) 
+
+        (regions "StartArea" P1 (difference (sites Bottom) (sites Corners)))
+        (regions "StartArea" P2 (difference (sites Top) (sites Corners)))
+        
+        (piece "Shogi_blank" Each)
+        (piece "hex" Each)
+        (piece "hex" Neutral)
+        (piece "Ball" Each)
+
+        (map "ShipDirection" {(pair P1 12) (pair P2 6)})
+    } )  
+    (rules 
+       (start { 
+            (set Score P1 0)  // Score must be an integer.
+            (set Score P2 3)  // Second player gets a komi of 3.5 and therefore wins ties.
+       })
+        
+    phases:{
+        (phase "Opening" // P1
+            (play 
+                (move Add (to (sites Mover) level:0) 
+                    (then
+                        "SetShipDirection"
+                    )
+                )  
+            )
+            (nextPhase Mover "Playing")
+        )
+
+        (phase "Playing" 
+            (play 
+                (if ("NewTurn")
+                    // Move a Ship
+                    (forEach Piece "Shogi_blank"
+                        "MoveShip"
+                    )                
+                    // Else SameTurn: Add a planet or pass adding a planet
+                    (or
+                        "AddPlanet"
+                        (move Pass)
+                    )
+                )
+            )
+        )
+    }
+        
+        (end
+            {
+            (if (and (is Full)  (> (score P1) (score P2)))  (result P1 Win) )
+            (if (and (is Full) (<= (score P1) (score P2)))  (result P2 Win) )
+            }
+        )  
+    )
+)
+
+//* ------------------------------------------------------------------------------
+
+(option "Board" <Board> args:{ <Type> }
+    {
+    (item "hex 6"            <(hex 6)>          "Hex-hex-6") 
+    (item "hex 7"            <(hex 7)>          "Hex-hex-7") 
+    (item "hex 8**"          <(hex 8)>          "Hex-hex-8")** 
+    (item "hex square 11"    <(hex Square 11)>  "Hex-square-11") 
+    (item "hex square 13*"   <(hex Square 13)>  "Hex-square-13")*
+    }
+)
+
+(option "Bonuses" <Bonus> args:{ <OnOff> }
+    {
+        (item "Bonuses On*"
+            <
+            "ClaimBonusHexes"
+            "ClaimContestedSites"
+            >
+            "Bonuses On"   
+        )*
+        (item "Bonuses Off"
+            <>
+            "Bonuses Off"
+        )   
+    }
+)
+
+//* -----------------------------------------------------------------------------
+
+(metadata 
+    
+    (info
+        {
+        (description "Astralis is an abstract, area-control, strategy game of space exploration, expansion, and extraction for two players. Players race across the galaxy in an attempt to colonize planets and populate space. The game is won by the player who controls the most territory in the form of planets and the areas of control they exert.
+")
+        (rules "Game play starts with the yellow player, turns alternate. The second player is given a komi of 3.5 points. To start, players take turns placing their ships on their edge of the board. Next, a player can explore (move), expand (place a planet), and possibly receive a bonus planet or exchange an opponent planet with their own.
+
+On a turn, a player must move his or her ship one or more hexes, in any one of the six standard directions, to any hex not containing an opponent's planet or ship. Ships may pass over any hexes not containing an opponent's planet or ship.
+
+When a colony ship reaches its destination hex, the player may place a planet on any one of the empty unexplored hexes adjacent to the ship, or pass. Sometimes a player may not be able to place a planet due to the fact that there are no adjacent unexplored hexes, in which case the player must pass and forego planet placement.
+
+Each planet has a zone of influence which extends to its six adjacent hexes. A player controls one of these hexes if he or she is the only player with one or more planets adjacent to the hex. A hex is contested if both players have one or more adjacent planets. Yellow and cyan tiles indicate which player controls a hex. Red indicate neither player controls the hex. Black hexes are unexplored.
+
+If a player surrounds an UNEXPLORED hex with owned controlled hexes, that player is awarded control and a planet is place in the surrounded unexplored hex.
+
+If after placing a planet, a player surrounds an opponent's planet with CONTESTED hexes, the surrounded planet is defeated and replaced. Then, each formerly contested hex is reevaluated, and if there are no longer any opponent planets adjacent to the hex, the hex's status changes to controlled. Conquering a planet is a significant gain and will often lead to winning the game... but not always. 
+")
+        (source "<a href=\"https://sites.google.com/site/theowlsnest02/home/astralis\" target=\"_blank\" class=\"style1\" style=\"color: #0000EE\" />The Owl's Nest - Astralis</a>
+            <a href=\"https://boardgamegeek.com/thread/2667975/new-game-astralis\" target=\"_blank\" class=\"style1\" style=\"color: #0000EE\" />BGG Rules</a>
+            <a href=\"https://boardgamegeek.com/boardgame/358608/astralis\" target=\"_blank\" class=\"style1\" style=\"color: #0000EE\" />BGG Database Entry</a>
+            <a href=\"https://mindsports.nl/index.php/the-pit/1165-astralis\" target=\"_blank\" class=\"style1\" style=\"color: #0000EE\" />Mindsports</a>
+        ")
+        (version "1.3.14")
+        (classification "board/space/territory")
+        (author "Phil Leduc")
+        (credit "Phil Leduc")
+        (date "2021")
+        }
+    )
+    
+    (graphics {
+
+        (board Colour Phase0 (colour Black))
+        (board Background fillColour:(colour Black) edgeColour:(colour LightGrey))
+        (board Colour InnerEdges (colour Grey))
+        (board Colour OuterEdges (colour Grey))
+        (board StyleThickness InnerEdges 0.5)
+        (board StyleThickness OuterEdges 0.7)
+
+        (piece Colour P1 "Ball" strokeColour:(colour Gold))
+
+        (piece Colour P2 "Ball" strokeColour:(colour LightBlue))
+
+        (piece Scale "Shogi_blank" scaleX:.7 scaleY:.7)
+        (piece Scale "Ball" 0.5)
+        (piece Scale "hex" 1.2)
+        (piece Colour P1 "Shogi_blank" strokeColour:(colour White))
+        (piece Colour P2 "Shogi_blank" strokeColour:(colour White))
+
+        (player Colour P1 (colour 240 230 140 200))
+        (player Colour P2 (colour 0 206 209 200))
+        (player Colour Neutral (colour 255 0 0 125)) 
+
+        (region Colour "StartArea" P1 Cell (colour 60 58 35))
+        (region Colour "StartArea" P2 Cell (colour 0 52 53))
+        // (region Colour "StartArea" P1 Cell (colour 240 230 140 200))
+        // (region Colour "StartArea" P2 Cell (colour 0 206 209 200))
+
+    })
+    (ai
+        (bestAgent "Alpha-Beta")
+        (heuristics (score))
+    )
+
+    // (ai
+    //     "Astralis_ai"
+    // )
+   
+)

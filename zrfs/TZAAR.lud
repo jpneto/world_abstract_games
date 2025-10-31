@@ -1,0 +1,387 @@
+//* TZAAR game design by Kris Brum, 2007 *******************************
+//* Ludii code for v1.3.14 by Phil Leduc, March - April 2025
+
+(define "PlaceFromHand"
+    (or {
+        (move (from Cell (handSite Mover 0) level:(topLevel Cell at:((handSite Mover 0)))) (to Vertex (sites Empty) ) stack:True)
+        (move (from Cell (handSite Mover 1) level:(topLevel Cell at:((handSite Mover 1)))) (to Vertex (sites Empty) ) stack:True)
+        (move (from Cell (handSite Mover 2) level:(topLevel Cell at:((handSite Mover 2)))) (to Vertex (sites Empty) ) stack:True)
+        }
+        (then 
+            (set State at:(last To) (mapEntry (last From)))
+        )
+    )
+
+)
+
+(define "FirstMovementCapture"
+    (move Step
+        (from if:(is Mover (who at:(from))))
+        (to if:(is Enemy (who at:(to))) (apply (remove (to))))
+        stack:True
+    )
+)
+
+(define "Capture"
+    (or
+        (move Hop
+            (from if:(is Mover (who at:(from))))
+            (between (range 1 9) if: (is Empty (between)) )
+            (to if:(and (is Enemy (who at:(to)))   ("StackSizeMet") )  
+                    (apply (remove (to) count:(size Stack at:(to))))
+            )
+            stack:True
+            ) 
+        (move Step
+            (from if:(is Mover (who at:(from))))
+            (to if:(and (is Enemy (who at:(to))) ("StackSizeMet")) 
+                    (apply (remove (to) count:(size Stack at:(to)))))
+            stack:True
+            )
+    )
+)
+(define "Reinforce"
+    (or
+        (move Hop
+            (from if:(is Mover (who at:(from))))
+            (between (range 1 9) if: (is Empty (between)) )
+            (to if:(is Mover (who at:(to))) )
+            stack:True
+            ) 
+        (move Step
+            (from if:(is Mover (who at:(from))))
+            (to if:(is Mover (who at:(to))) )
+            stack:True
+            )
+    )
+)
+
+(define "StackSizeMet"
+    (<= (size Stack at:(to)) (size Stack at:(from)))
+)
+
+// #1 = Mover or Next
+// #2 = state value (1, 2, or 3)
+(define "StackCount"
+    (count Sites in:(intersection (sites Occupied by:#1) (sites State #2)) )
+)
+
+//*****************************************************************************
+
+(game "TZAAR"  
+    (players 2)  
+    (equipment { 
+        (board (remove (rotate 330 (tri Hexagon 5)) vertices:{30}) use:Vertex )
+        (hand Each size:3)
+
+        (piece "Tott"   Each ) 
+        (piece "Tzarra" Each ) 
+        (piece "Tzaar"  Each ) 
+
+        (map "StateLookup" {90..95} {1 2 3  1 2 3})
+    })
+
+    (rules
+        // Setups are standard, random and manual
+        (start {
+            <Board:Setup>
+        })
+        
+        (play
+            (forEach Piece
+                (or {
+                    // <Board:PlaceAndMove> Options allow for standard, random, two-rank random and
+                    // player (manual) setup games.
+                    <Board:PlaceAndMove>
+                    // Perform adjacent or distant capture of enemy piece.
+                    (if (= (var "MoveType") 2)
+                        // Perform required capture
+                        ("Capture") 
+                        (then 
+                            (and {
+                                // Set pointer to optional second action: capture, reinforce or pass
+                                (set Var "MoveType" 3)
+                                (moveAgain)  // Same player is to move again
+                            })
+                        )
+                    )
+                    // Perform adjacent or distant capture of enemy piece, or
+                    // reinforcement (build a stack), or pass.
+                    (if (= (var "MoveType") 3)
+                        (or {
+                            ("Capture")
+                            ("Reinforce")
+                            (move Pass) 
+                        })
+                        (then 
+                            // Set pointer to required capture for next player
+                            (set Var "MoveType" 2)
+                        )
+                    )
+                } ) 
+            )
+
+        )
+ 
+        (end {
+            // Check if any piece type has been removed or captured.
+            // PieceTypes can be 2 when two-rank games are played.
+            //  HandEmpty checks if players are entering pieces.
+            (if (and { ("HandEmpty" P2) (= ("StackCount" Next 1) 0) (= <Board:PieceTypes> 3) })
+                (result Mover Win))
+            (if (and { ("HandEmpty" P2) (= ("StackCount" Next 2)  0) })
+                (result Mover Win))
+            (if (and { ("HandEmpty" P2) (= ("StackCount" Next 3)  0) })
+                (result Mover Win))
+            (if (and { ("HandEmpty" P2) (and (= ("StackCount" Mover 1) 0) (= <Board:PieceTypes> 3) ) })
+                (result Mover Loss))
+            (if (and { ("HandEmpty" P2) (= ("StackCount" Mover 2) 0) })
+                (result Mover Loss))
+            (if (and { ("HandEmpty" P2) (= ("StackCount" Mover 3) 0) })
+                (result Mover Loss))
+            // Check if the next player has no moves.
+            (if (and (no Moves Next) (= (var "MoveType") 2 )) (result Mover Win))
+        } )
+    )
+)
+
+//------------------------------------------------------------------------------
+
+(option "Board Setup" <Board> args:{ <Setup> <PlaceAndMove> <PieceTypes> }
+    {
+        (item "Standard*"      
+            <            
+            (place Stack "Tott1"   (sites {1 2 3 4  41 48 54 59  49 42 34 26  22  38  29}) state:1)
+            (place Stack "Tzarra1" (sites {7 8 9  40 47 53  43 35 27}) state:2)
+            (place Stack "Tzaar1"  (sites {14 15  39 46  36 28}) state:3)
+            (place Stack "Tott2"   (sites {10 17 25 33  58 57 56 55  18 11 5 0  21 30 37}) state:1)
+            (place Stack "Tzarra2" (sites {16 24 32  52 51 50  19 12 6}) state:2)
+            (place Stack "Tzaar2"  (sites {23 31  45 44  20 13}) state:3)
+            >
+            <
+            // First player's first movement turn, perform one adjacent capture only.
+            (if (<= (var "MoveType") 1)
+                ("FirstMovementCapture")
+                (then
+                    (set Var "MoveType" 2)
+                ) 
+            )
+            >
+            <3> 
+            "Standard Setup"
+        )*  
+        (item "Random"      
+            <            
+            (place Random {"Tott1"}   count:15 state:1) 
+            (place Random {"Tzarra1"} count:9  state:2) 
+            (place Random {"Tzaar1"}  count:6  state:3) 
+            (place Random {"Tott2"}   count:15 state:1) 
+            (place Random {"Tzarra2"} count:9  state:2) 
+            (place Random {"Tzaar2"}  count:6  state:3) 
+            >
+            <
+            // First player's first movement turn, perform one adjacent capture only.
+            (if (<= (var "MoveType") 1)
+                ("FirstMovementCapture")
+                (then
+                    (set Var "MoveType" 2)
+                ) 
+            )
+            >
+            <3> 
+            "Random Setup"
+        )  
+        (item "Two-Ranks Random"      
+            <            
+            (place Random {"Tzarra1"} count:15 state:2) 
+            (place Random {"Tzaar1"}  count:15 state:3) 
+            (place Random {"Tzarra2"} count:15 state:2) 
+            (place Random {"Tzaar2"}  count:15 state:3) 
+            >
+            <
+            // First player's first movement turn, perform one adjacent capture only.
+            (if (<= (var "MoveType") 1)
+                ("FirstMovementCapture")
+                (then
+                    (set Var "MoveType" 2)
+                ) 
+            )
+            >
+            <2> 
+            "Two Ranks Random Setup"
+        ) 
+        (item "Partial Placement"      
+            <            
+            (place Stack "Tott1"   Cell (handSite P1 0) count:5 state:1) 
+            (place Stack "Tzarra1" Cell (handSite P1 1) count:5 state:2) 
+            (place Stack "Tzaar1"  Cell (handSite P1 2) count:5 state:3) 
+            (place Stack "Tott2"   Cell (handSite P2 0) count:5 state:1) 
+            (place Stack "Tzarra2" Cell (handSite P2 1) count:5 state:2) 
+            (place Stack "Tzaar2"  Cell (handSite P2 2) count:5 state:3) 
+
+            (place Random {"Tott1"}   count:10 state:1) 
+            (place Random {"Tzarra1"} count:4  state:2) 
+            (place Random {"Tzaar1"}  count:1  state:3) 
+            (place Random {"Tott2"}   count:10 state:1) 
+            (place Random {"Tzarra2"} count:4  state:2) 
+            (place Random {"Tzaar2"}  count:1  state:3) 
+            > 
+            <
+            // First, players place pieces from their hands
+            (if (< (var "MoveType") 1)
+                ("PlaceFromHand")
+                (then 
+                    (if  ("HandEmpty" P2)(set Var "MoveType" 1) )
+                )
+            )
+            // First player's first movement turn, perform one adjacent capture only.
+            (if (= (var "MoveType") 1)
+                ("FirstMovementCapture")
+                (then
+                    (set Var "MoveType" 2)
+                ) 
+            )
+            >
+            <3> 
+            "Partial Placement"
+        ) 
+        (item "Placement"      
+            <            
+            (place Stack "Tott1"   Cell (handSite P1 0) count:14 state:1) 
+            (place Stack "Tzarra1" Cell (handSite P1 1) count:9  state:2) 
+            (place Stack "Tzaar1"  Cell (handSite P1 2) count:6  state:3) 
+            (place Stack "Tott2"   Cell (handSite P2 0) count:14 state:1) 
+            (place Stack "Tzarra2" Cell (handSite P2 1) count:9  state:2) 
+            (place Stack "Tzaar2"  Cell (handSite P2 2) count:6  state:3)
+            
+            (place Random {"Tott1"}    count:1 state:1) 
+            // (place Random {"Tzarra1"}  count:0  state:2) 
+            // (place Random {"Tzaar1"}   count:0  state:3) 
+            (place Random {"Tott2"}    count:1 state:1) 
+            // (place Random {"Tzarra2"}  count:0  state:2) 
+            // (place Random {"Tzaar2"}   count:0  state:3) 
+            > 
+            <
+            // Players play pieces from their hands
+            (if (< (var "MoveType") 1)
+                ("PlaceFromHand")
+                (then 
+                    (if  ("HandEmpty" P2)(set Var "MoveType" 1) )
+                )
+            )
+            // First player's first movement turn, perform one adjacent capture only.
+            (if (= (var "MoveType") 1)
+                ("FirstMovementCapture")
+                (then 
+                    (set Var "MoveType" 2)
+                ) 
+            )
+            >
+            <3> 
+            "Placement"
+        ) 
+    }
+)
+
+// Set player and stroke colors
+(option "Colors" <Color> args:{ <P1> <S1> <P2> <S2> } 
+    {
+        (item "Gold Silver*"      
+            <"#fbeec9"> <"#e4b61a"> 
+            <Black> <"#c0c0c0">  
+            "Gold and Silver"
+        )*  
+        (item "Gold Silver 2"       
+            <"#dcb830"> <Black> 
+            <"#c0c0c0"> <Black>  
+            "Gold and Silver 2"
+        )  
+        (item "Red Blue"      
+            <Red>  <White> 
+            <Blue> <White> 
+            "Red and Blue"
+        )  
+        (item "Green Black"      
+            <"#abc09f">  <Black> 
+            <Black>   <White> 
+            "Lt Green and Black"
+        )
+        (item "White Black"      
+            <White>  <Black> 
+            <Black>   <White> 
+            "White and Black"
+        )
+    }
+)
+
+//------------------------------------------------------------------------------
+
+(metadata 
+    
+    (info
+        {
+        (description "Released in 2007, TZAAR is the sixth of seven games in Kris Brum's GIPF series. It is a stack and capture game for two played on the 60 intersections of a tri-hexagon with 5 triangles to a side and a hole in its center. There are 30 pieces per player consisting of three sets called Tzaars (6), Tzarras (9), and Totts (15). 
+            
+            Players move by line of sight to non-dominant opponent stacks and remove the opponent's pieces from the board. Or, a player may move to an owned stack, merging into a stronger stack. Stacks consist of one or more mono-colored pieces and a stack's strength is the number pieces contained in the stack. Movement to any empty space is not allowed. Stack-embedded pieces no longer contribute to piece-type counts but do add to the strength of it's stack. 
+            
+            The goal of the game is to cause all opponent Tzaars, Tzarras, or Totts, to no longer be on top of any stack or to stalemate the opponent.") 
+        (rules "TZAAR can be set up in a standard layout or players can alternate placing their pieces until all board intersections are covered. 
+            
+            Following setup, the first player must perform a single capture move on his or her first turn. Captures are made by landing on opponent stacks of equal or lesser strength and removing it's pieces from the board. At the start of the game, all stacks have strength 1, so any adjacent opponent piece can be captured. Later on in the game, movement is by line of sight to an occupied intersection. Turns then alternate with players taking two actions.
+            
+            A player's turn must start with a capture move. Following this, the player can then either make another capture, reinforce an owned stack, by landing on and merging two stacks, or the player may pass this second action. 
+            
+            Players alternate performing these actions, until all of an opponent's 6 Tzaars, or 9 Tzarras, or 15 Totts pieces are no longer on top of any stack and wins the game. A player also wins if their opponent cannot make an initial required capture.")
+        (source "<a href=\"https://en.wikipedia.org/wiki/TZAAR\" target=\"_blank\" class=\"style1\" style=\"color: #0000EE\" />Wikipedia</a>")
+        (source "<a href=\"https://boardgamegeek.com/boardgame/31999/tzaar\" target=\"_blank\" class=\"style1\" style=\"color: #0000EE\" />BGG</a>")
+        (version "1.3.14")
+        (classification "board/war/replacement/eliminate")
+        (author "Kris Brum")
+        (credit "Phil Leduc")
+        (date "2007")
+        }
+    )
+    
+    (graphics {
+
+        (board 
+            Background image:"hex.svg" 
+            fillColour:(colour "#e7e7e0")
+            edgeColour:(colour "#e7e7e0") 
+            scaleX:1.12
+            scaleY:1.17
+        )
+    
+        (board Colour InnerEdges (colour Black))
+        (board Colour OuterEdges (colour Black))
+        (board StyleThickness InnerEdges 0.4)
+        (board StyleThickness OuterEdges 0.4)
+
+        (player Colour P1 (colour <Color:P1>))
+        (player Colour P2 (colour <Color:P2>))
+
+        (piece Colour P1 strokeColour:(colour <Color:S1>))
+        (piece Colour P2 strokeColour:(colour <Color:S2>))
+
+        // (show Piece State Middle) or Top or Blank
+        // <Rank:OnOff>
+
+        (piece Scale P1 "Tott"     0.80)
+        (piece Scale P2 "Tott"     0.80)
+        (piece Scale P1 "Tzarra"   0.80)
+        (piece Scale P2 "Tzarra"   0.80)
+        (piece Scale P1 "Tzaar"    0.80)
+        (piece Scale P2 "Tzaar"    0.80)
+        
+    })
+
+    // (ai 
+    //     "Tzaar_ai"
+    // )
+
+    (ai
+        (bestAgent "UCT")
+    )
+
+        
+)
