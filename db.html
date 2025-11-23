@@ -170,6 +170,7 @@
       <li>pull - pieces(s) can pull</li>
       <li>push - pieces(s) can push</li>
       <li>push-off - pieces can be pushed off the board</li>
+      <li>random - includes a random setup phase</li>
       <li>range - move/capture range depends on some criteria</li>
       <li>remove - remove some pattern of pieces from the board</li>
       <li>replacement - capture by replacement</li>
@@ -1495,7 +1496,7 @@
         name: "Corner",
         author: "Sid Sackson",
         type: "score",
-        features: "drop,range",
+        features: "random,drop,range",
         boardType: "5x5 6x6",
         link: "corner.htm,https://boardgamegeek.com/boardgame/931",
         linkNames: "WAG,BGG"
@@ -3366,7 +3367,7 @@
         name: "Leap Frog",
         author: "Chris Huntoon",
         type: "stalemate",
-        features: "short-jump",
+        features: "random,short-jump",
         boardType: "8x8",
         link: "leapfrog.htm,https://boardgamegeek.com/boardgame/63621",
         linkNames: "WAG,BGG"
@@ -6877,7 +6878,7 @@
         name: "Witch Stones",
         author: "Justin D. Jacobson",
         type: "score",
-        features: "setup,remove,neutral,color4",
+        features: "random,remove,neutral,color4",
         boardType: "9x9",
         link: "modern_rules/2005_Witch_Stones.pdf,https://boardgamegeek.com/boardgame/20517",
         linkNames: "WAG,BGG"
@@ -7067,7 +7068,7 @@
         name: "Saikoro",
         author: "Paul Edels",
         type: "stalemate",
-        features: "dice,move,range,replacement",
+        features: "dice,random,move,range,replacement",
         boardType: "8x8",
         link: "modern_rules/2007_Saikoro.htm,https://boardgamegeek.com/boardgame/27813",
         linkNames: "WAG,BGG"
@@ -7387,7 +7388,7 @@
         name: "Thebes",
         author: "Jordi Rossich",
         type: "position",
-        features: "setup,move,range,replacement,short-jump",
+        features: "random,move,range,replacement,short-jump",
         boardType: "7x7",
         link: "https://boardgamegeek.com/boardgame/113650",
         linkNames: "BGG"
@@ -7627,7 +7628,7 @@
         name: "Tzaar",
         author: "Kris Burm",
         type: "elimination,stalemate",
-        features: "stack,slide,long-jump,capture",
+        features: "random,stack,slide,long-jump,capture",
         boardType: "hexhex5",
         link: "modern_rules/2007_Tzaar.pdf,https://boardgamegeek.com/boardgame/31999,https://www.abstractgames.org/uploads/1/1/6/4/116462923/abstract_games_issue_17.pdf#page=20",
         linkNames: "WAG,BGG,1"
@@ -9027,7 +9028,7 @@
         name: "Paletto",
         author: "Dieter Stein",
         type: "capturing,stalemate",
-        features: "setup,remove,color6",
+        features: "random,remove,color6",
         boardType: "6x6",
         link: "modern_rules/2011_Paletto.pdf,https://boardgamegeek.com/boardgame/101463",
         linkNames: "WAG,BGG"
@@ -9577,7 +9578,7 @@
         name: "Kulami",
         author: "Andreas Kuhnekath-Häbler",
         type: "score",
-        features: "tiles,setup,drop",
+        features: "tiles,random,drop",
         boardType: "none",
         link: "modern_rules/2011_Kulami.pdf,https://boardgamegeek.com/boardgame/108831",
         linkNames: "WAG,BGG"
@@ -10687,7 +10688,7 @@
         name: "Tintas",
         author: "Dieter Stein",
         type: "score,capturing",
-        features: "slide,remove,multiple-move,color7",
+        features: "random,slide,remove,multiple-move,color7",
         boardType: "hexhex5",
         link: "modern_rules/2016_Tintas.pdf,https://boardgamegeek.com/boardgame/207951",
         linkNames: "WAG,BGG"
@@ -11347,7 +11348,7 @@
         name: "Lyngk",
         author: "Kris Burm",
         type: "score",
-        features: "stack,setup,slide,neutral,remove,wall,color6",
+        features: "stack,random,slide,neutral,remove,wall,color6",
         boardType: "hexhex4",
         link: "modern_rules/2017_LYNGK.pdf,https://boardgamegeek.com/boardgame/217083",
         linkNames: "WAG,BGG"
@@ -11467,7 +11468,7 @@
         name: "Fuse",
         author: "Néstor Romeral Andrés",
         type: "score",
-        features: "group,setup,slide,push",
+        features: "group,random,slide,push",
         boardType: "8x8",
         link: "modern_rules/2019_Fuse.pdf,https://boardgamegeek.com/boardgame/286350",
         linkNames: "WAG,BGG"
@@ -12147,7 +12148,7 @@
         name: "Nibble",
         author: "Jared McComb",
         type: "capturing",
-        features: "group,drop,capture,color9",
+        features: "group,random,drop,capture,color9",
         boardType: "9x9",
         link: "modern_rules/2020_Nibble.pdf,https://boardgamegeek.com/boardgame/325421",
         linkNames: "WAG,BGG"
@@ -13117,7 +13118,7 @@
         name: "Laniakea",
         author: "Marco Teubner",
         type: "position",
-        features: "tiles,move,slide",
+        features: "random,tiles,move,slide",
         boardType: "6x8",
         link: "modern_rules/2022_Laniakea.pdf,https://boardgamegeek.com/boardgame/371138",
         linkNames: "WAG,BGG"
@@ -13237,7 +13238,7 @@
         name: "Strands",
         author: "Nick Bentley",
         type: "score",
-        features: "group,setup,multiple-drop",
+        features: "group,random,multiple-drop",
         boardType: "hexhex6",
         link: "modern_rules/2022_Strands.pdf,https://boardgamegeek.com/boardgame/364343",
         linkNames: "WAG,BGG"
@@ -13247,7 +13248,7 @@
         name: "Streetcar Suburb",
         author: "Drew Edwards",
         type: "score",
-        features: "setup,drop,remove,+",
+        features: "random,drop,remove,+",
         boardType: "misc",
         link: "modern_rules/2022_Streetcar_Suburb.pdf,https://boardgamegeek.com/boardgame/355847",
         linkNames: "WAG,BGG"
@@ -15307,7 +15308,7 @@
         name: "MeM",
         author: "Anatol Holt",
         type: "score,pattern",
-        features: "setup,remove,reserve,color11",
+        features: "random,remove,reserve,color11",
         boardType: "6x6",
         link: "https://boardgamegeek.com/boardgame/1047,https://www.abstractgames.org/uploads/1/1/6/4/116462923/abstract_games_issue_2.pdf#page=22",
         linkNames: "BGG,1"
@@ -15427,7 +15428,7 @@
         name: "Veleno, The Good Neighbor",
         author: "Alex Randolph",
         type: "score",
-        features: "remove,move,choice",
+        features: "random,remove,move,choice",
         boardType: "hexhex4",
         link: "modern_rules/1986_Veleno.pdf,https://boardgamegeek.com/boardgame/11632",
         linkNames: "WAG,BGG"
@@ -15767,7 +15768,7 @@
         name: "36",
         author: "Néstor Romeral Andrés",
         type: "stalemate",
-        features: "tiles,setup,slide,drop",
+        features: "tiles,random,slide,drop",
         boardType: "3x3",
         link: "modern_rules/2024_36.pdf,https://boardgamegeek.com/boardgame/434075",
         linkNames: "WAG,BGG"
@@ -17387,7 +17388,7 @@
         name: "Moon Squad",
         author: "Drew Edwards",
         type: "connection",
-        features: "drop,move,reserve,flip,color5",
+        features: "random,drop,move,reserve,flip,color5",
         boardType: "misc",
         link: "modern_rules/2023_Moon Squad.pdf,https://boardgamegeek.com/boardgame/389539",
         linkNames: "WAG,BGG"
@@ -17557,7 +17558,7 @@
         name: "Feed the Ducks",
         author: "Néstor Romeral Andrés",
         type: "unification",
-        features: "setup,slide,reposition",
+        features: "random,slide,reposition",
         boardType: "hexhex5",
         link: "modern_rules/2011_Feed_Ducks.pdf,https://boardgamegeek.com/boardgame/112532",
         linkNames: "WAG,BGG"
@@ -17677,7 +17678,7 @@
         name: "Syrtis, Raft & Scupper",
         author: "David Vander Laan",
         type: "unification,elimination",
-        features: "tiles,group,setup,short-jump,path,approach",
+        features: "tiles,group,random,short-jump,path,approach",
         boardType: "none",
         link: "modern_rules/2014_Syrtis.pdf,https://boardgamegeek.com/boardgame/285273",
         linkNames: "WAG,BGG"
@@ -17758,7 +17759,7 @@
         name: "Tokan",
         author: "Steffen Mühlhäuser",
         type: "score",
-        features: "stack,setup,long-jump,ko",
+        features: "random,stack,setup,long-jump,ko",
         boardType: "none",
         link: "modern_rules/2022_Tokan.pdf,https://boardgamegeek.com/boardgame/371178",
         linkNames: "WAG,BGG"
