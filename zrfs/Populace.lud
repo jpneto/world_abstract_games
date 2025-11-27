@@ -1,0 +1,206 @@
+// Populace - A variant of Throngs
+
+//---------------------------------------------
+(define "SurplusOfAt"
+ (- 
+  (count Pieces of:#1 in:(sites Around #2))
+  (count Pieces of:(- 3 #1) in:(sites Around #2))
+))
+ 
+(define "IsThreatenedSiteAt" (<= 2 ("SurplusOfAt" (mover) #1)))
+(define "PotentialValueAt" (+ 1 ("SurplusOfAt" (mover) #1)))
+(define "IsControlledByAt" (< 0 ("SurplusOfAt" #1 #2)))
+
+(define "DropSites"
+ (difference
+  (sites Empty) 
+  (sites Around
+   (sites Around (sites Empty)) 
+   if:(and
+    (is Empty (to))
+    (not ("IsControlledByAt" (mover) (to)))
+))))
+
+(define "Pie" ("Flip" ~)) // Pie
+(define "Drop" (move Add (to ("DropSites"))))
+(define "Flip" (move Add (to (sites Occupied by:Next) #1 (apply (remove (to))))))
+
+(define "Move"
+ (move 
+  (from (sites Occupied by:Mover))
+  (to (sites Empty)
+   if:(and
+    (>= ("PotentialValueAt" (from)) (count Steps (from) (to)))
+    <Variants:moveRestrictions> // (not ("IsControlledByAt" (mover) (to)))
+))))
+
+(define "SetScoreOf"   
+ (set Score
+  (player #1) 
+  (+ 
+   (count Pieces of:#1) 
+   (count Sites in:(forEach (sites Empty) if:("IsControlledByAt" #1 (site)))) 
+)))
+
+(game "Populace" 
+ (players 2)
+ (equipment  
+  {
+   <Board:type>
+   (piece "Ball" P1)
+   (piece "Ball" P2)
+  }
+ )
+ (rules 
+  (play
+   (or
+    {
+     (if (= 0 (counter)) ("Pie")) 
+     ("Flip" if:("IsThreatenedSiteAt" (to)))
+     ("Drop")
+     ("Move")
+     (move Pass)
+    }
+    (then
+     (and
+      ("SetScoreOf" 1) 
+      ("SetScoreOf" 2) 
+  ))))
+  (end
+   (if (all Passed) (byScore))
+)))
+
+
+// Definitions of different Boards the game may be played on
+
+(define "ThrongsBoard"
+ (board 
+  (remove (tri Hexagon 7) 
+   vertices:{2 3 4 15 23 24 33 57 69 70 71 80 81 82 83 91 92 93 94 101 102 103 111 112 115 116 119 120 121 122 123 124 125 126}
+  )
+  use:Vertex
+))
+
+(define  "RaggedHex63"
+ (board
+  (remove (tri Limping  5 6)
+   vertices:{0 1 5 6 29 30 39 48 64 70 71 74}
+  ) 
+  use:Vertex
+))
+(define  "RaggedHex87"
+ (board
+  (trim
+   (remove (tri Limping 6 7)  
+    vertices:{0 1 2 6 7 8 15 33 44 45 55 56 67 77 87 95 96 102 103 104 107}
+  )) 
+  use:Vertex
+))
+
+
+(define  "RaggedHex153"
+ (board
+  (remove (tri {8 9 8 12 6})  
+   vertices:{0 1 2 3 7 8 9 10 11 18 19 20 30 54 68 69 82 83 84 98 99 100 113 114 128 141 154 165 166 175 176 177 183 184 185 186 187 190 191}
+  ) 
+  use:Vertex
+))
+
+
+// ---------------------------------------------
+// Options for Board and Set-up/Pie
+// Hex 7-8  variants: <{143}> <{27 37}> ;  <{127}> <{40 47}>  and not as good - <{12}> <{103 111}> ;
+// ---------------------------------------------
+
+(option "Boards" <Board> args:{ <type> <centeringX> <centeringY> }
+    {
+    (item "RaggedHex 63-Node" <("RaggedHex63")> <.025> <0.02> "Ragged edged centerless board for shorter plays.")**** //<{58}> <{15 18 }>
+    (item "Throngs 93-Node" <("ThrongsBoard")> <.005> <0.02> "Original board.")**
+    (item "Ragged Hex 87-Node" <("RaggedHex87")> <.045> <0.02> "Ragged edged centerless board.")
+    (item "Ragged Hex 153-Node" <("RaggedHex153")> <.04> <0.01> "Ragged edged centerless board for longer plays.") //<{13}> <{93 125}>
+    }
+)
+
+(option "Restrictions" <Variants> args:{ <moveRestrictions>  } // Improves AI depth in sparse vs blobbed positions -- and reduces length of random games.
+ {
+  (item "No moves to placement sites" <(not ("IsControlledByAt" (mover) (to)))> "No moves to placement sites")
+  (item "None" <True> "")
+ }
+)
+
+// -------------------------------------
+
+(metadata
+    (info
+        {
+        (description "Populace is a variant of Throngs designed by Kanare. It remains a highly abstracted wargame (territorial invasion game) with less emphasis on invasion, and rules that make move selection far easier.")
+        (rules "DEFINITION 
+- When you have more pieces adjacent to an empty space than your opponent, you control that space.
+- When a piece has two or more opponents adjacent to it than friendly pieces, the piece is threatened.
+- The number of friendly pieces adjacent to a piece minus the number of opponents adjacent to it, plus 1 for itself, is the potential value of the piece.
+
+GAMEPLAY
+The board is initially empty. Assign colors to each player in an appropriate way. Starting with one-stone pie.
+On your turn, you perform one of the following four actions:
+
+1. Drop
+Place your piece on a space you control or a space adjacent to no one piece.
+
+2. Flip
+Replace a threatened opponent's piece with one of your pieces on your hand.
+
+3. Move
+Move one of your pieces on the board. The piece can move in a number of steps up to its potential value, can change direction at each step, passing over empty spaces and/or other pieces, and must land on an empty space.
+
+4. Pass
+
+GAME END
+The game ends when both players pass consecutively and with the larger score wins. Your score is the total number of your pieces on the board plus the total number of spaces you control."
+             )
+        (source "<a href=\"https://boardgamegeek.com/thread/3414350/new-game-populace-based-on-throngs\" target=\"_blank\" class=\"style1\" style=\"color: #0000EE\" />BGG Forum</a>")
+        (version "1.3.13")
+        (classification "experimental")
+        (author "Kanare Kato, based on Throngs by Dale W. Walton")
+        (credit "Dale W. Walton 2020-11-11")
+        (date "18-11-2019")
+        }
+    )
+    (graphics
+        {
+        (board Style Graph)
+        (show Piece State Middle)
+        (player Colour P1 (colour DarkGrey))
+        (player Colour P2 (colour White))
+        (piece Scale P1 "Ball" 0.93)
+        (piece Scale P2 "Ball" 0.93)
+        (piece Colour P1 "Ball" state:0 fillColour:(colour 90 90 90) secondaryColour:(colour 0 0 0 0))
+        (piece Colour P2 "Ball" state:0 fillColour:(colour White) secondaryColour:(colour 0 0 0 0))
+        (piece Colour P1 "Ball" state:1 fillColour:(colour 40 40 40 80 ) secondaryColour:(colour 0 0 0) )
+        (piece Colour P2 "Ball" state:1 fillColour:(colour 255 255 255 110) secondaryColour:(colour 0 0 0))
+        (piece Colour P1 "Ball" state:2 fillColour:(colour 40 40 40 80 ) secondaryColour:(colour 0 0 0))
+        (piece Colour P2 "Ball" state:2 fillColour:(colour 255 255 255 110) secondaryColour:(colour 0 0 0))
+        (piece Colour P1 "Ball" state:3 fillColour:(colour 40 40 40 80 ) secondaryColour:(colour 0 0 0))
+        (piece Colour P2 "Ball" state:3 fillColour:(colour 255 255 255 110) secondaryColour:(colour 0 0 0))
+        (piece Colour P1 "Ball" state:4 fillColour:(colour 40 40 40 80 ) secondaryColour:(colour 0 0 0))
+        (piece Colour P2 "Ball" state:4 fillColour:(colour 255 255 255 110) secondaryColour:(colour 0 0 0))
+        (piece Colour P1 "Ball" state:5 fillColour:(colour 40 40 40 80 ) secondaryColour:(colour 0 0 0))
+        (piece Colour P2 "Ball" state:5 fillColour:(colour 255 255 255 110) secondaryColour:(colour 0 0 0))
+        (piece Colour P1 "Ball" state:6 fillColour:(colour 40 40 40 80 ) secondaryColour:(colour 0 0 0))
+        (piece Colour P2 "Ball" state:6 fillColour:(colour 255 255 255 110) secondaryColour:(colour 0 0 0))
+        (piece Colour P1 "Ball" state:7 fillColour:(colour 40 40 40 80 ) secondaryColour:(colour 0 0 0))
+        (piece Colour P2 "Ball" state:7 fillColour:(colour 255 255 255 110) secondaryColour:(colour 0 0 0))
+        (board Background image:"Disc.svg" fillColour:(colour 230 230 230) edgeColour:(colour 230 230 230) scale:1.26 rotation:150 offsetX:<Board:centeringX> offsetY:<Board:centeringY>)
+        (board StyleThickness InnerEdges 1.75)
+        (board StyleThickness OuterEdges 4.0)
+        (board StyleThickness InnerVertices 0.85)
+        (board StyleThickness OuterVertices 0.85)
+        (board Colour InnerVertices (colour 120 120 120))
+        (board Colour OuterVertices (colour DarkGrey))
+        (board Colour InnerEdges (colour 200 200 200 255))
+        (board Colour OuterEdges (colour Grey))
+        (no Sunken)
+        }
+    )
+)
+
+
