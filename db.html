@@ -134,6 +134,7 @@
       <li>demotion - pieces can be downgraded</li>
       <li>dice - use dice as pieces</li>
       <li>drop - pieces can be placed on the board</li>
+      <li>drop-opp - place opponent's pieces</li>
       <li>enclosure - surround something</li>
       <li>exchange-capture - jump a friend and lands an enemy capturing it</li>
       <li>explode - pieces explode and destroy neighbors</li>
@@ -2507,7 +2508,7 @@
         name: "Gyges",
         author: "Claude Leroy",
         type: "position",
-        features: "setup,stack,move,share,bounce,ko",
+        features: "setup,stack,move,share,bounce,ko,color1",
         boardType: "8x6",
         link: "gyges.htm,https://boardgamegeek.com/boardgame/10527",
         linkNames: "WAG,BGG"
@@ -4588,7 +4589,7 @@
         name: "Product",
         author: "Nick Bentley",
         type: "score",
-        features: "drop,group",
+        features: "drop,drop-opp,group",
         boardType: "hexhex5",
         link: "product.htm,https://boardgamegeek.com/boardgame/136995",
         linkNames: "WAG,BGG"
@@ -7120,7 +7121,7 @@
         type: "stalemate",
         features: "move,stack,share",
         boardType: "7x7",
-        link: "2007_Teiglith.gif,https://boardgamegeek.com/boardgame/33768",
+        link: "modern_rules/2007_Teiglith.gif,https://boardgamegeek.com/boardgame/33768",
         linkNames: "WAG,BGG"
       },
       {
@@ -8558,7 +8559,7 @@
         name: "Omega",
         author: "Néstor Romeral Andrés",
         type: "score",
-        features: "drop",
+        features: "drop,drop-opp,group",
         boardType: "hexhex10",
         link: "modern_rules/2010_Omega.pdf,https://boardgamegeek.com/boardgame/81588",
         linkNames: "WAG,BGG"
@@ -10098,7 +10099,7 @@
         name: "Minimize",
         author: "Brian Whitman",
         type: "score",
-        features: "group,drop,share",
+        features: "group,drop,drop-opp",
         boardType: "hexhex4",
         link: "modern_rules/2014_Minimize.pdf,https://boardgamegeek.com/boardgame/169096",
         linkNames: "WAG,BGG"
@@ -11238,7 +11239,7 @@
         name: "Manalath",
         author: "Dieter Stein, Néstor Romeral Andrés",
         type: "pattern",
-        features: "group,drop,share",
+        features: "group,drop,drop-opp",
         boardType: "hexhex5",
         link: "modern_rules/2018_Manalath.pdf,https://boardgamegeek.com/boardgame/127993",
         linkNames: "WAG,BGG"
