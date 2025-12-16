@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>WAG's Game Selection</title>
+  <style>
+    body {
+      font-family: Courier New, sans-serif;
+      padding: 20px;
+      font-size: 12px;
+    }
+    table {
+      width: 95%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid #bbb;
+      padding: 6px 10px;
+      text-align: left;
+      vertical-align: top;
+      font-size: 12px;
+    }
+    th {
+      /* background-color: #f4f4f4; */
+      cursor: pointer;
+      font-size: 14px;
+    }
+    th.sorted-asc::after {
+      content: " ↑";
+    }
+    th.sorted-desc::after {
+      content: " ↓";
+    }    
+    input[type="text"] {
+      font-family: Courier New;
+      width: 380px;
+      padding: 6px 10px;
+      margin-bottom: 10px;
+      font-size: 12px;
+    }
+    input[class="bgg"] {
+      width: 28px;
+      padding: 5px 6px;
+      margin-bottom: 10px;
+      font-size: 12px;
+    }
+    input[class="google"] {
+      width: 112px;
+      padding: 5px 6px;
+      margin-bottom: 10px;
+      font-size: 12px;
+    }
+    a {
+      color: #000000; /* #007bff; */
+      text-decoration: none;
+      margin-right: 8px;
+      display: inline-block;
+      font-size: 12px;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    input[type="text"],
+    input[type="text"]:focus   
+    {
+         background: transparent;
+         /* border: none; */
+         outline-width: 0;
+    }    
+    .half-width {
+      width: 70%;
+      margin: 0 auto; /* optional: centers the div horizontally */
+      background-color: #f4f4f4; /* optional: just for visibility */
+      padding: 1em;
+    }    
+  </style>
+</head>
+
+<!-- 
+<body background = "back-wood3.jpg">
+-->
+<body background = "back-wood3.jpg" onload="sortTable(0)"> 
+
+<h1>WAG's 21st Century Game Selection</h1>
+
+  <details>
+     <summary>About this page</summary>
+     <div class="half-width">      
+     <p>The list follows the same criteria of the <a href="https://jpneto.github.io/world_abstract_games/wag_canon.html">20th century Canon.</a>
+     It includes, however, games inspired by Go, given the exploration and advances proposed this century. 
+     However, I don't consider this list a 'canon' since not enough time has passed to conclude the cultural relevance of most of these games. It is a selection of worthwhile modern abstract games. At present, it spans the first quarter of the 21st century.</p>
+     </div>
+  </details>
+ 
+  <input type="text" id="searchInput" onkeyup="filterTable()"
+         placeholder="Search (!word for exclusion, >year <year for ranges)" autofocus>
+  <br>
+  <span id="list-length"></span> 
+  
+  <table id="dataTable">
+    <thead>
+      <tr>
+        <th onclick="sortTable(0)">Year</th>
+        <th onclick="sortTable(1)">Game</th>
+        <th onclick="sortTable(2)">Author(s)</th>
+        <th onclick="sortTable(3)">Top Games</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Rows will be inserted here -->
+    </tbody>
+  </table>
+
+  <script>
+    const data = [
+          {
+            year: "2001",
+            game: "Dvonn",
+            url: "https://boardgamegeek.com/boardgame/2346",
+            author: "Kris Burm",
+            star: "★★"
+          },
+          {
+            year: "2001",
+            game: "Gorgon",
+            url: "https://boardgamegeek.com/boardgame/63620",
+            author: "Chris Huntoon",
+            star: ""
+          },
+          {
+            year: "2001",
+            game: "Hive",
+            url: "https://boardgamegeek.com/boardgame/2655",
+            author: "John Yianni",
+            star: "★★"
+          },
+          {
+            year: "2001",
+            game: "Toscana",
+            url: "https://boardgamegeek.com/boardgame/1701",
+            author: "Niek Neuwahl",
+            star: "★"
+          },
+          {
+            year: "2002",
+            game: "Akron",
+            url: "https://boardgamegeek.com/boardgame/10889",
+            author: "Cameron Browne",
+            star: "★"
+          },
+          {
+            year: "2002",
+            game: "Pueblo",
+            url: "https://boardgamegeek.com/boardgame/3228",
+            author: "Michael Kiesling, Wolfgang Kramer",
+            star: ""
+          },
+          {
+            year: "2002",
+            game: "Sidewinder",
+            url: "https://www.zillions-of-games.com/cgi-bin/zilligames/submissions.cgi?do=show;id=315",
+            author: "Dan Troyka",
+            star: ""
+          },
+          {
+            year: "2002",
+            game: "Unlur",
+            url: "https://boardgamegeek.com/boardgame/3826",
+            author: "Jorge Gomez Arrausi",
+            star: "★★"
+          },
+          {
+            year: "2003",
+            game: "Cannon",
+            url: "https://boardgamegeek.com/boardgame/8553",
+            author: "David Whitcher",
+            star: ""
+          },
+          {
+            year: "2003",
+            game: "Iqishiqi",
+            url: "https://boardgamegeek.com/boardgame/172250",
+            author: "João Pedro Neto",
+            star: ""
+          },
+          {
+            year: "2003",
+            game: "Quintun",
+            url: "https://jpneto.github.io/world_abstract_games/quintun.htm",
+            author: "Martin Windischer",
+            star: ""
+          },
+          {
+            year: "2003",
+            game: "Yinsh",
+            url: "https://boardgamegeek.com/boardgame/7854",
+            author: "Kris Burm",
+            star: ""
+          },
+          {
+            year: "2004",
+            game: "Bipod",
+            url: "https://jpneto.github.io/world_abstract_games/bipod.htm",
+            author: "Bill Taylor",
+            star: ""
+          },
+          {
+            year: "2004",
+            game: "Nex",
+            url: "https://boardgamegeek.com/boardgame/187651",
+            author: "João Pedro Neto",
+            star: ""
+          },
+          {
+            year: "2004",
+            game: "Lynx",
+            url: "https://boardgamegeek.com/boardgame/47206",
+            author: "Cameron Browne, Dan Troyka",
+            star: ""
+          },
+          {
+            year: "2005",
+            game: "Abande",
+            url: "https://boardgamegeek.com/boardgame/21324",
+            author: "Dieter Stein",
+            star: ""
+          },
+          {
+            year: "2005",
+            game: "Thrall",
+            url: "https://www.zillions-of-games.com/cgi-bin/zilligames/submissions.cgi?do=show;id=1126",
+            author: "L. Lynn Smith",
+            star: ""
+          },
+          {
+            year: "2003",
+            game: "Connect6",
+            url: "https://boardgamegeek.com/boardgame/22847",
+            author: "I-Chen Wu",
+            star: "★"
+          },
+          {
+            year: "2006",
+            game: "King's Valley",
+            url: "https://boardgamegeek.com/boardgame/86169",
+            author: "Mitsuo Yamamoto",
+            star: ""
+          },
+          {
+            year: "2006",
+            game: "Margo",
+            url: "https://boardgamegeek.com/boardgame/24923",
+            author: "Cameron Browne",
+            star: "★"
+          },
+          {
+            year: "2006",
+            game: "Product",
+            url: "https://boardgamegeek.com/boardgame/136995",
+            author: "Nick Bentley",
+            star: ""
+          },
+          {
+            year: "2007",
+            game: "Oust",
+            url: "https://boardgamegeek.com/boardgame/30936",
+            author: "Mark Steere",
+            star: "★"
+          },
+          {
+            year: "2007",
+            game: "Ponte del Diavolo",
+            url: "https://boardgamegeek.com/boardgame/27172",
+            author: "Martin Ebel",
+            star: "★"
+          },
+          {
+            year: "2007",
+            game: "Taiji",
+            url: "https://boardgamegeek.com/boardgame/31926",
+            author: "Néstor Romeral Andrés",
+            star: ""
+          },
+          {
+            year: "2007",
+            game: "Tzaar",
+            url: "https://boardgamegeek.com/boardgame/31999",
+            author: "Kris Burm",
+            star: ""
+          },
+          {
+            year: "2007",
+            game: "Yavalath",
+            url: "https://boardgamegeek.com/boardgame/33767",
+            author: "Cameron Browne",
+            star: ""
+          },
+          {
+            year: "2008",
+            game: "Atoll",
+            url: "https://boardgamegeek.com/boardgame/34221",
+            author: "Mark Steere",
+            star: "★"
+          },
+          {
+            year: "2009",
+            game: "Murus Gallicus",
+            url: "https://boardgamegeek.com/boardgame/55131",
+            author: "Phil Leduc",
+            star: "★★"
+          },
+          {
+            year: "2009",
+            game: "Global Connection",
+            url: "https://boardgamegeek.com/boardgame/231266",
+            author: "Martin Windischer",
+            star: ""
+          },
+          {
+            year: "2010",
+            game: "Catchup",
+            url: "https://boardgamegeek.com/boardgame/68199",
+            author: "Nick Bentley",
+            star: "★★"
+          },
+          {
+            year: "2010",
+            game: "Mirador",
+            url: "https://boardgamegeek.com/boardgame/65822",
+            author: "Andrew Perkis",
+            star: ""
+          },
+          {
+            year: "2010",
+            game: "Pollux",
+            url: "https://boardgamegeek.com/boardgame/82267",
+            author: "Alban Viard",
+            star: ""
+          },
+          {
+            year: "2010",
+            game: "Shape Chess",
+            url: "https://boardgamegeek.com/boardgame/367618",
+            author: "Richu",
+            star: ""
+          },
+          {
+            year: "2010",
+            game: "Symple",
+            url: "https://boardgamegeek.com/boardgame/106341",
+            author: "Christian Freeling, Benedikt Rosenau",
+            star: "★"
+          },
+          {
+            year: "2010",
+            game: "Volo",
+            url: "https://boardgamegeek.com/boardgame/83283",
+            author: "Dieter Stein",
+            star: "★"
+          },
+          {
+            year: "2011",
+            game: "Ayu",
+            url: "https://boardgamegeek.com/boardgame/114484",
+            author: "Luis Bolaños Mures",
+            star: "★"
+          },
+          {
+            year: "2011",
+            game: "Talpa",
+            url: "https://boardgamegeek.com/boardgame/80657",
+            author: "Artyom Tchebotaryov",
+            star: ""
+          },
+          {
+            year: "2012",
+            game: "Rampart",
+            url: "https://boardgamegeek.com/boardgame/133923",
+            author: "Corey Clark",
+            star: ""
+          },
+          {
+            year: "2012",
+            game: "Vimbre",
+            url: "https://boardgamegeek.com/boardgame/130222",
+            author: "Luis Bolaños Mures",
+            star: ""
+          },
+          {
+            year: "2013",
+            game: "Crosscontrol",
+            url: "https://boardgamegeek.com/boardgame/143767",
+            author: "Fabius Maximus ",
+            star: "★"
+          },
+          {
+            year: "2012",
+            game: "Four",
+            url: "https://boardgamegeek.com/boardgame/133842",
+            author: "Stephen Tavener",
+            star: ""
+          },
+          {
+            year: "2013",
+            game: "Quantum Leap",
+            url: "https://boardgamegeek.com/boardgame/140782",
+            author: "Néstor Romeral Andrés",
+            star: ""
+          },
+          {
+            year: "2013",
+            game: "Veletas",
+            url: "https://boardgamegeek.com/boardgame/151224",
+            author: "Luis Bolaños Mures",
+            star: ""
+          },
+          {
+            year: "2011",
+            game: "Carnac",
+            url: "https://boardgamegeek.com/boardgame/103061",
+            author: "Emiliano Venturini",
+            star: "★"
+          },
+          {
+            year: "2014",
+            game: "Fendo",
+            url: "https://boardgamegeek.com/boardgame/159333",
+            author: "Dieter Stein",
+            star: ""
+          },
+          {
+            year: "2014",
+            game: "Minimize",
+            url: "https://boardgamegeek.com/boardgame/169096",
+            author: "Brian Whitman",
+            star: ""
+          },
+          {
+            year: "2014",
+            game: "inpHeXion",
+            url: "https://boardgamegeek.com/boardgame/166186",
+            author: "Masahiro Nakajima",
+            star: ""
+          },
+          {
+            year: "2014",
+            game: "Po-Go",
+            url: "https://boardgamegeek.com/boardgame/164626",
+            author: "Rey Alicea",
+            star: ""
+          },
+          {
+            year: "2015",
+            game: "DuploHex",
+            url: "https://boardgamegeek.com/boardgame/174474",
+            author: "José García-Monge",
+            star: "★"
+          },
+          {
+            year: "2015",
+            game: "Glaisher",
+            url: "https://boardgamegeek.com/boardgame/175363",
+            author: "Ken Shoda",
+            star: ""
+          },
+          {
+            year: "2016",
+            game: "Church in Town",
+            url: "https://boardgamegeek.com/boardgame/246818",
+            author: "Dieter Stein",
+            star: ""
+          },
+          {
+            year: "2016",
+            game: "Cubeo",
+            url: "https://boardgamegeek.com/boardgame/191916",
+            author: "Marek Kolcun",
+            star: ""
+          },
+          {
+            year: "2016",
+            game: "Linage",
+            url: "https://boardgamegeek.com/boardgame/219420",
+            author: "Luis Bolaños Mures",
+            star: "★"
+          },
+          {
+            year: "2017",
+            game: "Mycelium",
+            url: "https://boardgamegeek.com/boardgame/242370",
+            author: "Rey Alicea",
+            star: ""
+          },
+          {
+            year: "2017",
+            game: "Nonaga",
+            url: "https://boardgamegeek.com/boardgame/46614",
+            author: "Víktor Bautista i Roca",
+            star: "★"
+          },
+          {
+            year: "2017",
+            game: "Tak",
+            url: "https://boardgamegeek.com/boardgame/197405",
+            author: "James Ernest, Patrick Rothfuss",
+            star: ""
+          },
+          {
+            year: "2017",
+            game: "Urbino",
+            url: "https://boardgamegeek.com/boardgame/237009",
+            author: "Dieter Stein",
+            star: "★★"
+          },
+          {
+            year: "2018",
+            game: "Advanced Slither",
+            url: "https://boardgamegeek.com/boardgame/75957",
+            author: "Corey Clark",
+            star: "★★"
+          },
+          {
+            year: "2018",
+            game: "Blooms",
+            url: "https://boardgamegeek.com/boardgame/249095",
+            author: "Nick Bentley",
+            star: "★"
+          },
+          {
+            year: "2018",
+            game: "Boom & Zoom",
+            url: "https://boardgamegeek.com/boardgame/243927",
+            author: "Ty Bomba",
+            star: ""
+          },
+          {
+            year: "2018",
+            game: "Ringo",
+            url: "https://boardgamegeek.com/boardgame/261490",
+            author: "Julien Griffon",
+            star: ""
+          },
+          {
+            year: "2019",
+            game: "Make Muster",
+            url: "https://boardgamegeek.com/boardgame/310122",
+            author: "Dale Walton",
+            star: ""
+          },
+/*
+          {
+            year: "2019",
+            game: "Shobu",
+            url: "https://boardgamegeek.com/boardgame/272380",
+            author: "Jamie Sajdak, Manolis Vranas",
+            star: ""
+          },
+*/          
+          {
+            year: "2019",
+            game: "Uptown",
+            url: "https://boardgamegeek.com/boardgame/282947",
+            author: "Henrik Morast",
+            star: ""
+          },
+          {
+            year: "2019",
+            game: "Wunchunk",
+            url: "https://boardgamegeek.com/boardgame/285135",
+            author: "Craig Duncan",
+            star: "★"
+          },
+          {
+            year: "2020",
+            game: "Mattock",
+            url: "https://boardgamegeek.com/boardgame/320505",
+            author: "Drew Edwards",
+            star: "★"
+          },
+          {
+            year: "2020",
+            game: "Trike",
+            url: "https://boardgamegeek.com/boardgame/307379",
+            author: "Alek Erickson",
+            star: ""
+          },
+          {
+            year: "2020",
+            game: "Tumbleweed",
+            url: "https://boardgamegeek.com/boardgame/318702",
+            author: "Mike Zapawa",
+            star: "★★"
+          },
+          {
+            year: "2020",
+            game: "Volterra",
+            url: "https://boardgamegeek.com/boardgame/321684",
+            author: "Julien Griffon",
+            star: ""
+          },
+          {
+            year: "2021",
+            game: "Meridians",
+            url: "https://boardgamegeek.com/boardgame/333775",
+            author: "Kanare Kato",
+            star: "★"
+          },
+          {
+            year: "2021",
+            game: "Astralis",
+            url: "https://boardgamegeek.com/boardgame/358608",
+            author: "Phil Leduc",
+            star: ""
+          },
+          {
+            year: "2021",
+            game: "Lielow",
+            url: "https://boardgamegeek.com/boardgame/349408",
+            author: "Michael Amundsen, Alek Erickson",
+            star: "★"
+          },
+          {
+            year: "2021",
+            game: "Seekeh",
+            url: "https://boardgamegeek.com/thread/2692662",
+            author: "MoyoMonkey",
+            star: ""
+          },
+          {
+            year: "2022",
+            game: "Strands",
+            url: "https://boardgamegeek.com/boardgame/364343",
+            author: "Nick Bentley",
+            star: ""
+          },
+          {
+            year: "2022",
+            game: "SlideCore 6",
+            url: "https://boardgamegeek.com/boardgame/388457",
+            author: "Paschalis Antoniou",
+            star: ""
+          },
+          {
+            year: "2022",
+            game: "Scaffold",
+            url: "https://boardgamegeek.com/boardgame/360432",
+            author: "Andrew Lannan",
+            star: ""
+          },
+          {
+            year: "2022",
+            game: "WaldMeister",
+            url: "https://boardgamegeek.com/boardgame/371135",
+            author: "Andreas Kuhnekath-Häbler",
+            star: ""
+          },
+          {
+            year: "2023",
+            game: "Adere",
+            url: "https://boardgamegeek.com/boardgame/397893",
+            author: "Drew Edwards",
+            star: ""
+          },
+          {
+            year: "2023",
+            game: "Asli",
+            url: "https://boardgamegeek.com/boardgame/393166",
+            author: "Luis Bolaños Mures",
+            star: "★★"
+          },
+          {
+            year: "2023",
+            game: "Natal Seas",
+            url: "https://boardgamegeek.com/boardgame/402621",
+            author: "Dale Walton",
+            star: "★"
+          },
+          {
+            year: "2023",
+            game: "Moon Squad",
+            url: "https://boardgamegeek.com/boardgame/389539",
+            author: "Drew Edwards",
+            star: ""
+          },
+          {
+            year: "2024",
+            game: "Basalt",
+            url: "https://boardgamegeek.com/boardgame/421505",
+            author: "Michael Amundsen, Alek Erickson",
+            star: ""
+          },
+          {
+            year: "2024",
+            game: "Sunspot",
+            url: "https://boardgamegeek.com/boardgame/444740",
+            author: "Hoembla",
+            star: ""
+          },
+          {
+            year: "2024",
+            game: "Mimic",
+            url: "https://boardgamegeek.com/boardgame/432214",
+            author: "Andrew Bressette",
+            star: "★"
+          },
+          {
+            year: "2025",
+            game: "Eat your Neighbor",
+            url: "https://grateful-pantry-bd4.notion.site/Eat-your-Neighbor-1f9105b4dd21804caa9ac5d24cfd68e8",
+            author: "Nick Bentley",
+            star: ""
+          },
+          {
+            year: "2025",
+            game: "Bluestone",
+            url: "https://boardgamegeek.com/boardgame/444241",
+            author: "Craig Duncan",
+            star: ""
+          },
+          {
+            year: "2025",
+            game: "Serpent",
+            url: "https://boardgamegeek.com/boardgame/446586",
+            author: "Saïd Galdseid",
+            star: ""
+          },
+          {
+            year: "2004",
+            game: "Santorini",
+            url: "https://boardgamegeek.com/boardgame/9963/santorini",
+            author: "Gordon Hamilton",
+            star: "★"
+          },
+          {
+            year: "2024",
+            game: "Root Bound",
+            url: "https://boardgamegeek.com/boardgame/416201",
+            author: "Christopher Field",
+            star: "★"
+          },
+          {
+            year: "2025",
+            game: "Spora",
+            url: "https://boardgamegeek.com/boardgame/443703",
+            author: "João Pedro Neto",
+            star: ""
+          },
+          /*
+          {
+            year: "2025",
+            game: "",
+            url: "https://boardgamegeek.com/boardgame/",
+            author: "",
+            star: ""
+          },
+*/          
+        ];  // ★☆
+
+    let n_filtered = data.length;
+    
+    let currentSort = {
+      column: -1,
+      direction: 'asc'
+    };
+
+    function populateTable() {
+      const tableBody = document.querySelector("#dataTable tbody");
+      tableBody.innerHTML = "";
+
+      data.forEach(item => {
+        const urls  = item.url.split(',').map(url => url.trim());
+        const names = item.game.split(',').map(name => name.trim());
+
+        // Match links with their custom names
+        const linksHtml = urls.map((url, index) => {
+          const linkName = names[index] || "Visit"; // fallback if missing
+          return `<a href="${url}" target="_blank">${linkName}</a>`;
+        }).join('');
+
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td style="text-align: center;">${item.year}</td>
+          <td>${linksHtml}</td>
+          <td>${item.author}</td>
+          <td>${item.star}</td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    function filterTable() {
+      const input = document.getElementById("searchInput").value.trim().toLowerCase();
+      const rows = document.querySelectorAll("#dataTable tbody tr");
+
+      if (input === "") {
+        // If search box is empty, show all rows
+        rows.forEach(row => row.style.display = "");
+        n_filtered = data.length;
+        document.getElementById("list-length").textContent = 
+           "Total Games: " + n_filtered + "/" + data.length;        
+        return;
+      }
+
+      const excludedTerms = input.split(" ").filter(term => term.startsWith("!")).map(term => term.slice(1).trim());
+      const greaterThanTerms = input.split(" ").filter(term => term.startsWith(">")).map(term => parseInt(term.slice(1).trim(), 10));
+      const lessThanTerms = input.split(" ").filter(term => term.startsWith("<")).map(term => parseInt(term.slice(1).trim(), 10));
+      const includedTerms = input.split(" ").filter(term => !term.startsWith("!") && !term.startsWith(">") && !term.startsWith("<")).map(term => term.trim());
+
+      let count_filter = 0;
+      rows.forEach(row => {
+        const cells = row.querySelectorAll("td");
+        const rowText = Array.from(cells).map(cell => cell.textContent.toLowerCase()).join(" ");
+        const rowYear = parseInt(cells[0].textContent.trim(), 10);
+
+        // Check if the row contains any excluded terms
+        const containsExcluded = excludedTerms.some(term => rowText.includes(term));
+        if (containsExcluded) {
+          row.style.display = "none";
+          return;
+        }
+
+        // Check if the row year is greater than any specified in the search
+        const matchesGreaterThan = greaterThanTerms.every(term => rowYear > term);
+
+        // Check if the row year is less than any specified in the search
+        const matchesLessThan = lessThanTerms.every(term => rowYear < term);
+
+        // Check if the row contains all included terms
+        const matchesIncluded = includedTerms.every(term => rowText.includes(term));
+
+        if (matchesIncluded && matchesGreaterThan && matchesLessThan) {
+          row.style.display = "";
+          count_filter += 1
+        } else {
+          row.style.display = "none";
+        }
+      });
+      
+      n_filtered = count_filter;
+      document.getElementById("list-length").textContent = 
+          "Total Games: " + n_filtered + "/" + data.length;
+
+    }
+
+    function sortTable(columnIndex) {
+      const direction = currentSort.column === columnIndex && 
+                        currentSort.direction === 'asc' ? 'desc' : 'asc';
+      currentSort = { column: columnIndex, direction };
+
+      const keyMap = ["year", "game", "author", "star"];
+      
+      const sortedData = [...data].sort((a, b) => {
+        let valueA = a[keyMap[columnIndex]].toString().toLowerCase();
+        let valueB = b[keyMap[columnIndex]].toString().toLowerCase();
+
+        if (columnIndex === 0) {         // If sorting by year (numeric)
+          if (isNaN(valueA)) return  1;  // leave NaN at the end of the table
+          if (isNaN(valueB)) return -1;
+          valueA = parseInt(valueA, 10);
+          valueB = parseInt(valueB, 10);
+        }
+
+        if (valueA < valueB) return direction === 'asc' ? -1 :  1;
+        if (valueA > valueB) return direction === 'asc' ?  1 : -1;
+        return 0;
+      });
+
+      // Update table after sorting
+      data.length = 0; // Clear the original array
+      data.push(...sortedData); // Push the sorted data
+
+      // Re-render the table
+      populateTable();
+
+      // Update sorting indicators
+      updateSortingIndicators(columnIndex, direction);
+    }
+
+    function updateSortingIndicators(columnIndex, direction) {
+      const headers = document.querySelectorAll("th");
+      headers.forEach((header, index) => {
+        header.classList.remove("sorted-asc", "sorted-desc");
+        if (index === columnIndex) {
+          header.classList.add(direction === 'asc' ? 'sorted-asc' : 'sorted-desc');
+        }
+      });
+    }
+
+    // Populate the table initially
+    populateTable();
+    
+    // Show total number of games at the top of the page
+    document.getElementById("list-length").textContent = 
+        "Total Games: " + n_filtered + "/" + data.length;
+  </script>
+
+</body>
+</html>
