@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Hex Board Editor</title>
+<style>
+  body {
+    font-family: sans-serif;
+    background: #f4f4f4;
+    padding: 10px;
+  }
+  canvas {
+    background: #e6c27a;
+    border: 1px solid #444;
+    cursor: pointer;
+    background-image: url('background.png');
+  }
+  .controls {
+    margin-bottom: 10px;
+  }
+  .colors label,
+  .rendering label {
+    margin-right: 10px;
+  }
+  textarea {
+    width: 100%;
+    height: 220px;
+    margin-top: 10px;
+    font-family: monospace;
+    white-space: pre;
+  }
+  label {
+    font-size: 0.85em;
+    margin-bottom: 4px;
+    opacity: 0.85;
+  }  
+</style>
+</head>
+<body>
+
+<div class="controls">
+  <label>Board size:<label>
+  <select id="sizeSelect">
+    <option value="3">3</option>
+    <option value="4">4</option>
+    <option value="5">5</option>
+    <option value="6">6</option>
+    <option value="7" selected>7</option>
+    <option value="8">8</option>
+    <option value="9">9</option>
+    <option value="10">10</option>
+  </select>
+
+  <!--<button onclick="exportPNG()">Export PNG</button>-->
+</div>
+
+<div class="controls colors">
+  <label><input type="checkbox" value="black" checked> Black</label>
+  <label><input type="checkbox" value="white" checked> White</label>
+  <label><input type="checkbox" value="red">           Red</label>
+  <label><input type="checkbox" value="gray">          Gray</label>
+</div>
+
+<div class="controls rendering">
+  <label><input type="radio" name="renderMode" value="circle" checked> Circle</label>
+  <label><input type="radio" name="renderMode" value="image">          Gloss</label>
+</div>
+
+<center>
+  <canvas id="board" width="800" height="800"></canvas>
+</center>
+
+<textarea id="asciiOutput" readonly></textarea>
+
+<script>
+const canvas = document.getElementById("board");
+const ctx = canvas.getContext("2d");
+const sizeSelect = document.getElementById("sizeSelect");
+const asciiOutput = document.getElementById("asciiOutput");
+
+let N = parseInt(sizeSelect.value);
+let hexSize = 24;
+let stones = {};
+
+// ---------- Rendering assets ----------
+
+const stoneImages = {};
+["black", "white", "red", "gray"].forEach(c => {
+  const img = new Image();
+  img.src = `${c}.gif`;
+  stoneImages[c] = img;
+});
+
+function getRenderMode() {
+  return document.querySelector("input[name=renderMode]:checked").value;
+}
+
+// ---------- Color / ASCII maps ----------
+
+const colorMap = {
+  black: "#000000",
+  white: "#ffffff",
+  red:   "#cc0000",
+  gray:  "#777777"
+};
+
+const asciiMap = {
+  black: "x",
+  white: "o",
+  red:   "r",
+  gray:  "g"
+};
+
+// ---------- Helpers ----------
+
+function getActiveColorCycle() {
+  return [...document.querySelectorAll(".colors input:checked")]
+    .map(cb => cb.value);
+}
+
+function axialToPixel(q, r) {
+  return {
+    x: hexSize * (Math.sqrt(3) * q + Math.sqrt(3) / 2 * r),
+    y: hexSize * (3 / 2 * r)
+  };
+}
+
+// ---------- Drawing ----------
+
+function drawHex(x, y) {
+  ctx.beginPath();
+  for (let i = 0; i < 6; i++) {
+    const angle = Math.PI / 180 * (60 * i - 30);
+    const px = x + hexSize * Math.cos(angle);
+    const py = y + hexSize * Math.sin(angle);
+    if (i === 0) ctx.moveTo(px, py);
+    else ctx.lineTo(px, py);
+  }
+  ctx.closePath();
+  ctx.stroke();
+}
+
+function drawStoneCircle(x, y, color) {
+  ctx.beginPath();
+  ctx.arc(x, y, hexSize * 0.60, 0, Math.PI * 2);
+  ctx.fillStyle = color;
+  ctx.fill();
+  ctx.strokeStyle = "#000";
+  ctx.stroke();
+}
+
+function drawStoneImage(x, y, colorName) {
+  const img = stoneImages[colorName];
+  const size = hexSize * 1.15;
+  if (img.complete) {
+    ctx.drawImage(img, x - size / 2, y - size / 2, size, size);
+  } else {
+    // fallback if image not yet loaded
+    drawStoneCircle(x, y, colorMap[colorName]);
+  }
+}
+
+function drawBoard() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.save();
+  ctx.translate(canvas.width / 2, canvas.height / 2);
+
+  const cycle = getActiveColorCycle();
+  const mode = getRenderMode();
+
+  for (let q = -(N - 1); q <= (N - 1); q++) {
+    for (let r = -(N - 1); r <= (N - 1); r++) {
+      if (Math.abs(q + r) >= N) continue;
+
+      const { x, y } = axialToPixel(q, r);
+      drawHex(x, y);
+
+      const key = `${q},${r}`;
+      if (stones[key] !== undefined && cycle[stones[key]]) {
+        const colorName = cycle[stones[key]];
+        if (mode === "image") {
+          drawStoneImage(x, y, colorName);
+        } else {
+          drawStoneCircle(x, y, colorMap[colorName]);
+        }
+      }
+    }
+  }
+
+  ctx.restore();
+}
+
+// ---------- Interaction ----------
+
+canvas.addEventListener("click", (e) => {
+  const cycle = getActiveColorCycle();
+  if (cycle.length === 0) return;
+
+  const rect = canvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left - canvas.width / 2;
+  const my = e.clientY - rect.top - canvas.height / 2;
+
+  let best = null;
+  let bestDist = Infinity;
+
+  for (let q = -(N - 1); q <= (N - 1); q++) {
+    for (let r = -(N - 1); r <= (N - 1); r++) {
+      if (Math.abs(q + r) >= N) continue;
+
+      const { x, y } = axialToPixel(q, r);
+      const d = Math.hypot(mx - x, my - y);
+      if (d < bestDist && d < hexSize * 0.6) {
+        bestDist = d;
+        best = { q, r };
+      }
+    }
+  }
+
+  if (!best) return;
+
+  const key = `${best.q},${best.r}`;
+  stones[key] = (stones[key] === undefined) ? 0 : stones[key] + 1;
+  if (stones[key] >= cycle.length) delete stones[key];
+
+  drawBoard();
+  exportASCII();
+});
+
+sizeSelect.addEventListener("change", () => {
+  N = parseInt(sizeSelect.value);
+  stones = {};
+  drawBoard();
+  exportASCII();
+});
+
+document.querySelectorAll(".colors input, .rendering input").forEach(el =>
+  el.addEventListener("change", () => {
+    drawBoard();
+    exportASCII();
+  })
+);
+
+// ---------- Export ----------
+
+function exportPNG() {
+  const link = document.createElement("a");
+  link.download = "hex_board.png";
+  link.href = canvas.toDataURL("image/png");
+  link.click();
+}
+
+function exportASCII() {
+  const cycle = getActiveColorCycle();
+  let lines = [];
+
+  for (let r = -(N - 1); r <= (N - 1); r++) {
+    let line = " ".repeat(Math.abs(r));
+
+    for (let q = -(N - 1); q <= (N - 1); q++) {
+      if (Math.abs(q + r) >= N) continue;
+
+      const key = `${q},${r}`;
+      if (stones[key] !== undefined && cycle[stones[key]]) {
+        line += asciiMap[cycle[stones[key]]] + " ";
+      } else {
+        line += ". ";
+      }
+    }
+    lines.push(line.trimEnd());
+  }
+
+  asciiOutput.value = lines.join("\n");
+}
+
+// Initial render
+drawBoard();
+exportASCII();
+</script>
+
+</body>
+</html>
