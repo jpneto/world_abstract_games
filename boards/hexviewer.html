@@ -2,343 +2,383 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Hex Board Editor</title>
+<title>WAG's Board Viewer</title>
+
 <style>
-  body {
-    font-family: sans-serif;
-    background: #f4f4f4;
-    padding: 10px;
-  }
-  canvas {
-    background: #e6c27a;
-    border: 1px solid #444;
-    cursor: pointer;
-    background-image: url('background.png');
-  }
-  .controls {
-    margin-bottom: 10px;
-  }
-  .colors label,
-  .rendering label {
-    margin-right: 10px;
-  }
-  textarea {
-    width: 100%;
-    height: 240px;
-    margin-top: 10px;
-    font-family: monospace;
-    white-space: pre;
-  }
-  label {
-    font-size: 0.85em;
-    opacity: 0.85;
-  }
+body { 
+  font-family: sans-serif; 
+  background:#f4f4f4; 
+  padding:10px; 
+}
+canvas { 
+  background:#e6c27a; 
+  border:1px solid #444; 
+  cursor:pointer; 
+  background-image: url('background.png');
+}
+textarea {
+  width:100%;
+  height:220px;
+  font-family:monospace;
+  white-space:pre;
+}
+select { 
+  margin-right:10px; 
+}
+label {
+  font-size: 0.85em;
+  opacity: 0.85;
+}
+
 </style>
 </head>
+
 <body>
 
-<div class="controls">
-  <label>Board size:</label>
-  <select id="sizeSelect">
-    <option value="3">3</option>
-    <option value="4">4</option>
-    <option value="5">5</option>
-    <option value="6">6</option>
-    <option value="7" selected>7</option>
-    <option value="8">8</option>
-    <option value="9">9</option>
-    <option value="10">10</option>
-  </select>
-</div>
+<select id="boardType">
+  <option value="hex">Hex</option>
+  <option value="sq-inter">Square (intersections)</option>
+  <option value="sq-cell">Square (cells)</option>
+</select>
 
-<div class="controls colors">
-  <label><input type="checkbox" value="black" checked> Black</label>
-  <label><input type="checkbox" value="white" checked> White</label>
-  <label><input type="checkbox" value="red"> Red</label>
-  <label><input type="checkbox" value="gray"> Gray</label>
-</div>
+<select id="sizeSelect">
+  <option>3</option>
+  <option>4</option>
+  <option>5</option>
+  <option>6</option>
+  <option selected>7</option>
+  <option>8</option>
+  <option>9</option>
+  <option>10</option>
+</select>
 
-<div class="controls rendering">
-  <label><input type="radio" name="renderMode" value="circle" checked> Circle</label>
-  <label><input type="radio" name="renderMode" value="image"> Gloss</label>
-</div>
 
-<center>
-  <canvas id="board" width="800" height="800"></canvas>
-</center>
+<label>
+  <span title="x/black o/white r/red g/gray">Color cycle:<span>
+  <input id="cycleInput" value="x o r g" size="8">
 
-<textarea id="asciiOutput"></textarea>
+  <input type="checkbox" id="useImages">
+  Use Go-style stones
+</label>
+
+<br><br>
+
+<canvas id="board" width="900" height="900"></canvas>
+
+<textarea id="ascii"></textarea>
 
 <script>
 const canvas = document.getElementById("board");
 const ctx = canvas.getContext("2d");
+const ascii = document.getElementById("ascii");
 const sizeSelect = document.getElementById("sizeSelect");
-const asciiOutput = document.getElementById("asciiOutput");
+const boardTypeSelect = document.getElementById("boardType");
+const cycleInput = document.getElementById("cycleInput");
+const useImagesCheckbox = document.getElementById("useImages");
 
-let N = parseInt(sizeSelect.value);
-let hexSize = 24;
+let N = Number(sizeSelect.value);
+let boardType = boardTypeSelect.value;
 
-let stones = {}; // "q,r" -> color index
-let labels = {}; // "q,r" -> digit
+const hexSize = 26;
+const cellSize = 48;
 
-// ---------- Procedural Go stones ----------
+let stones = {}; // key -> x o r g
+let digits = {}; // key -> 0..9
 
-const stoneImages = {};
-["black", "white", "red", "gray"].forEach(c => {
-  const img = new Image();
-  img.src = `${c}.gif`;
-  stoneImages[c] = img;
-});
+// ---------------- IMAGES ----------------
 
-// ---------- Maps ----------
+const stoneImages = {
+  x: new Image(),
+  o: new Image(),
+  r: new Image(),
+  g: new Image()
+};
+
+stoneImages.x.src = "black.gif";
+stoneImages.o.src = "white.gif";
+stoneImages.r.src = "red.gif";
+stoneImages.g.src = "gray.gif";
+
+let imagesReady = {
+  x: false,
+  o: false,
+  r: false,
+  g: false
+};
+
+for (const k in stoneImages) {
+  stoneImages[k].onload = () => imagesReady[k] = true;
+}
+
+// ---------------- COLORS ----------------
 
 const colorMap = {
-  black: "#000000",
-  white: "#ffffff",
-  red:   "#cc0000",
-  gray:  "#777777"
+  x: "#000",
+  o: "#fff",
+  r: "#c00",
+  g: "#888"
 };
 
-const asciiMap = {
-  black: "x",
-  white: "o",
-  red:   "r",
-  gray:  "g"
-};
-
-// ---------- Helpers ----------
-
-function getRenderMode() {
-  return document.querySelector("input[name=renderMode]:checked").value;
+function cycleList() {
+  return cycleInput.value
+    .trim()
+    .split(/\s+/)
+    .filter(c => colorMap[c]);
 }
 
-function getActiveColorCycle() {
-  return [...document.querySelectorAll(".colors input:checked")]
-    .map(cb => cb.value);
-}
-
-function axialToPixel(q, r) {
-  return {
-    x: hexSize * (Math.sqrt(3) * q + Math.sqrt(3) / 2 * r),
-    y: hexSize * (3 / 2 * r)
-  };
-}
-
-// ---------- Drawing ----------
-
-function drawHex(x, y) {
-  ctx.beginPath();
-  for (let i = 0; i < 6; i++) {
-    const a = Math.PI / 180 * (60 * i - 30);
-    const px = x + hexSize * Math.cos(a);
-    const py = y + hexSize * Math.sin(a);
-    if (i === 0) ctx.moveTo(px, py);
-    else ctx.lineTo(px, py);
-  }
-  ctx.closePath();
-  ctx.stroke();
-}
-
-function drawStoneCircle(x, y, color) {
-  ctx.beginPath();
-  ctx.arc(x, y, hexSize * 0.6, 0, Math.PI * 2);
-  ctx.fillStyle = color;
-  ctx.fill();
-  ctx.strokeStyle = "#000";
-  ctx.stroke();
-}
-
-function drawStoneImage(x, y, colorName) {
-  const img = stoneImages[colorName];
-  const size = hexSize * 1.2;
-  ctx.drawImage(img, x - size / 2, y - size / 2, size, size);
-}
-
-function drawLabel(x, y, text) {
-  ctx.fillStyle = "#222";
-  ctx.font = `${hexSize * 0.75}px sans-serif`;
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText(text, x, y);
-}
+// ---------------- DRAW ----------------
 
 function drawBoard() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.clearRect(0,0,canvas.width,canvas.height);
   ctx.save();
-  ctx.translate(canvas.width / 2, canvas.height / 2);
+  ctx.translate(canvas.width/2, canvas.height/2);
+  ctx.strokeStyle = "#000";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.font = `${cellSize*0.45}px sans-serif`;
 
-  const cycle = getActiveColorCycle();
-  const mode = getRenderMode();
-
-  for (let q = -(N - 1); q <= (N - 1); q++) {
-    for (let r = -(N - 1); r <= (N - 1); r++) {
-      if (Math.abs(q + r) >= N) continue;
-
-      const { x, y } = axialToPixel(q, r);
-      drawHex(x, y);
-
-      const key = `${q},${r}`;
-
-      if (stones[key] !== undefined && cycle[stones[key]]) {
-        const colorName = cycle[stones[key]];
-        if (mode === "image") {
-          drawStoneImage(x, y, colorName);
-        } else {
-          drawStoneCircle(x, y, colorMap[colorName]);
-        }
-      } else if (labels[key]) {
-        drawLabel(x, y, labels[key]);
+  if (boardType === "hex") {
+    const R = N-1;
+    for (let q=-R;q<=R;q++)
+      for (let r=-R;r<=R;r++) {
+        if (Math.abs(q+r)>=N) continue;
+        const x = hexSize*(Math.sqrt(3)*q + Math.sqrt(3)/2*r);
+        const y = hexSize*(1.5*r);
+        drawHex(x,y);
+        const k=`${q},${r}`;
+        if (stones[k]) drawStone(x,y,stones[k]);
+        else if (digits[k]) drawDigit(x,y,digits[k]);
       }
+  }
+
+  if (boardType === "sq-inter") {
+    const span=(N-1)*cellSize, h=span/2;
+    for (let i=0;i<N;i++) {
+      const p=-h+i*cellSize;
+      ctx.beginPath();
+      ctx.moveTo(-h,p); ctx.lineTo(h,p);
+      ctx.moveTo(p,-h); ctx.lineTo(p,h);
+      ctx.stroke();
     }
+    for (let i=0;i<N;i++)
+      for (let j=0;j<N;j++) {
+        const x=-h+i*cellSize, y=-h+j*cellSize;
+        const k=`${i},${j}`;
+        if (stones[k]) drawStone(x,y,stones[k]);
+        else if (digits[k]) drawDigit(x,y,digits[k]);
+      }
+  }
+
+  if (boardType === "sq-cell") {
+    const span=N*cellSize, h=span/2, hc=cellSize/2;
+    for (let i=0;i<=N;i++) {
+      const p=-h+i*cellSize;
+      ctx.beginPath();
+      ctx.moveTo(-h,p); ctx.lineTo(h,p);
+      ctx.moveTo(p,-h); ctx.lineTo(p,h);
+      ctx.stroke();
+    }
+    for (let i=0;i<N;i++)
+      for (let j=0;j<N;j++) {
+        const x=-h+i*cellSize+hc, y=-h+j*cellSize+hc;
+        const k=`${i},${j}`;
+        if (stones[k]) drawStone(x,y,stones[k]);
+        else if (digits[k]) drawDigit(x,y,digits[k]);
+      }
   }
 
   ctx.restore();
 }
 
-// ---------- Interaction ----------
+function drawHex(x,y) {
+  ctx.beginPath();
+  for (let i=0;i<6;i++) {
+    const a=Math.PI/180*(60*i-30);
+    const px=x+hexSize*Math.cos(a);
+    const py=y+hexSize*Math.sin(a);
+    i?ctx.lineTo(px,py):ctx.moveTo(px,py);
+  }
+  ctx.closePath();
+  ctx.stroke();
+}
 
-canvas.addEventListener("click", (e) => {
-  const cycle = getActiveColorCycle();
-  if (cycle.length === 0) return;
-
-  const rect = canvas.getBoundingClientRect();
-  const mx = e.clientX - rect.left - canvas.width / 2;
-  const my = e.clientY - rect.top - canvas.height / 2;
-
-  let best = null;
-  let bestDist = Infinity;
-
-  for (let q = -(N - 1); q <= (N - 1); q++) {
-    for (let r = -(N - 1); r <= (N - 1); r++) {
-      if (Math.abs(q + r) >= N) continue;
-      const { x, y } = axialToPixel(q, r);
-      const d = Math.hypot(mx - x, my - y);
-      if (d < bestDist && d < hexSize * 0.7) {
-        bestDist = d;
-        best = { q, r };
-      }
-    }
+function drawStone(x, y, c) {
+  if (
+    useImagesCheckbox.checked &&
+    stoneImages[c] &&
+    imagesReady[c]
+  ) {
+    const img = stoneImages[c];
+    const r = cellSize * 0.35;
+    ctx.drawImage(img, x - r, y - r, r * 2, r * 2);
+    return;
   }
 
-  if (!best) return;
+  // fallback circle
+  ctx.beginPath();
+  ctx.arc(x, y, cellSize * 0.35, 0, Math.PI * 2);
+  ctx.fillStyle = colorMap[c];
+  ctx.fill();
+  ctx.stroke();
+}
 
-  const key = `${best.q},${best.r}`;
-  delete labels[key]; // placing stone clears label
 
-  stones[key] = (stones[key] === undefined) ? 0 : stones[key] + 1;
-  if (stones[key] >= cycle.length) delete stones[key];
+function drawDigit(x,y,d) {
+  ctx.fillStyle="#000";
+  ctx.fillText(d,x,y);
+}
+
+// ---------------- CLICK ----------------
+
+canvas.onclick = e => {
+  const rect=canvas.getBoundingClientRect();
+  const mx=e.clientX-rect.left-canvas.width/2;
+  const my=e.clientY-rect.top -canvas.height/2;
+  let key=null;
+
+  if (boardType==="hex") {
+    const R=N-1;
+    let best=Infinity;
+    for (let q=-R;q<=R;q++)
+      for (let r=-R;r<=R;r++) {
+        if (Math.abs(q+r)>=N) continue;
+        const x=hexSize*(Math.sqrt(3)*q + Math.sqrt(3)/2*r);
+        const y=hexSize*(1.5*r);
+        const d=Math.hypot(mx-x,my-y);
+        if (d<best && d<hexSize*0.7) {
+          best=d; key=`${q},${r}`;
+        }
+      }
+  }
+
+  if (boardType==="sq-inter") {
+    const span=(N-1)*cellSize, h=span/2;
+    let best=Infinity;
+    for (let i=0;i<N;i++)
+      for (let j=0;j<N;j++) {
+        const x=-h+i*cellSize, y=-h+j*cellSize;
+        const d=Math.hypot(mx-x,my-y);
+        if (d<best && d<cellSize*0.45) {
+          best=d; key=`${i},${j}`;
+        }
+      }
+  }
+
+  if (boardType==="sq-cell") {
+    const span=N*cellSize, h=span/2;
+    const i=Math.floor((mx+h)/cellSize);
+    const j=Math.floor((my+h)/cellSize);
+    if (i>=0&&i<N&&j>=0&&j<N) key=`${i},${j}`;
+  }
+
+  if (!key) return;
+
+  const cycle=cycleList();
+  const cur=stones[key];
+  const idx=cycle.indexOf(cur);
+
+  delete digits[key]; // stone always clears digit
+
+  if (idx===-1) stones[key]=cycle[0];
+  else if (idx===cycle.length-1) delete stones[key];
+  else stones[key]=cycle[idx+1];
 
   drawBoard();
   exportASCII();
-});
+};
 
-sizeSelect.addEventListener("change", () => {
-  N = parseInt(sizeSelect.value);
-  stones = {};
-  labels = {};
-  drawBoard();
-  exportASCII();
-});
-
-document.querySelectorAll(".colors input, .rendering input").forEach(el =>
-  el.addEventListener("change", () => {
-    drawBoard();
-    exportASCII();
-  })
-);
-
-// ---------- ASCII Export / Import ----------
+// ---------------- ASCII ----------------
 
 function exportASCII() {
-  const cycle = getActiveColorCycle();
-  let lines = [];
-
-  for (let r = -(N - 1); r <= (N - 1); r++) {
-    let line = " ".repeat(Math.abs(r));
-
-    for (let q = -(N - 1); q <= (N - 1); q++) {
-      if (Math.abs(q + r) >= N) continue;
-
-      const key = `${q},${r}`;
-      if (stones[key] !== undefined && cycle[stones[key]]) {
-        line += asciiMap[cycle[stones[key]]] + " ";
-      } else if (labels[key]) {
-        line += labels[key] + " ";
-      } else {
-        line += ". ";
+  let out=[];
+  if (boardType==="hex") {
+    const R=N-1;
+    for (let r=-R;r<=R;r++) {
+      const qMin=Math.max(-R,-r-R);
+      const qMax=Math.min( R,-r+R);
+      let line=" ".repeat(Math.abs(r));
+      for (let q=qMin;q<=qMax;q++) {
+        const k=`${q},${r}`;
+        line+= (stones[k] || digits[k] || ".") + " ";
       }
+      out.push(line.trimEnd());
     }
-    lines.push(line.trimEnd());
   }
 
-  asciiOutput.value = lines.join("\n");
+  if (boardType.startsWith("sq")) {
+    for (let j=0;j<N;j++) {
+      let line="";
+      for (let i=0;i<N;i++) {
+        const k=`${i},${j}`;
+        line+= (stones[k] || digits[k] || ".") + " ";
+      }
+      out.push(line.trimEnd());
+    }
+  }
+  ascii.value=out.join("\n");
 }
 
 function importASCII() {
-  const rows = asciiOutput.value
-    .split("\n")
-    .map(line => [...line].filter(c => "xorg.0123456789".includes(c)))
-    .filter(row => row.length > 0);
+  stones={};
+  digits={};
+  const lines=ascii.value.split("\n");
 
-  if (rows.length === 0) return;
-
-  const newN = Math.ceil((rows.length + 1) / 2);
-  N = newN;
-  sizeSelect.value = N;
-
-  stones = {};
-  labels = {};
-
-  const cycle = getActiveColorCycle();
-  const colorIndex = {};
-  cycle.forEach((c, i) => colorIndex[c] = i);
-
-  const rMin = -(N - 1);
-
-  rows.forEach((row, rowIndex) => {
-    const r = rMin + rowIndex;
-
-    const qs = [];
-    for (let q = -(N - 1); q <= (N - 1); q++) {
-      if (Math.abs(q + r) < N) qs.push(q);
-    }
-
-    for (let i = 0; i < Math.min(row.length, qs.length); i++) {
-      const symbol = row[i];
-      const key = `${qs[i]},${r}`;
-
-      if (symbol === ".") continue;
-
-      if ("0123456789".includes(symbol)) {
-        labels[key] = symbol;
-        continue;
+  if (boardType==="hex") {
+    const R=N-1;
+    let r=-R;
+    for (const raw of lines) {
+      if (r>R) break;
+      const cells=raw.trim().split(/\s+/);
+      const qMin=Math.max(-R,-r-R);
+      const qMax=Math.min( R,-r+R);
+      let qi=0;
+      for (let q=qMin;q<=qMax && qi<cells.length;q++,qi++) {
+        const c=cells[qi];
+        const k=`${q},${r}`;
+        if (colorMap[c]) stones[k]=c;
+        else if (/^[0-9]$/.test(c)) digits[k]=c;
       }
+      r++;
+    }
+  }
 
-      const color =
-        symbol === "x" ? "black" :
-        symbol === "o" ? "white" :
-        symbol === "r" ? "red"   :
-        symbol === "g" ? "gray"  : null;
-
-      if (color && colorIndex[color] !== undefined) {
-        stones[key] = colorIndex[color];
+  if (boardType.startsWith("sq")) {
+    for (let j=0;j<Math.min(N,lines.length);j++) {
+      const cells=lines[j].trim().split(/\s+/);
+      for (let i=0;i<Math.min(N,cells.length);i++) {
+        const c=cells[i];
+        const k=`${i},${j}`;
+        if (colorMap[c]) stones[k]=c;
+        else if (/^[0-9]$/.test(c)) digits[k]=c;
       }
     }
-  });
+  }
 
+  drawBoard();
+}
+
+ascii.addEventListener("keydown", e=>{
+  if (e.key==="Enter") {
+    e.preventDefault();
+    importASCII();
+  }
+});
+
+// ---------------- UI ----------------
+
+function refresh() {
+  N=Number(sizeSelect.value);
+  boardType=boardTypeSelect.value;
+  stones={};
+  digits={};
   drawBoard();
   exportASCII();
 }
 
-asciiOutput.addEventListener("blur", importASCII);
-asciiOutput.addEventListener("keydown", e => {
-  if (e.ctrlKey && e.key === "Enter") importASCII();
-});
+sizeSelect.onchange=refresh;
+boardTypeSelect.onchange=refresh;
 
-// ---------- Init ----------
-
-drawBoard();
-exportASCII();
+refresh();
 </script>
 
 </body>
