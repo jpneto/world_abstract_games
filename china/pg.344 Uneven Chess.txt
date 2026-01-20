@@ -1,0 +1,34 @@
+Uneven Chess (参差棋)
+
+Uneven Chess is a two-player abstract game. It takes its name from the uneven outline of the board.
+
+Game Procedure
+1. Setup
+
+The Uneven Chess board is shown in Figure 1. It uses square intersections; the board has seven squares per side, for a total of 49 intersections.
+
+Each player has 7 pieces of a different color. During setup, the players place their pieces on the intersections closest to their own side of the board.
+
+2. Movement
+
+The two players alternate turns. On each turn, a player moves one piece. The number of steps is not limited, but the piece may only move straight forward.
+
+3. Victory and Defeat
+
+Capturing is not permitted in this game.
+The player who is the first to move all of their pieces to the opponent’s side of the board wins.
+
+If a player is blocked and unable to move all of their pieces, the opponent wins. There are no draws.
+
+Related Game
+Mutual-Approach Chess (相遇棋)
+
+The rules of Mutual-Approach Chess are similar to those of Uneven Chess; only the board differs.
+
+The Mutual-Approach Chess board is shown in Figure 2. It has a stepped outline and contains 52 intersections. Each player has 8 pieces, distinguished as black and white.
+
+During play, pieces may move only to adjacent intersections, but the number of steps per move is not limited.
+
+The game ends when the final pair of opposing pieces meet; the player whose piece reaches the meeting point first wins. There are no draws.
+
+(Peng Xiangrui · Li Yu)

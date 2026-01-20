@@ -1,0 +1,36 @@
+Zang Chess (藏棋)
+
+Zang Chess, also known as Many-Eye Chess (多眼棋) or Multi-Eye Chess (多目棋), is popular in western China and is a Go-type board game.
+
+Zongzang Zhaba notes in A Guide to Tibetan Travel:
+
+“In world chess history, Zang Chess can be said to be ancient and unique. Whether compared with ‘Tianjiu’ (Six-Piece Chess), ‘Geziluo’ (Cross Chess), or ‘Jiajiajiu’ (Hand-Position Chess), it both absorbs the cultural essence of other ethnic groups’ chess traditions—simple, ingenious, and interesting—and also possesses its own distinctive methods and techniques.”
+
+Zang Chess can be played by two, four, or six players simultaneously. In ancient times it was mainly popular among the aristocracy; today it is commonly played among the general population, and is especially widespread in Tibet, Nepal, and Bhutan.
+
+Game Procedure
+1. Setup
+
+The Zang Chess board is shown in the figure. It is generally a 17 × 17 Go board.
+
+Before the game begins, 12 pieces are placed on the board, with 6 black and 6 white. These are called the “base pieces” (座子).
+
+2. Movement
+
+White moves first. After both sides have placed the 12 pieces, normal movement begins. Each move consists of one step.
+
+3. Capturing
+
+When three pieces form a straight line, the player may capture any one of the opponent’s pieces.
+
+When one side has only 3 pieces remaining, that side may ignore the one-step movement restriction and move pieces freely, as long as the player tries to arrange them into a straight line.
+
+4. Victory and Defeat
+
+The game ends when one side’s pieces have all been captured.
+
+(Meng Fanwei · Peng Xiangrui · Wu Ziyao)
+
+Reference
+
+① Zang Chess, in Guide to Tibetan Travel [M]. Chengdu: Sichuan People’s Publishing House, 1993, p. 97.

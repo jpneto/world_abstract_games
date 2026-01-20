@@ -1,0 +1,67 @@
+Crossing-the-Sea Chess (渡海棋)
+
+Crossing-the-Sea Chess is a two-player or three-player board game. The central part of the Crossing-the-Sea Chess board represents the sea. The two sides set out from islands or mountains, and crossing the sea to reach the destination is the objective; hence the name of the game.
+
+Game Procedure
+◆ Method of Play I
+1. Setup
+
+The board of Crossing-the-Sea Chess is shown in Figure 1. The central area consists of 9 × 9 = 81 squares, representing the sea. At the top and bottom there are 3 × 3 = 9 squares each, representing islands. The islands are generally depicted as eating areas or backward areas. In total there are 99 squares.
+
+The two sides each have an island, with a sea area between them. The sea area may contain squares that pieces may not pass through. Some squares also indicate the direction of movement for pieces entering or leaving the sea area.
+
+Crossing-the-Sea Chess uses 18 pieces in total, with each side having 9 pieces. During setup, both sides place their pieces on the 9 squares of their respective islands.
+
+2. Movement
+
+The two sides decide the first player by rolling dice or drawing lots. During play, a piece moves by stepping from square to square. Each player may move only one piece per turn, and each move consists of only one step. Pieces may advance, retreat, or move sideways, but they may not remain stationary or move backward illegally.
+
+The main types of movement are as follows:
+
+If a piece is blocked by an opponent’s piece and the square behind that piece is empty, it may jump onto that square. The direction of movement does not matter. If there are several pieces in a row, and the square behind the last piece is empty, the jump is allowed. A jump may be made only once per turn and may not be repeated.
+
+If a piece is blocked by one of the player’s own pieces, regardless of how many pieces there are or whether there are empty squares, it may not jump over them to continue moving. If the way is blocked by both an opponent’s piece and the player’s own piece, movement is also not allowed.
+
+Only when a piece reaches the “bridge” may it move across the sea. After crossing the bridge, it enters the three squares in the middle of the sea area and must proceed according to the required direction.
+
+When a piece reaches an island, it must follow the route prescribed by the rules. It may not jump over other pieces.
+
+Upon reaching the destination, if an opposing piece occupies that square, the player may place their own piece on top of the opponent’s piece, thereby capturing it. This is considered a successful crossing of the sea.
+
+3. Victory and Defeat
+
+Whichever side is the first to have all 9 of its pieces reach the destination island wins.
+
+◆ Method of Play II: Three-Player Game
+1. Setup
+
+The board for the three-player version of Crossing-the-Sea Chess is shown in Figure 2. The central area of the board consists of 81 small squares, representing the sea. On the left, right, and top sides there is a square area of 9 squares each, representing mountains. The passages between the mountains and the sea are the routes for crossing the sea.
+
+There are a total of 27 pieces, divided into three colors, with 9 pieces for each player. During setup, as shown in Figure 2, the three players place their pieces on the three sides of the square mountain areas.
+
+2. Movement
+
+The movement rules are the same as those for the two-player version.
+
+3. Victory Conditions
+
+The objective of the game is as follows:
+
+The player on the left must move their pieces to the right-side mountain.
+
+The player on the right must move their pieces to the left-side mountain.
+
+The player at the bottom must move their pieces to the top-side mountain.
+
+The first player to have all of their pieces reach the destination mountain wins.
+
+Figure 1: Initial setup for the two-player Crossing-the-Sea Chess
+Figure 2: Initial setup for the three-player Crossing-the-Sea Chess
+
+(For reference: He Nanmin)
+
+References
+
+China Youth Press. Collected Works on Chess and Board Games [M]. Beijing: China Youth Press, 1998, pp. 44–47.
+
+Crossing-the-Sea Chess, in Collection of Chinese Folk Games [M]. Beijing: China Children’s Publishing House, 1992, pp. 91–92.

@@ -1,0 +1,47 @@
+Enclosure Chess is a two-player confrontation game and a Go-type board game whose main objective is to capture pieces.
+
+Game Procedure
+1. Setup
+
+The Enclosure Chess board is shown in Figure 1. It is a square formed by 5 horizontal and 5 vertical straight lines, producing 16 small squares and 25 intersections.
+
+There are 24 pieces in total: 12 red and 12 black. The red pieces are shared by both players and serve as the main pieces, while the black pieces are the auxiliary pieces.
+
+Before the game begins, the 12 black pieces are first placed on the board as shown in Figure 1.
+
+2. Play
+
+The two players alternately place red pieces, placing one piece per turn.
+
+3. Capturing
+
+After the two players have placed red pieces alternately, either player may use red pieces to surround black pieces and capture them.
+
+After one red piece is placed, if a black piece is completely surrounded by red pieces, it is captured and removed.
+
+If, after one red piece is placed, two to four black pieces are surrounded, then those two to four black pieces are captured simultaneously, as shown in Figure 2.
+
+4. Victory and Defeat
+
+After all red pieces have been placed, the player who has captured more black pieces wins.
+
+① Chen Hanping. Chinese Folk Chess and Board Games [M]. Beijing: People’s Sports Publishing House, 2007, pp. 239–241.
+
+Variants and Related Games
+1.
+
+The Enclosure Chess board may also be a square of 7 horizontal and 7 vertical lines, producing 36 small squares and 49 intersections. There are 49 pieces in total, of which 25 are black and 24 are white.
+
+Before the game begins, both players first place black pieces, as shown in Figure 3. After setup, the two players alternately place white pieces to surround black pieces. The player who occupies the last remaining empty intersection around a black piece captures that black piece.
+
+Typical captures are shown in Figure 4. After all white pieces have been placed, the player who has captured more black pieces wins.
+
+2.
+
+There is another type of Enclosure Chess, mainly popular in Zhejiang and Yunnan. It has the same name but different rules.
+
+Each player has 6 pieces, distinguished by color. Before the game begins, each player places their pieces on the intersections of three horizontal lines on their own side.
+
+The two players begin by competing for the 5 intersections in the center of the board. They then contest the remaining 16 intersections. The first player to completely surround the opponent’s pieces and capture them wins.
+
+(Peng Xiangrui · Wu Ziyao)

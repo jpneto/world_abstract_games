@@ -1,0 +1,43 @@
+Bao Yingxiang Chess (宝应象棋)
+
+Bao Yingxiang Chess, also known as Bao Yingxiang or simply Xiang Chess, is regarded as one of the earliest elephant-type board games in ancient China and as a forerunner of Chinese chess. Bao Yingxiang Chess has six types of pieces, collectively called the “Six Armies” (六甲).
+
+Liu Zongyuan, in Eulogies (Songci), wrote:
+
+“The eight directions determine the opening of battle; the Six Armies separate above and below.”
+
+In the Scripture of the Beginning of the Dao (Taishang Jingfa ritual text), it is stated:
+
+“With broad deliberation and repeated calculation, one casts and advances the Six Armies; generals are arrayed, and chariots and horses belong to their ranks.”
+
+Game Procedure
+1. Setup
+
+The Bao Yingxiang Chess board is shown in the figure. It consists of 9 horizontal and 9 vertical straight lines, forming an 8 × 8 grid of squares.
+
+During setup, the two sides place their pieces on the first and second ranks.
+
+2. Movement
+
+The first move is made by the Chariot (车).
+
+The chariot moves 2 or 3 squares at a time.
+
+When moving diagonally, it must move to the second rank and capture an opposing Soldier (兵) directly in front of it.
+
+The Soldiers advance first; the second rank must leave an empty space so that the chariot has room to maneuver. Only then does advancing become meaningful.
+
+Historical Notes
+Sources and Legends
+
+Regarding historical records of Bao Yingxiang Chess, a passage in the Tang-dynasty prime minister Li Deyu’s Records of the Strange (Xu Guai Lu) describes Bao Yingxiang Chess:
+
+“Xu Guai recounts events seen in dreams. In the fifth year of the Tang Zhenyuan era, a man from Lingnan named Zheng Shun was lodging at the home of a Li family in Qinzhou. One night he heard the sound of drums. After some time, he dreamed of drums sounding, with two opposing formations: to the east was the Heavenly Horse Army, and to the west the Golden Elephant Army. After the formations were set, a general said: ‘The Heavenly Horse gallops three leagues at an angle; above it, the generals move horizontally in all four directions, galloping straight into the eight directions. Only the Six Armies may not move.’
+
+The drums sounded again. Each side advanced one horse by three leagues. The drums sounded again; each side advanced the chariot horizontally. The drums sounded again; the armies advanced. After the battle ended, Zheng’s family dug several zhang into the ground and found an ancient tomb. In the tomb was a bronze chess set (an elephant game), with pieces arranged in full formation, all cast in bronze. Only then did they realize that the general’s commands described the movements of Bao Yingxiang Chess. They burned incense and flattened the ground, obtained the treasure, and suddenly Zheng awoke from the dream, crying out. His body recovered, and strange phenomena in the house ceased.
+
+The above is the full account of Bao Yingxiang Chess as recorded in Records of the Strange. The author likely used a dream narrative to render ancient chess movements vivid. Yet it should be noted that the text mentions ‘full formations, all cast in bronze,’ which indicates that elephant chess was popular among the upper classes after the Tang dynasty, and that its pieces were exquisitely made.
+
+Dreams may reflect material reality, but they still differ from it. That people in ancient times later saw dream events realized in reality cannot be taken as proof; rather, it may be regarded as a coincidence or a moment of insight.”
+
+(Zhang Xueqin · Wu Ziyao)

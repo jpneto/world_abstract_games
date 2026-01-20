@@ -1,0 +1,25 @@
+Sai Pao Qi (Racing Pieces)
+
+Sai Pao Qi is a two-player adversarial game that determines the number of moves by throwing dice. The goal of the game is to race one’s pieces to the opponent’s side of the board.
+
+Game Procedure
+◆ Variant 1
+
+Setup
+The board for Sai Pao Qi is shown in Figure 1. There are 100 grid squares. Each player has 5 pieces, one side uses black pieces and the other uses white pieces.
+
+Movement
+Both players throw dice to determine the number of steps to move, and then take turns moving. During movement, pieces may not retreat or move sideways; they may only move forward.
+
+Victory Conditions
+The player who first moves all of their pieces to the opponent’s side wins. If both players reach the opponent’s side at the same time, the game is a draw.
+
+Figure 1: Sai Pao Qi board, variant 1
+
+◆ Variant 2
+
+As the popularity of Sai Pao Qi spread, its rules and board gradually underwent certain changes, as shown in Figure 2. Before the match, the two players determine who moves first by guessing odds or evens (or similar methods). On each turn, a player may choose one piece to move, or may choose two pieces, each moving one step. The direction of movement is unrestricted, but pieces may not capture opponent pieces. The player who first moves all of their pieces to the opponent’s side wins.
+
+Figure 2: Sai Pao Qi board, variant 2
+
+(Reference source: Li Chun)

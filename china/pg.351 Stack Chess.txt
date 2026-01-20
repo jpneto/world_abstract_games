@@ -1,0 +1,44 @@
+Stack Chess (叠棋)
+
+Stack Chess is a two-player abstract game. It is a completely new chess model designed according to the ideas of “equal starting positions, free development, and non-fixed outcomes.” It uses rules to reflect cooperation and constraints. On the surface, pieces are continually captured or removed according to the opponent’s rules, but in reality the game emphasizes stacking mechanics and presents a very high level of intellectual challenge.
+
+Game Procedure
+1. Setup
+
+The Stack Chess board is shown in the figure. It is formed by the intersection of five horizontal and seven vertical straight lines, for a total of 35 intersections.
+
+There are 35 pieces in total. They are not divided by color; both players share the same pieces. During setup, all 35 pieces are placed onto the board at once.
+
+2. Movement
+
+The two players alternate turns moving pieces. On each turn, only one step may be made.
+
+A move consists of either moving a piece or jumping over pieces. A player may jump over one or two pieces and land on the piece immediately beyond, stacking on top of the front piece. This is called “隔二重叠” (“stacking over two”).
+
+Stacked pieces occupy the same intersection and are called a stack. Pieces may not move backward.
+
+When jumping, if the jumping piece lands on an opponent’s piece, it may capture it; if it lands on one of the player’s own pieces, the stack grows. After a jump, the jumping piece must stop.
+
+Only jumps of exactly two pieces are permitted. Any empty intersections between the starting point and the destination are not counted.
+
+Pieces within a stack may not move independently.
+
+3. Victory and Defeat
+
+Stack Chess is a continuous game: the number of pieces on the board may increase or decrease, and individual pieces may be captured or rendered immobile.
+
+When one player is no longer able to make a move according to the stacking rules, the other player wins.
+
+Rule Variations
+
+The rules of Stack Chess may be modified:
+
+Victory may be defined as the player who makes the last legal move.
+
+“Stacking over two” may be changed to stacking over one or stacking over three. If the board is large enough (more than 50 intersections), stacking over two or three may be allowed.
+
+Pieces may be allowed to move backward.
+
+In summary, Stack Chess has flexible rules, and players may agree on the rules in advance.
+
+(Zhang Xueqin · He Nanmin)

@@ -1,0 +1,35 @@
+
+**●● Bamboo-Basket Game (筜箕棋)**
+
+Bamboo-Basket Game is a two-player abstract strategy game. Its gameplay is similar to Nine Men’s Morris.
+
+---
+
+### Game Procedure
+
+**1. Setup**
+The Bamboo-Basket board is shown in Figure 1. It has a total of 19 points (positions).
+Each player has 4 pieces, distinguished by black and white.
+Players take turns placing their pieces on any empty points of the board.
+The setup phase ends once all pieces have been placed.
+
+**2. Movement**
+After setup, players take turns moving, one move per turn.
+
+**3. Capturing**
+Captures are made by encirclement.
+When a player’s pieces surround an opponent’s piece so that it has no path to escape, that opponent piece may be captured and removed from the board.
+As shown in Figures 2 and 3, there are two types of captures: edge capture and central capture.
+
+**4. Winning**
+The first player to capture 2 of the opponent’s pieces wins the game.
+
+---
+
+**Figure captions**
+
+* Figure 1: Bamboo-Basket board
+* Figure 2: Edge capture
+* Figure 3: Central capture
+
+*(Source: Guo Chaoyun, Li Qing)*

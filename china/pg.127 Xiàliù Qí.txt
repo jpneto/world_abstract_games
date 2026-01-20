@@ -1,0 +1,52 @@
+Xiàliù Qí (下六棋)
+
+Xiàliù Qí, also called Xiàliù, is a two-player abstract board game popular in the Jiangsu region of China. It developed from ancient Liùbó (Six Bo) and is believed to have spread during the Three Kingdoms period, especially in the Huai River basin of Jiangsu and northern Jiangsu.
+
+Gameplay
+1. Setup
+
+The Xiàliù Qí board is shown in Figure 1 and consists of 36 intersections. Each player has 6 pieces. The two players sit opposite each other.
+
+Each player places their 6 pieces on the row of intersections closest to them, with one piece occupying each intersection.
+
+2. Movement
+
+The two players take turns alternately. Pieces move either horizontally or vertically, and each move is limited to one step. Only one piece may be moved per turn.
+
+3. Capturing
+
+Capturing is divided into five main cases:
+
+Minor capture (小吃):
+Three pieces form a straight line, with two adjacent pieces belonging to one player and the piece at the other end belonging to the opponent. The opponent’s piece is captured.
+
+Major capture (大吃):
+Four pieces form a straight line, with two adjacent pieces belonging to one player and the other two belonging to the opponent. Both opponent pieces are captured.
+
+Complete capture (全了):
+When six pieces lie on the same horizontal or vertical line, the player may freely capture any two opponent pieces.
+
+Advanced capture (夹吃):
+If two pieces are on the same horizontal or vertical line and sandwich one opponent piece between them, that opponent piece is captured.
+
+Center capture (掏心):
+If one piece occupies the center point between two opponent pieces on the same horizontal or vertical line, the two opponent pieces are captured.
+
+After a capture, one player continues until no further captures are possible, then the turn passes to the opponent.
+
+4. Winning Conditions
+
+A player wins by capturing all of the opponent’s pieces or by rendering the opponent unable to make any legal move.
+
+If both players are left with one piece each and neither can capture the other, the game is a draw.
+
+Linked Variant
+Xiàsì Qí (下四棋)
+
+Xiàsì Qí, also called Xiàsì, is a two-player abstract game popular in the Jiangsu region.
+
+Its board differs from Xiàliù Qí, as shown in Figure 2. Each player has 4 pieces, placed on the row of intersections closest to them, with one piece per intersection.
+
+Movement, capturing, and victory conditions are the same as in Xiàliù Qí.
+
+(Source: Zhang Xuehua, He Yutian)

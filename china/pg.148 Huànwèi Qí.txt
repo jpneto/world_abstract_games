@@ -1,0 +1,28 @@
+Huànwèi Qí (换位棋) — “Position-Swapping Game”
+
+Huànwèi Qí is a two-player abstract strategy game. The objective for each player is to move all of their own pieces to the starting area of the opponent, hence the name “Huànwèi Qí” (“Position-Swapping Game”).
+
+Huànwèi Qí is similar in spirit to Shànxiàn Qí (Single-Line Chess), differing mainly in the number of board spaces and pieces. Because of this, there are also differences in jumping and capturing, but the basic rules are largely the same.
+
+Gameplay
+1. Setup
+
+As shown in the diagram, the Huànwèi Qí board consists of a single row of 18 small squares.
+
+Each player has 5 pieces, distinguished by black and white. Players place their 5 pieces on opposite ends of the board. There must be no empty squares between a player’s own pieces.
+
+2. Movement
+
+The player to move is determined by agreement or by lot, and the two players then alternate turns.
+
+On each turn, only one piece may be moved, and it may only move forward, never backward.
+
+If a piece encounters an opponent’s piece and there is an empty square immediately beyond it, the moving piece may jump over the opponent’s piece and land on the empty square. No matter how many opponent pieces lie in between, they may all be jumped over, but jumps may not be chained consecutively.
+
+A player may not jump over their own pieces. If a player’s own piece is blocking the way ahead, the player must wait until the blocking piece moves before pieces behind it may advance.
+
+3. Winning Conditions
+
+The first player to move all 5 of their pieces to the opposite end of the board wins.
+
+(Source: Huang Jianghong, He Yutian)

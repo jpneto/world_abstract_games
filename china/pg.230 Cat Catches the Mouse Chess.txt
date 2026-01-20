@@ -1,0 +1,18 @@
+Cat Catches the Mouse Chess
+
+Cat Catches the Mouse Chess, also called Mouse-Catching Chess, is a very simple two-player abstract strategy game.
+
+Game Procedure
+
+Setup
+The board for Cat Catches the Mouse Chess is shown in the diagram. It has 24 intersections. Each player has one piece, distinguished by black and white, and they are placed on the two opposite corners of the board.
+
+Moves
+The cat moves first. On each turn, either player may move their piece one step along the lines.
+
+Winning Condition
+If the cat catches the mouse within ten moves, the cat wins. Otherwise, if after ten moves the mouse has not been caught, the mouse wins.
+
+(Diagram caption: “Cat Catches the Mouse Chess Board”)
+
+(Ying Shipo, Zhang Xuelin)

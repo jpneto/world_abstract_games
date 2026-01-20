@@ -1,0 +1,29 @@
+Hare and Wolf Chess
+
+Hare and Wolf Chess is a two-player abstract strategy game. Its gameplay is similar to Hounds and Hare (or Hare and Hounds).
+
+Game Procedure
+
+Setup
+The board for Hare and Wolf Chess is shown in the diagram and has 31 intersections. The two sides are the hare and the wolves.
+
+The hare has 1 piece, placed on the central intersection of the board.
+
+The wolves have 5 pieces, placed on the five intersections along the bottom edge of the board.
+
+Moves
+The wolves move first.
+
+The hare may move along the lines to any adjacent intersection.
+
+The wolves may only move forward along the lines.
+
+Winning Conditions
+
+If the wolves surround the hare so that it cannot move, the wolves win.
+
+If the hare breaks through the encirclement and moves first to the bottom edge of the board, the hare wins.
+
+(Diagram caption: “Hare and Wolf Chess Board”)
+
+(Ying Shipo, Li Chun)

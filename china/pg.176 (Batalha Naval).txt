@@ -1,0 +1,38 @@
+Naval Combat Chess (海军作战棋)
+
+Naval Combat Chess is a two-player competitive game, divided into the Red Navy and the Blue Navy. Compared with other naval chess games, the gameplay is relatively simple. Through continuous alternating artillery fire, when a player hits the opponent, they must carefully calculate the arrangement and coverage of the opponent’s ships, and in the next shot increase the hit probability, until all of the opponent’s battleships are sunk. The objective is to destroy all enemy vessels in the shortest possible time.
+
+Game Procedure
+1. Setup
+
+The Naval Combat Chess board, as shown in the diagram, is an 11 × 11 grid representing the sea area.
+
+Each side has four types of ships:
+
+Aircraft carrier: 1 ship, occupies 8 squares, arranged as 2 rows of 4 squares.
+
+Cruiser: 2 ships, each occupies 6 squares, arranged in a straight line of 6 squares.
+
+Destroyer: 3 ships, each occupies 4 squares, arranged in a straight line of 4 squares.
+
+Submarine: 4 ships, each occupies 2 squares, arranged in a straight line of 2 squares.
+
+Before the game begins, players place their ships on the board. Ships may be placed horizontally or vertically.
+
+2. Play
+
+The game proceeds by taking turns to fire shots. Either side may go first. If the Red side goes first, it calls out a coordinate; the Blue side then responds whether the shot is a hit or a miss.
+
+When a hit is announced, the attacking player records the hit ship on their own tracking chart. After a hit, the attacking player may immediately fire again. A player may fire up to three consecutive shots in one turn.
+
+3. Victory
+
+Players alternate firing shots until one side’s battleships have all been sunk. The side that sinks all of the opponent’s ships first wins.
+
+Diagrams
+
+Red Navy deployment diagram
+
+Blue Navy deployment diagram
+
+Naval Combat Chess board

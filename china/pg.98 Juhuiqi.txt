@@ -1,0 +1,40 @@
+●● Juhuiqi (聚会棋)
+
+Juhuiqi is a two-player abstract strategy game. Its gameplay is similar to Dingziqi (peg-connection games).
+
+---
+
+### Game Procedure
+
+1. Setup
+The Juhuiqi board is shown in Figure 1.
+Each player has 18 pieces of a distinct color or shape.
+Players take turns placing one piece at a time. Pieces may be placed on any empty position on the board.
+
+2. Scoring
+As shown in Figure 2, when a player’s pieces form a target shape, that player scores points.
+Specifically, the score awarded for each target shape is as follows:
+
+| Target Shape      | Score    |
+| ----------------- | -------- |
+| Triangle          | 3 points |
+| Diamond (rhombus) | 4 points |
+| Trapezoid         | 5 points |
+| Hexagon           | 6 points |
+
+3. End of the Game / Winning
+When there are no empty positions left on the board, the game ends.
+The player with the higher total score wins.
+If both players have the same score, the game is a draw.
+
+---
+
+Figure captions
+
+* Figure 1: Juhuiqi board
+* Figure 2: Target shapes in Juhuiqi
+
+  * Triangle: scores 3 points
+  * Diamond: scores 4 points
+  * Trapezoid: scores 5 points
+  * Hexagon: scores 6 points

@@ -1,0 +1,31 @@
+Plum Blossom Chess (梅花棋, Méihuā Qí)
+
+Plum Blossom Chess is a forming-pattern-type confrontational game with gameplay similar to Gather Chess (聚会棋, Jùhuì Qí). Both sides take turns placing pieces, with the goal being to form the target pattern shaped like a plum blossom. The plum blossom patterns are shown in Figure 3 and include the following types:
+
+    Upright Small Plum Blossom (正小梅花) - (Top Left)
+
+    Slanted Small Plum Blossom (斜小梅花) - (Top Right)
+
+    Upright Large Plum Blossom (正大梅花) - (Bottom Left)
+
+    Slanted Large Plum Blossom (斜大梅花) - (Bottom Right)
+
+The game ends when there are no empty positions left on the board. The side with the highest final score wins. Additionally, when placing a plum blossom, one should try to construct the "Double Plum Blossom" (双梅花) shape, as shown in Figure 4, which doubles the score.
+
+    Figure 3: Plum Blossom Chess Target Patterns
+
+    Figure 4: Double Plum Blossom Pattern
+
+2. Hexagonal Chess (六角棋, Liùjiǎo Qí)
+
+The gameplay of Hexagonal Chess is also similar to Gather Chess, but the board is different. The Hexagonal Chess board and target patterns are shown in Figure 5.
+
+    Long Connected Win (长连胜, Cháng Liánshèng)
+
+    Large Hexagon Win (大六角胜, Dà Liùjiǎo Shèng)
+
+    Small Hexagon Win (小六角胜, Xiǎo Liùjiǎo Shèng)
+
+    Figure 5: Hexagonal Chess Target Patterns
+
+(应沛驰 Zhang Xuefeng Li Qing)

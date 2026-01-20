@@ -1,0 +1,28 @@
+Scoring Go (记分围棋)
+
+Scoring Go is a two-player confrontation game that combines numbers and competition and is a variant of Go with a strong competitive character. Both the board and the pieces may be replaced by those of Go. The main difference is that the small grid points on the board are marked with scores. Generally, odd-numbered rows (1, 3, 5, …) are marked with 1 point, while even-numbered rows (2, 4, 6, …) are marked with 3 points. ①
+
+Game Procedure
+1. Setup
+
+The Scoring Go board is shown in the figure. It is a square board formed by 8 horizontal lines and 8 vertical lines, producing a grid of intersections. Each line contains 7 small circles.
+
+Each empty circle is filled with a number—1, 2, 3, 4, 5, 6, 7, or 8—representing a score value.
+
+2. Play
+
+Each side has 56 pieces. Players take turns placing one piece at a time, placing it on an empty small circle.
+
+After a piece is placed, if that piece encloses an area of empty circles, the numbers in those enclosed circles are recorded.
+
+If one piece is placed and, at the same time, two numbers are enclosed by that player’s pieces, then the two numbers are added together and recorded.
+
+3. Victory and Defeat
+
+When all of one player’s pieces have been placed, the numbers recorded on that player’s score sheet are added together. The player with the higher total score wins.
+
+(Peng Xiangrui · Wu Ziyao)
+
+Reference
+
+① Wu Jun, Fang Yuan. Collection of Go Variants [M]. Fuzhou: Fujian People’s Publishing House, 1989, p. 11.

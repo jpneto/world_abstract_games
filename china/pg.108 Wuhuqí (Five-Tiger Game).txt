@@ -1,0 +1,52 @@
+Wuhuqí (Five-Tiger Game)
+
+Wuhuqí, also known as Five Tigers, Fangcheqi, Dabianqi, Xiabián, Sanxing Sì, Wuhuqi, Wumaqi, Changjiangqi, etc., is a two-player abstract strategy game widely played in many regions of China.
+
+Game Procedure
+1. Setup
+
+The Wuhuqí board is shown in the diagram. It consists of 16 squares and 25 intersections.
+There are 25 pieces in total: one player has 13 pieces, the other 12 pieces.
+The pieces are distinguished by color. Players take turns placing pieces on the board.
+
+2. Scoring and Capturing
+
+Players aim to form specific target patterns.
+When a player successfully forms a target pattern, they may capture a fixed number of opponent pieces.
+However, pieces that have already formed part of a completed pattern may not be captured again.
+
+Once the board is completely filled, players capture pieces according to the patterns they form.
+If neither player can form a target pattern, each player captures one piece.
+
+After this, the first player captures first, then the second player, and afterwards players alternate turns.
+
+(Diagram caption: Wuhuqí board)
+
+Target Patterns in Wuhuqí
+
+Five Tigers (also called Five Nests):
+Divided into central tiger and edge tiger.
+Five connected pieces in a horizontal or vertical line.
+Capture 3 pieces.
+
+Tongtian (also called Great Tiger or Large Tiger):
+Five connected pieces in a diagonal line.
+Capture 4 pieces.
+
+Small Well (also called Square, Small Square, or Little Well):
+Four pieces forming a square.
+Capture 1 piece.
+
+Three-Slash (also called Small Slash):
+Three connected pieces in a diagonal line.
+Capture 1 piece.
+
+Four-Slash:
+Four connected pieces in a diagonal line.
+Capture 2 pieces.
+
+3. Victory
+
+The player who captures all of the opponent’s pieces wins the game.
+
+(Ying Minyan, Zhang Xuebo, Chen Chunjun, Li Chun)

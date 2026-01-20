@@ -1,0 +1,32 @@
+[This is almost Dots and Boxes]
+Modianqi (Ink-Dot Game)
+
+Modianqi is a two-player abstract strategy game. Its gameplay is somewhat similar to Bridg-It.
+
+Game Procedure
+
+1. Board
+
+The board of Modianqi consists of 100 ink dots, that is, 100 individual points arranged in a grid of 10 rows by 10 columns, as shown in the diagram.
+
+2. Connecting Lines
+
+Players take turns drawing a line between any two dots on the board; each turn, one line is drawn.
+Lines may be drawn horizontally or vertically, but not diagonally, and no line may be drawn more than once.
+
+The purpose of drawing lines is to enclose four dots to form a square.
+
+3. Victory
+
+Within a square, the boundary edges may consist of lines drawn by either player.
+However, the player who draws the final edge completing the square claims ownership of that square.
+
+Additionally, if a line segment between two dots serves as the shared side of two adjacent squares, it must still be drawn.
+
+Players may use two different markers to distinguish the squares they have claimed.
+The game ends when no more moves are possible; the player who has claimed more squares wins.
+
+Illustration caption:
+Modianqi board
+
+(Huang Chaozhi, Li Chun)

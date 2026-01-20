@@ -1,0 +1,26 @@
+Eight-Character Chess (八子棋)
+
+Eight-Character Chess is a board game invented by Zhou Guojian, a villager from Hunan Province, on the basis of Go (Weiqi), after improvement and innovation. It is similar in play to Go and represents the inheritance and development of traditional Go in modern daily life.
+
+Game Procedure
+1. Setup
+
+The board for Eight-Character Chess is shown in the figure. There are a total of 16 pieces. Each side has 8 pieces, divided into black and white.
+
+In addition, there are 2 red pieces, which are public shared pieces that both sides may use. The red pieces are used as substitute pieces.
+
+Each player prepares 5 tokens. During each round, one token may be exchanged for one piece.
+
+After setup, Black moves first, followed by White. Pieces may be placed freely on any empty intersection on the board.
+
+2. Movement
+
+After one side places a piece, the opponent must move one of their own pieces. The piece moves along a line to an adjacent empty intersection; each move consists of only one step.
+
+During movement, when both players have only one piece remaining on the board, each player may add two additional pieces, until the game ends.
+
+3. Victory and Defeat
+
+The first player to arrange all of their 8 pieces into a continuous line—whether horizontal, vertical, or diagonal—wins.
+
+(Zhang Xueqin · Wu Ziyao)

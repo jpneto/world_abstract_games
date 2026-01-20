@@ -1,0 +1,49 @@
+Three-Connection Game (三通棋)
+Overview
+
+Three-Connection is a two-player abstract connection game played on a triangular board.
+Players take turns placing stones only; there is no movement and no capture.
+
+The objective is to form a connected group of stones that touches all three sides of the board.
+
+Equipment
+
+A triangular board subdivided into a triangular lattice with 64 intersection points.
+
+32 stones for each player, in two different colors.
+
+Setup
+
+The board starts empty.
+Players choose a color.
+Either player may move first.
+
+Play
+
+Players alternate turns.
+
+On a turn, a player:
+
+Places one stone of their color on any empty intersection of the board.
+
+Stones, once placed, remain fixed for the rest of the game.
+
+Connectivity is defined by adjacent intersections connected by the edges of the triangular grid.
+
+Objective (Winning Condition)
+
+A player wins immediately upon forming a single connected group of their stones that touches all three sides of the triangular board.
+
+Touching a side means that at least one stone in the connected group lies on that side of the board.
+
+Draw
+
+If both players simultaneously complete a connection touching all three sides, the game is a draw.
+
+Notes
+
+This game is a pure connection game, structurally equivalent to Y, played on a finite triangular grid.
+
+There is no capture, blocking is indirect, and the game has perfect information.
+
+The game is expected to be drawless under normal play, except for the explicit simultaneous-completion rule.

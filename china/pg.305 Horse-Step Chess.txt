@@ -1,0 +1,38 @@
+Horse-Step Chess (马步棋)
+
+Horse-Step Chess is a single-player board game. Its movement is similar to the movement of the horse in Chinese chess (Xiangqi), hence the name.
+
+Game Procedure
+◆ Method of Play I
+1. Setup
+
+The Horse-Step Chess board is shown in Figure 1. It is formed by the intersections of 5 horizontal and 6 vertical straight lines, creating a grid.
+
+The player uses one piece, which may be regarded as the “horse” from Chinese chess, though it may also be treated as a generic piece. The piece may be placed on any intersection, as shown in Figure 1.
+
+2. Movement
+
+The piece must move continuously without repeating any position and must traverse all intersections on the board.
+
+Movement follows the horse’s move in Chinese chess: one step straight followed by one step diagonally, forming the character “日”.
+
+3. Victory and Defeat
+
+If the player successfully reaches the goal by traversing all intersections, the result is a win.
+If the piece cannot continue moving, the result is a loss.
+
+◆ Method of Play II
+
+The player takes 49 pieces. At the start of the game, all pieces are placed on the board formed by the intersections of 7 horizontal and 7 vertical lines.
+
+The player chooses one piece as the starting piece. Each move follows a diagonal direction (as shown in Figure 2). For example, the black piece labeled “1” can move to points A or B; the black piece labeled “2” can move to points C, D, E, or F.
+
+Each time a piece moves to an intersection, one piece is removed.
+
+If the player removes all pieces, the player wins.
+If 40 or more pieces are removed, the result is considered a pass.
+
+Figure 1: Horse-Step Chess board
+Figure 2: Horse-Step Chess board (variant)
+
+(Ying Zhipeng · Wu Ziyao)

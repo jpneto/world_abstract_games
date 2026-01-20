@@ -1,0 +1,38 @@
+砖格棋 (Zhuān Gé Qí)
+
+Zhuan Ge Qi is a two-player abstract strategy game. Its gameplay is similar to Tic-Tac-Toe.
+
+Game Procedure
+1. Board Setup
+
+The board is shown in the diagram. It is a large square subdivided internally into 32 small rectangles, with a total of 57 intersection points.
+Each player has 10 pieces, distinguished by color or shape. Players take turns placing pieces, starting with Black. Placement continues until all pieces have been placed.
+
+2. Moving Pieces
+
+After all pieces are placed, the two players take turns moving.
+On each turn, a player may move one piece by one step.
+
+3. Capturing
+
+When one player’s pieces form a target pattern, that player may capture the opponent’s pieces.
+
+The target patterns in Zhuan Ge Qi include:
+
+the “口” (square) shape
+
+the “十” (cross) shape
+
+If a “口” shape is formed, the player may capture any one of the opponent’s pieces.
+If a “十” shape is formed, the player may capture any two of the opponent’s pieces — one of which must be the piece that just moved.
+
+4. Winning the Game
+
+The player who first captures all of the opponent’s pieces wins the game.
+
+Diagram: Zhuan Ge Qi board
+
+(Xu Yin, Li Chun)
+
+Reference:
+① Many Types of Folk Board Games, Beijing: Agricultural Publishing House, 2000.

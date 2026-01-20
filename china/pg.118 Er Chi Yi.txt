@@ -1,0 +1,53 @@
+Er Chi Yi, also known as “Two Capture One”, “Four Squares”, or “Four-Step Top”, is a two-player abstract strategy game.
+
+Game Procedure
+1. Board Setup
+
+The board is shown in Figure 1. It consists of 16 cells with 25 intersection points.
+Each player has 5 pieces. During setup, players take turns placing pieces, and all pieces must be placed on the row of intersections closest to the player.
+
+2. Movement
+
+After setup, players take turns moving.
+On each turn, a player may move one piece by one step.
+
+3. Capturing
+
+As shown in Figure 2, when one player has two pieces on the same line, and there is one opponent piece adjacent on that line, the opponent’s piece may be captured (at that moment, there are three pieces on the same line).
+This capture is called “top” (顶吃) and is similar to capturing in Tic-Tac-Toe.
+
+However, there are several special configurations in which capturing is not allowed:
+
+If, after moving, the configuration “Two Blacks, One White” appears on the same line, the white piece cannot be captured (see Figure 3).
+
+If there is an empty space between the two black pieces and the white piece, the white piece cannot be captured (see Figure 4).
+
+If the two black pieces are adjacent to the white piece, the white piece cannot be captured (see Figure 5).
+
+If, after a move, although the two black pieces and the white piece are on the same line, there is another piece elsewhere on that line, then the white piece still cannot be captured (see Figure 6).
+
+4. Winning the Game
+
+The player who first captures all of the opponent’s pieces wins.
+
+Related Games
+1. 着棋子 (Zhuo Qi Zi)
+
+Also called Four-in-a-Row, this game has rules identical to Er Chi Yi, differing only in the board.
+
+The board has 9 cells and 16 intersection points.
+Each player has 4 pieces, distinguished by color or shape.
+Gameplay follows the same movement and capture rules as Er Chi Yi.
+
+2. 推大车 (Tui Da Che)
+
+Also known as “Pushing the Cart”, this is a two-player abstract game with gameplay similar to Er Chi Yi.
+
+The board consists of 9 cells with 16 intersection points.
+Each player has 4 pieces, initially placed on the row of intersections closest to the player.
+
+During play, in addition to “top” captures, if one player’s two pieces form a straight line with two opponent pieces, the player must capture one of their own pieces closest to themselves; this is called “pushing the cart”.
+
+The winner is the player who first captures all of the opponent’s pieces.
+
+(Peng Xiangqi, Zhang Xuanqi, Li Chun)

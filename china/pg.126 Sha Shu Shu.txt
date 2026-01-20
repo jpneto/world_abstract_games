@@ -1,0 +1,37 @@
+杀蜀黍 (Sha Shu Shu)
+
+Sha Shu Shu is a two-player abstract strategy game that is widely played in the Bazhong–Nanchong–Guang’an region of Sichuan.
+Because the pieces placed on the board resemble the drooping heads of ripened sorghum (蜀黍) after harvest, the game is also known as Sorghum Chess, Harvest Sorghum Chess, or Cutting Sorghum Chess.
+
+In areas where Sha Shu Shu is popular, people often sing the following rhyme:
+
+“I’ll teach you a tune,
+I’ll teach you a little game,
+I’ll teach you the southern Sichuan Sha Shu Shu.”
+
+Game Procedure
+1. Board Setup
+
+The board is shown in the diagram. It consists of 25 cells with 36 intersection points.
+Each player has 18 pieces, distinguished by color or shape.
+Players place their pieces on the three rows of intersections closest to their own side.
+
+2. Movement
+
+Pieces move along diagonal lines only, one step per move.
+Moving along straight (horizontal or vertical) lines is not allowed.
+
+3. Capturing
+
+If one of your opponent’s pieces is located on an adjacent intersection directly opposite yours along a diagonal, you may capture that piece.
+
+4. Winning the Game
+
+The player who captures all of the opponent’s pieces first wins.
+
+Diagram: Sha Shu Shu board layout
+
+(Cai Rongqing, Peng Xiangqi, Li Chun)
+
+Reference:
+① Guo Yuxian, Folk Games and Traditional Skills, Beijing: China Social Sciences Press, 2006.

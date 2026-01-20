@@ -1,0 +1,42 @@
+Lúnxíng Qí (轮行棋)
+
+Lúnxíng Qí is a two-player abstract board game. The board has numbered spaces, and the two players move alternately in rotation, hence the name “Lúnxíng Qí” (“Rotational Movement Chess”).
+
+Gameplay
+1. Setup
+
+The board of Lúnxíng Qí consists of a regular hexagon formed by three sets of intersecting parallel lines, for a total of 19 spaces.
+
+Each player has 4 pieces. Player A moves first, followed by Player B. The spaces are numbered from 1 to 8. Odd-numbered spaces belong to Player A, and even-numbered spaces belong to Player B.
+
+Each player places their 4 pieces in the shaded region on opposite sides of the board, as shown in the diagram. These regions are called the “starting areas.” Player A’s starting area is also Player B’s target area, and vice versa.
+
+2. Movement
+
+In each round, both players may make one move, and they must move according to the numerical order of the spaces.
+
+That is:
+
+Player A moves the piece on space 1,
+
+Player B moves the piece on space 2,
+
+then Player A moves the piece on space 3,
+
+Player B moves the piece on space 4,
+
+…
+
+until Player B moves the piece on space 8,
+
+then Player A moves the piece on space 1 again, and so on in this cycle.
+
+If the piece whose turn it is cannot move because all adjacent spaces are occupied, the player skips that move and proceeds to the next numbered piece. If it still cannot move, the turn passes to the opponent, and the cycle continues.
+
+3. Winning Conditions
+
+If one player moves all of their pieces into the opponent’s “starting area,” that player wins.
+
+If one player has achieved this condition and the other player can also achieve it with their remaining piece(s), the game is a draw.
+
+(Source: Ying Qingdi, He Ertian)

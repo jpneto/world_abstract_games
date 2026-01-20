@@ -1,0 +1,96 @@
+Liudaoqi (Six-Path Game)
+
+Liudaoqi, also called Dafangqi, Insert-Dafang, or Swing-Dafang, is played in a way similar to Gobang (Five-in-a-Row). It is a two-player abstract strategy game that is popular and widely spread among the people.
+
+Game Procedure
+1. Setup
+
+The board of Liudaoqi is shown in the diagram: it has 25 intersections and a total of 36 playing lines.
+Each player has 33 pieces, which may be round or of other shapes. Players take turns placing pieces on any empty intersection except the center point, until the board is completely filled.
+Any remaining pieces are kept as reserve pieces.
+
+2. Capturing
+
+During the placement phase, players must place their pieces so as to form one of the target patterns.
+If a player forms a target pattern, they capture pieces equal to the number specified by that pattern.
+If the player forms multiple target patterns at once, they may capture a corresponding number of pieces.
+
+After the board is completely filled, players continue capturing according to the patterns they form.
+If neither player can form a target pattern, they alternately capture one piece; this is called “passing” (通子).
+
+The target patterns in Liudaoqi include:
+
+Dragon:
+Six connected horizontal or vertical lines.
+Four of the intersections must be inside the board, and the other two must be on the edge.
+Capture 3 pieces.
+
+Six-Slash (also called “Diagonal Slash” or “Through Slash”):
+Six connected diagonal lines.
+Capture 4 pieces.
+
+Five-Slash (also called “Five-Slash Child”):
+Five connected diagonal lines.
+Capture 3 pieces.
+
+Four-Slash (also called “Four-Slash Child”):
+Four connected diagonal lines.
+Capture 3 pieces.
+
+Three-Slash (also called “Three-Slash Child”):
+Three connected diagonal lines, with two of the intersections on the board edge.
+Capture 1 piece.
+
+Square (also called “One-Square” or “Large Square”):
+Capture 1 piece.
+
+3. Movement
+
+When no more captures are possible, both players move pieces.
+Each move consists of moving one piece by one step only.
+
+During movement, if a player forms one of the above target patterns, they capture the opponent’s pieces according to the capture rules and add the corresponding number of pieces to their own supply.
+If the newly added pieces also form a target pattern, no additional capture is made.
+
+4. Victory
+
+The player who captures all of the opponent’s pieces wins the game.
+
+-- page 2
+
+(Diagram)
+
+Labels on the diagram (from top / left):
+
+六斜 – Six-Slash
+
+五斜 – Five-Slash
+
+四斜 – Four-Slash
+
+三斜 – Three-Slash
+
+方 – Square
+
+龙 – Dragon
+
+Caption under the diagram:
+六道棋目标棋形
+Target patterns in Liudaoqi
+
+Variants / Related Games (链接)
+
+Liuzhouqi, also called Fangzhou, Anliu, Swing Six, Lailiu, etc., uses the same board and pieces as Liudaoqi, but the rules are simpler.
+There are only two target patterns:
+
+Chengliu (also called Shangliu or Chengpai):
+Six pieces connected in a straight line horizontally or vertically.
+Captures 2 pieces.
+
+Chengfang (also called Shangfang):
+Four pieces forming a square on the board.
+Captures 1 piece.
+
+The game ends when one player captures all of the opponent’s pieces; that player is the winner.
+
+(Zhang Xuebo, Li Chun)

@@ -1,0 +1,33 @@
+Jiezi Chess (捉子棋)
+
+Jiezi Chess is a two-player game played using Chinese-chess (Xiangqi) pieces.
+
+Game Procedure
+
+1. Setup
+The Jiezi Chess board is shown in the figure. It has a diamond shape and a total of 30 intersections. There are solid lines, dashed lines, and intersections.
+Each player has 9 pieces, either red or black. The pieces are:
+
+5 Soldiers (兵 / 卒)
+
+2 Rooks (车)
+
+1 Scholar (士)
+
+1 General (将 / 帅)
+
+All pieces are placed on the two rows of intersections nearest to the player’s own side.
+
+2. Movement
+Players alternate turns. Pieces move along the lines, and each move advances one step only.
+
+3. Capturing
+Jiezi Chess uses encircling capture.
+If two pieces of the same side are on the same straight line or dashed line, and an opponent’s piece lies between them, that opponent piece may be captured.
+
+4. Victory Conditions
+The player who captures the opponent’s General (将 / 帅) wins the game.
+
+Figure: Initial setup of Jiezi Chess
+
+(Reference: Lu Qingyan, Li Yu)

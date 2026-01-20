@@ -1,0 +1,31 @@
+Shuangtian Qi (Double-Field Game)
+
+Shuangtian Qi, also known as Defensive Chess, is a two-player adversarial game. The board of Shuangtian Qi is formed by two “field” (田) shapes rotated 45 degrees and joined together, hence the name “Double-Field Game”.
+
+Game Procedure
+1. Setup
+
+The Shuangtian Qi board has a total of 17 positions. Each player has 8 pieces, distinguished by red/black or black/white pieces. For ease of explanation, the positions are numbered: one group is numbered 1–8, and the other group 10–17. Position 9 is empty at the start.
+
+Each player places their pieces on one side of the board along the same numbered positions, leaving position 9 empty. As shown in the diagram, pieces numbered 1–8 are placed on the left side of the board, and pieces numbered 10–17 are placed on the right side.
+
+2. Movement
+
+The objective of movement in Shuangtian Qi is to exchange the positions of one’s pieces with those of the opponent. The exact positions occupied by individual pieces do not matter.
+
+There are two main types of moves:
+
+Step move:
+Move a piece to an adjacent empty position.
+
+Jump move:
+A piece jumps over an adjacent piece and lands on an empty position beyond it. The jumped-over piece remains in place; the color of the jumped piece does not matter.
+
+3. Victory Conditions
+
+The two players attempt to exchange their piece positions. A player wins if they successfully complete the exchange of positions; otherwise, they lose.
+
+Diagram: Shuangtian Qi piece layout
+
+References
+Zhou Wei, Collected Folk Games, Vol. 1, Beijing: People’s Sports Publishing House, 2009, p. 252.

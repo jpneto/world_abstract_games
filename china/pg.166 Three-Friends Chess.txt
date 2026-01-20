@@ -1,0 +1,24 @@
+Three-Friends Chess (三友棋)
+
+Three-Friends Chess is a two-player abstract board game. Because its board is similar to that of international chess, and because many of its pieces use encircling captures rather than direct captures as in Go, it is therefore called “Three-Friends Chess.”
+
+Game Procedure
+
+1. Setup
+The board for Three-Friends Chess is shown in Figure 1; a standard international chessboard may also be used.
+Each side has 48 pieces, for a total of 96 pieces. Pieces may be placed directly on the intersections of the board, as shown in Figure 1.
+
+2. Movement and Capture
+Black moves first. Each move consists of moving one piece.
+A piece may move one step horizontally or vertically, or diagonally. It may pass over pieces that block the way, and may also capture multiple opponent pieces in a single move. The movement rules are similar to those of Go.
+
+During movement, if along a straight line (horizontal, vertical, or diagonal) there are pieces of both sides, and the opponent’s pieces lie between two of the player’s own pieces, then all those opponent pieces are captured.
+If the opponent’s pieces are arranged at the edge of the board in an “L” shape, as shown in Figure 2, the opponent’s pieces located at both ends are also captured in the same way.
+
+3. Victory Conditions
+Three-Friends Chess requires a time limit, generally about half an hour. When the specified time expires, the player who has captured more opponent pieces wins.
+
+Figure 1: Initial setup of Three-Friends Chess
+Figure 2: “L”-shaped capture in Three-Friends Chess
+
+(Reference: He Jinduo)

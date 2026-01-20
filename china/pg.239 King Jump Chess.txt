@@ -1,0 +1,29 @@
+King Jump Chess
+
+King Jump Chess is a two-player abstract strategy game.
+
+Game Procedure
+
+Setup
+The board for King Jump Chess is shown in Figure 1. It is a square formed by an 8 × 8 grid, with 64 squares, each square being an intersection point.
+There are 32 pieces in total, 16 per player. During setup, each player places their pieces on the second and third ranks closest to themselves, leaving the first rank nearest to each player empty, which serves as that player’s home camp.
+
+Moves and Capturing
+The first player is determined by drawing lots. Once decided, players alternate turns.
+
+Non-capturing move: A piece may move one step forward or diagonally forward, but may not move sideways or backward. Only one move per turn is allowed.
+
+Capturing move: A piece may capture by jumping. As shown in Figure 1, when capturing, there must be an opponent piece directly adjacent in front, and the jumping piece moves to the square beyond it, which must be empty. The jumped piece is removed from the board.
+A piece that jumps into the opponent’s home camp is promoted to a “King”. A King may move one step and may also make multiple consecutive jumps, capturing several pieces in succession. After each jump, if another capture is possible, the King must continue jumping. The jumping and capturing rules for the King are the same as in Checkers.
+
+Special capturing rule:
+If one side has two or more adjacent pieces in a straight horizontal line, then regardless of whether there are empty squares, the opponent may not capture by jumping along that horizontal line.
+However, capturing is allowed along vertical or diagonal directions. As shown in Figure 2, the black pieces may capture the white pieces.
+
+Winning Conditions
+The player who captures all of the opponent’s pieces wins. If each side is reduced to only one piece, the game is a draw.
+
+(Figure 1: King Jump Chess Setup)
+(Figure 2: Special Capturing Rule)
+
+(Peng Xihe, He Yumin)

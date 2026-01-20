@@ -1,0 +1,61 @@
+六子冲棋 (Liu Zi Chong Qi)
+
+Liu Zi Chong Qi, also known as Chongqi, Arrow Chess, or Cannon Chess, is a two-player abstract strategy game widely played in Sichuan and Hubei.
+Each player has six pieces, hence the name “Six-Piece Chong.”
+
+Game Procedure
+1. Board Setup
+
+The board is shown in Figure 1. It consists of 9 cells with 16 intersection points.
+Each player has 6 pieces, distinguished by black and white.
+
+Players alternately place their pieces as follows:
+
+4 pieces are placed on the four intersections of the bottom row.
+
+2 pieces are placed on the left and right ends of the row just above the bottom row.
+
+2. Movement
+
+Players take turns moving.
+Pieces may move horizontally, vertically, or diagonally, but only one step at a time.
+Jumping over other pieces is not allowed.
+
+3. Capturing
+
+Capturing occurs mainly in three situations, as shown in Figure 2.
+
+(1) Two-against-one (二打一)
+
+When three pieces form a straight line, and two adjacent pieces belong to one player, while the third end point is empty,
+if the other end is occupied by an opponent’s piece, that opponent’s piece may be captured.
+
+(2) Two-against-two (二打二)
+
+When four pieces form a straight line, with two adjacent pieces belonging to one player, and both ends occupied by opponent pieces,
+the player may capture both opponent pieces.
+
+(3) Cannon Capture (挑吃)
+
+If a player inserts one of their pieces between two opponent pieces, and one end of the line is empty,
+the player may capture the two opponent pieces.
+
+After making a capture, the capturing piece may then move one step horizontally or vertically, and may continue capturing using the cannon capture method.
+
+4. Winning the Game
+
+A player wins by capturing all of the opponent’s pieces, or by blocking the opponent so that none of their pieces can move.
+
+If both players are reduced to one piece each, and neither can capture the other, the game is a draw.
+
+Related Game
+五道棋 (Wu Dao Qi)
+
+Also called Five-Line Chess.
+
+The board is formed by five vertical and five horizontal straight lines, creating 25 intersection points.
+Each player has 5 pieces, as shown in Figure 3, placed on the five intersections closest to their side.
+
+The rules for movement, capturing, and winning are the same as in Liu Zi Chong Qi.
+
+(Peng Xiangqi, Zhang Xueqi, He Yujian)

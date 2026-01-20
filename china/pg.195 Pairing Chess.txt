@@ -1,0 +1,22 @@
+Pairing Chess (对子棋)
+
+Pairing Chess is a two-player abstract strategy game. It is called Pairing Chess because each player places two stones per turn.
+
+Game Procedure
+1. Setup
+
+The Pairing Chess board is shown in the diagram. It consists of 36 cells and 49 intersection points.
+
+The two players take turns placing stones. On each turn, a player places two stones, which may be placed on any empty intersections on the board.
+However, the two stones placed in a single turn must be adjacent to each other and may not be separated.
+
+Stones may be placed either horizontally or vertically.
+
+3. Win/Loss
+
+If a player is unable to continue placing stones according to the rules, that player loses.
+If both players are unable to place stones according to the rules, the game is a draw.
+
+Diagram
+
+Pairing Chess board position

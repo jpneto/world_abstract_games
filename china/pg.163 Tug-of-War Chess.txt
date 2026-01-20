@@ -1,0 +1,35 @@
+Tug-of-War Chess (拽王棋)
+
+Tug-of-War Chess is a two-player abstract board game. Pieces are captured by pulling.
+
+Game Procedure
+
+1. Setup
+The Tug-of-War Chess board is shown in Figure 1 and has a total of 53 intersections. One player takes the black pieces and the other the white pieces.
+
+Black has 6 pieces
+
+White has 10 pieces
+
+At the start, all black pieces are placed at the top of the board, and all white pieces are placed along the bottom edge of the board.
+
+2. Movement
+Players alternate turns. On each turn, a player makes one move.
+
+3. Capturing
+Capturing in Tug-of-War Chess is done by pulling, as shown in Figure 2.
+
+If a black piece A moves to point A, it captures the white piece at point A.
+
+If a white piece A moves to point B, it captures the black piece at point A.
+
+White pieces may not capture black pieces by pulling from the black player’s starting area.
+
+4. Victory Conditions
+
+Black wins by pulling its pieces to reach the bottom edge of the board.
+
+White wins if it makes the black pieces unable to move.
+
+Figure 1: Initial setup of Tug-of-War Chess
+Figure 2: Capturing by pulling in Tug-of-War Chess

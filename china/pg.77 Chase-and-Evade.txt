@@ -1,0 +1,32 @@
+
+**●● Chase-and-Evade Game (追随棋)**
+
+Chase-and-Evade is a two-player abstract strategy game.
+
+---
+
+### Game Procedure
+
+**1. Setup**
+The Chase-and-Evade board is shown in the diagram. It consists of 23 square grid points.
+The two players use black and white pieces. Black has 11 pieces, and White has 12 pieces, which are arranged on the board as shown in the illustration.
+
+**2. Removal (Opening action)**
+After the game begins, Black moves first.
+Black selects any one of White’s pieces and removes it from the board, leaving that point empty.
+
+**3. Movement**
+Players then take turns moving, with Black moving first.
+A move must follow the grid lines, either horizontally or vertically, to an adjacent empty point. Diagonal moves are not allowed.
+
+**4. Winning**
+Both players aim to surround the opponent’s pieces.
+When one player completely surrounds the opponent’s pieces so that they have no legal moves, that player wins.
+
+---
+
+**Figure caption**
+
+* Chase-and-Evade starting position
+
+*(Source: Zhang Xueqi, Li Qing)*

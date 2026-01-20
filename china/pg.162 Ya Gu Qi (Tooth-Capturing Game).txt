@@ -1,0 +1,165 @@
+Ya Gu Qi (Tooth-Capturing Game)
+
+Ya Gu Qi is a two-player adversarial game. Its gameplay is similar to Tonggu Qi found in Chinese folk board games.
+
+Game Procedure
+1. Setup
+
+The Ya Gu Qi board is based on a 16-square grid, with diagonal connections added between the squares, for a total of 41 positions. Each player has 9 pieces, which may be distinguished by color or by shape. The pieces are placed on the two rows of points closest to each player’s own side of the board.
+
+2. Movement
+
+The two players alternate turns. On each turn, a player may move only one piece by one step.
+
+3. Capture
+
+If a player’s piece moves to a point adjacent to an opponent’s piece, and the two points are connected by a line, then if three pieces lie in a straight line on the same connection, and the opponent’s piece is in the middle, that middle piece is captured and removed from the board.
+
+4. Victory Conditions
+
+The player who first captures all of the opponent’s pieces wins. If, after a piece is captured, neither player is able to capture any further opponent pieces, the game is considered a draw.
+
+Diagram: Ya Gu Qi board setup
+
+(Huang Jianghong · Li Chun)
+
+----------------
+
+Here is a structured analysis of whether Ya Gu Qi is likely to be drawish, based on its rules and board properties.
+
+1. Key structural features that affect draw likelihood
+(a) Small, symmetric force
+
+Each player has 9 pieces on a 41-point graph.
+
+Initial positions are symmetric and fairly far apart.
+
+With few pieces relative to space, forced interactions are rare early on, encouraging cautious maneuvering.
+
+➡️ This already biases the game toward long maneuver phases rather than early decisive captures.
+
+(b) Capture requires alignment, not jumping
+
+Captures occur only when three pieces lie in a straight line, with the opponent’s piece in the middle.
+
+There is no jumping capture, no replacement, and no forced continuation.
+
+Consequences:
+
+Captures are easy to foresee and avoid.
+
+A player can usually sidestep threats by moving away from linear alignment.
+
+There is no “tactical avalanche” like in checkers.
+
+➡️ This strongly increases drawishness.
+
+(c) One-step moves only
+
+Pieces move only one step per turn.
+
+No compound moves, no captures that create tempo gains.
+
+This means:
+
+It is hard to force zugzwang.
+
+Players can often “pass pressure” back to the opponent by shuffling.
+
+➡️ One-step-only movement is a classic draw-favoring mechanism in abstract games.
+
+(d) No obligation to capture
+
+Even if a capture is available, it is not compulsory.
+
+Players can decline trades indefinitely.
+
+Compare:
+
+Games with forced capture (e.g. checkers) → decisive.
+
+Games without forced capture (e.g. Fanorona without approach/withdrawal forcing) → draw-prone.
+
+➡️ Players can avoid simplifying into losing endgames.
+
+(e) Draw rule explicitly anticipates stagnation
+
+“If, after a capture, neither player can capture further opponent pieces, the game is a draw.”
+
+This rule:
+
+Codifies dead positions.
+
+Suggests that the game’s traditional form expects mutual blocking.
+
+➡️ Historically, this is strong evidence the game is drawish in practice.
+
+2. Comparison to known games
+Game	Capture type	Forced capture	Draw tendency
+Ya Gu Qi	Linear custodian	No	High
+Nine Men’s Morris	Custodian	No	High
+Fanorona	Custodian	Yes	Low
+Alquerque	Jump capture	Yes	Medium
+Tafl variants	Custodian	Often forced	Medium
+
+Ya Gu Qi sits closest to Nine Men’s Morris–style dynamics, but with less forced interaction.
+
+3. Likely practical outcome
+
+With perfect or near-perfect play:
+
+Early phase: cautious positioning, no captures.
+
+Midgame: occasional voluntary captures if advantageous.
+
+Endgame: blocked positions with no safe alignments.
+
+➡️ Most games between competent players will end in a draw.
+
+With casual or inexperienced players:
+
+Tactical oversights create captures.
+
+Games often end decisively.
+
+➡️ The game is skill-sensitive, but still draw-biased at higher levels.
+
+4. Would it be solved as a draw?
+
+If analyzed computationally:
+
+Small piece count.
+
+Low branching factor.
+
+No hidden information.
+
+➡️ Very plausible that the solved outcome would be draw, or “draw except for blunders”.
+
+This is similar to solved Morris variants and many small custodian-capture games.
+
+5. How to make it less drawish (if desired)
+
+If you are thinking in Ludii / design terms, any of these would reduce drawishness:
+
+Mandatory capture
+
+Multiple captures per move
+
+Win by immobilization
+
+Capture by jumping instead of alignment
+
+Asymmetric setup or unequal piece counts
+
+Bottom line
+
+Ya Gu Qi is very likely a drawish game under optimal play, by design:
+
+Non-forced custodian capture
+
+One-step movement
+
+High symmetry
+
+Explicit draw condition

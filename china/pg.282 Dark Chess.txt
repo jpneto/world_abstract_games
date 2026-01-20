@@ -1,0 +1,40 @@
+Dark Chess (暗棋)
+
+Dark Chess is a chess-type board game played using a Xiangqi (Chinese chess) board and pieces. Because the pieces are placed face down on the board and are only revealed when captured, it is called Dark Chess. It is similar to Blind Dark Chess and to Chinese chess card games.
+
+Game Procedure
+1. Setup
+
+The Dark Chess board is shown in the figure. It consists of a grid formed by 5 horizontal and 8 vertical intersecting lines, similar to a Chinese chess board, for a total of 32 intersections.
+
+All the pieces are placed face down on the intersections. Each side has 16 pieces. Before the game begins, the pieces are thoroughly shuffled and randomly placed on the board. The central 2 × 2 area may not contain any pieces.
+
+2. Play
+
+One side is chosen at random to flip over one piece on the board. Once a piece is revealed, that side takes that piece’s color as their own, and the opponent takes the other color.
+
+Thereafter, the two players alternately take turns. On each turn, a player may either flip over one face-down piece or move one of their own pieces.
+
+When moving a piece, except for special rules, all pieces move one step orthogonally to an adjacent empty intersection or to an intersection occupied by an opponent’s piece, in order to capture it.
+
+The capture rules for the pieces are as follows:
+
+General (帅) can capture any opposing piece except the Soldier (卒).
+
+Advisor (士) can capture any opposing piece except the General (帅).
+
+Elephant (相) can capture any opposing piece except the General (帅) and Advisor (士).
+
+Chariot (车) can capture any opposing piece except the General (帅), Advisor (士), and Elephant (相).
+
+Horse (马) can move one step orthogonally to an empty square or to a square occupied by an opponent’s piece and may capture any opposing piece.
+
+Cannon (炮) has special rules: it moves orthogonally any number of empty squares; to capture, it must jump over exactly one intervening piece and then land on an opposing piece.
+
+Soldier (卒) may capture any opposing piece.
+
+3. Victory and Defeat
+
+The player who captures all of the opponent’s pieces wins the game.
+
+(Peng Xiangrui · Wu Ziyao)
