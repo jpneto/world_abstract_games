@@ -1,0 +1,27 @@
+Dúzǐqí (Solitaire Chess / Lone Piece Game)
+
+Dúzǐqí is a two-player abstract strategy game. Its greatest distinguishing feature is that on a fairly large board there is only a single piece, hence the name. The rules are simple, yet the game is full of subtlety. In playing Dúzǐqí, although the piece has many possible paths of advance, all routes are of equal length—that is, the total number of steps from the starting point to the ending point is fixed. Moreover, if on the first move one does not play well, this will influence the overall outcome of the entire game. Therefore, in every encounter both sides tend to be extremely cautious, carefully calculating and comparing possibilities.
+
+Game Procedure
+
+1. Setup
+
+The board of Dúzǐqí is as shown in the diagram, formed by straight lines intersecting diagonally and vertically. The board contains many squares and many intersection points. By agreement of both players, either square-based placement or point-based placement may be used.
+
+Point-based placement may also be used. There is only one piece, shared by both players; any easily obtained object may serve as the piece—such as a stone, a blade of grass, or a twig—though a round piece is preferable. During setup, place the single piece on a square at one corner of the board.
+
+(Diagram caption: “Dúzǐqí board”)
+
+2. Movement
+
+The two players take turns moving. On each turn, a player may move one step, or may consecutively move two steps. Movement is only allowed forward; moving backward is not permitted. If two steps are taken, a turn may be made in the middle.
+
+The square where the piece is located at the start of the game is the starting point, and the vertex at the opposite corner of the board is the destination.
+
+3. Victory
+
+During play, the position of the piece changes, but there is always only one piece. Once the piece reaches the destination, the game ends, and the player who moved the piece to the destination is the winner.
+
+(Xu Bin, He Hejian)
+
+From: Zhou Wei (ed.), One Hundred Abstract Games, Beijing: People’s Sports Publishing House, 2009, p. 56.
