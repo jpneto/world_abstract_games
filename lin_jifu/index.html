@@ -9,48 +9,6 @@
       padding: 20px;
       font-size: 12px;
     }
-    table {
-      width: 66%;
-      border-collapse: collapse;
-      margin-top: 10px;
-    }
-    th, td {
-      border: 1px solid #bbb;
-      padding: 6px 10px;
-      text-align: left;
-      vertical-align: top;
-      font-size: 12px;
-    }
-    th {
-      /* background-color: #f4f4f4; */
-      cursor: pointer;
-      font-size: 14px;
-    }
-    th.sorted-asc::after {
-      content: " ↑";
-    }
-    th.sorted-desc::after {
-      content: " ↓";
-    }    
-    input[type="text"] {
-      font-family: Courier New;
-      width: 380px;
-      padding: 6px 10px;
-      margin-bottom: 10px;
-      font-size: 12px;
-    }
-    input[class="bgg"] {
-      width: 28px;
-      padding: 5px 6px;
-      margin-bottom: 10px;
-      font-size: 12px;
-    }
-    input[class="google"] {
-      width: 112px;
-      padding: 5px 6px;
-      margin-bottom: 10px;
-      font-size: 12px;
-    }
     a {
       color: #000000; /* #007bff; */
       text-decoration: none;
@@ -61,18 +19,14 @@
     a:hover {
       text-decoration: underline;
     }
-    input[type="text"],
-    input[type="text"]:focus   
-    {
-         background: transparent;
-         /* border: none; */
-         outline-width: 0;
-    }    
     .half-width {
-      width: 70%;
+      width: 60%;
       margin: 0 auto; /* optional: centers the div horizontally */
       background-color: #f4f4f4; /* optional: just for visibility */
       padding: 1em;
+    }
+    .clickable-image {
+      cursor: zoom-in;
     }    
   </style>
 </head>
@@ -85,7 +39,9 @@
 
 <center>
    <b><font size="+1">Bamboo-Basket Game (筜箕棋)</font></b><br>
-   <img src="pg.76 Bamboo-Basket.gif" width="400">   
+   <a href="pg.76 Bamboo-Basket.gif" target="_blank" rel="noopener noreferrer">
+     <img src="pg.76 Bamboo-Basket.gif" width="360" class="clickable-image">
+   </a>
 </center>   
 
 <div class="half-width">   
@@ -129,7 +85,7 @@ Captions
 Source: Guo Chaoyun, Li Qing)
 </pre></div></details>
 
-<br><b>Rules</b>:
+<br><b>Summary</b>:
 <ul>
     <li>Material. Each player has four stones.</li>
     <li>Setup. Players take turns placing a friendly stone on an empty intersection.</li>
@@ -141,7 +97,9 @@ Source: Guo Chaoyun, Li Qing)
 <br>
 <center>
    <b><font size="+1">Chase-and-Evade Game (追随棋)</font></b><br>
-   <img src="pg.77 Chase-and-Evade.gif" width="400">
+   <a href="pg.77 Chase-and-Evade.gif" target="_blank" rel="noopener noreferrer">
+     <img src="pg.77 Chase-and-Evade.gif" width="360" class="clickable-image">
+   </a>   
 </center>   
 
 <div class="half-width">   
@@ -152,25 +110,27 @@ Chase-and-Evade Game (追随棋)
 
 1. Setup
 
-The Chase-and-Evade board is shown in the diagram. It consists of 23 square grid points.
-The two players use black and white pieces. Black has 11 pieces, and White has 12 pieces, 
-which are arranged on the board as shown in the illustration.
+The Chase-and-Evade board is shown in the diagram. It consists of 23 square grid
+points. The two players use black and white pieces. Black has 11 pieces, and
+White has 12 pieces, which are arranged on the board as shown in the
+illustration.
 
 2. Removal (Opening action)
 
-After the game begins, Black moves first. Black selects any one of White’s pieces and 
-removes it from the board, leaving that point empty.
+After the game begins, Black moves first. Black selects any one of White’s
+pieces and removes it from the board, leaving that point empty.
 
 3. Movement
 
-Players then take turns moving, with Black moving first. A move must follow the grid lines, 
-either horizontally or vertically, to an adjacent empty point. Diagonal moves are not 
-allowed.
+Players then take turns moving, with Black moving first. A move must follow the
+grid lines, either horizontally or vertically, to an adjacent empty point.
+Diagonal moves are not allowed.
 
 4. Winning
 
-Both players aim to surround the opponent’s pieces. When one player completely surrounds 
-the opponent’s pieces so that they have no legal moves, that player wins.
+Both players aim to surround the opponent’s pieces. When one player completely
+surrounds the opponent’s pieces so that they have no legal moves, that player
+wins.
 
 Figure caption
   Chase-and-Evade starting position
@@ -178,11 +138,11 @@ Figure caption
 (Source: Zhang Xueqi, Li Qing)
 </pre></div></details>
 
-<br><b>Rules</b>:
+<br><b>Summary</b>:
 <ul>
     <li>Material. Black has 11 pieces, and White has 12 pieces</li>
     <li>Setup. As shown. Black removes one white stone. Black starts.</li>
-    <li>Gameplay. Each player, on his turn, moves a friendly stone to an adjacent empty square.</li>
+    <li>Gameplay. Each player, on his turn, moves a friendly stone to an orthogonal adjacent empty square.</li>
     <li>Goal. The player that cannot move, loses the game.</li>
 </ul>
 <hr>
@@ -191,7 +151,9 @@ Figure caption
 <br>
 <center>
    <b><font size="+1">Juhuiqi (聚会棋)</font></b><br>
-   <img src="pg.98 Juhuiqi.gif" width="400">
+   <a href="pg.98 Juhuiqi.gif" target="_blank" rel="noopener noreferrer">
+     <img src="pg.98 Juhuiqi.gif" width="360" class="clickable-image">
+   </a>      
 </center>   
 
 <div class="half-width">   
@@ -200,25 +162,30 @@ Figure caption
 <pre>
 Juhuiqi (聚会棋)
 
-Juhuiqi is a two-player abstract strategy game. Its gameplay is similar to Dingziqi (peg-connection games).
+Juhuiqi is a two-player abstract strategy game. Its gameplay is similar to
+Dingziqi (peg-connection games).
 
 Game Procedure
 
 1. Setup
+
 The Juhuiqi board is shown in Figure 1.
 Each player has 18 pieces of a distinct color or shape.
-Players take turns placing one piece at a time. Pieces may be placed on any empty position on the board.
+Players take turns placing one piece at a time. Pieces may be placed on any
+empty position on the board.
 
 2. Scoring
-As shown in Figure 2, when a player’s pieces form a target shape, that player scores points.
-Specifically, the score awarded for each target shape is as follows:
 
-| Target Shape      | Score    |
-| ----------------- | -------- |
-| Triangle          | 3 points |
-| Diamond (rhombus) | 4 points |
-| Trapezoid         | 5 points |
-| Hexagon           | 6 points |
+As shown in Figure 2, when a player’s pieces form a target shape, that player
+scores points. Specifically, the score awarded for each target shape is as
+follows:
+
+    | Target Shape      | Score    |
+    | ----------------- | -------- |
+    | Triangle          | 3 points |
+    | Diamond (rhombus) | 4 points |
+    | Trapezoid         | 5 points |
+    | Hexagon           | 6 points |
 
 3. End of the Game / Winning
 When there are no empty positions left on the board, the game ends.
@@ -239,7 +206,7 @@ Figure captions
 </pre>
 </div></details>
 
-<br><b>Rules</b>:
+<br><b>Summary</b>:
 <ul>
     <li>Material. Each player has 18 stones</li>
     <li>Setup. None</li>
@@ -252,7 +219,9 @@ Figure captions
 <br>
 <center>
    <b><font size="+1">Plum Blossom Chess (梅花棋, Méihuā Qí)</font></b><br>
-   <img src="pg.99 Plum Blossom Chess.gif" width="400">
+   <a href="pg.99 Plum Blossom Chess.gif" target="_blank" rel="noopener noreferrer">
+     <img src="pg.99 Plum Blossom Chess.gif" width="360" class="clickable-image">
+   </a>     
 </center>   
    
 <div class="half-width"><details>
@@ -279,9 +248,9 @@ The side with the highest final score wins. Additionally, when placing
 a plum blossom, one should try to construct the "Double Plum Blossom" 
 (双梅花) shape, as shown in Figure 4, which doubles the score.
 
-    Figure 3: Plum Blossom Chess Target Patterns
+    Figure 3: Plum Blossom Chess Target Patterns (one point each)
 
-    Figure 4: Double Plum Blossom Pattern
+    Figure 4: Double Plum Blossom Pattern (two points each)
 
 2. Hexagonal Chess (六角棋, Liùjiǎo Qí)
 
@@ -301,7 +270,7 @@ patterns are shown in Figure 5.
 </pre>
 </div></details>
 
-<br><b>Rules</b>:
+<br><b>Summary</b>:
 <ul>
     <li>Material. Enough black and white stones.</li>
     <li>Setup. None.</li>
@@ -316,11 +285,12 @@ The patterns in the hexagonal version seem impossible to achieve with proper pla
 <br>
 <center>
    <b><font size="+1">Liudaoqi (Six-Path Game)</font></b><br>
-   <img src="pg.102 Liudaoqi (Six-Path Game).gif" width="400">
-</center>   
-
-<center>
-   <img src="pg.103 Liudaoqi (Six-Path Game).gif" width="400">
+   <a href="pg.102 Liudaoqi (Six-Path Game).gif" target="_blank" rel="noopener noreferrer">
+     <img src="pg.102 Liudaoqi (Six-Path Game).gif" width="360" class="clickable-image">
+   </a>     
+   <a href="pg.103 Liudaoqi (Six-Path Game).gif" target="_blank" rel="noopener noreferrer">
+     <img src="pg.103 Liudaoqi (Six-Path Game).gif" width="360" class="clickable-image">
+   </a>  
 </center>   
    
 <div class="half-width"><details>
@@ -333,6 +303,7 @@ in a way similar to Gobang (Five-in-a-Row). It is a two-player abstract
 strategy game that is popular and widely spread among the people.
 
 Game Procedure
+
 1. Setup
 
 The board of Liudaoqi is shown in the diagram: it has 25 intersections 
@@ -436,7 +407,7 @@ that player is the winner.
 </pre>
 </div></details>
 
-<br><b>Rules</b>:
+<br><b>Summary</b>:
 <ul>
     <li>Material. 33 black and 33 white stones.</li>
     <li>Setup. Each player places one friendly stone on an empty intersection. Each time a pattern is made (see details) the player captures one or more adversary stones.</li>
@@ -449,7 +420,9 @@ that player is the winner.
 <br>
 <center>
    <b><font size="+1">Modianqi (Ink-Dot Game)</font></b><br>
-   <img src="pg.104 Modianqi (Ink-Dot Game).gif" width="400">
+   <a href="pg.104 Modianqi (Ink-Dot Game).gif" target="_blank" rel="noopener noreferrer">
+     <img src="pg.104 Modianqi (Ink-Dot Game).gif" width="360" class="clickable-image">
+   </a>     
 </center>   
    
 <div class="half-width"><details>
@@ -467,7 +440,7 @@ arranged in a grid of 10 rows by 10 columns, as shown in the diagram.
 
 2. Connecting Lines
 
-Players take turns drawing a line between any two dots on the board; each turn, 
+Players take turns drawing a line between any two dots on the board; each turn,
 one line is drawn. Lines may be drawn horizontally or vertically, but not 
 diagonally, and no line may be drawn more than once.
 
@@ -482,22 +455,24 @@ ownership of that square.
 Additionally, if a line segment between two dots serves as the shared side of 
 two adjacent squares, it must still be drawn.
 
-Players may use two different markers to distinguish the squares they have claimed.
-The game ends when no more moves are possible; the player who has claimed more 
-squares wins.
+Players may use two different markers to distinguish the squares they have
+claimed. The game ends when no more moves are possible; the player who has
+claimed more squares wins.
 
 Illustration caption: Modianqi board
 
 (Huang Chaozhi, Li Chun)</pre>
 </div></details>
-<br>This is Dots'n'Boxes without the 'if square is closed, then play again' rule.
+<br>This is Dots'n'Boxes without the 'if a square is closed, then play again' rule.
 <hr>
 <!-->
 
 <br>
 <center>
    <b><font size="+1">Wuhuqí (Five-Tiger Game)</font></b><br>
-   <img src="pg.108 Wuhuqí (Five-Tiger Game).gif" width="400">
+   <a href="pg.108 Wuhuqí (Five-Tiger Game).gif" target="_blank" rel="noopener noreferrer">
+     <img src="pg.108 Wuhuqí (Five-Tiger Game).gif" width="360" class="clickable-image">
+   </a>     
 </center>   
    
 <div class="half-width"><details>
@@ -563,7 +538,7 @@ The player who captures all of the opponent’s pieces wins the game.
 </pre>
 </div></details>
 
-<br><b>Rules</b>:
+<br><b>Summary</b>:
 <ul>
     <li>Material. 13 black stones, 12 white stones.</li>
     <li>Setup. None</li>
@@ -576,7 +551,9 @@ The player who captures all of the opponent’s pieces wins the game.
 <br>
 <center>
    <b><font size="+1">Zhaqiang Che Luobo (扎枪扯萝卜)</font></b><br>
-   <img src="pg.113 Zhaqiang Che Luobo.gif" width="400">
+   <a href="pg.113 Zhaqiang Che Luobo.gif" target="_blank" rel="noopener noreferrer">
+     <img src="pg.113 Zhaqiang Che Luobo.gif" width="360" class="clickable-image">
+   </a>     
 </center>   
    
 <div class="half-width"><details>
@@ -588,6 +565,7 @@ Zhaqiang Che Luobo is a two-player abstract strategy game. Its gameplay is
 similar to Nine Men’s Morris.
 
 Game Procedure
+
 1. Board Setup
 
 The board is shown in the diagram. It consists of 25 cells, with 36 intersection 
@@ -622,7 +600,7 @@ Diagram: Board layout for Zhaqiang Che Luobo
 </pre>
 </div></details>
 
-<br><b>Rules</b>:
+<br><b>Summary</b>:
 <ul>
     <li>Material. Enough black and white stones</li>
     <li>Setup. None</li>
@@ -636,7 +614,9 @@ If the ruleset and translation are correct, this seems a very cold game.
 <br>
 <center>
    <b><font size="+1">Zhuān Gé Qí (砖格棋)</font></b><br>
-   <img src="pg.115 Zhuān Gé Qí.gif" width="400">
+   <a href="pg.115 Zhuān Gé Qí.gif" target="_blank" rel="noopener noreferrer">
+     <img src="pg.115 Zhuān Gé Qí.gif" width="360" class="clickable-image">
+   </a>     
 </center>   
    
 <div class="half-width"><details>
@@ -647,13 +627,15 @@ If the ruleset and translation are correct, this seems a very cold game.
 Zhuan Ge Qi is a two-player abstract strategy game. Its gameplay is similar to Tic-Tac-Toe.
 
 Game Procedure
+
 1. Board Setup
 
-The board is shown in the diagram. It is a large square subdivided internally into 32 small 
-rectangles, with a total of 57 intersection points.
+The board is shown in the diagram. It is a large square subdivided internally
+into 32 small rectangles, with a total of 57 intersection points.
 
-Each player has 10 pieces, distinguished by color or shape. Players take turns placing pieces,
-starting with Black. Placement continues until all pieces have been placed.
+Each player has 10 pieces, distinguished by color or shape. Players take turns
+placing pieces, starting with Black. Placement continues until all pieces have
+been placed.
 
 2. Moving Pieces
 
@@ -669,9 +651,11 @@ The target patterns in Zhuan Ge Qi include:
 the “口” (square) shape
 the “十” (cross) shape
 
-If a “口” shape is formed, the player may capture any one of the opponent’s pieces.
-If a “十” shape is formed, the player may capture any two of the opponent’s pieces
-— one of which must be the piece that just moved.
+If a “口” shape is formed, the player may capture any one of the opponent’s
+pieces.
+
+If a “十” shape is formed, the player may capture any two of the opponent’s 
+pieces — one of which must be the piece that just moved. One piece is decided by the current player, and the other is decided by the adversary.
 
 4. Winning the Game
 
@@ -686,11 +670,11 @@ Reference:
 </pre>
 </div></details>
 
-<br><b>Rules</b>:
+<br><b>Summary</b>:
 <ul>
     <li>Material. Each player has 10 stones.</li>
-    <li>Setup. Black starts. Players place their stones, in turn, in an empty rectangle.</li>
-    <li>Gameplay. On their turn, each player moves a friendly piece to an adjacent rectangle. If a square or a cross is made (with respectively four and five friendly pieces) the player removes, resp., one and two adversary stones.</li>
+    <li>Setup. Black starts. Players place their stones, in turn, in an empty intersection.</li>
+    <li>Gameplay. On their turn, each player moves a friendly piece to an adjacent intersection. If a square or a cross is made (with respectively four and five friendly pieces) the player removes, resp., one and two adversary stones. If two stones are removed, one is decided by the current player, and the other is decided by the adversary.</li>
     <li>Goal. The player that captures all adversary stones wins the game.</li>
 </ul>
 <hr>
@@ -699,7 +683,9 @@ Reference:
 <br>
 <center>
    <b><font size="+1">Er Chi Yi</font></b><br>
-   <img src="pg.118 Er Chi Yi.gif" width="400">
+   <a href="pg.118 Er Chi Yi.gif" target="_blank" rel="noopener noreferrer">
+     <img src="pg.118 Er Chi Yi.gif" width="360" class="clickable-image">
+   </a>     
 </center>   
    
 <div class="half-width"><details>
@@ -711,9 +697,10 @@ is a two-player abstract strategy game.
 Game Procedure
 1. Board Setup
 
-The board is shown in Figure 1. It consists of 16 cells with 25 intersection points.
-Each player has 5 pieces. During setup, players take turns placing pieces, and all 
-pieces must be placed on the row of intersections closest to the player.
+The board is shown in Figure 1. It consists of 16 cells with 25 intersection
+points. Each player has 5 pieces. During setup, players take turns placing
+pieces, and all pieces must be placed on the row of intersections closest to 
+the player.
 
 2. Movement
 
@@ -722,25 +709,31 @@ On each turn, a player may move one piece by one step.
 
 3. Capturing
 
-As shown in Figure 2, when one player has two pieces on the same line, and there is 
-one opponent piece adjacent on that line, the opponent’s piece may be captured 
-(at that moment, there are three pieces on the same line).
+Figure 2 = capture.
+
+As shown in Figure 2, when one player has two pieces on the same line, 
+and there is one opponent piece adjacent on that line, the opponent’s piece 
+may be captured (at that moment, there are three pieces on the same line).
+
 This capture is called “top” (顶吃) and is similar to capturing in Tic-Tac-Toe.
 
-However, there are several special configurations in which capturing is not allowed:
+Figure 3-6 = no capture.
 
-If, after moving, the configuration “Two Blacks, One White” appears on the same line, 
-the white piece cannot be captured (see Figure 3).
+However, there are several special configurations in which capturing is not
+allowed:
+
+If, after moving, the configuration “Two Blacks, One White” appears on the same
+line, the white piece cannot be captured (see Figure 3).
 
 If there is an empty space between the two black pieces and the white piece, the 
-white piece cannot be captured (see Figure 4).
+white piece cannot be captured. The 3 stones should be adjacent. (see Figure 4).
 
 If the two black pieces are adjacent to the white piece, the white piece cannot 
-be captured (see Figure 5).
+be captured. Only O-O-X, no O-X-O. (see Figure 5).
 
 If, after a move, although the two black pieces and the white piece are on the 
 same line, there is another piece elsewhere on that line, then the white piece 
-still cannot be captured (see Figure 6).
+still cannot be captured (see Figure 6). Their can't be irrelevant stones on that line.
 
 4. Winning the Game
 
@@ -750,8 +743,7 @@ Related Games
 
 1. 着棋子 (Zhuo Qi Zi)
 
-    Also called Four-in-a-Row, this game has rules identical to Er Chi Yi, differing 
-    only in the board.
+    Also called Four-in-a-Row, this game has rules identical to Er Chi Yi, differing only in the board.
 
     The board has 9 cells and 16 intersection points.
     Each player has 4 pieces, distinguished by color or shape.
@@ -763,12 +755,12 @@ Related Games
     gameplay similar to Er Chi Yi.
 
     The board consists of 9 cells with 16 intersection points.
-    Each player has 4 pieces, initially placed on the row of intersections closest 
-    to the player.
+    Each player has 4 pieces, initially placed on the row of intersections 
+    closest to the player.
 
-    During play, in addition to “top” captures, if one player’s two pieces form a 
-    straight line with two opponent pieces, the player must capture one of their 
-    own pieces closest to themselves; this is called “pushing the cart”.
+    During play, in addition to “top” captures, if one player’s two pieces form
+    a straight line with two opponent pieces, the player must capture one of
+    their own pieces closest to themselves; this is called “pushing the cart”.
 
     The winner is the player who first captures all of the opponent’s pieces.
 
@@ -776,7 +768,7 @@ Related Games
 </pre>
 </div></details>
 
-<br><b>Rules</b>:
+<br><b>Summary</b>:
 <ul>
     <li>Material. Each player has five stones.</li>
     <li>Setup. The pieces are placed on the player's first row</li>
@@ -789,7 +781,9 @@ Related Games
 <br>
 <center>
    <b><font size="+1">Liu Zi Chong Qi (六子冲棋)</font></b><br>
-   <img src="pg.125 Liu Zi Chong Qi.gif" width="400">
+   <a href="pg.125 Liu Zi Chong Qi.gif" target="_blank" rel="noopener noreferrer">
+     <img src="pg.125 Liu Zi Chong Qi.gif" width="360" class="clickable-image">
+   </a>     
 </center>   
    
 <div class="half-width"><details>
@@ -802,22 +796,24 @@ is a two-player abstract strategy game widely played in Sichuan and Hubei.
 Each player has six pieces, hence the name “Six-Piece Chong.”
 
 Game Procedure
+
 1. Board Setup
 
-The board is shown in Figure 1. It consists of 9 cells with 16 intersection points.
-Each player has 6 pieces, distinguished by black and white.
+The board is shown in Figure 1. It consists of 9 cells with 16 intersection
+points. Each player has 6 pieces, distinguished by black and white.
 
 Players alternately place their pieces as follows:
 
 Four pieces are placed on the four intersections of the bottom row.
 
-Two pieces are placed on the left and right ends of the row just above the bottom row.
+Two pieces are placed on the left and right ends of the row just above the
+bottom row.
 
 2. Movement
 
 Players take turns moving.
-Pieces may move horizontally, vertically, or diagonally, but only one step at a time.
-Jumping over other pieces is not allowed.
+Pieces may move horizontally, vertically, or diagonally, but only one step at
+a time. Jumping over other pieces is not allowed.
 
 3. Capturing
 
@@ -826,21 +822,19 @@ Capturing occurs mainly in three situations, as shown in Figure 2.
 (1) Two-against-one (二打一)
 
 When three pieces form a straight line, and two adjacent pieces belong to one 
-player, while the third end point is empty,
-if the other end is occupied by an opponent’s piece, that opponent’s piece 
-may be captured.
+player, while the third end point is empty, if the other end is occupied by an
+opponent’s piece, that opponent’s piece may be captured.
 
 (2) Two-against-two (二打二)
 
 When four pieces form a straight line, with two adjacent pieces belonging to 
-one player, and both ends occupied by opponent pieces,
-the player may capture both opponent pieces.
+one player, and both ends occupied by opponent pieces, the player may capture
+both opponent pieces.
 
 (3) Cannon Capture (挑吃)
 
 If a player inserts one of their pieces between two opponent pieces, and 
-one end of the line is empty,
-the player may capture the two opponent pieces.
+one end of the line is empty, the player may capture the two opponent pieces.
 
 After making a capture, the capturing piece may then move one step horizontally 
 or vertically, and may continue capturing using the cannon capture method.
@@ -868,14 +862,30 @@ The rules for movement, capturing, and winning are the same as
 in Liu Zi Chong Qi.
 
 (Peng Xiangqi, Zhang Xueqi, He Yujian)
+
+--------- Mingyang Tian (lk758tmy) comments:
+
+Stones can only be moved orthogonally, and can't be moved diagonally.
+
+Besides, when a player only have one stone left, that stone can be moved as many 
+steps you want in the same direction (like Rook in Chess).
+
+I'm not sure with the capturing rule of this game. The text does not match the 
+figures exactly. (For instance, according to the text, only figure3 is counted 
+as Two-against-two, and figure4 is not.) And the rules I found on the internet 
+said other things.
+
+It's the common status of many folk games: rules varies among regions, and only 
+locals know the exact rules they play. (Rules on the Internet are always a "mix" 
+of different local rules, and may contradict itself.)
 </pre>
 </div></details>
 
-<br><b>Rules</b>:
+<br><b>Summary</b>:
 <ul>
     <li>Material. Each player has six stones.</li>
     <li>Setup. Place four stones on the player's first row, then two more at the edges in the second row (the picture has a typo in the setup diagram).</li>
-    <li>Gameplay. Each player moves  friendly stone to an orthogonal or diagonal adjacent empty intersection. Capture is custodial or by intrusion (see details)</li>
+    <li>Gameplay. Each player moves friendly stone to an orthogonal adjacent empty intersection. Capture is custodial or by intrusion (see details). If the player only has one stone, it can slide like a Rook.</li>
     <li>Goal. The player that stalemates the adversary wins the game. If that is not possible, the game is a draw.</li>
 </ul>
 <hr>
@@ -884,7 +894,9 @@ in Liu Zi Chong Qi.
 <br>
 <center>
    <b><font size="+1">杀蜀黍 (Sha Shu Shu)</font></b><br>
-   <img src="pg.126 Sha Shu Shu.gif" width="400">
+   <a href="pg.126 Sha Shu Shu.gif" target="_blank" rel="noopener noreferrer">
+     <img src="pg.126 Sha Shu Shu.gif" width="360" class="clickable-image">
+   </a>     
 </center>   
    
 <div class="half-width"><details>
@@ -892,7 +904,8 @@ in Liu Zi Chong Qi.
 <pre>
 杀蜀黍 (Sha Shu Shu)
 
-Sha Shu Shu is a two-player abstract strategy game that is widely played in the Bazhong–Nanchong–Guang’an region of Sichuan.
+Sha Shu Shu is a two-player abstract strategy game that is widely played 
+in the Bazhong–Nanchong–Guang’an region of Sichuan.
 
 Because the pieces placed on the board resemble the drooping heads of 
 ripened sorghum (蜀黍) after harvest, the game is also known as Sorghum 
@@ -908,11 +921,11 @@ Game Procedure
 
 1. Board Setup
 
-The board is shown in the diagram. It consists of 25 cells with 36 intersection 
+The board is shown in the diagram. It consists of 25 cells with 36 intersection
 points. Each player has 18 pieces, distinguished by color or shape.
 
-Players place their pieces on the three rows of intersections closest to 
-their own side.
+Players place their pieces on the three rows of intersections closest to their
+own side.
 
 2. Movement
 
@@ -938,7 +951,7 @@ China Social Sciences Press, 2006.
 </pre>
 </div></details>
 
-<br><b>Rules</b>:
+<br><b>Summary</b>:
 <ul>
     <li>Material. Each player has 18 stones</li>
     <li>Setup. Stones are placed in the player's three first rows.</li>
@@ -951,7 +964,9 @@ China Social Sciences Press, 2006.
 <br>
 <center>
    <b><font size="+1">Xiàliù Qí (下六棋)</font></b><br>
-   <img src="pg.127 Xiàliù Qí.gif" width="400">
+   <a href="pg.127 Xiàliù Qí.gif" target="_blank" rel="noopener noreferrer">
+     <img src="pg.127 Xiàliù Qí.gif" width="360" class="clickable-image">
+   </a>     
 </center>   
    
 <div class="half-width"><details>
@@ -1033,7 +1048,7 @@ Movement, capturing, and victory conditions are the same as in Xiàliù Qí.
 </pre>
 </div></details>
 
-<br><b>Rules</b>:
+<br><b>Summary</b>:
 <ul>
     <li>Material. Each player has 6 stones.</li>
     <li>Setup. The player's stones are placed in his first row.</li>
@@ -1046,7 +1061,9 @@ Movement, capturing, and victory conditions are the same as in Xiàliù Qí.
 <br>
 <center>
    <b><font size="+1">Huànwèi Qí (换位棋) — “Position-Swapping Game”</font></b><br>
-   <img src="pg.148 Huànwèi Qí.gif" width="400">
+   <a href="pg.148 Huànwèi Qí.gif" target="_blank" rel="noopener noreferrer">
+     <img src="pg.148 Huànwèi Qí.gif" width="360" class="clickable-image">
+   </a>     
 </center>   
    
 <div class="half-width"><details>
@@ -1100,7 +1117,7 @@ the board wins.
 </pre>
 </div></details>
 
-<br><b>Rules</b>:
+<br><b>Summary</b>:
 <ul>
     <li>Material. Each player has 5 stones.</li>
     <li>Setup. Each army is placed on the extreme five squares of the 1x18 board.</li>
@@ -1114,9 +1131,10 @@ As with most traversal games, an extra rule is necessary to prevent drawish stra
 
 <br>
 <center>
-   <b><font size="+1">Lúnxíng Qí (轮行棋)
-</font></b><br>
-   <img src="pg.149 Lúnxíng Qí.gif" width="400">
+   <b><font size="+1">Lúnxíng Qí (轮行棋)</font></b><br>
+   <a href="pg.149 Lúnxíng Qí.gif" target="_blank" rel="noopener noreferrer">
+     <img src="pg.149 Lúnxíng Qí.gif" width="360" class="clickable-image">
+   </a>     
 </center>   
    
 <div class="half-width"><details>
@@ -1175,7 +1193,7 @@ achieve it with their remaining piece(s), the game is a draw.
 </pre>
 </div></details>
 
-<br><b>Rules</b>:
+<br><b>Summary</b>:
 <ul>
     <li>Material. There are four black stones numbered 1,3,5,7; and four white stones 2,4,6,8.</li>
     <li>Setup. As shown in the diagram.</li>
@@ -1188,7 +1206,7 @@ achieve it with their remaining piece(s), the game is a draw.
 <br>
 <center>
    <b><font size="+1">Sai Pao Qi (Racing Pieces)</font></b><br>
-   <img src="pg.150 Sai Pao Qi (Racing Pieces).gif" width="400">
+   <img src="pg.150 Sai Pao Qi (Racing Pieces).gif" width="500">
 </center>   
    
 <div class="half-width"><details>
@@ -1238,7 +1256,7 @@ Figure 2: Sai Pao Qi board, variant 2
 </pre>
 </div></details>
 
-<br><b>Rules</b>:
+<br><b>Summary</b>:
 <ul>
     <li>Material. Four (or five) stones per player.</li>
     <li>Setup. As shown.</li>
@@ -1252,9 +1270,10 @@ However, this game has random elements, so it is not included
 
 <br>
 <center>
-   <b><font size="+1">Shuangtian Qi (Double-Field Game)
-</font></b><br>
-   <img src="pg.152 Shuangtian Qi (Double-Field Game).gif" width="400">
+   <b><font size="+1">Shuangtian Qi (Double-Field Game)</font></b><br>
+   <a href="pg.152 Shuangtian Qi (Double-Field Game).gif" target="_blank" rel="noopener noreferrer">
+     <img src="pg.152 Shuangtian Qi (Double-Field Game).gif" width="360" class="clickable-image">
+   </a>     
 </center>   
    
 <div class="half-width"><details>
@@ -1263,21 +1282,23 @@ However, this game has random elements, so it is not included
 Shuangtian Qi (Double-Field Game)
 
 Shuangtian Qi, also known as Defensive Chess, is a two-player adversarial game. 
-The board of Shuangtian Qi is formed by two “field” (田) shapes rotated 45 degrees
-and joined together, hence the name “Double-Field Game”.
+ 
+The board of Shuangtian Qi is formed by two “field” (田) shapes rotated 
+45 degrees and joined together, hence the name “Double-Field Game”.
 
 Game Procedure
+
 1. Setup
 
 The Shuangtian Qi board has a total of 17 positions. Each player has 8 pieces, 
 distinguished by red/black or black/white pieces. For ease of explanation, 
-the positions are numbered: one group is numbered 1–8, and the other group 10–17. 
-Position 9 is empty at the start.
+the positions are numbered: one group is numbered 1–8, and the other group
+10–17. Position 9 is empty at the start.
 
-Each player places their pieces on one side of the board along the same numbered 
-positions, leaving position 9 empty. As shown in the diagram, pieces numbered 1–8 
-are placed on the left side of the board, and pieces numbered 10–17 are placed on
-the right side.
+Each player places their pieces on one side of the board along the same
+numbered positions, leaving position 9 empty. As shown in the diagram, pieces
+numbered 1–8 are placed on the left side of the board, and pieces numbered
+10–17 are placed on the right side.
 
 2. Movement
 
@@ -1313,16 +1334,16 @@ People’s Sports Publishing House, 2009, p. 252.
 
 <br>
 <center>
-   <b><font size="+1">Ya Gu Qi (Tooth-Capturing Game)</font></b><br>
-   <img src="pg.162 Ya Gu Qi (Tooth-Capturing Game).gif" width="400">
+   <b><font size="+1">Jian Di Qi (歼敌棋 Eliminate Enemy Game)</font></b><br>
+   <a href="pg.162 Ya Gu Qi (Tooth-Capturing Game).gif" target="_blank" rel="noopener noreferrer">
+     <img src="pg.162 Ya Gu Qi (Tooth-Capturing Game).gif" width="360" class="clickable-image">
+   </a>     
 </center>   
    
 <div class="half-width"><details>
 <summary>Automatic Translation</summary>
 <pre>
-Ya Gu Qi (Tooth-Capturing Game)
-
-Ya Gu Qi is a two-player adversarial game. Its gameplay is similar to 
+Jian Di Qi is a two-player adversarial game. Its gameplay is similar to 
 Tonggu Qi found in Chinese folk board games.
 
 Game Procedure
@@ -1330,26 +1351,28 @@ Game Procedure
 1. Setup
 
 The Ya Gu Qi board is based on a 16-square grid, with diagonal connections
-added between the squares, for a total of 41 positions. Each player has 9 pieces, 
-which may be distinguished by color or by shape. The pieces are placed on the 
-two rows of points closest to each player’s own side of the board.
+added between the squares, for a total of 41 positions. Each player has 
+9 pieces, which may be distinguished by color or by shape. The pieces are
+placed on the two rows of points closest to each player’s own side of the 
+board.
 
 2. Movement
 
-The two players alternate turns. On each turn, a player may move only one piece by one step.
+The two players alternate turns. On each turn, a player may move only one 
+piece by one step.
 
 3. Capture
 
-If a player’s piece moves to a point adjacent to an opponent’s piece, and the two 
-points are connected by a line, then if three pieces lie in a straight line on the 
-same connection, and the opponent’s piece is in the middle, that middle piece is 
-captured and removed from the board.
+If a player’s piece moves to a point adjacent to an opponent’s piece, and 
+the two points are connected by a line, then if three pieces lie in a straight
+line on the same connection, and the opponent’s piece is in the middle, that
+middle piece is captured and removed from the board.
 
 4. Victory Conditions
 
-The player who first captures all of the opponent’s pieces wins. If, after a piece 
-is captured, neither player is able to capture any further opponent pieces, the 
-game is considered a draw.
+The player who first captures all of the opponent’s pieces wins. 
+If, after a piece is captured, neither player is able to capture any 
+further opponent pieces, the game is considered a draw.
 
 Diagram: Ya Gu Qi board setup
 
@@ -1357,7 +1380,7 @@ Diagram: Ya Gu Qi board setup
 </pre>
 </div></details>
 
-<br><b>Rules</b>:
+<br><b>Summary</b>:
 <ul>
     <li>Material. Each player has 9 stones.</li>
     <li>Setup. As shown.</li>
@@ -1370,29 +1393,31 @@ This game seems especially drawish.
 
 <br>
 <center>
-   <b><font size="+1">Tug-of-War Chess (拽王棋)</font></b><br>
-   <img src="pg.163 Tug-of-War Chess.gif" width="400">
+   <b><font size="+1">"擒王棋" (Qin Wang Qi / Capture King Game)</font></b><br>
+   <a href="pg.163 Tug-of-War Chess.gif" target="_blank" rel="noopener noreferrer">
+     <img src="pg.163 Tug-of-War Chess.gif" width="360" class="clickable-image">
+   </a>     
 </center>   
    
 <div class="half-width"><details>
 <summary>Automatic Translation</summary>
 <pre>
-Tug-of-War Chess (拽王棋)
-
-Tug-of-War Chess is a two-player abstract board game. Pieces are captured by pulling.
+Capture King Game is a two-player abstract board game. Pieces are 
+captured by pulling.
 
 Game Procedure
 
 1. Setup
 
-The Tug-of-War Chess board is shown in Figure 1 and has a total of 53 intersections. 
-One player takes the black pieces and the other the white pieces.
+The Tug-of-War Chess board is shown in Figure 1 and has a total of 
+53 intersections. One player takes the black pieces and the other the white
+pieces.
 
 Black has 6 pieces
 White has 10 pieces
 
-At the start, all black pieces are placed at the top of the board, and all white 
-pieces are placed along the bottom edge of the board.
+At the start, all black pieces are placed at the top of the board, and all
+white pieces are placed along the bottom edge of the board.
 
 2. Movement
 
@@ -1405,7 +1430,8 @@ Capturing in Tug-of-War Chess is done by pulling, as shown in Figure 2.
 If a black piece A moves to point A, it captures the white piece at point A.
 If a white piece A moves to point B, it captures the black piece at point A.
 
-White pieces may not capture black pieces by pulling from the black player’s starting area.
+White pieces may not capture black pieces by pulling from the black 
+player’s starting area.
 
 4. Victory Conditions
 
@@ -1418,22 +1444,24 @@ White wins if it makes the black pieces unable to move.
 </pre>
 </div></details>
 
-<br><b>Rules</b>:
+<br><b>Summary</b>:
 <ul>
     <li>Material. Black has 6 stones, White has 10 stones.</li>
-    <li>Setup. As shown.</li>
+    <li>Setup. As shown. The top most black stone is 王 (King).</li>
     <li>Gameplay. Each player moves a stone to an adjacent empty intersection. Captures are custodian.</li>
-    <li>Goal. Black wins by moving his remaining pieces to the bottom edge, while White wins by stalemating Black.</li>
+    <li>Goal. Black wins by moving his King to the bottom edge, while White needs to enclose Black's King.</li>
 </ul>
 
-This seems to me like a trivial win for White, but perhaps the rules are not properly described or translated.
+This is a Tafl-like game.
 <hr>
 <!-->
 
 <br>
 <center>
    <b><font size="+1">Three-Friends Chess (三友棋)</font></b><br>
-   <img src="pg.166 Three-Friends Chess.gif" width="400">
+   <a href="pg.166 Three-Friends Chess.gif" target="_blank" rel="noopener noreferrer">
+     <img src="pg.166 Three-Friends Chess.gif" width="360" class="clickable-image">
+   </a>     
 </center>   
    
 <div class="half-width"><details>
@@ -1450,11 +1478,11 @@ Game Procedure
 
 1. Setup
 
-The board for Three-Friends Chess is shown in Figure 1; a standard international 
-chessboard may also be used.
+The board for Three-Friends Chess is shown in Figure 1; a standard
+international chessboard may also be used.
 
-Each side has 48 pieces, for a total of 96 pieces. Pieces may be placed directly 
-on the intersections of the board, as shown in Figure 1.
+Each side has 48 pieces, for a total of 96 pieces. Pieces may be placed 
+directly on the intersections of the board, as shown in Figure 1.
 
 2. Movement and Capture
 
@@ -1468,14 +1496,15 @@ During movement, if along a straight line (horizontal, vertical, or diagonal)
 there are pieces of both sides, and the opponent’s pieces lie between two of 
 the player’s own pieces, then all those opponent pieces are captured.
 
-If the opponent’s pieces are arranged at the edge of the board in an “L” shape, 
-as shown in Figure 2, the opponent’s pieces located at both ends are also 
-captured in the same way.
+If the opponent’s pieces are arranged at the edge of the board in an 
+“L” shape, as shown in Figure 2, the opponent’s pieces located at both 
+ends are also captured in the same way.
 
 3. Victory Conditions
 
 Three-Friends Chess requires a time limit, generally about half an hour. 
-When the specified time expires, the player who has captured more opponent pieces wins.
+When the specified time expires, the player who has captured more opponent 
+pieces wins.
 
 Figure 1: Initial setup of Three-Friends Chess
 Figure 2: “L”-shaped capture in Three-Friends Chess
@@ -1484,11 +1513,11 @@ Figure 2: “L”-shaped capture in Three-Friends Chess
 </pre>
 </div></details>
 
-<br><b>Rules</b>:
+<br><b>Summary</b>:
 <ul>
-    <li>Material. Each player has 48 stones.</li>
+    <li>Material. Each player has 24 stones.</li>
     <li>Setup. As shown.</li>
-    <li>Gameplay. Each player moves to an orthogonal or diagonal adjacent empty intersection. Capture is custodian allowing multiple stones in between, and also in L-shape across the corners.</li>
+    <li>Gameplay. Each player moves to an orthogonal or diagonal adjacent empty intersection. Capture is custodian allowing multiple stones in between, and also in L-shape across the corners. Leaping (include multiple-leap) is also allowed, as in Chinese checkers.</li>
     <li>Goal. When no more captures are possible, the player with more captures wins the game.</li>
 </ul>
 <hr>
@@ -1497,14 +1526,14 @@ Figure 2: “L”-shaped capture in Three-Friends Chess
 <br>
 <center>
    <b><font size="+1">Jiezi Chess (捉子棋)</font></b><br>
-   <img src="pg.168 Jiezi Chess.gif" width="400">
+   <a href="pg.168 Jiezi Chess.gif" target="_blank" rel="noopener noreferrer">
+     <img src="pg.168 Jiezi Chess.gif" width="360" class="clickable-image">
+   </a>     
 </center>   
    
 <div class="half-width"><details>
 <summary>Automatic Translation</summary>
 <pre>
-Jiezi Chess (捉子棋)
-
 Jiezi Chess is a two-player game played using Chinese-chess (Xiangqi) pieces.
 
 Game Procedure
@@ -1527,7 +1556,8 @@ player’s own side.
 
 2. Movement
 
-Players alternate turns. Pieces move along the lines, and each move advances 
+Players alternate turns. Pieces move along the lines, and each move advances
+
 one step only.
 
 3. Capturing
@@ -1544,32 +1574,1352 @@ The player who captures the opponent’s General (将 / 帅) wins the game.
 Figure: Initial setup of Jiezi Chess
 
 (Reference: Lu Qingyan, Li Yu)
+
+-------------- Mingyang Tian comments:
+
+Many details are missing in the original text.
+
+I assume it only "borrows" pieces from Xiangqi, so there is no distinguish between 兵/卒, 车 and 士. (将/帅 matters for the goal.)
+
 </pre>
 </div></details>
 
-<p>This is a Chess-like game, see details for rules. The noticeable ludeme here is the long-range custodian capture.</p>
+<p>This is a Chess-like game, see details for rules.</p>
 <hr>
 <!-->
 
 <br>
 <center>
-   <b><font size="+1"></font></b><br>
-   <img src=".gif" width="400">
+   <b><font size="+1">Crossing-the-Sea Chess (渡海棋)</font></b><br>
+   <a href="pg.179 Crossing-the-Sea Chess.gif" target="_blank" rel="noopener noreferrer">
+     <img src="pg.179 Crossing-the-Sea Chess.gif" width="360" class="clickable-image">
+   </a>     
+   <a href="pg.180 Crossing-the-Sea Chess.gif" target="_blank" rel="noopener noreferrer">
+     <img src="pg.180 Crossing-the-Sea Chess.gif" width="360" class="clickable-image">
+   </a>     
 </center>   
    
 <div class="half-width"><details>
 <summary>Automatic Translation</summary>
 <pre>
+Crossing-the-Sea Chess (渡海棋)
 
+Crossing-the-Sea Chess is a two-player or three-player board game. The central
+part of the Crossing-the-Sea Chess board represents the sea. The two sides set
+out from islands or mountains, and crossing the sea to reach the destination is
+the objective; hence the name of the game.
+
+Game Procedure
+
+Method of Play I
+
+1. Setup
+
+The board of Crossing-the-Sea Chess is shown in Figure 1. The central area
+consists of 9 × 9 = 81 squares, representing the sea. At the top and bottom
+there are 3 × 3 = 9 squares each, representing islands. The islands are
+generally depicted as eating areas or backward areas. In total there are 
+99 squares.
+
+The two sides each have an island, with a sea area between them. The sea area
+may contain squares that pieces may not pass through. Some squares also
+indicate the direction of movement for pieces entering or leaving the sea area.
+
+Crossing-the-Sea Chess uses 18 pieces in total, with each side having 9 pieces.
+During setup, both sides place their pieces on the 9 squares of their
+respective islands.
+
+2. Movement
+
+The two sides decide the first player by rolling dice or drawing lots. During
+play, a piece moves by stepping from square to square. Each player may move
+only one piece per turn, and each move consists of only one step. Pieces may
+advance, retreat, or move sideways, but they may not remain stationary or move
+backward illegally.
+
+The main types of movement are as follows:
+
+If a piece is blocked by an opponent’s piece and the square behind that piece
+is empty, it may jump onto that square. The direction of movement does not
+matter. If there are several pieces in a row, and the square behind the last
+piece is empty, the jump is allowed. A jump may be made only once per turn and
+may not be repeated.
+
+If a piece is blocked by one of the player’s own pieces, regardless of how many
+pieces there are or whether there are empty squares, it may not jump over them
+to continue moving. If the way is blocked by both an opponent’s piece and the
+player’s own piece, movement is also not allowed.
+
+Only when a piece reaches the “bridge” may it move across the sea. After
+crossing the bridge, it enters the three squares in the middle of the sea area
+and must proceed according to the required direction.
+
+When a piece reaches an island, it must follow the route prescribed by the
+rules. It may not jump over other pieces.
+
+Upon reaching the destination, if an opposing piece occupies that square, the
+player may place their own piece on top of the opponent’s piece, thereby
+capturing it. This is considered a successful crossing of the sea.
+
+3. Victory and Defeat
+
+Whichever side is the first to have all 9 of its pieces reach the destination
+island wins.
+
+Method of Play II: Three-Player Game
+
+1. Setup
+
+The board for the three-player version of Crossing-the-Sea Chess is shown in
+Figure 2. The central area of the board consists of 81 small squares,
+representing the sea. On the left, right, and top sides there is a square area
+of 9 squares each, representing mountains. The passages between the mountains
+and the sea are the routes for crossing the sea.
+
+There are a total of 27 pieces, divided into three colors, with 9 pieces for
+each player. During setup, as shown in Figure 2, the three players place their
+pieces on the three sides of the square mountain areas.
+
+2. Movement
+
+The movement rules are the same as those for the two-player version.
+
+3. Victory Conditions
+
+The objective of the game is as follows:
+
+The player on the left must move their pieces to the right-side mountain.
+The player on the right must move their pieces to the left-side mountain.
+The player at the bottom must move their pieces to the top-side mountain.
+The first player to have all of their pieces reach the destination mountain wins.
+
+Figure 1: Initial setup for the two-player Crossing-the-Sea Chess
+Figure 2: Initial setup for the three-player Crossing-the-Sea Chess
+
+(For reference: He Nanmin)
+
+References: 
+
+China Youth Press. Collected Works on Chess and Board Games [M]. 
+Beijing: China Youth Press, 1998, pp. 44–47.
+
+Crossing-the-Sea Chess, in Collection of Chinese Folk Games [M]. 
+Beijing: China Children’s Publishing House, 1992, pp. 91–92.
 </pre>
 </div></details>
 
-<br><b>Rules</b>:
+<p>This is a Halma-like traversal game. Check details for the rules.</p>
+<hr>
+<!-->
+
+<br>
+<center>
+   <b><font size="+1">Pairing Chess (对子棋)
+</font></b><br>
+   <a href="pg.195 Pairing Chess.gif" target="_blank" rel="noopener noreferrer">
+     <img src="pg.195 Pairing Chess.gif" width="360" class="clickable-image">
+   </a>     
+</center>   
+   
+<div class="half-width"><details>
+<summary>Automatic Translation</summary>
+<pre>
+Pairing Chess (对子棋)
+
+Pairing Chess is a two-player abstract strategy game. It is called 
+Pairing Chess because each player places two stones per turn.
+
+Game Procedure
+
+1. Setup
+
+The Pairing Chess board is shown in the diagram. It consists of 36 cells 
+and 49 intersection points.
+
+The two players take turns placing stones. On each turn, a player places two
+stones, which may be placed on any empty intersections on the board.
+However, the two stones placed in a single turn must be adjacent to each other
+and may not be separated.
+
+Stones may be placed either horizontally or vertically.
+
+3. Win/Loss
+
+If a player is unable to continue placing stones according to the rules, 
+that player loses.
+
+If both players are unable to place stones according to the rules, 
+the game is a draw.
+
+Diagram
+
+Pairing Chess board position
+</pre>
+</div></details>
+
+<br><b>Summary</b>:
+<ul>
+    <li>Material. Enough black and white stones</li>
+    <li>Setup. As shown.</li>
+    <li>Gameplay. Players place two friendly stones on two orthogonally adjacent empty intersections.</li>
+    <li>Goal. The last player able to move wins the game. (there is a draw rule in the details that does not make sense)</li>
+</ul>
+<hr>
+<!-->
+
+<br>
+<center>
+   <b><font size="+1">Three-Connection Game (三通棋)</font></b><br>
+   <a href="pg.196 Three Connection Game.gif" target="_blank" rel="noopener noreferrer">
+     <img src="pg.196 Three Connection Game.gif" width="360" class="clickable-image">
+   </a>     
+</center>   
+   
+<div class="half-width"><details>
+<summary>Automatic Translation</summary>
+<pre>
+Three-Connection Game (三通棋)
+
+Three-Connection is a two-player abstract connection game played on 
+a triangular board. Players take turns placing stones only; there 
+is no movement and no capture.
+
+The objective is to form a connected group of stones that touches all three
+sides of the board.
+
+Equipment
+
+A triangular board subdivided into a triangular lattice with 64 intersection points.
+
+32 stones for each player, in two different colors.
+
+Setup
+
+The board starts empty.
+Players choose a color.
+Either player may move first.
+
+Play
+
+Players alternate turns.
+
+On a turn, a player:
+
+  Places one stone of their color on any empty intersection of the board.
+
+Stones, once placed, remain fixed for the rest of the game.
+
+Connectivity is defined by adjacent intersections connected by the edges 
+of the triangular grid.
+
+Objective (Winning Condition)
+
+A player wins immediately upon forming a single connected group of their stones
+that touches all three sides of the triangular board.
+
+Touching a side means that at least one stone in the connected group lies on
+that side of the board.
+
+Draw
+
+If both players simultaneously complete a connection touching all three sides,
+the game is a draw.
+
+Notes
+
+This game is a pure connection game, structurally equivalent to Y, 
+played on a finite triangular grid.
+
+There is no capture, blocking is indirect, and the game has perfect information.
+
+The game is expected to be drawless under normal play, except for the explicit
+simultaneous-completion rule.
+</pre>
+</div></details>
+
+<p>This is the game of Y (again, it includes a senseless draw rule)</p>
+<hr>
+<!-->
+
+<br>
+<center>
+   <b><font size="+1">Cat Catches the Mouse</font></b><br>
+   <a href="pg.230 Cat Catches the Mouse Chess.gif" target="_blank" rel="noopener noreferrer">
+     <img src="pg.230 Cat Catches the Mouse Chess.gif" width="360" class="clickable-image">
+   </a>     
+</center>   
+   
+<div class="half-width"><details>
+<summary>Automatic Translation</summary>
+<pre>
+Cat Catches the Mouse Chess, also called Mouse-Catching Chess, 
+is a very simple two-player abstract strategy game.
+
+Game Procedure
+
+Setup
+
+The board for Cat Catches the Mouse Chess is shown in the diagram. It has 
+24 intersections. Each player has one piece, distinguished by black and white,
+and they are placed on the two opposite corners of the board.
+
+Moves
+
+The cat moves first. On each turn, either player may move their piece one step
+along the lines.
+
+Winning Condition
+
+If the cat catches the mouse within ten moves, the cat wins. Otherwise, if
+after ten moves the mouse has not been caught, the mouse wins.
+
+(Diagram caption: “Cat Catches the Mouse Chess Board”)
+
+(Ying Shipo, Zhang Xuelin)
+</pre>
+</div></details>
+
+<br><b>Summary</b>:
+<ul>
+    <li>Material. One stone per player</li>
+    <li>Setup. As shown</li>
+    <li>Gameplay. The 'cat' moves first. On each turn, either player may move their piece to an adjacent intersection. The cat can capture the mouse.</li>
+    <li>Goal. If the cat captures the mouse in ten or less moves, he wins the game, otherwise, it loses.</li>
+</ul>
+<p>This is a broken game (the mouse just needs to move between two non-corner edges) that might be interesting for young children.</p>
+<hr>
+<!-->
+
+<br>
+<center>
+   <b><font size="+1">Hare and Wolf</font></b><br>
+   <a href="pg.234 Hare and Wolf.gif" target="_blank" rel="noopener noreferrer">
+     <img src="pg.234 Hare and Wolf.gif" width="360" class="clickable-image">
+   </a>     
+</center>   
+   
+<div class="half-width"><details>
+<summary>Automatic Translation</summary>
+<pre>
+Hare and Wolf Chess is a two-player abstract strategy game. 
+Its gameplay is similar to Hounds and Hare (or Hare and Hounds).
+
+Game Procedure
+
+Setup
+
+The board for Hare and Wolf Chess is shown in the diagram and has 
+31 intersections. The two sides are the hare and the wolves.
+
+The hare has 1 piece, placed on the central intersection of the board.
+
+The wolves have 5 pieces, placed on the five intersections along the 
+bottom edge of the board.
+
+Moves
+
+The wolves move first.
+The hare may move along the lines to any adjacent intersection.
+The wolves may only move forward along the lines.
+
+Winning Conditions
+
+If the wolves surround the hare so that it cannot move, the wolves win.
+
+If the hare breaks through the encirclement and moves first to the 
+bottom edge of the board, the hare wins.
+
+(Diagram caption: “Hare and Wolf Chess Board”)
+
+(Ying Shipo, Li Chun)
+</pre>
+</div></details>
+
+<p>This is a Hare and Hounds variant.</p>
+<hr>
+<!-->
+
+<br>
+<center>
+   <b><font size="+1">King Jump Chess</font></b><br>
+   <a href="pg.239 King Jump Chess.gif" target="_blank" rel="noopener noreferrer">
+     <img src="pg.239 King Jump Chess.gif" width="360" class="clickable-image">
+   </a>     
+</center>   
+   
+<div class="half-width"><details>
+<summary>Automatic Translation</summary>
+<pre>
+King Jump Chess is a two-player abstract strategy game.
+
+Game Procedure
+
+Setup
+
+The board for King Jump Chess is shown in Figure 1. It is a square formed by an
+8 × 8 grid, with 64 squares, each square being an intersection point.
+
+There are 32 pieces in total, 16 per player. During setup, each player places
+their pieces on the second and third ranks closest to themselves, leaving the
+first rank nearest to each player empty, which serves as that player’s home
+camp.
+
+Moves and Capturing
+
+The first player is determined by drawing lots. Once decided, players 
+alternate turns.
+
+Non-capturing move: A piece may move one step forward or diagonally forward,
+but may not move sideways or backward. Only one move per turn is allowed.
+
+Capturing move: A piece may capture by jumping. As shown in Figure 1, when
+capturing, there must be an opponent piece directly adjacent in front, and the
+jumping piece moves to the square beyond it, which must be empty. The jumped
+piece is removed from the board.
+
+A piece that jumps into the opponent’s home camp is promoted to a “King”. 
+A King may move one step and may also make multiple consecutive jumps,
+capturing several pieces in succession. After each jump, if another capture is
+possible, the King must continue jumping. The jumping and capturing rules for
+the King are the same as in Checkers.
+
+Special capturing rule:
+
+If one side has two or more adjacent pieces in a straight horizontal line, then
+regardless of whether there are empty squares, the opponent may not capture by
+jumping along that horizontal line.
+
+However, capturing is allowed along vertical or diagonal directions. 
+As shown in Figure 2, the black pieces may capture the white pieces.
+
+Winning Conditions
+
+The player who captures all of the opponent’s pieces wins. 
+If each side is reduced to only one piece, the game is a draw.
+
+(Figure 1: King Jump Chess Setup)
+(Figure 2: Special Capturing Rule)
+
+(Peng Xihe, He Yumin)
+</pre>
+</div></details>
+
+<br><b>Summary</b>:
+<ul>
+    <li>Material. 16 stones per player</li>
+    <li>Setup. As shown.</li>
+    <li>Gameplay. A stone moves horizontally or diagonally forwards, or captures by short-jump. Jumps are multiple. If the jump lands on the last row, the stone is promoted to a King (check details for more info).</li>
+    <li>Goal. The player that captures all adversary stones wins the game.</li>
+</ul>
+<hr>
+<!-->
+
+<br>
+<center>
+   <b><font size="+1">Eight-Character Chess (八子棋)</font></b><br>
+   <a href="pg.267 Eight-Character Chess.gif" target="_blank" rel="noopener noreferrer">
+     <img src="pg.267 Eight-Character Chess.gif" width="360" class="clickable-image">
+   </a>     
+</center>   
+   
+<div class="half-width"><details>
+<summary>Automatic Translation</summary>
+<pre>
+Eight-Character Chess is a board game invented by Zhou Guojian, a villager from
+Hunan Province, on the basis of Go (Weiqi), after improvement and innovation.
+It is similar in play to Go and represents the inheritance and development of
+traditional Go in modern daily life.
+
+Game Procedure
+
+1. Setup
+
+The board for Eight-Character Chess is shown in the figure. There are a total
+of 16 pieces. Each side has 8 pieces, divided into black and white.
+
+In addition, there are 2 red pieces, which are public shared pieces that both
+sides may use. The red pieces are used as substitute pieces.
+
+Each player prepares 5 tokens. During each round, one token may be exchanged
+for one piece.
+
+After setup, Black moves first, followed by White. Pieces may be placed freely
+on any empty intersection on the board.
+
+2. Movement
+
+After one side places a piece, the opponent must move one of their own pieces.
+The piece moves along a line to an adjacent empty intersection; each move
+consists of only one step.
+
+During movement, when both players have only one piece remaining on the board,
+each player may add two additional pieces, until the game ends.
+
+3. Victory and Defeat
+
+The first player to arrange all of their 8 pieces into a continuous
+line—whether horizontal, vertical, or diagonal—wins.
+
+(Zhang Xueqin · Wu Ziyao)
+
+---------------------
+[a different LLM translation]
+
+Game Process
+
+1. Placement. The Eight-Character Chess board is shown in the figure. 
+There are a total of 16 pieces, with each side holding 8 pieces, distinguished
+by the colors black and white. Additionally, there are 2 red pieces which serve
+as public "wildcard" pieces; both sides may use the red pieces to connect their
+line. Each side has 5 reserve pieces; in each round, a reserve piece can
+replace a red piece. After the game starts, Black places a piece first,
+followed by White. Pieces can be placed on any empty intersection on the board.
+
+2. Movement. The two players take turns moving their own pieces. Move one
+square along the lines to an empty position; only one square can be moved at a
+time. During the movement process, if both sides have exhausted their reserve
+pieces and a winner has not been determined, each side may add 2 more reserve
+pieces until a winner is decided.
+
+3. Winning and Losing. The first player to connect their 8 pieces in a
+vertical, horizontal, or diagonal line wins.
+
+(Authors: Zhang Xueting, Wu Shuqin)
+</pre>
+</div></details>
+
+<br><b>Summary</b>:
+<ul>
+    <li>Material. Enough black and white stones, plus two red shared stones.</li>
+    <li>Setup. None (?)</li>
+    <li>Gameplay. [The translation is not clear about the rules]</li>
+    <li>Goal. A 8 in-a-row wins the game (which might include any of the red stones).</li>
+</ul>
+<p>Something is missing in this ruleset, which is a pity since this game shows potential.</p>
+<hr>
+<!-->
+
+<br>
+<center>
+   <b><font size="+1">Capture Chess (吃子棋)</font></b><br>
+   <a href="pg.268 Capture Chess.gif" target="_blank" rel="noopener noreferrer">
+     <img src="pg.268 Capture Chess.gif" width="360" class="clickable-image">
+   </a>     
+</center>   
+   
+<div class="half-width"><details>
+<summary>Automatic Translation</summary>
+<pre>
+Capture Chess is a traditional two-player confrontation game. At the beginning 
+of the game, the objective is to capture pieces; survival then becomes the
+objective, hence the name of the game.
+
+Game Procedure
+
+1. Setup
+
+The Capture Chess board is shown in Figure 1. It consists of the intersections
+of five horizontal and five vertical straight lines, for a total of 25 points.
+The board is square in shape.
+
+Each player has 10 pieces. The pieces of the two players are made of different
+colors or different materials so that they can be distinguished.
+
+Before the game begins, each player places their 10 pieces on the 10 points
+closest to their own side of the board.
+
+2. Movement
+
+Before the game starts, one player holds 1 piece or an empty hand and
+challenges the opponent. If the opponent guesses correctly, the opponent 
+moves first.
+
+The player who moves first must choose a piece color. Thereafter, the two sides
+alternately move their own pieces. Each turn, a player may move only one piece,
+and each move consists of one step.
+
+3. Capturing
+
+After one side moves a piece, if that piece encounters an opponent’s piece, it
+may jump over that piece and capture it. The captured piece is then removed
+from the board, as shown in Figure 2.
+
+4. Victory and Defeat
+
+The game ends when one side’s pieces have all been captured.
+
+Discussion
+
+Capture Chess is similar to Go to a certain extent. Chen Zhiyuan notes in 
+A History of the Evolution of Go Rules:
+
+“Capture Chess determines victory and defeat by killing the opponent or by
+counting the number of pieces killed. However, as skill levels rise, if one
+side only seeks survival, it becomes very difficult to kill them. This can
+gradually cause the objective of play to shift from capturing pieces to living.
+In that case, living on the board becomes increasingly important. Capture Chess
+emphasizes capturing, while living without being captured is also a form of
+capturing; thus, capturing and living are two aspects of the same thing. The
+transition from focusing on captured pieces to focusing on pieces that cannot
+be captured is a natural one in terms of logic. From Capture Chess, with
+capturing as the objective, to Go, with living as the objective, the first
+stage of Go’s development is thus completed.”
+
+(Peng Xiangrui · Wu Ziyao)
+</pre>
+</div></details>
+
+<br><b>Summary</b>:
+<ul>
+    <li>Material. Each player has 10 stones.</li>
+    <li>Setup. As shown.</li>
+    <li>Gameplay. On his turn, the player move a friendly stone to an adjacent empty intersection, or captures by short-jump.</li>
+    <li>Goal. The player that captures all adversary stones wins the game.</li>
+</ul>
+<hr>
+<!-->
+
+<br>
+<center>
+   <b><font size="+1">Scoring Go (记分围棋)</font></b><br>
+   <a href="pg.271 Scoring Go.gif" target="_blank" rel="noopener noreferrer">
+     <img src="pg.271 Scoring Go.gif" width="360" class="clickable-image">
+   </a>     
+</center>   
+   
+<div class="half-width"><details>
+<summary>Automatic Translation</summary>
+<pre>
+Scoring Go is a two-player confrontation game that combines numbers and
+competition and is a variant of Go with a strong competitive character. Both
+the board and the pieces may be replaced by those of Go. The main difference is
+that the small grid points on the board are marked with scores. Generally,
+odd-numbered rows (1, 3, 5, …) are marked with 1 point, while even-numbered
+rows (2, 4, 6, …) are marked with 3 points. ①
+
+Game Procedure
+
+1. Setup
+
+The Scoring Go board is shown in the figure. It is a square board formed 
+by 8 horizontal lines and 8 vertical lines, producing a grid of intersections.
+Each line contains 7 small circles.
+
+Each empty circle is filled with a number—1, 2, 3, 4, 5, 6, 7, or
+8—representing a score value.
+
+2. Play
+
+Each side has 56 pieces. Players take turns placing one piece at a time,
+placing it on an empty small circle.
+
+After a piece is placed, if that piece encloses an area of empty circles, 
+the numbers in those enclosed circles are recorded.
+
+If one piece is placed and, at the same time, two numbers are enclosed by 
+that player’s pieces, then the two numbers are added together and recorded.
+
+3. Victory and Defeat
+
+When all of one player’s pieces have been placed, the numbers recorded on 
+that player’s score sheet are added together. The player with the higher 
+total score wins.
+
+(Peng Xiangrui · Wu Ziyao)
+
+Reference
+
+① Wu Jun, Fang Yuan. Collection of Go Variants [M]. 
+  Fuzhou: Fujian People’s Publishing House, 1989, p. 11.
+</pre>
+</div></details>
+
+<br><b>Summary</b>:
+<ul>
+    <li>Material. Each player has 56 stones.</li>
+    <li>Setup. None.</li>
+    <li>Gameplay. Players place one friendly stone on an empty (non-numeric) intersection. If some numbers then become enclosed, the player gains those respective points.</li>
+    <li>Goal. The player with highest score wins.</li>
+</ul>
+<hr>
+<!-->
+
+<br>
+<center>
+   <b><font size="+1">Enclosure Chess</font></b><br>
+   <a href="pg.276 Enclosure Chess.gif" target="_blank" rel="noopener noreferrer">
+     <img src="pg.276 Enclosure Chess.gif" width="360" class="clickable-image">
+   </a>     
+   <a href="pg.276 Enclosure Chess_2.gif" target="_blank" rel="noopener noreferrer">
+     <img src="pg.276 Enclosure Chess_2.gif" width="360" class="clickable-image">
+   </a>     
+</center>   
+   
+<div class="half-width"><details>
+<summary>Automatic Translation</summary>
+<pre>
+Enclosure Chess is a two-player confrontation game and a Go-type board 
+game whose main objective is to capture pieces.
+
+Game Procedure
+
+1. Setup
+
+The Enclosure Chess board is shown in Figure 1. It is a square formed 
+by 5 horizontal and 5 vertical straight lines, producing 16 small squares 
+and 25 intersections.
+
+There are 24 pieces in total: 12 red and 12 black. The red pieces are shared by
+both players and serve as the main pieces, while the black pieces are the
+auxiliary pieces.
+
+Before the game begins, the 12 black pieces are first placed on the board as
+shown in Figure 1.
+
+2. Play
+
+The two players alternately place red pieces, placing one piece per turn.
+
+3. Capturing
+
+After the two players have placed red pieces alternately, either player 
+may use red pieces to surround black pieces and capture them.
+
+After one red piece is placed, if a black piece is completely surrounded 
+by red pieces, it is captured and removed.
+
+If, after one red piece is placed, two to four black pieces are surrounded,
+then those two to four black pieces are captured simultaneously, as shown 
+in Figure 2.
+
+4. Victory and Defeat
+
+After all red pieces have been placed, the player who has captured more 
+black pieces wins.
+
+① Chen Hanping. Chinese Folk Chess and Board Games [M]. 
+  Beijing: People’s Sports Publishing House, 2007, pp. 239–241.
+
+Variants and Related Games
+
+1.
+
+The Enclosure Chess board may also be a square of 7 horizontal and 7 vertical
+lines, producing 36 small squares and 49 intersections. There are 49 pieces 
+in total, of which 25 are black and 24 are white.
+
+Before the game begins, both players first place black pieces, as shown in
+Figure 3. After setup, the two players alternately place white pieces to
+surround black pieces. The player who occupies the last remaining empty
+intersection around a black piece captures that black piece.
+
+Typical captures are shown in Figure 4. After all white pieces have been
+placed, the player who has captured more black pieces wins.
+
+2.
+
+There is another type of Enclosure Chess, mainly popular in Zhejiang and
+Yunnan. It has the same name but different rules.
+
+Each player has 6 pieces, distinguished by color. Before the game begins, 
+each player places their pieces on the intersections of three horizontal 
+lines on their own side.
+
+The two players begin by competing for the 5 intersections in the center 
+of the board. They then contest the remaining 16 intersections. The first
+player to completely surround the opponent’s pieces and capture them wins.
+
+(Peng Xiangrui · Wu Ziyao)
+</pre>
+</div></details>
+
+<br><b>Summary</b>:
+<ul>
+    <li>Material. There are 12 red and 12 black stones, shared by the players.</li>
+    <li>Setup. As shown.</li>
+    <li>Gameplay. Players place red stones and try to capture black stones by enclosure.</li>
+    <li>Goal. When all red stones are placed, the player with more captured black stones wins the game.</li>
+</ul>
+<hr>
+<!-->
+
+<br>
+<center>
+   <b><font size="+1">Zang Chess (藏棋)</font></b><br>
+   <a href="pg.279 Zang Chess.gif" target="_blank" rel="noopener noreferrer">
+     <img src="pg.279 Zang Chess.gif" width="360" class="clickable-image">
+   </a>     
+</center>   
+   
+<div class="half-width"><details>
+<summary>Automatic Translation</summary>
+<pre>
+Zang Chess, also known as Many-Eye Chess (多眼棋) or Multi-Eye Chess (多目棋), 
+is popular in western China and is a Go-type board game.
+
+Zongzang Zhaba notes in A Guide to Tibetan Travel:
+
+“In world chess history, Zang Chess can be said to be ancient and unique.
+Whether compared with ‘Tianjiu’ (Six-Piece Chess), ‘Geziluo’ (Cross Chess), or
+‘Jiajiajiu’ (Hand-Position Chess), it both absorbs the cultural essence of
+other ethnic groups’ chess traditions—simple, ingenious, and interesting—and
+also possesses its own distinctive methods and techniques.”
+
+Zang Chess can be played by two, four, or six players simultaneously. In
+ancient times it was mainly popular among the aristocracy; today it is commonly
+played among the general population, and is especially widespread in Tibet,
+Nepal, and Bhutan.
+
+Game Procedure
+
+1. Setup
+
+The Zang Chess board is shown in the figure. It is generally a 17 × 17 Go board.
+
+Before the game begins, 12 pieces are placed on the board, with 6 black 
+and 6 white. These are called the “base pieces” (座子).
+
+2. Movement
+
+White moves first. After both sides have placed the 12 pieces, normal movement
+begins. Each move consists of one step.
+
+3. Capturing
+
+When three pieces form a straight line, the player may capture any one of 
+the opponent’s pieces.
+
+When one side has only 3 pieces remaining, that side may ignore the one-step
+movement restriction and move pieces freely, as long as the player tries to
+arrange them into a straight line.
+
+4. Victory and Defeat
+
+The game ends when one side’s pieces have all been captured.
+
+(Meng Fanwei · Peng Xiangrui · Wu Ziyao)
+
+Reference
+
+① Zang Chess, in Guide to Tibetan Travel [M]. 
+  Chengdu: Sichuan People’s Publishing House, 1993, p. 97.
+</pre>
+</div></details>
+
+<br><b>Summary</b>:
+<ul>
+    <li>Material. Enough black and white stones.</li>
+    <li>Setup. Players place six white and six black stones.</li>
+    <li>Gameplay. On his turn, the player moves a friendly stone to an empty intersection. When a player makes a 3 in-a-row, he captures any adversary stone. When one player has just three stones left, he can relocate any friendly stone to any empty intersection.</li>
+    <li>Goal. The player that captures all adversary stones, wins the game.</li>
+</ul>
+<hr>
+<!-- This is a hidden-info game
+
+<br>
+<center>
+   <b><font size="+1">Dark Chess (暗棋)</font></b><br>
+   <a href="pg.282 Dark Chess.gif" target="_blank" rel="noopener noreferrer">
+     <img src="pg.282 Dark Chess.gif" width="360" class="clickable-image">
+   </a>     
+</center>   
+   
+<div class="half-width"><details>
+<summary>Automatic Translation</summary>
+<pre>
+Dark Chess is a chess-type board game played using a Xiangqi (Chinese chess)
+board and pieces. Because the pieces are placed face down on the board and are
+only revealed when captured, it is called Dark Chess. It is similar to Blind
+Dark Chess and to Chinese chess card games.
+
+Game Procedure
+
+1. Setup
+
+The Dark Chess board is shown in the figure. It consists of a grid formed 
+by 5 horizontal and 8 vertical intersecting lines, similar to a Chinese chess
+board, for a total of 32 intersections.
+
+All the pieces are placed face down on the intersections. Each side has 
+16 pieces. Before the game begins, the pieces are thoroughly shuffled and
+randomly placed on the board. The central 2 × 2 area may not contain any pieces.
+
+2. Play
+
+One side is chosen at random to flip over one piece on the board. Once a piece
+is revealed, that side takes that piece’s color as their own, and the opponent
+takes the other color.
+
+Thereafter, the two players alternately take turns. On each turn, a player may
+either flip over one face-down piece or move one of their own pieces.
+
+When moving a piece, except for special rules, all pieces move one step
+orthogonally to an adjacent empty intersection or to an intersection occupied
+by an opponent’s piece, in order to capture it.
+
+The capture rules for the pieces are as follows:
+
+General (帅) can capture any opposing piece except the Soldier (卒).
+Advisor (士) can capture any opposing piece except the General (帅).
+Elephant (相) can capture any opposing piece except the General (帅) and Advisor (士).
+Chariot (车) can capture any opposing piece except the General (帅), Advisor (士), and Elephant (相).
+Horse (马) can move one step orthogonally to an empty square or to a square occupied by an opponent’s piece and may capture any opposing piece.
+Cannon (炮) has special rules: it moves orthogonally any number of empty squares; to capture, it must jump over exactly one intervening piece and then land on an opposing piece.
+Soldier (卒) may capture any opposing piece.
+
+3. Victory and Defeat
+
+The player who captures all of the opponent’s pieces wins the game.
+
+(Peng Xiangrui · Wu Ziyao)
+</pre>
+</div></details>
+
+<br><b>Summary</b>:
 <ul>
     <li>Material. </li>
     <li>Setup. </li>
     <li>Gameplay. </li>
     <li>Goal. </li>
+</ul>
+<hr>
+<!-- Chess-like game, not minimalistic 
+
+<br>
+<center>
+   <b><font size="+1">Bao Yingxiang Chess (宝应象棋)</font></b><br>
+   <a href="pg.285 Bao Yingxiang Chess.gif" target="_blank" rel="noopener noreferrer">
+     <img src="pg.285 Bao Yingxiang Chess.gif" width="360" class="clickable-image">
+   </a>     
+</center>   
+   
+<div class="half-width"><details>
+<summary>Automatic Translation</summary>
+<pre>
+Bao Yingxiang Chess, also known as Bao Yingxiang or simply Xiang Chess, is
+regarded as one of the earliest elephant-type board games in ancient China and
+as a forerunner of Chinese chess. Bao Yingxiang Chess has six types of pieces,
+collectively called the “Six Armies” (六甲).
+
+Liu Zongyuan, in Eulogies (Songci), wrote:
+
+“The eight directions determine the opening of battle; the Six Armies 
+ separate above and below.”
+
+In the Scripture of the Beginning of the Dao (Taishang Jingfa ritual text), 
+it is stated:
+
+“With broad deliberation and repeated calculation, one casts and advances the
+ Six Armies; generals are arrayed, and chariots and horses belong to their
+ ranks.”
+
+Game Procedure
+
+1. Setup
+
+The Bao Yingxiang Chess board is shown in the figure. It consists of 
+9 horizontal and 9 vertical straight lines, forming an 8 × 8 grid of squares.
+
+During setup, the two sides place their pieces on the first and second ranks.
+
+2. Movement
+
+The first move is made by the Chariot (车).
+
+The chariot moves 2 or 3 squares at a time.
+
+When moving diagonally, it must move to the second rank and capture an 
+opposing Soldier (兵) directly in front of it.
+
+The Soldiers advance first; the second rank must leave an empty space so that
+the chariot has room to maneuver. Only then does advancing become meaningful.
+
+Historical Notes
+
+Sources and Legends
+
+Regarding historical records of Bao Yingxiang Chess, a passage in the
+Tang-dynasty prime minister Li Deyu’s Records of the Strange (Xu Guai Lu)
+describes Bao Yingxiang Chess:
+
+“Xu Guai recounts events seen in dreams. In the fifth year of the Tang Zhenyuan
+era, a man from Lingnan named Zheng Shun was lodging at the home of a Li family
+in Qinzhou. One night he heard the sound of drums. After some time, he dreamed
+of drums sounding, with two opposing formations: to the east was the Heavenly
+Horse Army, and to the west the Golden Elephant Army. After the formations were
+set, a general said: ‘The Heavenly Horse gallops three leagues at an angle;
+above it, the generals move horizontally in all four directions, galloping
+straight into the eight directions. Only the Six Armies may not move.’
+
+The drums sounded again. Each side advanced one horse by three leagues. The
+drums sounded again; each side advanced the chariot horizontally. The drums
+sounded again; the armies advanced. After the battle ended, Zheng’s family dug
+several zhang into the ground and found an ancient tomb. In the tomb was a
+bronze chess set (an elephant game), with pieces arranged in full formation,
+all cast in bronze. Only then did they realize that the general’s commands
+described the movements of Bao Yingxiang Chess. They burned incense and
+flattened the ground, obtained the treasure, and suddenly Zheng awoke from the
+dream, crying out. His body recovered, and strange phenomena in the house
+ceased.
+
+The above is the full account of Bao Yingxiang Chess as recorded in Records of
+the Strange. The author likely used a dream narrative to render ancient chess
+movements vivid. Yet it should be noted that the text mentions ‘full 
+formations, all cast in bronze,’ which indicates that elephant chess was 
+popular among the upper classes after the Tang dynasty, and that its pieces 
+were exquisitely made.
+
+Dreams may reflect material reality, but they still differ from it. That people 
+in ancient times later saw dream events realized in reality cannot be taken as 
+proof; rather, it may be regarded as a coincidence or a moment of insight.”
+
+(Zhang Xueqin · Wu Ziyao)
+</pre>
+</div></details>
+
+<br><b>Summary</b>:
+<ul>
+    <li>Material. </li>
+    <li>Setup. </li>
+    <li>Gameplay. </li>
+    <li>Goal. </li>
+</ul>
+<hr>
+<!-->
+<br>
+<center>
+   <b><font size="+1">Dúzǐqí (Solitaire Chess / Lone Piece Game)</font></b><br>
+   <a href="pg.290 Dúzǐqí (Lone Piece Game).gif" target="_blank" rel="noopener noreferrer">
+     <img src="pg.290 Dúzǐqí (Lone Piece Game).gif" width="360" class="clickable-image">
+   </a>     
+</center>   
+   
+<div class="half-width"><details>
+<summary>Automatic Translation</summary>
+<pre>
+Dúzǐqí is a two-player abstract strategy game. Its greatest distinguishing
+feature is that on a fairly large board there is only a single piece, hence the 
+name. The rules are simple, yet the game is full of subtlety. In playing 
+Dúzǐqí, although the piece has many possible paths of advance, all routes are 
+of equal length—that is, the total number of steps from the starting point to 
+the ending point is fixed. Moreover, if on the first move one does not play 
+well, this will influence the overall outcome of the entire game. Therefore, in 
+every encounter both sides tend to be extremely cautious, carefully calculating 
+and comparing possibilities.
+
+Game Procedure
+
+1. Setup
+
+The board of Dúzǐqí is as shown in the diagram, formed by straight lines 
+intersecting diagonally and vertically. The board contains many squares and 
+many intersection points. By agreement of both players, either square-based 
+placement or point-based placement may be used.
+
+Point-based placement may also be used. There is only one piece, shared by both 
+players; any easily obtained object may serve as the piece—such as a stone, a 
+blade of grass, or a twig—though a round piece is preferable. During setup, 
+place the single piece on a square at one corner of the board.
+
+(Diagram caption: “Dúzǐqí board”)
+
+2. Movement
+
+The two players take turns moving. On each turn, a player may move one step, or 
+may consecutively move two steps. Movement is only allowed forward; moving 
+backward is not permitted. If two steps are taken, a turn may be made in the 
+middle.
+
+The square where the piece is located at the start of the game is the starting 
+point, and the vertex at the opposite corner of the board is the destination.
+
+3. Victory
+
+During play, the position of the piece changes, but there is always only one 
+piece. Once the piece reaches the destination, the game ends, and the player 
+who moved the piece to the destination is the winner.
+
+(Xu Bin, He Hejian)
+
+From: Zhou Wei (ed.), One Hundred Abstract Games, 
+      Beijing: People’s Sports Publishing House, 2009, p. 56.
+</pre>
+</div></details>
+
+<br><b>Summary</b>:
+<ul>
+    <li>Material. One shared stone.</li>
+    <li>Setup. As shown.</li>
+    <li>Gameplay. Each player move the stone one or two steps always towards the opposite corner.</li>
+    <li>Goal. The player that moves the stone into the corner wins the game.</li>
+</ul>
+<p>This game can be easily solved with memoization.</p>
+<p>Here is the value of each position (left-bottom is the starting position):</p>
+<pre>
+                v
+1 1 0 1 1 0 1 1 0 <- final corner
+0 1 1 0 1 1 0 1 1 
+1 0 1 1 0 1 1 0 1 
+1 1 0 1 1 0 1 1 0 
+0 1 1 0 1 1 0 1 1 
+1 0 1 1 0 1 1 0 1 
+1 1 0 1 1 0 1 1 0 
+0 1 1 0 1 1 0 1 1 
+1 0 1 1 0 1 1 0 1    Note that 1 means win for the next player, 0 means loss.
+</pre>
+
+<p>Depending on the board size, there is a pattern of repeating (loss, win, win) for the first player. That is, with perfect play, the first player wins for boards of size N when N mod 3 &ne; 1.</p>
+
+<!-- Python code:
+
+def solve(sz, pos=(0,0), seen=None):
+  verbose = not seen
+  if not seen:    
+    seen = {(sz-1, sz-1) : 0}
+  
+  if pos not in seen:
+    r, c = pos
+    res = []
+    for nr, nc in [(r,c+2), (r,c+1), (r+1,c+1), (r+1,c), (r+2,c)]:
+      if nr < sz and nc < sz:
+        res.append(solve(sz, (nr,nc), seen))
+    seen[pos] = 1 if 0 in res else 0
+    
+  if verbose:
+    for r in range(sz):
+      for c in range(sz):
+        print(seen[sz-r-1,c], end=' ')
+      print()
+      
+  return seen[pos] 
+
+solve(9)
+-->
+<hr>
+
+<!-- One-player game
+<br>
+<center>
+   <b><font size="+1">Horse-Step Chess (马步棋)</font></b><br>
+   <a href="pg.305 Horse-Step Chess.gif" target="_blank" rel="noopener noreferrer">
+     <img src="pg.305 Horse-Step Chess.gif" width="360" class="clickable-image">
+   </a>     
+</center>   
+   
+<div class="half-width"><details>
+<summary>Automatic Translation</summary>
+<pre>
+Horse-Step Chess is a single-player board game. Its movement is similar 
+to the movement of the horse in Chinese chess (Xiangqi), hence the name.
+
+Game Procedure
+
+◆ Method of Play I
+
+1. Setup
+
+The Horse-Step Chess board is shown in Figure 1. It is formed by the 
+intersections of 5 horizontal and 6 vertical straight lines, creating a grid.
+
+The player uses one piece, which may be regarded as the “horse” from Chinese 
+chess, though it may also be treated as a generic piece. The piece may be 
+placed on any intersection, as shown in Figure 1.
+
+2. Movement
+
+The piece must move continuously without repeating any position and must 
+traverse all intersections on the board.
+
+Movement follows the horse’s move in Chinese chess: one step straight followed 
+by one step diagonally, forming the character “日”.
+
+3. Victory and Defeat
+
+If the player successfully reaches the goal by traversing all intersections, 
+the result is a win.
+
+If the piece cannot continue moving, the result is a loss.
+
+◆ Method of Play II
+
+The player takes 49 pieces. At the start of the game, all pieces are placed on 
+the board formed by the intersections of 7 horizontal and 7 vertical lines.
+
+The player chooses one piece as the starting piece. Each move follows a 
+diagonal direction (as shown in Figure 2). For example, the black piece labeled 
+“1” can move to points A or B; the black piece labeled “2” can move to points 
+C, D, E, or F.
+
+Each time a piece moves to an intersection, one piece is removed.
+
+If the player removes all pieces, the player wins.
+If 40 or more pieces are removed, the result is considered a pass.
+
+Figure 1: Horse-Step Chess board
+Figure 2: Horse-Step Chess board (variant)
+
+(Ying Zhipeng · Wu Ziyao)
+</pre>
+</div></details>
+
+<br><b>Summary</b>:
+<ul>
+    <li>Material. </li>
+    <li>Setup. </li>
+    <li>Gameplay. </li>
+    <li>Goal. </li>
+</ul>
+<hr>
+<!-->
+
+<br>
+<center>
+   <b><font size="+1">Uneven Chess (参差棋)</font></b><br>
+   <a href="pg.344 Uneven Chess.gif" target="_blank" rel="noopener noreferrer">
+     <img src="pg.344 Uneven Chess.gif" width="360" class="clickable-image">
+   </a>     
+   <a href="pg.344 Uneven Chess_2.gif" target="_blank" rel="noopener noreferrer">
+     <img src="pg.344 Uneven Chess_2.gif" width="360" class="clickable-image">
+   </a>     
+</center>   
+   
+<div class="half-width"><details>
+<summary>Automatic Translation</summary>
+<pre>
+Uneven Chess is a two-player abstract game. It takes its name from the uneven 
+outline of the board.
+
+Game Procedure
+
+1. Setup
+
+The Uneven Chess board is shown in Figure 1. It uses square intersections; the 
+board has seven squares per side, for a total of 49 intersections.
+
+Each player has 7 pieces of a different color. During setup, the players place 
+their pieces on the intersections closest to their own side of the board.
+
+2. Movement
+
+The two players alternate turns. On each turn, a player moves one piece. The 
+number of steps is not limited, but the piece may only move straight forward.
+
+3. Victory and Defeat
+
+Capturing is not permitted in this game.
+
+The player who is the first to move all of their pieces to the opponent’s side 
+of the board wins.
+
+If a player is blocked and unable to move all of their pieces, the opponent 
+wins. There are no draws.
+
+Related Game
+
+Mutual-Approach Chess (相遇棋)
+
+The rules of Mutual-Approach Chess are similar to those of Uneven Chess; only 
+the board differs.
+
+The Mutual-Approach Chess board is shown in Figure 2. It has a stepped outline 
+and contains 52 intersections. Each player has 8 pieces, distinguished as black 
+and white.
+
+During play, pieces may move only to adjacent intersections, but the number of 
+steps per move is not limited.
+
+The game ends when the final pair of opposing pieces meet; the player whose 
+piece reaches the meeting point first wins. There are no draws.
+
+(Peng Xiangrui · Li Yu)
+</pre>
+</div></details>
+
+<br><b>Summary</b>:
+<ul>
+    <li>Material. Each player has seven stones.</li>
+    <li>Setup. As shown.</li>
+    <li>Gameplay. On his turn the player slides a friendly stone over a line of empty squares.</li>
+    <li>Goal. The player that moves all his stones to the opponent's initial positions wins the game. A player can also win by blocking all opponent stones.</li>
+</ul>
+<hr>
+<!-->
+<br>
+<center>
+   <b><font size="+1">Stack Chess (叠棋)</font></b><br>
+   <a href="pg.351 Stack Chess.gif" target="_blank" rel="noopener noreferrer">
+     <img src="pg.351 Stack Chess.gif" width="360" class="clickable-image">
+   </a>     
+</center>   
+   
+<div class="half-width"><details>
+<summary>Automatic Translation</summary>
+<pre>
+Stack Chess is a two-player abstract game. It is a completely new chess model 
+designed according to the ideas of “equal starting positions, free development, 
+and non-fixed outcomes.” It uses rules to reflect cooperation and constraints. 
+On the surface, pieces are continually captured or removed according to the 
+opponent’s rules, but in reality the game emphasizes stacking mechanics and 
+presents a very high level of intellectual challenge.
+
+Game Overview
+
+Stack Chess is a two-player game based on a "fair start, free development, but 
+different outcomes" philosophy. The core mechanic involves jumping over pieces 
+to create "stacks." Once a piece becomes part of a stack, it is locked and 
+cannot move again.
+
+Game Process
+
+1. Setup (布子)
+
+    The Board: A grid of 5 horizontal lines and 7 vertical lines, creating 35 
+    intersection points (positions).
+
+    The Pieces: There are 35 identical pieces. Unlike traditional chess, pieces 
+    are not divided by color to represent sides; they are shared by both 
+    players.
+
+    Initial State: At the start, all 35 pieces are placed on the board, filling 
+    every intersection.
+
+2. Movement (走子)
+
+Players take turns moving any single piece according to these rules:
+
+    The "Jump Two" Rule: A piece moves vertically or horizontally by jumping 
+    over exactly two pieces and landing on the third piece to form a Stack 
+    (叠子).
+
+    Direction: Movement must be in a straight line (no diagonals).
+
+    The Jump: The two "jumped" pieces can be single pieces or already-formed 
+    stacks.
+
+    Distance: The physical distance is irrelevant. As long as you jump over 
+    exactly two occupied positions, the empty spaces between them do not count.
+
+    Stacking Limit: Once a piece has been stacked onto another, it cannot be 
+    moved again.
+
+3. Winning and Losing (胜负)
+
+    As the game progresses, single pieces become fewer and stacks become more 
+    frequent. Eventually, some pieces become "dead" because they cannot make a 
+    valid jump.
+
+    Victory: The game ends when a player cannot make a move according to the 
+    "Jump Two" rule. In the standard rules, the player who cannot move loses, 
+    and their opponent is declared the winner.
+</pre>
+</div></details>
+
+<br><b>Summary</b>:
+<ul>
+    <li>Material. 35 shared stones of one color</li>
+    <li>Setup. Place one stone per intersection.</li>
+    <li>Gameplay. Each player picks one stone and orthogonally jumps over two other pieces (stone or stack; no need to be adjacent), landing on top of a third stone to form a stack. Stacks cannot move.</li>
+    <li>Goal. The player that stalemates the opponent wins the game.</li>
 </ul>
 <hr>
 <!-->
