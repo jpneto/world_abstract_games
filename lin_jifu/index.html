@@ -11,7 +11,6 @@
     }
     a {
       color: #000000; /* #007bff; */
-      text-decoration: none;
       margin-right: 8px;
       display: inline-block;
       font-size: 12px;
@@ -1708,6 +1707,40 @@ Beijing: China Children’s Publishing House, 1992, pp. 91–92.
 </pre>
 </details></div>
 
+<div class="half-width"><details>
+<summary>Comments by Mingyang Tian</summary>
+<pre>
+Crossing the Sea (渡海棋)
+
+Material:
+
+As in the figure. The 9*9 board represents the sea, the two 3*3 boards 
+represent the islands.
+When moving a piece from the sea to the island, or from the island to the sea, 
+it can only be moved along the arrow.
+When moving a piece inside the island, it cannot cross the bold lines.
+
+Movement:
+
+On each turn, move one piece one step forward or sideways. Neither retreating 
+nor diagonal movement is allowed.
+A piece can also jump over adjacent adversary piece(s) (a single piece or 
+several pieces in a row) on those 3 directions, and land on the first empty 
+square behind it/them. Note that if a piece jump over several pieces, all 
+of them must be adversary piece.
+
+Goal:
+
+Winner is the first player who moves all your pieces into the opposite island.
+If you move a piece into the island, and there's an adversary piece on the 
+island that blocks your way, you can directly jump over it.
+
+3-player-variant:
+
+As in the figure. For setup, pieces are staring in the sea instead of on the island.
+</pre>
+</details></div>
+
 <p>This is a Halma-like traversal game. Check details for the rules.</p>
 <hr>
 <!-->
@@ -1883,10 +1916,12 @@ after ten moves the mouse has not been caught, the mouse wins.
 <ul>
     <li>Material. One stone per player</li>
     <li>Setup. As shown</li>
-    <li>Gameplay. The 'cat' moves first. On each turn, either player may move their piece to an adjacent intersection. The cat can capture the mouse.</li>
+    <li>Gameplay. The 'cat' moves first. On each turn, either player moves their piece to an adjacent intersection. The cat can capture the mouse.</li>
     <li>Goal. If the cat captures the mouse in ten or less moves, he wins the game, otherwise, it loses.</li>
 </ul>
-<p>This is a broken game (the mouse just needs to move between two non-corner edges) that might be interesting for young children.</p>
+<p>This seems a broken game (the mouse just needs to move between two non-corner edges) that might be interesting for young children.</p>
+
+<p>Mingyang Tian: This is indeed a children's game, and quite popular. The key point is: cat should go along that diagonal corner once. The reason will be clear if you play it on a checker board.</p>
 <hr>
 <!-->
 
@@ -2004,11 +2039,38 @@ If each side is reduced to only one piece, the game is a draw.
 </pre>
 </details></div>
 
+<div class="half-width"><details>
+<summary>Comments by Mingyang Tian</summary>
+<pre>
+Moving/jumping direction: Orthogonally only, retreating is allowed.
+(The LLM made a weird mistake here. Maybe use a traditional machine-translating.)
+
+Special capturing rule:
+
+If you have 2 pieces orthogonally adjacent to each other, all friendly pieces 
+on that line cannot be captured parallel-ly to those 2 pieces, but can be 
+captured vertically.
+
+Not allowed:
+
+    OX.XX  =>  ..OXX
+
+Allowed:
+
+    .O.      ...
+    XX.  =>  X..
+    ...      .O.
+
+King: Move like a non-capture Rook. After movement, it can make an additional 
+normal jump-capture. This jump cannot be multipled.
+</pre>
+</details></div>
+
 <br><b>Summary</b>:
 <ul>
     <li>Material. 16 stones per player</li>
     <li>Setup. As shown.</li>
-    <li>Gameplay. A stone moves horizontally or diagonally forwards, or captures by short-jump. Jumps are multiple. If the jump lands on the last row, the stone is promoted to a King (check details for more info).</li>
+    <li>Gameplay. A stone moves orthogonally, or captures by short-jump. Jumps are multiple (except for Kings). If the jump lands on the last row, the stone is promoted to a King (check details for more info).</li>
     <li>Goal. The player that captures all adversary stones wins the game.</li>
 </ul>
 <hr>
@@ -2436,6 +2498,27 @@ Reference
   Chengdu: Sichuan People’s Publishing House, 1993, p. 97.
 </pre>
 </details></div>
+
+<div class="half-width"><details>
+<summary>Comments by Mingyang Tian</summary>
+<pre>
+Zang Chess (藏棋)
+
+藏棋 means "Tibetian Game", and can be refered to many different abstract 
+games origined in Tibetian. And it seems the author mixed them again.
+
+The "17*17 board with 12 initial stones" one is Tibetian Go. The rules 
+can be easily found on the Internet.
+
+I cannot find a "3-in-a-row" one. But I guess it would be a variant 
+of 9-men-morris.
+
+Another famous tibetian game is Jiu Qi (久棋):
+  https://boardgamegeek.com/thread/1814455/which-tibetan-game-is-this
+</pre>
+</details></div>
+
+
 
 <br><b>Summary</b>:
 <ul>
@@ -2866,6 +2949,18 @@ piece reaches the meeting point first wins. There are no draws.
 </pre>
 </details></div>
 
+<div class="half-width"><details>
+<summary>Comments by Mingyang Tian</summary>
+<pre>
+Uneven Chess (参差棋)
+
+The movement rule translated by LLM is correct. Pieces can only be 
+moved forwardly, so in the end all pieces will block each other. 
+The player who makes the last legal move wins.
+(So it's Nim, but played on a "2-dimensional" board)
+</pre>
+</details></div>
+
 <br><b>Summary</b>:
 <ul>
     <li>Material. Each player has seven stones.</li>
@@ -2873,6 +2968,9 @@ piece reaches the meeting point first wins. There are no draws.
     <li>Gameplay. On his turn the player slides a friendly stone over a line of empty squares.</li>
     <li>Goal. The player that moves all his stones to the opponent's initial positions wins the game. A player can also win by blocking all opponent stones.</li>
 </ul>
+
+This game is also known as <a href="https://sites.google.com/site/boardandpieces/list-of-games/tiouk-tiouk?authuser=0">Tiouk Tiouk</a>, a West African game, or more recently as <a href="../northcott.htm">Northcott's game</a>.
+
 <hr>
 <!-->
 <br>
@@ -2944,6 +3042,20 @@ Players take turns moving any single piece according to these rules:
     and their opponent is declared the winner.
 </pre>
 </details></div>
+
+<div class="half-width"><details>
+<summary>Comments by Mingyang Tian</summary>
+<pre>
+Stack Chess (叠棋)
+
+Gameplay: picks one stone and orthogonally jumps over exactly two other 
+stones (no need to be adjacent; a stack count as the number of stones it 
+contains, so in other words, you can jump over either 2 single stones or 
+a 2-stone stack), landing on top of a third stone to form a stack. 
+Stacks cannot move.
+</pre>
+</details></div>
+
 
 <br><b>Summary</b>:
 <ul>
