@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WAG's Ontology</title>
+
+    <style>
+      body { 
+        font-family: monospace, 
+        sans-serif; 
+        margin: 20px; 
+      }
+      textarea {
+        width: 100%; 
+        margin-top: 8px; 
+        font-family: monospace;
+        font-size: 0.9em;
+        background: transparent;
+      }
+      select, button {
+        margin-top: 8px; 
+        font-family: monospace;
+      }
+      input {
+        width: 15%; 
+        margin-top: 8px; 
+        font-family: monospace;
+        background: transparent;
+      }
+      label {
+        font-size: 0.85em;
+        margin-bottom: 4px;
+        opacity: 0.75;
+      }
+      select {
+        background-color: transparent;
+        color: inherit;
+      }
+      input[type="checkbox"] {
+        width: 20px;
+      }
+      iframe {
+        width: 100%; 
+      }
+      #scaled-frame {
+          zoom: 0.85;
+      }      
+      pre {
+        background: #f4f4f4; padding: 12px; border: 1px solid #ccc;
+        font-family: "Courier New", monospace; white-space: pre;
+      }
+      .root   { font-weight: bold; }
+      .pred   { color: #1f4ed8; font-size: 0.9em; }
+      .succ   { color: #15803d; font-size: 0.9em; }
+      .branch { color: #666; }
+      .label  { color: #7c3aed; font-style: italic; font-size: 0.8em; opacity: 0.8; }
+      .toggle { cursor: pointer; user-select: none; margin-right: 2px; }
+      .shared { font-weight: bold; border-radius: 3px; padding: 0 2px; }
+    </style>
+</head>
+<body background = "back-wood3.jpg">
+
+<h2>WAG's Ontology</h2>
+
+<!----------------------->
+
+<details>
+  <summary><label>About</label></summary>
+  <blockquote><font size="2">
+  <p>This page presents a graph including binary relations of abstract games. These relations intend to briefly describe what type of main transformation happened between the older and the newer game. They do not necessarily map historical connections, but try to describe ludemic changes (like changes in win condition, or a new board topology). I tried to keep the number of labels as small as possible. The point is not to describe all changes (that would amount to describe all rules of both games) but to give a quick summary of what are the main differences about each pair of games.</p>
+  <p>Also, the choice of pairs was subjective. The main criteria was the time of publication, where older games 'cause' new games. If A, B and C are similar games sorted by time, it is expected to appear A->B and B->C, even if sometimes A->C could make more sense. The goal is to help users find new games. A game in bold means it appears more than once in the query.</p>
+  <!-- <p>The labels were chosen given the following best practices: nouns over verbs, hyphenation to help filtering, orthogonal labels (one idea per label), exclude game-specific terms.</p>-->
+  List of game relations:<ul>
+    <li><b>expansion</b>: Increase of size, dimensionality, or total number of playable positions of the board.</li>
+    
+    <li><b>reduction</b>: Decrease of size, like shrinking the board or disabling areas previously playable.</li>
+
+    <li><b>structure</b>: A modification altering board adjacency, topology, symmetry or connectivity without necessarily changing its size</li>
+
+    <li><b>setup</b>: Alters the initial configuration of the game like piece placement, asymmetry between players, or initial conditions.</li>
+
+    <li><b>piece-add</b>: Introducing new piece types or increases the number of pieces. The added pieces may new behaviors.</li>
+
+    <li><b>piece-rem</b>: Removing piece types or number of pieces.</li>
+
+    <li><b>piece-change</b>: Changes of movement, constraints, or the functioning of existing pieces; this includes promotion, transformation, or persistent state changes (like Chess castling).</li>
+
+    <li><b>placement</b>: Alters how pieces are placed on the board. This might include multiple placements, or new effects in other pieces after placement</li>
+
+    <li><b>movement</b>: Alters how pieces move on the board</li>
+
+    <li><b>capture</b>: Add capturing, or change how pieces capture/removed from play.</li>
+
+    <li><b>action</b>: Adds, removes, or change other categories of player actions. Examples include introducing passing, swapping, flipping.</li>
+
+    <li><b>turn</b>: Alters the sequence, frequency, or structure of turns. Like changes to alternation, forced moves, or multiple actions per turn.</li>
+
+    <li><b>win</b>: Alters the criteria by which a game is won, or drawn.</li>
+
+    <li><b>balance</b>: A modification intended to improve competitive balance without introducing new mechanics. This includes restrictions, compensations (komi), bidding, asymmetric starting.</li>
+
+    <li><b>aesthetics</b>: A change in appearance, usually for commercial or educational purposes.</li>
+  </ul>
+  </font></blockquote>
+</details>
+
+
+<details>
+<summary><label>Current Ontology</label></summary>
+<label>
+&nbsp;&nbsp;Each entry A -> B states a relation from game A to game B<br>
+&nbsp;&nbsp;The optional labels, after `:`, describe the relation type
+</label>
+<textarea id="graphData" rows="8">
+Lightning -> Hex : structure
+Hex -> Y : structure
+Hex -> Twixt : structure, placement
+Twixt -> Network : action
+Hex -> Thorns : structure, placement
+Hex -> Havannah : win, expansion
+Hex -> Troll : structure, action
+Othello -> Troll : win
+Reversi -> Othello : setup, aesthetics
+Twixt -> Straat : piece-change, win
+Twixt -> Bridg-It : piece-change, structure
+Bridg-It -> Connections : win
+Twixt -> Octagons : structure, placement
+Abalone -> Link : win, structure
+Troll -> Link : movement, board
+Hex -> Tack : capture
+Othello -> Tack : capture
+Octagons -> Onyx : structure, capture
+Bridg-It -> Visavis : structure
+Y -> Sisimizi : structure, movement
+Halma -> Creeper : win, action
+Ataxx -> Creeper : win, capture
+Bridg-It -> Trellis : placement
+Y -> Trilithon : structure
+Go -> Gonnect : win
+Hex -> Gonnect : structure, action
+Tower of Power -> Notwo's : win
+Trellis -> Quax : placement
+Y -> Split : structure
+Y -> Poly-Y : structure
+Poly-Y -> Star : win
+Star -> *Star : structure
+Split -> Gaia : balance
+Troll -> Apex : action
+Apex -> Sesqui : action, movement
+Sesqui -> Slither : movement
+Slither -> Advanced Slither : movement
+Hex -> Jade : win
+Quax -> Akron : placement
+Bridg-It -> Beeline : structure
+Twixt -> Antipalos : structure
+Antipalos -> Alta : reduction
+Quax -> ConHex : structure
+Gonnect -> Kanga : capture
+Trinidad -> Sesqui : placement
+Havannah -> Unlur : win, setup
+Unlur -> Bipod : win, structure
+Unlur -> Pippinzip : win
+Quax -> Weave : win
+Y -> Antipod : structure, win
+Jade -> Chameleon : win
+Y -> Gem : win, structure
+Halma -> Hexma : win
+Hex -> Hexma : action
+Jade -> Imnyss : action
+Y -> Quintun : win, placement
+Havannah -> Lisbon : placement, win
+Hex -> Nex : placement
+Hex -> ZeN : structure
+Hex -> Box Hex : structure
+Trellis -> Crossway : placement
+Levee -> Mineway : structure
+Quax -> Quadrex : placement
+Y -> Begird : win, structure
+Begird -> Anchor2D : structure
+Anchor2D -> Atoll : structure, win
+Link -> Perifero : strucuture, action
+Link -> Dozer Hex : balance
+Hex -> Marque : structure, capture
+Crossway -> Slash : placement
+Y -> Starboard Y : win
+ZeN -> Torus: win
+Y -> Cross : structure
+Yavallah -> Cross : win
+Starboard Y -> Eccentric Y : win
+Lines of Action -> Global Connection : win, action
+Anchor -> Global Connection : win, action
+Jade -> Grand Hex : win
+Trellis -> Metamorphosis : placement
+Atoll -> Mobius : structure
+ConHex -> Tudor Bond : structure
+Twixt -> Bløctagøns : placement
+Quax -> Bløctagøns : aesthetics
+1 Stein + Co. -> Druid : win, placement
+Druid -> Caminos : win, placement
+Hex -> Canvas : structure, piece-add
+Amazons -> Canvas : structure, win
+Twixt -> Chain Lightnining : placement, action
+Hex -> Fractal : structure
+Network -> Mirador : structure
+Amazons -> Pollux : structure, win
+Hex -> Pollux : action
+Twixt -> Query -> structure
+Y -> Swaparound : structure, balance
+Lightning -> Thruway : action
+Antipod -> Trig : win
+Antipod -> Antipode : action, win
+Quax -> Pathagon : action
+Druid -> SteinPlatz : win
+Trellis -> Talpa : capture
+Quax -> Brique : placement, action
+Trellis -> Diamond : structure, piece-add
+Dots'n'Boxes -> Diamond Maze : win
+Dots'n'Boxes -> Lynx : win
+Dozer Hex -> Flecks : structure
+Crossway -> Konobi : placement
+Slither -> Quaxtep : movement
+Crossway -> Quinten : placement
+SyGo -> Scware : win
+Crossway -> Scware : placement
+Sesqui -> Shifty : placement
+Swaparound -> Spry : placement
+Spry -> Strands : win
+Slither -> Vimbre : action
+Druid -> Bridget : win
+Levee -> Cairo Corridor : structure
+Slither -> Columna : placement, win, piece-add
+Crossway -> Kopano : placement
+Y -> Asterisk : placement, structure
+Y -> Belaris : placement, structure
+Hex -> inpHexion : movement, action
+Crossway -> Pathwayz : action
+Crossway -> Whirlwind : placement, setup
+Crossway -> Distrify : placement
+Hex -> DuploHex : action, piece-add
+Y -> Glaisher : structure, action
+Trax -> Maíandros : win
+Star -> Odd-Y : win
+Crossway -> Cation : placement
+Crossway -> Connecticut : placement, piece-add
+Crossway -> Flicker : capture
+Caminos -> Flink : placement
+Hex -> Identicon : setup, piece-add
+Crossway -> Morphos : placement
+Crossway -> Rhode : placement
+Slither -> Squer : placement
+Columna -> Consta : placement
+Chain Lightning -> Cut and Thrust : action
+Columna -> Escabel : movement
+Mobility -> Heisenberg : action, win
+Gyre -> Omny : win
+Gyre -> Sunder : win
+Thruway -> Tak : action, piece-add
+Druid -> Monoch : action
+Quadrex -> Pinch : placement
+Quax -> Squex : capture
+Triskelion -> Alliances : placement
+Straat -> Blinq : placement
+Crossway -> Flipway : piece-add
+Mirador -> Flipway : win
+Hex -> MapHex : win
+Quadrex -> Resolve : placement
+Antipalos -> Trails : reduction
+Slither -> Aquifer : action
+Crossway -> Bent : win
+Hex -> KnightVision : action
+Cannons & Bullets -> KnightVision : win
+Hex -> Lox : placement
+Tumbleweed -> Lox : win
+Hex -> Morlox : placement, capture, structure
+Tumbleweed -> Morlox : win, structure
+Y -> Myramid : placement, structure
+Y -> Node : structure, placement
+Y -> Skirt : structure, placement
+Slither -> Boloa : piece-add, capture
+Crossway -> Brickway : placement, capture
+Amazons -> HexCore 6 : win, structure, action
+Crossway -> Oli : piece-add
+Quadrex -> Quabble : placement
+Trellis -> Quabble : placement
+Quadrex -> Scaffold : expansion, placement
+Hex -> Signum : win, structure
+Hexma -> SquAlma : structure, action, piece-add
+Y -> Adere : movement, piece-add
+Hex -> Bricka : structure, action, piece-add
+Lynx -> Cablink : action
+Crossway -> Cataclysm : action
+Crossway -> Clump : action
+Y -> Cobweb : structure, piece-add
+Cobweb -> Pilastri : win, structure
+Crossway -> Crisscross : placement, capture
+Strands -> Estate : win
+Antipalos -> Finta : placement
+Crossway -> Halfcut : placement
+Y -> Hexagonal Y : structure, placement
+Crossway -> Reneo : action
+Resolve -> Reneo : capture
+Crossway -> Swaptimum : action
+Omny -> Windborne : action, piece-add
+Adere -> Basalt : action
+Lava -> Basalt : win
+Y -> Conect : structure
+Morphos -> Crosswind : placement
+Abak -> Fortification : action
+Crossway -> Minefield : placement
+Heisenberg -> Necklace : action
+Lines of Action -> Neural Connection : win, action
+Scware -> Overgrowth : action
+Crossway -> Perpend : placement
+Hex -> Rex+ : placement, win
+Y -> Triforce : structure, placement
+Y -> Bluestone : structure, capture
+Kwintie -> Linkx : win
+Levee -> Mineway : structure, action
+Morphos -> Morphid : structure
+Serpent -> Snex : win, action
+</textarea>
+
+<br>
+</details>
+
+<!----------------------->
+
+<label>Game:</label>
+<input type="text" id="gameInput" placeholder="eg. Twixt">
+
+<br><label>Depth:</label>
+<select id="depthSelect">
+  <option value="1">1</option>
+  <option value="2" selected>2</option>
+  <option value="3">3</option>
+  <option value="4">4</option>
+  <option value="5">5</option>
+  <option value="all">∞</option>
+</select>
+
+<label>Filters:</label>
+<input type="text" id="filterInput" placeholder="eg. action !win">|<input type="checkbox" id="dotLabels" unchecked><label>export labels?</label>
+
+<button onclick="exportDOT()">Export DOT</button> 
+<label><a href="https://edotor.net/" target="_blank" >viewer</a></label>
+
+<pre id="output"></pre>
+
+<details>
+  <summary><label>Database</label></summary>
+  <iframe id="scaled-frame" src="https://jpneto.github.io/world_abstract_games/db.html" height="300px"></iframe>
+</details>
+
+<script>
+    const collapsed = new Set();
+
+    function parseGraph(text) {
+      const outgoing = {}, incoming = {}, labels = {};
+      for (const line of text.split("\n")) {
+        if (!line.includes("->")) continue;
+
+        const [leftRaw, right] = line.split("->").map(s => s.trim());
+        const [toRaw, labelText] = right.split(":").map(s => s.trim());
+
+        const left = leftRaw.toLowerCase();
+        const to   = toRaw.toLowerCase();
+
+        outgoing[left] ??= [];
+        incoming[to] ??= [];
+        outgoing[left].push(to);
+        incoming[to].push(left);
+
+        if (labelText) {
+          labels[`${left}->${to}`] =
+            labelText.split(",").map(l => l.trim().toLowerCase());
+        }
+      }
+      return { outgoing, incoming, labels };
+    }
+
+    function parseFilter(text) {
+      const tokens = text.toLowerCase().split(/\s+/).filter(Boolean);
+      return {
+        include: tokens.filter(t => !t.startsWith("!")),
+        exclude: tokens.filter(t => t.startsWith("!")).map(t => t.slice(1))
+      };
+    }
+
+    function edgeAllowed(graph, from, to, filter) {
+      if (!filter.include.length && !filter.exclude.length) return true;
+
+      const labels = graph.labels[`${from}->${to}`];
+      if (!labels) return false;
+
+      for (const bad of filter.exclude)
+        if (labels.some(l => l.includes(bad))) 
+          return false;
+
+      for (const good of filter.include)
+        if (!labels.some(l => l.includes(good))) 
+          return false;
+
+      return true;
+    }
+
+    function collectCounts(node, graph, depth, maxDepth, dir, counts, visited, filter) {
+      if (depth > maxDepth || visited.has(node)) 
+        return;
+      visited.add(node);
+
+      const next = dir === "pred"
+        ? graph.incoming[node] || []
+        : graph.outgoing[node] || [];
+
+      for (const n of next) {
+        const from = dir === "pred" ? n : node;
+        const to   = dir === "pred" ? node : n;
+        if (!edgeAllowed(graph, from, to, filter)) 
+          continue;
+
+        counts[n] = (counts[n] || 0) + 1;
+        collectCounts(n, graph, depth + 1, maxDepth, dir, counts, new Set(visited), filter);
+      }
+    }
+
+    function render(node, graph, depth, maxDepth, prefix, dir, counts, filter) {
+      if (depth > maxDepth) return "";
+
+      const children = (dir === "pred"
+        ? graph.incoming[node]
+        : graph.outgoing[node]) || [];
+
+      const visible = children.filter(c => {
+        const from = dir === "pred" ? c : node;
+        const to   = dir === "pred" ? node : c;
+        return edgeAllowed(graph, from, to, filter);
+      });
+
+      let out = "";
+
+      visible.forEach((child, i) => {
+        const edgeKey = dir === "pred"
+          ? `${child}->${node}`
+          : `${node}->${child}`;
+
+        const id = dir + ":" + edgeKey;
+        const isLast = i === visible.length - 1;
+        const branch = isLast ? "└─ " : "├─ ";
+        const nextPrefix = prefix + (isLast ? "   " : "│  ");
+        const isCollapsed = collapsed.has(id);
+
+        const marker = `<span class="toggle" onclick="toggle('${id}')">${isCollapsed ? "▶" : "▼"}</span> `;
+
+        const labelArr = graph.labels[edgeKey];
+        const label = labelArr
+          ? ` <span class="label">[${labelArr.join(", ")}]</span>`
+          : "";
+
+        const sharedClass = counts[child] > 1 ? "shared" : "";
+
+        out += `<span class="branch">${prefix}${branch}</span>${marker}` +
+               `<span class="${dir} ${sharedClass}">${child}</span>${label}\n`;
+
+        if (!isCollapsed) {
+          out += render(child, graph, depth + 1, maxDepth, nextPrefix, dir, counts, filter);
+        }
+      });
+
+      return out;
+    }
+
+    function toggle(id) {
+      collapsed.has(id) ? collapsed.delete(id) : collapsed.add(id);
+      update();
+    }
+
+    function update() {
+      const game = gameInput.value.trim().toLowerCase();
+      if (!game) { output.innerHTML = ""; return; }
+
+      const graph = parseGraph(graphData.value);
+      if (!graph.outgoing[game] && !graph.incoming[game]) {
+        output.innerHTML = "<label>(no such game in data)</label>";
+        return;
+      }
+
+      const depth =
+        depthSelect.value === "all"
+          ? Infinity
+          : parseInt(depthSelect.value);
+
+      const filter = parseFilter(filterInput.value);
+
+      const predCounts = {}, succCounts = {};
+      collectCounts(game, graph, 1, depth, "pred", predCounts, new Set(), filter);
+      collectCounts(game, graph, 1, depth, "succ", succCounts, new Set(), filter);
+
+      let html = `<span class="root">${game}</span>\n<span class="branch">│</span>\n`;
+      html += `<span class="branch">├─ </span><span class="pred">Predecessors</span>\n`;
+      html += render(game, graph, 1, depth, "│  ", "pred", predCounts, filter)
+           || `<span class="branch">│  └─ </span><span class="pred">(none)</span>\n`;
+      html += `<span class="branch">└─ </span><span class="succ">Successors</span>\n`;
+      html += render(game, graph, 1, depth, "   ", "succ", succCounts, filter)
+           || `<span class="branch">   └─ </span><span class="succ">(none)</span>\n`;
+
+      output.innerHTML = html;
+    }
+
+    function exportDOT() {
+      const root = gameInput.value.trim().toLowerCase();
+      if (!root) return;
+
+      const graph = parseGraph(graphData.value);
+      if (!graph.outgoing[root] && !graph.incoming[root]) return;
+
+      const depth =
+        depthSelect.value === "all"
+          ? Infinity
+          : parseInt(depthSelect.value);
+
+      const filter = parseFilter(filterInput.value);
+      const includeLabels = document.getElementById("dotLabels").checked;
+
+      const nodes = new Set([root]);
+      const edges = [];
+
+      function traverse(node, d, dir, visited) {
+        if (d > depth || visited.has(node)) return;
+        visited.add(node);
+
+        const next = dir === "pred"
+          ? graph.incoming[node] || []
+          : graph.outgoing[node] || [];
+
+        for (const child of next) {
+          const from = dir === "pred" ? child : node;
+          const to   = dir === "pred" ? node : child;
+          const edgeKey = `${from}->${to}`;
+          const collapseKey = `${dir}:${edgeKey}`;
+
+          if (!edgeAllowed(graph, from, to, filter)) continue;
+
+          nodes.add(from);
+          nodes.add(to);
+
+          edges.push({
+            from,
+            to,
+            labels: graph.labels[edgeKey]
+          });
+
+          if (!collapsed.has(collapseKey)) {
+            traverse(child, d + 1, dir, new Set(visited));
+          }
+        }
+      }
+
+      traverse(root, 1, "pred", new Set());
+      traverse(root, 1, "succ", new Set());
+
+      // Build DOT
+      let dot = "digraph GameTaxonomy {\n";
+      dot += "  node [fontname=\"monospace\"];\n";
+      dot += "  edge [fontname=\"monospace\"];\n\n";
+
+      for (const n of nodes) {
+        dot += `  "${n}";\n`;
+      }
+
+      dot += "\n";
+
+      for (const e of edges) {
+        if (includeLabels && e.labels && e.labels.length) {
+          dot += `  "${e.from}" -> "${e.to}" [label="${e.labels.join(", ")}"];\n`;
+        } else {
+          dot += `  "${e.from}" -> "${e.to}";\n`;
+        }
+      }
+
+      dot += "}\n";
+
+      const blob = new Blob([dot], { type: "text/plain" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "taxonomy_visible.dot";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    gameInput.addEventListener("input", update);
+    graphData.addEventListener("input", update);
+    depthSelect.addEventListener("change", update);
+    filterInput.addEventListener("input", update);
+</script>
+
+</body>
+</html>
