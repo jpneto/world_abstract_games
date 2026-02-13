@@ -141,6 +141,7 @@
       <li>fill - a board area is filled with stones</li>
       <li>gravity - game uses or simulates weight and/or fall of pieces</li>
       <li>group - groups of connected pieces have relevance</li>
+      <li>group-drop - pieces dropped together</li>
       <li>group-move - pieces move together</li>
       <li>group-promote - pieces promote together</li>
       <li>grow - pieces grow from/to a pattern</li>
@@ -3444,7 +3445,7 @@
         linkNames: "WAG,BGG"
       },
       {
-        year: 1969,
+        year: 1965,
         name: "Lines of Action",
         author: "Claude Soucie",
         type: "unification",
@@ -3578,7 +3579,7 @@
         name: "Medusa",
         author: "Christian Freeling",
         type: "score",
-        features: "drop,group-move,enclosure,pattern",
+        features: "drop,move,range,enclosure,pattern",
         boardType: "hexhex10",
         link: "medusa.htm,https://boardgamegeek.com/boardgame/68851/medusa",
         linkNames: "WAG,BGG"
@@ -5499,7 +5500,7 @@
         name: "Symbio",
         author: "Cameron Browne",
         type: "stalemate",
-        features: "group,move-group,drop,replacement",
+        features: "group,move,range,grow,replacement",
         boardType: "8x8",
         link: "symbio.htm,https://boardgamegeek.com/boardgame/21556",
         linkNames: "WAG,BGG"
@@ -5559,7 +5560,7 @@
         name: "Tandems",
         author: "Unknown",
         type: "traversal",
-        features: "move-group",
+        features: "group-move",
         boardType: "5x5",
         link: "tandems.htm,https://boardgamegeek.com/boardgame/66338",
         linkNames: "WAG,BGG"
@@ -6119,7 +6120,7 @@
         name: "Accumulation ",
         author: "Bill Taylor, João Pedro Neto",
         type: "unification",
-        features: "move-group,remove",
+        features: "group-move,remove",
         boardType: "hexhex5",
         link: "accumulation.htm",
         linkNames: "WAG,BGG"
@@ -13819,7 +13820,7 @@
         name: "Tacticum",
         author: "Tony Ripley",
         type: "stalemate,capturing",
-        features: "move,move-group,phalanx,custodian",
+        features: "move,group-move,phalanx,custodian",
         boardType: "8x12",
         link: "modern_rules/2009_Tacticum.pdf,https://boardgamegeek.com/boardgame/54056",
         linkNames: "WAG,BGG"
@@ -14109,7 +14110,7 @@
         name: "Anache",
         author: "Ocean Brindisi",
         type: "position,stalemate",
-        features: "group,move-group,promote,custodian,intrusion,reposition,ko",
+        features: "group,group-move,promote,custodian,intrusion,reposition,ko",
         boardType: "12x12",
         link: "modern_rules/2024_Anache.pdf,https://boardgamegeek.com/boardgame/425859",
         linkNames: "WAG,BGG"
@@ -14179,7 +14180,7 @@
         name: "Gliss",
         author: "Corey Clark",
         type: "elimination,score",
-        features: "drop-group,move-group,multiple-move,flip,replacement",
+        features: "group-drop,group-move,flip,replacement",
         boardType: "19x19",
         link: "modern_rules/2024_Gliss.pdf,https://boardgamegeek.com/boardgame/428098",
         linkNames: "WAG,BGG"
@@ -17108,7 +17109,7 @@
         year: 2020,
         name: "Gygoreg",
         author: "Michał Zapała",
-        type: "unification",
+        type: "elimination",
         features: "group,drop,capture",
         boardType: "10x10 diamond",
         link: "modern_rules/2020_Gygoreg.pdf,https://boardgamegeek.com/thread/2497603/unification-game",
@@ -18266,13 +18267,13 @@
         linkNames: "WAG,1"
       },
       {
-        year: 2011,
+        year: 2020,
         name: "Divoc",
         author: "Néstor Romeral Andrés",
         type: "unification",
         features: "random,group,stack,long-jump,split",
         boardType: "7x7",
-        link: "modern_rules/2011_Divoc.pdf,https://boardgamegeek.com/boardgame/319259",
+        link: "modern_rules/2020_Divoc.pdf,https://boardgamegeek.com/boardgame/319259",
         linkNames: "WAG,BGG"
       },
       {
@@ -19514,6 +19515,26 @@
         boardType: "8x8 w/walls",
         link: "modern_rules/2004_Lynx.html,https://boardgamegeek.com/boardgame/47206",
         linkNames: "WAG,BGG"
+      },
+      {
+        year: NaN,
+        name: "Green",
+        author: "Martin Windischer",
+        type: "connection",
+        features: "tiles3D,drop,neutral",
+        boardType: "8x8",
+        link: "https://boardgamegeek.com/boardgame/271246",
+        linkNames: "WAG,BGG"
+      },
+      {
+        year: NaN,
+        name: "Sfilzotto",
+        author: "Unknown",
+        type: "connection",
+        features: "move,range",
+        boardType: "8x8",
+        link: "loa.htm#sfilzotto",
+        linkNames: "WAG"
       },
 /*{
         year: 2026,
