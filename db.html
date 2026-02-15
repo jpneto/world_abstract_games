@@ -45,6 +45,12 @@
       margin-bottom: 10px;
       font-size: 12px;
     }
+    input[class="bggforum"] {
+      width: 120px;
+      padding: 5px 6px;
+      margin-bottom: 10px;
+      font-size: 12px;
+    }
     input[class="google"] {
       width: 112px;
       padding: 5px 6px;
@@ -19751,9 +19757,16 @@ yearCountsDiv.innerHTML = html;
     url = url1 + start_date + url2 + end_date + url3;
     window.open(url, "_blank");  // open new tab in browser
   }
+
+  function searchBGGForum() { 
+    const searchElement = document.forms["bggforum"]["what"].value;
+    const url =  `https://boardgamegeek.com/forums/search?objecttype=family&objectid=4666&searchTerm=${searchElement}&forumuid=743500`;
+    window.open(url, "_blank");  // open new tab in browser
+  }
 </script>
 
 <br>
+
 <form name="bgg" onsubmit="return false">
  Search Abstract Games on Board Game Geek from
  <input type="text" class="bgg" id="start_date" name="start_date" value="2024"></input>
@@ -19761,6 +19774,12 @@ yearCountsDiv.innerHTML = html;
  <input type="text" class="bgg" id="end_date" name="end_date" value="2025"></input>
     
  <input type="submit" value="🔍" onclick="searchBGG()"></input>
+</form>
+
+<form name="bggforum" onsubmit="return false">
+ Search on BGG Abstract Games Forum
+ <input type="text" class="bggforum" id="what" name="what" value=""></input>   
+ <input type="submit" value="🔍" onclick="searchBGGForum()"></input>
 </form>
 
 <!-- Form to search WAG using google -->
