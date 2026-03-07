@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+   <h3>Introduction</h3>
+    <p>Welcome to the network Neutron server. The <a href="#rules">rules of Neutron</a> are below. The <a href="commands.html">commands</a> are
+    the same for all pbmserv games. <a name="rules"></p>
+
+    <h2 align="center">PROGRAMMING -- PASTIMES AND PLEASURES </h2>
+    <p align="center">(C) 1978 CHARLES WETHERELL </a></p>
+    <h3>The Game of Neutron</h3>
+    <p>Neutron was invented by Robert A. Kraus and published in
+    issue 71 of the excellent English Magazine Games &amp; Puzzles. The structure of Neutron
+    is familiar, but it has several unusual twists. </p>
+    <p>Neutron is a two-player game played on a 5x5 square board;
+    White owns the five white pawns at the bottom of the board and Black owns the five black
+    pawns at the top of the board. The neutron begins in the center and doesn't belong to
+    anybody. Figure 1 shows the board at the beginning of the game. Notice the coordinates
+    used for recording moves. </p>
+    <pre>                 A   B   C   D   E
+               +---+---+---+---+---+
+             1 | x | x | x | x | x | 1 &lt;- Black's back row
+               +---+---+---+---+---+
+             2 |   |   |   |   |   | 2
+               +---+---+---+---+---+
+             3 |   |   | * |   |   | 3
+               +---+---+---+---+---+
+             4 |   |   |   |   |   | 4
+               +---+---+---+---+---+
+             5 | o | o | o | o | o | 5 &lt;- White's back row
+               +---+---+---+---+---+
+                 A   B   C   D   E
+
+        x = Black pawn  o = White pawn  * = Neutron
+
+              Figure 1.  Beginning of Neutron.</pre>
+    <p>Winning the game is simple; just maneuver the neutron onto
+    your own back row. It doesn't matter if you move it there yourself or if you force your
+    opponent to do the deed for you. As soon as the neutron shows up on your back row, you've
+    won the game. You can also win by stalemating your opponenet. That is, if your opponent
+    gets trapped in a situation where he cannot complete his turn, you've also won the game.
+    Each turn has two parts and it is easy to lose because both parts must be completed before
+    the turn is legal. </p>
+    <p>White always plays first and the turn alternate -- White,
+    Black, White, Black, ... . As I said above, a turn has two parts. First the player moves
+    the neutron; then he moves one of his own pawns. Now it is a little easier to see how a
+    stalemate might occur. If Black can trap the neutron sorround it completely with with
+    pawns -- then White will not be able to complete even the first part of his turn and so
+    will lose the game. There is one exception to the two part turn rule. On White's very
+    first turn only, White does not move the neutron. This helps even out the advantage White
+    gets from moving first. </p>
+    <p>Every piece, even the neutron, moves in excactly the same
+    way -- along a straight line horizontally, vertically, or diagonally. A piece stops moving
+    just before it runs into another piece or the side wall; there is no jumping or capturing.
+    But there is one unusual feature. When a piece moves, it must go as far as possible in the
+    direction chosen. There is no stopping short. For example, White's pawn which begins on B5
+    can go to A4, B2, or E2, but it cannot stop on B3 or C4. Neutron pieces are a lot like
+    politicians; they aren't smart enough to stop when they're ahead. </p>
+    <p>Just to make sure you understand the game, why don't you
+    try to answer there questions about Figure 2? First, where can White's pawn on C5 move to?
+    Second, what squares can Black's pawn on B4 move to? Third, can White win if it is his
+    move? Finally, can Black win if it is his move? There are <a href="#answers">answers</a>
+    at the end of the coloumn, but don't peek right away. </p>
+    <pre>                       Black
+
+                 A   B   C   D   E
+               +---+---+---+---+---+
+             1 |   |   | x |   | o | 1 &lt;- Black's back row
+               +---+---+---+---+---+
+             2 | x | o |   |   |   | 2
+               +---+---+---+---+---+
+             3 |   |   | * |   | o | 3
+               +---+---+---+---+---+
+             4 | x | x | x |   |   | 4
+               +---+---+---+---+---+
+             5 |   |   | o |   | o | 5 &lt;- White's back row
+               +---+---+---+---+---+
+                 A   B   C   D   E
+
+                       White
+
+             Figure 2.  A sample game.</pre>
+    <h3>Neutron Notation</h3>
+    <p>To be able to record a game a notation has to be
+    introduced: When moving pieces the move is recorded as the coordinates of the source and
+    the destination. The coordinates are separated by a dash (-). In figure 1 three legal
+    moves exists for the white pawn at B5. They are: B5-A4, B5-B2, and B5-E2. </p>
+    <p>When moving the neutron the source is know and is omitted
+    (along with the dash). In figure 2 the following 5 moves are valid for the neutron A3, C2,
+    D2, D3, and D4. </p>
+    <p>The first move only involves moving a white pawn and is
+    recorded as just described. </p>
+    <p>The next moves are a combination of a neutron move and a
+    pawn move. They are also recorded as just explained and are separated with a comma (,).
+    For example: &quot;A2,C4-E2&quot;. </p>
+    <p>The last move may be terminated after moving the neutron to
+    a back row and thus does not need the move for a pawn. For example: &quot;C1&quot; or
+    &quot;E5&quot;. <a name="answers"></p>
+    <h3>Answers:</a> </h3>
+    <ol>
+      <li>A5, D5, D4. </li>
+      <li>A5, B5, A3, B3. </li>
+      <li>White moves the neutron to A3 and his pawn on E3 to B3. Now
+        White wins because Black is stalemated. Using the Neutron Notation this can be written as
+        &quot;A3,E3-B3&quot;. </li>
+      <li>Black moves the neutron to A3 and the pawn on A2 to B3. Now
+        White must move the neutron to A1 giving Black the win. Black could also move his pawn
+        from C4 to B3 to stalemate White. In short, either &quot;A3,A2-B3 A1&quot; or
+        &quot;A3,C4-B3&quot;. </li>
+    </ol>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

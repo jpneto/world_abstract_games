@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+    <p>CoNeutron is based on the game of Neutron. When playing
+    Neutron it became clear the game lacks balance and the first player to move (even when his
+    first move is restricted to only moving a pawn) has an enormous advantage. Discussing the
+    subject, this solution to get a more balanced game came up and because the code for
+    Neutron hardly had to be changed, it was implemented soon after. <a name="rules"></p>
+    <h3>THE RULES</a> </h3>
+    <p>CoNeutron is played by 2 players on a 5x5 square board. The
+    players sit on opposite sides of the board. One plays white, the other plays black. The
+    row closest to the player's side is called his back row. </p>
+    <pre>
+                 A   B   C   D   E
+               +---+---+---+---+---+
+             1 | x | x | x | x | x | 1 &lt;- Black's back row
+               +---+---+---+---+---+
+             2 |   |   |   |   |   | 2
+               +---+---+---+---+---+
+             3 |   |   | * |   |   | 3
+               +---+---+---+---+---+
+             4 |   |   |   |   |   | 4
+               +---+---+---+---+---+
+             5 | o | o | o | o | o | 5 &lt;- White's back row
+               +---+---+---+---+---+
+                 A   B   C   D   E
+    x = Black pawn  o = White pawn  * = Neutron
+
+        Figure 1.  Beginning of CoNeutron.
+</pre>
+    <p>The game starts with the set-up as shown in
+    figure 1. Figure 1 also shows the characters A, B, C, D and E and the numbers 1, 2, 3, 4
+    and 5. These are used to give coordinates to determine the position of the pieces on the
+    board. For example the neutron starts at position C3. </p>
+    <h3>WINNING</h3>
+    <p>A game of CoNeutron can be won in 2 ways: <ol>
+      <li>a player moves the neutron to his OPPONENT'S back row or
+        forces his opponent to move it there. </li>
+      <li>the opponent can not make a complete turn (usually this
+        means the neutron will be trapped and impossible to move). </li>
+    </ol>
+    <h3>MOVING</h3>
+    <p>The players take turns on making moves. White moves first.
+    All pieces move in exactly the same way. They move in a straight line in one of the eight
+    possible directions, and they must go as far as possible. Specifically, they must travel
+    in a straight line until they bump into another piece, or the edge of the board. A
+    complete move consists of moving first the neutron, then one of your own pieces. </p>
+    <p>On the initial setup, this means the neutron can go to
+    either A3 (straight horizontal line to the left), B2 (straight diagonal line up and left),
+    C2, D2, E3, B4, C4 or D4. It can NOT stop at B3 because it has to be moved until it
+    reaches the side of the board or runs into another piece! The pawns are moved in the exact
+    same way: in a straight line, and as far as they can go. </p>
+    <h3>NOTATION</h3>
+    <p>The moves are notated as </p>
+    [coordinates of neutron destination],[coordinates of pawn]-[coordinates of pawn's destination]
+    <p>So if on White's first turn he/she decides to move the
+    neutron to A3 and the pawn on B5 to B2, it is notated as 'A3,B5-B2'. </p>
+    <p>If the neutron can be moved (or is forced to be moved) in a
+    way that ends the game (meaning: finishing on a back row), then only the neutron move has
+    to be notated: 'A5'. </p>
+    <h3>REFERENCE TO NEUTRON</h3>
+    <p>CoNeutron is based on Neutron. It only differs on 2 points:
+    <ol>
+      <li>The winning condition is moving the neutron to your
+        OPPONENT's back row, where in Neutron you win by moving it to your OWN back row. </li>
+      <li>There is no exception on the first move, so White moves both
+        the neutron and a pawn. </li>
+    </ol>
+    <p>You can get the rules of Neutron by sending '<a href="neutron.html#rules">help neutron.rules</a>' to Richard's PBeM Server
+    (pbmserv@gamerz.net). </p>
+    <h3>EXAMPLES</h3>
+    <p>Because my description of the rules may have left you
+    puzzling, here are some examples: <ol>
+      <li>Making a move. <p>Here's
+        a situation as it might occur in a game of CoNeutron: </p>
+        <pre>                 A   B   C   D   E
+               +---+---+---+---+---+
+             1 |   |   | x |   | x | 1 &lt;- Black's back row
+               +---+---+---+---+---+
+             2 | x | x | x |   |   | 2
+               +---+---+---+---+---+
+             3 |   |   | * | o |   | 3
+               +---+---+---+---+---+
+             4 |   |   | o |   |   | 4
+               +---+---+---+---+---+
+             5 | o |   | o | o |   | 5 &lt;- White's back row
+               +---+---+---+---+---+
+                 A   B   C   D   E</pre>
+        <p>It's White's turn to move. First he must move the neutron.
+        It can be moved to A3 (runs into a side-wall), B4 or D2 (runs into a pawn) or to E5...
+        most likely White won't move to E5, because that will lose him the game (see example 2).
+        The neutron can NOT be moved to B3 (it has to go as far as it can), C2 (capturing of
+        pieces is not allowed), A1 (jumping is not allowed) or E4 (can not be reached in a
+        straight line). Let's say White moves the neutron to A3: </p>
+        <pre>                 A   B   C   D   E
+               +---+---+---+---+---+
+             1 |   |   | x |   | x | 1 &lt;- Black's back row
+               +---+---+---+---+---+
+             2 | x | x | x |   |   | 2
+               +---+---+---+---+---+
+             3 | * |   |   | o |   | 3
+               +---+---+---+---+---+
+             4 |   |   | o |   |   | 4
+               +---+---+---+---+---+
+             5 | o |   | o | o |   | 5 &lt;- White's back row
+               +---+---+---+---+---+
+                 A   B   C   D   E</pre>
+        <p>Now White has to make a choice which pawn he will move. He
+        can only move his own pawns, the white ones, that are indicated with 'o'. He decides to
+        move the one at D3. He can move it to B3 (runs into the neutron), D1 or E3 (runs into a
+        side-wall) or D4 (runs into another pawn). He can NOT move it to A3, C2 or C4 (capturing
+        is not allowed), B1 (jumping is not allowed), E5 (can not be reached in a straight line)
+        or C3 (it has to go all the way). </p>
+        <p>If White chooses to move his pawn to E2, his complete turn
+        can be notated by: 'A3,D3-E2'. </p>
+      </li>
+      <li>Winning by moving to your opponent's back row. <pre>                 A   B   C   D   E
+               +---+---+---+---+---+
+             1 |   | x | x |   |   | 1 &lt;- Black's back row
+               +---+---+---+---+---+
+             2 |   | x |   |   | o | 2
+               +---+---+---+---+---+
+             3 | x |   | x | o |   | 3
+               +---+---+---+---+---+
+             4 | * |   | o |   |   | 4
+               +---+---+---+---+---+
+             5 | o | o |   |   |   | 5 &lt;- White's back row
+               +---+---+---+---+---+
+                 A   B   C   D   E</pre>
+        <p>It's White's turn to move. He can win this game by moving
+        the neutron to D1 (a straight diagonal line). </p>
+      </li>
+      <li>Winning by forcing your opponent to move the neutron to his
+        own back row. <pre>                 A   B   C   D   E
+               +---+---+---+---+---+
+             1 |   | x | x |   |   | 1 &lt;- Black's back row
+               +---+---+---+---+---+
+             2 |   | x |   |   | o | 2
+               +---+---+---+---+---+
+             3 | x |   | x | o |   | 3
+               +---+---+---+---+---+
+             4 |   | * | o |   |   | 4
+               +---+---+---+---+---+
+             5 | o | o |   |   |   | 5 &lt;- White's back row
+               +---+---+---+---+---+
+                 A   B   C   D   E</pre>
+        <p>Again, it's White's turn. The move A4,C4-B4 will give this
+        board: </p>
+        <pre>                 A   B   C   D   E
+               +---+---+---+---+---+
+             1 |   | x | x |   |   | 1 &lt;- Black's back row
+               +---+---+---+---+---+
+             2 |   | x |   |   | o | 2
+               +---+---+---+---+---+
+             3 | x |   | x | o |   | 3
+               +---+---+---+---+---+
+             4 | * | o |   |   |   | 4
+               +---+---+---+---+---+
+             5 | o | o |   |   |   | 5 &lt;- White's back row
+               +---+---+---+---+---+
+                 A   B   C   D   E</pre>
+        <p>Now it's Black's turn. First he has to move the neutron.
+        But that can only go one direction: up and to the right. Also he has to move the neutron
+        as far as it can go, so Black has to move the neutron all the way to D1 and he loses the
+        game. </p>
+      </li>
+      <li>Winning by closing in the neutron. <pre>                 A   B   C   D   E
+               +---+---+---+---+---+
+             1 |   | x | x |   |   | 1 &lt;- Black's back row
+               +---+---+---+---+---+
+             2 |   |   |   |   | o | 2
+               +---+---+---+---+---+
+             3 | x | x | x | o |   | 3
+               +---+---+---+---+---+
+             4 |   | * | o |   |   | 4
+               +---+---+---+---+---+
+             5 | o | o |   |   |   | 5 &lt;- White's back row
+               +---+---+---+---+---+
+                 A   B   C   D   E</pre>
+        <p>Ah, Black is learning! He has closed the gap to D1! But if
+        White now moves A4,C4-B4 this will result in: </p>
+        <pre>                 A   B   C   D   E
+               +---+---+---+---+---+
+             1 |   | x | x |   |   | 1 &lt;- Black's back row
+               +---+---+---+---+---+
+             2 |   |   |   |   | o | 2
+               +---+---+---+---+---+
+             3 | x | x | x | o |   | 3
+               +---+---+---+---+---+
+             4 | * | o |   |   |   | 4
+               +---+---+---+---+---+
+             5 | o | o |   |   |   | 5 &lt;- White's back row
+               +---+---+---+---+---+
+                 A   B   C   D   E</pre>
+        <p>Now it's Black's turn. He has to move the neutron, but
+        can't! Therefore he loses the game... again. </p>
+      </li>
+    </ol>
+    <p>NOTE: these are all examples... Black doesn't lose all the
+    time :) </p>
+    <h3>ACKNOWLEDGEMENTS</h3>
+    <p>C.D.Wright told me about a CoNeutron Tournament run at
+    Cambridge University. It was run by Mark Owen and Julian Richardson. They had modified the
+    rules of Neutron to make it more balanced and therefore they are the inventors of
+    CoNeutron. </p>
+    <p>Sören Pingel Dalsgaard coded and implemented the game for
+    Richard's PBeM-server (pbmserv@gamerz.net). </p>
+    <p>Richard Rognlie made it all possible by setting up
+    Richard's PBeM-server for us games addicts. </p>
+    <p>The first game of CoNeutron on Richard's PBeM-server was
+    played between Ronald Lokers and Sören Pingel Dalsgaard in November, 1997. Sören won :( </p>
+    <p><i>Ronald Lokers, November 21, 1997</i> </p>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

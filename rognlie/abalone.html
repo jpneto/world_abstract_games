@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+    <h3><font face="Arial" size="2">Abalone Command Summary</font></h3>
+    <dl>
+      <dt><font face="Arial" size="2"><a name="challenge">abalone challenge [-bowl] <b>userid1</b>
+        <b>userid2</b> [... <b>userid6</b>]</a> </font></dt>
+      <dd><font face="Arial" size="2">Start a new game between up to six players. 
+        </font><p><font face="Arial" size="2">The standard boards
+        are: </font></p>
+      </dd>
+    </dl>
+    <pre><font face="Courier" size="1">        Two                Three              Four
+
+            1 1 1 1 1          1 1 1 1 1          1 1 1 1 .
+           1 1 1 1 1 1        1 1 1 1 1 1        1 1 1 1 . 2
+          . . 1 1 1 . .      . . . . . . .      . . . . . 2 2
+         . . . . . . . .    3 . . . . . . 2    4 . . . . . 2 2
+        . . . . . . . . .  3 3 . . . . . 2 2  4 4 . . . . . 2 2
+         . . . . . . . .    3 3 . . . . 2 2    4 4 . . . . . 2
+          . . 2 2 2 . .      3 3 . . . 2 2      4 4 . . . . .
+           2 2 2 2 2 2        3 3 . . 2 2        4 . 3 3 3 3
+            2 2 2 2 2          3 3 . 2 2          . 3 3 3 3
+
+
+        Five               Six
+
+            1 1 1 1 .          . 1 1 1 .
+           1 1 1 1 . 2        6 . 1 1 . 2
+          . . . . . 2 2      6 6 . 1 . 2 2
+         4 . . 5 5 . 2 2    6 6 6 . . 2 2 2
+        4 4 . 5 5 5 . 2 2  . . . . . . . . .
+         4 4 . 5 5 . . 2    5 5 5 . . 3 3 3
+          4 4 . . . . .      5 5 . 4 . 3 3
+           4 . 3 3 3 3        5 . 4 4 . 3
+            . 3 3 3 3          . 4 4 4 .</font></pre>
+    <p><font face="Arial" size="2">Note: I don't especially like the 5-person setups, but it
+    was the best I could come up with. The 5th player is penalized a marble for being
+    centered. </font></p>
+    <p><font face="Arial" size="2">The &quot;bowl&quot; setups are: </font></p>
+    <pre><font face="Courier" size="1">        Two                Three              Four
+ 
+            1 1 . 2 2          1 1 . 2 2          1 1 . 2 2
+           1 1 1 2 2 2        1 1 . . 2 2        1 1 1 2 2 2
+          . 1 1 . 2 2 .      . . 1 . 2 . .      . 1 1 . 2 2 .
+         . . . . . . . .    3 . . . . . . 3    . . . . . . . .
+        . . . . . . . . .  3 3 3 . . . 3 3 3  . . . . . . . . .
+         . . . . . . . .    3 . . . . . . 3    . . . . . . . .
+          . 2 2 . 1 1 .      . . 2 . 1 . .      . 3 3 . 4 4 .
+           2 2 2 1 1 1        2 2 . . 1 1        3 3 3 4 4 4
+            2 2 . 1 1          2 2 . 1 1          3 3 . 4 4
+ 
+ 
+        Five               Six
+ 
+            4 4 . 3 3          1 1 . 2 2
+           4 4 4 3 3 3        1 1 1 2 2 2
+          . 4 4 . 3 3 .      . 1 . . . 2 .
+         . . . . . . 1 1    6 6 . . . . 3 3
+        . . . . . . 1 1 1  6 6 . . . . . 3 3
+         . . . . . . 1 1    6 6 . . . . 3 3
+          . 5 5 . 2 2 .      . 5 . . . 4 .
+           5 5 5 2 2 2        5 5 5 4 4 4
+            5 5 . 2 2          5 5 . 4 4</font></pre>
+    <a name="rules"><h3><font face="Arial" size="2">Rules for Abalone</a> </font></h3>
+    <dl>
+      <dt><font face="Arial" size="2">Object of the game: </font></dt>
+      <dd><font face="Arial" size="2">On a hexagonal board (radius 5) two to six players have
+        armies of marbles. Players take turns &quot;pushing&quot; 1, 2 or 3 linearly connected
+        marbles, attempting to push their opponents' marbles off the board. First player to push 6
+        of their opponent's marbles off the board wins. In the 3+ player version, the 6 marbles
+        may be any combination of 6 opponents' marbles. </font></dd>
+      <dt><font face="Arial" size="2">&nbsp;</font></dt>
+      <dt><font face="Arial" size="2">Initial board layout: </font></dt>
+      <dd><pre><font face="Courier" size="1">
+            o o o o o
+           o o o o o o
+          . . o o o . .
+         . . . . . . . .
+        . . . . . . . . .
+         . . . . . . . .
+          . . x x x . .
+           x x x x x x
+            x x x x x</font></pre>
+      </dd>
+      <dd><font face="Arial" size="2">This is the standard two player layout. See the <a href="#challenge">challenge command</a> for info on layouts for more players. </font></dd>
+      <dt><font face="Arial" size="2">Movement: </font></dt>
+      <dd><font face="Arial" size="2">You may move a group of 1, 2, or 3 adjacent marbles of your
+        color (a group of 3 marbles must be in a straight line) one space in any one of the six
+        possible directions. </font><p><font face="Arial" size="2">Examples of legal moves: </font></p>
+        <p><font face="Arial" size="2">One marble<br>
+        </font><font face="Courier" size="1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        . . . . . . . .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; . . . . . . . . <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; . . . . x . . . . =&gt; . . . . . x . . .
+        &nbsp;<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; . . . . . . . . &nbsp;&nbsp;&nbsp;&nbsp;
+        . . . . . . . .<br>
+        </font><font face="Arial" size="2"><br>
+        Two marbles &quot;forward&quot;<br>
+        </font><font face="Courier" size="1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        . . . . . . . . &nbsp;&nbsp;&nbsp;&nbsp; . . . . . . . . <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; . . . . x x . . . =&gt; . . . . . x x . . <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; . . . . . . . . &nbsp;&nbsp;&nbsp;&nbsp;
+        . . . . . . . .<br>
+        </font><font face="Arial" size="2"><br>
+        Two marbles &quot;sideways&quot;<br>
+        </font><font face="Courier" size="1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        . . . . . . . . &nbsp;&nbsp;&nbsp;&nbsp; . . . x x . . . <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; . . . . x x . . . =&gt; . . . . . . . . . <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; . . . . . . . . &nbsp;&nbsp;&nbsp;&nbsp;
+        . . . . . . . .<br>
+        </font><font face="Arial" size="2"><br>
+        Three marbles &quot;forward&quot;<br>
+        </font><font face="Courier" size="1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        . . . . . . . . &nbsp;&nbsp;&nbsp;&nbsp; . . . . . . . . <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; . . . . x x x . . =&gt; . . . . . x x x .<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; . . . . . . . . &nbsp;&nbsp;&nbsp;&nbsp;
+        . . . . . . . .<br>
+        </font><font face="Arial" size="2"></font></p>
+        <p><font face="Arial" size="2">Three marbles &quot;sideways&quot;<br>
+        </font><font face="Courier" size="1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        . . . . . . . . &nbsp;&nbsp;&nbsp;&nbsp; . . . x x x . . <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; . . . . x x x . . =&gt; . . . . . . . . . <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; . . . . . . . . &nbsp;&nbsp;&nbsp;&nbsp;
+        . . . . . . . .<br>
+        </font><font face="Arial" size="2"></font></p>
+      </dd>
+    </dl>
+    <p><font face="Arial" size="2">A group of two or three marbles may push an opponent's
+    smaller group when moving in a direction that the line is pointing (i.e., not when moving
+    &quot;sideways&quot;). </font></p>
+    <p><font face="Arial" size="2">Thus, the three possible pushes are: </font></p>
+    <blockquote>
+      <pre><font face="Arial" size="2">Two push one
+</font><font face="Courier" size="1">         . . . . . . . .      . . . . . . . . 
+        . . . . x x o . . =&gt; . . . . . x x o .
+         . . . . . . . .      . . . . . . . .
+</font><font face="Arial" size="2">
+Three push one
+</font><font face="Courier" size="1">         . . . . . . . .      . . . . . . . . 
+        . . . x x x o . . =&gt; . . . . x x x o . 
+         . . . . . . . .      . . . . . . . .
+</font><font face="Arial" size="2"></font></pre>
+      <pre><font face="Arial" size="2">Three push two
+</font><font face="Courier" size="1">         . . . . . . . .      . . . . . . . . 
+        . . . x x x o o . =&gt; . . . . x x x o o
+         . . . . . . . .      . . . . . . . .
+</font><font face="Arial" size="2"></font></pre>
+    </blockquote>
+    <pre><font face="Arial" size="2">Marbles can be pushed off of the board, like so:     </font></pre>
+    <blockquote>
+      <pre><font face="Arial" size="2">One Oh piece is removed
+</font><font face="Courier" size="1">         . . . . . . . .      . . . . . . . . 
+        . . . . x x x o o =&gt; . . . . . x x x o
+         . . . . . . . .      . . . . . . . .</font></pre>
+    </blockquote>
+    <p><font face="Arial" size="2">Once you have pushed six of your opponent's marbles off of
+    the board, you win! </font><dl>
+      <dt><font face="Arial" size="2">Movement Notation: </font></dt>
+      <dd><font face="Arial" size="2">The movement notation for abalone has two forms. In each
+        form, rcX is a letter/number pair specifying a space by row and column (e.g., E5 is the
+        center of the board). </font><ol>
+          <li><font face="Arial" size="2">rc1,rc2 moves 1 marble from rc1 to rc2. </font><p><font face="Arial" size="2">Example: c5,d5</font></p>
+            <pre><font face="Courier" size="1">
+        1 2 3 4 5                       1 2 3 4 5
+        / / / / / 6                     / / / / / 6
+    A- o o o o o / 7                A- o o o o o / 7
+   B- o o o o o o / 8              B- o o o o o o / 8
+  C- . . o o o . . / 9            C- . . o o . . . / 9
+ D- . . . . . . . . /            D- . . . . o . . . /
+E- . . . . . . . . .      =&gt;    E- . . . . . . . . .     
+ F- . . . . . . . .              F- . . . . . . . .
+  G- . . x x x . .                G- . . x x x . .
+   H- x x x x x x                  H- x x x x x x
+    I- x x x x x                    I- x x x x x</font></pre>
+          </li>
+          <li><font face="Arial" size="2">rc1-rc2,rc3 moves the string of *your* marbles defined by
+            rc1-rc2. The direction is rc1-&gt;rc3 if rc3 is adjacent to rc1. Otherwise, it moves in
+            direction rc2-&gt;rc3. </font><p><font face="Arial" size="2">Example: a1-c3,b2 or a1-c3,d4</font></p>
+            <pre><font face="Courier" size="1">
+        1 2 3 4 5                       1 2 3 4 5
+        / / / / / 6                     / / / / / 6
+    A- o o o o o / 7                A- . o o o o / 7
+   B- o o o o o o / 8              B- o o o o o o / 8
+  C- . . o o o . . / 9            C- . . o o o . . / 9
+ D- . . . . . . . . /            D- . . . o . . . . /
+E- . . . . . . . . .      =&gt;    E- . . . . . . . . .     
+ F- . . . . . . . .              F- . . . . . . . .
+  G- . . x x x . .                G- . . x x x . .
+   H- x x x x x x                  H- x x x x x x
+    I- x x x x x                    I- x x x x x</font></pre>
+                                  
+<font face="Arial" size="2"></font></p>
+            <p><font face="Arial" size="2">Example: c3-c5,d4 or c3-c5,d6</font></p>
+            <pre><font face="Courier" size="1">
+        1 2 3 4 5                       1 2 3 4 5
+        / / / / / 6                     / / / / / 6
+    A- o o o o o / 7                A- o o o o o / 7
+   B- o o o o o o / 8              B- o o o o o o / 8
+  C- . . o o o . . / 9            C- . . . . . . . / 9
+ D- . . . . . . . . /            D- . . . o o o . . /
+E- . . . . . . . . .      =&gt;    E- . . . . . . . . .     
+ F- . . . . . . . .              F- . . . . . . . .
+  G- . . x x x . .                G- . . x x x . .
+   H- x x x x x x                  H- x x x x x x
+    I- x x x x x                    I- x x x x x</font></pre>
+<font face="Arial" size="2"></font></p>
+            <p><font face="Arial" size="2">Example: e7-f8,f8 or e7-f8,g9</font></p>
+            <pre><font face="Courier" size="1">
+        1 2 3 4 5                       1 2 3 4 5
+        / / / / / 6                     / / / / / 6
+    A- o o o o o / 7                A- o o o o o / 7
+   B- o o o o o o / 8              B- o o o o o o / 8
+  C- . . o . . . . / 9            C- . . o . . . . / 9
+ D- . . . . . . . . /            D- . . . . . . . . /
+E- . . . . . . o . .      =&gt;    E- . . . . . . . . .     
+ F- . . . . . . o .              F- . . . . . . o .
+  G- . . x x x . x                G- . . x x x . o
+   H- x x x x x .                  H- x x x x x .
+    I- x x x x x                    I- x x x x x</font></pre>
+<font face="Arial" size="2"></font></p>
+          </li>
+        </ol>
+      </dd>
+    </dl>
+    <a name="tips"><h3><font face="Arial">Playing Tips for Abalone</a> By Wayne
+    Schmittberger, ex-Editor of Games Magazine and avid Abalone Player </font></h3>
+    <ol>
+      <li><font face="Arial" size="2">At the start, advance your marbles quickly toward the center
+        of the board. </font><p><font face="Arial" size="2">Marbles in the center are much safer,
+        and can move around more easily, than ones near the edge. And, if you can occupy the
+        center, you will also force yoour opponent's marbles to stay near the edge. (Unless your
+        opponent(s) can outwit you and take over the center). </font></p>
+        <pre><font face="Arial" size="2">
+</font><font face="Courier" size="1">        o o o o o            . o o o o            . o o o .
+       o o o o o o          o o o o o o          o o o o o o
+      . . o o o . .        . . o o o . .        . . o o o . .
+     . . . . . . . .      . . . o . . . .      . . . o o . . .
+    . . . . . . . . . =&gt; . . . . . . . . . =&gt; . . . . . . . . .
+     . . . . . . . .      . . . . x . . .      . . . x x . . .
+      . . x x x . .        . . x x x . .        . . . x x . .
+       x x x x x x          x x x x x x          x x x x x x
+        x x x x x            x x x x .            x x x . .
+
+</font><font face="Arial" size="2">    Diagram 1.  It's best to start advancing a line of three marbles toward
+                the center.  One possible opening is for white and black to
+                make the moves shown.
+</font></pre>
+      </li>
+      <li><font face="Arial" size="2">Keep your marbles together. </font><p><font face="Arial" size="2">Your marbles are strongest in a solid group. The more lines in which you have
+        connected rows of three or more marbles, the harder it will be for your opponent to push
+        you back toward the edge. </font></p>
+        <pre><font face="Courier" size="1">                         . . . . .          
+                        . . . . . .        
+                       . . . o o o x      
+                      . . . o o o x .    
+                     . . . o o o x . .  
+                      . . x o o . x .    
+                       . x x o x x .      
+                        . x x x . x    o o
+                         . x . . .          
+</font><font face="Arial" size="2">
+    Diagram 2.  White's strong central formation has no weaknesses, while
+                black has no way to prevent his thin line of marbles from
+                being pushed back and cut apart.  White has the advantage,
+                despite black's current 2-0 lead in marbles.
+</font></pre>
+      </li>
+      <li><font face="Arial" size="2">&quot;Divide and Conquer&quot; </font><p><font face="Arial" size="2">Try to separate the opponent's marbles into two or more groups. Smaller groups
+        will be easier to push back and trap against the edge of the board, where they will be
+        lost. </font></p>
+      </li>
+      <li><font face="Arial" size="2">Plan ahead. </font><p><font face="Arial" size="2">Wherever
+        your marbles are next to your opponent's, carefully consider the effect of each possible
+        push. Pushes tend to create many new possibilities for each side, since as many as five
+        marbles can change position at once (when three marbles push two). </font></p>
+      </li>
+      <li><font face="Arial" size="2">Think twice before pushing an opponent's marble off the
+        board. </font><p><font face="Arial" size="2">Early in the game, it is usually more
+        important to keep your marbles in the center than to move them toward the edge in order to
+        eject a marble or two. (If you fall behind 2-0 or 3-1 in pushing off marbles, you can
+        easily catch up if you have the move central position.) And if an opponent's marble has no
+        way to escape, don't hurry to push it off, as you will usually have a more important move
+        to make elsewhere. </font></p>
+      </li>
+      <li><font face="Arial" size="2">Abandon stragglers. </font><p><font face="Arial" size="2">Don't
+        waste time trying to link up isolated marbles with your main group, unless you can do it
+        in just a move or two. </font></p>
+      </li>
+      <li><font face="Arial" size="2">Play patiently. </font><p><font face="Arial" size="2">When
+        you're not sure what to do, look for your least useful marble(s), and try to improve their
+        positions. </font></p>
+      </li>
+      <li><font face="Arial" size="2">The more marbles that have been pushed off the board, the
+        more important it is to gain the lead in marbles. </font><p><font face="Arial" size="2">Although
+        a strong central position is more important that ejecting marbles early in the game, the
+        opposite is trow after each side has lost three or four marbles. If your marbles are badly
+        scattered around the edges after you have pushed off six of your opponent's marbles, it
+        won't matter! </font></p>
+      </li>
+      <li><font face="Arial" size="2">Try hard to be the first player to eject five marbles. </font><p><font face="Arial" size="2">The first player to push off a fifth marble will usually have a big
+        advantage, because the opponent will then have to look after every vulnerable marble, and
+        answer every threat to eject a marble. </font></p>
+      </li>
+      <li><font face="Arial" size="2">Late in the game, play accurately and agressively. </font><p><font face="Arial" size="2">If you see a way to eject enough of the opponent's marbles to bring
+        your total up to six, don't bother to defend your own marbles unless the opponent can win
+        before you do. </font></p>
+        <pre><font face="Courier" size="1">          . . . . .                      . . . . .
+         . . . . . .                    . . . . . .
+        . . x . . . .                  . . x . . . .
+       . . x . . . . .  x x x x       . . x . . . . .  x x x x
+      . x x x o . . . .         ==&gt;  . x x . o . . . .
+       x o x o o . . .                x o x o o . . .
+        o x o o . . .                  o x o o . . .
+         o . . o o x    o o o           x . . o o x    o o o o
+          o . . . x                      o . . . x
+</font><font face="Arial" size="2">
+    Diagram 3.  White leads 4-3, but needs at least three turns to eject 
+                two black marbles in to the lower right.  Black, with the
+                move, wins the race by ejecting one white marble as shown,
+                after which black needs but two more turns to push off
+                the trapped marbles.</font></pre>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h3><strong>Rules </strong></h3>
+<p>Each player starts with a DNA sequence of 36 randomly generated nucleotides labelled A, C, G and T for adenine, guanine, cytosie and thymine respectively. </p>
+<p>Players take turns nominating a chunk of three consecutive nucleotides contained in their sequence.  All instances of that chunk are removed from their sequence and  all opponents' sequences. Chunks are removed left-to-right with the remainder of the sequence collapsing down to fill the gap; this operation is repeated until no more chunks are removed, hence multiple removals are possible per turn.</p>
+<p>During the  first round of play, the first player may remove at most one chunk from any opponent, the second player may remove at least two chunks from any opponent, and so on.</p>
+<p>Players whose sequence length falls below the  chunk size are removed from the game; the last surviving  player wins. If the sequence length of all players falls below the chunk size then the game is won by the player with the longest sequence, else the game is a tie in the case of  equal sequence length.</p>
+
+<h3><strong>Example</strong></h3>
+<p>For example, the following figure shows a game between ned, ted and jed:</p>
+<pre>ned (36): TCGCATGTACAAAGTTTTCAATCTTCGCCTTGAGAG<br>ted (36): TCAGCGCGTTCCCGGAGTCGTCGTATTAAAGGGGAT<br>jed (36): GCCAATTATGGACTTGTTGTCAGATAGTTTCCGGCG</pre>
+<p>As first move, ned might nominate the chunk AAG which occurs once in their sequence as well ted's, giving the following result once these chunks have been  removed (ned could not have nominated TTG on the first move as that chunk occurs twice in jed's sequence):</p>
+<pre>ned (33): TCGCATGTACATTTTCAATCTTCGCCTTGAGAG<br>ted (33): TCAGCGCGTTCCCGGAGTCGTCGTATTAGGGAT<br>jed (36): GCCAATTATGGACTTGTTGTCAGATAGTTTCCGGCG</pre>
+<p>As second move, ted might nominate TTC whose removal gives the   following result:</p>
+<pre>ned (27): TCGCATGTACATTAATCGCCTTGAGAG<br>ted (30): TCAGCGCGCCGGAGTCGTCGTATTAGGGAT<br>jed (33): GCCAATTATGGACTTGTTGTCAGATAGTCGGCG. </pre>
+
+<h3><strong>Notes</strong></h3>
+<p>Chunk removal may be nested and not necessarily straightforward. For example, the chunk AGC only occurs once in the sequence  TAAGAAGCGCCT but consider what happens as it is  removed:</p>
+<pre>  TAAGAAGCGCCT  --&gt; &nbsp;TAAGAGCCT  --&gt;  TAAGCT  --&gt;  TAT<br>       ^^^               ^^^           ^^^             </pre>
+<p>Chunks may be selected  strategically to break dangerous formations in your own sequence or to manipulate opponents' sequences to encourage them to attack other opponents. For example, player A  might nominate a sequence whose removal causes player B's sequence to form a chunk that's disastrous for player C. </p>
+<p>There is hence a balance in multiplayer games between hurting your opponents (especially the next player in turn, who you have the greatest control over) and helping them hurt others. Spread the hurt around! </p>
+<p>Only one strand of each player's double helix is shown as that strand's  sequence  implies the sequence on the other strand (unless you have eleven toes).</p>
+<div>
+
+  <h3 align="left"><strong>Test Options</strong></h3>
+  <p>The <tt>-min_chunk</tt> parameter specifies the minimum  chunk size (must be at least 2).<br>
+  The <tt>-max_chunk</tt> parameter specifies the maximum chunk size. Chunks may therefore range in size within each game (e.g. 2..4).<br>
+    The <tt>-non_incremental</tt> option removes  the  incremental first round limit on chunk removal.<br>
+    The <tt>-need_not_own</tt> option specifies that  players need not own a chunk to nominate it.<br>
+    The <tt>-no_reduce_self</tt> option specifies that  players do not remove chunks from their own sequence.<br>
+    The <tt>-reduce_next</tt> option specifies that   players  remove chunks from the next opponent but not other opponents.<br>
+  </p>
+  </div>
+<h3 align="left"><strong>Syntax</strong></h3>
+<p>Remove chunk GGT:<br>
+  <tt> &nbsp;&nbsp;dna move <b>board#</b> <b>userid</b> <b>password</b> GGT</tt>
+</p>
+<p>Manually set sequence to GCCAATTATGGACTTGTTGTCAGATAGTTTCCGGCG:<br>
+  <tt> &nbsp;&nbsp;dna move <b>board#</b> <b>userid</b> <b>password</b> GCCAATTATGGACTTGTTGTCAGATAGTTTCCGGCG</tt>
+</p>
+<p>Alternatively,  simply spit on your  keyboard to trigger the auto-gene sequencer and start the game with your  own unique DNA  sequence!* </p>
+<p>*Not implemented yet. </p>
+
+<h3>History </h3>
+<p>DNA  rules by   Cameron Browne, copyright (c) Cyberite Ltd  2008.</p>
+<p align="left">Graphical web interface: <a href="https://web.archive.org/web/20251015211904/http://www.gamerz.net/pbmserv/List.php?Dna">http://www.gamerz.net/pbmserv/List.php?Dna</a></p>
+<p>Implementation and Help file by Cameron Browne, October 2008.</p>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

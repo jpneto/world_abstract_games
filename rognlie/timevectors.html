@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+  <h3>Rules</h3>
+  <p>Players take turns placing a piece of their colour on an empty board point. 
+    Note that the board is divided into four 4x4x4 quadrants. A player wins by 
+    creating a vector of four of their pieces in a row within a quadrant. The 
+    following example shows a number of winning vectors for both X and O (this 
+    will not happen during an actual game - at most one player can win):</p>
+  <pre>
+
+              A  B  C  D     E  F  G  H  
+         8   x  .  .  .     .  .  .  .   8
+        7   .  x  .  .     .  .  .  .   7
+       6   .  .  x  .     .  .  .  .   6
+      5   .  .  .  x     .  .  .  .   5
+                                           Level S
+    4   .  .  .  .     .  .  .  .   4
+   3   .  .  .  .     .  .  .  .   3
+  2   .  .  .  .     .  .  .  o   2
+ 1   x  .  .  .     .  .  .  .   1
+
+         8   .  .  .  .     .  .  .  .   8
+        7   .  .  .  .     .  .  .  .   7
+       6   .  .  .  .     .  .  .  .   6
+      5   .  .  .  .     .  .  .  .   5
+                                           Level R
+    4   .  .  .  .     .  .  .  .   4
+   3   .  .  .  .     .  .  .  .   3
+  2   .  .  .  .     .  .  o  .   2
+ 1   .  x  .  .     .  .  .  .   1
+
+         8   .  .  .  .     o  o  o  o   8
+        7   .  .  .  .     .  .  .  .   7
+       6   .  .  .  .     .  .  .  .   6
+      5   .  .  .  .     .  .  .  .   5
+                                           Level Q
+    4   .  .  .  .     .  .  .  .   4
+   3   .  .  .  .     .  .  .  .   3
+  2   .  .  .  .     .  o  .  .   2
+ 1   .  .  x  .     .  .  .  .   1
+
+         8   .  .  .  .     .  .  .  .   8
+        7   .  .  .  .     .  .  .  .   7
+       6   .  .  .  .     .  .  .  .   6
+      5   .  .  .  .     .  .  .  .   5
+                                           Level P
+    4   .  .  .  .     .  .  .  .   4
+   3   .  .  .  .     .  .  .  .   3
+  2   .  .  .  .     o  .  .  .   2
+ 1   .  .  .  x     .  .  .  .   1
+    A  B  C  D     E  F  G  H    
+  </pre>
+
+  <p>In addition, a player can win by creating a 4-in-a-row vector that visits 
+    each quadrant in clockwise or anticlockwise order. These are called &quot;4th 
+    dimension&quot; vectors and can be quite tricky to spot! The following example 
+    shows winning 4th dimension vectors for both X and O:</p>
+    
+  <pre>
+              A  B  C  D     E  F  G  H  
+         8   x  .  .  .     x  .  .  .   8
+        7   .  .  .  .     .  .  .  .   7
+       6   .  .  .  .     .  .  .  .   6
+      5   .  .  .  .     .  .  .  .   5
+                                           Level S
+    4   x  .  .  .     x  .  .  .   4
+   3   .  .  .  .     .  .  .  .   3
+  2   .  .  .  .     .  .  .  o   2
+ 1   .  .  .  .     .  .  .  .   1
+
+         8   .  .  .  .     .  .  .  .   8
+        7   .  .  .  .     .  .  .  .   7
+       6   .  .  .  .     .  .  o  .   6
+      5   .  .  .  .     .  .  .  .   5
+                                           Level R
+    4   .  .  .  .     .  .  .  .   4
+   3   .  .  .  .     .  .  .  .   3
+  2   .  .  .  .     .  .  .  .   2
+ 1   .  .  .  .     .  .  .  .   1
+
+         8   .  .  .  .     .  .  .  .   8
+        7   .  .  .  .     .  .  .  .   7
+       6   .  o  .  .     .  .  .  .   6
+      5   .  .  .  .     .  .  .  .   5
+                                           Level Q
+    4   .  .  .  .     .  .  .  .   4
+   3   .  .  .  .     .  .  .  .   3
+  2   .  .  .  .     .  .  .  .   2
+ 1   .  .  .  .     .  .  .  .   1
+
+         8   .  .  .  .     .  .  .  .   8
+        7   .  .  .  .     .  .  .  .   7
+       6   .  .  .  .     .  .  .  .   6
+      5   .  .  .  .     .  .  .  .   5
+                                           Level P
+    4   .  .  .  .     .  .  .  .   4
+   3   .  .  .  .     .  .  .  .   3
+  2   o  .  .  .     .  .  .  .   2
+ 1   .  .  .  .     .  .  .  .   1
+    A  B  C  D     E  F  G  H    
+  
+  </pre>
+  
+    <p>A more detailed explanation of winning vectors can be found in the official 
+    Time Vectors <a href="https://web.archive.org/web/20240724203940/http://www.jdbgames.com/tv/tvman.pdf">manual</a>.</p>
+
+  <h3>References and History</h3>
+
+  <p>Time Vectors rules and board design by J. David Barnhart (c) 1986, who gave his permission for this implementation.<br>
+    Time Vectors is manufactured by <a href="https://web.archive.org/web/20240724203940/http://www.jdbgames.com/tv/index.htm">JDB Games</a>.</p>
+  <p>Implementation and help file by <a href="https://web.archive.org/web/20240724203940/mailto:cameronb@optusnet.com.au">Cameron Browne</a>, January 2005.<br>
+</div>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

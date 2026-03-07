@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+              
+<p>
+<font face="Arial" size="2">
+Xiangqi (Chinese chess) is a chess-like game which is especially 
+popular in the Far East: China, Taiwan, Thailand, Singapore, 
+Vietnam, Hong Kong, etc.
+
+Xiangqi is NOT any of the following games: Shogi, Japanese
+chess, go, wei chi, weiqi, Chinese checkers, western chess, Korean
+chess, Thai chess, Makrook, Malaysian chess, Mah Jong, Sic bo, Pai
+gow.
+
+In Xiangqi the pieces moves on the intersection of the 
+board, not in the spaces between them. 
+
+The board with the start position is:
+</font>
+<pre><font face="Courier" size="1">
+
+     A   B   C   D   E   F   G   H   I
+
+10  gR--gH--gE--gG--gK--gG--gE--gH--gR 10   Green 
+     |   |   |   | \ | / |   |   |   | 
+ 9   +---+---+---+---+---+---+---+---+  9
+     |   |   |   | / | \ |   |   |   |   
+ 8   +--gC---+---+---+---+---+--gC---+  8
+     |   |   |   |   |   |   |   |   |   
+ 7  gS---+--gS---+--gS---+--gS---+--gS  7
+     |   |   |   |   |   |   |   |   |   
+ 6   +---+---+---+---+---+---+---+---+  6
+     |         R  I  V  E  R         |
+ 5   +---+---+---+---+---+---+---+---+  5
+     |   |   |   |   |   |   |   |   |
+ 4  rS---+--rS---+--rS---+--rS---+--rS  4
+     |   |   |   |   |   |   |   |   | 
+ 3   +--rC---+---+---+---+---+--rC---+  3
+     |   |   |   | \ | / |   |   |   |  
+ 2   +---+---+---+---+---+---+---+---+  2
+     |   |   |   | / | \ |   |   |   |
+ 1  rR--rH--rE--rG--rK--rG--rE--rH--rR  1   Red
+
+     A   B   C   D   E   F   G   H   I
+
+</font></pre>
+
+<font face="Arial" size="2">
+Notice the "River" between Row 5 and Row 6.
+
+
+The pieces are the following:
+
+'R' are a Rook
+'H' are a Horse
+'E' are a Elephant
+'G' are a Guard
+'K' are a King
+'C' are a Cannon
+'S' are a Soldier
+
+<p><a name="rules"> </a>
+<b>Rooks</b>:
+
+  The Rooks move and capture like Rooks in Chess.</p>
+
+<p>
+<b>Horses</b>:
+
+  The Horses move and capture as in chess, with one important
+  difference: they can be blocked. 
+  
+  Example: if a Horse sits on C3 and another piece 
+  (either your own or the opponent's) sits on C4, the Horse 
+  can't move to D5 or B5; but it could move to B1 or D1 or A2 
+  or E2 or E4. If a Horse sits on F3 and another piece 
+  is on G3, then it can't move to H2 or H4.</p>
+ 
+<p>
+<b>Elephants</b>:
+
+  The Elephants can move only two diagonal spaces at a time. 
+  They cannot cross the River (see River below) to the other 
+  side of the board. It captures on the square to which he 
+  is moving. A Elephant on G1 can move to E3 or I3. If an 
+  opposing piece sits on E3, he can capture it.
+  If his own piece sits on E3, he can' move there. If he sits on G1
+  and another piece sits on H2, he can't move to I3 because he is
+  blocked.</p>
+
+<p>
+<b>Guards</b>:
+
+  The Guards can move only one space diagonally, and can't leave the
+  Palace (see Palace below). They capture the same way they move.</p>
+
+<p>
+<b>Kings</b>:
+
+  The Kings moves as in chess, only he can't move diagonally, only one
+  square vertically or horizontally. The King must remain in the palace.</p>
+
+<p>
+<b>Cannons</b>:
+
+  Cannons move like Rooks, as many squares vertically or horizontally as
+  they want, as long as there is no other piece in the way. However,
+  Cannons capture by jumping over a piece to capture another piece.
+  Example: a Cannon sits on E2; a Horse sits on F2 (the piece can
+  belong to either side); and an opposing Rook sits on H2. The Cannon
+  could capture the Rook by jumping over the Horse. It can only capture
+  by jumping, and can jump over only one piece. If there were two pieces
+  between the Cannon and the Rook, then the Rook couldn't be captured
+  by that Cannon. The Cannon cannot jump if it isn't going to capture
+  something, it must simply move like a Rook.</p>
+
+<p>
+<b>Soldiers</b>:
+
+  Soldiers move one square forward. While the Soldier is on its own side of 
+  the board, it captures by moving 1 square forward and taking an 
+  opposing piece that may be sitting there (the Soldiers don't capture 
+  diagonally as in chess).
+  Once a Soldier moves across the river onto the other side of the board,
+  it acquires an additional power: it can then move 1 square sideways in
+  addition to being able to move one square forward. On the other side of
+  the board, the Soldier could then capture by moving sideways or forward.
+  The Soldier can never move backward. The Soldier does not promote when it
+  reaches the back rank of the opponent.</p>
+
+<p>
+<b>Palace</b>:
+
+  The King and Guards can't leave the Palace (except the 
+  Guards who leave when they are captured). 
+  The Palace is the 9 points:
+  D1,E1,F1,D2,E2,E2,D3,E3,F3    for Red 
+  and
+  D10,E10,F10,D9,E9,F9,D8,E8,F9 for Green</p>
+
+<p>
+<b>River</b>:
+
+  The River is nothing more than an empty space in the middle of the
+  board dividing the two sides. A piece can't move into the river and
+  it doesn't count as a space. The Elephants and Guards are
+  purely defensive pieces because they can't cross the river
+  and attack the opposing king. Once a piece crosses the river, it
+  becomes more important for attack than defence.</p>
+
+<p>
+<b>Colours</b>:
+
+  In chess, the player who moves first has the "white" pieces. In
+  Xiangqi, the player who moves first moves has the red pieces. 
+  The second player's pieces are green.</p>
+
+<b>Winning</b>:
+<p>
+  a) the object of the game is to checkmate or stalemate the opponent.
+     This is accomplished by:</p>
+<p>
+  1. Placing the opponent in check so that he has no legal move to get
+     out of the check.</p>
+<p>
+  2. Stalemating your opponent so that he has no legal move (when you
+     stalemate your opponent, you win. It is not a draw as in chess).</p>
+<p>  
+  b) Red moves first.</p>
+<p>
+  c) You can't check your opponent indefinitely by moving the same
+     piece to the same squares (resulting in perpetual check and a draw in
+     chess). You can't put the opponent in check more than three times in a
+     row with the same piece without either side moving any other piece.</p>
+<p>
+  d) Similar to the rule above, you can't indefinitely "chase" an
+     opposing piece from one square to another if your opponent has no
+     other way to avoid losing the piece. If you move a Rook to E6
+     threatening a Cannon on E7, and your opponent's only move to avoid
+     capture is to move the Cannon to F7, then you can't keep chasing it
+     from E7 to F7 by moving from E6 to F6 indefinitely. The idea of this
+     rule and the rule above is to avoid perpetual check draws. Some of
+     these situations can be complicated but usually the person who is
+     initiating the perpetual move loop must break it off.</p>
+<p>
+  e) The two Kings can't face each other on the same file. If Red's
+     King is on E2 and Green's King is on E10 and there are no pieces
+     directly between them on the E-file, then that is an illegal position.
+     If Green's King is the only piece on the F-file, then Red's king on
+     the E-file can't move to the F-file.</p>
+<p>
+  f) When neither side can capture the opposing King, the game is a
+     Draw.</p></font>
+     
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h3><font face="Arial" size="2">Introduction</font></h3>
+    <p><font face="Arial" size="2">Welcome to the network Hex server. The rules of Hex are in
+    the FAQ below. The Hex &quot;<a href="#challenge">challenge</a>&quot; commands is
+    described here. <a href="commands.html">Other commands</a> are the same for all pbmserv
+    games. </font><dl>
+      <dt><font face="Arial" size="2"><a name="challenge">hex challenge [ -handicap=<b>X</b> ] [
+        -size=<b>X</b> ] <b>userid1</b> <b>userid2</b></a> </font></dt>
+      <dd><font face="Arial" size="2">Start a new game between <b>userid1</b> and <b>userid2</b> </font><p><font face="Arial" size="2">If a positive handicap is specified, the board is made narrower by
+        the number of rows specified. If a negative handicap is specified, the board is made
+        shorter by the number of rows specified. </font></p>
+        <p><font face="Arial" size="2">If a size is specified, it changes the size of the board.
+        The default size is 11. (-size=11) </font></p>
+      </dd>
+    </dl>
+    <hr>
+    <pre><font face="Arial" size="2">HEX: Answers to common questions.</font></pre>
+    <pre><font face="Arial" size="2">This FAQ is copyright 1994 by David Boll.  The rules are copyright by
+Piet Hein, and are used here without permission.  Any suggestions, questions,
+or comments should be sent to David Boll:  <a href="https://web.archive.org/web/20241205160923/mailto:dboll@vcd.hp.com">dboll@vcd.hp.com</a></font></pre>
+    <pre><font face="Arial" size="2">CONTENTS:
+
+    1) Origin/Background of Hex, Literature on Hex
+    2) Rules of Hex
+    3) Elementary concepts:  the 2-bridge 
+    4) Edge techniques
+    5) Advanced strategy:  Forced moves, ladders, etc.
+    6) The opening
+    7) Sample Game </font></pre>
+    <pre><font face="Arial" size="2">1) Origin/Background of Hex
+    
+Hex was invented/discovered by <a href="https://web.archive.org/web/20241205160923/http://www.mazeworks.com/hex7/about/invent.htm">Piet Hein and John Nash</a>.  It a connectivity game, 
+in the same family of games as Twixt, Bridge-It, and has some afficinados
+among Go players as well.  It is a perfect example of one of those 'a
+minute to learn, a lifetime to master' games.
+    
+There's really not much Hex literature that I am aware of.  Martin Gardner
+introduced the game in one of his Mathematical Recreations column, 
+reprinted in his first book (I think), the one with Hexaflexagons &amp; other
+stuff.
+    
+All other material I've read has been in the form of proofs of first
+player wins or variations on Hex.  I'm not familiar with any strategic
+discussion of the game.</font></pre>
+    <pre><font face="Arial" size="2">2) Rules of Hex
+    
+Hex is a two player strategy game played on a NxN rhombus of hexagons, as 
+illustrated below for N=4:
+    </font><font face="Courier" size="1">
+           Top 
+
+          . . . .
+           . . . .  Right
+    Left    . . . .
+             . . . .
+
+               Bottom</font></pre>
+    <pre><font face="Arial" size="2">Players alternately mark hexes.  The goal of the first player is to form 
+a unbroken chain of his hexes that connects the top to the bottom,
+while the second player attempts to form an unbroken chain of her hexes
+connecting the left side and the right.  To make subsequent diagrams
+clearer, the 2 players will be referred to as H)orizontal and V)ertical,
+with Vertical having the first move.  For notational purposes, the board
+is indexed by letter and number, like so:
+    </font><font face="Courier" size="1">
+         A B C D 
+       1  . . . .
+        2  . . . .
+         3  . . . .
+          4  . . . .</font></pre>
+    <pre><font face="Arial" size="2">3) Elementary concepts: the 2-bridge
+
+Connectivity is the key to hex, consider the following game with V to
+move next:
+    </font><font face="Courier" size="1">
+         A B C D 
+       1  V . . .
+        2  . . . H
+         3  . H . .
+          4  . . . V</font><font face="Arial" size="2">
+
+No matter where V moves, H has the game won! There are only four hexes
+that matter in this game:  A4, A3, C3, and C2 and H has a response to all
+four of these moves.  If V moves A4, H moves A3 (and vice versa), and if V
+moves C3, H moves C2 (and vice versa).  So, hex players consider
+hexes such as B3 and D2 to be connected, even though they do not touch,
+because a connection can be trivially forced.  By playing moves of this
+type, you can extend two rows at a time rather than one.  This document
+will refer to hexes 'connected' in this manner as a 2-bridge.
+    
+However, your opponent is not likely to let you march across the board, 
+forming 2-bridges at will!  Usually, connections are formed more
+subtly, as in the following example:  (H to move)
+       </font><font face="Courier" size="1">
+           A B C D E F G H I
+         1  . . . . . . . . .
+          2  . . . . . . . V .
+           3  . . V . . . . V .
+            4  . . . V . . . . .
+             5  . . . . . . V . .
+              6  . . V H H H V . .
+               7  . . . . . . H . .
+                8  . H . V . H . . .
+                 9  . H . . . . . . .</font><font face="Arial" size="2">
+ 
+Although the game might appear close at first glance, V has a clear win.
+V is connected from the north edge to hexes C6 and G6 (if you don't see
+this, refer to the section on edge tactics).  And, each of these hexes 
+are one move away from being connected to hex D8.  Hex D8 is connected to
+the south edge (clearly), and one move away from being connected to the
+north edge in two different ways.  H can't stop both of these connections
+with only a single move.  So, if H and V were good players, H would 
+resign.  Of course, if H and V were good players, the game wouldn't 
+look like this, but that's beside the point!</font></pre>
+    <pre><font face="Arial" size="2">4) Edge techniques
+
+It's handy to know when a hex is connectable to an edge regardless of
+what the other player does.  This section discusses connection to an
+edge from 2, 3, and 4 rows out, using a connection template.  A 
+connection template is a pattern of OPEN hexes that will allow
+connection even if the opponent moves first, regardless of what the
+opponent does.
+
+2 rows away:  This hardly needs explaining, but suppose V was one row from
+the bottom edge, the template looks like this:
+</font><font face="Courier" size="1">
+          . V
+           - -    &lt;- edge</font><font face="Arial" size="2">
+
+If the 2 hexes below V are clear, V is connected.  If H moves to one of the
+dashed hexes, V moves to the other.  If H moves elsewhere, V should
+also, since this connection is guaranteed.
+    
+3 rows away:  The template is the following:
+</font><font face="Courier" size="1">
+       A B C D
+     1  . . . .
+      2  . . V -
+       3  . - - -
+        4  - - - -</font><font face="Arial" size="2">
+
+If the dashed hexes (or their mirror image) are clear, V has a connect-
+ion.  The basic idea is that either B3 or D3 will connect, and H can't
+stop both.  V need not defend this connection unless H moves into one
+of the dashed hexes.
+
+4 rows away:  This is more complicated:
+</font><font face="Courier" size="1">
+     A B C D E F G
+   1  . . . . . . .
+    2  . . . . . . .
+     3  . . . . . . .
+      4  . . . - V - .
+       5  . . - - - - -
+        6  . - - - - - -
+         7  - - - - - - -
+</font><font face="Arial" size="2">
+If H moves into this region, but doesn't move to one of {D5,E5,D6,C7,D7},
+V simply moves to D6 for an easy connect.
+
+If H moves one of {D5,E5}, V moves to the other and has a valid template
+from 6 rows out.
+
+If H moves to D6 or C7, V responds F5 and has 3rd row template.
+
+What if H plays D7?  You may want to try to work out a connecting strategy
+for V that stays within the confines of this partial board.
+
+The key response by V (to a D7 move by H) is E5.  At first, this appears
+to be moving directly into the defense, but V is now threatening to
+connect from the second row out at both F6 and C6, and H can't stop
+both of them.
+
+There are several other 4 templates, but this one is the most compact
+and symmetrical.</font></pre>
+    <pre><font face="Arial" size="2">5) Advanced strategy:  Forced moves, ladders, etc.
+
+We discussed earlier how a 2-bridge is a fundamental connection concept
+in Hex.  As we saw, if a player moves in one of the two link hexes, the
+other player moves to the other link hex to maintain the connection.
+Interetingly enough, however, there are cases where moving into your
+opponent's 2-bridge can be a good move - because the hex is valuable
+to you later.  Here's a rather contrived example:  (V to move and win)
+</font><font face="Courier" size="1">
+                    A B C D E F G H I
+                 1   . . . . . . . . .
+                  2   . . . . . . . . .
+                   3   . . . . . . . . .
+                    4   . . . . V . . . .
+                     5   . . . V . V . . .
+                      6   . . . . . . . . .
+                       7   . . . H . H . . .
+                        8   . H . . . . . . .
+                         9   . . . . . . . . .</font></pre>
+    <pre><font face="Arial" size="2">From our study of edge connection techniques, we know that the hexes  
+D7 and B8 are effectively connected to the left, and F7 is connected
+to the right.  So, as V, we better jump in between these two links and
+play E7, right?  Wrong!  E7 is easily defensed by D9.  The correct move
+by V (one of 'em, anyway, there's at least 2 others) is C8.  A move
+to C8 pretty much forces a response of C7 by H, and now V plays E7.
+
+Under this scenario, H's defense of D9 won't work at all, V just moves
+to D8 to secure the connection.  The idea is V made a move that forced
+a response by H (If H responds to C8 with E7, V wins with C7), and
+the hex C8 turns out to be a valuable one later on.  Moves such as this
+are termed forcing moves, and understanding them is important.
+     
+Another important concept in hex is the ladder.  Ladders occurs when
+both players place their pieces along one row or column.  They're
+usually forced by one of the two players, and they usually occur near
+an edge.  Here's an example, H to play:
+</font><font face="Courier" size="1">
+                    A B C D E F G H I
+                 1   . . . . . . . . .
+                  2   . . . . . . . . .
+                   3   . . . V . . . . .
+                    4   . . . . . . . . .
+                     5   . . . . . . . . .
+                      6   . . V . . . V . V
+                       7   . . . H . . H . .
+                        8   . H . . H . . . V
+                         9   . . . . . . . . .</font></pre>
+    <pre><font face="Arial" size="2">Note that H is connected from the left almost all the way across, but
+was one hex shy of having a valid 3-template on the right side with
+hex G7, prior to V moving to I6.  H could force a ladder here with a 
+sequence like (H6-I5-H5-I4-H4-I3-H3-I2-H2-I1) - but there would be no 
+point in it.  Worse, after a continuation of (I7-H7), H loses the game.
+But, suppose the situation was ever so slightly different:  suppose H 
+has an additional piece at H2, so the board looks like this: 
+  </font><font face="Courier" size="1">   
+                    A B C D E F G H I
+                 1   . . . . . . . . .
+                  2   . . . . . . . H .
+                   3   . . . V . . . . .
+                    4   . . . . . . . . .
+                     5   . . . . . . . . .
+                      6   . . V . . . V . V
+                       7   . . . H . . H . .
+                        8   . H . . H . . . V
+                         9   . . . . . . . . .</font></pre>
+    <pre><font face="Arial" size="2">Now H can play the same ladder sequence as before - but this time,
+H 'ladders down' to the piece at H2 to win the game.
+ 
+
+I'll close this section with some strategic generalities about hex:
+
+     1) Always look for useful forcing moves.
+
+     2) When trying to connect to an edge, it is usually better to get an
+        unassailable link to the edge first, then try to connect to the link.
+
+     3) Play defense first, offense second - even when ahead.
+
+     4) Remember the potential of ladders, and learn to see them as a single
+        move.
+
+     5) If you move first, you will win with perfect play.  Another way to
+        look at this is:  Unless you make a mistake, you have a winning line
+        (as the first player).  Find it.  Often the knowledge that you 'should'
+        have a win helps you find it.
+
+     6) Know the fundamentals of opening and edge connection.</font></pre>
+    <pre><font face="Arial" size="2">6) The opening
+  
+If you're the first player, the opening move is easy:  open in the center
+hex.  The second person has a few semi reasonable choices, marked with 
+small letters in the diagram below:
+     </font><font face="Courier" size="1">
+                  A B C D E F G H I J K
+               1   . . . . . . . . . . .
+                2   . . . . . . h . . . .
+                 3   . . . . . . f g . . .
+                  4   . . . . . d c e . . .
+                   5   . . . . . a b . . . .
+                    6   . . . . . V . . . . .
+                     7   . . . . . . . . . . .
+                      8   . . . . . . . . . . .
+                       9   . . . . . . . . . . .
+                        10  . . . . . . . . . . .
+                         11  . . . . . . . . . . .</font><font face="Arial" size="2">
+
+  a:  Likely to get a response of H4 by V.  If H then tries G5, V replies
+      H5 - and H is being locked out of the right edge.
+  b:  Weak.  V plays F5 or E5, and is one row closer to home.
+  c:  Now V responds with E5
+  d:  Could be good, provided V can't connect with G4.  I've never tried to
+      work this out.  I3 also looks to be a decent response for V, and both
+      plays are strong defensive moves as well.
+  e:  Like c, only weaker
+  f:  The 'classic' defensive move.  Recall that moving in this position is
+      the key to the best defense from 4 rows out, it's also typically the
+      best position from which to defend on a wide open board.
+  g:  Weak, leaves the left side of the board too wide open.
+  h:  Seems to be a good defensive play, but I've never used it or seen it.
+      Less offensive potential than f.
+  
+So, if both players move typically, the opening will be 1. F6 G3, or some 
+rotated version of this.  After this, it's hard to say.  D5 is tempting, it 
+threatens to connect to F6, and is in the 'classic' defensive position
+with respect to G3.  D4 looks OK also - it establishes a edge link at the
+cost of weaker defense on G3.  H3 and I3 have possibilities as well, they
+both establish a link and play defense on the weaker side of G3.  I tend
+to lean toward D4 and I3; one of my playing partners (who is a stronger
+player than me) seems to prefer D5.
+  
+
+Opening variations:  The advantage of the first move is quite strong, and
+sometimes you want to neutralize this advantage.  The following are some
+ways in which this can happen:
+
+  1)  The first player cannot open on the main diagonal.  I've only played this
+      version twice as the opener, one time I opened as close to the center
+      hex as possible, and another time I opened at F4 (on a 11x11).  The
+      first player still has the advantage.
+  2)  The often-discussed 3 move equilization:  One player constructs a
+      position with two moves by V and one move by H, and the second player
+      chooses who plays which side.  If the opening position is carefully
+      constructed, the game is quite playable.
+  3)  Even simpler:  one move equilization.  It has been proved that opening in
+      the acute corner is a losing move for V, so perhaps placing a V near
+      an acute corner, then letting the other player choose sides would be
+      workable in Hex.  I've tried this once, and it seemed OK.</font></pre>
+    <pre><font face="Courier" size="2">7) Sample Game (11x11 board)
+
+The following is an annotated transcript of a hex game.  Follow along 
+with this on a board, and you could learn all kinds of stuff.  The 
+players are H and V, V moves first.  H is a bit weak in the opening,
+but the mid game is wide open after a questionable move by V.  V ends
+up preserving the win by carefully maintaining the winning line
+throughout some tricky positions. 
+
+   Moves     Comments
+
+   1. F6     The center hex, the strongest opening move for V.
+         F5  H chooses a weaker line of defense, G3 is usual. 
+   2. H4     V presses the attack on the north edge.
+         I1  H plays the &quot;classic&quot; defensive move.  Note that G5 may look
+             tempting here, but H is in trouble after H5.
+   3. E4     V shifts focus to the right side, threatening, but not estab-
+             lishing, a link to the north.
+         E3  H's piece at I1 allows this defense, but F1 might have been
+             better.
+   4. G2     H can stop V's connection to E4 or H4, but not both!
+         G3  
+   5. I3     V is now connected from the north.  J2 or H2 both get the link,
+             and H can't stop both.
+         E9  H shifts sides and tries to play defense on the south.
+   6. H7     Nice, aggressive, offensive and defensive move.
+         G10 H's game is all defense at this point.
+   7. I9     V connects to the south, choosing to fight for the link in the
+             middle rather than along the edge.
+         J2  H's first sign of life on offense.  H threatens H2 or I2, which
+             links H from the right out to F5...
+   8. H2     But, V shuts the door on that!
+         H6  This piece is linked to the right, even though it's not the
+             usual 4th row template, thanks to the H piece at H2,
+   9. J5     V tries to block,
+         I4  And H saves the link.
+  10. G7?    Not a terrible move, but D9 was probably better.  V links up in the
+             center with this move.
+         G6! If V responds with a knee-jerk F7 to save the link, H looks
+             pretty good after G5.
+  11. D6!    A nice reply to H's strong move.  V de-fuses F5, and extends from
+             E4, which could end up being connected to the north.
+         G5  H makes the link anyway.  Perhaps H would have been better off
+             moving on the south side here.
+  12. F3     V keeps the sure thing to the north.
+         F7  H is now connected from the right out to F7/E9.
+  13. C9     Once again, V gets a link and plans to fight for connection in
+             the middle.
+         D5! A very sneaky threat.  If V plays a knee-jerk E5, H plays D9,
+             and forces V to choose which side of C9 to play defense on.
+             If north, H attacks south at B11, with some north ladder help
+             at D5, and east ladder help at G10.  If south, C8 wins for H.
+  14. C6!    But V sees right through all that!  This move strengthens ties
+             to C9, and allows V to stop H even if H makes the E5 link.
+         G1  H tries to throw some doubt in V's ability to stop H from 
+             connecting from D4 to the left.
+  15. F2 F1  V forces two ladder steps, which restores ability to stop
+  16. E2 E1  H after H's threat of E5.
+  17. H1     Now this is safe for V.
+         C8  H's last gasp at a win.  Inexact play by V could lead to a
+             ladder east then north to H's link to the east edge.
+  18. E7     The only win-preserving move in the area.
+         D8  Forced.
+  19. E8     Threatens to connect at D9 or F8; H has run out of tricks.
+             H resigns.</font></pre>
+    <p><font face="Arial" size="2">&nbsp;</font></p>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h1>Rules</h1>
+<h2>Set-up</h2>
+<p>Each player has 3 timers, labelled ABC and XYZ for no particularly good reason, and 32 discs.</p>
+<p>
+<pre>
+You are playing Tamsk
+Next move: 20 seconds
+                     D7                       Player 1 (ABC)
+                    ____                      32 rings remaining
+               C6  /    \  E6                 
+              ____/   1  \____                
+         B5  /    \ C--- /    \  F5           
+        ____/   1  \____/   1  \____          
+   A4  /    \      /    \      /    \  G4     
+  ____/   1  \____/   2  \____/   1  \____    
+ /    \      /    \      /    \      /    \   
+/   1  \____/   2  \____/   2  \____/   1  \  
+\ Z--- /    \      /    \      /    \ Y--- /  
+ \____/   2  \____/   3  \____/   2  \____/   
+ /    \      /    \      /    \      /    \   
+/   1  \____/   3  \____/   3  \____/   1  \  
+\      /    \      /    \      /    \      /  
+ \____/   2  \____/   4  \____/   2  \____/   
+ /    \      /    \      /    \      /    \   
+/   1  \____/   3  \____/   3  \____/   1  \  
+\      /    \      /    \      /    \      /  
+ \____/   2  \____/   3  \____/   2  \____/   
+ /    \      /    \      /    \      /    \   
+/   1  \____/   2  \____/   2  \____/   1  \  
+\ A--- /    \      /    \      /    \ B--- /  
+ \____/   1  \____/   2  \____/   1  \____/   
+      \      /    \      /    \      /        
+   A1  \____/   1  \____/   1  \____/  G1     
+            \      /    \      /              
+         B1  \____/   1  \____/  F1           
+                  \ X--- /                    
+               C1  \____/  E1                 
+                                              Player 2 (XYZ)
+                     D1                       32 rings remaining
+
+</pre>
+</p>
+ 
+<h2>Objective</h2>
+<p>The winner is the player who gets rid of the most discs.</p>
+ 
+<h2>Moving</h2>
+<p>Each turn, you do the following:
+<ul>
+  <li>move one of your timers to an adjacent space</li>
+  <li>flip the timer over</li>
+  <li>drop a ring over the new position</li>
+</ul>
+</p>
+
+<p>Each space can contain a certain number of rings (the numbers on the
+board show the spare capacity); once a space is full, you can't move
+there any more.</p>
+
+<p>On your first three turns, you must move each of your timers once; so
+after three turns, the sand is running in each timer.
+After that point, if any timer runs out of sand then it is dead: it cannot move again, and
+permanently blocks the space it is in.</p>
+
+<h2>The 15-second timer</h2>
+<p>In addition to the pieces, there is a 15-second timer to prevent your opponent from
+sitting and waiting until you run out of sand in all your timers.  You start the timer 
+in the opponent's turn, and he must move before it runs out of sand. </p>
+
+<p><b>Confusion warning: </b>
+You can't turn the 15-second timer over until it is empty, so if you move faster than your
+maximum allotted time, you give extra time to your opponent, hence each
+move must be made in between 15 and 30 seconds, depending on how quickly
+your opponent moves.  A few examples:
+<ul>
+  <li>You have 15 seconds to make your move; you move in 10 seconds.  
+There are 5 seconds remaining before the sand runs out so you can start the timer
+in your opponent's turn.  Your opponent gets 5 + 15 = 20 seconds to make his move.</li>
+  <li>You have 20 seconds to make your move; you move in 1 second.  We assume that your 
+opponent had just started the timer at the end of your turn; he gets 15s + 15s = 30 seconds.</li>
+  <li>You have 15 seconds to make your move; you move in 15 seconds.  
+Your opponent gets 15 seconds too.</li>
+</ul>
+</p>
+
+<h1>Notation</h1>
+<p>Each board location is denoted by a column letter (a-g), and height (1-7).  A move is in the form:</p>
+<p align="CENTER">
+        [start location]-[end location]/[time spent per move]
+</p>
+<p align="CENTER">
+e.g. <b><i>a1-a2/13</i></b>
+</p>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

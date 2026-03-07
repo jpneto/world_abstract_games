@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+    <h3>Rules</h3>
+  </div>
+  <div>Copyright (c) May 2007 by Steven W. Meyers.</div>
+  <br>
+  <div></div>
+  <div>Forms can be played on any size square or rectangular grid which has an even number of rows, an even number of columns, or both. Initially, one entire side of the board is filled with black stones and the opposite side with an equal number of white stones, all forming one interconnected group, as shown in Figure 1. Each player takes ownership of one entire set of like-colored, on-board stones. Draws and ties cannot occur in Forms. Steven W. Meyers designed forms in May, 2007.<br>
+  </div>
+<div>
+    <pre>O O O O O O
+O O O O O O
+O O O O O O
+# # # # # #
+# # # # # #
+# # # # # #</pre>
+  </div>
+  <div>Figure 1 - Initial Setup</div>
+  <div># = Black</div>
+  <div>O = White</div>
+  <br>
+  <div>
+    <h3>Terminology</h3>
+  </div>
+  <div>A "connection" here is a horizontal or vertical adjacency between two stones. A "group" here is either a singleton (a single stone not connected to any other stones) or a set of two or more stones of either or both colors, each stone in the group being connected to at least one other stone in the group. A group includes all of the stones which are connected to it, and so is never a subset of a larger group.<br>
+    <br>
+  </div>
+  <div>
+    <h3>Moves</h3>
+  </div>
+  <div>Players take turns making moves, one move per turn. A move consists of three parts. First you select one of your stones. Then you use said selected stone to capture by replacement any enemy stone. Finally you remove all stones from the board which are not part of the group which now includes said selected stone. Figures 2a through 2c show one complete move for Black. Each player will always have a move available and must make one on his turn.<br>
+  </div>
+  <div>
+    <pre>O # O O O O
+. . # . O O
+O O . # . O
+# # # + O #
+# . . O . .
+. O # # # #</pre>
+  </div>
+  <div>Figure 2a</div>
+  <div># = Black</div>
+  <div>O = White</div>
+  <div>+ = Black's selected stone.<br>
+  </div>
+  <div>
+    <pre>O # O O O +
+. . # . O O
+O O . # . O
+# # # . O #
+# . . O . .
+. O # # # #</pre>
+  </div>
+  <div>Figure 2b</div>
+  <div># = Black</div>
+  <div>O = White</div>
+  <div>+ = Black captures white stone.</div>
+  <div>
+    <pre>O # O O O +
+. . # . O O
+. . . . . O
+. . . . O #
+. . . . . .
+. . . . . .<br></pre>
+  </div>
+  <div>Figure 2c</div>
+  <div># = Black</div>
+  <div>O = White</div>
+  <div>Black removes all stones not part of selected stone's group.</div>
+  <br>
+  <div>
+    <h3>Object of the Game</h3>
+  </div>
+  <div>When all of your stones have been removed from the board, you win.</div>
+  <br> 
+  <div>
+    <h3>Syntax</h3>
+    <p>O moves first. The move syntax is:</p>
+  </div>
+    <div>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;<strong>A1-B2&nbsp;</strong> &nbsp;&nbsp;&nbsp;&nbsp;Move the piece at A1 to B2.<br>
+    </p>
+    <h3>History</h3>
+  </div>
+  <div>Forms was invented by Steven Meyers in 2007.</div>
+  <br>
+  <div>Forms is a game system comprising many variants, some of which involve non-capturing moves as well as capturing moves. The variant implemented here has the simplest rules of any variant thus far.</div>
+  <br>
+  <div>Implementation  by Cameron Browne, July 2007. Help file by Steven Meyers.</div>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

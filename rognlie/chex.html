@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+              
+<h3><font face="Arial" size="2">Rules of Chex</font></a></h3>
+    <p><font face="Arial" size="2">Here are the basic rules for Chex (Copyright (c) 1994 David
+    Smith) a variant of <a href="chess.html">Chess</a> </font></p>
+    <h3><font face="Arial" size="2">Object of the Game</font></h3>
+    <p><font face="Arial" size="2">To capture your opponent's king. </font></p>
+    <p><font face="Arial" size="2">Unlike standard Chess, Chex is played on a dynamic board
+    which grows and shrinks to enclosed the pieces currently in play. The board is not limited
+    to 8x8. It may grow to any width and/or height. </font></p>
+    <p><font face="Arial" size="2">The players' pieces do not start on the board. Rather they
+    are off the board, and &quot;drawn&quot; randomly to be added to play. </font></p>
+    <h3><font face="Arial" size="2">Movement Rules</font></h3>
+    <p><font face="Arial" size="2">White moves first. On your initial turn, you draw a piece
+    and put it into play at position, A1. A border row of 1 tile is then added to the board,
+    so the piece will appear to be at B2. Black then draws a piece and puts it into play at
+    some position adjacent to the white piece. </font></p>
+    <p><font face="Arial" size="2">Thereafter, a turn consists of either: </font><ol>
+      <li><font face="Arial" size="2">Drawing a piece and adding it to the board<br>
+        or </font></li>
+      <li><font face="Arial" size="2">Making a &quot;normal&quot; chess move (see <a href="chess.html#rules">chess help page</a>) subject to the following restriction: </font><p><font face="Arial" size="2">When the movement or capture is complete, any remaining pieces must
+        remain connected (directly or indirectly) to all other pieces. In other words, you may not
+        &quot;break the board&quot;. </font></p>
+      </li>
+    </ol>
+    <p><font face="Arial" size="2">Example: </font></p>
+    <pre><font face="Courier" size="1">           a   b   c   d   e
+        +---+---+---+---+---+     Black
+      4 |:::|   |:::|   |:::|  4
+        +---+---+---+---+---+
+      3 |   |:N:| B |:::|   |  3
+        +---+---+---+---+---+
+      2 |:::|*P*|:::|*P*|:::|  2
+        +---+---+---+---+---+
+      1 |   |:::|   |:::|   |  1
+        +---+---+---+---+---+     White
+          a   b   c   d   e</font></pre>
+    <p><font face="Arial" size="2">In this example, white's bishop can not move. He is
+    currently, &quot;tagged&quot; by the black pawns. If he moves, he would leave a
+    &quot;break&quot; in the board. White's kNight is free to move to D4,D2,C1 or A1.
+    Similarly, black's pawns are also unable to move. If it were black's turn, he would be
+    forced to draw a piece. </font></p>
+    <p><font face="Arial" size="2">When a player has drawn and placed in play all 16 own
+    pieces, the game continues with that player being reduced to moving his or her pieces only
+    until a result is achieved. </font></p>
+    <p><font face="Arial" size="2">White pawns move &quot;north&quot;. Black pawns move
+    &quot;south&quot;. </font></p>
+    <p><font face="Arial" size="2">There is no pawn promotion, en passant capture or castling
+    in this variant of chess. </font></p>
+    <h3><font face="Arial" size="2">Victory Conditions</font></h3>
+    <p><font face="Arial" size="2">The game is over when one player's king has been captured.
+    There is currently no check/checkmate detection in this chess variant due to the
+    complexity of the &quot;breaking the board&quot; condition. </font></p>
+    <p><font face="Arial" size="2">The game is a stalemate if a player draws their King and is
+    unable to put it into play &quot;safely&quot; (such that the next player would immediately
+    capture it. Again, this is not currently detected by the game engine. If you draw your
+    King, and can not put it into play, simple propose a &quot;draw&quot;. Your opponent is
+    honor bound to accept it. </font></p>
+    <p><font face="Arial" size="2">The game is also a stalemate if you have no pieces
+    remaining to draw, and are unable to make a legal move (that is, without &quot;breaking
+    the board&quot;). Again, if this happens, propose a draw for your opponent to accept. </font></p>
+    <p><font face="Arial" size="2">&nbsp;</font></td>
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

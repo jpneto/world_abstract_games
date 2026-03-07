@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h3><font face="Arial" size="2">Introduction</font></h3>
+    <p><font face="Arial" size="2">Welcome to the network Twixt server. On a 24x24 board,
+    players take turns placing pegs of their color on the board. Any time a peg is placed a
+    &quot;knight's move&quot; from another peg of the same color, a strut may be placed,
+    connecting them. A strut can not cross over (through) another strut. The object is to
+    connect your (opposite) sides of the board while preventing your opponent from connecting
+    his/her pair of sides. </font><dl>
+      <dt><font face="Arial" size="2"><a name="challenge">twixt challenge <b>red-userid</b> <b>black-userid</b>
+        [ -size=<b>#size</b> ] [ -handicap=<b>#handicap</b> ]</a> </font></dt>
+      <dd><font face="Arial" size="2">Start a new game. The Red player starts and plays
+        vertically. Default board size is 24x24. If a positive handicap is specified, the board's
+        width is reduced by the specified number of columns, therefore making it easier for Black
+        to win (in theory). A positive handicap of only 1 row might just balance out Red's first
+        move advantage. If a negative handicap is given, the board's height is reduced by that
+        many rows, making it easier for Red to win. </font></dd>
+      <dt><font face="Arial" size="2">&nbsp;</font></dt>
+      <dt><a name="move"><font face="Arial" size="2">twixt move <b>board</b> <b>userid</b> <b>password</b>
+        <b>move</b>[#<b>moveno</b>] </font></a></dt>
+      <dd><font face="Arial" size="2">Make a move on the specified board (if it is your turn). </font><p><font face="Arial" size="2">Usually, a move is of the form letter a-x or A-X number 1-24, such
+        as j12 or K5, telling where to place a peg. Any links that this peg can make, without
+        removing other links, will automatically be made. </font></p>
+        <p><font face="Arial" size="2">Each time a move is made, both players receive the updated
+        move list and board position. The size of the display you receive is set by using the
+        &quot;small&quot;, &quot;medium&quot;, &quot;big&quot;, or &quot;large&quot; command. (See
+        above.) If you have not sent one of these commands, you will receive the medium display. </font></p>
+        <p><font face="Arial" size="2">UNLINKING AND/OR MANUALLY LINKING </font></p>
+        <p><font face="Arial" size="2">If on your move you wish to remove some of your links,
+        and/or control which links get placed on the board, here's the syntax to follow. Note that
+        the [] symbols mean &quot;what is enclosed is optional.&quot; </font></p>
+        <p><font face="Arial" size="2">***NOTE! There should be NO SPACES ANYWHERE in your move. </font></p>
+        <p><font face="Arial" size="2">Each move should conform to the following syntax: </font></p>
+        <p><font face="Arial" size="2">coordinates [ - unlink list ] [ + link list ] </font></p>
+        <p><font face="Arial" size="2">where coordinates = letter a-x or A-X number 1-24 </font></p>
+        <p><font face="Arial" size="2">and both types of list are of the form: </font></p>
+        <p><font face="Arial" size="2">coordinates / coordinates [ / coordinates ... ] [ , list ] </font></p>
+        <p><font face="Arial" size="2">Each group of coordinates indicates a &quot;chain&quot; of
+        pegs to link or unlink. Commas are used as delimiters between each chain. </font></p>
+        <p><font face="Arial" size="2">Here's an example of a move using the unlink/link feature. </font></p>
+        <pre><font face="Courier" size="1">Before move:
+          H  I  J  K  L  M  N  O  P
+       10 .  .  .  O_ .  .  #_ .  .     (Only part of the board
+                     ---_  /  ---_       is shown here.)
+       11 #  .  . _#_ #  O |.  #  #
+              _---   ---_ /   /
+       12 .  #  . _O_ #_ #  # |.  O
+              _---   ---_--_ /   /          # to move.
+       13 #  O  .  .  .  O_ #  . |.
+                           ---_ /
+       14 .  .  .  .  .  .  .  O  .
+</font></pre>
+        <p><font face="Arial" size="2"># makes the move:
+        j12-i12/k11/m12/n10,o11/n13+h11/j12/l11/n12/p11 </font></p>
+        <pre><font face="Courier" size="1">After move:</font></pre>
+        <pre><font face="Courier" size="1">          H  I  J  K  L  M  N  O  P
+       10 .  .  .  O_ .  .  #_ .  .
+                     ---_     ---_
+       11 #_ .  .  # _#_ O  .  # _#
+            ---_ _---   ---_ _---
+       12 .  #  # _O_ #_ #  #  .  O
+              _---   ---_--_     /          O to move.
+       13 #  O  .  .  .  O_ #  . |.
+                           ---_ /
+       14 .  .  .  .  .  .  .  O  .
+</font></pre>
+        <p><font face="Arial" size="2">If you provide an unlink list with your move but no link
+        list, the server will first do the unlinks, and then will automatically link all possible
+        links to the peg you just played. The + symbol has the effect of disabling this
+        autolinking feature. Note that in the above example, the link h13/j12 was not made. If for
+        some reason you wish to make no links at all, even though you could link to the peg just
+        played, use the + with nothing after it. </font></p>
+        <p><font face="Arial" size="2">If you should make a mistake in your move that the server
+        recognizes, such as coordinates off the board, impossible to link, impossible to unlink,
+        etc. then nothing will happen on the board. The server will send back a (hopefully
+        informative) error message, and it will still be your move. </font></p>
+        <p><font face="Arial" size="2">If your move completes an uninterrupted chain connecting
+        your border rows, the server will announce that you have won the game. </font></p>
+      </dd>
+      <dt><font face="Arial" size="2"><a name="swap">twixt move <b>board</b> <b>userid</b> <b>password</b>
+        swap <br>
+        or<br>
+        twixt swap <b>board</b> <b>userid</b> <b>password</b></a> </font></dt>
+      <dd><font face="Arial" size="2">Swap sides in the game. This ONLY works on the second
+        player's (Black's) first move in a non-handicapped game. If you use it, then you will be
+        Red, the peg your opponent just placed will be your peg, and it will be your opponent's
+        move. </font><p><font face="Arial" size="2">This option is included in an attempt to
+        reduce Red's natural first-move advantage. The idea is for Red to make a first move which
+        is not ideal, producing a position with even chances for both sides. Both players should
+        agree to have this option available BEFORE the game begins, of course! </font></p>
+        <p><font face="Arial" size="2">When sides are swapped, the updated move list (with the
+        player's names switched around) and board position will be sent to both players. </font></p>
+      </dd>
+    </dl>
+    <a name="rules"><h3><font face="Arial" size="2">TwixT Rules</a> </font></h3>
+    <p><font face="Arial" size="2">Twixt is a board game for 2 players, invented by Alex
+    Randolph. It was once marketed in the U.S. by 3M and then Avalon Hill, but now the only
+    distributors of new sets are (I believe) Klee and Schmidt in Europe. You may be able to
+    buy a used set from some mail-order distributors, or if you're lucky, find one in a
+    well-stocked game store. The newsgroup rec.games.board.marketplace may occasionally hold
+    an auction for a used set. Also, <a href="https://web.archive.org/web/20241205151606/http://www.ebay.com/">http://www.ebay.com</a>
+    frequently holds auctions for used sets. Avalon Hill will be selling new sets again in
+    1999. If you feel ambitious, you could do like I did, and make your own set. Email me at <a href="https://web.archive.org/web/20241205151606/mailto:chmeee@hotmail.com">chmeee@hotmail.com</a> if you would like more details.
+    Anyway, here are the rules to the game, as well as some general comments and a sample game
+    on a small board. </font></p>
+    <p><font face="Arial" size="2">The board is a 24x24 square grid of holes, minus the corner
+    holes. The holes along the edges are referred to as border rows. The &quot;top&quot; and
+    &quot;bottom&quot; border rows are the Red border rows; the &quot;left&quot; and
+    &quot;right&quot; border rows are the Black border rows. (European sets may use different
+    colors.) </font></p>
+    <p><font face="Arial" size="2">Each player has a collection of pegs and links of his/her
+    color. 50 of each (a total of 200 pieces) is an ample supply. </font></p>
+    <p><font face="Arial" size="2">Red moves first, and tries to &quot;build a bridge&quot;
+    connecting top &amp; bottom. Black tries to build a bridge connecting left and right.
+    Since each link is an un-crossable barrier to either side. It is impossible for both sides
+    to have a completed bridge. At the start, the board is empty. A move consists of two
+    parts: </font><ol>
+      <li><font face="Arial" size="2">Place one of your color pegs in any empty hole EXCEPT in
+        your opponent's border rows. (This is why there are no corner holes.) </font></li>
+      <li><font face="Arial" size="2">Link any pair or pairs of your pegs that you wish to link. A
+        link may be played ONLY if your two pegs are at opposite corners of a 6-holed rectangle
+        (like a knight's move in chess) and there is no other link blocking your way. Note that
+        your own links will block you as well. </font></li>
+    </ol>
+    <p><font face="Arial" size="2">You ARE allowed to remove as many of your OWN links as you
+    wish on your move, prior to placing any. Usually, there is no need to, but you sometimes
+    need the elbow room. (See example B below.) You might conceivably also need to remove some
+    links because you're running out of them. You are also allowed to remove as many of your
+    own pegs as you wish on your move. With at least 40 pegs and 40 links for each side,
+    however, running out of either is extremely unlikely. </font></p>
+    <p><font face="Arial" size="2">(See the <a href="#move">twixt special commands</a> for an
+    explanation of move syntax on the server. The server does support link removal, and
+    controlling how you make your links if any. Peg removal is not supported; electronically
+    generated pegs are not about to run out, and there is never any advantage in removing
+    them.) </font></p>
+    <p><font face="Arial" size="2">After Red makes the very first move in an EVEN game, Black
+    has the option of swapping sides if desired. The Red peg would remain on the board, and
+    play continues from this position, with Black making the next move. This '<a href="#swap">swap</a>'
+    option is included to reduce the natural advantage of the first move, making the game more
+    evenly balanced. </font></p>
+    <p><font face="Arial" size="2">THE OBJECT is to build an UNINTERRUPTED chain of linked
+    pegs connecting a peg in one of your border rows with a peg in your other border row. If
+    neither side can complete such a chain, the game is a draw. </font></p>
+    <p><font face="Arial" size="2">Draws can occur when one player has an impenetrable barrier
+    to the other, but this barrier is not an uninterrupted chain of linked pegs. For example: </font></p>
+    <pre><font face="Courier" size="1">
+Example A
+
+   E  F  G  H  I  J  K  L
+
+ 6 .  .  #_ .  O  #_ .  .         Only part of the board is shown here.
+          \---_ \  \---_
+ 7 .  .  .| .  #| .| .  #         O's border rows are 1 and 24.
+           \     \  \  /
+ 8 .  .  .  #  .  O  # |.         O's I6-J8-K10 chain is connected to the
+             \     \  /           top, and J9-K11-J13 is connected to the
+ 9 .  .  .  .| .  O| #  .         bottom. #'s pegs and links prevent
+              \    \\ \           O from connecting these 2 groups.
+10 .  .  .  .  #  .| O| .
+                \   \  \          Draw.
+11 .  .  .  .  .| .  O  #
+                 \  /  /
+12 .  .  .  .  . _# |. |.
+             _---  /  /
+13 .  .  .  #  .  O  #  .
+</font></pre>
+    <pre><font face="Courier" size="1">
+Example B
+
+   E  F  G  H  I  J  K  L
+
+ 6 .  .  #_ .  O  #_ .  .
+          \---_ \  \---_
+ 7 .  .  .| .  #| .| .  #         O to move.
+           \     \  \  /
+ 8 .  .  .  #  .  O  # |.         Here O can remove the J9-K11 link, and
+             \     \  /           then play a peg at I11,
+ 9 .  .  .  .| .  O| #  .         double-linking to K10 and J13.
+              \    \\ \
+10 .  .  .  .  #  .| O| .
+                    \  \          If O could not remove his link, this
+11 .  .  .  #  .  .  O  #         would also be a draw.
+             \      /  /
+12 .  .  .  .| .  . |. |.
+              \    /  /
+13 .  .  .  .  #  O  #  .
+</font></pre>
+    <p><font face="Arial" size="2">Here's a sample &quot;game&quot; I made up on a 12x12 TwixT
+    board. For this game, the 'swap' option was NOT allowed. </font></p>
+    <pre><font face="Courier" size="1">
+                       RED
+
+        A   B   C   D   E   F   G   H   I   J   K   L
+    1       .   .   .   .   .   .   .   .   .   .
+
+    2   .   R8  .   .   .   .   .   .   .   .   .   .
+             \
+    3   .   . \ B7  .   .   .   .   .   .   .   .   .
+               \ ~~---__
+    4   .   .   R3  .   B6  .   B2  .   .   .   .   .
+B                \               \                          B
+L   5   .   .   . \ .   .   .   . \ .   .   .   .   .       L
+A                  \               \                        A
+C   6   .   .   .   R7  .   .   R1  B5  .   .   .   .       C
+K                  /      _---~/   /                        K
+    7   .   .   . / .   R4  . / . / .   .   .   .   .
+                 /_---~~     /   /
+    8   .   B3  R2  .   .   R6  B1  .   .   .   .   .
+             ~~---__         \
+    9   .   .   .   B4  .   . \ .   .   .   .   .   .
+                               \
+   10   .   .   .   .   .   .   R5  .   .   .   .   .
+
+   11   .   .   .   .   .   .   .   .   .   .   .   .
+
+   12       .   .   .   .   .   .   .   .   .   .
+
+                       RED</font><font face="Arial" size="2">
+
+   RED  BLACK
+1.  G6           A solid opening move. By playing midway between the Red
+               borders, Red is making Black's task as difficult as possible.
+2.       G8      On a larger board, this might be too close to the Red peg,
+               but Black's game is already desperate. Black might have tried
+               G10 instead, after which 2.E9,G4;3.E5(linking G6),D9;
+               4.C8(linking E9),E11(G10,D9);5.B10(C8),D3;6.D2 (Red wins) is
+               one possible continuation.
+3.  C8           Red gets in Black's way. Playing 4 holes away from your
+               opponent's peg like this is frequently a good blocking move
+               to make, particularly when the move is supported by a nearby
+               peg as it is here.
+4.       G4      Black follows the opening maxim: &quot;Don't start a fist fight
+               too soon.&quot; Simply playing E7 loses to 3.D6(C8),D5(E7);
+               4.C4(D6) and Red will win the race to the wall. Note that
+               in this variation, Red's G6 peg is not part of the final
+               bridge. It's perfectly okay to abandon pegs this way.
+                 Black might have played F4, after which one continuation is
+               3.E5(G6),D5(F4);4.C6(E5) and Red is unstoppable.
+5.  C4           The C4-C8 pegs form what is called a &quot;setup,&quot; which means
+               they threaten to link together in one move in two different
+               ways. C4-G6 also threatens to link in one move, but they can
+               only link via E5, so this is not a setup.
+6.       B8      Black tries to make two threats at once. Now we're in the
+               middle game (things move along quickly on a quarter board.)
+7.  E7           (linking G6,C8): the best move. Red covers both threats at
+               once. If for example Red had played D6(C4,C8) then
+               4. ... D9(B8);5.G10,E7(G8,D9);6.H8(G6,G10),F6(G4,G8) and Black
+               has a win. Or if 4.E9(C8),D7(B8);5.E7(C8,G6),F6(G4,D7).
+8.       D9      (linking B8): the only move, not that it matters.
+9.  G10          Now it's Red's turn to make two threats at once.
+10.      H6      (link G4,G8)  Black is just going through the motions.
+11. F8           (link G10,G6) E9 was also possible.
+12.      E4
+13. D6(C4,C8),C3(E4);
+14.      B2(C4)  Black resigns.
+</font></pre>
+    <p><font face="Arial" size="2">Here are some pithy aphorisms about the game: </font><ul>
+      <li><font face="Arial" size="2">Sometimes the best offense is a good defense. See Red's move
+        #2 above. By falling back to block, Red tries to have a &quot;net&quot; built by the time
+        Black gets there. </font></li>
+      <li><font face="Arial" size="2">Always keep the whole board in mind. Don't get drawn into a
+        local battle if a distant move would help your position more. Remember just because you
+        put some pegs down doesn't mean they have to be part of your final bridge. </font></li>
+      <li><font face="Arial" size="2">Develop an eye for the &quot;diagonals&quot;- for example in
+        the game above, the line B2-C4-D6... was very important for Red. In a &quot;race&quot;
+        such as in the analysis to Black's 2nd move, being at least on such a crucial diagonal
+        means you will win the race to the wall. </font></li>
+    </ul>
+    <h3><font face="Arial" size="2">HANDICAPS AND THE 'SWAP' RULE</font></h3>
+    <p><font face="Arial" size="2">Let us say that Red (the first player to move) has border
+    rows 1 and 24. As mentioned above, Black has the option of swapping sides after Red's
+    first move. This means that an initial move like L12 for Red would actually be a poor
+    choice, because, Black could simply swap and have a winning position. So, what would be a
+    good first move for Red? There is a general consensus among several strong players that
+    the set of all initial moves which lead to equal chances for both sides lies roughly on an
+    ellipse, symmetric about the center of the board, passing through E12 and L7 or L8. This
+    is offered as a rough guide only; you are encouraged to pursue your own ideas about what a
+    good initial move might be. </font></p>
+    <p><font face="Arial" size="2">If desired, you could play a game without allowing any
+    'swap.' This would be a handicap game, where one player is giving the other the handicap
+    of the first move. In such a game, the initial move L12 would certainly be a strong move.
+    In fact, if the players are of disparate playing strengths, you may wish to invoke a
+    stronger handicap. One possible way to handicap the game is to reduce the width of the
+    playing field, so that the weaker player has less distance to bridge. With an actual game
+    set, this might be indicated with a rubber band of the right size. A 6-row plus first-move
+    handicap can provide a challenging game between an experienced player and a beginner. It
+    is unclear, however, who would have the advantage if the second player (Black) were given
+    a 1-row handicap. (Perhaps this is an alternate way to balance the game.) If you wish to
+    give a &quot;small&quot; handicap of only 1 or 2 rows, let the weaker player move first as
+    well, to be sure you actually are giving a handicap. </font></p>
+    <p><font face="Arial" size="2">POSTSCRIPT: you might like to check out the Twixt puzzles
+    at: </font></p>
+    <p><font face="Arial" size="2"><a href="https://web.archive.org/web/20241205151606/http://www.gamerz.net/pbmserv/TwixT/puzzles.html">http://www.gamerz.net/~pbmserv/TwixT/puzzles.html</a>
+    </font></p>
+    
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

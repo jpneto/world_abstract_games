@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h3> Rules </h3>
+<p>The board is made up of  hexagonal cells, each with a slot on each edge indicating a direction of travel. The slots are numbered 0..5, as shown:</p>
+<pre>     +-----+              +-----+           0 = up<br>    /   .   \            /   0   \          1 = up right<br>   / .     . \          / 5     1 \         2 = down right<br>  +           +        +           +        3 = down<br>   \ .     . /          \ 4     2 /         4 = down left<br>    \   .   /            \   3   /          5 = up left<br>     +-----+              +-----+   </pre>
+<p>The board is a hexagonal arrangement of such cells (3  per side) which are initially empty. Each player  starts with 12 markers of their colour in hand.</p>
+<pre>                      +-----+                               On   In<br>                     /   .   \                       O: 12 ( 0 + 12 )<br>                    / .     . \                      X: 12 ( 0 + 12 )<br>             +-----+     c     +-----+<br>            /   .   \ .     . /   .   \<br>           / .     . \   .   / .     . \<br>    +-----+     b     +-----+     g     +-----+<br>   /   .   \ .     . /   .   \ .     . /   .   \<br>  / .     . \   .   / .     . \   .   / .     . \<br> +     a     +-----+     f     +-----+     l     +<br>  \ .     . /   .   \ .     . /   .   \ .     . /<br>   \   .   / .     . \   .   / .     . \   .   /<br>    +-----+     e     +-----+     k     +-----+          +-----+<br>   /   .   \ .     . /   .   \ .     . /   .   \        /   0   \<br>  / .     . \   .   / .     . \   .   / .     . \      / 5     1 \<br> +     d     +-----+     j     +-----+     p     +    +           +<br>  \ .     . /   .   \ .     . /   .   \ .     . /      \ 4     2 /<br>   \   .   / .     . \   .   / .     . \   .   /        \   3   /<br>    +-----+     i     +-----+     o     +-----+          +-----+<br>   /   .   \ .     . /   .   \ .     . /   .   \<br>  / .     . \   .   / .     . \   .   / .     . \<br> +     h     +-----+     n     +-----+     s     +<br>  \ .     . /   .   \ .     . /   .   \ .     . /<br>   \   .   / .     . \   .   / .     . \   .   /<br>    +-----+     m     +-----+     r     +-----+<br>           \ .     . /   .   \ .     . /<br>            \   .   / .     . \   .   /<br>             +-----+     q     +-----+<br>                    \ .     . /<br>                     \   .   /<br>                      +-----+</pre>
+<p align="left">The scores at the top right of the board indicate each player's total number of  markers, which is the sum of their   markers  on the board (On) plus their remaining markers  in hand (In). The numbered cell on the right indicates direction numbers for quick reference. </p>
+<p align="left"><strong>Play: </strong>Each turn the current player must  move either a marker or a cell.</p>
+<p align="left"><strong>Marker move:</strong> The player can add a marker of their colour to any empty slot of any cell, provided that they still have markers in hand.</p>
+<p align="left">Alternatively, the player can move a marker of their colour to any empty slot on its current cell or any other cell in  its direction of travel.</p>
+<p align="left"><strong>Cell move:</strong> The player can move a  cell  in any direction indicated by any  of its markers (of either colour) by moving all of its markers to the new cell location, as if the cell and all of its contents had been picked up and moved.  The cell  can move any number of steps provided that all intervening cells are empty. Any markers on the destination cell (of either colour) are captured and removed from the game. </p>
+<p align="left"><strong>Aim:</strong> Any player with only 1 marker remaining is removed from the game; the last remaining player wins.<br>
+</p>
+<h3> Examples</h3>
+<p>Consider the  following board position with X leading in piece count and O to move:</p>
+<pre>                      +-----+                               On   In<br>                     /   .   \                       O:  4 ( 3 + 1 )<br>                    / .     . \                      X:  6 ( 6 + 0 )<br>             +-----+     c     +-----+<br>            /   .   \ .     . /   .   \<br>           / .     . \   .   / .     . \<br>    +-----+     b     +-----+     g     +-----+<br>   /   .   \ .     . /   .   \ .     . /   .   \<br>  / .     . \   .   / .     . \   .   / .     . \<br> +     a     +-----+     f     +-----+     l     +<br>  \ .     . /   .   \ O     . /   .   \ .     . /<br>   \   X   / .     . \   .   / .     X \   .   /<br>    +-----+     e     +-----+     k     +-----+          +-----+<br>   /   .   \ .     . /   X   \ .     . /   .   \        /   0   \<br>  / .     . \   .   / .     . \   .   / .     . \      / 5     1 \<br> +     d     +-----+     j     +-----+     p     +    +           +<br>  \ .     . /   .   \ O     X /   .   \ .     . /      \ 4     2 /<br>   \   .   / .     . \   X   / .     . \   .   /        \   3   /<br>    +-----+     i     +-----+     o     +-----+          +-----+<br>   /   .   \ .     . /   .   \ .     . /   .   \<br>  / X     O \   .   / .     . \   .   / .     . \<br> +     h     +-----+     n     +-----+     s     +<br>  \ .     . /   .   \ .     . /   .   \ .     . /<br>   \   .   / .     . \   .   / .     . \   .   /<br>    +-----+     m     +-----+     r     +-----+<br>           \ .     . /   .   \ .     . /<br>            \   .   / .     . \   .   /<br>             +-----+     q     +-----+<br>                    \ .     . /<br>                     \   .   /<br>                      +-----+</pre>
+<p>O has one remaining marker in hand, but instead of adding it they decide to   save their h1 marker  which is  under threat from cells a and j. O could move the h1 marker  to any empty slot on cells h, i, j, k or l. However, a much better option is to move the entire cell h to j  as shown below:</p>
+<pre>                      +-----+                               On   In<br>                     /   .   \                       O:  3 ( 2 + 1 )<br>                    / .     . \                      X:  3 ( 3 + 0 )<br>             +-----+     c     +-----+<br>            /   .   \ .     . /   .   \<br>           / .     . \   .   / .     . \<br>    +-----+     b     +-----+     g     +-----+<br>   /   .   \ .     . /   .   \ .     . /   .   \<br>  / .     . \   .   / .     . \   .   / .     . \<br> +     a     +-----+     f     +-----+     l     +<br>  \ .     . /   .   \ O     . /   .   \ .     . /<br>   \   X   / .     . \   .   / .     X \   .   /<br>    +-----+     e     +-----+     k     +-----+          +-----+<br>   /   .   \ .     . /   .   \ .     . /   .   \        /   0   \<br>  / .     . \   .   / X     O \   .   / .     . \      / 5     1 \<br> +     d     +-----+     j     +-----+     p     +    +           +<br>  \ .     . /   .   \ .     . /   .   \ .     . /      \ 4     2 /<br>   \   .   / .     . \   .   / .     . \   .   /        \   3   /<br>    +-----+     i     +-----+     o     +-----+          +-----+<br>   /   .   \ .     . /   .   \ .     . /   .   \<br>  / .     . \   .   / .     . \   .   / .     . \<br> +     h     +-----+     n     +-----+     s     +<br>  \ .     . /   .   \ .     . /   .   \ .     . /<br>   \   .   / .     . \   .   / .     . \   .   /<br>    +-----+     m     +-----+     r     +-----+<br>           \ .     . /   .   \ .     . /<br>            \   .   / .     . \   .   /<br>             +-----+     q     +-----+<br>                    \ .     . /<br>                     \   .   /<br>                      +-----+</pre>
+<p>This move captures three X pieces and unfortunately one O piece (although this is a sacrifice worth making) and forks cells a and k. X is now in a bad position, and must lose at least one piece next turn. X might think of  moving  cell j to e in the hope that   O captures it next turn from f (in which case O would also capture one of their own pieces) but O would probably  just capture cell a from this position instead.<br>
+</p>
+<h3>Notes</h3>
+<p>Players may capture their own markers. </p>
+<p>Markers cannot be used to directly defend friendly cells, as the opponent can hijack them to  capture the pieces they were meant to  protect. Hijack is therefore a game of all-out attack. However, an indirect form of defense can be achieved by counterattacking either the attacking pieces or the pieces they attack.</p>
+<p>For instance, the formation below   shows  X  attacking an O marker (left). O can defend their marker next move by playing at either slot a1 or slot d4 (right).  A move at a1  would threaten the X marker whether it captures or not, so is probably the better option. A move at    d4  would threaten the X marker only if it captures the O on cell c;   X would probably not use   d4 to capture the O on cell c as it  would then directly threaten the original  X marker on b  next turn.</p>
+<pre>
+                                +-----+                                +-----+
+                               /   .   \                              /   .   \
+                              / .     . \                            / .     . \
+                       +-----+     d     +                    +-----+     d     +
+                      /   O   \ .     . /                    /   O   \ 4     . /
+                     / .     . \   .   /                    / .     . \   .   / 
+              +-----+     c     +-----+              +-----+     c     +-----+<br>             /   .   \ .     . /                    /   .   \ .     . /<br>            / .     X \   .   /                    / .     X \   .   /<br>     +-----+     b     +-----+              +-----+     b     +-----+   <br>    /   .   \ .     . /                    /   .   \ .     . / <br>   / .     . \   .   /                    / .     1 \   .   /  <br>  +     a     +-----+                    +     a     +-----+ 
+   \ .     . /                            \ .     . /<br>    \   .   /                              \   .   /<br>     +-----+                                +-----+
+</pre>
+<p>Use the &quot;-can_rotate&quot; option to allow cells to be optionally rotated  after being moved. This allows  powerful moves that make it hard to capture pieces, especially in the end game, so is not recommended. Use the &quot;-in_place&quot; option to allow cells to rotate without moving. This can also be useful but could lead to stalemates if  players  rotate - unrotate - rotate - unrotate etc.<br>
+</p>
+<h3>Three-Player Version</h3>
+<p>Three-player Hijack is played as per standard game, however the ability to exploit  enemy markers introduces an intriguing complication. Consider the following sequence of play:<br>
+A:  Adds piece 'a'. <br>
+    B: Adds piece 'b' to threaten 'a'.<br>
+   C: Captures 'a' with 'b'.</p>
+<p>Players can  manipulate  the next player into performing their captures for them - or at least try to, as  the next player will not necessarily make the capture that they would prefer. This  can lead to some interesting exchanges. <br>
+</p>
+
+<h3>History </h3>
+<p>Hijack rules copyright (c)  Cameron Browne,  May 2007.</p>
+<p>The name Hijack refers to the fact that players can effectively hijack cells by  exploiting   enemy markers to  help capture  other enemy markers.</p>
+<p>Players are encouraged to yell out &quot;Hijack!&quot; when exploiting  enemy markers. This is a great game for passing the time on long international flights.</p>
+<p>Implementation and Help file by Cameron Browne, May 2007.<br>
+</p>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

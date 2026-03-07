@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h2>Rules</h2></a>
+
+The <a href="https://web.archive.org/web/20241112123044/http://www.gamepuzzles.com/powerof2.htm">Power of Two board</a>
+has two display formats (large and small).  The small board gives the location
+of the pieces but does not include all possible connecting lines.  Here is the
+small display along with the default starting configuration.
+Capital X's correspond to fresh dark pieces, and capital O's to fresh light
+pieces.  Aged pieces are represented by lower case letters and empty
+intersections are represented by asterisks.
+<p><pre>
+Remaining Pieces: Light 14 Dark 14
+
+   a b c d e f g h i j k l m
+ 1 X - - - * - * - * - - - O  1
+ 2 |     * |   |   | *     |  2
+ 3 |   *   * * | * *   *   |  3
+ 4 | *   * |   *   | *   * |  4
+ 5 * - * - * - * - * - * - *  5
+ 6 |   *   | *   * |   *   |  6
+ 7 * - - * *  PoT  * * - - *  7
+ 8 |   *   | *   * |   *   |  8
+ 9 * - * - * - * - * - * - *  9
+10 | *   * |   *   | *   * | 10
+11 |   *   * * | * *   *   | 11
+12 |     * |   |   | *     | 12
+13 X - - - * - * - * - - - O 13
+   a b c d e f g h i j k l m
+</pre>
+Figure 1: Default Initial Setup.  Note that the pieces are case sensitive (as described below).
+<p>
+The large board display (the default option) shows the pieces and the lines
+connecting them.  Note that the coordinates for rows and columns have
+duplicates to ensure that the name of an intersection is the same in the small
+and large displays.  The primary purpose of the game is to place all your
+sixteen pieces, therefore the board display makes note of the number of pieces
+remaining to be placed.
+<p><pre>
+Remaining Pieces: Light 14 Dark 14
+
+     a     b c cdd   e  ff   g   hh  i   jjk k l     m
+ 1   X - - - - - - - * - - - * - - - * - - - - - - - O    1
+     |.\ - _       / |     /.|.\     | \       _ - /.|
+     | . \   - _ /       / .   . \       \ _ -   / . |
+ 2   |  .  \   /*- _ | /  .  |  .  \ | _ -*\   /  .  |    2
+ 3   |   .   *  .    * _ .       . _ *    .  *   .   |    3
+ 3   |    ./- _\ . / |  *- _ | _ -*  | \ . /_ -\.    |    3
+ 4   |   / *    -*     .   _ * _   .     *-    * \   |    4
+     | /    .  /   \ |._ -   |   - _.| /   \  .    \ |
+ 5   * - - - * - - _ * - - - * - - - * _ - - * - - - *    5
+     |     /  ._ -  .| \   /   \   / |.  - _.  \     |
+ 6   |   / _ - *   .     *       *     .   * - _ \   |    6
+     | / -      . .  | /           \ |  . .      - \ |
+ 7   * - - - - - * - *     P o T     * - * - - - - - *    7
+     | \ - _    . .  | \           / |  . .    _ - / |
+ 8   |   \   - *   .     *       *     .   * -   /   |    8
+     |     \  .  - _.| /   \   /   \ |._ -  .  /     |
+ 9   * - - - * - - - * _ - - * - - _ * - - - * - - - *    9
+     | \    .  \   / |.  - _ | _ -  .| \   /  .    / |
+10   |   \ *  _ -*     .   _ * _   .     *- _  * /   |   10
+11   |    .\-  / . \ | _*-   |   -*_ | / . \  -/.    |   11
+11   |   .   *  .  _ *   .       .   * _  .  *   .   |   11
+12   |  .  /   \*-   | \  .  |  .  / |   -*/   \  .  |   12
+     | . / _ -   \       \ .   . /       /   - _ \ . |
+     |./ -         \ |     \.|./     | /         - \.|   
+13   X - - - - - - - * - - - * - - - * - - - - - - - O   13
+     a     b c cdd   e  ff   g   hh  i   jjk k l     m
+</pre>
+Figure 2: Large Display Option (the default).  Note that the coordinates are the same in both displays.
+<p>
+Each turn has up to three phases: movement, placing pieces (depending on the
+first phase this may or not occur), and aging pieces (pieces are only aged if
+pieces were placed this turn).  In all cases only your own pieces are placed
+and only your own pieces are aged (and possibly removed).
+<p>
+a) A player moves one of his pieces any distance along a line (if none of your
+pieces has a legal move, you lose). For example, one possible first move for
+Light is m13-j7.
+<p>
+If the destination intersection of a newly moved piece contains no occupied neighbors then the turn is complete and no pieces are added or aged (as described below).
+<p>
+b) If the destination intersection of a piece you just moved is next to an
+existing piece (yours or your opponent's) you must place a new piece in such a
+way that it forms a triangle with your piece and the neighbor.  For example, if
+Light moves initially from m13-m5, he must place a piece at l4.  This move
+would be written m13-m5:l4.
+<p>
+There may be more than one possible way to form a triangle.  For example, in
+Figure 3 below, if Dark moves from a1-e1, he may place a piece at a1 (the
+intersection he just vacated) or at g1.
+<p>
+If you move to an intersection adjacent to two or more pieces, you must place a
+piece for each occupied neighbor (even if one intersection would have formed a
+triangle with more than one of them).  For example, Dark may move from a13-c11
+and place pieces at d10 and a13 (written a13-c11:d10,a13).
+<p>
+If there is not room to add the required number of pieces, the move is illegal.
+For example in Figure 3, Light cannot move from m13-k11 since there would be no
+way to form a triangle with the piece at j10.
+<p>
+<p><pre>
+     a     b c cdd   e  ff   g   hh  i   jjk k l     m
+ 1   X - - - - - - - * - - - * - - - * - - - - - - - O    1
+     |.\ - _       / |     /.|.\     | \       _ - /.|
+     | . \   - _ /       / .   . \       \ _ -   / . |
+ 2   |  .  \   /*- _ | /  .  |  .  \ | _ -*\   /  .  |    2
+ 3   |   .   *  .    O _ .       . _ *    .  *   .   |    3
+ 3   |    ./- _\ . / |  *- _ | _ -*  | \ . /_ -\.    |    3
+ 4   |   / *    -*     .   _ * _   .     *-    * \   |    4
+     | /    .  /   \ |._ -   |   - _.| /   \  .    \ |
+ 5   * - - - x - - _ * - - - * - - - * _ - - * - - - *    5
+     |     /  ._ -  .| \   /   \   / |.  - _.  \     |
+ 6   |   / _ - *   .     *       *     .   * - _ \   |    6
+     | / -      . .  | /           \ |  . .      - \ |
+ 7   * - - - - - * - *     P o T     * - * - - - - - *    7
+     | \ - _    . .  | \           / |  . .    _ - / |
+ 8   |   \   - *   .     *       *     .   * -   /   |    8
+     |     \  .  - _.| /   \   /   \ |._ -  .  /     |
+ 9   * - - - * - - - * _ - - * - - _ * - - - * - - - *    9
+     | \    .  \   / |.  - _ | _ -  .| \   /  .    / |
+10   |   \ o  _ -*     .   _ * _   .     o- _  O /   |   10
+11   |    .\-  / . \ | _*-   |   -*_ | / . \  -/.    |   11
+11   |   .   *  .  _ *   .       .   * _  .  *   .   |   11
+12   |  .  /   \O-   | \  .  |  .  / |   -O/   \  .  |   12
+     | . / _ -   \       \ .   . /       /   - _ \ . |
+     |./ -         \ |     \.|./     | /         - \.|
+13   X - - - - - - - * - - - * - - - * - - - - - - - O   13
+     a     b c cdd   e  ff   g   hh  i   jjk k l     m
+</pre>
+Figure 3: Placing pieces.
+<p>
+c) If your move causes pieces to be added, then the piece you moved and any
+pieces of yours which you moved adjacent to are aged.  A newly placed (fresh)
+piece is represented by a capital letter. A fresh piece is aged to a lower case
+(aged) piece.  If an aged piece undergoes aging a second time, it is returned
+to your supply of unplaced pieces.
+<p>
+In Figure 5 (a1-d3:b4,e5), the moved piece now at d3 would be aged to "x" and
+the piece at c5 would be removed from the board.  The newly placed pieces are
+entered as fresh pieces "X" and the opponent's piece at e3 is unaffected even
+though it played a part in determining placements.
+<p>
+Aging occurs strictly after placement, so a piece cannot be placed on an
+intersection which will be vacated by aging.  This also means that aging is not
+taken into account when determining if a move is legal (i.e., if all possible
+placements can be made).
+<p>
+The game ends if your turn ends (i.e., including aging) with all sixteen of
+your pieces on the board.  
+<p>
+Normally you may run out of pieces to place in step
+b).  In other words, it must be legal to move to the destination intersection
+but it is okay to have too few remaining markers to actually place.  However if
+you play with the "exact" option you must use your markers up by exact count.
+<p>
+<h2>Options</h2>
+
+In addition to the default starting configuration, there are two other possible configurations.  The "fast" setting starts each player with four pieces on the board (Figure 4) and the "middle" setting (Figure 5) starts with two pieces on the board for each player placed at the centers of the sides.
+<p><pre>
+Remaining Pieces: Light 12 Dark 12
+
+   a b c d e f g h i j k l m
+ 1 X - - - * - * - * - - - O  1
+ 2 |     * |   |   | *     |  2
+ 3 |   *   * * | * *   *   |  3
+ 4 | *   * |   *   | *   * |  4
+ 5 * - * - X - * - O - * - *  5
+ 6 |   *   | *   * |   *   |  6
+ 7 * - - * *  PoT  * * - - *  7
+ 8 |   *   | *   * |   *   |  8
+ 9 * - * - X - * - O - * - *  9
+10 | *   * |   *   | *   * | 10
+11 |   *   * * | * *   *   | 11
+12 |     * |   |   | *     | 12
+13 X - - - * - * - * - - - O 13
+   a b c d e f g h i j k l m
+</pre>
+   Figure 4: Fast Initial Setup
+<p><pre>
+Remaining Pieces: Light 14 Dark 14
+
+   a b c d e f g h i j k l m
+ 1 * - - - * - X - * - - - *  1
+ 2 |     * |   |   | *     |  2
+ 3 |   *   * * | * *   *   |  3
+ 4 | *   * |   *   | *   * |  4
+ 5 * - * - * - * - * - * - *  5
+ 6 |   *   | *   * |   *   |  6
+ 7 X - - * *  PoT  * * - - O  7
+ 8 |   *   | *   * |   *   |  8
+ 9 * - * - * - * - * - * - *  9
+10 | *   * |   *   | *   * | 10
+11 |   *   * * | * *   *   | 11
+12 |     * |   |   | *     | 12
+13 * - - - * - O - * - - - * 13
+   a b c d e f g h i j k l m
+</pre>
+   Figure 5: Middle Initial Setup
+
+<p>Other advanced features include "noborder" which means that the outermost lines around the board cannot be used for travel (although they still count in determining triangles) and "exact" which means that the last move of the game must exhaust all your pieces by exact count (you cannot make a move that should lead to the placement of three pieces if you only have two left).</p>
+
+<h2>Strategy</h2>
+
+Whenever possible it is most efficient to leverage ones opponent's pieces in
+placing new pieces.  If you consider a piece to have two lives, then on the
+simplest case, moving one of your pieces next to another you lose two lives due
+to aging and gain two due to placement for no net gain.  However, if you place
+more than one on a turn or use the opponent's pieces you gain ground.  Also, be
+careful that you do not allow yourself to be surrounded.
+
+<h2>References and History</h2>
+
+The Power of Two was invented by Arthur Blumberg and is distributed by Kadon
+Enterprises, Inc. (<a href="https://web.archive.org/web/20241112123044/http://www.gamepuzzles.com/">www.gamepuzzles.com</a>). This adaptation for the network server
+was coded with the permission and ecouragement of the inventor by Lyman Hurd.
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

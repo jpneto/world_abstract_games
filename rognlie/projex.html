@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+  <h3>Board Layout</h3>
+
+  <p>Projex is played on a hexagonal grid within a six-sided board. The number 
+    of cells per side alternate between n and n-1 around the board. For instance, 
+    a board of size 6 consists of 6, 5, 6, 5, 6, 5 cells along each edge, as shown 
+    below:<br>
+  </p>
+  <pre><br>           1-   . . . . .              <br>          2-   . . . . . .             <br>         3-   . . . . . . .            <br>        4-   . . . . . . . .           <br>       5-   . . . . . . . . .          <br>      6-   . . . . . . . . . .         <br>       7-   . . . . . . . . .          <br>        8-   . . . . . . . .   \       <br>         9-   . . . . . . .   \ J      <br>         10-   . . . . . .   \ I       <br>                            \ H        <br>                 \ \ \ \ \ \ G         <br>                  A B C D E F          </pre>
+  <p></p>
+  <p>Each cell is adjacent to its hexagonal neighbours. In addition, each edge 
+    cell is adjacent to the two edge cells directly across from it. This means 
+    that the game is played on a projective plane on which chains may leave the 
+    board from one side and reenter from the opposite side.</p>
+  <p>For instance, edge cell 'X' is adjacent to cells 'J' and 'K' as shown below. 
+    The figure on the right shows each cell's projection (denoted by lower case) 
+    on the far side of the board.<br>
+  </p>
+  <pre>                                           o o p q r s <br>          . . . . .                       n A B C D E s<br>         . . . . . .                     m # . . . . F t<br>        . . . . . . .                   l Z . . . . . G u<br>       . . . . . . . .                 k Y . . . . . . H v<br>      X . . . . . . . .               j X . . . . . . . I w<br>     . . . . . . . . . J             j W . . . . . . . . J x<br>      . . . . . . . . K               i V . . . . . . . K x<br>       . . . . . . . .                 h U . . . . . . L y<br>        . . . . . . .                   g T . . . . . M z<br> </pre>
+  
+ <h3>Rules</h3>
+  <p>The board is initially empty. Players take turns placing one of their pieces 
+    at an empty point. The first player to complete a global loop wins. A global 
+    loop is a cycle of pieces that crosses the board edge an odd number of times.</p>
+  <p>The following games have been won by X who has completed a global loop:<br>
+  </p>
+  <pre>          . x . . .                          . . . . x<br>         . . x . . .                        . . . . x .    <br>        . . . x . . .                      . . . . x . .       <br>       . . . . x . . .                    x . . . . x x x<br>      . . . . x . . . .                  . x . . . . . . .<br>     . . . . x . . . . .                . . x . . . . . . . <br>      . . . . x . . . .                  x x . . . . . . .<br>       . . . . x . . .                    . . . x x x x x  <br>        . . . . x . .                      . . x . . . .   <br>         . . . . x .                        . x . . . .   
+
+     One edge crossing                 Three edge crossings </pre>
+  <p> The following games have an even number of edge crossings and therefore 
+    have not been won by either player (yet):<br>
+  </p>
+  <pre>          . . . . .                          . . x . .       <br>         . . . . . .                        x . . x . .    <br>        x x x x x x x                      . x . . x x x<br>       . . . . . . . .                    . . x . . . . .<br>      . . . . . . . . .                  x . . x . . . . .<br>     . . . . . . . . . .                . x . . x . . . . . <br>      . . . . . . . . .                  . x . . x x x x x<br>       x x x x x x x x                    x . . . . . . .<br>        . . . . . . .                      . . . . x x x<br>         . . . . . .                        . . . x . .   
+
+     Two edge crossings                 Four edge crossings </pre>
+  <p>Ties are not possible. A filled board must contain a global loop, and a global 
+    loop cuts all possible opponent's global loops.</p>
+  <p>We can also describe global loops in the following way: a player has a global 
+    loop if the opponent cannot possibly connect any two opposed edge points directly 
+    across the board. For instance, it is still possible for O to connect two 
+    opposed edge points directly across the board in the &quot;Two edge crossings&quot; 
+    and &quot;Four edge crossings&quot; examples above, hence X has not yet completed 
+    a global loop in either of the these games.</p>
+  <h3>Move Syntax</h3>
+  <p>X moves first. The move syntax is: </p>
+  <p> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; projex move <b>board# userid 
+    password coord</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </p>
+  <p>Where <b>&quot;coord&quot; </b>is an empty board point in the form 'F6'. 
+    The following command swaps the opening move:</p>
+  <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;projex move <b>board# userid 
+    password </b>swap<br>
+  </p>
+  <p>The swap option can only be taken after the first three moves have been made. 
+    All cells on the projective board are of similar strength, so a single move 
+    swap is not a sufficient equaliser: </p>
+  <p><a href="https://web.archive.org/web/20251114033011/http://www.gamerz.net/pbmserv/commands.html">Other commands</a> are the 
+    same as for all pbmserv games. </p>
+  <p>
+  <p> 
+  <h3>History</h3>
+
+  <p>Projex was invented by Bill Taylor in 1994.</p>
+  <p>Bill would like to point out that a global loop leaves the rest of the board 
+    connected, whereas a local loop doesn't - it has two sides.
+  <p>Implementation and help file by <a href="https://web.archive.org/web/20251114033011/mailto:cameronb@optusnet.com.au">Cameron 
+    Browne</a>, November 2003. 
+  <p>&nbsp;</p>
+  </div>
+  
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

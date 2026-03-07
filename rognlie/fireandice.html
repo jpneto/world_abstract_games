@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+  <h3>Rules</h3>
+  <p>Each player has 25 pieces of their type. Fire (#) starts with a single # 
+    piece at the central position D4 and moves first.</p>
+  <p>Players alternate taking turns. Each turn the current player must move one 
+    of their pieces either:<br>
+    &nbsp;&nbsp;a) to another position on the same island, or<br>
+    &nbsp;&nbsp;b) to the same position on another island.</p>
+  <p>In both cases the destination point must be empty. Once the piece is moved, 
+    an opponent's piece is automatically added to the position just vacated.</p>
+  <p>A player controls an island by forming a line or ring of three of their pieces 
+    upon it. For instance, the following examples show the seven possible ways 
+    in which Fire may control an island:</p>
+  <pre>          _                  _                  _
+         / \                / \                / \
+        / # \              / # \              / - \
+       /     \            /     \            /     \       Line from corner
+      / #   - \          / -   # \          / -   - \         to corner.
+     /    -    \        /    -    \        /    -    \ 
+    / #   -   - \      / -   -   # \      / #   #   # \ 
+    \___________/      \___________/      \___________/ </pre>
+  <p></p>
+  <pre>          _                  _                  _
+         / \                / \                / \
+        / # \              / - \              / - \
+       /     \            /     \            /     \       Line from corner
+      / -   - \          / -   # \          / #   - \         to edge.
+     /    #    \        /    #    \        /    #    \ 
+    / -   #   - \      / #   -   - \      / -   -   # \ 
+    \___________/      \___________/      \___________/ </pre>
+  <pre>                             _               
+                            / \                
+                           / - \             
+                          /     \            
+                         / #   # \    &lt;--- These pieces
+                        /    -    \        form a ring.
+                       / -   #   - \     
+                       \___________/      </pre>
+  <p> Each of these islands is controlled by Fire regardless of whether the unused 
+    positions are empty or occupied by either player. It's not possible for more 
+    than one player to control an island at any time.</p>
+  <p>The game is won by the first payer to form a similar line or ring of three 
+    islands under their control. </p>
+  <h3>Sample Game</h3>
+  <p>The following example shows a game won by Ice (O) who controls three islands 
+    in a line (A, C and G). Ice also controls the central island D but this is 
+    not relevant to the win.</p>
+  <pre>     FIRE (#):  4            _           ICE (O):  5 
+                            / \ 
+                           / O \ 
+                          /     \ 
+         A               / O   O \             1 
+                        /    #    \ 
+       B   C           / O   #   O \         2   3 
+         D             \___________/           4 
+     E   F   G        .      .      .      5   6   7 
+                     .       .       .
+                   _.    . . . . .    ._ 
+                  / \  .     .     .  / \ 
+                 / # \.      .      ./ # \ 
+                /     \      _      /     \ 
+               / #   # \    / \    / O   O \ 
+              /    O    \  / - \  /    #    \ 
+             / O   #   - \/     \/ #   O   # \ 
+             \___________/ #   O \___________/ 
+             .   .      /    O    \      .   .
+            .    .     / O   -   - \     .    .
+          _.      .  . \___________/ .  .      ._ 
+         / \       .        / \        .       / \ 
+        / O \    .  .      / # \      .  .    / - \ 
+       /     \ .      .   /     \   .      . /     \ 
+      / O   - \         ./ #   # \.         / #   # \ 
+     /    -    \        /    O    \        /    #    \ 
+    / #   #   # \. . . / -   O   # \ . . ./ O   O   O \ 
+    \___________/      \___________/      \___________/ 
+</pre>
+  <h3>General Tips</h3>
+  <p>The following points summarise strategies and tactics from the official Fire 
+    and Ice rules page: <a href="https://web.archive.org/web/20250524003310/http://www.otb-games.com/fireandice/rules.html">http://www.otb-games.com/fireandice/rules.html</a></p>
+  As soon as a player controls an island they can safely move additional pieces 
+  off it, as only one player can control an island at a time. 
+  <p>Critical islands are usually those at the intersection of lines extending 
+    from the pairs of islands most strongly held by both players.</p>
+  <p> It is often prudent to concede a disputed island and concentrate your efforts 
+    elsewhere if the opponent holds the majority of positions upon it.</p>
+  <p>Each game consists of between 9 and 24 moves per player.</p>
+  <p>The triangular pattern of seven points which connect into triplets in seven 
+    ways is a mathematical construct called the Fano Plane, which is a finite 
+    projective plane of order two.</p>
+
+  <h3>History</h3>
+
+  <p>Fire and Ice rules and design by Jens-Peter Schliemann. The game is copyright 
+    Pin International and distributed by Out of the Box Publishing, who would 
+    like to point out that copying for commercial purposes is forbidden.</p>
+  <p>Further details of the game including its history, variants and additional 
+    tips on strategy may be found at Out of the Box's &quot;Fire and Ice&quot; 
+    page: <a href="https://web.archive.org/web/20250524003310/http://www.otb-games.com/fireandice/">http://www.otb-games.com/fireandice/</a></p>
+  <p> Implementation and help file by <a href="https://web.archive.org/web/20250524003310/mailto:cameronb@optusnet.com.au">Cameron 
+    Browne</a>, November 2003.
+  <p>&nbsp;</p>
+  </div>
+  
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

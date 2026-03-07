@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h2>Rules of HexEmergo</h2>
+
+(Copyright (c) Christian Freeling)
+<p>
+Note: If there's mention of "men" and "pieces", a man is single, while a piece
+consists of a number of stacked men. If the difference doesn't matter, a
+man may also be referred to as a piece, for instance 'the number of pieces
+on the board'. 
+
+<h3>Object</h3>
+
+If a player has no legal move he loses the game. This may come
+about either by being eliminated or being blocked completely.
+<p>
+This diagram shows the board, which by default is initially empty. 
+
+<pre>
+            1   2   3   4   
+
+      A - .   .   .   .   5   
+
+    B - .   .   .   .   .   6   
+
+  C - .   .   .   .   .   .   7   
+
+D - .   .   .   .   .   .   .   
+
+  E - .   .   .   .   .   .   
+
+    F - .   .   .   .   .   
+
+      G - .   .   .   .   
+
+  Ohs (Ohs) inhand: 12
+  Eks (Eks) inhand: 12
+</pre>
+
+<p>
+<ul>
+<p><li>There are two players, 'black' and 'white'. Each initially has
+twelve men 'in hand'. 
+<p><li>A piece is a column of one or more men, composed in one of the
+following ways:
+    <ul>
+    <li>All white 
+    <li>White with black prisoner(s) 
+    <li>All black 
+    <li>Black with white prisoner(s) 
+    </ul>
+
+<p><li>The top man of a column determines its owner. The top men
+together are called the cap. 
+<p><li>Players move, and must move, in turn. White moves first. A
+'move' may be: 
+    <ul>
+    <li>Entering a man. 
+    <li>Entering the shadowpiece. 
+    <li>Moving a piece. 
+    <li>Capturing one or more men. 
+    </ul>
+
+<p><li>There are two phases: the entering phase and the movement phase. 
+</ul>
+
+<h3>Capture</h3> 
+
+<ul>
+<p><li><b>Capture is obligatory and has precedence in both phases.</b> 
+<p><li>A player captures the top man of an opponent's piece on an
+adjacent square, by jumping the piece with his own piece, taking
+the top man along under it, and landing on the square beyond,
+which must exist and be vacant for the capture to take place. 
+<p><li><b>Majority capture takes precedence</b>: if the capturing piece can continue its
+course in a similar fashion in any direction except a 180o turn, it
+must do so, taking care beforehand to establish the route that
+brings the maximum number of captured men. If there are more
+than one way to meet this criterion, the player is free to choose. 
+<p><li>In a multiple capture the capturing piece may visit a square more
+than once as well as jump a piece more than once! 
+</ul>
+
+<p>
+The capture of a single man reduces the number of pieces on the board by
+one. Since there is no mechanism to increase the number of pieces, a
+game of HexEmergo is always 'spiraling upward', that is, the number of
+pieces steadily decreases while their size increases. 
+
+<h3>The Entering Stage</h3>
+
+<ul>
+<p><li>Entering is only allowed on vacant squares. If the player to move
+cannot make a capture, then <b>entering a man has precedence over
+moving a piece.</b> He may not enter more than one man, unless his
+opponent has all twelve men on the board, in which case he must
+enter his remaining men as one piece. This piece is called the
+shadowpiece. 
+</ul>
+<p>
+A player may still have several men in hand while his opponent has all
+men on the board. This is always the result of one player entering while
+the other must capture. It is not at all unusual: creating a large
+shadowpiece is a very valid strategic goal, particularly for black. 
+<p>
+White may not, on his very first move, enter on the central square (e5).
+Apart from that there's only one condition for entering a man or the
+shadowpiece alike: 
+
+<p>
+<ul>
+<p><li><b>Entering may not force an opponent into making a
+capture, unless the entering player is already being
+attacked by his opponent.</b> 
+</ul>
+<p>
+This is the key rule governing the entering phase! As long as my
+opponent does not attack any of my pieces, I may not put the piece I enter
+under attack. If he attacks one of my pieces, however, he releases me
+from the above condition. 
+
+<h3>The Movement Stage</h3>
+
+If the player to move cannot make a capture and does not have any
+men in hand, he must move a piece to an adjacent square. There are no
+restrictions except that the square must be vacant. 
+
+<h3>Alternative Rules</h3>
+
+As pointed out on <a href="https://web.archive.org/web/20250712154822/http://www.mindsports.nl/Arena/HexEmergoTutor/AboutHexEmergo.html">Mindsports Arena</a>, the game under the above rules
+contains a flaw if it comes to e-mail games, due to the fact that white, if
+he can keep the first move after the entering stage, can use trial and error
+to construct a knock-out combination beyond anything anyone could
+figure out behind the board. Therefore e-mail games may benefit from
+the initial position depicted below. 
+
+<pre>
+            1   2   3   4   
+
+      A - X   X   X   X   5   
+
+    B - X   X   X   X   X   6   
+
+  C - .   X   X   X   X   .   7   
+
+D - .   .   .   .   .   .   .   
+
+  E - .   O   O   O   O   .   
+
+    F - O   O   O   O   O   
+
+      G - O   O   O   O   
+
+Initial board with -alternate option.
+</pre>
+<p>
+There is no entering stage. White simply starts under the rules of the
+movement stage. Note that both players have thirteen men instead of the
+usual twelve.
+
+<h2>HexEmergo Links</h2>
+
+Christian Freeling's <a href="https://web.archive.org/web/20250712154822/http://www.mindsports.nl/Arena/HexEmergoTutor/">
+MindSports Arena</a> site has more information on HexEmergo,
+including complete rules, strategy hints, example games, 
+downloadable Java tutorials, and graphical online play.
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

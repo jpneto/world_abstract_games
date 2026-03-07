@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h3>Rules</h3>
+
+  <p>Two players, Cross and Parallel, take turns placing either an 'x'
+    or an 'o' at a vacant board point. Cross wins by connecting all
+    four sides with either a chain of 'x's or a chain of
+    'o's. Parallel wins by connecting either the top and bottom or
+    left and right sides with both a chain of 'x's and a chain of
+    'o's. Draws are not possible.</p>
+  <p>If the board is a rhombus, the size is odd, and Cross plays first
+    then Cross is not allowed to make his first move on the short
+    diagonal.</p>
+  <p>If the board has one even side and Cross plays first then
+    Parallel's first move is not allowed to by symmetric of the
+    opposite color to Cross' first move. Here symmetric means "rotated
+    through 180 degrees".</p>
+  <p>Jade looks like just another Hex variant until you've made a few
+    moves, work out what's really going on, and your brain has a
+    hernia.</p>
+  <h3>Example Games</h3>
+  <p>A number of completed 7x7 games are shown by way of example.<br>
+  </p>
+  <p><font face="Courier New, Courier, mono">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;. . 
+    . x . . .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;. . . . . . o<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; . . x . o o o&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    &nbsp;. . . . . o .<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; . . x o x x x&nbsp;&nbsp; &nbsp; &nbsp; 
+    . . . . o . .<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; . o x x o o . &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;. 
+    . . o . . .<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; . x o x x . . &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;. 
+    . o . . . .<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x o o o x . . &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    . o . . . . .<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; . . . . x . . 
+    &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;o . . . . . . </font></p>
+  <p><font face="Courier New, Courier, mono">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Cross wins&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Cross 
+    wins </font></p>
+  <p><font face="Courier New, Courier, mono">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;. . 
+    . . . . . &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;o . . . . . x<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; . . . . . . . &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;o 
+    . . . . x .<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; . . . . . . . &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    o . . . x . .<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; o o o o o o o&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    &nbsp;o . . x . . .<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; . . . . . . . &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;o 
+    . x . . . .<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x x x x x x x &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    o x . . . . .<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; . . . . . . . 
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; o x . . . . .</font></p>
+  <p><font face="Courier New, Courier, mono"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    &nbsp;&nbsp; &nbsp;Parallel wins &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Parallel 
+    wins</font><font face="Courier New, Courier, mono"><br>
+    </font></p>
+  <h3>Syntax</h3>
+  <pre>The move syntax is:
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;<b>F6o&nbsp;</b><i>&nbsp;</i>&nbsp;&nbsp; Place an 'o' piece at coordinate F6, which must be empty.
+&nbsp;&nbsp;&nbsp;&nbsp;<b>A4x&nbsp;</b><i>&nbsp;</i>&nbsp;&nbsp; Place an 'x' piece at coordinate A4, which must be empty.</pre>
+  <p>
+  </p><p> 
+  </p><h3>References and History</h3>
+
+  <p>Jade was invented by Mark Thompson in 2001. If he wasn't such a
+    nice guy I'd describe it as the product of a brilliant but twisted
+    mind.</p>
+  <p>The original rules had each player placing both an 'x' and an 'o'
+    each turn (presumably only one on the first move). Claude Chaunier
+    later suggested the current rule of placing only one symbol of the
+    player's choice per turn.</p> 
+  <p> At first, boards always had the
+    same number of rows and columns. Cross then has the easier task as
+    he is able to choose which colour to align with at any move. Many
+    brilliant and not so brilliant rules were suggested and tried in
+    order to fix this problem. Finally Mark Thompson (again) realized
+    that it helps Parallel if the board has more columns than rows
+    (say). The bigger the discrepancy the better for Parallel. It
+    isn't yet known which size exactly balances out Cross' advantage
+    but it does give a very natural way of getting a more even
+    game.</p>
+  <p>There exists certain symmetry strategies by which certain players
+    can win on certain sized boards. Again various rule changes were
+    suggested until Bill Taylor pointed out that the first move
+    restrictions above is the minimal restrictions needed to prevent
+    the known symmetry strategies. It makes for a good puzzle to
+    rediscover the symmetry strategies given the first move
+    restrictions!
+
+  <p> Jade rules copyright (c) 2001 Mark Thompson.
+  </p><p>Various improvements to the original rules suggested by Cameron Browne, Claude Chaunier and Bill Taylor.
+  </p><p>Implementation and help file by <a href="https://web.archive.org/web/20250121013131/mailto:cameronb@optusnet.com.au">Cameron 
+    Browne</a> and <a href="https://web.archive.org/web/20250121013131/mailto:wamelen@math.lsu.edu">Paul van Wamelen</a>, last change October 2003.</p>
+  </div>
+  
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

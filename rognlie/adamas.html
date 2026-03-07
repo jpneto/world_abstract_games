@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h3> Rules </h3>
+<p><strong>Start: </strong>The board is hexagonally tessellated hexagon with 3 cells per side. Player start with 8 pieces each stacked in opposite corners (the pieces actually form stacks - taller stacks are  just shown as  piles in the ASCII display to fit them in).</p>
+<pre>         +---------------+     <br>        /                 \   <br>       /   .     .     .   \<br>      /                     \     <br>     /                       \   <br>    /oo .     .     .     .  xx<br>   / oo                      xx\<br>  /  oo                      xx \<br> (   oo    .     .     .     xx  )<br>  \                             /<br>   \                           /<br>    \   .     .     .     .   /<br>     \                       /<br>      \                     /<br>       \   .     .     .   /<br>        \                 /<br>         +---------------+</pre>
+<p><strong>Play: </strong>Each turn the current player may either  <em>split</em> one or <em>merge</em> several of their stacks. </p>
+<p>a) <em>Split</em>: Any number of pieces can split off a stack in any number of directions, to any point(s) in direct line-of-sight.</p>
+<p>b) <em>Merge</em>: Any number of pieces from two or more stacks  can merge to a single point in direct line-of-sight.</p>
+<p>All moves must be to points in unobstructed line-of-sight along any of the six axial directions (there is no jumping of pieces). The destination points may be empty or occupied by friendly stacks, which are added to. </p>
+<p>Moving a complete stack from one point to another is just a special case of a split move. Single pieces are considered to be stacks of height 1. </p>
+<p><strong>Capture: </strong>Any enemy stack with  height  equal to the total number of differently coloured pieces  in line-of-sight (the <em>visible enemy count</em>) can be captured by replacement.  Multiple  enemy stacks may be captured per turn. </p>
+<p>The opening player cannot capture on the first move. </p>
+<p><strong>Aim: </strong>Any player with no remaining pieces or legal moves is removed from the game; the last  remaining player wins. The game is tied if only two differently coloured pieces  remain and neither can be captured next turn.<br>
+</p>
+<h3> Examples</h3>
+<p>The following example shows O's first move, which splits seven pieces to different positions. Each destination position was in unobstructed line-of-sight of the source stack before the move  (but not necessarily after the move).</p>
+<pre>
+         +---------------+     <br>        /                 \   <br>       /   O     .     .   \<br>      /                     \     <br>     /                       \   <br>    /   .     .  O  .     .  xx<br>   /             O           xx\<br>  /              O           xx \<br> (   o     O     O     .     xx  )<br>  \                             /<br>   \                           /<br>    \   .     .     .     .   /<br>     \                       /<br>      \                     /<br>       \   O     .     .   /<br>        \                 /<br>         +---------------+</pre>
+<p> X replies by moving four pieces as shown below:</p>
+<pre>
+         +---------------+     <br>        /                 \   <br>       /   o     .     .   \<br>      /                     \     <br>     /                       \   <br>    /   .     .  o  .     .  x\<br>   /             o           x \<br>  /              o           x  \<br> (   o     o     o     X     x   )<br>  \                             /<br>   \                           /<br>    \   .     .     .     .   /<br>     \                 X     /<br>      \                X    /<br>       \   o     .     X   /<br>        \                 /<br>         +---------------+</pre>
+<p>The central O stack is now under threat since its visible enemy count (3+1= 4) is equal to its height (4). X can capture this stack next turn with any or all of the threatening pieces if O does not take immediate evasive action. </p>
+<p>O decides to retreat and merge the threatened 4-stack with one of their their two  1-stacks into a single 6-stack, as shown below. Note that X's 1-stack is now threatened.</p>
+<pre>
+         +---------------+     <br>        /                 \   <br>       /   .  O  .     .   \<br>      /       O             \     <br>     /        O              \   <br>    /   .     OO    .     .  x\<br>   /                         x \<br>  /                          x  \<br> (   o     .     o     x     x   )<br>  \                             /<br>   \                           /<br>    \   .     .     .     .   /<br>     \                 x     /<br>      \                x    /<br>       \   o     .     x   /<br>        \                 /<br>         +---------------+</pre>
+<p>The following example shows a multiple capture in action, with X to move. The visible enemy count (i.e. the number of X pieces in direct line-of-sight) from both  of O's  4-stacks equals 4, hence each of these 4-stacks is under threat. Note that X's central 2-stack contributes to each of these threats. </p>
+<pre>
+         +---------------+     <br>        /        x        \   <br>       /   .     x     .   \<br>      /                     \     <br>     /                       \   <br>    /   .     .     .  o  .   \ <br>   /                   o       \<br>  /  x     x           o        \<br> (   x     x     .     o     .   )<br>  \                             /<br>   \                           /<br>    \   .     .  o  .     .   /<br>     \           o           /<br>      \          o          /<br>       \   x     o     x   /<br>        \                 /<br>         +---------------+</pre>
+<p>X's best move is to split their central 2-stack as follows, capturing each  of O's threatened stacks with a single piece. X has won the game in a single move!</p>
+<pre>
+         +---------------+     <br>        /        x        \   <br>       /   .     x     .   \<br>      /                     \     <br>     /                       \   <br>    /   .     .     .     .   \ <br>   /                           \<br>  /  x                          \<br> (   x     .     .     X     .   )<br>  \                             /<br>   \                           /<br>    \   .     .     .     .   /<br>     \                       /<br>      \                     /<br>       \   x     X     x   /<br>        \                 /<br>         +---------------+<br>
+</pre>
+<h3>Notes</h3>
+<p>When performing multiple captures,  the visible enemy count for each stack is calculated once at the start of the turn, by default. This means that threats cannot change as the move is made, otherwise capturing  would be too easy.</p>
+<p> Use the -<tt>prog_cap</tt> option to turn on progressive capture, which means that the visible enemy count will be  recalculated after each part of  a split move, possibly allowing the capture of stacks throughout the move that were not threatened at the start of the move. Nasty! Note that the capturing example above would not be correct if the-<tt>prog_cap</tt> option were used.</p>
+<p>The fact that the opening player cannot catpure on the first move somewhat limits their opening options. This helps balance out any inherent first move advantage.</p>
+<p> Capture is  asymmetric: stacks can threaten other stacks without themselves being threatened (or at least without being threatened by inferior stacks). This mechanism is a cornerstone of games with capture, otherwise players would never dare threaten enemy pieces and captures would never occur.<br>
+</p>
+<h3>Three-Player version</h3>
+<p>The three-player version is played as per the two-player version, on a larger board and with 12 pieces starting in non-adjacent  corners.</p>
+<pre>                               xxx<br>            +------------------xxx+    <br>           /                   xxx \   <br>          /   .     .     .    xxx  \<br>         /                           \     <br>        /                             \   <br>       /   .     .     .     .     .   \<br>      /                                 \     <br>     /                                   \   <br>    ooo .     .     .     .     .     .   \<br>   /ooo                                    \<br>  / ooo                                     \<br> (  ooo    .     .     .     .     .     .   )<br>  \                                         /<br>   \                                       /<br>    \   .     .     .     .     .     .   /<br>     \                                   /<br>      \                                 /<br>       \   .     .     .     . yyy .   /<br>        \                      yyy    /<br>         \                     yyy   /<br>          \   .     .     .    yyy  /<br>           \                       /<br>            +---------------------+</pre>
+<p>The fact that all differently coloured pieces are counted in the visible enemy count means that  stacks belonging to  two different players may combine to threaten stacks belonging to the third player.  In other words, if player A is moving then (A + B) pieces count in threats towards C, and (A + C) pieces count in threats towards B. Player A can therefore  use both B and C pieces to help their counts while capturing B and C pieces in the same move. Tricky!<br>
+</p>
+
+<h3>History </h3>
+<p>Adamas rules copyright (c)  Cameron Browne,  May 2007.</p>
+<p>The game was originally called &quot;Adam&quot; because when you see enemy pieces you have to add 'em, but that was a bit silly. &quot;Adamas&quot; sounds much tougher. Thanks to Bill Taylor and João Neto for feedback on related  stacking ideas.</p>
+<p>Adamas was originally played on a board with four cells per side and a 12 piece start, but this proved too confusing and led to drawn out end games, as the larger board offered many avenues of escape for hunted pieces. The smaller board leads to a shorter,  more interesting and more puzzle-like game. </p>
+<p>Implementation and Help file by Cameron Browne, May 2007.</p>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

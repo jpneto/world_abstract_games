@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h3><font face="Arial" size="2">Hexbo Rules</a> (Copyright (c) 1996 Mark
+    Steere &lt;tanbo@ix.netcom.com&gt;) </font></h3>
+    <p><font face="Arial" size="2">AUTHOR'S NOTE: Feel free to distribute this document. </font></p>
+    <h3><font face="Arial" size="2">PREFACE</font></h3>
+    <p><font face="Arial" size="2">Hexbo, created by Richard Rognlie in February 1996, is a
+    variant of Tanbo, invented by the author in October 1993. Hexbo substitutes a hexagonal
+    board for the square board of Tanbo. Otherwise, the rules of Hexbo are identical to those
+    of Tanbo. And this document is largely identical to &quot;Tanbo Rules&quot;, except the
+    diagrams have been changed to represent Hexbo. </font></p>
+    <pre><font face="Courier" size="1">         HEXBO                 TANBO     
+       . . . . .         . . . . . . . . .
+      . # . . O .        . # . . . . . O .
+     . . . . . . .       . . . . . . . . .
+    . . . . . . . .      . . . . . . . . .
+   . O . . . . . # .     . . . . . . . . .
+    . . . . . . . .      . . . . . . . . .
+     . . . . . . .       . . . . . . . . .
+      . # . . O .        . O . . . . . # .
+       . . . . .         . . . . . . . . .</font></pre>
+    <p><font face="Arial" size="2">These small versions of Hexbo and Tanbo show the difference
+    in board shape and pattern. </font></p>
+    <pre><font face="Arial" size="2">I   INTRODUCTION
+II  RULES AND OBJECT
+
+I  INTRODUCTION
+===============
+
+HEXBO IS A GAME OF ROOTS
+------------------------
+Hexbo crudely models a system of plant roots.  Roots which are
+growing, competing for space, and dying.  In beginner play, the roots
+grow much as the roots in a garden. Over time, the roots become shrewd
+and calculating.
+
+There is no score in Hexbo.  The object is to completely destroy your 
+opponent.  
+
+FIGURES A - D are excerpts from a novice game.  FIGURE A is the
+initial configuration.  FIGURES B and C show roots growing and
+competing for space.  In FIGURE D, black has won by eliminating the
+six white roots.
+
+ </font><font face="Courier" size="1"> FIGURE A: INITIAL SETUP - 12 SEEDS
+            #=BLACK, O=WHITE
+
+                  1 2 3 4 5 6 7 8 9 10
+                 / / / / / / / / / / 11
+             A- # . . . . . . . . O / 12
+            B- . . . . . . . . . . . / 13
+           C- . . . . . . . . . . . . / 14
+          D- . . . . . . . . . . . . . / 15
+         E- . . . . O . . . . # . . . . / 16  
+        F- . . . . . . . . . . . . . . . / 17 
+       G- . . . . . . . . . . . . . . . . / 18
+      H- . . . . . . . . . . . . . . . . . / 19
+     J- . . . . . . . . . . . . . . . . . . /
+    K- O . . . # . . . . . . . . . O . . . #  
+     L- . . . . . . . . . . . . . . . . . .  
+      M- . . . . . . . . . . . . . . . . .  
+       N- . . . . . . . . . . . . . . . .  
+        O- . . . . . . . . . . . . . . .    
+         P- . . . . O . . . . # . . . .    
+          Q- . . . . . . . . . . . . .     
+           R- . . . . . . . . . . . .      
+            S- . . . . . . . . . . .      
+             T- # . . . . . . . . O    
+
+
+  FIGURE B: ROOTS SPREAD VIA ADJACENCIES.  CLUMPS AND CLOSED LOOPS ARE
+            NOT PERMITTED.
+
+                  1 2 3 4 5 6 7 8 9 10
+                 / / / / / / / / / / 11
+             A- # . . . . . . . . O / 12
+            B- . # . . . . . . # O . / 13
+           C- . . # O O O . # # . O . / 14
+          D- . . # O . . . # . # . . . / 15
+         E- . . # . O O . # . # . . . . / 16  
+        F- . . # . O . O O . # . . . . . / 17 
+       G- # # # . . . . . . # . . . . . . / 18
+      H- . O O O O . . . .&gt;#&lt;. . . . . . . / 19
+     J- . O . . # O . . . . . . . . . . . . /
+    K- O O . . # . . . . . . . . . O . . . #  
+     L- . . . . . . . . . . . . . . . . . .  
+      M- . . . . . . . . . . . . . . . . .  
+       N- . . . . . . . . . . . . . . . .  
+        O- . . . . . . . . . . . . . . .    
+         P- . . . . O . . . . # . . . .    
+          Q- . . . . . . . . . . . . .     
+           R- . . . . . . . . . . . .      
+            S- . . . . . . . . . . .      
+             T- # . . . . . . . . O    
+
+
+  FIGURE C: 12 ROOTS COMPETE FOR SPACE.  SEPARATE,
+            LIKE-COLORED ROOTS MUST NOT BE JOINED.
+
+                  1 2 3 4 5 6 7 8 9 10
+                 / / / / / / / / / / 11
+             A- # . . . O # . . . O / 12
+            B- . # O . . O # . # O . / 13
+           C- . . # O O O . # # . O O / 14
+          D- . . # O . . . # . # O . O / 15
+         E- . . # . O O . #&gt;O&lt;# . . # O / 16  
+        F- . . # . O . O O O # . . # . O / 17 
+       G- # # # . # O . # . # . # # O . . / 18
+      H- . O O O O # O O # # . # O O . . # / 19
+     J- . O . . # O # . # . # # . . O . . # /
+    K- O O . # # O . # # O . . # O O # . . #  
+     L- . O # . # O O O O . . # O . . # O .  
+      M- . O # . . . . . O . # O . . # O .  
+       N- . O # . O . . . O . . . . # O .  
+        O- . O # # O . . # # . # # # . O    
+         P- O # . . O . . . # # . O O O    
+          Q- # . . . O O O O O O O . .     
+           R- # O O O . . . . . . . .      
+            S- O . . . . . . . . . .      
+             T- . . . . O O O O O O    
+
+
+  FIGURE D: BLACK WINS BY ELIMINATING THE 6 WHITE ROOTS.
+
+                  1 2 3 4 5 6 7 8 9 10
+                 / / / / / / / / / / 11
+             A- . . . . . # # # # # / 12
+            B- . . . . . # . . . . . / 13
+           C- . . . . . # . # . . . . / 14
+          D- . . . . . # . # . # # . # / 15
+         E- . . . . . # . . # # . # # . / 16  
+        F- . . . . # . # # . . . # . # . / 17 
+       G- . . . . . # . . # # . # . . # . / 18
+      H- . . . . . # . . # . # # . . . # # / 19
+     J- . . # . # . # . # . . . . . . # . # /
+    K- . . . # # . . # # . . . . . . # . . .  
+     L- . . # . # . . . . . . . . # . # . .  
+      M- . . # . # # # . . . . . # . # . .  
+       N- . . # . . . # . . . . . # # . .  
+        O- . . # # . . # . . . . # . # .    
+         P- . # . # . . # # # # # . . .    
+          Q- # . . # . . . . . . . . .     
+           R- # . . . . . . . . . . .      
+            S- . . . . . . . . . . .      
+             T- . . . . . . . . . .    
+</font><font face="Arial" size="2">
+
+II  RULES AND OBJECT
+====================
+
+EQUIPMENT
+---------
+Hexbo requires a board as shown in Figure A, as well as 150 white
+stones and 150 black stones.  One player takes ownership of the white 
+stones and becomes &quot;white&quot;.  The other player is &quot;black&quot;.  In the 
+diagrams, white is &quot;O&quot; and black is &quot;#&quot;.
+
+INITIAL SETUP
+-------------
+Initially, each player has 6 stones on the board as shown in Figure A.
+The stones are interspersed and evenly spaced on the board.
+
+BASIC MOVES
+-----------
+After setting up this initial configuration, black makes the first
+move.  (A &quot;move&quot; will always mean adding exactly one stone to the
+board.  Stones are never actually moved from one point to another on
+the board.)  Next white makes a move, and the players continue to take
+turns adding their stones to the board until one player wins.
+
+A newly added stone must &quot;connect&quot; to exactly one stone of the same
+color, which is already on the board.  Two points &quot;connect&quot; if they
+are adjacent.  Several examples of legal and illegal moves appear
+in the following sections.
+
+Players are not allowed to pass.  You must add exactly one stone to
+the board during your turn.
+</font><font face="Courier" size="1">
+  FIGURE E: EXAMPLES OF LEGAL AND ILLEGAL MOVES FOR WHITE.
+  LEGAL WHITE MOVES: D3, B8, H1, H13
+  ILLEGAL WHITE MOVES (NO CONNECTION): E3, G6, G15, L11
+  ILLEGAL WHITE MOVES (2+ CONNECTIONS): D5, C11, H2, L2
+
+                  1 2 3 4 5 6 7 8 9 10
+                 / / / / / / / / / / 11
+             A- # # . . . . . . . O / 12
+            B- . . # # # . . . . O . / 13
+           C- . . . O O # . . O O . . / 14
+          D- . . . O . O # . . . . . . / 15
+         E- # . . . O . O # . # # . . . / 16  
+        F- O # . . . . . O # . . # . . . / 17 
+       G- . O # . . . . . . . . . # # . . / 18
+      H- . . O # . . . . . . . . . . . . . / 19
+     J- . O O . # . . . . . . . . O . . . . /
+    K- O O # # # . . . . . . . . . O O . . #  
+     L- . # . . . . . . . . . . . O . . . .  
+      M- . . . . . . . . . . . . . . . . .  
+       N- . . . . . . . . . . . . . . . .  
+        O- . . . . . . O O . . . . . . .    
+         P- . . . . O O . . . # # . . .    
+          Q- . . . O . O . . . . # # .     
+           R- . O O . . O . . . # . .      
+            S- . # # # # . . # # . O      
+             T- # . . . # . O O O O    </font><font face="Arial" size="2">
+
+
+LEGAL MOVES CONNECT TO EXACTLY ONE STONE OF THE SAME COLOR
+----------------------------------------------------------
+In FIGURE E, points D3, B8, H1, and H13 are examples of legal
+moves for white.  Each of these moves connects to exactly one white
+stone, already on the board.
+
+ILLEGAL MOVES THAT DON'T CONNECT TO ANY STONES OF THE SAME COLOR
+----------------------------------------------------------------
+Points E3, G6, G15, and L11 are examples of illegal moves for white.
+These moves don't connect to any white stones.
+
+ILLEGAL MOVES THAT CONNECT TO 2 OR MORE STONES OF THE SAME COLOR
+----------------------------------------------------------------
+Points D5, C11, H2, and L2 in FIGURE E are examples of illegal
+moves for white.  These moves are illegal for white because they each
+connect to two or more white stones already on the board.
+
+Point D5 for example is an illegal move for white because it connects
+to five white stones.  The five white stones are below-left, left,
+above-left, above-right, and right of point D5.
+
+Point C11 is an illegal move for white because it connects to two
+white stones already on the board.  The two white stones are left, 
+and above-left of point C11.
+
+ROOTS
+-----
+By adding stones in this manner, the players form &quot;roots&quot; (A root is a
+group of interconnected stones of the same color.)  In FIGURE B, roots
+are just beginning to form.  As the roots grow larger, they compete
+for limited growing space.
+
+After a few games, players can easily discern the individual roots.
+
+When a single root becomes so constricted that it can no longer grow,
+the entire root is immediately removed from the board.  The
+surrounding roots can then grow into the area vacated by the removed
+root.  (Sometimes two or more roots will run out of growing space
+simultaneously.  This is discussed separately, in detail below.)
+
+In FIGURE D, black has won the game by eliminating the six white
+roots.  (See OBJECT OF THE GAME.)
+</font><font face="Courier" size="1">
+  FIGURE F: IMPOSSIBLE FORMATIONS
+
+                  1 2 3 4 5 6 7 8 9 10
+                 / / / / / / / / / / 11
+             A- # . . . . . . O . . / 12
+            B- . # . . . . . . O O O / 13
+           C- . # # . . . . . . . . . / 14
+          D- . # # . . . . . . . . . . / 15
+         E- . # # . . . . # # # # # . . / 16  
+        F- # # # . . . . . . . # # # . . / 17 
+       G- . . . # # . . . . . . # # # . . / 18
+      H- . . . . . # # . . . . . . . . . . / 19
+     J- . . # # . . . # . . . . . . . . . # /
+    K- . . # . # . . . . . . . . . . . . # #  
+     L- . . # # . . . . . . O . . . . . # #  
+      M- . . . . . . . . . . . . . . . . .  
+       N- . . . . . . . . . . . . . . . .  
+        O- # # . . O O O . . . # # # # .    
+         P- # . . O O O O . . # . . . #    
+          Q- # . O O O O O . . # . . #     
+           R- # . O O O O . . . # # #      
+            S- # . O O O . . . . O O      
+             T- # . . . . . . . . O    
+</font><font face="Arial" size="2">
+
+IMPOSSIBLE FORMATIONS
+---------------------
+The rules for adding stones make it impossible for certain types of
+formations to occur in Hexbo.  In particular, separate roots of the
+same color will never be joined.  Roots will not form closed loops or
+clumps.  Every root will contain one of the stones of the initial
+configuration (shown in FIGURE A).  New roots will never be created
+during the course of the game.
+
+All of the formations in FIGURE F are impossible.  They cannot be
+created without violating the rules of Hexbo.
+
+THE EXPANDED ROOT
+-----------------
+When a player makes a move, he connects his newly added stone to only
+one of his roots.  This root increases in size by one and is referred
+to as the &quot;expanded root&quot; during the player's turn.
+
+The &quot;expanded root&quot; concept is essential to an understanding of the
+following sections.
+
+ROOT SPACE
+----------
+The &quot;root space&quot; of a root consists of the available legal moves
+which serve to expand that root.  A root is &quot;free&quot; if it has at least
+one point of root space.  For example, in FIGURE E, point T15 is the
+only point of root space for the small black root.  Because that root
+has root space, it is free.
+
+BOUNDED ROOTS
+-------------
+A root becomes &quot;bounded&quot; when a move is made which completely deprives
+that root of root space.  For example, in FIGURE E, if white adds a
+stone to point T15, white deprives the small black root of root space,
+therefore bounding it.
+
+Alternatively, white could bound one of his own roots by moving to
+point H1 in FIGURE E.  Expanding this small white root would leave it
+with no root space, therefore bounding it.
+
+The &quot;bounded root&quot; concept is central to Hexbo.
+
+REMOVING BOUNDED ROOTS
+----------------------
+When a player makes a move which causes one or more roots to become
+bounded, he will be required to remove at least one of these bounded
+roots from the board, during his current turn.  This is described in
+detail in the following sections.
+</font><font face="Courier" size="1">
+  FIGURE G:                    FIGURE H:
+  ROOT IS EXPANDED             EXPANDED, BOUNDED ROOT
+  AND BOUNDED.                 IS REMOVED.
+
+             1 2 3 4 5                  1 2 3 4 5
+            / / / / / 6                / / / / / 6
+        A- . . . O . / 7           A- . . . O . / 7 
+       B- . # # # O O / 8         B- . # # # O O / 8
+      C- O # . . O . # / 9       C- O # . . O . # / 9
+     D- O . . . # . . # /       D- O . . . # . . # /
+    E- . O O . . # # # .       E- . O O . . # # # .
+     F- O # O . # . . #         F- O . O . # . . #
+      G- . # . O . O O           G- . . . O . O O
+       H- . # # O O .             H- . . . O O .
+        J-&gt;#&lt;. O . .               J- . . O . .
+</font><font face="Arial" size="2">
+
+EXPANDED AND BOUNDED ROOT IS REMOVED FROM THE BOARD
+---------------------------------------------------
+If you make a move which expands and bounds one of your roots, you
+must immediately remove this expanded and bounded root from the board.
+FIGURES G and H demonstrate such a move on a 9 by 9 board.  By moving
+to point J5 in FIGURE G, black expands and bounds the small black root
+in the lower left corner.  Black must immediately remove the expanded
+and bounded root, as shown in FIGURE H.
+</font><font face="Courier" size="1">
+  FIGURE I:                    FIGURE J:
+  EXPANDED ROOT AND THREE      ONLY THE EXPANDED,
+  OTHER ROOTS ARE BOUNDED.     BOUNDED ROOT IS REMOVED.
+
+             1 2 3 4 5                  1 2 3 4 5
+            / / / / / 6                / / / / / 6
+        A- # . O . . / 7           A- . . O . . / 7 
+       B- . # # O O . / 8         B- . . . O O . / 8
+      C- O # . # . # # / 9       C- O . . . . # # / 9
+     D- O # . . # . . # /       D- O . . . . . . # /
+    E- . O # # .&gt;#&lt;. # O       E- . O . . . . . # O  
+     F- . O . . . O O O         F- . O . . . O O O
+      G- . O O # O . .           G- . O O # O . .
+       H- O # # . O O             H- O # # . O O   
+        J- # . # O .               J- # . # O .   </font><font face="Arial" size="2">
+
+REMOVE ONLY THE EXPANDED, BOUNDED ROOT - NO OTHER ROOTS
+-------------------------------------------------------
+If your move expands and bounds one of your roots, and simultaneously
+bounds one or more additional roots of either color, you must
+immediately remove the expanded root, and only the expanded root.
+You must not remove any additional roots during your current turn.
+The additional roots, which are momentarily bounded during your turn,
+become free again when you remove the expanded root.
+
+FIGURES I and J demonstrate such a move.  By moving to point E6 in
+FIGURE I, black expands the black root in the center.  This move
+simultaneously bounds four roots: the expanded root, the black
+root in the lower left corner, the black root on the right,
+and the white root in the lower right corner.  Black must immediately
+remove the expanded root, and only the expanded root, as shown in 
+FIGURE J.
+
+Three roots in FIGURE J, which were momentarily bounded during black's
+turn, became free again when black removed the expanded, bounded root.
+The white root in the lower right corner reclaimed its one point of
+root space.  The two remaining black roots also reclaimed their
+root space.
+
+At the conclusion of a turn, there should not be any bounded roots on
+the board.
+</font><font face="Courier" size="1">
+  FIGURE K:                    FIGURE L:
+  EXPANDED ROOT IS NOT         REMOVE THE THREE
+  BOUNDED, BUT THREE OTHER     BOUNDED ROOTS.
+  ROOTS ARE BOUNDED.
+
+             1 2 3 4 5                  1 2 3 4 5
+            / / / / / 6                / / / / / 6
+        A- . . O . . / 7           A- . . O . . / 7 
+       B- . # # O O . / 8         B- . # # O O . / 8
+      C- O # . # . # # / 9       C- O # . # . . . / 9
+     D- O # . . # . . # /       D- O # . . # . . . /
+    E- . O # # .&gt;#&lt;. # O       E- . O # # . # . . .  
+     F- . O . . . O O O         F- . O . . . . . .
+      G- . O O # O . .           G- . O O . . . .
+       H- O # # . O O             H- O . . . . .   
+        J- # . # O .               J- . . . . .   </font><font face="Arial" size="2">
+
+IF ONE OR MORE ROOTS GET BOUNDED, AND THE EXPANDED ROOT IS
+----------------------------------------------------------
+NOT ONE OF THE BOUNDED ROOTS, REMOVE ALL THE BOUNDED ROOTS.
+-----------------------------------------------------------
+If you move to bound one or more roots of either or both colors, and
+the expanded root is not one of the bounded roots, you must
+immediately remove all of the roots which you bounded by making that
+move.
+
+By moving to point E6 in FIGURE K, black expands the black root in the 
+center.  Unlike the previous example, this time the expanded root is 
+not bounded.  However, three other roots are bounded by this move: the 
+black root in the lower left corner, the black root on the right, and 
+the white root in the lower right corner.  Black must immediately 
+remove the three bounded roots, as shown in FIGURE L.
+
+SUMMARY - WHEN TO REMOVE ROOTS
+------------------------------
+In summary, whenever a move causes a single root to be bounded, that
+root is immediately removed.  When a player's move causes two or more
+roots to be simultaneously bounded, the player must look at the
+expanded root.
+
+If the expanded root is one of the bounded roots, then the expanded
+root, and only the expanded root is removed.
+
+Otherwise, if the expanded root is not one of the bounded roots, then
+all of the bounded roots must be removed.
+
+The rules for removing roots were designed to ensure that when all
+six of a player's roots have been eliminated, the other player will
+still have at least one root remaining on the board.  This prevents
+ties (draws) from occuring.
+
+RETURN OPPOSING ROOTS TO OPPONENT
+---------------------------------
+Whenever you remove an opposing root from the board, you must return
+its stones to your opponent.  Players never take ownership of opposing
+stones.  After stones have been returned to their owner, they can be
+played again during later turns.
+
+OBJECT OF THE GAME
+------------------
+To win, a player must eliminate all six of his opponent's roots.
+One player will always win.  It's impossible to repeat a board
+configuration in Hexbo.  Therefore a game cannot result in a draw.
+</font><font face="Courier" size="1">
+  FIGURE M:                    FIGURE N:
+  LAST MOVE OF THE GAME.       WHITE HAS WON THE GAME.
+  BLACK MUST SACRIFICE
+  HIS LAST REMAINING ROOT.
+
+             1 2 3 4 5                  1 2 3 4 5
+            / / / / / 6                / / / / / 6
+        A- # . O . O / 7           A- . . O . O / 7 
+       B- . # # O O # / 8         B- . . . O O . / 8
+      C- O # . # . O # / 9       C- O . . . . O . / 9
+     D- O # . O # . # . /       D- O . . O . . . . /
+    E- . O # # O # # .&gt;#&lt;      E- . O . . O . . . . 
+     F- . O . # O . # #         F- . O . . O . . . 
+      G- . O O O # # .           G- . O O O . . .
+       H- O . . O . #             H- O . . O . .    
+        J- O O . O O               J- O O . O O     </font><font face="Arial" size="2">
+
+FIGURES M and N show the last turn of a game.  In FIGURE M, black
+has one root remaining on the board.  Black's only available
+move is point E9, and point E9 is also the black root's only remaining
+point of root space. By moving to point E9, black bounds his last
+remaining root which he immediately removes from the board, as shown
+in FIGURE N. White has won the game.</font></pre>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h3><strong>Rules </strong></h3>
+<p> <strong>Play: </strong>O starts the game by placing an O piece on any triangle, then players take turns making either of the following moves:<br>
+  1) place a piece of their colour on any empty cell, or<br>
+  2) place two pieces of their colour on two adjacent empty triangles.</p>
+<p>Any groups of same-coloured pieces with no freedoms (adjacent empty cells) are captured and removed from the board. Players may not move at cells without freedom unless that move captures enemy pieces to create freedom. </p>
+<p>Players may not make the same move they made last turn.</p>
+<p><strong>Aim: </strong>Players occupy bases (hexagonal areas labelled 'A'..'G') by having three or more consecutive pieces within them, and win the game by forming a path connecting two  occupied bases on opposite sides of the board; the winning path must actually connect the occupying pieces, not just reach the bases. </p>
+<p>Both players may  occupy a base if both have three consecutive pieces within it. Two bases are considered adjacent if they share a neighbouring square. </p>
+<p>For example, the following board shows a game won by O who has occupied bases A, C, E and F  and connected opposed bases C and E with a single group. X  occupies  bases B, C, E and G but has not connected an opposed pair.</p>
+<pre>
+                    _-+-------+-_         _-+-------+-_                    <br>                 _--   \     /   --_   _--   \  o  /   --_                 <br>               +-       \   /       -+-       \   /       -+               <br>              / \        \ /   o    / \   o    \ /   o    / \              <br>             /   \      _-+-_      /   \      _-+-_      /   \             <br>            /     \  _--  |  --_  /  o  \  _--  |  --_  /  o  \            <br>           +-------+-_  o | o  _-+-------+-_  x | x  _-+-------+           <br>           |       |  --_ | _--  |       |  --_ | _--  |       |           <br>           |       | o  _-A-_  x |   x   | x  _-B-_ x  |   o   |           <br>           |       | _--  |  --_ |       | _--  |  --_ |       |           <br>         _-+-------+-_  o | x  _-+-------+-_    | x  _-+-------+-_         <br>      _--   \     /   --_ | _--   \  x  /   --_ | _--   \  o  /   --_      <br>    +-       \   /       -+-       \   /       -+-       \   /       -+    <br>   / \        \ /   o    / \    o   \ /   x    / \   x    \ /   o    / \   <br>  /   \      _-+-_      /   \      _-+-_      /   \      _-+-_      /   \  <br> /     \  _--  |  --_  /  o  \  _--  |  --_  /     \  _--  |  --_  /  o  \ <br>+-------+-_  x | x  _-+-------+-_  o | x  _-+-------+-_  x | x  _-+-------+<br>|       |  --_ | _--  |       |  --_ | _--  |       |  --_ | _--  |       |<br>|       | x  _-C-_  o |   o   | x  _-D-_ x  |   x   | o  _-E-_  x |   o   |<br>|       | _--  |  --_ |       | _--  |  --_ |       | _--  |  --_ |       |<br>+-------+-_  o | o  _-+-------+-_  x | o  _-+-------+-_  o | o  _-+-------+<br> \     /   --_ | _--   \     /   --_ | _--   \  x  /   --_ | _--   \  o  / <br>  \   /       -+-       \   /       -+-       \   /       -+-       \   /  <br>   \ /        / \   o    \ /        / \   o    \ /   x    / \   o    \ /   <br>    +-_      /   \      _-+-_      /   \      _-+-_      /   \      _-+    <br>       --_  /     \  _--  |  --_  /  o  \  _--  |  --_  /     \  _--       <br>          -+-------+-_  o | o  _-+-------+-_  o | x  _-+-------+-          <br>           |       |  --_ | _--  |       |  --_ | _--  |       |           <br>           |       | o  _-F-_  x |   x   | x  _-G-_  x |       |           <br>           |       | _--  |  --_ |       | _--  |  --_ |       |           <br>           +-------+-_  o |    _-+-------+-_    | x  _-+-------+           <br>            \     /   --_ | _--   \     /   --_ | _--   \     /            <br>             \   /       -+-       \   /       -+-       \   /             <br>              \ /        / \   x    \ /   x    / \        \ /              <br>               +-_      /   \      _-+-_      /   \      _-+               <br>                  --_  /     \  _--     --_  /     \  _--                  <br>                     -+-------+-           -+-------+-                     </pre>
+<p>Note that both players occupy  base E while neither player occupies  base D. </p>
+<h3 align="left"><strong>Syntax</strong></h3>
+<p>Place a piece at cell f3:<br>
+  <tt> &nbsp;&nbsp;marque move <b>board#</b> <b>userid</b> <b>password</b> f3</tt> </p>
+<p>Place two  pieces at adjacent triangular cells  f3 and f4:<br>
+  <tt> &nbsp;&nbsp;marque move <b>board#</b> <b>userid</b> <b>password</b> f3,f4</tt> </p>
+<h3>History </h3>
+<div align="center">
+  <p align="left">Marque design and  rules by Cameron Browne and copyright (c) Cyberite Ltd 2008.</p>
+  </div>
+<p>Official Marque rules: <a href="https://web.archive.org/web/20250208034535/http://www.cameronius.com/games/marque/">http://www.cameronius.com/games/marque/</a></p>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

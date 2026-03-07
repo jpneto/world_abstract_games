@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h3><a name="rules"><font face="Arial" size="2">The Rules of Ninuki-Renju</font></a><font face="Arial" size="2"> </font></h3>
+    <p><font face="Arial" size="2">Here is a synopsis of the rules for Ninuki-Renju.</p> 
+	<p>Also see <a href="https://web.archive.org/web/20250417081950/http://renju.nu/r1rulhis2.htm">http://renju.nu/r1rulhis2.htm</a></font></p>
+
+    <h3><font face="Arial" size="2">Object of the Game</font></h3>
+    <p><font face="Arial" size="2">On a square board, the two players try to be the first to create a
+   "perfect" line of 5 stones in a row of their color *or* try to
+   capture 5 pairs of their opponents stones. You capture a pair of
+   stones any time you sandwich the stones between a pair of your stones.</font></p>
+
+    <h3><font face="Arial" size="2">Movement Rules</font></h3>
+    <p><font face="Arial" size="2">On your turn, you place a piece of your color on the board.</p></font>
+
+    <pre><font face="Courier" size="1">
+          A B C D E F G H J K L M N O P Q R S T
+      19  . . . . . . . . . . . . . . . . . . .  19
+      18  . . . . . . . . . . . . . . . . . . .  18
+      17  . . . . . . . . . . . . . . . . . . .  17
+      16  . . . . . . . . . . . . . . . . . . .  16
+      15  . . . . . . . . . . . . . . . . . . .  15
+      14  . . . . . . . . . . . . . . . . . . .  14
+      13  . . . . . . . . . . . . . . . . . . .  13
+      12  . . . . . . . . . . . . . . . . . . .  12
+      11  . . . . . . . . . . . . . . . . . . .  11
+      10  . . . . . . . . . . . . . . . . . . .  10
+       9  . . . . . . . . . . . . . . . . . . .   9
+       8  . . . . . . . . . . . . . . . . . . .   8
+       7  . . . . . . . . . . . . . . . . . . .   7
+       6  . . . . . . . . . . . . . . . . . . .   6
+       5  . . . . . . . . . . . . . . . . . . .   5
+       4  . . . . . . . . . . . . . . . . . . .   4
+       3  . . . . . . . . . . . . . . . . . . .   3
+       2  . . . . . . . . . . . . . . . . . . .   2
+       1  . . . . . . . . . . . . . . . . . . .   1
+          A B C D E F G H J K L M N O P Q R S T
+
+              Figure 1 -- Empty Ninuki Board</font></pre>
+
+   <h3><font face="Arial" size="2">Opening Rules: </font></h3>
+	<p><font face="Arial" size="2">The first move of the game (by Eks) is automatically made to the center (K10 on a 19x19 board). </font></p>
+	<p><font face="Arial" size="2">The second move, made by Ohs, must be adjacent to the center move, that is restricted to [J-L][9-11].</font></p>
+	<p><font face="Arial" size="2">The third move (Eks) must *not* be within 2 spaces of the piece at K10, that is OUTSIDE of [H-M][8-12].</font></p>
+
+ <h3><font face="Arial" size="2">Capture Examples</font></h3>
+
+      <pre><font face="Courier" size="1">
+        . . . . . .        . . . . . .
+        . . . . x .        . . . . x .
+        . . . o . .        . . . . . .
+        . . o . . .   =&gt;   . . . . . .
+        . A o o x .        . x . . x .
+        . . . . . .        . . . . . .
+
+  </font></pre><p><font face="Arial" size="2"> 
+  An 'x' piece placed at A results in the capture of 2 pairs of Ohs men.</font></p>
+        <pre><font face="Courier" size="1">
+        . . . . . .        . . . . . .
+        . . . . x .        . . . . x .
+        . . . o . .        . . . o . .
+        . . B . . .   =&gt;   . . o . . .
+        . x . . . .        . x . . . .
+        . . . . . .        . . . . . .
+
+</font></pre><p><font face="Arial" size="2">
+   An 'o' piece placed at B does *not* result in the capture of a pair of
+   Ohs men. Eks must do the "sandwich"ing to capture the Ohs men.</font></p>
+
+ <h3><font face="Arial" size="2">Additional movement rules:</font></h3>
+
+   <p><font face="Arial" size="2">If a five is made and after that the opponent captures and destroys
+   the five there is no win. This is called an "unperfect 5". The destroying 
+   of the unperfect five must be made with the move immediately following 
+   the five.</font></p>
+
+   <p><font face="Arial" size="2">Neither player is allowed to form a double-three, unless the move 
+   also makes a five, or it is necessary to do so when destroying an "unperfect 5" or blocking an opponent's four.</font></p>
+      <pre><font face="Courier" size="1">
+  14  . . . . . . . . . . . . . . . . . . .  
+  13  . . . . . . . . . . . . . . . . . . .  
+  12  . . . . . . . . . . . o . . . . . . .  
+  11  . . . . . . . . x . x o o . . . . . .  
+  10  . . . . . . x o o o o O . . . . . . .  
+   9  . . . . . . . . . . o . . . . . . . .   
+   8  . . . . . . . . . . . . . . . . . . .   
+   7  . . . . . . . . . . . . . . . . . . .   
+</font></pre><p><font face="Arial" size="2">
+  5-3-3 is allowed.</font></p>
+
+  <p><font face="Arial" size="2">Forming a double three while blocking or capturing a four or
+  unperfect five is forbidden if there are other allowed defenses. </font></p>
+      <pre><font face="Courier" size="1">
+  14  . . . . . . . . . . . . . . . . . . .  
+  13  . . . . . . . . . . . . . . . . . . .  
+  12  . . . . . . . . . . . . . . . . . . .  
+  11  . . . . . . . . x . . . . . . . . . .  
+  10  . . . . . . x o o o o 1 . . . . . . .  
+   9  . . . . . . . . . . o . . . . . . . .   
+   8  . . . . . . . . . . o X . . . . . . .   
+   7  . . . . . . . . . . . . . . . . . . .   
+   6  . . . . . . . . . x . x . . . . . . .   
+   5  . . . . . . . . x . . x . . . . . . .   
+   4  . . . . . . . . . . . . . . . . . . . 
+ </font></pre><p><font face="Arial" size="2"> 
+  X is prohibited because 1 defends the four without forming a 3-3.</font></p>
+
+      <pre><font face="Courier" size="1">
+  14  . . . . . . . . . . . . . . . . . . .  
+  13  . . . . . . x . . x . . . . . . . . .  
+  12  . . . . . . x . x . 1 . . . . . . . .  
+  11  . . . . . . . . . . o . . . . . . . .  
+  10  . . . . . . X o o o o x . . . . . . .  
+   9  . . . . . . . . . . x . . . . . . . .  
+   8  . . . . . . . . . . . . . . . . . . . 
+</font></pre><p><font face="Arial" size="2">
+   X is prohibited because 1 is allowed.</font></p>
+
+  <p><font face="Arial" size="2"> A move that forms a 3-3 due to capturing is not allowed,
+   but a capturing move that reveals a 3-3 is allowed.</font></p>
+ <pre><font face="Courier" size="1">
+  14  - - - - - - - - - - - - - - - - - - -  
+  13  - - - - - - x - - x - - - - - - - - -  
+  12  - - - - - - x - x - - - - - - - - - -  
+  11  - - - - - - - - - - - - - - - - - - -        forms 3-3  (forbidden)
+  10  - - - - - - X - - - - - - - - - - - -  
+   9  - - - - - o o - - - - - - - - - - - -  
+   8  - - - - o - o - - - - - - - - - - - -  
+   7  - - - x - - x - - - - - - - - - - - -  
+   6  - - - - - - - - - - - - - - - - - - -  
+
+
+  14  - - - - - - - - - - - - - - - - - - -  
+  13  - - - - - - x - - x - - - - - - - - -  
+  12  - - - - - - x - x - - - - - - - - - -        not part of the 3-3 (allowed)
+  11  - - - - - - - - - - - - - - - - - - -  
+  10  - - - - - - x - - - - - - - - - - - -  
+   9  - - - - X o o x - - - - - - - - - - -  
+   8  - - - - - - - - - - - - - - - - - - -  
+</font></pre>
+   <font face="Arial" size="2">An "overline" (six or more stones in a row) does not win and remains neutral.</font></dd>
+
+   <font face="Arial" size="2">A rare case occurs when a fifth capture gives the opponent a five. 
+   This occurs when one stone is captured away from a 6-in-a-row, 
+   leaving 5. In this case, the game is draw.</font></dd>
+</dl>
+
+<p><font face="Arial" size="2">Implementation by jeanp-a</font></p>
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

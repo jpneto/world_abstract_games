@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+ <h3>Rules</h3>
+  <p>Two players, Vert and Horz, take turns placing pieces of their colour on 
+    the board. Vert plays first and places a single V piece on any empty cell 
+    as the opening move.</p>
+  <p>Thereafter players may place either:<br>
+    &nbsp;&nbsp;1) One piece of their colour on any empty cell, or<br>
+    &nbsp;&nbsp;2) Two pieces of the colour on an empty octagon and an adjacent 
+    empty square.</p>
+  <p>If the opponent's last move was a singleton (not counting the opening move) 
+    then the current player may instead make a special three-piece move, occupying 
+    an empty octagon and two empty squares adjacent to the octagon or an empty square and two 
+    empty octagons adjacent to the square.</p>
+  <p>Vert wins by connecting the top and bottom sides with a continuous chain 
+    of V pieces. Horz wins by connecting the left and right sides with a continuous 
+    chain of H pieces. One player must win.</p>
+  <p>Even with the first move forced to be a single move there is a first player advantage and the usual (for connection games) "pie rule" is therefore in effect: on the second player's first move he can swap sides in order to steal the opening move.
+  </p>
+  <h3>Notes</h3>
+  <p>The following board shows a sample game won by H.<br>
+  </p>
+  <pre>
+           A  B  C  D  E  F  G  H  I  J  K  L  M  N  O 
+          .-.   .-.   .-.   .-.   .-.   .-.   .-.   .-. 
+         /   \ /   \ /   \ /   \ /   \ /   \ /   \ /   \ 
+     15 |     |     |     |     |     |  V  |     |     | 15
+         \   / \   / \   / \   / \   / \   / \   / \   / 
+     14   )-(   )-(   )-(   )-(   )-(   ) (   )-(   )-(   14
+         /   \ /   \ /   \ /   \ /   \ /   \ /   \ /   \ 
+     13 |     |     |  H     H     H  |  V  |     |     | 13
+         \   / \   /     / \   / \     \   / \   / \   / 
+     12   )-(   )-' H .-( V '-' V )   H ) (   )-(   )-(   12
+         /   \ /     /   \       /     /   \ /   \ /   \ 
+     11 |     |  H  |     |  V  |  H  |  V  |     |     | 11
+         \   / \   / \   /     / \   /     / \   / \   / 
+     10   )-(   ) (   )-' V .-(   ) ( V   (   )-(   )-(   10
+         /   \ /   \ /     /   \ /   \     \ /   \ /   \ 
+      9 |     |  H  |  V  |     |  H  |  V     V  |     | 9
+         \   /     / \   / \   /     /     / \     \   / 
+      8   )-' H .-(   ) (   )-' H .-' V .-' H '-. V '-(   8
+         /     /   \ /   \ /     /     /         \     \ 
+      7 |  H  |     |  V  |  H  |  V  |  H     H  |  V  | 7
+         \   / \   /     / \     \   /     / \   /     / 
+      6   )-(   )-' V .-(   )-. H '-' H .-( V ) ( V   (   6
+         /   \ /     /   \ /   \       /   \ /   \     \ 
+      5 |     |  V  |     |     |  H  |     |  H  |  V  | 5
+         \   / \   / \   / \   / \   / \   / \     \   / 
+      4   )-(   ) (   )-(   )-( V '-' V )-( V '-. H '-(   4
+         /   \ /   \ /   \ /   \       /   \     \     \ 
+      3 |     |  V  |     |     |  V  |     |  V  |  H  | 3
+         \   / \   / \   / \   / \   / \   / \   / \   / 
+      2   )-(   )-(   )-(   )-(   ) (   )-(   )-(   )-(   2
+         /   \ /   \ /   \ /   \ /   \ /   \ /   \ /   \ 
+      1 |     |     |     |     |  V  |     |     |     | 1
+         \   / \   / \   / \   / \   / \   / \   / \   / 
+          '-'   '-'   '-'   '-'   '-'   '-'   '-'   '-' 
+           A  B  C  D  E  F  G  H  I  J  K  L  M  N  O</pre>
+  <p>As the board fills up, isolated single cells will often occur at key points. 
+    However the importance of taking these points must be weighed up against the 
+    fact that the opponent will be allowed to make a special triple move next 
+    turn. </p>
+  
+  <h3>References and History</h3>
+
+  <p>Stymie rules copyright (c) Randall Bart 2003. </p>
+  <p>Implementation and help file by <a href="https://web.archive.org/web/20250319132322/mailto:cameronb@optusnet.com.au">Cameron 
+    Browne</a>, Jan 2004.</p>
+</div>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

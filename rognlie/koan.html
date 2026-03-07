@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<b>Object of Game:</b>
+
+Each player has six octagonal and five square playing 
+pieces set out on the board at the start of play as 
+shown in diagram 1. 
+
+<pre><font face="Courier" size="1">
+Diagram 1: KO-AN start up position.
+
+         A  B  C  D  E  F  G  H  I  J  K 
+         |  |  |  |  |  |  |  |  |  |  |
+    
+        ---   ---   ---   ---   ---   ---  
+       / X \ / X \ / X \ / X \ / X \ / X \ 
+  11- | XXX | XXX | XXX | XXX | XXX | XXX | -11
+       \ X / \ X / \ X / \ X / \ X / \ X / 
+  10-   --- X --- X --- X --- X --- X ---   -10
+       /   \ /   \ /   \ /   \ /   \ /   \ 
+   9- |     |     |     |     |     |     | - 9
+       \   / \   / \   / \   / \   / \   / 
+   8-   ---   ---   ---   ---   ---   ---   - 8
+       /   \ /   \ /   \ /   \ /   \ /   \ 
+   7- |     |     |     |     |     |     | - 7
+       \   / \   / \   / \   / \   / \   / 
+   6-   ---   ---   ---   ---   ---   ---   - 6 
+       /   \ /   \ /   \ /   \ /   \ /   \  
+   5- |     |     |     |     |     |     | - 5
+       \   / \   / \   / \   / \   / \   / 
+   4-   ---   ---   ---   ---   ---   ---   - 4
+       /   \ /   \ /   \ /   \ /   \ /   \ 
+   3- |     |     |     |     |     |     | - 3
+       \   / \   / \   / \   / \   / \   / 
+   2-   --- O --- O --- O --- O --- O ---   - 2
+       / O \ / O \ / O \ / O \ / O \ / O \ 
+   1- | OOO | OOO | OOO | OOO | OOO | OOO | - 1
+       \ O / \ O / \ O / \ O / \ O / \ O / 
+        ---   ---   ---   ---   ---   ---  
+
+         A  B  C  D  E  F  G  H  I  J  K 
+         |  |  |  |  |  |  |  |  |  |  |    
+</font></pre>
+<font face="Arial" size="2">
+To win a player must get any one piece to the opponent's 
+player's end of the board. If a player cannot move when it 
+is their turn, or if they have lost all their pieces, 
+they have lost.
+</font>
+<pre><font face="Courier">
+ X
+XXX    is a _octagonal_ black piece
+ X
+
+ 
+ X     is a _square_ black piece
+ 
+
+ O
+OOO    is a _octagonal_ white piece
+ O
+
+ 
+ O     is a _square_ white piece
+</font></pre>
+
+<font face="Arial" size="2&quot;"><b>Rules of moving:</b>
+<p>
+1.  One player uses the white playing pieces and the other 
+    uses black. White goes first.
+<p>
+2.  On each turn a player moves one pieces one space forwards. 
+    No pieces can move backwards or sideways. Pieces cannot 
+    move directly from a square space to another square space. 
+    Square pieces are permitted to land on both square and 
+    octagonal spaces: similarly octagonal pieces can land on 
+    both types of spaces; see diagram 2.
+<p>
+3.  No two pieces may be on the same space at the same time 
+    n.b. see the rules for capturing.
+<p>
+
+<b>Capturing pieces.</b>
+<p>
+4.  When a permitted move lands a piece on a space occupied by 
+    an opposing piece, that piece may be taken on condition that;
+<p>
+ a. octagonal pieces can only take opposing pieces (either type) 
+    which are standing on octagons (green spaces) and,
+<p>
+ b. square pieces can only take opposing pieces (either type) 
+    which are standing on squares (square spaces). see diagram 3.
+<p>
+5.  Only one piece may be taken on any one turn and the capturing 
+    piece occupies the space of the opponents lost piece. This 
+    capture completes the player's turn to move.
+<p>
+6.  Players do not have to take opposing pieces when the 
+    opporturnity aries. They choose if and when to do so.
+<p>
+Diagram 2: Rules of moving
+</font>
+<pre><font face="Courier" size="1">
+         A  B  C  D  E  F  G  H  I  J  K 
+         |  |  |  |  |  |  |  |  |  |  |
+    
+        ---   ---   ---   ---   ---   ---  
+       /   \ /   \ /   \ / X \ /   \ /   \ 
+  11- |     |     |     | XXX |     |     | -11
+       \   / \   / \   / \ X / \   /X\   / 
+  10-   ---   ---   ---   ---   ---XXX---   -10
+       /   \ /   \ /   \ /   \ /   \X/   \ 
+   9- |     |  X  |     |     |     |     | - 9
+       \   / \   / \   / \   / \   / \   / 
+   8-   ---   ---   --- X ---   ---   ---   - 8
+       /   \ /   \ /   \ /   \ /   \ /   \ 
+   7- |     |     |     |     |     |     | - 7
+       \   / \   / \   / \   / \   / \   / 
+   6-   ---   ---   ---   ---   ---   ---   - 6 
+       /   \ /   \ /   \ /   \ /   \ /   \  
+   5- |     |     |     |     |     |     | - 5
+       \   / \   / \   / \   / \   /O\   / 
+   4-   ---   ---   --- O ---   ---OOO---   - 4
+       /   \ /   \ /   \ /   \ /   \O/   \ 
+   3- |     |  O  |     |     |     |     | - 3
+       \   / \   / \   / \   / \   / \   / 
+   2-   ---   ---   ---   ---   ---   ---   - 2
+       /   \ /   \ /   \ /   \ / O \ /   \ 
+   1- |     |     |     |     | OOO |     | - 1
+       \   / \   / \   / \   / \ O / \   / 
+        ---   ---   ---   ---   ---   ---  
+
+         A  B  C  D  E  F  G  H  I  J  K 
+         |  |  |  |  |  |  |  |  |  |  |    
+</font>
+<font face="Courier" size="2">
+The black octagonal on G11 can go to G9, H10 or F10.
+The black octagonal on J10 can go to I9 or K9.
+The black square    on C9  can go to C7, B8 or D8.
+The black square    on F8  can go to E7 or G7.
+The white octagonal on I1  can go to H2, I3 or J2.
+The white octagonal on J4  can go to I5 or K5.
+The white square    on C3  can go to B4, C5 or D4.
+The white square    on F4  can go to E5 or G5.
+</font></pre>
+<font face="Arial" size="2">
+<p>
+<b>Diagram 3: How the pieces capture</b>
+</font>
+<pre><font face="Courier" size="1">
+         A  B  C  D  E  F  G  H  I  J  K 
+         |  |  |  |  |  |  |  |  |  |  |
+    
+        ---   ---   ---   ---   ---   ---  
+       /   \ /   \ /   \ / X \ /   \ /   \ 
+  11- |     |     |     | XXX |     |     | -11
+       \   / \   / \   / \ X / \   /X\   / 
+  10-   ---   ---   ---   ---   ---XXX---   -10
+       /   \ /   \ /   \ /   \ /   \X/   \ 
+   9- |     |  X  |     |     |     |     | - 9
+       \   / \   / \   / \   / \   / \   / 
+   8-   ---   ---   --- X ---   ---   ---   - 8
+       /   \ /   \ /   \ /   \ /   \ /   \ 
+   7- |     |     |     |     |     |     | - 7
+       \   / \   / \   / \   / \   / \   / 
+   6-   ---   ---   ---   ---   ---   ---   - 6 
+       /   \ /   \ /   \ /   \ /   \ /   \  
+   5- |     |     |     |     |     |     | - 5
+       \   / \   / \   / \   / \   /O\   / 
+   4-   ---   ---   --- O ---   ---OOO---   - 4
+       /   \ /   \ /   \ /   \ /   \O/   \ 
+   3- |     |  O  |     |     |     |     | - 3
+       \   / \   / \   / \   / \   / \   / 
+   2-   ---   ---   ---   ---   ---   ---   - 2
+       /   \ /   \ /   \ /   \ / O \ /   \ 
+   1- |     |     |     |     | OOO |     | - 1
+       \   / \   / \   / \   / \ O / \   / 
+        ---   ---   ---   ---   ---   ---  
+
+         A  B  C  D  E  F  G  H  I  J  K 
+         |  |  |  |  |  |  |  |  |  |  |    
+</font>
+<font face="Courier" size="2">
+The black octagonal on G11 can capture on G9.
+The black octagonal on J10 can capture on I9 and k9.
+The black square on C9 can capture B8 and D8.
+The black square on F8 cannot capture.
+The white octagonal on I1 can capture on I3.
+The white octagonla on J4 can capture on I5 and K5.
+The white square on C3 can capture on B4 and D4.
+The white square on F4 cannot capture.
+</font>
+</pre>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

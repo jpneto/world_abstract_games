@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h3>Copolymer Rules</h3></a> (Copyright (c) 2006 Mark
+    Steere &lt;mark@marksteeregames.com&gt;) </font>
+    <p><font face="Arial" size="2"><h3>AUTHOR'S NOTE</h3> Feel free to distribute this document. </font></p>
+
+    <p><font face="Arial" size="2"><h3>INTRODUCTION</h3>
+Copolymer is an ultra simple game for two players.
+Any honeycomb patterned grid with an odd
+number of cells can be used, such as the hexagonal grid in Figure 1.<br><br>
+
+Draws and ties cannot occur in Copolymer.  Mark Steere designed 
+Copolymer in April, 2006.</font>
+
+<pre>
+              1 2 3 4 5 6 
+             / / / / / / 7
+         A- . . . . . . / 8            
+        B- . . . . . . . / 9  
+       C- . . . . . . . . / 10 
+      D- . . . . . . . . . / 11         
+     E- . . . . . . . . . . /         
+    F- . . . . . . . . . . . 
+     G- . . . . . . . . . .       
+      H- . . . . . . . . . 
+       J- . . . . . . . . 
+        K- . . . . . . . 
+
+      Figure 1 -- Initial Setup
+</pre>
+
+<font face="Arial"><h3>BASIC MOVES</h3>
+Players take turns claiming cells on the board, at
+least one cell per turn. Players are not allowed to pass on their turn.<br><br>
+
+Define 'connection' here as an adjacency between two neighboring cells.
+If you claim a cell which has two or more connections with enemy
+cells, you must claim at least one more cell while it is still your turn.<br><br>
+
+Your turn concludes when you claim a cell which does not have two
+or more connections with enemy cells.<br><br>
+
+You are never required to form connections with enemy cells unless the
+only cells available to you connect to enemy cells.
+
+<p><font face="Arial"><h3>OBJECT OF THE GAME</h3>
+Once all of the cells have been claimed,
+the player who has claimed the majority of cells wins.
+
+<p><font face="Arial"><h3>EXAMPLE PLAY</h3>
+Here one player will be X and the other O.
+In Figure 2a it's O's turn. In Figure 2b O has claimed a
+cell which has two connections with X cells, so he must claim
+another cell while it is still his turn.<br><br>
+
+In Figure 2c O has claimed another cell which has two
+connections with X cells and so he must claim yet another cell
+while it is still his turn. In Figure 2d O has claimed a cell which
+has no connections with X cells thus concluding O's turn.<br></font>
+
+<pre><font face="Courier">
+    x . x        x . x        x O x        x o x
+   x . . .      x O . .      x o . .      x o . .
+  o o o . .    o o o . .    o o o . .    o o o . O
+   x . o .      x . o .      x . o .      x . o .
+    . . x        . . x        . . x        . . x
+  Figure 2a    Figure 2b    Figure 2c    Figure 2d
+</font></pre>
+
+
+<font face="Arial">
+Now, continuing the same example, in Figure 3a X has claimed a
+cell which has three connections with O cells, and therefore
+must claim another cell while it is still his turn. In Figure 3b X
+has claimed a cell which has only one connection with an O
+cell thus concluding X's turn.
+</font>
+
+<pre><font face="Courier">
+    x o x        x o x 
+   x o . .      x o . .
+  o o o . o    o o o . o
+   x X o .      x x o .
+    . . x        . X x 
+  Figure 3a    Figure 3b
+</font></pre>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

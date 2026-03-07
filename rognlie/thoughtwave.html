@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h3>Thoughtwave Rules :</h3></a>
+<p><b>Aim :</b></p>
+<p>The aim of Thoughtwave is to connect your 2 sides of the board. Player 1 is trying to connect Left to Right, and player 2 top to bottom.</p>
+<p><b>Play :</b></p>
+<p>Thoughtwave is played on a 10x10 board. Each player has a fixed number of pieces. There are 5 types of piece and there is only 1 type of move, which is to place one of your remaining pieces on the board.</p>
+</font>
+<pre><font face="Courier" size="2">
+	     A   B   C   D   E   F   G   H   I   J  
+	   +---+---+---+---+---+---+---+---+---+---+
+	 1 |   |   |   |   |   |   |   |   |   |   | 1
+	   +---+---+---+---+---+---+---+---+---+---+
+	 2 |   |   |   |   |   |   |   |   |   |   | 2
+	   +---+---+---+---+---+---+---+---+---+---+
+	 3 |   |   |   |   |   |   |   |   |   |   | 3
+	   +---+---+---+---+---+---+---+---+---+---+
+	 4 |   |   |   |   |   |   |   |   |   |   | 4
+	   +---+---+---+---+---+---+---+---+---+---+
+	 5 |   |   |   |   |   |   |   |   |   |   | 5
+	   +---+---+---+---+---+---+---+---+---+---+
+	 6 |   |   |   |   |   |   |   |   |   |   | 6
+	   +---+---+---+---+---+---+---+---+---+---+
+	 7 |   |   |   |   |   |   |   |   |   |   | 7
+	   +---+---+---+---+---+---+---+---+---+---+
+	 8 |   |   |   |   |   |   |   |   |   |   | 8
+	   +---+---+---+---+---+---+---+---+---+---+
+	 9 |   |   |   |   |   |   |   |   |   |   | 9
+	   +---+---+---+---+---+---+---+---+---+---+
+	10 |   |   |   |   |   |   |   |   |   |   | 10
+	   +---+---+---+---+---+---+---+---+---+---+
+	     A   B   C   D   E   F   G   H   I   J  
+
+	Pieces:  Cross  T-Piece   Line   Corner DeadEnd
+	Player1    2       6       5      10       1
+	Player2    2       6       5      10       1
+</pre><font>
+<font face="Arial" size="2">
+<p>On their turn a player may place a piece on any empty square on the board. The notation for placing a piece is :</p>
+<p>[piece]@[column][row]</p>
+<p>The first part of the move denotes the piece to use and it's orientation. The pieces are described with compass directions, where north is the top of the board (top, right, bottom and left are also permitted). Also instead of nesw to place the cross piece a player may use X (e.g. X@e5 = nesw@e5 = e5.trbl). So to place a line horizontally at E5 the command would be :</p>
+<p>ew@E5</p>
+<p>The only restriction to placing pieces is if the piece you want to place is next to another piece already on the board. E.g.</p>
+</font>
+<pre><font face="Courier" size="2">
+           A   B   C  
+         +---+---+---+--
+       1 |   #####   |
+         +-#-+-#-+---+--
+       2 ### |   ### |
+         +---+-#-+-#-+--
+       3 |   | # |   |
+         +---+---+---+--
+         |   |   |   |
+</font></pre>
+<font face="Arial" size="2">
+<p>In the example above there is only 1 piece that can be placed at B2. It is nes@B2. The pieces North, East and South of B2 all have waves leading to that square, and so if you want to play on that square you MUST connect to these other waves. Similarly you CANNOT place a wave connecting to A2 from B2 as the corner piece on A2 has no wave connecting to B2. E.g. there are only 3 valid moves that can be placed on A3 : w@A3, s@A3 &amp; sw@A3. In short, if you do not have a piece that can fit on that square then you can NEVER play there.</p>
+<p><b>Winning :</b></p>
+<p>The winner is the first player to connect their edges using any path through the waves. Pieces must connect off the board to be connected (i.e. On the previous example board A2 is connected, whereas B1 is not). In the event that the last piece placed connects both players the winner is the player that placed the last piece. If all the pieces are placed and a connection has not been made then the game is a draw.</p>
+<p><b>Hints &amp; Tips :</b></p>
+<p>1) Because a player MUST connect to waves already on the board there is no need in playing pieces next to each other. So to cover more ground place pieces 1 space apart. E.g.</p>
+</font>
+<pre><font face="Courier" size="2">
+       4 |   |   |   |   |   |   |   |   |   |   | 4
+         +---+---+---+---+---+-#-+---+---+---+---+
+       5 |   #####   #####   #####   |   |   |   | 5
+         +---+-#-+---+-#-+---+-#-+---+---+---+---+
+       6 |   |   |   |   |   |   |   |   |   |   | 6
+</font></pre>
+<font face="Arial" size="2">
+<p>2) Try to have more than 1 wave that you are trying to connect. If you have pinned all your hopes on a single Line then the DeadEnd piece will be able to block your progress.</p>
+<p>3) If you wish to block your opponent it is much better to leave 2 spaces between their wave and your piece. If you place the piece too close, your opponent can use your piece to help them get closer to their side. Also if you try and block your opponent with the end piece when they have an alternate path (e.g. w@g5, on the end of the cross) your opponent will go round you with no increase in the number of squares they need to get to the other side.</p>
+</font>
+<pre><font face="Courier" size="2">
+       4 |   |   |   |   |   |   |   |   |   |   | 4
+         +---+---+---+---+---+-#-+---+---+-X-+---+
+       5 |   #####   #####   #####   |   | X |   | 5
+         +---+-#-+---+-#-+---+-#-+---+---+-X-+---+
+       6 |   |   |   |   |   |   |   |   |   |   | 6
+</font></pre>
+<font face="Arial" size="2">
+<p>4) Finally when placing pieces be sure not to leave yourself without the piece you need to connect your wave. If you are the only player that has pieces of that type, then your opponent will not be able to use those squares to connect his wave. Equally if your opponent is ahead with their wave and you have no way to block them, try and force them to run out of the pieces they need (this is easy to do if they use their cross pieces early on).</p>
+</font>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

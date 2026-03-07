@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h3>Rules</h3>
+  <p>Two players, Vert and Horz, take turns placing either an 'x' piece or an 
+    'o' piece on the board. </p>
+  <p>Vert wins by completing either a chain of 'x' pieces or a chain of 'o' pieces 
+    between the top and bottom board edges. Horz wins by completing either a chain 
+    of 'x' pieces or a chain of 'o' pieces between the left and right board edges. 
+  </p>
+  <p>If a move results in a connecting chain for both players, then the mover 
+    wins. For example:<br>
+    <pre>
+. . . . . . .      . . . o . . .      . . . . . . x
+ . . . . . . .      . . . o . . .      . . . . . x .
+  . . . . . . .      . . . o . . .      . . . . x . .
+   o o o o o o o      . . . o . . .      . . . x . . .
+    . . . . . . .      . . . o . . .      . . x . . . .
+     . . . . . . .      . . . o . . .      . x . . . . .
+      . . . . . . .      . . . o . . .      x . . . . . .
+
+       Horz wins           Vert wins       Last mover wins    
+    </pre></p>
+    
+  <h3>Notes</h3>
+  
+  <p>Playing Chameleon is a constant tightrope act. In most connection games, 
+    each player can concentrate fully on pushing their connection as hard as possible. 
+    However in Chameleon players must keep their connections strong only in their 
+    direction or risk having them stolen. Players must consider the implications 
+    of each move very carefully.</p>
+  <p>Chameleon has a similar feel to Jade but with clearer goals.</p>
+  <p>One of the most interesting aspects of Chameleon is that it inherently solves 
+    the first move advantage problem which plagues most connection games. While 
+    opening in the centre is a winning move in Hex, it is a death sentence in 
+    Chameleon. The first player's best opening move is well away from the centre 
+    and any opponent's edge.</p>
+  <p>Chameleon should be played on larger boards. Games smaller than 10x10 tend 
+    to degenerate into a race after only a few moves.</p>
+  <br>
+  
+  <h3>Syntax</h3>
+  <p>Vert moves first. The move syntax is: &nbsp;&nbsp;&nbsp;</p>
+  <p>&nbsp;&nbsp;&nbsp;&nbsp;chameleon move <b>board# userid password coord</b> 
+    <br>
+  </p>
+  <p>where <b>&quot;coord</b>&quot; is of the form <b>&quot;f4o&quot;&nbsp;</b>to 
+    place an 'o' piece at empty point <b>f4</b>, or <b>&quot;f4x&quot;&nbsp;</b>to 
+    place an 'x' piece at empty point <b>f4</b>. </p>
+  <p>&nbsp;&nbsp;&nbsp;&nbsp;chameleon move <b>board# userid password </b>swap 
+  </p>
+  <p>Swap the opening move (second move only). The swap option is not that important 
+    but is provided for experimentation. </p>
+
+  <h3>References and History</h3>
+
+  <p>Chameleon was discovered by Randy Cox in early November 2003, then independently 
+    rediscovered mid November 2003 by Bill Taylor after an idea by Cameron Browne. 
+    Interestingly, there is a good reason for the proximity of these independent 
+    discoveries, as both were motivated by the upcoming deadline for the 2003 
+    Shared Pieces game design competition.</p>
+  <p>The game was originally called Goofy Hex then Funky Hex by Randy, but was 
+    first made public under the name Chameleon and that has stuck. This name refers 
+    to the fact that players tend to change colours based on their environment; 
+    the fact that Bill's eyes pop out when he sees a good move has nothing to 
+    do with it.</p>
+  <p>Implementation and help file by <a href="https://web.archive.org/web/20250523233822/mailto:cameronb@optusnet.com.au">Cameron 
+    Browne</a>, November 2003.</p>
+    
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<p>Akron is a 3D connection game in which players strive to connect their sides 
+    of the board with marbles of their colour. Vert attempts to connect the top 
+    and bottom of the board while Horz attempts to connect the left and right 
+    sides. Players can stack marbles on top of each other to step over enemy blocks.</p>
+  <p> Two pieces are connected if they are (i) orthogonally (squarely) adjacent 
+    on the same level, or (ii) one rests directly upon the other from the level 
+    above. If a connection crosses over an opponent's connection at any point, 
+    then the uppermost connection prevails; the lower connection is cut until 
+    the upper one is removed (<i>over/under rule</i>). </p>
+  <p>A connection wins the game only if it still exists after the opponent's next move. This enourages longer and closer games. </p>
+  <p>The following example shows an 8x8 game won by Vert.</p>
+  <pre>   ___                           ___
+  /   \                         /   \<br> (  V  ) = Vertical piece      (     ) = Horizontal piece<br>  \___/                         \___/
+
+ +-------------------------------------------------------+<br> | \    A     B     C     D     E     F     G     H    / |<br> |  +--------------------___--------------------------+  |<br> |  |                   /   \                         |  |<br> |8 |   .     .     .  (  V  )  .     .     .     .   | 8|<br> |  |  ___   ___   ___  \___/  ___                    |  |<br> |  | /   \ /   \ /   \ /   \_/   \                   |  |<br> |7 |(     |     |     |  V/   \V  )  .     .     .   | 7|<br> |  | \___/ \___/ \___/ \_(  V  )_/                   |  |<br> |  |       /   \ /   \_/  \___/  \                   |  |<br> |6 |   .  (  V  |   /   \_/   \   )  .     .     .   | 6|<br> |  |       \___/ \_(   /   \V  )_/  ___              |  |<br> |  |             /  \_(  V  )_/  \_/   \             |  |<br> |5 |   .     .  (  V/  \___/  \V/   \   )  .     .   | 5|<br> |  |             \_(  V  |     |     )_/             |  |<br> |  |             /  \___/ \___/ \___/  \             |  |<br> |4 |   .     .  (   /   \ /   \V  |     )  .     .   | 4|<br> |  |             \_(  V  |     )_/ \___/  ___   ___  |  |<br> |  |             /  \___/ \___/  \_/   \ /   \ /   \ |  |<br> |3 |   .     .  (  V  |  V/   \V/   \   |     |     )| 3|<br> |  |  ___   ___  \___/ \_(  V  |  V  )_/ \___/ \___/ |  |<br> |  | /   \ /   \ /   \ /  \___/ \___/  \       /   \ |  |<br> |2 |(     |     |  V  |  V/   \ /   \V  )  .  (     )| 2|<br> |  | \___/ \___/ \___/ \_(     |  V  )_/  ___  \___/ |  |<br> |  | /   \ /   \ /   \ /  \___/ \___/  \ /   \ /   \ |  |<br> |1 |(  V  |     |     |     |  V  |     |     |  V  )| 1|<br> |  | \___/ \___/ \___/ \___/ \___/ \___/ \___/ \___/ |  |<br> |  +-------------------------------------------------+  |<br> | /    A     B     C     D     E     F     G     H    \ | <br> +-------------------------------------------------------+</pre>
+  <h3>Moves</h3>
+  <p>Each turn the current player may either <b><i>add</i></b> or <b><i>move</i></b>.one 
+    of their pieces.</p>
+  <p>A piece can be <b><i>added</i></b> from the player's pile (if not empty) 
+    directly to any empty board point. </p>
+  <p>Alternatively, a piece already on the board can be <b><i>moved</i></b> to 
+    any valid empty point that touches a piece connected to it. A point is <i>valid</i> 
+    if it is empty and either (i) on the board surface, or (ii) supported by a 
+    flat stable square of four touching pieces. This is the only way to promote 
+    a piece to higher levels. </p>
+  <p>The destination point must be valid before, during and after the move. Marbles 
+    that drop during the move cannot be used as support pieces that turn.</p>
+  <p>A piece that directly supports more than one piece on the level above cannot 
+    be moved.</p>
+  <p>For example, the Horz piece <b>a</b> in the following example has five valid 
+    moves (labelled 1..5). </p>
+  <pre>     .     .     .     .     .     .     .     .     <br>                            ___                      <br>                           /   \                     <br>     .     .     <b>1</b>     .  (  V  )  .     .     .      <br>                ___   ___  \___/  ___                 <br>               /   \ /   \ /   \ /   \                      <br>     .     <b>2</b>  (     |  <b>a</b>  |     |  V  )  .     .            <br>               \___/ \___/ \___/<b>4</b>\___/                <br>               /   \ /   \_/   \_/   \                <br>     .     .  (  V  |   /   \ /   \   )  <b>3</b>     .      <br>               \___/ \_(     |     )_/                <br>                     /  \___/<b>5</b>\___/  \                <br>     .     .     .  (  V/   \_/   \V  )  .     .      <br>                     \_(  V  |  V  |_/<br>                     /  \___/ \___/  \<br>     .     .     .  (     |  <b>b</b>  |     )  .     .      <br>                     \___/ \___/ \___/                <br>                                                 <br>     .     .     .     .     .     .     .     .  </pre>
+  <p>Notice that each of these moves are to points that are:</p>
+</div>
+<ul>
+  <li> 
+    <div class="Section1">Empty; </div>
+  </li>
+  <li> 
+    <div class="Section1">Either on the board surface (<b>1, 2, 3</b>) or elevated 
+      to a higher level and supported by four support pieces (<b>4, 5</b>); and 
+    </div>
+  </li>
+  <li>
+    <div class="Section1">Adjacent to a Horz piece connected to <b>a</b>.</div>
+  </li>
+</ul>
+<div class="Section1"> 
+  <p>Piece <b>b</b> is not connected to <b>a</b> due to the over/under rule. The 
+    overpassing V connection cuts all paths between <b>a</b> and <b>b</b>. In 
+    fact <b>b</b> cannot move at all; it directly supports two pieces on the level 
+    above so is pinned until at least one of these pieces is moved.</p>
+  <p></p>
+  <p>If the piece being moved supports a piece on the level directly above, then 
+    that piece drops down to fill the gap. This may cause a cascade of dropping 
+    pieces if the dropping piece in turn supports a piece above it, etc. </p>
+  <p>For example, moving the piece <b>e</b> in the following example causes a 
+    cascade of two pieces. You can dislodge and drop opponent's pieces in this 
+    way.<br>
+  </p>
+  <pre>&nbsp;.     .     .     .     . &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; .     .     .     .     .     .    <br>      ___   ___   ___      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;        ___   ___   ___   ___         <br>     /   \_/   \_/   \     &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;      /   \_/   \_/   \ /   \        <br> .  (   /   \_/   \   )  . &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   .  (   /   \_/   \   |  <b>e</b>  )  .    <br>     \_(   /   \   )_/     &nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;     \_(     |     )_/ \___/        <br>     /  \_(  V  )_/  \     &nbsp;&nbsp;&nbsp;   &nbsp;&nbsp;     /  \___/ \___/  \    <br> .  (   /  \___/  \   )  . &nbsp;-----&gt;&nbsp; .  (   /   \ /   \   )  .     .    <br>     \_(     |  V  )_/     &nbsp;&nbsp;&nbsp; &nbsp; &nbsp;      \_(     |  V  )_/              <br>     /  \___/ \___/  \     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;        /  \___/ \___/  \              <br> .  (     |     |  <b>e</b>  )  . &nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp; .  (     |     |  V  )  .     .    <br>     \___/ \___/ \___/  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;           \___/ \___/ \___/              <br>                           <br> .     .     .     .     . &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    .     .     .     .     .     .    </pre>
+  <h3>Syntax</h3>
+  <p>Vert move first. Moves are specified in the usual format &quot;akron move 
+    <b>board# userid password action</b>&quot; where <b>action</b> is one of:</p>
+  <pre><b>swap</b>    Horz may <b><i>swap</i></b> directions to steal Vert's opening move (move <i><b>2</b></i> only).</pre>
+  <pre><b>F6</b>      <i><b>Add</b></i> a piece from the player's pile to empty board point <b>F6</b>.</pre>
+  <pre><b>A2-D3'</b>  <i><b>Move</b></i> the existing piece at <b>A2</b> to valid empty point <b>D3'</b>.      <b>
+        D3'</b> is an interstiial point referenced by its upper 
+        left coordinate (<b>D3</b>) and denoted by an apostrophe.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</pre>
+  <p> 
+  <p> 
+  <h3>References and History</h3>
+  <p>Akron rules copyright (c) 2002 Cameron Browne.</p>
+  <p></p>
+  <p>More details about Akron including the complete official rules can be found 
+    at the Akron site: <a href="https://web.archive.org/web/20250121002155/http://members.optusnet.com.au/cyberite/akron/akron-1.htm">http://members.optusnet.com.au/cyberite/akron/akron-1.htm</a></p>
+  <p>A detailed discussion including basic strategy and history can be found in 
+    the article &quot;Akron: Connections in a higher dimension&quot;, <i>Abstract 
+    Games Magazine</i>, Issue 14, Summer 2003.</p>
+  <p>Implementation and help file by <a href="https://web.archive.org/web/20250121002155/mailto:cameronb@optusnet.com.au">Cameron 
+    Browne</a>, May 2003.</p>
+  <p>Thanks to Paul van Wamelen for providing the superb Akron graphical viewer 
+    for PBeM games: <a href="https://web.archive.org/web/20250121002155/http://www.gamerz.net/pbmserv/tst/List.php?Akron">current Akron games</a></p>
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

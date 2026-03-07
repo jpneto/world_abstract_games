@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h3><strong>Rules</strong></h3>
+<p><strong>Equipment:</strong> Two players, Red and Blue, each have eight pawns of their colour and share a common pool of 32 hexagonal tiles. Each tile has either a red, blue, green or black dot; there are eight of each type.</p>
+<p><strong>Start: </strong>The playing surface is initially empty. </p>
+<p><strong>Placement Phase: </strong>Red places a tile of their choice in the centre of the playing area, Blue places a tile of a different colour adjacent to it, then players takes turns placing a tile of their choice adjacent to at least two existing tiles, such that no two tiles of the same colour ever touch.</p>
+<p>Once all tiles are placed, players then place their pawns on the tiles of their colour.</p>
+<p><strong>Movement Phase:</strong> Play then alternates with each turn consisting of:<br>
+  1) moving a pawn, and <br>
+  2) removing a tile.<br>
+  Both actions must be performed each move (if possible).</p>
+<p><strong>1) Pawn Move: </strong>The current player must move a pawn of their colour to any empty tile that can be reached by a series of steps through adjacent empty tiles (i.e. pawns block other pawns). Groups of enemy pawns with no freedom are then captured and removed; a group has freedom if it is adjacent to at least one empty tile. </p>
+<p><strong>2) Tile Removal: </strong>The current player must then remove a tile of any colour provided that it has at least one free edge. Any subsets of empty tiles isolated by the removal are themselves removed from the game; it is not permitted to isolate tile subsets containing pawns. Enemy pawn groups with no freedom are captured and removed, then friendly pawn groups with no freedom are captured and removed (self-capture is possible).</p>
+<p><strong>First Move Equaliser:</strong> The opening player cannot capture any pawns on their first move.</p>
+<p><strong>Aim:</strong> The last player with pawns in play wins. Any move that captures all pawns loses.<br>
+</p>
+<h3><strong>Notes</strong></h3>
+<p>Suicide by pawn move is not possible. Suicide by tile removal is possible and allowed (although not advised).</p>
+<p>The requirement that same-coloured tiles never touch ensures that the initial pawn placement will be sparse and fair for both players: all pawns will start with at least one freedom and no pawn groups of size two or more will initially exist.</p>
+<p>The requirement that the opening player cannot capture any pawns on their first move reduces the advantage of moving first.</p>
+<p>It is generally best to avoid too much thought in the tile placement phase, especially in the early stages. Players should place the tiles as quickly as possible while ensuring that same-coloured tiles do not touch. The use of random placement in computer play is encouraged.</p>
+<p>The fact that tile removal is compulsory each turn means that no game will ever last longer than 30 moves once the movement phase is reached, and will generally end much sooner.</p>
+<p align="left"><strong>Three-Player Version:</strong> Limit may be played with a third player (Green). The rules are the same as for the two-player version, except that only the last player to move can capture on the first round and the game is tied if any move captures all pawns. </p>
+<p align="left">Three-player games can be viewed using the graphical web interface, however moves in three-player games must be made by email until the web interface is enhanced to support multiplayer games. <br>
+  </p>
+<div align="left"><div align="center"></div>
+</div>
+
+<h3><strong>History </strong></h3>
+
+<p>Limit rules copyright Cameron Browne &copy; 2008. Four-colour hexagonal tiling originally suggested by Stephen Tavener.</p>
+<p>The name &ldquo;Limit&rdquo; embodies the overarching theme of the game, namely to limit the opponent's available territory and freedom.</p>
+<p>Limit is an environmentally friendly game, being made almost entirely out of recycled ideas:<br>
+  - four-colour piece placement (from Chroma),<br>
+  - pawn movement and freedom-based capture (from Trugo), and<br>
+  - tile removal and subset disconnection (from Halves).<br>
+  Like any recipe, the proof is not in the raw ingredients but in their  combination!</p>
+<div align="left">
+  <div align="center">
+    <p align="left">More details are available at  the <a href="https://web.archive.org/web/20250621080134/http://www.cameronius.com/games/limit/">official Limit page</a>.</p>
+  </div>
+</div>
+<p>Implementation and Help file by Cameron Browne, June  2008.<br>
+</p>
+
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

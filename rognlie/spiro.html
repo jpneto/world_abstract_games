@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+              
+  <h3>Rules</h3>
+  <p><em><strong>Equipment: </strong></em>The board consists of a pair of paths wrapped in a concentric spiral formation and  separated by a wall. Each player starts with 12 pieces stacked on their central (home) cell, as shown. The numbers above the pieces indicate the total stack height for that cell. </p>
+  <pre>      a   b   c   d   e   f   g   h   i   j   k   l   m<br> <br>              + . . . +-------+-------+-------+              <br>             / .     / .     . .     . .     . \             <br>6           /   .   /   .   .   .   .   .   .   \           6<br>           /     . /     . .     . .     . .     \<br>          + . . . + . . . +-------+-------+ . . . +<br>         / .     / .     / .     . .     . \     . \<br>5       /   .   /   .   /   .   .   .   .   \   .   \       5<br>       /     . /     . /     . .     . .     \ .     \<br>      + . . . + . . . + . . . +-------+ . . . + . . . +<br>     / .     / .     / .     / .     . \     . \     . \<br>4   /   .   /   .   /   .   / 12.   .   \   .   \   .   \   4<br>   /     . /     . /     . /  X  . .     \ .     \ .     \<br>  + . . . + . . . + . . . +-------+ . . . + . . . + . . . +<br>   \     . \     . \     . .  12 / .     / .     / .     /<br>3   \   .   \   .   \   .   . O /   .   /   .   /   .   /   3<br>     \ .     \ .     \ .     . /     . /     . /     . /<br>      + . . . + . . . +-------+ . . . + . . . + . . . +<br>       \     . \     . .     . .     / .     / .     /<br>2       \   .   \   .   .   .   .   /   .   /   .   /       2<br>         \ .     \ .     . .     . /     . /     . /<br>          + . . . +-------+-------+ . . . + . . . +<br>           \     . .     . .     . .     / .     /<br>1           \   .   .   .   .   .   .   /   .   /           1<br>             \ .     . .     . .     . /     . /<br>              +-------+-------+-------+ . . . +<br> <br>      a   b   c   d   e   f   g   h   i   j   k   l   m</pre>
+  <p><em><strong>Start: </strong></em>X starts with a single six-sided die roll, thereafter players roll two six-sided dice per  turn. Player  must make moves equalling the pips shown on the dice, and must use as many pips as possible each turn. The move may be made by the same piece or a combination of pieces.  Rolling a double entitles the player to  use twice the number of pips shown. </p>
+  <p><em><strong>Play: </strong></em>Pieces may step in a clockwise direction around the spiral, and/or jump over walls.</p>
+  <p><em><strong>i) Step moves: </strong></em>Pieces may step in a clockwise direction around their current path a number of cells equal to the pips shown on one or both of the dice. If the piece steps onto a singleton enemy piece, the enemy piece is  pinned  (as per Plakoto) until the player moves off it. </p>
+  <p><em><strong>ii) Jump moves: </strong></em>Alternatively, a piece may jump over the wall of its current cell (if there is one) to the cell directly on the other side (if there is one).  If the piece jumps onto a singleton enemy piece, then that enemy piece is  blotted  (as per Backgammon) and sent back to its central starting cell. </p>
+  <p>Jumping a wall uses up all the pips of one die of the player's choice. Players may only jump once per turn. </p>
+  <p>Pieces may jump walls leading  inwards as well as outwards (unless the -no_inwards option is used) but   can in no event  jump into the  enemy's central  starting cell. Players are allowed to jump a wall then jump directly back only if that move blots a piece (that is, the move must change the board state). </p>
+  <p>In no event may a piece step or jump onto a cell blocked by an enemy stack of height two or more.</p>
+  <p><em><strong>Bearing off: </strong></em>Pieces that step off the end of the board are removed from the game. The die roll for bearing off need not be precise and the piece need not be on the player's home path; any roll that moves the piece off the end of either  spiral path will suffice.  It is not permitted to jump off the board. </p>
+  <p><em><strong>Aim: </strong></em>The game is won by the first player to get all of their pieces off the board.<br> 
+  </p>
+  <h3>Example</h3>
+  <p>The following example show the various  move types on the small board, with  X to move having just rolled {4, 4}.</p>
+  <pre>      a   b   c   d   e   f   g   h   i   j       .-----. .-----.<br>                                                  |o   o| |o   o|<br>          + . . . +-------+-------+    X to move: |     | |     |<br>         / .     / .     . .     . \              |o   o| |o   o|<br>4       /   .   /   .   .   .   .   \        4    `-----' `-----'<br>       /     . /     . .  O  . .     \<br>      + . . . + . . . +-------+ . . . +<br>     / .     / .     / .  X  . \     . \<br>3   /   .   /   .   /   . X .   \   .   \    3<br>   /     . /     . /     . .     \ .     \<br>  + . . . + . . . +-------+ . . . + . . . +<br>   \     . \     . .     / .     / .     /<br>2   \   .   \   .   .   /   .   /   .   /    2<br>     \ .     \ .     . /     . /     . /<br>      + . . . +-------+ . . . + . . . +<br>       \     . .     . .  O  / .     /<br>1       \   .   .   .   . O /   .   /        1<br>         \ .     . .     . /  O  . /<br>          +-------+-------+ . . . +<br> <br>      a   b   c   d   e   f   g   h   i</pre>
+  <p>Neither of the two X pieces can step 4 cells immediately as  O's 2-stack at f1 blocks them. However, X can jump both pieces across the wall to blot the singleton O piece at f4 (which is returned to the start) then move one of their pieces to pin the singleton O piece at g1. This results in the situation shown below.</p>
+  <pre>      a   b   c   d   e   f   g   h   i   j<br> <br>          + . . . +-------+-------+   <br>         / .     / .     . .     . \  <br>4       /   .   /   .   .   .   .   \        4<br>       /     . /     . .  X  . .     \<br>      + . . . + . . . +-------+ . . . +<br>     / .     / .     / .     . \     . \<br>3   /   .   /   .   /   .   .   \   .   \    3<br>   /     . /     . /     . .     \ .     \<br>  + . . . + . . . +-------+ . . . + . . . +<br>   \     . \     . .     / .     / .     /<br>2   \   .   \   .   . O /   .   /   .   /    2<br>     \ .     \ .     . /     . /     . /<br>      + . . . +-------+ . . . + . . . +<br>       \     . .     . .  O  / .     /<br>1       \   .   .   .   . O / X .   /        1<br>         \ .     . .     . /  O  . /<br>          +-------+-------+ . . . +<br> <br>      a   b   c   d   e   f   g   h   i</pre>
+  <p>X could  have made one other move from this position: moving a single X piece to jump to f4, step to i3, step to g1, then bear off. That may  have been a better move since the X piece at f4 is now under direct threat from the blotted O piece returned to central cell e2, however pinning the enemy piece at g1 is also a good result.<br>
+  &nbsp;</p>
+  <h3>Notes</h3>
+  <p>It may look like a lot of distance must be covered to win the game. However, this is misleading as pieces may make huge gains in distance by jumping outwards. For instance, a piece jumping to the outer ring may make up 16 cells at the expense of a single die. </p>
+  <p>No cell has more than one   jump direction from or to  it. The two central cells have two walls hence two potential  jump directions, but one is forbidden as  players cannot jump into the opponent's home cell.</p>
+  <p>Jumping is the only way for pieces to move into  the enemy's path. </p>
+  <p>Consecutive cells allow alternating jump directions (inward-outward-inward-outward-etc) until a corner is reached. Jumping inwards may occasionally be useful for making a strategic block, pin or blot, however this must be balanced against the distance lost.</p>
+  <p>It is unlikely that a player will be able move enough of their pieces into the enemy path to establish a blockade of six consecutive blocks (a devastating but somewhat unsporting tactic in Backgammon games). Even if they did, the opponent could simply jump inwards or outwards to step around the blockade. Instead, it is more effective in Spiro to establish blocks on alternating cells to block enemy pieces from jumping outwards. For instance, in the following example, O would be unable to jump outwards on their next turn  unless they rolled a high double:</p>
+  <pre>      a   b   c   d   e   f   g   h   i   j   k   l   m<br> <br>              + . . . +-------+-------+-------+              <br>             / .     / .     . .     . .     . \             <br>6           /   .   /   .   .   .   .   .   .   \           6<br>           /     . /     . .     . .     . .     \<br>          + . . . + . . . +-------+-------+ . . . +<br>         / .     / .     / .     . .     . \     . \<br>5       /   .   /   .   /   .   .   .   .   \   .   \       5<br>       /     . /     . /     . .     . .     \ .     \<br>      + . . . + . . . + . . . +-------+ . . . + . . . +<br>     / .     / .     / .     / .     . \     . \     . \<br>4   /   .   /   .   /   .   /   .   .   \   .   \   .   \   4<br>   /     . /     . /     . /     . .     \ .     \ .     \<br>  + . . . + . . . + . . . +-------+ . . . + . . . + . . . +<br>   \     . \     . \     . .     / .     / .     / .     /<br>3   \   . X \   .   \   .   .   /   .   /   .   /   .   /   3<br>     \ .  X  \ .     \ .     . /     . /     . /     . /<br>      + . . . + . . . +-------+ . . . + . . . + . . . +<br>       \     . \     . .     . .     / .     / .     /<br>2       \   . X \   .   .   .   . O / X .   /   .   /       2<br>         \ .  O  \ .     . .     . /  X  . /     . /<br>          + . . . +-------+-------+ . . . + . . . +<br>           \     . .  X  . .  X  . .     / .     /<br>1           \   .   . X .   . O .   .   /   .   /           1<br>             \ .     . .     . .     . /     . /<br>              +-------+-------+-------+ . . . +<br> <br>      a   b   c   d   e   f   g   h   i   j   k   l   m</pre>
+  <p>Doubles are very powerful moves. They not only allow quick advancement but  give the player  the opportunity to move a safe block over a wall and into the enemy path. </p>
+  <p>If it turns out that inward jumps allow  cycles leading to  stalemates, it may be necessary to make the -no_inwards option an official rule.  Please let me (camb) know if this occurs. In the meantime it's best to keep movement as free as possible. <br>
+  </p>
+  <h3>Syntax</h3>
+  <p>X moves first. The move syntax  allows moves to be described in a variety of ways:</p>
+  <pre>&nbsp; Spiro move <b>board# userid password</b> <b>c3-c6,c6-c8</b>&nbsp;&nbsp;&nbsp;
+            (move <strong>c</strong><b>3</b> to <b>c6 </b>then<b> c6 </b>to <b>c8</b>)&nbsp; &nbsp; 
+&nbsp; Spiro move <b>board# userid password</b> <b>c3-c6-c8</b>&nbsp;&nbsp;&nbsp;&nbsp;  
+            (move <strong>c</strong><b>3</b> to <b>c8 </b>via <b>c6</b>)&nbsp; &nbsp;
+&nbsp; Spiro move <b>board# userid password</b> <b>c3-c8</b>&nbsp;&nbsp;&nbsp;&nbsp;     
+            (move <b>c3</b> to <b>c8</b> - not necessarily via<b> c6</b>)&nbsp; &nbsp; 
+&nbsp; Spiro move <b>board# userid password</b> <b>a4-c6-x</b>&nbsp;&nbsp;&nbsp;&nbsp;     
+            (move <b>a4</b>to<b> c6</b> then bear it off the board)&nbsp; &nbsp; <br>&nbsp;&nbsp;Spiro move <b>board# userid password</b> <b>3xc3-c6,c1-c4</b>&nbsp;
+            (move <b>c3</b> to <b>c6 </b>three times, then <strong>c</strong><b>1 </b>to <b>c4</b>)<br>&nbsp;&nbsp;Spiro move <b>board# userid password</b> <b>3xc3:2,b5-b7</b>&nbsp;
+            (move three pieces at <b>c3</b> two pips, then <strong>b5</strong> to <b>b7</b>)<br>&nbsp;&nbsp;Spiro move <b>board# userid password</b> <b>c5:2:+:x</b>&nbsp;
+            (move a<b> c3</b> piece two pips, jump, then bear it off)<br>&nbsp; Spiro move <b>board# userid password</b> <b>c5:11</b>&nbsp;
+            (move the piece<b> </b>at <b>c5</b> five pips then six pips, or vice versa)<br></pre>
+  <h3>History</h3>
+  <p>Spiro rules copyright (c) Cameron Browne, May 2007. </p>
+  <p>Spiro was initially designed with a single spiral path, then put aside while the related games of  Savoy and Savoya were developed. Sadly Savoy and Savoya had a serious problem in that stalemates occurred whenever players mutually pinned each other. The new dual spiral design of the Spiro board should avoid  such   problems (although it may be necessary to forbid inward jumps to guarantee this).</p>
+  <p>Implementation and help file by <a href="https://web.archive.org/web/20241112133405/mailto:cameronb@optusnet.com.au">Cameron 
+    Browne</a>, May 2007.</p>
+    
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

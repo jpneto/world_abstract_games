@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h3>Rules</h3>
+  <p>V starts, thereafter players take turns adding a stone of their colour to 
+    the board. Stones are either sarsens (1 unit) or lintels (3 units).</p>
+  <pre>
+        +-----+
+       /|     |
+       ||     |                  Sarsens are single unit cubes.
+       |+-----+&nbsp;&nbsp;&nbsp;
+       /-----+
+
+        +-----+-----+-----+
+       /|                 |
+       ||                 |      Lintels are three units long.
+       |+-----+-----+-----+&nbsp;&nbsp;&nbsp;
+       /-----+-----+-----/</pre>
+  <p>Sarsens can be placed directly on the ground, or on top of any same-coloured 
+    stone.</p>
+  <p>Lintels must lie flat, be supported at both ends, and  rest on exactly  two  units of same-coloured stone. Lintels therefore 
+    cannot be placed directly on the ground. The following examples show legal 
+    lintel placements for V.</p>
+  <pre>                                             +-----+-----+-----+
+      +-----+     +-----+                   /| v v   v v   v v |
+     /| v v |    /| v v |                  /|| v v   v v   v v |   
+     || v v |    || v v |         ----&gt;    ||+-----+-----+-----+&nbsp;&nbsp;&nbsp;
+     |+-----+    |+-----+                  |/-----+-----+-----/
+     /-----/     /-----/                   /-----/     /-----/</pre>
+  <pre>                                             +-----+-----+-----+
+      +-----+-----+-----+                   /| v v   v v   v v |
+     /| h h | v v | v v |                  /|| v v   v v   v v |   
+     || h h | v v | v v |         ----&gt;    ||+-----+-----+-----+&nbsp;&nbsp;&nbsp;
+     |+-----+-----+-----+                  |/-----+-----+-----/
+     /-----/-----/-----/                   /-----/-----/-----/
+                                                                      
+                                                   +-----+-----+-----+
+      +-----+-----+-----+-----+             +-----/| v v   v v   v v |
+     /| v v   v v   v v | h h |            /| v v || v v   v v   v v |   
+     || v v   v v   v v | h h |   ----&gt;    || v v |+-----+-----+-----+&nbsp;&nbsp;&nbsp;
+     |+-----+-----+-----+-----+            |+-----/-----+-----+-----/
+     /-----------------/-----/             /-----------------/-----/</pre>
+  <p>There can be gaps left underneath lintels (unless the -nogaps option is used), 
+    however only the topmost stone at each square counts in any connection. In 
+    other words, upper stones cut all lower connections that they cross over.</p>
+  <p>V wins by connecting the top and bottom sides with a continuous path of V 
+    stones. H wins by connecting the left and right sides with a continuous path 
+    of H stones. Two stones of the same colour are connected if they are orthogonally 
+    (squarely) adjacent, and do not have to be the same height. </p>
+  <p>Players may choose to pass on their turn rather than move. The game ends 
+    in a draw if all players pass in succession.</p>
+  <h3>Notes</h3>
+  <p>The following board shows a sample game won by V.<br>
+    &nbsp; </p>
+  <pre>
+      A   +-----+ C     D     E     F     G     H                          <br>   +-----/| v v |----+-----+-----+-----+-----+-----+                       <br> 8 |     || v v |                                  | 8                     <br>   |     |+     +                                  |                       <br>   +     /| v v |    +     +     +     +     +     +                       <br> 7 |     ||+-----+                                 | 7                     <br>   |     |/| v v |                                 |                       <br>   +     /|| v v |   +     +     +     +     +     +                       <br> 6 |     ||+     +                                 | 6                     <br>   |+-----/| v v |----+-----+-----+-----+-----+-----+                      <br>   /| h h ||+-----+-----+-----+ h   h h   h h   h h |                      <br> 5 || h h |/| v v   v v   v v | h   h h   h h   h h |5                     <br>   |+-----/|| v v   v v   v v |---+     +-----+-----+                      <br>   /-----/||+-----+-----+-----+--/| h h |----/-----/                       <br> 4 |     ||/-----/-----/-----/   || h h |          | 4                     <br>   |     |/-----/    |/-----/    |+-----+          |                       <br>   +     /-----/     /| v v |    /-----/     +     +                       <br> 3 |                 || v v |                      | 3                     <br>   |                 |+     +                      |                       <br>   +     +     +     /| v v |    +     +     +     +                       <br> 2 |             +-----+-----+-----+               | 2                     <br>   |      +-----/| v v   v v   v v |----+          |                       <br>   +     /| h h || v v   v v   v v |h h |    +     +                       <br> 1 |     || h h |+-----+-----+-----+h h |          | 1                     <br>   |     |+-----/-----/-----/-----/-----+          |                       <br>   +-----/-----/-----/-----/-----/-----/-----+-----+                       <br>      A     B     C     D     E     F     G     H
+                         <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A B C D E F G H             A B C D E F G H<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>&nbsp;&nbsp;&nbsp;8  . v . . . . . .  8       8  . 1 . . . . . .  8 
+   7  . v . . . . . .  7       7  . 1 . . . . . .  7 
+   6  . v . . . . . .  6       6  . 2 . . . . . .  6 
+   5  h v h h h h h h  5       5  1 2 1 1 1 1 1 1  5 
+   4  . v v v . h . .  4       4  . 3 3 3 . 1 . .  4 
+   3  . . . v . . . .  3       3  . . . 1 . . . .  3 
+   2  . . . v . . . .  2       2  . . . 1 . . . .  2 
+   1  . h v v v h . .  1       1  . 1 2 2 2 1 . .  1 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>      A B C D E F G H             A B C D E F G H 
+</pre>
+  <p>Below the main board there are two board summaries showing: 1) the current 
+    owner of each square, and 2) the current height at each square. These summaries 
+    can be helpful if any part of the main board gets obscured by excessive monument 
+    growth.</p>
+  <h3>Druid's Hex</h3>
+  <p>Two (or sometimes three) different sects of Druids prefer to build their 
+    monument at the Giant's Causeway, which is composed of hexagonal columns of 
+    stone. Druid's Hex is played on the hex hex board; use the -hex option to 
+    start a game.</p>
+  <p><b>Two-Player Druid's Hex: </b>The game is won by the first player to connect 
+    any three alternating (non-adjacent) sides with a path of their stones. The 
+    following example shows a game won by X, who has completed a path of X stones 
+    between three alternating sides.</p>
+  <pre>     <br>                                    E9   <br>                                  _____    <br>                             D8  /     \   F8   <br>                           _____/       \_____   <br>                     _____/                   \   G7     <br>                    /     \      .     .       \_____   <br>               B6  /  x x  \                         \   H6 <br>             _____/\  x x  /    .       .     .       \_____ <br>        A5  /     \ \_____/                                 \   I5<br>      _____/       \/     \      .     .       .     .       \_____ <br>     /        _____/  x x  \                                       \ <br>    /        /     \  x x  /    .       .     .   _____     .       \<br>    \       /  o o  \_____/                      /     \            /<br>     \     /\  o o  /     \      .     .   _____/  o o  \    .     / <br>     /     \ \_____/  x x  \_____         /        o o  /____      \ <br>    /       \/____/\  _____/     \  _____/  o o   _____/     \      \<br>    \             \ \/     \ x x  \/        o o  /     \ o o  \_____/<br>     \     .       \/  o o  \x x  /  o o   _____/  x x  \o o  /     \<br>     /             /\  o o  /____/\  o o  /        x x  /____/  x x  \<br>    /       .     /\ \_____/     \ \_____/  x x   _____/     \  x x  /<br>    \             \ \/     \ x x  \/        x x  /____/  x x  \_____/<br>     \     .       \/  x x  \x x  /  x x   _____/     \  x x  /____/ <br>     /        _____/\  _____/____/\  x x  /____/  o o  \_____/     \ <br>    /        /     \ \/     \    \ \_____/    /\  o o  /____/       \<br>    \  _____/  x x  \/  o o  \_____/____/     \ \_____/             /<br>     \/     \  x x  /\  o o        \___/       \/____/       .     /<br>     /  o o  \_____/\ \_____   o o  \_____                         \ <br>    /\  o o  /     \ \/____/\  o o        \   .       .     .       \<br>    \ \_____/  x x  \/     \ \_____   o o  \                        /<br>     \/____/\  x x  /  x x  \/____/\  o o  /____     .        _____/ <br>           \ \_____/\  x x  /____/\ \_____/     \            /      <br>        A1  \/____/\ \_____/____/\ \/____/  o o  \     _____/   I1 <br>                  \ \/____/       \/____/\  o o  /    /      <br>               B1  \/____/       .     /\ \_____/____/   H1 <br>                         \             \ \/____/      <br>                      C1  \_____        \/____/   G1 <br>                                \       /       <br>                             D1  \_____/   F1 <br>                                         <br>                                    E1 <br>
+</pre>
+  <p>The following diagram shows two possible winning paths for O:</p>
+  <pre> <br>                 .                                   .<br>              .     .                             .     .<br>           o     .     .                       .     .     o<br>        .     o     .     .                 .     .     .     .<br>     .     .     .     .     .           .     .     .     o     .<br>        .     o     .     .                 .     .     o     .<br>     .     .     o     .     .           .     .     .     .     .<br>        .     .     .     .                 o     o     o     .<br>     .     .     o     o     o           o     o     o     .     .<br>        .     o     o     o                 .     .     .     .<br>     .     .     .     .     .           .     .     o     .     .<br>        .     o     .     .                 .     .     o     .<br>     .     o     .     .     .           .     .     .     .     .<br>        .     .     .     .                 .     .     o     .<br>           o     .     .                       .     .     o<br>              .     .                             .     .<br>                 .                                   .<br></pre>
+  <p>The alternating-sides winning condition is not usually found in connection 
+    games played on the hex hex board, as players can spoil the game by cutting 
+    off opposite sides of the board, making it impossible for either player to 
+    win:</p>
+  <pre><br>                 .                <br>              .     .              <br>           o     .     x          <br>        .     .     .     .        <br>     .     o     .     x     .     <br>        .     .     .     .         <br>     .     o     .     x     .     <br>        .     .     .     .         <br>     .     o     .     x     .     <br>        .     .     .     .         <br>     .     o     .     x     .     <br>        .     .     .     .         <br>     .     o     .     x     .    <br>        .     .     .     .          <br>           o     .     x            <br>              .     .               <br>                 .                 <br></pre>
+  <p>However, this is not a problem in Druid as players can build over enemy blocks 
+    to resolve potential deadlocks. In fact, such deadlocks are good for Druid; 
+    they build tension and define hot spots where players must concentrate.</p>
+  <p><b>Three-Player Druid's Hex: </b>The aim is the same as that of standard 
+    Druid; a player wins by connecting their opposed edges with stones of their 
+    colour. The following example shows a three-player game won by X, who has 
+    completed a path of X stones between the X sides.</p>
+  <pre>             O                     E9                     X              <br>                                  _____                                   <br>                             D8  /     \  _____                         <br>                           _____/       \/     \                        <br>                      C7  /             /  o o  \ G7                     <br>                    _____/       .     /\  o o  /____                    <br>               B6  /                   \ \     /     \  _____           <br>             _____/       .     .       \/     \      \/     \          <br>        A5  /        _____              /  o o  \     /  x_____ I5      <br>      _____/        /   _____    .     /\  o o  /    /\  /     \___     <br>     /             /  o/     \         \ \     /   _____/  X X  \  \    <br>    /       .    _____/  y y  \ .   _____/     \  /        X X  /   \  <br>    \           /        y y  /    /     \ o_____/  X X   _____/    /  <br>     \    _____/  y y   _____/____/  y y  \/        X X  /____/    /     <br>     /   /        y y  /____/        y y  /  X X   _____/____/     \     <br>    /   /  y y   _____/____/  y y   _____/\  X X  /____/     \      \   <br>    \  /\  y y  /____/        _____/____/\ \_____/____/  y y  \     /   <br>     \/\ \_____/   \/  y y   /     \    \ \/____/____/\  y y  /    /    <br>     /\ \/____/    /\  y y  /  x x  \ x  \/     \    \ \_____/     \    <br> Y  /\ \/____/    /\ \_____/\  x x  /____/  o o  \    \/____/       \  Y<br>    \ \/____/     \ \/____/\ \     /        o o  /____              /   <br>     \/____/       \/____/\ \/     \ o o   _____/     \      .     /     <br>     /                   \ \/  x x  \o o  /____/  o o  \_____      \   <br>    /       .     .       \/\  x x  /____/____/\  o o        \      \  <br>    \  _____              /\ \     /     \    \ \_____   o o  \_____/  <br>     \/     \      .     /\ \/     \ x x  \    \/____/\  o o        \   <br>     /  y y  \           \ \/  x x  \x x  /          \ \_____   o o  \   <br>    /\  y y  /    .   _____/\  x x  /____/    .       \/____/\  o o  /<br>    \ \_____/        /     \ \_____/____/                   \ \_____/   <br>     \/____/        /  x x  \/____/____/       .     .       \/____/  <br>           \       /\  x x  /____/                           /        <br>        A1  \_____/\ \_____/    .       .     .        _____/   I1     <br>                  \ \/____/                           /               <br>               B1  \/____/       .     .        _____/   H1         <br>                         \                     /                       <br>                      C1  \_____         _____/   G1                 <br>                                \       /                               <br>                             D1  \_____/   F1                         <br>                                                                       <br>             X                     E1                     O   
+</pre>
+  <h3>Druid's Walk</h3>
+  <p>Druid's Walk can be played on any of the Druid variants except for Druid's 
+    Y and two-player Druid's Hex. In this game, a Druid hops onto the first stone 
+    of his colour to be played on one of his edges, and must step, climb or jump 
+    from one same-coloured stone to another to reach the opposite side. Use the 
+    -walk option to start a game of Druid's Walk. </p>
+  <p>Rules are as per standard Druid until a stone is placed on a friendly edge 
+    for the first time, in which case a Druid is placed on top and each turn thereafter the player may either:<br>
+    &nbsp;&nbsp;1) Place a stone as per usual, or <br>
+    &nbsp;&nbsp;2) Move their Druid.</p>
+  <p>The Druid can only move to adjacent stones of the same colour (height differences 
+    are not important). Stones cannot be placed over any Druid, and Druids cannot 
+    move into gaps left underneath stones.</p>
+  <p>Each player can have only one Druid on the board. Each Druid's target edge 
+    is marked '*', and each Druid's current position is marked as follows:<br>
+  </p>
+  <pre>      +-----+  
+     /|*v*v*|    
+     ||*v*v*|     Square version
+     |+-----+   
+     /-----/    
+       _____        <br>      /     \      <br>     / *y*y* \   <br>    /\ *y*y* /    Hexagonal version<br>    \ \_____/      <br>     \/____/   </pre>
+  <p> The first Druid to reach the opposite side is the winner.</p>
+  <p>Druid's Walk adds a balancing mechanism to the game. A player might complete 
+    a connection between their sides but still require several moves to get their 
+    Druid home, giving the opponent a few moves' grace in which to cut the connection 
+    and keep the game alive. It is therefore good to get your Druid on the board 
+    early and advanced as far as possible. However this must be weighed against 
+    the importance of claiming central territory, especially in the early stages 
+  of the game.</p>
+  <h3>Druid's Y</h3>
+  <p>Druid's Y is played on a triangular Y board using the standard Druid rules and pieces. As in Y, a player wins by connecting all three sides of the board with a path of their stones. Use the -y option to start a game of Druid's Y.</p>
+  <p> The following example shows a game won by X:</p>
+  <pre>       A8<br>      _____<br>     /     \   B7<br>    /       \_____<br>    \             \   C6<br>     \     .       \_____  <br>     /                   \  _D5__<br>    /       .     .       \/     \ <br>    \                     /  o o  \_E4__<br>     \     .   _____     /\  _____/     \ <br>     /        /     \    \ \/     \ x x  \ F3<br>    /       ./  x x  \_____/  o o  \x x  /____  <br>    \  _____/\  x x        \  o o  /____/     \   G2<br>     \/     \ \_____   x x  \_____/     \      \_____  <br>     /  x x  \/     \  x x        \ x x  \           \   H1<br>    /\  x x  /  o o  \_____   x x  \x x  /    .       \_____  <br>    \ \_____/\  o o        \  x x  /____/                   \<br>     \/     \ \_____   o o  \_____/     \      .     .       \<br>     /  o o  \/____/\  o o        \ x x  \_____              /<br>    /\  o o  /____/\ \_____   o o  \x x  /     \       _____/<br>    \ \_____/     \ \/____/\  o o  /____/  x x  \     /<br>     \/____/       \/____/\ \_____/     \  x x  /____/   H1<br>     /                   \ \/____/  o o  \_____/          <br>    /       .     .       \/____/\  o o  /____/   G1<br>    \                           \ \_____/          <br>     \     .       .     .       \/____/   F1<br>     /                           /          <br>    /       .     .        _____/   E1<br>    \                     /          <br>     \     .        _____/   D1<br>     /             /         <br>    /        _____/   C1 <br>    \       /         <br>     \_____/   B1<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>        A1</pre>
+  <h3>Syntax</h3>
+  <p>V (or X) moves first. The move syntax is: &nbsp;&nbsp;&nbsp;</p>
+  <p>&nbsp; &nbsp; druid move <b>board# userid password</b> <b>c3</b>&nbsp;&nbsp;&nbsp;&nbsp;(place 
+    a sarsen at <b>C3</b>)&nbsp; &nbsp; <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;druid move <b>board# userid password</b> <b>c3,a4</b>&nbsp;&nbsp;&nbsp;&nbsp;(place 
+    a sarsen at <b>C3</b> and move the Druid to<b> A4</b>)<br>
+    &nbsp; &nbsp; druid move <b>board# userid password b2-b4</b> &nbsp;(lay a 
+    lintel between <b>B2</b> and <b>B4</b>)<br>
+    &nbsp;&nbsp; &nbsp;druid move <b>board# userid password e</b> &nbsp;(move the Druid East one step)&nbsp;<br>
+    &nbsp;&nbsp; &nbsp;druid move <b>board# userid password </b>swap &nbsp;(swap 
+    the opening move - available second move only)&nbsp;&nbsp;<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;druid move <b>board# userid password </b>pass &nbsp;&nbsp;(pass 
+    this turn)<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;druid move <b>board# userid password </b>--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(pass 
+  this turn)</p>
+  <p> The game ends as a draw if all players pass in succession.</p>
+  <p> 
+  <p> 
+  <h3>References and History</h3>
+
+  <p>Druid rules copyright (c) Cameron Browne, Jan 2004. </p>
+  <p>Implementation and help file by <a href="https://web.archive.org/web/20250712151400/mailto:cameronb@optusnet.com.au">Cameron 
+    Browne</a>, Feb 2004.</p>
+    
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

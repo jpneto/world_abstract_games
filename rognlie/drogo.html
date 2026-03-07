@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h3> Rules </h3>
+
+<p>Players take turns placing one or two adjacent  pieces (cubes) of their colour on  valid empty points of  the 6x6x6 board area.  A  point is valid if it is: 1) a  board point, or 2) supported  by an existing piece. Players may not place a piece directly upon an enemy piece unless that move extends an existing friendly group.</p>
+<p>Only one piece may be placed on the opening move. </p>
+<p>All pieces in a stack are owned by the player with the topmost piece. </p>
+<p><em><strong>Connection</strong></em>: Two stacks of the same colour are connected if  they are squarely adjacent to each other. A group is a visibly connected set of stacks.</p>
+<p><em><strong>Freedom</strong></em>: A stack  has freedom if it is adjacent to at least one empty  board level point.  A group  has freedom  if at least one of its member stacks has freedom.</p>
+<p><em><strong>Surround capture</strong></em>: After  playing a piece, all   enemy groups without  freedom are  captured and removed from the board. All pieces in captured stacks are removed,  regardless of their colour.</p>
+<p><em><strong>No suicide rule</strong></em>: It is not permitted to place a piece without freedom, unless that move captures neighbours to create its own freedom.</p>
+<p><em><strong>Ko  rule</strong></em>: It is not permitted to repeat a previous board position (this has not been implemented so is up to the players' discretion).</p>
+<p>Players may not voluntarily pass, but are forced to pass if there is  no legal move. </p>
+<p>The game ends when neither  player can make any further move. Players' scores are given by the total height of the stacks that they own; the player with the highest score wins. </p>
+<p><em><strong>Multiplayer</strong></em>: Multiplayer  Drogo is played using exactly the same rules as the two-player version.<br>
+</p>
+<h3> Examples</h3>
+<pre>   An X piece at 'a' captures the O group, which has no remaining freedoms.
+ 
+   +     +     +     +     +               +     +     +     +     +   <br>   |                                       |                            <br>   |      +-----+                          |+-----+-----+             <br>   +     /| x x |    +     +               /| X X   x x |    +     +   <br>   |  a  || x x |                          || X X   x x |               <br>   |+-----+-----+-----+                    |+-----+-----+-----+          <br>   /| o o   o o | x x |    +               /-----/-----/| x x |    +   <br>   || o o   o o | x x |                    |           || x x |        <br>   |+     +     +     +                    |           |+     +         <br>   /| o o   o o | x x |    +               +     +     /| x x |    +   <br>   || o o   o o | x x |                    |           || x x |         <br>   |+     +     +     +                    |           |+     +            <br>   /| o o   o o | x x |    +               +     +     /| x x |    +     <br>   || o o   o o | x x |                    |           || x x |                <br>   |+-----+-----+-----+                    |           |+-----+                <br>   /-----/-----/-----/-----+               +-----+-----/-----/-----+<br>
+   If instead it is O's turn, O can delay this group's capture by 
+   building over the surrounding X pieces to create another freedom.
+
+   +     +     +     +     +               +     +     +     +     +   <br>   |                                       |                            <br>   |      +-----+                          |      +-----+             <br>   +     /| x x |    +     +               +     /| x x |    +     +   <br>   |  b  || x x |                          |     || x x |               <br>   |+-----+-----+-----+                    |+-----+-----+-----+          <br>   /| o o   o o | x x |    +               /| o o   o o | x x |    +   <br>   || o o   o o | x x |                    || o o   o o | x x |        <br>   |+     +     +     +                    |+     +     +     +         <br>   /| o o   o o | x x |    +               /| o o   o o | x x |    +   <br>   || o o   o o | x x |                    || o o  +-----+-----+<br>   |+     +     +     +                    |+     /| o o   o o |    <br>   /| o o   o o | x x |    +               /| o o || o o   o o |   +     <br>   || o o   o o | x x |                    || o o |+-----+-----+<br>   |+-----+-----+-----+                    |+-----/     /     /<br>   /-----/-----/-----/-----+               /-----/-----/-----/-----+<br>
+</pre>
+<h3>  Notes</h3>
+<p>Since the  board space is cubical, players should be aware that there is a strict limit on how high pieces can be stacked; vertical ladders are doomed to failure.</p>
+<p>Some multiplayer Go variants relax the connection definition so that enemy groups may consist of stones of any colour except the current player's. Drogo maintains the  stricter definition -  that any group may only consist of one colour -  to encourage captures.<br>
+</p>
+
+<h3>History</h3>
+
+<p>Drogo rules copyright (c)  Cameron Browne,  March 2006.</p>
+<p>Thanks to Phil Bordelon for suggesting the &quot;topmost player owns the stack&quot; rule, which solves a lot of problems with hidden pieces. </p>
+<p>The name &quot;Drogo&quot;  refers to the fact that the game  combines Druid-like equipment with a Go-like ethic (the more obvious &quot;Drugo&quot; sounded too much like a William S. Burroughs novel).</p>
+<p>Implementation and Help file by Cameron Browne, March 2006.</p>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

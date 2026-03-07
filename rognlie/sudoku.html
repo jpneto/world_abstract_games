@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+    <h3><font face="Arial" size="2">Rules of Su-do-ku</a> </font></h3>
+    <h3><font face="Arial" size="2">This is not your Newspaper's Su-do-ku</font></h3>
+    <p><font face="Arial" size="2">Standard Su-do-ku is a single player puzzle.  The normal grid is a 9x9 array of cells subdivided into 9 3x3 supercells.</font></p>
+    <pre><font face="Courier" size="2">
+          - 6 -|1 - 4|- 5 -  
+          - - 8|3 - 5|6 - -  
+          2 - -|- - -|- - 1  
+          -----+-----+-----
+          8 - -|4 - 7|- - 6  
+          - - 6|- - -|3 - -  
+          7 - -|9 - 1|- - 4  
+          -----+-----+-----
+          5 - -|- - -|- - 2  
+          - - 7|2 - 6|9 - -  
+          - 4 -|5 - 8|- 7 -  
+
+         Figure 1 -- Typical Su-do-ku Puzzle</font></pre>
+    <p><font face="Arial" size="2">The object of a su-do-ku puzzle is to place the numbers 1-9 on the grid in such a way as each column, row and supercell contains all of the numbers 1-9 with no repeats.
+    <h3><font face="Arial" size="2">Object of the Game is Different</font></h3>
+    <p><font face="Arial" size="2">On a su-do-ku grid, players take turns adding digits to the board in an attempt to be the last player to be able to make a valid move.   If a cell becomes "dead" (due to the fact that all of the possible digits are already in use in that row+column+supercell) no piece can be played there.
+    </font></p>
+    <h3><font face="Arial" size="2">Challenge Options</font></h3>
+    <p><font face="Courier" size="2">sudoku challenge [-size=XxY] [-showdeadcells|-hidedeadcells] userid1 userid2 [ ... userid6]</font></p>
+
+    <p><font face="Arial" size="2">starts a new game between 2 to 6 players (userid1, userid2, ... userid6).</font></p>
+
+    <p><font face="Arial" size="2">The -size parameter sets the dimensions of a supercell.  the default is 3x3.  valid values range from 2x2 to 6x6 to 7x5</font></p>
+    <p><font face="Arial" size="2">if the total number of cells in a supercell is less than 10 (2x2, 2x3, 2x4, 3x3) the digits in the cell will be 1..n (where n is the number of cells in the supercell)</font></p>
+    <p><font face="Arial" size="2">if the total number of cells in a supercell is 10 or more (2x5, 2x6, 3x4, 3x5, etc.) the digits in the cell will be 0..9 and the letters A..n-1 (where n is the number of cells in the supercell and A=10, B=11, C=12, etc.)</font></p>
+    <pre><font face="Courier" size="2">
+          A B C D E F  
+       1  - 6 -|1 - 4  1
+       2  - - 2|3 - 5  2
+          -----+-----
+       3  2 - -|- - 1  3
+       4  3 - -|4 - 6  4
+          -----+-----
+       5  - - 6|- - -  5
+       6  1 - -|6 - 3  6
+          A B C D E F  
+
+         Figure 2 -- Typical '-size=3x2' Su-do-ku grid</font></pre>
+
+    <p><font face="Arial" size="2">The -showdeadcells parameter (the default) causes dead cells to no longer be displayed with the '-'.   They cease to be.  </font></p>
+    <p><font face="Arial" size="2">The -hidedeadcells parameter causes dead cells to be displayed normally (with the '-').</font></p>
+
+    <h3><font face="Arial" size="2">Movement Rules</font></h3>
+    <p><font face="Arial" size="2">A su-do-ku move consists of 2 parts.   The row/column of the position where the digit is to be placed, and the digit to place there.  e.g. "B3-5" would put a 5 in column B, row 3.</font></p>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h2>Rules</h2>
+
+The official rules can be found on the <a href="https://web.archive.org/web/20250524001410/http://www.gipf.com/">Project GIPF website (www.gipf.com)</a>.  What follows is a quick summary along with some observations on notation.  The board is a hexagon with the corners removed:
+<p>
+<pre>
+                11 
+             10     
+          9     .     . 
+       8     .     .     . 
+    7     .     .     .     .        
+ 6     .     .     .     .     .        
+          .     .     .     .     
+ 5     .     .     .     .     .    
+    .     .     .     .     .     .    
+ 4     .     .     .     .     .       
+    .     .     .     .     .     . 
+ 3     .     .     .     .     .    
+    .     .     .     .     .     . 
+ 2     .     .     .     .     . 
+    .     .     .     .     .     . 
+ 1     .     .     .     .     . 
+          .     .      .    .    
+       .     .     .     .     .     
+    A     .     .     .     .     K     
+       B     .     .     .     J       
+          C     .     .     I 
+             D           H  
+                E     G 
+                   F
+</pre>
+<p>
+The letters mark columns and the numbers indicate rows going from upper left to lower right.  Intersections are denoted by a letter and number (e.g., "a1") and ranges are denoted using a hyphen (e.g., "b1-f4").  The first five moves for each player consist of placing a ring (denoted "(x)" or "(o)").  For these moves you need only indicate the intersection.  
+<p>
+After the rings have been placed, a move consists of moving one of your rings in a straight line.  After a ring has moved it leaves behind a marker of the same color (denoted "x" or "o").  There are 51 markers black on one side and white on the other.  When the markers are exhausted, no more moves are possible and the game ends as described below.  Rings may travel any distance over blank squares and may jump over markers, however if they jump over a sequence of markers they must stop on the first empty intersection.  All the markers jumped over are flipped meaning that white markers become black and black markers become white.  
+<p>
+If a move results in a row of five markers of your color, you must remove the row (returning the markers to the supply) and also remove one of your rings.  This is indicated, for example, by  "i8-f5;xg5-g9xa5" meaning move a ring from i8 to f5, remove the row g5-g9 and the ring at a5.  If the row to be removed is unambiguous, it can be left out and the preceding move can be simplified to: "i8-f5; xa5".  
+<p>
+Note: Although the official format specifies a semicolon ";" between parts of a move, limitations in the server mean that to specify the move you must actually use a colon ":".  The move will be displayed in official format.  It is possible that your move causes a row of five of your opponent's pieces.  The row and marker to be removed are indicated at the beginning of his or her next move.  E.g., "xg5-g9xa5;d3-b3"  
+<p>
+It may be the case that more than one row is formed in a single turn.  In this case the rows to be removed are separated by a semicolon (a colon on input).  If a move produced a pair of rows that intersect, you can pick which one to remove; however, if after the first is removed the second no longer forms a row, it is not removed.  
+<p>
+If the blitz option is set, the game is won by the first player to remove one ring.  In the normal (default) game, the game is won when someone removes three rings.  
+<p>
+If a player cannot move they are forced to pass.  If neither player can move either because they are blocked or because there are no more markers to, then the game is awarded to the player with the greater number of rings and if each player has the same number of rings removed the game is tied.
+<p>
+<h2>References and History</h2>
+<p>
+Yinsh is the sixth game in Kris Burm's Project Gipf (chronologically it is fifth but it is intended to be the last game in the cycle started by the game Gipf).  It has been adapted for Richard's PBEM server by Lyman Hurd with the support and encouragement of the inventor.
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

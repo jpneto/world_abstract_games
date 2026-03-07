@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<a name="rules"><font face="Arial"><a href="https://web.archive.org/web/20231206074416/http://www.marksteeregames.com/Loophole_2D_rules.pdf"><h2>Loophole Rules</h2></a></a> (Copyright (c) 2008 Mark Steere &lt;mark@marksteeregames.com&gt;) </font></h3><br><br>
+
+<font face="Arial">
+
+
+<h3>Introduction</h3> 
+Loophole is a two player game played on a
+hexagonal patterned rhombus with two windows and an initial placement of
+stones as shown in Figure 1. Each player takes
+possession of an entire set of stones of one color, black (#) or white (O). Draws
+cannot occur in Loophole.<br>
+
+<pre><font face="courier" size="1">
+
+       A B C D E F G H I J K L M N O P Q R S
+        # # # # # # # # # # # # # # # # # # #
+    1  O . . . . . . . . . . . . . . . . . . . O  1
+     2  O . . . . . . . . . . . . . . . . . . . O  2
+      3  O . . . . . . . . . . . . . . . . . . . O  3
+       4  O . . . . . . . . . . . . # # # . . . . O  4
+        5  O . . . . . . . . . . . O       O . . . O  5
+         6  O . . . . . . . . . . . O       O . . . O  6
+          7  O . . . . . . . . . . . O       O . . . O  6
+           8  O . . . . . . . . . . . . # # # . . . . O  8
+            9  O . . . . . . . . . . . . . . . . . . . O  9
+            10  O . . . . . . . . . . . . . . . . . . . O  10
+             11  O . . . . . . . . . . . . . . . . . . . O  11
+              12  O . . . . # # # . . . . . . . . . . . . O  12
+               13  O . . . O       O . . . . . . . . . . . O  13
+                14  O . . . O       O . . . . . . . . . . . O  14
+                 15  O . . . O       O . . . . . . . . . . . O  15
+                  16  O . . . . # # # . . . . . . . . . . . . O  16
+                   17  O . . . . . . . . . . . . . . . . . . . O  17
+                    18  O . . . . . . . . . . . . . . . . . . . O  18
+                     19  O . . . . . . . . . . . . . . . . . . . O  19
+                            # # # # # # # # # # # # # # # # # # #
+                             A B C D E F G H I J K L M N O P Q R S
+
+                 Figure 1 -- Initial Setup
+
+</font></pre>
+
+<font face="Arial">
+
+<h3>Stone Placement</h3> 
+Players take turns adding their stones to
+unoccupied cells on the board, one stone per turn. Black makes the first
+placement of the game. Each player will always have a placement
+available on his turn and must make one.
+
+<h3>Loops</h3> 
+Figure 2 shows two examples of single node loops. The loop on
+the left side of the diagram doesn't look like a loop, but stone sequences
+connecting opposite sides of the board are considered to be loops. 
+
+<p> <b>Technical note:</b> Loophole is essentially a three dimensional game played on a surface with three identical, symmetrically arranged windows.  
+In this two dimensional adaptation, one of the three windows is stetched outward and downward, forming the large rhombus in the diagrams.
+
+<pre><font face="courier" size="1">
+
+       A B C D E F G H I J K L M N O P Q R S
+        # # # # # # # # # # # # # # # # # # #
+    1  O . . . # . . . . . . . . . . . . . . . O  1
+     2  O . . . # . . . . . . . . # # # . . . . O  2
+      3  O . . . # . . . . . . . # . . # . . . . O  3
+       4  O . . . # . . . . . . # . # # # . . . . O  4
+        5  O . . # . . . . . . # . O       O . . . O  5
+         6  O . # . . . . . . . # . O       O . . . O  6
+          7  O . # . . . . . . . # . O       O . . . O  6
+           8  O . # . . . . . . . # . . # # # . . . . O  8
+            9  O . # . . . . . . . # . . # . . . . . . O  9
+            10  O . # . . . . . . . # # # . . . . . . . O  10
+             11  O . # . . . . . . . . . . . . . . . . . O  11
+              12  O . # . . # # # . . . . . . . . . . . . O  12
+               13  O . # . O       O . . . . . . . . . . . O  13
+                14  O . # . O       O . . . . . . . . . . . O  14
+                 15  O . # . O       O . . . . . . . . . . . O  15
+                  16  O . # . . # # # . . . . . . . . . . . . O  16
+                   17  O . # . . . . . . . . . . . . . . . . . O  17
+                    18  O . # # . . . . . . . . . . . . . . . . O  18
+                     19  O . . # . . . . . . . . . . . . . . . . O  19
+                            # # # # # # # # # # # # # # # # # # #
+                             A B C D E F G H I J K L M N O P Q R S
+
+                 Figure 2 -- Single node loops
+
+</font></pre>
+
+
+<p>Figure 3 shows a double node loop. 
+
+<pre><font face="courier" size="1">
+
+       A B C D E F G H I J K L M N O P Q R S
+        # # # # # # # # # # # # # # # # # # #
+    1  O . . . . . . . . . . . . . . . . . . . O  1
+     2  O . . . . . . . . . . . # # # . . . . . O  2
+      3  O . . . . . . . . . . # . . # . . . . . O  3
+       4  O . . . . . . . . . # . . # # # . . . . O  4
+        5  O . . . . . . . . # . . O       O . . . O  5
+         6  O . . . . . . . # . . . O       O . . . O  6
+          7  O . . . . . . # . . . . O       O . . . O  6
+           8  O . . . . . . # . . . . . # # # . . . . O  8
+            9  O . . . . . . # . . . . . . # . . . . . O  9
+            10  O . . . . . # . . . . . . . # . . . . . O  10
+             11  O . . . . . # . . . . . . . # . . . . . O  11
+              12  O . . . . # # # . . . . . . # . . . . . O  12
+               13  O . . . O       O . . . # # . . . . . . O  13
+                14  O . . . O       O . . # . . . . . . . . O  14
+                 15  O . . . O       O . # . . . . . . . . . O  15
+                  16  O . . . . # # # . # . . . . . . . . . . O  16
+                   17  O . . . . . # . # . . . . . . . . . . . O  17
+                    18  O . . . . . # # . . . . . . . . . . . . O  18
+                     19  O . . . . . . . . . . . . . . . . . . . O  19
+                            # # # # # # # # # # # # # # # # # # #
+                             A B C D E F G H I J K L M N O P Q R S
+
+                 Figure 3 -- Double node loop
+
+</font></pre>
+
+
+
+<p>Figure 4 shows another double node
+loop. Again, this loop doesn't actually look like a loop but is considered to
+be one in this two dimensional version of Loophole. 
+
+
+<pre><font face="courier" size="1">
+
+       A B C D E F G H I J K L M N O P Q R S
+        # # # # # # # # # # # # # # # # # # #
+    1  O . . . # . . . . . . . . . . . . . . . O  1
+     2  O . . . # . . . . . . . . . . . . . . . O  2
+      3  O . . . # . . . . . . . . . . . . . . . O  3
+       4  O . . . # # . . . . . . . # # # . . . . O  4
+        5  O . . . . # . . . . . . O       O . . . O  5
+         6  O . . . . # . . . . . . O       O . . . O  6
+          7  O . . . . # . . . . . . O       O . . . O  6
+           8  O . . . . # # . . . . . . # # # . . . . O  8
+            9  O . . . . . # . . . . . . . . . . . . . O  9
+            10  O . . . . . # . . . . . . . . . . . . . O  10
+             11  O . . . . . # . . . . . . . . . . . . . O  11
+              12  O . . . . # # # . . . . . . . . . . . . O  12
+               13  O . . . O       O . . . . . . . . . . . O  13
+                14  O . . . O       O . . . . . . . . . . . O  14
+                 15  O . . . O       O . . . . . . . . . . . O  15
+                  16  O . . . . # # # . . . . . . . . . . . . O  16
+                   17  O . . . . . # . . . . . . . . . . . . . O  17
+                    18  O . . . . . # . . . . . . . . . . . . . O  18
+                     19  O . . . . # . . . . . . . . . . . . . . O  19
+                            # # # # # # # # # # # # # # # # # # #
+                             A B C D E F G H I J K L M N O P Q R S
+
+                 Figure 4 -- Double node loop
+
+</font></pre>
+
+
+<p>Figure 5 shows a triple node loop.
+
+
+<pre><font face="courier" size="1">
+
+       A B C D E F G H I J K L M N O P Q R S
+        # # # # # # # # # # # # # # # # # # #
+    1  O . . . . . . . . . . . . . . . # . . . O  1
+     2  O . . . . . . . . . . . . . . # . . . . O  2
+      3  O . . . . . . . . . . . . . # . . . . . O  3
+       4  O . . . . . . . . . . . . # # # . . . . O  4
+        5  O . . . . . . . . . . . O       O . . . O  5
+         6  O . . . . . . . . . . . O       O . . . O  6
+          7  O . . . . . . . . . . . O       O . . . O  6
+           8  O . . . . . . . . . . . . # # # . . . . O  8
+            9  O . . . . . . . . . . . . . # . . . . . O  9
+            10  O . . . . . . . # # # # # # . . . . . . O  10
+             11  O . . . . . . # . . . . . . . . . . . . O  11
+              12  O . . . . # # # . . . . . . . . . . . . O  12
+               13  O . . . O       O . . . . . . . . . . . O  13
+                14  O . . . O       O . . . . . . . . . . . O  14
+                 15  O . . . O       O . . . . . . . . . . . O  15
+                  16  O . . . . # # # . . . . . . . . . . . . O  16
+                   17  O . . . . . # . . . . . . . . . . . . . O  17
+                    18  O . . . . # . . . . . . . . . . . . . . O  18
+                     19  O . . . . # . . . . . . . . . . . . . . O  19
+                            # # # # # # # # # # # # # # # # # # #
+                             A B C D E F G H I J K L M N O P Q R S
+
+                 Figure 5 -- Triple node loop
+
+</font></pre>
+
+<h3>Object of the Game</h3> 
+To win you must form at least two loops. Each
+of the two loops must be a single node loop, a double node loop, or a triple
+node loop. The two loops must be topographically distinct. Two loops of
+the same type (e.g. two double node loops) that use the same set of nodes
+are not topographically distinct. For example, in Figure 6 Black has not
+won because the two single node loops use the same node.<br><br>
+
+<pre><font face="courier" size="1">
+
+       A B C D E F G H I J K L M N O P Q R S
+        # # # # # # # # # # # # # # # # # # #
+    1  O . . . . . . . . . . . . . . . . . . . O  1
+     2  O . . . . . . . . . . . . . . . . # # . O  2
+      3  O . . . . . . . . . . . # # . . # . # . O  3
+       4  O . . . . . . . . . . # . # # # . . # . O  4
+        5  O . . . . . . . . . # . O       O . # . O  5
+         6  O . . . . . . . . . # . O       O . # . O  6
+          7  O . . . . . . . . . # . O       O . # . O  6
+           8  O . . . . . . . . . # . . # # # . # . . O  8
+            9  O . . . . . . . . . # # . # . # # . . . O  9
+            10  O . . . . . . . . . . # # . . . . . . . O  10
+             11  O . . . . . . . . . . . . . . . . . . . O  11
+              12  O . . . . # # # . . . . . . . . . . . . O  12
+               13  O . . . O       O . . . . . . . . . . . O  13
+                14  O . . . O       O . . . . . . . . . . . O  14
+                 15  O . . . O       O . . . . . . . . . . . O  15
+                  16  O . . . . # # # . . . . . . . . . . . . O  16
+                   17  O . . . . . . . . . . . . . . . . . . . O  17
+                    18  O . . . . . . . . . . . . . . . . . . . O  18
+                     19  O . . . . . . . . . . . . . . . . . . . O  19
+                            # # # # # # # # # # # # # # # # # # #
+                             A B C D E F G H I J K L M N O P Q R S
+
+                 Figure 6 -- Black has not won
+
+</font></pre>
+
+
+
+In Figure 2 Black has won with two distinct single node loops. In Figure 7
+Black has won with a single node loop and a double node loop. Note that
+loops of different types that share nodes are topographically distinct. 
+
+
+<pre><font face="courier" size="1">
+
+       A B C D E F G H I J K L M N O P Q R S
+        # # # # # # # # # # # # # # # # # # #
+    1  O . . . . . . . . . . . . . . # . . . . O  1
+     2  O . . . . . . . . . . . . . . # . . . . O  2
+      3  O . . . . . . . . . . . # # # . . . . . O  3
+       4  O . . . . . . . . . . # . # # # . . . . O  4
+        5  O . . . . . . . . . # . O       O . . . O  5
+         6  O . . . . . . . . . # . O       O . . . O  6
+          7  O . . . . . . . . . # . O       O . . . O  6
+           8  O . . . . . . . . . # . . # # # . . . . O  8
+            9  O . . . . . . . . . # . . . # . . . . . O  9
+            10  O . . . . . . . . . # . . . # . . . . . O  10
+             11  O . . . . . . . . . # . . # . . . . . . O  11
+              12  O . . . . # # # . . # # # . . . . . . . O  12
+               13  O . . . O       O . . . # . . . . . . . O  13
+                14  O . . . O       O . . . # . . . . . . . O  14
+                 15  O . . . O       O . . . # . . . . . . . O  15
+                  16  O . . . . # # # . . . # . . . . . . . . O  16
+                   17  O . . . . . . . . . . # . . . . . . . . O  17
+                    18  O . . . . . . . . . . # . . . . . . . . O  18
+                     19  O . . . . . . . . . . # . . . . . . . . O  19
+                            # # # # # # # # # # # # # # # # # # #
+                             A B C D E F G H I J K L M N O P Q R S
+
+                 Figure 7 -- Black wins
+
+</font></pre>
+
+
+
+
+In
+Figure 8 Black has won with a single node loop, a double node loop, and a
+triple node loop.
+
+
+<pre><font face="courier" size="1">
+
+       A B C D E F G H I J K L M N O P Q R S
+        # # # # # # # # # # # # # # # # # # #
+    1  O . . # . . . . . . . . . . . . . . . . O  1
+     2  O . # . . . . . . . . # # # . . . . . . O  2
+      3  O . # # . . . . . # # . . # . . . . . . O  3
+       4  O . . # . . . . # . . . . # # # . . . . O  4
+        5  O . . # . . . . # . . . O       O . . . O  5
+         6  O . . # . . . . # . . . O       O . . . O  6
+          7  O . # . . . . # . . . . O       O . . . O  6
+           8  O # . . . . . # . . . . . # # # . . . . O  8
+            9  O # . . . . . # . . . . . . . # . . . . O  9
+            10  O # . . . . . # . . . . . . . # . . . . O  10
+             11  O # . . . . # . . . . . . . # . . . . . O  11
+              12  O # . . . # # # . . . . . . # . . . . . O  12
+               13  O # . . O       O . . . . . # . . . . . O  13
+                14  O # . . O       O . . . . . # # . . . . O  14
+                 15  O # # . O       O . . . . . . # . . . . O  15
+                  16  O . # . . # # # . . . . . . . # . . . . O  16
+                   17  O . # . . . # . . . . . . . # . . . . . O  17
+                    18  O # . . . . # . . . . . . . # . . . . . O  18
+                     19  O # . . . # . . . . . . . # . . . . . . O  19
+                            # # # # # # # # # # # # # # # # # # #
+                             A B C D E F G H I J K L M N O P Q R S
+
+                 Figure 8 -- Black wins
+
+</font></pre>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

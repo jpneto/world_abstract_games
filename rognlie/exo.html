@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h3> Rules </h3>
+<p><strong> </strong><strong> </strong>The Exo board consists of a hexagonal tiling split up into hexagonal regions. Border cells between regions (marked &lsquo;:&rsquo;) do not belong to any region. The board is initially empty. </p>
+<pre>   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; . . . .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; . . . . .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; . . . . . .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+   &nbsp;&nbsp;&nbsp;&nbsp; . . . : . . . . . : . . .&nbsp;&nbsp;&nbsp; 
+   &nbsp;&nbsp;&nbsp; . . . . : . . . . : . . . .&nbsp;&nbsp; 
+   &nbsp;&nbsp; . . . . . : . . . : . . . . .&nbsp; 
+   &nbsp; . . . . . . : : : : . . . . . . 
+   &nbsp;&nbsp; . . . . . : . . . :&nbsp; . . . . .&nbsp; 
+   &nbsp;&nbsp;&nbsp; . . . . : . . . . : . . . .&nbsp;&nbsp; 
+   &nbsp;&nbsp;&nbsp;&nbsp; : : : : . . . . . : : : :&nbsp;&nbsp; 
+   &nbsp;&nbsp;&nbsp; . . . . : . . . . : . . . .&nbsp;&nbsp; 
+   &nbsp;&nbsp; . . . . . : . . . : . . . . .&nbsp; 
+   &nbsp; . . . . . . : : : : . . . . . . 
+   &nbsp;&nbsp; . . . . . : . . . : . . . . .&nbsp; 
+   &nbsp;&nbsp;&nbsp; . . . . : . . . . : . . . .&nbsp;&nbsp; 
+   &nbsp;&nbsp;&nbsp;&nbsp; . . . : . . . . . : . . .&nbsp;&nbsp; 
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; . . . . . .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; . . . . .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; . . . .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </pre>
+
+<p><strong>Play:</strong> Players take turns placing a piece of their colour on an empty cell.
+After each move, enemy groups with no freedoms (adjacent empty cells) are captured and removed from the board. Pieces cannot be placed where they would have no freedom after the move. Players may not pass. </p>
+<p>Ko rule: Players may not make a move that would recreate a previous board position. </p>
+<p> A <em>cycle</em> is a set of same-coloured pieces surrounding at least one empty cell. Each cycle constitutes a potential <em>goal</em> for their owner. </p>
+<p><strong> Aim: </strong> A player wins by connecting two or more of their goals from non-adjacent regions. More precisely, a player wins if they form a group with two cycles A and B such that at least one cell within A and at least one cell within B belong to non-adjacent regions. </p>
+<p> In addition, a player with no valid moves loses.</p>
+<p><strong>First move equaliser:</strong> The second player may elect to swap colours in lieu of making their first move. </p>
+<h3> Example</h3>
+<p> The following example shows a game won by X. </p>
+<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   &nbsp;&nbsp;&nbsp;&nbsp; o . o .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; . o o . .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; . o . . . .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+   &nbsp;&nbsp;&nbsp;&nbsp; . . . : o . . . . : . . .&nbsp;&nbsp;&nbsp; 
+   &nbsp;&nbsp;&nbsp; . . . . o . . x x X . . . .&nbsp;&nbsp; 
+   &nbsp;&nbsp; . . . . o : . x . : x . . . .&nbsp; 
+   &nbsp; . . . o o . : X : : . x . . . . 
+   &nbsp;&nbsp; . . o . o : . x . : x o o . .&nbsp; 
+   &nbsp;&nbsp;&nbsp; . . o o : . . x x X o . o .&nbsp;&nbsp; 
+   &nbsp;&nbsp;&nbsp;&nbsp; : : O : . . x . . O : o :&nbsp;&nbsp; 
+   &nbsp;&nbsp;&nbsp; . . o o : . x . . O . o . .&nbsp;&nbsp; 
+   &nbsp;&nbsp; . . o . o : x . . O . o . . .&nbsp; 
+   &nbsp; . . . o o . : X : O . o . . . . 
+   &nbsp;&nbsp; . . . . . : x . o : o . . . .&nbsp; 
+   &nbsp;&nbsp;&nbsp; . . . . : x . o . O . . . .&nbsp;&nbsp; 
+   &nbsp;&nbsp;&nbsp;&nbsp; . . . : . x . o o : . . .&nbsp;&nbsp; 
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; . x x . . .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x . x . .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x x . .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  </pre>
+<p> Note that one of the goals in the winning X group straddles more than one region; the key point is that the two goals contain at least one cell each that are in non-adjacent regions. </p>
+<p> The leftmost white group does not win because its two lower goals contain cells in adjacent regions, and the upper eye contains a board edge hence is not a goal. The rightmost white group does not win because it has only one goal even though it stretches to two non-adjacent regions. A single piece could split this goal into two to make this group a winner. </p>
+<h3><strong> Strategy and Tactics </strong></h3>
+<p> Cycles within a group constitute eyes, therefore they have a defensive role as well as creating goals. </p>
+<p> Eyes that include a board edge do not constitute goals (that would make the game too easy) but can still be useful for defending key groups. </p>
+<p> Exo is a game of dynamic goals that players create and destroy as the game progresses. Single eyes form temporary goals that may be captured; only groups with double eyes form stable goals. </p>
+<p> Eyes within the central region do not constitute goals as this region is adjacent to all others. However, a strong central group can provide a useful stepping stone through which goals in outlying regions may connect. </p>
+<p> Larger eyes that straddle more than one region allow a greater number of possible winning combinations for that goal. </p>
+<p> It is usually good to play in an opponent&rsquo;s eye if that will force the opponent to reply within the eye and shrink it. Shrinking the eye to contain only border cells means that it cannot be used as a goal. </p>
+<h3><strong>Notes </strong></h3>
+<p> It is harder to both surround pieces and block connections on the hex grid than on the square grid. Hence forming eyes and joining them is not as difficult as it may first seem. </p>
+<p> The surround flip option, if used,  avoids ko problems inherent in Go-style surround capture games. However, surround flip will make it harder to form goals as the opponent can just play within eyes to fill them up (or force you to).</p>
+<p> Border cells do not count for either region as that would make them too strong, especially cells  where three borders meet. </p>
+<p> Apart from Go and some of the archetypal connection games, Exo&rsquo;s closest relative would probably be Sisimizi, a game in which players try to connect movable anthills with chains of ants.</p>
+<h3>Syntax</h3>
+<p>The move syntax is:<br>
+    <br>
+    <tt> </tt><tt> </tt><tt> </tt><tt> </tt><tt> &nbsp;&nbsp;exo move <b>board#</b> <b>userid</b> <b>password</b> a7</tt> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;(place a piece at <strong>a7</strong>)<tt><br>
+    &nbsp;</tt><tt>&nbsp;exo move <b>board#</b> <b>userid</b> <b>password</b> swap</tt> &nbsp;&nbsp;&nbsp; (swap colours - second move only)<tt> &nbsp;&nbsp;</tt></p>
+<p>Pieces placed on border  pieces are capitalised so the border does not get hidden.</p>
+<h3>History</h3>
+<p> Exo rules copyright (c)  Cameron Browne, March 2007. </p>
+<p> The name &ldquo;Exo&rdquo; is short for exotropia, a visual disorder in which the eyes tend to diverge. How many other games do you know named after an eye condition?</p>
+<p>Implementation and Help file by Cameron Browne, March 2007.<br>
+</p>
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

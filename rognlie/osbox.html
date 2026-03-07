@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h3><strong> Introduction</strong></h3>
+<p> Osbox is a pure strategy game in which  two players push knotwork dice onto a board in order to create closed paths.<br>
+</p>
+<h3><strong>Rules</strong></h3>
+<p><strong>Dice: </strong>Players share a common pool of six-sided Osbo dice showing knot segments on each face. Note that two of the faces are identical:</p>
+<pre>     .-----.   .--#--.   .-----.   .-----.   .-----.   .--#--.  
+     |     |   | # # |   |#### |   |#### |   |#####|   |## ##|
+     | ### |   | # # |   #   # |   #   # |   #     #   #     #
+     | # # |   | # # |   |## # |   |## # |   |## ##|   |## ##|
+     `--#--'   `--#--'   `--#--'   `--#--'   `--#--'   `--#--'</pre>
+<p><strong>Start:</strong> The game is played on a 4x4 square board which is initially empty. The first player (Horz) owns the left and right sides and the second player (Vert) owns the top and bottom sides. Players can only move along their home sides. </p>
+<p><strong>Play:</strong>  Players  take turns placing a die of their choice on one of their home side positions and pushing it onto the board, which may  cause dice already on the board to be pushed  one space along the same row/column (dice cannot be pushed onto rows/columns that are full). Path segments do not need to match those on neighbouring dice.</p>
+<p>The current player scores points for each path closed by their move which visits more than one row and more than one column. A path's score is given by the number of crossings it contains, with self-crossings counting twice. The dice through which scoring paths pass are then removed from the board as they occur. </p>
+<p>For example, if Horz pushes the die face indicated below onto the board as shown, it will push two other dice along the same row. This creates two closed knots, one of which scores 8 points and is removed from the board. The smaller knot on the left does not score any points as it lies along a single row. </p>
+<pre>               +-----+-----+-----+-----+                +-----+-----+-----+-----+<br>               |           |     |     |                |                       |<br>               |           | ### |     |                |             ...       | <br>               |           | # # |     |                |             . .       |<br>         +-----+-----+--#--+--#--+     +                +-----+-----+  .  +     +<br>   ----&gt; |  ###|###  | # # |           |                |  ###|###  | . .       |<br>   Push  |  #  #  #  | # # |           |     gives      |  #  #  #  | . .       |<br>   ----&gt; |  ###|###  | # # |           |                |  ###|###  | . .       |<br>         +-----+-----+--#--+--#--+-----+                +-----+-----+  .  +     +     <br>               |           | # ##|###  |                |             . .. ...  |<br>               |           | #   #  #  |                |             ..  .  .  | <br>               |           | # ##|###  |                |             . .. ...  |<br>               +     +     +--#--+-----+                +     +     +  .  +     +<br>               |           | # # |     |                |             . .       |<br>               |           | ### |     |                |             ...       | <br>               |           |     |     |                |                       |<br>               +-----+-----+-----+-----+                +-----+-----+-----+-----+</pre>
+<p><strong>Aim: </strong>The game ends there board is full is won by the player with the highest score. The game is tied if scores  are equal.<br>
+  <br>
+</p>
+<div align="center">
+  <h3 align="left"><strong>Notes</strong></h3>
+  <p align="left">The fact that paths cannot lie completely within a single  row or column  ensures that players cannot simply push a thin knot along a single row/column to score it multiple times and reduces the number of cheap points from trivial pairings along the board edges.</p>
+  <p align="left">The capture  rule makes this game a  sort of celtic knotwork Tetris. Each scoring move will free up the board making games longer and more complex, hence it can be played on smaller boards (e.g. 4x4). This rule introduces some interesting tactics in that players may tempt the opponent into completing small knots whose removal opens the way for larger knots next turn. <br>
+  </p>
+  <h3 align="left"><strong>Variants</strong></h3>
+  <p align="left"><strong>Any Side:</strong> The current player may enter their die from any side of the board, not just their own side.</p>
+  <p align="left"><strong>Multiplayer Osbox:</strong> There's no reason that Osbox should not work with three or four players each owning a single board side. Then again, there's no reason that it should work either.<br>
+    <br>
+  </p>
+  </div>
+
+<h3>History </h3>
+
+<p>Osbox  rules copyright (c)  Cameron Browne,  April  2008.</p>
+<p>Osbox is a pure strategy game for players like the      Osbo dice but don't like the random element of Osbo. Osbox is similar in principle to a knotwork version of Tetris as suggested by Dan Isdell.</p>
+<p>More details are available at  the <a href="https://web.archive.org/web/20230925100652/http://www.cameronius.com/games/osbox/">official Osbox page</a>.</p>
+<p>Implementation and Help file by Cameron Browne, March  2008.<br>
+</p>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

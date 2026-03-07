@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+ <h3>Rules</h3>
+
+  <p>The board is initially empty. Vert starts then players alternate taking turns adding a piece of their colour to the board.</p>
+  <div>If the piece just placed forms  a 2x2  square consisting of two similar diagonal stones, one opposite stone and an empty cell, then an additional  piece of the majority colour is automatically placed at  the  empty  cell. If this results in a similar situation, the same applies again, and so on indefinitely:</div>
+  <pre class="style1"> . . . . . . .         . . . . . . .         . . . . . . .
+ . . . . . . .         . . . . . . .         . . . . . . .
+ . . v h . . .         . . v h . . .         . . v h . . .           
+ . . H . v . .  ----&gt;  . . h H v . .  ----&gt;  . . h h v . .
+ . . . . h . .         . . . . h . .         . . . H h . .
+ . . . . . . .         . . . . . . .         . . . . . . .
+ . . . . . . .         . . . . . . .         . . . . . . .
+</pre>
+  <p>Player Vert (<font face="Courier New, Courier, mono"><b>V</b></font>) wins by connecting the top and bottom edges of the board with a chain of <font face="Courier New, Courier, mono"><b>V</b></font> pieces, while player Horz (<font face="Courier New, Courier, mono"><b>H</b></font>) wins by connecting the left and right edges of the board with a chain of <font face="Courier New, Courier, mono"><b>H</b></font>&nbsp;pieces.</p>
+  <h3>Example</h3>
+  <p>Below is a 19x19 game of Quadrex won by Vert, who has completed a chain of <font face="Courier New, Courier, mono"><b>V</b></font> 
+    pieces from top to bottom.</p>
+  <pre><font face="Courier New, Courier, mono">       a b c d e f g h i j k l m n o p q r s </font></pre>
+  <pre>  19   . . . . . . . . . v . . . . . . . . .   19
+  18   . . . . . . . . . v . . . . . . . . .   18
+  17   . . . . . . . . . v v v . . . . . . .   17
+  16   . . . . . . . . . . . v . . . . . . .   16
+  15   . . . h h h h . . . . v . . . . . . .   15
+  14   . . . h . . h . . . . v . . . . . . .   14
+  13   . . . h . . h . . . . v v . . . . . .   13
+  12   . . . h . . h . . . . . v . . . . . .   12
+  11   . . . h . . h . . . . . v . . . . . .   11
+  10   h h h h . . h h h h h h v h h h h h h   10
+   9   . . . . . . . . . . . . v . . . . . .   9
+   8   . . . . . . . . . . . . v . . . . . .   8
+   7   . . . . . . . . v v v v v . . . . . .   7
+   6   . . . . . . . . v . . . . . . . . . .   6
+   5   . . . . . . . . v . . . . . . . . . .   5
+   4   . . . . . . . . v . . . . . . . . . .   4
+   3   . . . . . . . . v . . . . . . . . . .   3
+   2   . . . . . . . . v . . . . . . . . . .   2
+   1   . . . . . . . . v . . . . . . . . . .   1</pre>
+  <pre>       a b c d e f g h i j k l m n o p q r s </pre>
+  <h3>Syntax</h3>
+  Moves are specified in the usual format &quot;quadrex move<b> board# userid password 
+  action&quot;</b> where <b>action</b> is one of:<br>
+  <pre>
+&nbsp;&nbsp;&nbsp;&nbsp;<b>F6&nbsp;</b><i>&nbsp;</i>&nbsp;&nbsp;  Place a piece at coordinate <b>F6</b>, which must be empty.<br><br>&nbsp;&nbsp;&nbsp;&nbsp;<b>swap</b>&nbsp;&nbsp;  Horz may elect to swap Vert's opening move as their first play.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This ensures that Vert does not start with too strong an opening move.</pre>
+  <h3> History</h3>
+
+  <p>Quadrex rules copyright (c) 2007 Bill Taylor.</p>
+  <p>Implementation and help file by Cameron Browne,  May 2007.</p>
+</div>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

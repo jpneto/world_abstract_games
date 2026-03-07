@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<font face="Arial">
+<h3>Introduction </h3>
+Diffusion is a two player game which employs a Mancala board and
+a set of like-colored stones. Here a 2x6 board with 48 stones will be used. Initially the
+board is set up with four stones in each of the small pits and no stones in the large pits,
+as shown in Figure 1. Two 2x3 'blocks' are outlined in Figure 2. Each player owns the
+block to his left. Numbers indicate the stone count in each pit. Diffusion is a unique,
+robust addition to the family of Mancala games. Draws and ties cannot occur in
+Diffusion. Mark Steere invented Diffusion on January 20, 2006.
+</font>
+
+<pre><font face="courier" size="3">
+      F   E   D   C   B   A 
+.---.---.---.---.---.---.---.---.
+|   | 4 | 4 | 4 | 4 | 4 | 4 |   |
+|   |---+---+---+---+---+---|   |
+|   | 4 | 4 | 4 | 4 | 4 | 4 |   |
+'---'---'---'---'---'---'---'---'
+      G   H   I   J   K   L 
+
+  Figure 1 -- Diffusion Board - Initial Setup
+
+                .-----------.
+    .-----------|  Block B  |
+.---|---.---.---|---.---.---|---.
+|   | 4 | 4 | 4 | 4 | 4 | 4 |   |
+|   |---+---+---|---+---+---|   |
+|   | 4 | 4 | 4 | 4 | 4 | 4 |   |
+'---|---'---'---|---'---'---|---'
+    |  Block A  |-----------'
+    '-----------'
+
+  Figure 2 -- Blocks A and B
+</font></pre>
+
+
+<font face="Arial">
+<h3>Object of the Game</h3> If, at the conclusion of a turn, one of the two blocks is
+completely vacated, the owner of that block wins.
+
+</font>
+
+<font face="Arial">
+<h3>Moves</h3> Players take turns making moves. You begin your turn by scooping all of the
+stones out of any one of the 12 small pits which contains stones. (There will never be
+more than five stones in a small pit.) You conclude your turn by distributing those
+stones into pits adjacent to and surrounding the newly emptied pit, as described in
+the following sections. Players cannot pass on their turn. There will always be at least
+one move available.
+
+<h3>Stone Distribution for Edge Small Pits</h3> Having scooped all of the
+stones out of one of the four non-corner small pits in your near row, you must distribute
+those stones into small pits which are orthogonally or diagonally adjacent to the newly
+emptied pit as follows: Place one stone into the small pit immediately to the right of the
+emptied pit, and proceed counterclockwise around the emptied pit, depositing all of the
+remaining stones, one stone per small pit, in a continuous sequence (no gaps).Figure 3 
+shows such an example.<br>
+</font>
+
+<pre><font face="courier" size="3">
+.---.---.---.---.---.---.---.---.
+|   | 4 | 4 | 4 | 4 | 4 | 4 |   |
+|   |---+---+---+---+---+---|   |
+|   | 4 | 4 | 4 | 4 | 4 | 4 |   |
+'---'---'---'---'---'---'---'---'
+
+  Figure 3a -- Starting Position
+
+
+.---.---.---.---.---.---.---.---.
+|   | 4 | 4 | 4 | 4 | 4 | 4 |   |
+|   |---+---+---+---+---+---|   |
+|   | 4 | 4 | 0 | 4 | 4 | 4 |   |
+'---'---'---'---'---'---'---'---'
+
+  Figure 3b -- Scoop All Stones out of Edge Small Pit
+
+
+.---.---.---.---.---.---.---.---.
+|   | 4 | 5 | 5 | 5 | 4 | 4 |   |
+|   |---+---+---+---+---+---|   |
+|   | 4 | 4 | 0 | 5 | 4 | 4 |   |
+'---'---'---'---'---'---'---'---'
+
+  Figure 3c -- Distribute Stones Counter-Clockwise Around Emptied Small Pit
+
+</font></pre>
+
+<font face="Arial">
+<h3>Stone Distribution for Corner Small Pits</h3> Having scooped all of the
+stones out of one of the four corner small pits, treat the adjacent large pit as two empty
+small pits, and follow the distribution rules described in the preceding section. Figure 4
+shows such an example.<br>
+</font>
+
+<pre><font face="courier" size="3">
+.---.---.---.---.---.---.---.---.
+|   | 3 | 0 | 2 | 0 | 0 | 2 |   |
+|20 |---+---+---+---+---+---| 20|
+|   | 0 | 0 | 0 | 0 | 1 | 0 |   |
+'---'---'---'---'---'---'---'---'
+
+  Figure 4a -- Starting Position
+
+
+.---.---.---.---.---.---.---.---.
+| 0 | 0 | 0 | 2 | 0 | 0 | 2 |   |
+|---|---+---+---+---+---+---| 20|
+| 0 | 0 | 0 | 0 | 0 | 1 | 0 |   |
+'---'---'---'---'---'---'---'---'
+
+  Figure 4b -- Scoop All Three Stones out of Corner Small Pit
+
+
+.---.---.---.---.---.---.---.---.
+|   | 0 | 0 | 2 | 0 | 0 | 2 |   |
+|22 |---+---+---+---+---+---| 20|
+|   | 1 | 0 | 0 | 0 | 1 | 0 |   |
+'---'---'---'---'---'---'---'---'
+
+  Figure 4c -- Distribute Stones Counter-Clockwise Around Emptied Small Pit
+
+</font></pre>
+
+<font face="Arial">
+<h3>No Six-Count Small Pits</h3> If the addition of a stone to a small pit would increase
+the number of stones in that small pit to six, you must add that stone to one of the large
+pits instead. Then resume distributing the remaining stones, starting with the next
+small pit in the counterclockwise direction around the emptied pit. Figure 5 shows
+such an example. As noted earlier, a small pit should never contain more than five stones.<br>
+</font>
+
+<pre><font face="courier" size="3">
+.---.---.---.---.---.---.---.---.
+|   | 2 | 0 | 1 | 4 | 0 | 1 |   |
+|20 |---+---+---+---+---+---| 10|
+|   | 0 | 0 | 5 | 5 | 0 | 0 |   |
+'---'---'---'---'---'---'---'---'
+
+  Figure 5a -- Starting Position
+
+
+.---.---.---.---.---.---.---.---.
+|   | 2 | 0 | 1 | 0 | 0 | 1 |   |
+|20 |---+---+---+---+---+---| 10|
+|   | 0 | 0 | 5 | 5 | 0 | 0 |   |
+'---'---'---'---'---'---'---'---'
+
+  Figure 5b -- Scoop All Four Stones out of Edge Small Pit
+
+
+.---.---.---.---.---.---.---.---.
+|   | 2 | 0 | 2 | 0 | 0 | 1 |   |
+|20 |---+---+---+---+---+---| 12|
+|   | 0 | 0 | 5 | 5 | 1 | 0 |   |
+'---'---'---'---'---'---'---'---'
+
+  Figure 5c -- No Six-Count Pits - Large Pit Increases by Two
+
+</font></pre>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

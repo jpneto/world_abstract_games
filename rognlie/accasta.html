@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h2>Rules of Accasta</h2></a>
+
+<p>Copyright (c) <a href="https://web.archive.org/web/20241003235614/mailto:dieter@spielstein.de">Dieter Stein</a></p>
+
+<p><b>accatastare</b> <i>(ital.)</i> stack, pile up</p>
+
+<h3>Pieces and Stacks</h3>
+<p>Every player is provided with 20 pieces of different values.</p>
+
+<p>There are three different pieces: <b>shields</b> (S), <b>horses</b> (H), and
+<b>chariots</b> (C).</p>
+
+<p>Pieces can be stacked. The top piece of a stack determines
+its owner.</p>
+
+<h4>Shield</h4>
+<p>Each player has nine shields.
+Shields move <b>one</b> cell in any of the six directions.</p>
+
+<p><pre>
+             1   2   3   4   
+           -/- -/- -/- -/- 
+      g -- .   .   .   .   5   
+             --- --- ---  /
+    f -- .   .   .   .   .   6   
+               --- ---      /
+  e -- .   .   .   .   .   .   7   
+                              /
+d -- .   .   .   X   X   .   .   
+                              \
+  c -- .   .   X   S   X   .   7   
+               --- ---      \
+    b -- .   .   X   X   .   6   
+             --- --- ---  \
+      a -- .   .   .   .   5   
+           -\- -\- -\- -\- 
+             1   2   3   4   
+</pre></p>
+
+<h4>Horse</h4>
+<p>Each player has seven horses.
+Horses move <b>one or two</b> cells in any of the six directions. The
+move must be straight. Jumping over an occupied cell is not allowed.</p>
+
+<p><pre>
+             1   2   3   4   
+           -/- -/- -/- -/- 
+      g -- .   .   .   .   5   
+             --- --- ---  /
+    f -- .   .   .   .   .   6   
+               --- ---      /
+  e -- .   .   X   .   X   .   7   
+                              /
+d -- .   .   .   X   X   .   .   
+                              \
+  c -- .   X   X   H   X   X   7   
+               --- ---      \
+    b -- .   .   X   X   .   6   
+             --- --- ---  \
+      a -- .   X   .   X   5   
+           -\- -\- -\- -\- 
+             1   2   3   4   
+</pre></p>
+
+<h4>Chariot</h4>
+<p>Each player has four chariots.
+Chariots move <b>one, two, or three</b> cells in any of the six directions. The
+move must be straight. Jumping over an occupied cell is not allowed.</p>
+
+<p><pre>
+             1   2   3   4   
+           -/- -/- -/- -/- 
+      g -- .   .   .   .   5   
+             --- --- ---  /
+    f -- .   X   .   .   X   6   
+               --- ---      /
+  e -- .   .   X   .   X   .   7   
+                              /
+d -- .   .   .   X   X   .   .   
+                              \
+  c -- X   X   X   C   X   X   7   
+               --- ---      \
+    b -- .   .   X   X   .   6   
+             --- --- ---  \
+      a -- .   X   .   X   5   
+           -\- -\- -\- -\- 
+             1   2   3   4   
+</pre></p>
+
+<h3>Initial Setup</h3>
+<p>This diagram shows the initial setup of the stacked pieces on the
+board as well as the system of coordinates.</p>
+
+<p><pre>
+                Black
+
+             1   2   3   4   
+           -/- -/- -/- -/- 
+      g -- shc shc shc shc 5   
+             --- --- ---  /
+    f -- .   sh  sh  sh  .   6   
+               --- ---      /
+  e -- .   .   s   s   .   .   7   
+                              /
+d -- .   .   .   .   .   .   .   
+                              \
+  c -- .   .   S   S   .   .   7   
+               --- ---      \
+    b -- .   SH  SH  SH  .   6   
+             --- --- ---  \
+      a -- SHC SHC SHC SHC 5   
+           -\- -\- -\- -\- 
+             1   2   3   4   
+
+                White
+</pre></p>
+
+<p>The horizontal lines go from
+<b>a</b> to <b>g</b>, and the numbered lines are bent over the line <b>d</b>.
+This conforms to the symmetrical aspect of the board where White initally
+places his stacks on one side and Black on the opposite side.</p>
+
+<p>The underlined (and in the beginning occupied) cells on both sides
+are called the players' <b>castles</b>.</p>
+
+<h3>Object</h3>
+<p>If a player succeeds in placing at least three of his own stacks
+in the opponent's castle he wins the game.</p>
+
+<h3>Moving the Pieces</h3>
+<p>Pieces are moved from cell to cell <b>individually</b> or <b>together with
+pieces underneath</b>. A player can split a stack top down in any combination.
+The top piece of the moving part of a stack determines the possible range.</p>
+
+<p><i>For example:</i> Chariots can carry other pieces underneath up to three
+cells. Shields, on the other hand, can carry horses or chariots only to an
+adjacent cell.</p>
+
+<p>The target cell of a move can be empty <b>or</b> occupied by one's own or
+an enemy stack (or single piece). The arriving pieces are always placed on
+top of the target stack. <b>Pieces are never removed from board.</b></p>
+
+<p><b>However, stacking is only allowed if there are not more than three
+pieces of a color in the resulting stack.</b> Please note, that this refers
+to joining a friendly stack as well as capturing an enemy stack! See the
+following diagram:</p>
+
+<p><pre>
+                 1     2     3     4     
+              --/-- --/-- --/-- --/-- 
+         g -- .     .     .     .     5     
+                 ----- ----- -----   /
+      f -- .     HHs   .     .     .     6     
+                    ----- -----         /
+   e -- .     .     .     .     SsSHh .     7     
+                                           /
+d -- .     .     .     .     .     .     .     
+                                           \
+   c -- .     .     .     SHC   .     .     7     
+                    ----- -----         \
+      b -- .     .     .     .     .     6     
+                 ----- ----- -----   \
+         a -- .     .     .     .     5     
+              --\-- --\-- --\-- --\-- 
+                 1     2     3     4     
+
+</pre>
+<i>The black stack at f2 can be captured only by the chariot at c4 alone.
+Moving with horse or with shield would result in a stack with four or five
+white pieces, respectively. The stack at e5 cannot be captured at all; there
+are already three white pieces there.</i></p>
+
+<p>Stacks which contain three captured pieces are invulnerable, until they
+are split again. They are called <b>safe stacks</b>.</p>
+
+<p><i>Safe stacks are the tactically most important aspect of Accasta.</i></p>
+
+<h3>Multiple Moves</h3>
+<p>In case a player does not move all pieces of a stack, he is
+allowed to <b>immediately</b> move pieces of the original stack 
+underneath as well.</p>
+
+<p><pre>
+                 1     2     3     4     
+              --/-- --/-- --/-- --/-- 
+         g -- .     .     .     .     5     
+                 ----- ----- -----   /
+      f -- .     X     .     .     .     6     
+                    ----- -----         /
+   e -- .     .     .     .     .     .     7     
+                                           /
+d -- .     .     .     X     .     .     .     
+                                           \
+   c -- .     X     *     SsHC  .     .     7     
+                    ----- -----         \
+      b -- .     .     .     .     .     6     
+                 ----- ----- -----   \
+         a -- .     .     .     .     5     
+              --\-- --\-- --\-- --\-- 
+                 1     2     3     4     
+</pre>
+<i>The stack at c4 can make three submoves: Chariot moves singly to f2, horse with captured
+shield to c2, and finally, white shield to d4. If the chariot first moved
+to c3 (marked with *), then the horse could not reach c2 any longer, because leaping over
+another piece is never allowed.</i></p>
+
+<h3>Release</h3>
+<p>An enemy piece can be set free when splitting a stack. <b>However, this is not allowed
+inside one's own castle.</b> A release completes the current move of a player.</p>
+
+<h3>Winning a Game</h3>
+<p>Players try to place at least three of one's own stacks inside the opponent's castle.</p>
+<p><pre>
+             1   2   3   4   
+           -/- -/- -/- -/- 
+      g -- .   .   shS .   5   
+             --- --- ---  /
+    f -- .   SH  .   .   .   6   
+               --- ---      /
+  e -- .   .   S   .   .   .   7   
+                              /
+d -- .   .   .   .   .   .   .   
+                              \
+  c -- .   .   .   .   .   .   7   
+               --- ---      \
+    b -- .   .   .   .   .   6   
+             --- --- ---  \
+      a -- .   .   .   .   5   
+           -\- -\- -\- -\- 
+             1   2   3   4   
+</pre></p>
+<i>White wins with his stacks at e3, f2, and g3.</i></p>
+
+<p>It is also possible (although most unlikely) to win a game by capturing
+all pieces of the opponent before occupying his castle.</p>
+
+<h2><a name="notation"></a>Notation</h2>
+<p>Shields, horses, and chariots are displayed as <tt>S</tt>, <tt>H</tt>,
+and <tt>C</tt>, respectively.
+The move types are displayed as <tt>-</tt> (minus, for moving), <tt>+</tt> (plus, for joining),
+and <tt>x</tt> (for capturing).</p>
+
+<p>First of all, the origin cell is written, followed by a colon, like:<br>
+<tt><b>a1:</b></tt></p>
+
+<p>Then the submove(s) follow, separated by commas. Each submove is displayed as
+<b>pieces movetype targetcell</b>. One's own pieces are written upper case, enemy (i.e.
+captured) pieces lower case.<br>
+<pre><b>1 a1:C-d1,H-b1,S+b1    2 g1:CHxd1
+3 ...                  4 d1:CHc-e1;</b></pre></p>
+
+<p>Pieces can be omitted, this means that the whole (remaining) stack is moving:<br>
+<tt><b>a1:C-d1,H-b1,+b1</b></tt> or, another example: <tt><b>a1:-d1</b></tt></p>
+
+<h3>Short Form</h3>
+<p>However, all punctuation is optional, so the long form notation<br>
+<tt><b>a1:C-d1,H-b1,+b1</b></tt> can be reduced to <tt><b>a1Cd1Hb1b1</b></tt>,
+which is still unambiguous but not very readable.
+See e.g.: <tt><b>c1Ccc4 (c1:Cc-c4)</b></tt></p>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

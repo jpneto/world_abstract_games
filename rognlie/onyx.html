@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h3><font face="Arial" size="2">The Rules of Onyx</font></a></h3>
+<p><font face="Arial" size="2">
+   This is the initial layout for a standard game of Onyx.  Each player
+   starts with two pieces along each of the two sides of the board
+   belonging to the opponent.
+</font></p>
+
+<font face="Courier"><pre>
+    A   B   C   D   E   F   G   H   I   J   K   L
+ 12   -   -   -   -   - H - H -   -   -   -   -   12
+    | / |   | / |   | / |   | / |   | / |   | / |
+ 11   -   -   -   -   -   -   -   -   -   -   -   11
+    |   | \ |   | \ |   | \ |   | \ |   | \ |   |
+ 10   -   -   -   -   -   -   -   -   -   -   -   10
+    | / |   | / |   | / |   | / |   | / |   | / |
+  9   -   -   -   -   -   -   -   -   -   -   -    9
+    |   | \ |   | \ |   | \ |   | \ |   | \ |   |
+  8   -   -   -   -   -   -   -   -   -   -   -    8
+    | / |   | / |   | / |   | / |   | / |   | / |
+  7 V -   -   -   -   -   -   -   -   -   -   - V  7
+    |   | \ |   | \ |   | \ |   | \ |   | \ |   |
+  6 V -   -   -   -   -   -   -   -   -   -   - V  6
+    | / |   | / |   | / |   | / |   | / |   | / |
+  5   -   -   -   -   -   -   -   -   -   -   -    5
+    |   | \ |   | \ |   | \ |   | \ |   | \ |   |
+  4   -   -   -   -   -   -   -   -   -   -   -    4
+    | / |   | / |   | / |   | / |   | / |   | / |
+  3   -   -   -   -   -   -   -   -   -   -   -    3
+    |   | \ |   | \ |   | \ |   | \ |   | \ |   |
+  2   -   -   -   -   -   -   -   -   -   -   -    2
+    | / |   | / |   | / |   | / |   | / |   | / |
+  1   -   -   -   -   - H - H -   -   -   -   -    1
+    A   B   C   D   E   F   G   H   I   J   K   L
+</pre></font>
+
+<p><font face="Arial" size="2">
+   Onyx is a connection game with a unique capturing rule.
+   It is played by two players; 'V' Player (Vertical Player or Player
+   playing Black) and 'H' Player (Horizontal Player or Player playing
+   White).
+    </font></p>
+<p><font face="Arial" size="2">
+   The Onyx board is comprised of interlocking squares and equilateral
+   triangles.  Each square is further divided into four non-equilateral
+   triangles by lines that join opposite corner points of the square.
+   These lines form a midpoint at the center of each square.
+   A move consists of placing a piece of one's color on the midpoint
+   of a square or on the corner point of a square or equilateral triangle.
+   One restriction on placement is that a piece can only be placed on the
+   midpoint of a square if the four corner points of that square are
+   unoccupied. Two pieces joined by a single straight line are considered
+   to be connected.  With the ascii representation of the board the
+   equilateral triangles are comprised of adjacent diagonal, horizontal
+   and vertical lines that are joined to each other.  (Therefore, these
+   triangles lose their equilateral shape due to the limitation of the
+   ascii representation.  Also, two triangles that share a diagonal line
+   appear to form a square.  However, the real squares are the ones that
+   do not show a diagonal line in them.)
+    </font></p>
+<p><font face="Arial" size="2">
+   Squares are shown without any diagonal lines joining the opposite
+   corners.  Nonetheless, a piece can be placed in the center (midpoint)
+   of a square and that piece is considered to be connected to any piece
+   that occupies a corner point of that same square.
+    </font></p>
+<p><font face="Arial" size="2">
+   Capturing: If the midpoint of a square is unoccupied and a player
+   places a piece on the corner point of the square with the result that
+   both player's have two pieces occupying opposite corner points of the
+   square then the two opponent's pieces on that square are captured and
+   removed from the board.  It is possible to capture two pairs of pieces
+   on two different squares with one move.  In that case all four captured
+   pieces are removed from the board.
+    </font></p>
+<p><font face="Arial" size="2">
+   The object of the game is to construct an unbroken chain of your
+   connected pieces linking one side of the board to the opposite side.
+   The Vertical Player must complete a chain from top to bottom, while
+   the Horizontal Player must complete a chain from left to right.  Pieces
+   may be placed either at an intersection of a letter and number
+   (i.e. D10 - the corner point of a square) or inside an empty square
+   that does not have a line through it (ie. the midpoint of a square).
+   The corners of the board (A1, L1, A12, and L12) belong to the sides
+   of either player and may be part of an unbroken chain for either
+   player in the connection of two opposite sides of the board.
+
+    </font></p>
+<p><font face="Arial" size="2">
+   Example 1:  Midpoint moves
+
+<font face="Courier"><pre>
+    2   -   -   -   -     In this example, 'V' Player placed one of his
+      | / | V | / | H |   pieces at BC12 (the midpoint of the square bounded
+    1   -   -   -   -     by columns B and C and rows 1 and 2) while
+      A   B   C   D   E   'H' Player placed one of his pieces at DE12
+</pre></font>
+
+   In example 1, the inside of a square is noted with the two letters and
+   two numbers of the two columns and two rows that surround the desired
+   location.  Notice that CD12 is not a valid place to make a move (it has a
+   '/' through it).
+
+    </font></p>
+<p><font face="Arial" size="2">
+   Example 2:  Restriction on midpoint moves
+
+<font face="Courier"><pre>
+   10   -   - V -   -      Neither player may play at BC910 nor at DE910.
+      | / | ? | / | ? |
+    9   -   -   -   - H
+      A   B   C   D   E
+</pre></font>
+
+   In example 2, neither player may place a piece at the locations
+   marked with a question mark ('?') since one or more of the corners of
+   the square is occupied with a player's piece; there is a piece at C10.
+   Remember that a player may place a piece inside of a square only if all
+   four corners of that square are empty.  Likewise, neither player may
+   play at DE910 because of the piece at E9.
+
+    </font></p>
+<p><font face="Arial" size="2">
+   Example 3:  Linking pieces
+
+<font face="Courier"><pre>
+   10   - V -   - H -
+      | / |   | / | H |
+    9 V -   - V -   - H
+      G   H   I   J   K
+</pre></font>
+
+   In example 3, the pieces at H10 and G9 are connected by the '/' line
+   that links them.  Also, the pieces at J10 and K9 are both connected
+   to the piece at JK910 and are therefore part of the same connected chain.
+   A piece located in the center of a square is linked to any pieces of the
+   same color located at any of the corners of that square.  Notice that
+   the 'V' pieces at H10 and I9 are not connected.  A 'V' piece placed at
+   either H9 or I10 would connect to both the 'V' piece at I9 and the
+   'V' piece at H10 making them all part of one connected chain.
+
+    </font></p>
+<p><font face="Arial" size="2">
+   Example 4:  Captures
+
+<font face="Courier"><pre>
+    4   -   - V - V - H          4   - H -   - V - H
+      | / |   | / | ? |   ---&gt;     | / |   | / | ? |
+    3   - V - H -   - V          3   -   - H -   - V
+      C   D   E   F   G            C   D   E   F   G
+</pre></font>
+
+   In example 4, the 'H' Player may make a single capture by playing
+   D4 (or D4*); he then captures the two 'V' pieces at E4 and D3 and they
+   are removed from the board as shown on the right.  A capture may only
+   occur when the opponent's pieces are at diagonally opposite corners of
+   a square.  The 'H' Player may also capture at F3 only if the location
+   marked with the question mark were empty.  A capture may only occur if
+   the center of the square is empty; if the location marked with the
+   question mark had a piece in it, then a capture would not be possible
+   at that square.
+
+    </font></p>
+<p><font face="Arial" size="2">
+   Example 5:  Double captures
+
+<font face="Courier"><pre>
+    4 V - H - V -   -           4 V -   - V -   -
+      | / |   | / |   |           | / |   | / |   |
+    3 H -   - H -   -    ---&gt;   3   - V -   -   -
+      |   | \ |   | \ |           |   | \ |   | \ |
+    2 V - H -   - H - H         2 V -   -   - H - H
+      C   D   E   F   G           C   D   E   F   G
+</pre></font>
+
+   Example 5 shows a double capture.  Player 'V' makes the move, D3,
+   (or D3**) and captures the opponent at two squares and removes all the
+   opponent's pieces at D2, C3, E3, and D4 as shown on the right.  (BTW:
+   just to make clear, the 'V' pieces at D3 and C4 are not connected
+   because the slash/line is in the wrong direction.  The slash/line at
+   CD34 connects any pieces that would occupy D4 and C3; while the
+   slash/line at DE23 would connect pieces located at D3 and E2.  A
+   piece located in the center of a square is connected to any pieces
+   of the same color located at any of the corners of that square.
+   The two 'H' pieces located at F2 and G2 are connected by the
+   horizontal line between them.)
+
+    </font></p>
+<p><font face="Arial" size="2">
+   Example 6:  Alternate ascii representation
+
+<font face="Courier"><pre>
+   4   -   - V -        4  -- --V--
+     |   | / |   |  -&gt;    |\/| /|\/|
+   3   -   -   - V  -&gt;    |/\|/ |/\|
+     D   E   F   G      3  -- -- --V
+                          D  E  F  G
+</pre></font>
+
+   Example 6 shows an alternate ascii representation of the Onyx board.
+   The squares that appear empty on the left are actually filled by four
+   lines going to the center as shown on the right.  The pieces
+   at F4 and G3 are not yet part of the same connected chain.
+   If a 'V' piece were located at F3 or G4 or FG34 then the two
+   'V' pieces on the board would be part of the same connected chain.
+
+    </font></p>
+    
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

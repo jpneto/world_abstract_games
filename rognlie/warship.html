@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+  <h3>Rules</h3>
+  <p>Each player starts with five warships randomly placed on a 10x10 grid (hidden from  opponents):<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;1 x Aircraft carrier (5 units long)<br> 
+    &nbsp;&nbsp;&nbsp;&nbsp;1 x Destroyer (4 units long)<br> 
+    &nbsp;&nbsp;&nbsp;&nbsp;2 x Cruisers (3 units long)<br> 
+    &nbsp;&nbsp;&nbsp;&nbsp;1 x Submarine (2 units long)</p>
+  <p>Each turn the current player specifies a number of board coordinates to which they fire  shots on all opponent's boards. Misses are marked '+', hits are marked 'x', and sunk ships are marked 'X' (unless the -nosink option is used).</p>
+  <p>Players get one shot per turn unless the -allfire and/or -nosink options entitle them to more. Players  must fire if possible, but do not have to  use all of their allotted shots each turn. Players with no remaining floaters are skipped. The last remaining floater wins the game.</p>
+  <p>The following board shows a battle in progress from nelson's perspective. Numbers in brackets indicate how many shots each player may currently fire.</p>
+  <pre>     A B C D E F G H I J      A B C D E F G H I J<br> <br> 10  . . . . . 3 . . . .  10  . . . . . . . . . .  10<br>  9  . . . . . x . . 4 .   9  . . . . . . . . . .   9<br>  8  . + 3 . + x + . 4 .   8  . . . x + . . + . .   8     + = Miss<br>  7  . . 3 . . + . . 4 .   7  . . . . . + X X X .   7<br>  6  . . 3 . . . . + 4 .   6  . + . + . . + . . .   6     x = Hit<br>  5  . . . . + . + . . .   5  . . . . . . . . . .   5<br>  4  . 5 5 x x 5 . . . .   4  . . X . . + . . . .   4     X = Sunk <br>  3  . + . . . . . + . .   3  . . X + . . . + . .   3<br>  2  . . 2 2 + . . . . .   2  . . . . . . . . . .   2<br>  1  . . . . . . . . . .   1  . . . . . . . . . .   1<br>          nelson (5)             villeneuve (3)<br>     A B C D E F G H I J      A B C D E F G H I J
+</pre>
+    First move equaliser: the opening player's  number of shots is halved for the first move (rounded up).
+    <h3>Multiplayer Warship</h3>
+  <p>The multiplayer game is identical to the standard game except that more than two  players participate.</p>
+    <p>&quot;Once ze rockets go up who cares where zey come down? That's not my department," says Werner von Braun. -Tom Lehrer</p>
+  </div>
+  <h3>References and History</h3>
+
+  <p>Warship is a traditional game of naval gazing, though the rather nasty multiplayer option may be novel.</p>
+  <p>Implementation and help file by <a href="https://web.archive.org/web/20240917200845/mailto:cameronb@optusnet.com.au">Cameron 
+    Browne</a>, September 2004.<br>
+  </p>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

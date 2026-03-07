@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<a name="rules">
+<h3>Rules for Scramble</h3>
+</a>
+
+<h4>INTRODUCTION</h4>
+
+   Scramble is a word game played on a 15x15, 19x19, or 21x21 board. 
+   The object is to 
+   form words on the board using tiles in your "hand" that give you 
+   the most points.
+<p>
+   Each tile has a letter, and every letter has a specific point value.
+   There are also two "blank" tiles that you can use to represent whatever
+   letter you wish. However, once you place a blank tile on the board, it
+   must continue to represent the same letter you initially used it for. 
+   Blanks have no point value. A blank is shown on the board by the lower
+   case letter that it represents.
+<p>
+   There are bonus spaces on the board that give extra points when used. 
+   The space represented by % will double the value of a letter placed on 
+   it, and the spaces with @ will triple the value of the letter. If a 
+   space with * is used, the entire word score is doubled, and if a # is
+   used, the entire word score is tripled. Additionally, on the 19x19 and
+   21x21 boards, there are quadruple letter (&amp;) spaces and quadruple word
+   ($) spaces available. Letter multiplying spaces are
+   calculated before word multiplying spaces. Once a multiplier space has
+   been used, the multiplier will not count in subsequent turns that
+   re-use the letter placed on it. A multiplier will only be used more
+   than once if the space is used to form multiple words within the same
+   turn.
+<p>
+   When you play a full rack (7 tiles in the 15x15 board, or 8 tiles in
+   the 19x19 and 21x21 boards) you will receive a 50 point bonus.
+<p>
+   The game also keeps track of the point values of the letters you play,
+   not including any bonus multipliers or multi-word uses. This score is
+   called "letterpoints" and represents the actual point value of all the
+   letters you have played.
+<p>
+   Your score is shown as "points/letterpoints" on the game board. At the
+   end of the game, a summary is given showing your points, letterpoints,
+   and ratio. The higher the ratio, the better use you have made of
+   bonus multipliers, multi-word uses, and existing letter use.
+
+<h4>STARTING</h4>
+
+   Each player draws a tile to see who goes first. The player with the
+   tile closest to A will go first; blanks are considered farthest from A.
+   If two or more players share the same letter closest to A, all
+   players will redraw tiles.
+<p>
+   The players will replace their tiles, and all tiles will be mixed. Each
+   player will then be given a full rack of tiles (7 with the 15x15 board
+   and 8 with the 19x19 and 21x21 boards).
+
+<h4>PLAY</h4>
+
+   Each player will place tiles on the board to form a word. The tiles must
+   be placed so that at least one existing letter on the board is used to 
+   form a new word along with the tiles you place down. The only exception 
+   is the very first move, where the first player must place their word so 
+   that it covers the very center space, H8. The first word may be placed
+   vertically or horizontally, as long as at least one of its letters
+   covers H8.
+<p>
+   After a word is placed on the board, tiles are drawn from the remaining
+   tiles to give the player a full rack. When all remaining tiles have been
+   used up, the player will be left with only their remaining tiles.
+<p>
+   The network version of Scramble will check all works created against a
+   standard word-game dictionary.  If a word does not appear in the dictionary,
+   it is handled according to which game mode is being used: strict, nostrict,
+   or tournament.
+
+<h4 id="challenge">ADJUDICATION AND CHALLENGES</h4>
+
+   In strict mode (the default), no invalid words are allowed, and the
+   game will return a move with invalid words as an error.
+<p>
+   In -nostrict mode, words that do not appear in the dictionary
+   will be flagged as such, and another player may choose to request an
+   undo. If the player who just played realizes they made a word in error,
+   they may also request an undo. 
+   The game does not enforce that every word created is in the dictionary, 
+   but all players are informed of the words that do not appear.
+<p>
+   In -tournament mode, the players are not told whether the words are in
+   the dictionary or not.  Players may use the "challenge" command to check
+   whether the word(s) just played by his opponent are valid.
+   The "challenge" command may only be used in tournament mode.
+<p>
+   When a "challenge" command is issued, all words made on the immediately
+   preceeding turn are check against the dictionary.
+   If all the words are in the dictionary, the challenge fails.
+   The challenger scores zero points for his turn, and his turn is over.
+   If any of the words are not in the dictionary, the challenge succeeds.
+   All tiles played on the preceeding turn are removed from the board and 
+   placed back in the opponent's rack, and no points are scored for any 
+   of those words.  It is then the challenger's turn to play a word.
+   In keeping with tournament rules, you are not told which word(s) are
+   invalid, only that at least one was not in the dictionary.
+<p>
+   NOTE: Because a challenge may result in tiles being returned to a rack,
+   in tournament mode new tiles are not drawn until the beginning of your
+   turn.  This give your opponent time to issue a challenge on their turn.
+   Although this means you cannot use your opponent's time to plan your
+   move as well, this is not a serious hardship because of the long
+   time limits in email play.
+
+<h4>PLAYING BLANKS</h4>
+
+   If you have a blank tile and wish to play it, simply specifying the
+   word in your move is usually sufficient. First all letters that you have
+   in your hand are used, then blank(s) are used to fill any other letters
+   that you have specified. However, sometimes you may wish to specify
+   the specific location that the blank will be used in your word. For
+   example, if you have two A's and one blank, you might spell the word
+   "banana". First, your two A's would be used, then your blank would be
+   used for the 3rd A. However, if you wish your blank to be used for the
+   first A, specify the word in your move as b-anana. If you wish the 2nd
+   A to be used by the blank, specify ban-ana. Notice that you do not
+   replace the letter in your word with a dash (-), but merely precede
+   it with a dash.
+<p>
+   You might also wish to play a blank instead of a letter you have. For
+   example, if you have a Z, and want to make the word ZOO, but want to
+   save your Z for a better scoring position, play -zoo as your word, and
+   your blank will be used as Z while keeping the Z you have for later use.
+
+<h4>PASSING</h4>
+
+   A player may pass if they are unable to make a word. Use the word pass
+   as the move to pass your turn without scoring any points.
+
+<h4>RESIGNING</h4>
+
+   You may resign the game by sending your move as the word "resign".
+   If more than one player is still playing after you resign, your tiles
+   are put back into the pool for others to draw. If there is only one
+   remaining player, you will give the value of the tiles in your rack
+   to that player, and they will win the game. If their final score is
+   higher than yours, they will win by the difference of their score and
+   your score. If your score is still higher, they will still win (since
+   you resigned), but they will not get credit for winning by any number
+   of points.
+
+<h4>UNDOING A MOVE</h4>
+
+   If you mistakenly place a word on the board, or if another player
+   places a word that you don't agree with, you may request an undo of the
+   move. All others players are then given the chance to accept or reject
+   the undo. If all players accept, the last move is undone. To request
+   an undo, use it as your move text, for example:
+<pre>
+          scramble move 333 zzz aaa undo
+</pre>
+<h4>GAME END</h4>
+
+   The game will end after all the tiles to draw from have been used up.
+   At this point, if a player uses all their remaining tiles to form a word,
+   the game ends immediately.  Also, any player left with tiles will have 
+   their scores deducted from his score, and the player who used all their 
+   tiles will get those points.
+<p>
+   If a complete round progresses and every player passes, and all the tiles
+   have been dealt out, the game will end.
+<p>
+   The player with the highest score wins. The amount of points of the
+   win is determined by the lowest score subtracted from the highest score.
+<p>
+   If a tie exists between two or more players high scores, the player
+   with the lowest letterpoint use will prevail is the winner. The player
+   with the lower letterpoint use has made better use of their letters to
+   get their high score, and therefore wins the tie.
+
+<h4>EXAMPLES OF PLAY</h4>
+<pre>
+       A B C D E F G H I J K L M N O 
+
+    1  # . . % . . . # . . . % . . #  1 
+    2  . * . . . @ . . . @ . . . * .  2 
+    3  . . * . . . % . % . . . * . .  3 
+    4  % . . * . . . % . . . * . . %  4 
+    5  . . . . * . . . . . * . . . .  5 
+    6  . @ . . . @ . . . @ . . . @ .  6 
+    7  . . % . . . % . % . . . % . .  7 
+    8  # . . % . . . Z O O . % . . #  8 
+    9  . . % . . . % . % . . . % . .  9 
+   10  . @ . . . @ . . . @ . . . @ .  10
+   11  . . . . * . . . . . * . . . .  11
+   12  % . . * . . . % . . . * . . %  12
+   13  . . * . . . % . % . . . * . .  13
+   14  . * . . . @ . . . @ . . . * .  14
+   15  # . . % . . . # . . . % . . #  15
+
+       A B C D E F G H I J K L M N O
+</pre>
+   In the above board, the word ZOOM could be made with the move
+   H8,A,ZOOM. Note that even though the letters Z, O, and O are already
+   on the board and you are only adding the M, you must still specify
+   the entire word.
+<p>
+   If instead, you made the move K8,D,MORE you would get credit for the
+   new word MORE, plus the word ZOOM because you changed ZOO to ZOOM by
+   adding the M at the end.
+<p>
+   If you wanted to make the word ON, using the O already at I8, you
+   would enter the move I8,D,ON. Note that using the move I9,D,N is
+   not valid, you must include the entire word you wish to make in your
+   move.
+
+<pre>
+       A B C D E F G H I J K L M N O
+
+    1  # . . % . . . # . . . % . . #  1 
+    2  . * . . . @ . . . @ . . . * .  2 
+    3  . . * . . . % . % . . . * . .  3 
+    4  % . . * . . . % . . . * . . %  4 
+    5  . . . . * . . . . . * . . . .  5 
+    6  . @ . . . @ . . . @ . . . @ .  6 
+    7  . . % . . . % . % . . . % . .  7 
+    8  # . . % . . . Z O O . % . . #  8 
+    9  . . % . . . % E % . A . % . .  9 
+   10  . @ . . . @ . B O A R . . @ .  10
+   11  . . . . * . . R . . K . . . .  11
+   12  % . . * . . . A . . . * . . %  12
+   13  . . * . . . % . % . . . * . .  13
+   14  . * . . . @ . . . @ . . . * .  14
+   15  # . . % . . . # . . . % . . #  15
+
+       A B C D E F G H I J K L M N O 
+</pre>
+   In the above example, if you wanted to play the letter at location
+   K8, you would not use the move K8,A,M or K8,D,M. You would specify
+   either H8,A,ZOOM or K8,D,MARK. In either case you would get credit
+   for both words ZOOM and MARK.
+<pre>
+       A B C D E F G H I J K L M N O 
+
+    1  # . . % . . . # . . . % . . #  1 
+    2  . * . . . @ . . . @ . . . * .  2 
+    3  . . * . . . % . % . . . * . .  3 
+    4  % . . * . . . % . . . * . . %  4 
+    5  . . . . * . . . . . * . . . .  5 
+    6  . @ . . . @ . . . @ . . . @ .  6 
+    7  . . % . . . % . % . . . % . .  7 
+    8  # . . R E . N E C K . % . . #  8 
+    9  . . % E . . % . H . . . % . .  9 
+   10  . @ . A . @ . . E @ . . . @ .  10
+   11  . . . M E A S U R E * . . . .  11
+   12  % . . * . . . % R . . * . . %  12
+   13  . . * . . . % . Y . . . * . .  13
+   14  . * . . . @ . . . @ . . . * .  14
+   15  # . . % . . . # . . . % . . #  15
+
+       A B C D E F G H I J K L M N O 
+</pre>
+   In the above example, it is only legal to put a letter at F8 if it
+   makes each individual word into one word. Making the move D8,A,REP
+   is not valid, because the word REPNECK is not a real word. Placing a
+   D at F8 to make the word REDNECK would be legal, and the move would
+   be specified as D8,A,REDNECK.
+
+<h4>LETTER FREQUENCY AND VALUES</h4>
+
+   You may use the -v parameter on a command to view the total number
+   of letters and their point values in the current game. The English and
+   French versions have different point values assigned to their letters,
+   and the -large, -grand, and -broad boards use an extended number of
+   tiles.
+<p>
+   Below are the number of each letter appearing in the standard sized 
+   game.  The point values for each letter are the same for all sizes.
+<p>
+<pre>
+English:
+
+   LETTER  NUMBER  POINTS           LETTER  NUMBER  POINTS
+   A       9       1                N       6       1
+   B       2       3                O       8       1
+   C       2       3                P       2       3
+   D       4       2                Q       1       10
+   E       12      1                R       6       1
+   F       2       4                S       4       1
+   G       3       2                T       6       1
+   H       2       4                U       4       1
+   I       9       1                V       2       4
+   J       1       8                W       2       4
+   K       1       5                X       1       8
+   L       4       1                Y       2       4
+   M       2       3                Z       1       10
+                                    Blank   2       0
+
+French:
+
+   LETTER  NUMBER  POINTS           LETTER  NUMBER  POINTS
+   A       9       1                N       6       1
+   B       2       3                O       6       1
+   C       2       3                P       2       3
+   D       3       2                Q       1       8
+   E       15      1                R       6       1
+   F       2       4                S       6       1
+   G       2       2                T       6       1
+   H       2       4                U       6       1
+   I       8       1                V       2       4
+   J       1       8                W       1       10
+   K       1       10               X       1       10
+   L       5       1                Y       1       10
+   M       3       2                Z       1       10
+                                    Blank   2       0
+</pre>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

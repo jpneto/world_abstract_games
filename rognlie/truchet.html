@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h3> Rules </h3>
+<p>The board is a 7x7 square grid surrounded by alternating light and dark regions. Two players, O and X, each start with 12 stackable pieces of their colour. </p>
+<p>Players share a common pool of 49 coloured truchet tiles. Each tile has inverse dotted and blank patterns on the front and back, which may be oriented either left or right:</p>
+<pre>            Left        Right<br>                                 <br>          +---|---+   +---|---+<br>          |    \..|   |../    |<br>          __    \__   __/    __<br>   Front  |.\     |   |     /.|<br>          |..\    |   |    /..|
+          +---|---+   +---|---+     The front and back of a<br>                                    coloured truchet tile.<br>          +---|---+   +---|---+<br>          |....\  |   |  /....|<br>          __....\__   __/....__<br>   Back   | \.....|   |...../ |<br>          |  \....|   |..../  |
+          +---|---+   +---|---+</pre>
+<p><strong>Start: </strong>Players take opposite sides of the board and fill the closest rows with tiles of their choice, oriented so that tiles' edge colours match those of neighbouring tiles. O places the last tile on the central cell.</p>
+<p align="left">When all tiles are placed, the tile paths define alternating light and dark <em><strong>regions</strong></em>. X owns the  dotted regions and O owns the  blank regions.</p>
+<p align="left">Players place their pieces on the twelve closest <em><strong>junctions</strong></em> (tile corners, marked '+') within regions of their colour, as shown below.</p>
+<pre>     ___     ___     ___     ___     ___     ___     ___     ___    <br>    /   \   /...\   /   \   /...\   /   \   /...\   /   \   /...\   <br>   /     \ /.....\ /     \ /.....\ /     \ /.....\ /     \ /.....\  <br>  (  (o)  |...+...|  (o)  |...+...|  (o)  |...+...|  (o)  |...+...) <br>   \     /......./         \...../         \...../         \...../  <br>    \___/....___/    ___    \___/    ___    \___/    ___    \___/   <br>    /......./       /...\           /...\           /...\       \   <br>   /......./       /.....\         /.....\         /.....\       \  <br>  (...+...(  (o)  (...+...\  (o)  /...+...)  (o)  (...+...\  (o)  ) <br>   \.......\       \.......\     /......./         \.......\     /  <br>    \___....\___    \___....\___/....___/    ___    \___....\___/   <br>    /   \.......\       \.........../       /...\       \.......\   <br>   /     \.......\       \........./       /.....\       \.......\  <br>  (  (o)  \...+...\  (o)  \...+.../  (o)  /...+...\  (o)  )...+...) <br>   \       \.......\       \...../       /.........\     /......./  <br>    \___    \___....\___    \___/    ___/....___....\___/....___/   <br>    /...\       \.......\           /......./   \.........../   \   <br>   /.....\       \.......\         /......./     \........./     \  <br>  (...+...)   +   \...+...)   +   (...+...(   +   )...+.../   +   ) <br>   \...../         \...../         \.......\     /......./       /  <br>    \___/    ___    \___/    ___    \___....\___/....___/    ___/   <br>    /       /...\           /...\       \.........../       /...\   <br>   /       /.....\         /.....\       \........./       /.....\  <br>  (   +   /...+...\   +   /...+...\   +   )...+.../   +   (...+...) <br>   \     /.........\     /.........\     /......./         \...../  <br>    \___/....___....\___/....___....\___/....___/    ___    \___/   <br>    /......./   \.........../   \.........../       /...\       \   <br>   /......./     \........./     \........./       /.....\       \  <br>  (..(x)../   +   \..(x)../   +   \..(x)..(   +   (..(x)..\   +   ) <br>   \...../         \...../         \.......\       \.......\     /  <br>    \___/    ___    \___/    ___    \___....\___    \___....\___/   <br>    /       /...\           /...\       \.......\       \.......\   <br>   /       /.....\         /.....\       \.......\       \.......\  <br>  (   +   /..(x)..)   +   (..(x)..)   +   )..(x)..)   +   )..(x)..) <br>   \     /......./         \...../       /......./       /......./  <br>    \___/....___/    ___    \___/    ___/....___/    ___/....___/   <br>    /......./       /...\           /......./       /......./   \   <br>   /......./       /.....\         /......./       /......./     \  <br>  (..(x)..|   +   |..(x)..|   +   |..(x)..|   +   |..(x)..|   +   ) <br>   \...../ \     / \...../ \     / \...../ \     / \...../ \     /  <br>    \___/   \___/   \___/   \___/   \___/   \___/   \___/   \___/   </pre>
+<p>O placed the last tile, so X makes the first piece move.</p>
+<p align="left"><strong>Play: </strong>Each turn the current player <em>may</em> make a tile move then <em>must</em> make a stack move.</p>
+<p align="left"><strong>Tile move:</strong> Any tile may be flipped if there are no pieces pinning any of its corners. Once flipped, the tile must be reoriented to match edge colours with its neighbours.</p>
+<p align="left"><strong>Stack move:</strong> The stack move may be a <em><strong>step</strong></em>, <em><strong>merge</strong></em> or <em><strong>split</strong></em> (as follows). Singleton pieces are considered to be stacks of height 1.<br>
+  <br>
+  <em><strong>a) Step</strong></em><strong>: </strong>A stack may step to a connected empty junction within its current region. The entire stack must move and cannot jump over any other stacks.<br>
+  <em><strong>b) Merge</strong></em><strong>:</strong> &nbsp;Two or more stacks from orthogonally adjacent&nbsp;junctions may merge to form a single stack. No pieces may be left behind. One of the source stacks may  move within its region before merging. <br>
+  <em><strong>c) Split</strong></em><strong>:</strong> A stack may split into two or more stacks at orthogonally adjacent junctions.&nbsp;The entire stack must split. The source stack may move within its region before splitting. </p>
+<p align="left"><strong>Capture:</strong>&nbsp;Stacks that merge or split may land on one or more enemy stacks to capture them by replacement. Stacks on enemy junctions can be captured by same-sized or taller stacks. Stacks on friendly junctions can only be captured by taller stacks.</p>
+<p align="left">All stack moves must be to empty junctions unless capturing. </p>
+<p align="left">Stacks may not exceed 4 pieces in height.</p>
+<p align="left"><strong>Aim:</strong> A player wins if the opponent has no remaining pieces or cannot move a stack on their turn.<br>
+</p>
+<h3> Examples</h3>
+<p>A merge move capturing an  O stack of height 1:</p>
+<pre>            /.....\       \..                    /.....\       \.. 
+      +    /..(x)..\   +   ).               +   /...+...\   +   ). 
+          /.........\     /..                  /.........\     /.. 
+      ___/....___....\___/...              ___/....___....\___/... 
+     /......./   \...........             /......./(x)\........... 
+    /.(x).../     \........./            /......./ (x) \........./ 
+   (..(x)..(  (o)  )...+.../    ----&gt;   (...+...(  (x)  )...+.../ 
+    \.......\     /......./              \.......\     /......./ 
+     \___....\___/....___/                \___....\___/....___/ 
+         \.........../                        \.........../ 
+          \........./                          \........./ 
+       +   )...+.../   +                    +   )...+.../   + 
+          /......./                            /......./ </pre>
+<p>  A split move capturing an 0 stack of height 2. Note that the O stack is on an enemy junction, so can be captured by a stack of equal height:</p>
+<pre>            /.....\       \..                    /.....\       \.. 
+       +   /...+...\   +   ).               +   /..(x)..\   +   ). 
+          /.........\     /..                  /.........\     /.. 
+      ___/....(x)....\___/...              ___/....___....\___/... 
+     /......./(x)\...........             /......./   \........... 
+    /......./ (x) \...(o).../            /......./     \...(x).../ 
+   (...+...(  (x)  )..(o)../    ----&gt;   (...+...(   +   )..(x)../ 
+    \.......\     /......./              \.......\     /......./ 
+     \___....\___/....___/                \___....\___/....___/ 
+         \.........../                        \.........../ 
+          \........./                          \........./ 
+       +   )...+.../   +                    +   )..(x)../   + 
+          /......./                            /......./ </pre>
+<h3>Strategy and Tactics</h3>
+<p align="left">Any stack within a friendly region must land in an enemy region if it wishes to merge or split, due to the tiling&rsquo;s parity. </p>
+<p align="left">Tall stacks are relatively safe within friendly regions. If they are cornered and forced to split, however, the resulting substacks will land within enemy regions and be especially vulnerable. </p>
+<p align="left">Truchet is more tactical than strategic due to the dynamic nature of the board. In other words, it is generally better to make clever short-term sequences of moves than to try to formulate long term plans. In this sense, Truchet is an <em>opportunistic</em> game. </p>
+<p align="left">It is generally good to minimise your opponent's mobility, eventually trapping enemy stacks where they can be captured or forced to split. </p>
+<p align="left">Pieces are safe from immediate capture from enemy pieces in the same region, and can be used to block off parts of the region or occupy key junctions from which the opponent might threaten adjacent pieces. Pieces can be placed to pin key tiles that you don't want flipped.</p>
+<p align="left">It can be dangerous to linger in small enclosed regions, as every junction may be directly threatened by stacks in the surrounding region. <br>
+</p>
+<h3>Notes</h3>
+<p>When a tile is flipped it automatically changes orientation (dictated by neighbouring tiles). </p>
+<p align="left">Threats are asymmetrical, as a stack can threaten an enemy stack without itself being threatened.</p>
+<p align="left">The following diagram shows the parity (+=X and -=O) of the 64 junctions on the 7x7 board:</p>
+<pre align="left">  &nbsp;&nbsp;- + - + - + - + 
+&nbsp;&nbsp;  + - +&nbsp;- + - + -
+  &nbsp;&nbsp;- + - + - + - + 
+&nbsp;&nbsp;  + - +&nbsp;- + - + -
+  &nbsp;&nbsp;- + - + - + - + 
+&nbsp;&nbsp;  + - +&nbsp;- + - + -
+  &nbsp;&nbsp;- + - + - + - + 
+&nbsp;&nbsp;  + - +&nbsp;- + - + -
+</pre>
+<p align="left">  Merging is the only way to stack pieces. Merging and splitting are the only ways to change parity. Parity changes can therefore only be made by two or more pieces working together, and a player with two remaining pieces left will not be able to form a 2-stack unless they are both in regions of the same parity. Truchet is a real parity game (sorry). </p>
+<p align="left">If either player can demonstrate that neither player can win (that is, no more captures are possible and neither player can trap the opponent's remaining pieces) then the game should be declared a draw. </p>
+<p align="left">Once a tile is placed during the initial placement stage, it cannot be flipped until the piece movement stage begins; players should not adjust their initial placements in response to an opponent&rsquo;s tile placement. If players can&rsquo;t manage this then dividers such as manila folders can be used to hide the initial tile placements, or alternatively players may take turns placing a tile each until all tiles are placed. </p>
+<p align="left">The game is generally quicker and more interesting if the initial tile placement is made more or less at random, rather than putting too much thought into it. Initial tile placements are not critical anyway - there is no immediate advantage in starting with all pieces in a single region or with a large home region that spans the board to surround enemy regions. Regions will change as tiles are flipped during the course of the game.</p>
+<p align="left">The board should have an odd number of tiles per side as this gives an equal number of junctions of each colour.</p>
+<p align="left">The number of pieces for an <em>n</em> x <em>n</em> board will be (<em>n</em> - 1) (<em>n</em> + 1) / 2. For the standard 7 x 7 board this is (7 - 1) (7 + 1) / 4 = 12.<br>
+</p>
+<h3>Variants</h3>
+<p align="left"><strong>Hexagonal Truchet: </strong>Played as per the standard version on a hex hex board using hexagonal truchet tiles. Still under development.<br>
+</p>
+
+<h3>History </h3>
+
+<p>Truchet rules copyright (c)  Cameron Browne,  April 2007.</p>
+<p>Please see the official Truchet page for further details and examples: <a href="https://web.archive.org/web/20241205170543/http://members.optusnet.com.au/helen.gilbert/truchet-game/">http://members.optusnet.com.au/helen.gilbert/truchet-game/</a></p>
+<p>Thanks to Dave Dyer for testing and suggestions for rule improvements. </p>
+<p>Implementation and Help file by Cameron Browne, April 2007.</p>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

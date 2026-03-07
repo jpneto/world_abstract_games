@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h3><strong> Introduction</strong></h3>
+<div align="left">Lambo is a tile-placement game in which players strive to form closed groups of their colour.</div>
+<p><strong><em>Note</em></strong>: The game  is much easier to see using the <a href="https://web.archive.org/web/20250319123354/http://www.gamerz.net/pbmserv/List.php?Lambo">graphical web interface</a> than  the ASCII email version!<br>
+</p>
+<h3><strong>Rules </strong></h3>
+<p>Two players, Light and Dark, share a common pool of 48 hexagonal bridge tiles. Each tile contains a white bridge and a blue bridge, and may be oriented in three ways such that the corner colours are the same for each rotation.</p>
+<pre>         .--oo          .--oo          .--oo<br>        o   oo\        /    oo        / ooo \<br>       ooo  oo )      oooo    )      oooo    )<br>        o   oo/        \ ooo /        \    oo<br>         `--oo          `--oo          `--oo</pre>
+<p align="left"><strong>Start:</strong> The game starts with a single tile in the middle of the playing area. </p>
+<p align="left"><strong>Play:</strong> Light places a single tile adjacent to the starting tile such that edge colours match, then players take turns placing two tiles per turn adjacent to at least one existing tile such that edge colours match. The two tiles played each turn must themselves be adjacent (unless the <tt>-anywhere</tt> option is used).</p>
+<p><strong>Aim:</strong> The game is won by the player who forms a closed group of their colour containing at least one bridge. Only one tile need be played if that tile wins the game for either player.</p>
+<p>For example, the following figure  shows a game won by Dark (o) who has enclosed a 'o' group containing  one bridge. The closed Light  group in the lower left contains no  bridges so doesn't count. </p>
+<pre>                    .--oo              <br>                   /    oo<br>              .--ooooo    `--oo          <br>             / ooo   ooo   ooo \<br>        .--ooooo    .  ooooo    `--oo        <br>       o   oo     oo    oo    oo   oo\<br>      ooo  oo .  ooooo    .  oooo  oo `--oo  <br>       o   oo     oo ooo o   ooo   oo     oo<br>        )  ooooo    .  oooo  oo .  ooooo    )      <br>       o   oo  ooo   ooo o   ooo   oo  ooo /<br>      ooo  oo .  ooooo    .  oooo  oo .--oo <br>       o   oo  ooo      oo    oo   oo/<br>        `--ooooo    .--ooooo    .--oo  <br>             \    oo     \ ooo /<br>              `--oo       `--oo  </pre>
+<p>If a move forms winning groups for both players, then the mover loses. If the tiles run out before either player wins then the game is won by the player with the largest group (counting bridges) otherwise it is a draw.<br>
+</p>
+<h3 align="left"><strong>Variants</strong></h3>
+<p><strong>Eat Enemy: </strong>&nbsp;In this version, a group wins if it eats (surrounds) two or more enemy groups. The enclosing group may be open or closed. The eaten enemy groups may be of any size (unless a minimum -<tt>eat_size</tt> is specified). </p>
+<p>If a move achieves this for both players then the group that eats the most enemy groups wins, else the mover loses. </p>
+<p>If the tiles run out, the game is won by the player who eats the largest enemy group,  if tied then the player who eats the most enemy groups, if still tied then the game is drawn. </p>
+<p>  <strong>Must Contain: </strong>&nbsp;In this version, groups only win if they are closed and contain at least one closed enemy subgroup. This allows a more relaxed game in which positions can develop more fully as players are not constantly answering immediate threats every turn. This is also a bit more elegant as it removes the minimum group size &quot;must contain a bridge&quot; requirement. </p>
+<p>If the tiles run out, the game is won by the owner of the largest closed group, if tied then the owner of the most closed groups, if still tied then the game is drawn. <br>
+</p>
+
+<h3>History </h3>
+
+<p>Lambo tiles and rules by   Cameron Browne and copyright (c) Cyberite Ltd,  2008.</p>
+<p align="left">The name Lambo is derived from the fact that the game is a sort of "Lite Mambo".</p>
+<p>Please see the official Lambo page for further details and examples: <a href="https://web.archive.org/web/20250319123354/http://www.cameronius.com/games/lambo/">http://www.cameronius.com/games/lambo/</a>.</p>
+<p>Lambo will be released under the name <a href="https://web.archive.org/web/20250319123354/http://www.cameronius.com/games/palago/">Palago</a>. </p>
+<p>Implementation and Help file by Cameron Browne, August 2008.<br>
+</p>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

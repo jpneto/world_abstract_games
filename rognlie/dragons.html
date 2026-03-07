@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h3><strong> Introduction</strong></h3>
+<p>  Dragons is a  tile placement game in which players strive to complete sinuous loops  of their colour.</p>
+<p><strong>Note:</strong>  Games are much easier to visualise using the <a href="https://web.archive.org/web/20240917191424/http://www.gamerz.net/pbmserv/List.php?Dragons">graphical web UI</a>. <br>
+</p>
+<h3><strong>Rules</strong></h3>
+<p><strong>Tiles:</strong> Two players, O and X, share a common pool of hexagonal Dragons tiles. Each tile shows <em>shoulders</em> on the front and <em>tails</em> on the back in both players' colours. </p>
+
+<pre><font face="Courier New, Courier, mono">      .-o-.        .-o-.         
+     ooooooo      xxxxxxx 
+    (       )    (       )
+     xxxxxxx      ooooooo
+      `-x-'        `-x-'</font></pre>
+<p align="left"><strong>Start:</strong> The game starts with a  sinlge tile in the centre of the playing area. Players then take turns adding a tile of their choice adjacent to at least one existing tile, such that edge colours match.</p>
+
+<p><strong>Auto Moves: </strong>If a tile placement creates a gap at which only tile rotation matches, then that tile is automatically placed there; this will occur for any gap with three closed sides. Each auto move may trigger further auto moves.  For example,  move <em><strong>a</strong></em> shown below creates an auto move <em><strong>b</strong></em>.</p>
+<pre><font face="Courier New, Courier, mono">                                 .-x-.                        .-x-.          <br>                                xxxx oo                      xxxx oo           <br>      .-o-.   <em><strong>a</strong></em>            .-o-' x <em><strong> </strong></em> o )                .-o-' x   o )        <br>     xxxxxxx              xxxxxxxx oooo                xxxxxxxx oooo       <br>    (       )            (       .-o-'                (         o (          <br>     ooooooo              ooooooo          ----&gt;       ooooooooooooo        <br>      ) x (                ) x (   <strong><em>b</em></strong>                    ) x     <strong><em> </em></strong>   )        <br>     xxxxxxx              xxxxxxx                      xxxxxxxxxxxxx         <br>    (       )            (       )                    (       .-x-'        <br>     ooooooo              ooooooo                      ooooooo                <br>      `-o-'                `-o-'                        `-o-'              
+
+     Position               Move                        Auto move</font></pre>
+<p>A player's move consists of their initial tile placement in addition to all subsequent auto moves. All possible auto moves <em>must</em> be made each turn.</p>
+<p><strong>Gap  Moves: </strong>The current player must fill a gap with three closed sides if any exist (these will only occur if the three closed sides are alternating colours). For example, the current player must play at <em><strong>g</strong></em> in the position shown:</p>
+<pre><font face="Courier New, Courier, mono">            .-x-.                <br>           xxxx oo                 <br>      .-x-' x   o )          <br>     oo xxxxx oooo        <br>    ( o    x .-o-'            <br>     oooo xx<br>      ) o (   <em>g</em>              <br>     xx oooo<br>    ( x   o )                   <br>     xxxx oo                   <br>      `-x-'                      </font></pre>
+<p><strong>Aim:</strong> Players win by forming a loop of their colour that passes through six or more tiles. </p>
+<p>If a move completes winning loops for both players, then the longest loop wins. If both loops are the same length or neither player wins before the tiles run out then the game is drawn. </p>
+<p>Remember that the win test is not made each turn until all auto moves have been made!<br>
+</p>
+<h3><strong>Variants</strong></h3>
+<p align="left"><strong>Tantrix Scoring:</strong> Each dragon scores 1 pt per hole, doubled if the dragon is closed. The winner is the player with the highest scoring dragon after all tiles (default 40) have been played.<br>
+</p>
+
+<h3><strong>History </strong></h3>
+
+<p>Dragons tiles and rules by Cameron Browne and copyright (c) Cyberite Ltd 2009.</p>
+<p align="left">Graphical web interface: <a href="https://web.archive.org/web/20240917191424/http://www.gamerz.net/pbmserv/List.php?Dragons">http://www.gamerz.net/pbmserv/List.php?Dragons</a></p>
+<div align="left">
+  <div align="center">
+    <p align="left">More details are available at the <a href="https://web.archive.org/web/20240917191424/http://www.cameronius.com/games/dragons">official Dragons page</a>.</p>
+  </div>
+</div>
+<p>Implementation and Help file by Cameron Browne, January  2009.<br>
+</p>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

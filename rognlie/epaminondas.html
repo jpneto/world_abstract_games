@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<a name="rules">
+<h2>Rules of Epaminondas</h2>
+</a>
+
+<h3>Setup</h3>
+
+Epaminondas is played on a 14x12 board.  The two rows closest to each
+player are filled with pieces of his color.
+<p>
+The board size can be customized in the "challenge" command by using the 
+size option.   The syntax is "--size=[rows]x[cols]".  For example, the
+game can also be played on an 8x8 checkboard with this command:
+<p>
+<pre>
+     epaminondas challenge -size=8x8 player1 player2
+</pre>
+
+<p>
+
+<h3>Movement</h3>
+The basic unit of movement in Epaminondas is the phalanx.  A phalanx is
+an unbroken line of pieces of the same color in any direction (horizontal,
+vertical, or diagonal).  In the following diagram, the large X in the middle
+is a part of a 4-piece phalanx vertically, 3-piece plalanxes on both diagonals,
+and form a phalanx of 1 piece horizontally.
+<p>
+<pre>
+     . . x . . 
+     . . x x .
+     x . <b>X</b> . .
+     . x x x .
+     . . . . x
+</pre>
+<p>
+A phalanx may move forward or backward along it length.  It may NOT move
+sideways at all.  It may move only as far as its own length, so a phalanx
+of 3-pieces may move 1, 2, or 3 spaces.  It is not necessary to keep 
+existing phalanxes together; a smaller phalanx may break off of a larger
+one, as long as it does not move more spaces than the number of pieces moved.
+An isolated piece forms a phalanx of 1, and may move 1 space in any direction.
+<p>
+
+<h3>Capturing</h3>
+
+When a phalanx encounters an enemy piece when moving, it may be able to
+capture one or more enemy pieces.  The enemy pieces along the same line
+as the attacking phalanx will form a phalanx of 1 or more enemy pieces.
+In order to be able to capture, the attacking phalanx must be longer than
+the enemy phalanx.  If the enemy phalanx is equal in length or longer than
+the attacking phalanx, it is safe and may not be captured.
+<p>
+When a capture is possible, the leading piece of the attacking phalanx
+stops on the space occupied by the first enemy piece encountered.
+That enemy and all other enemy pieces in the defending phalanx are removed
+from the board.  The following diagram illustrate possible captures,
+and non-captures, by the phalanx of 3 eks.
+
+<p>
+<pre>
+The ohs are out of range of the eks phalanx:
+     . o o . . . x x x .    ---&gt;    . o o x x x . . . .
+
+These ohs can be captured:
+     . . o o . . x x x .    ---&gt;    . . . x x x . . . .
+
+This phalanx of ohs is equal in length and may not be captured:
+     . . o o o . x x x .    ---&gt;    . . o o o x x x . . 
+
+Only the first phalanx of ohs is captured:
+     . o o . o o x x x .    ---&gt;    . o o . . x x x . .
+</pre>
+
+<h3>Object</h3>
+
+The object of the game is to get a piece to the opposite side of the
+board.  But there is an additional complication: after reaching the
+opposite side of the board, your opponent has one move to counter your
+threat.  There are two ways to do this:
+
+<ol>
+<li>He may capture the piece.
+<li>He may move one of his own pieces to your side of the board.
+</ol>
+
+The implications of this is that, at the <u>start</u> of your turn,
+you have <u>more</u> pieces on the opposite side of the board than
+your opponent has on your side of the board, you win.
+
+<p>
+Here is an illustration of what can happen:
+
+<pre>
+     5  x x x . . .
+     4  . . x . . .
+     3  . . . . o .
+     2  . o x . o .
+     1  o . . . o .
+
+        A B C D E F
+</pre>  
+
+First, Ohs moves e1,e3-e5 to reach the opposite side of the board.
+
+<pre>
+     5  x x x . O .
+     4  . . x . O .
+     3  . . . . O .
+     2  . o x . . .
+     1  o . . . . .
+
+        A B C D E F
+</pre>  
+
+Eks must get a piece of his own across the board, or capture the piece
+on E5.  He chooses to move C2-D1, so now both players have the same
+number of pieces across the board.
+
+<pre>
+     5  x x x . o .
+     4  . . x . o .
+     3  . . . . o .
+     2  . o . . . .
+     1  o . . X . .
+
+        A B C D E F
+</pre>  
+
+Ohs chooses to move E4-D5.  He now has two pieces on the opposite side
+of the board, and again threatens to win if Eks cannot counter him.
+
+<pre>
+     5  x x x O o .
+     4  . . x . . .
+     3  . . . . o .
+     2  . o . . . .
+     1  o . . x . .
+
+        A B C D E F
+</pre>  
+
+Eks moves A5,C5-D5 which captures both of Ohs pieces, and threatens to
+win, because he now has more pieces on the opposite side of the board
+than eks!  Ohs has no move to counter the threat, so Eks will win
+after the next move by Ohs.
+
+<pre>
+     5  . X X X . .
+     4  . . x . . .
+     3  . . . . o .
+     2  . o . . . .
+     1  o . . x . .
+
+        A B C D E F
+</pre>  
+
+
+<h3>Move Notation</h3>
+<p>
+As shown in the preceeding section, the moves sent to the server
+are notated by giving both end points of the phalanx being moved,
+followed by the space one end of the phalanx moves to.
+If a single piece is being moved, simply give the source and destination
+spaces. 
+<p>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

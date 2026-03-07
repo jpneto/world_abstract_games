@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+    <a name="rules"><h3><font face="Arial" size="2">Rules of Go</a> </font></h3>
+    <h3><font face="Arial" size="2">Object of the Game</font></h3>
+    <p><font face="Arial" size="2">On a 19x19 (or 13x13 or 9x9) board, the two players of go
+    try to surround as much territory as possible with groups of stones of their color. </font></p>
+    <h3><font face="Arial" size="2">Movement Rules</font></h3>
+    <p><font face="Arial" size="2">On your turn, you place a piece of your colour in any
+    unoccupied position on the board. </font></p>
+    <pre><font face="Courier" size="1">
+          A B C D E F G H J K L M N O P Q R S T
+
+      19  . . . . . . . . . . . . . . . . . . .  19
+      18  . . . . . . . . . . . . . . . . . . .  18
+      17  . . . . . . . . . . . . . . . . . . .  17
+      16  . . . . . . . . . . . . . . . . . . .  16
+      15  . . . . . . . . . . . . . . . . . . .  15
+      14  . . . . . . . . . . . . . . . . . . .  14
+      13  . . . . . . . . . . . . . . . . . . .  13
+      12  . . . . . . . . . . . . . . . . . . .  12
+      11  . . . . . . . . . . . . . . . . . . .  11
+      10  . . . . . . . . . . . . . . . . . . .  10
+       9  . . . . . . . . . . . . . . . . . . .   9
+       8  . . . . . . . . . . . . . . . . . . .   8
+       7  . . . . . . . . . . . . . . . . . . .   7
+       6  . . . . . . . . . . . . . . . . . . .   6
+       5  . . . . . . . . . . . . . . . . . . .   5
+       4  . . . . . . . . . . . . . . . . . . .   4
+       3  . . . . . . . . . . . . . . . . . . .   3
+       2  . . . . . . . . . . . . . . . . . . .   2
+       1  . . . . . . . . . . . . . . . . . . .   1
+
+          A B C D E F G H J K L M N O P Q R S T
+
+                Figure 1 -- Empty Go Board</font></pre>
+    <p><font face="Arial" size="2">&nbsp;</font>
+
+    <p><font face="Arial" size="2">However, the server doesn't ever know if a game is over, nor who won.</font>
+
+    <p><font face="Arial" size="2">That is left as an exercise to the players. The losing player should resign.</font>
+
+    <p><font face="Arial" size="2">&nbsp;</font>
+<table border="1" cellpadding="0" cellspacing="0"><tr><td>
+<table border="0" cellpadding="0" cellspacing="0"><tr><th>
+Note from Richard</th></tr>
+<tr><td>
+    <p><font face="Arial" size="2">&nbsp;</font>
+    <p><font face="Arial" size="2">This is due to the difficulty of determining the live/dead status of groups of stones.   In fact, recently, I was looking at a game and completely missed a seki.</font>
+
+    <p><font face="Arial" size="2"><i>Someday</i>, I hope to add an end-game phase where, after both players have passed, they begin a "nominate... accept/reject" phase where one player nominates a group of stones that he feels are dead.   and the other player accepts or rejects that nomination.</font>
+
+    <p><font face="Arial" size="2">Lather... Rinse... Repeat...</font>
+    <p><font face="Arial" size="2">again... once both players have passed (meaning there are no more dead groups, only live groups and groups in seki), then (and only then) could the server determine the score.</font>
+
+    <p><font face="Arial" size="2">This is essentially how the IGS servers work (IIRC).</font>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

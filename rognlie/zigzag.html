@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+  <h3>Overview</h3>
+  <p>Zig Zag is a semi-multi-lap mancala game for 2 players, by Clark D. Rodeffer &amp; Amanda J. L. Rodeffer.</p>
+  <h3>Rules</h3>
+  <p>The game begins with empty storehouses and 5 seeds in each of the 12 pits.</p>
+  <pre>      fred                    [0]  &lt;--- seeds captured by fred</pre>
+  <pre>      A    B    C    D    E    F 
+   +----+----+----+----+----+----|
+   |  5 |  5 |  5 |  5 |  5 |  5 |
+   +----+----+----+----+----+----+
+   |  5 |  5 |  5 |  5 |  5 |  5 |
+   +----+----+----+----+----+----+
+      a    b    c    d    e    f </pre>
+  <pre>      sue                     [0]  &lt;--- seeds captured by sue</pre>
+  <p>    Each player, on their turn, lifts all of the seeds from one of the 
+    non-empty pits on their own side of the board, and sows them, one at a<br>
+    time, in a zig zag fashion, with the start of the first lift (called a 
+  "lap") sowing toward the center line of the board. When the end of the<br>
+    board is reached, continue sowing straight across, then zig zag back in 
+    the other direction.<br>
+    <br>
+    For example, if sue  sows the 5 seeds in a  (zig zag,  
+  beginning toward the center line) the board would look like this:</p>
+  <pre>      fred                    [0]</pre>
+  <pre>      A    B    C    D    E    F
+   +----+----+----+----+----+----|
+   |  5 |  6 |  5 |  6 |  5 |  6 |
+   +----+----+----+----+----+----+
+   |  0 |  5 |  6 |  5 |  6 |  5 |
+   +----+----+----+----+----+----+
+      a    b    c    d    e    f </pre>
+  <pre>      sue                     [0]</pre>
+  <p>    What happens next depends upon where the last seed lands.<br>
+    <br>
+    1) If the last seed of the current lap falls into a non-empty pit on 
+    the opponent's side of the board (as in the example above), or into an<br>
+    empty pit on the mover's  own side of the board, the turn is over, and 
+    the opponent's turn begins.<br>
+    <br>
+    2) If the last seed of the current lap falls into a non-empty pit on 
+    the player's own side of the board, then the move continues  and the mover  lifts all of the seeds from 
+    that pit, including the last one sown, and sows them, one at a time, in 
+    a zig zag fashion, continuing in the same direction the last lap was 
+    going when it ended. Unlike the first lap, this may not necessarily be 
+  toward the center line of the board. </p>
+  <p>For example, in the above diagram, 
+    if fred lifts the 6 seeds from pit D, he would sow (zig zag, beginning 
+    toward the center line) into c-B-a-A-b-C. Then since the last seed fell 
+    into a non-empty pit on his own side of the board, he would lift the 6 
+    seeds from pit 'c' and continue sowing d-E-f-F-e-D. The board would then 
+  look like this:</p>
+  <pre>      fred                    [0]</pre>
+  <pre>      A    B    C    D    E    F
+   +----+----+----+----+----+----|
+   |  6 |  7 |  0 |  1 |  6 |  7 |
+   +----+----+----+----+----+----+
+   |  1 |  6 |  7 |  6 |  7 |  6 |
+   +----+----+----+----+----+----+
+      a    b    c    d    e    f </pre>
+  <pre>      sue                     [0]</pre>
+  <p>    3) If the last seed of the current lap falls into an empty pit on the 
+    opponent's side of the board, the mover captures all of the seeds (if any)<br>
+    from the pit on their own side of the board directly across from the pit 
+    into which the last seed was sown, and places them into their storehouse. 
+  The  turn is then over, and the opponent's turn begins. </p>
+  <p>For example, in 
+    the above diagram, if sue lifts the 7 seeds from pit e, she would sow 
+    (zig zag, beginning toward the center line) into pits D-c-B-a-A-b-C. 
+    Since the final seed fell into an empty pit on her opponent's side of 
+    the board, she gets to capture the eight seeds from pit c and place 
+    them into her storehouse. The board would then look like this:</p>
+  <pre>      fred                    [0]</pre>
+  <pre>      A    B    C    D    E    F
+   +----+----+----+----+----+----|
+   |  7 |  8 |  1 |  2 |  6 |  7 |
+   +----+----+----+----+----+----+
+   |  2 |  7 |  0 |  6 |  0 |  6 |
+   +----+----+----+----+----+----+
+      a    b    c    d    e    f </pre>
+  <pre>      sue                     [8]</pre>
+  <p>    <em><strong>Restriction:</strong></em> If your opponent sowed a non-capturing single seed into an 
+    empty hole on your own side of the board across the center line, you 
+    are not allowed to sow the same seed back where it came from unless it 
+    will capture seeds. This is to prevent endless cycles before the end of 
+    play, but (to mix metaphors) such a maneuver might be used tactically 
+    as a ko threat to force an opponent into zugzwang.<br>
+    <br>
+    <em><strong>Aim:</strong></em> The game ends when no more seeds can be captured. Due to the forced 
+    first lap sowing toward the center line, this usually happens when 
+    there are two or fewer seeds remaining on the board. The player who last 
+  made a capturing move is awarded these remaining seeds. </p>
+  <p>The player who 
+    captures the most seeds wins.</p>
+  <p>Due to the nature of the zig-zag moves, the current player is guaranteed to  have at least one valid move on their side of the board unless there are two or fewer seeds  remaining. </p>
+  <h3>History</h3>
+  <p>This is Zig Zag version 1.0.0 by Clark D. Rodeffer &amp; Amanda J. L. 
+Rodeffer, January 31, 2007.</p>
+  <p>Implementation  by Cameron Browne.  Help file by Cameron Browne and Clark D. Rodeffer.</p>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

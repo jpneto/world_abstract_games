@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h2>Rules</h2>
+
+Full rules and an artificially intelligent opponent are available at <a href="https://web.archive.org/web/20250121011639/http://www.hivemania.com/">www.hivemania.com</a>. Here is a synopsis.
+
+<p>
+Each player has eleven hexagonal pieces representing insects.  The set of pieces for each player comprises one queen, two beetles, two spiders, three grasshoppers (hoppers), and three ants.  Grasshoppers are called "hoppers" to avoid the visual similarity between the lowercase "g" and "q".  There is no fixed board, but every piece must be placed in such a way as to form a connected set (the hive, see figure 1).  The hive must remain connected during a player's move.
+<p>
+<pre>
+     1                              
+  A     2                           
+     .     3                        
+  B     .     4                     
+     .     .     5                  
+  C     .     .     6               
+     .     .     .     7            
+  D     .     .     .     8         
+     .     .     .  __ .     9      
+  E     .     .    /s \   .     10  
+     .     .     . \__/.     .      
+  F     .     .  __/s \   .     .   
+     .  __ .  __/S \__/.     .     A
+  G    /h \__/Q \__/.     .     .   
+     . \__/a \__/A \   .     .     B
+  H     . \__/. \__/.     .     .   
+     .    /b \  /B \   .     .     C
+        . \__/. \__/.  __ .     .   
+     1     .    /S \__/a \__ .     D
+        2     . \__/b \__/q \__ .   
+           3     . \__/A \__/A \   E
+              4     . \__/. \__/.   
+                 5     .     .     F
+                    6     .     .   
+                       7     .     G
+                          8     .   
+                             9     H
+                                10  
+  
+  Figure 1
+</pre>
+
+<p>
+The first two moves consist simply of naming the piece to be played.  Subsequent to that, a piece is placed by specifying the type of piece and the grid location (note that the grid coordinates change as the board grows) (e.g., Bf10 places a beetle at position f10).
+<p>
+The pieces belonging to one player are indicated by capital letters and the other by small letters (move input is case insensitive).
+<p>
+Moving a piece is specified by giving the starting and ending intersection (e.g., g7-f4 moves the capital player's ant) assuming that the source indicates an intersection containing your piece.
+
+<p>
+The object of the game is to cause the opponent's queen to be completely surrounded.  Both friendly and unfriendly pieces count in making this determination.  In the unlikely event that a single move causes both queens to be surrounded simultaneously, the game is a draw.
+<p>
+The queen must be placed within the first four moves, and only after the queen is placed may pieces be moved instead of placed.  As long as you have pieces remaining to be placed, however, you always have the option of placing them.
+<p>
+Pieces must be placed adjacent to one of your existing pieces and may not touch an opponent's piece (there is no such restriction for moving pieces).  Once placed a piece is never removed although it may become immobilized by an opposing beetle as described below.
+<p>
+<h3>Movement:</h3>
+<p>
+   As mentioned previously, at no time can a piece
+   disconnect the hive (i.e., if the hive would be
+   disconnected by removing a piece, that piece cannot
+   move).
+<p>
+   Queens move a single step in any unoccupied
+   direction provided that they stay connected to the
+   hive and can physically make the move.  In other words
+   a queen can only move into a direction if there are at
+   least two adjacent free sides in that direction.
+<p>
+   Beetles may move one hex in any direction.  Unique
+   among pieces, they may move on top of a friendly or
+   enemy piece.  A piece under a beetle is immobilized
+   and beetles may stack on other beetles.  If a beetle
+   is not moving onto or coming off another piece, it
+   must satisfy the same requirements as a queen's move,
+   that is have two free sides.
+<p>
+   Spiders make exactly three moves and may not double
+   back on themselves.  Each of the three moves follows
+   the same rules as a queen's move.
+<p>
+   Grasshoppers (hoppers) hop over any continuous line
+   of one or more pieces in a straight line.  They may
+   hop into holes regardless of the number of free sides.
+ They may not hop over empty space.
+<p>
+   Ants may move an arbitrary number of spaces along
+   the outside of the hive as long as neither their
+   current position nor their destination is trapped.
+<p>
+<h2>Credits</h2>
+Hive was adapted for Richard's PBEM server by Ray Pearce and Lyman Hurd (with help from John Williams) with the kind permission of its inventor John Yianni.
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

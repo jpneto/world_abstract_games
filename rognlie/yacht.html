@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+  <h2>Help For The Game Of Yacht</h2>
+
+<h3>Introduction</h3>
+
+  <p>Welcome to the network Yacht server. The Yacht challenge command starts a 
+    new game as follows:</p>
+
+  <p class="MsoNormal"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;yacht challenge [-hide]<b> 
+    userid1</b> <b>userid2 [userid3] [userid4] </b></p>
+  <p class="MsoNormal">Starts a game for between two and four players. <a href="https://web.archive.org/web/20250423102130/http://www.gamerz.net/pbmserv/commands.html">Other commands</a> are the 
+    same as for all pbmserv games. <br>
+    -hide specifies that rerolls are to be hidden from opponents. This dramatically 
+    reduces the number of mails generated per game, and means that player messages 
+    are not repeated to opponents multiple times throughout each turn. However 
+    it also means that opponents will only see the dice rolled at the start of 
+    each opponent's turn, which are not necessarily the dice used for scoring.</p>
+  <h3>Rules</h3>
+
+  <p>Players alternate taking turns. Each turn the current player rolls five dice. 
+    They may then optionally reroll any of the five dice, and may then optionally 
+    reroll any of the five dice again. The player must then nominate a category 
+    in which to enter the score showing on the dice.</p>
+  <p>The score categories are shown in the following sample game between fred 
+    and ned.</p>
+  <p><br>
+  </p>
+  <pre>     fred has rolled the following:<br>
+     .-----.  .-----.  .-----.  .-----.  .-----.
+     |o &nbsp;&nbsp;o|  |o &nbsp;&nbsp;o|  |o &nbsp;&nbsp;&nbsp;|  |o &nbsp;&nbsp;&nbsp;|  |o &nbsp;&nbsp;o|
+     |o &nbsp;&nbsp;o|  | &nbsp;&nbsp;  |  | &nbsp;o&nbsp; |  | &nbsp;&nbsp;&nbsp;&nbsp;|  | &nbsp;o&nbsp; |
+     |o &nbsp;&nbsp;o|  |o &nbsp;&nbsp;o|  | &nbsp;&nbsp;&nbsp;o|  | &nbsp;&nbsp;&nbsp;o|  |o &nbsp;&nbsp;o|
+     `-----'  `-----'  `-----'  `-----'  `-----'
+
+     fred has two rolls left. 
+
+     Scores              fred     ned 
+     --------------------------------------------------------------
+     
+     a) Aces               .       . 
+     b) Twos               .       . 
+     c) Threes             .       . 
+     d) Fours              .       . 
+     e) Fives              .       . 
+     f) Sixes              .       . 
+      
+     Total                 0       0 
+     Bonus for 63  (35)    .       . 
+     
+     Upper Total           0       0 
+     
+     t) 3 of a Kind        .       . 
+     r) 4 of a Kind        .       . 
+     h) Full House (25)    .       . 
+     s) Small Strt (30)    .       . 
+     l) Large Strt (40)    .       . 
+     y) Yacht      (50)    .       . 
+     x) Chance             .       . 
+     
+     Lower Total           0       0 
+     
+     --------------------------------------------------------------
+     Grand Total           0       0 
+     ==============================================================
+</pre>
+  <p>For instance, fred could choose to nominate the Large Straight category to 
+    score 40 points based on the above dice, or he could choose to reroll some 
+    or all of the dice and aim for a different category.</p>
+  <p>The Upper Section categories are scored as follows:</p>
+  <pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a) Aces:    Total all 1s.&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b) Two:     Total all 2s.&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c) Threes:  Total all 3s.&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;d) Fours:   Total all 4s.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;e) Fives:   Total all 5s.&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f) Sixes:   Total all 6s.</pre>
+  <p>If the combined score of the Upper Section categories is 63 or higher, then 
+    a 35 point bonus is automatically added to the Upper Total.</p>
+  <p>The Lower Section categories are scored as follows:</p>
+  <pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;t) 3 of a Kind:  Total all dice (if three of a kind).&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;r) 4 of a Kind:  Total all dice (if four of a kind).&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;h) Full House:   25 (if three of one kind and two of another).&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;s) Small Strt:   30 (if sequential straight run of four dice).
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;l) Large Strt:   40 (if sequential straight run of five dice).&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y) Yacht:        50 (if five of a kind).
+&nbsp;&nbsp;&nbsp;&nbsp; x) Chance:       Total all dice.</pre>
+  <p>If the player nominates a category for which their dice do not qualify, then 
+    0 points is entered for that category.</p>
+  <p>If the player rolls additional Yachts after 50 points have already been entered 
+    in the Yacht category, then 100 points are automatically added to their Yacht 
+    score. The player must then nominate a different (unused) category which is 
+    scored normally, except for the Full House, Small Straight and Large Straight 
+    categories which are scored the full 25, 30 or 40 points respectively.</p>
+  <p>The Grand Total is the sum of the Upper and Lower totals. The player with 
+    the highest Grand Total at the end of the thirteenth round wins.</p>
+  <h3>Move Syntax</h3>
+  <p>The following are examples of valid moves:</p>
+  <p>&nbsp;&nbsp;&nbsp;&nbsp;yacht move <b>board# userid password 3</b> </p>
+  <p>Rerolls the die showing 3 pips.</p>
+  <p> &nbsp;&nbsp;&nbsp;&nbsp;yacht move <b>board# userid password 2414</b></p>
+  <p>Rerolls the four dice showing 2, 4, 1 and 4 pips.</p>
+  <p>&nbsp;&nbsp;&nbsp;&nbsp;yacht move <b>board# userid password all</b> </p>
+  <p>Rerolls all five dice - for emergencies and serious gamblers only!</p>
+  <p>&nbsp;&nbsp;&nbsp;&nbsp;yacht move <b>board# userid password e</b></p>
+  <p>Enters the score shown on the dice in category e) Fives.</p>
+  <p>Players may enter a category in lieu of either of their rerolls. <a href="https://web.archive.org/web/20250423102130/http://www.gamerz.net/pbmserv/commands.html">Other commands</a> are the 
+    same as for all pbmserv games. </p>
+  <p>
+  <p> 
+  <h3>History</h3>
+
+  <p>Yacht is a traditional dice game.</p>
+  <p> Implementation and help file by <a href="https://web.archive.org/web/20250423102130/mailto:cameronb@optusnet.com.au">Cameron 
+    Browne</a>, December 2003. 
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

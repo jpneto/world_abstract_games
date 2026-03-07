@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h2>Help For the Game Of Antipalos</h2>
+
+<h3>Introduction</h3>
+
+  <p>Welcome to the network Antipalos server. The Antipalos challenge command 
+    is described below. <a href="https://web.archive.org/web/20250208033836/http://www.gamerz.net/pbmserv/commands.html">Other commands</a> are the 
+    same for all pbmserv games. </p>
+
+  <p class="MsoNormal">antipalos challenge [-size=<b>number</b>]<b> userid1</b> 
+    <b>userid2</b> </p>
+  <p class="MsoNormal" style="margin-left:.5in">Start a new game between <b>userid1</b> 
+    and <b>userid2</b> </p>
+  <p class="MsoNormal" style="margin-left:.5in">The -size parameter sets the overall 
+    board size. This must be in the range 3..26 with the default being 16.</p>
+
+  <h3>Rules</h3>
+
+  <p>The board is initially empty. Vert starts then players take turns placing 
+    a piece of their colour on the board. Each piece is placed between two diagonally 
+    adjacent points and cannot cross or be placed on top of an existing piece.</p>
+  <p>Vert (<font face="Courier New, Courier, mono"><b>V</b></font>) wins by connecting 
+    the top and bottom edges of the board with a chain of <font face="Courier New, Courier, mono"><b>V</b></font> 
+    pieces, while Horz (<font face="Courier New, Courier, mono"><b>H</b></font>) 
+    wins by connecting the left and right edges of the board with a chain of <font face="Courier New, Courier, mono"><b>H</b></font>&nbsp;pieces. 
+    Paths may cross where they meet at a vertex.</p>
+  <p>Games can be drawn if the board fills up before either player wins.</p>
+  <h3>Notes</h3>
+  <p>Below is a 6x6 game won by Vert, who has completed a chain of <font face="Courier New, Courier, mono"><b>V</b></font> 
+    pieces from top to bottom.</p>
+  <p><font face="Courier New, Courier, mono">&nbsp;&nbsp;&nbsp;&nbsp;A &nbsp;&nbsp;B&nbsp;&nbsp; 
+    C&nbsp;&nbsp; D&nbsp;&nbsp; E&nbsp;&nbsp; F&nbsp;&nbsp; G&nbsp;&nbsp;<br>
+    </font></p>
+  <font face="Courier New, Courier, mono">&nbsp;7&nbsp;&nbsp;. &nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;<b>.</b>&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;7<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+  &nbsp;&nbsp;&nbsp;&nbsp;v&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+  &nbsp;6&nbsp;&nbsp;. &nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;<b>.</b>&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;6<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;h&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;h&nbsp;&nbsp;&nbsp;h&nbsp;h&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;h&nbsp;h&nbsp;&nbsp;&nbsp;h&nbsp; 
+  &nbsp;&nbsp; h&nbsp;v&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+  &nbsp;5&nbsp;&nbsp;. &nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;<b>.</b>&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;5<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+  &nbsp; &nbsp;v&nbsp;h&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;h&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;h&nbsp;h&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+  &nbsp;4&nbsp;&nbsp;. &nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;<b>.</b>&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;4<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+  &nbsp;3&nbsp;&nbsp;. &nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;<b>.</b>&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;3<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+  v&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+  &nbsp;2&nbsp;&nbsp;. &nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;<b>.</b>&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;2<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+  &nbsp;1&nbsp;&nbsp;. &nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp; <b>.</b>&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;1<br>
+  </font><font face="Courier New, Courier, mono"><br>
+  </font><font face="Courier New, Courier, mono"> </font><font face="Courier New, Courier, mono"> 
+  </font><font face="Courier New, Courier, mono"> </font><font face="Courier New, Courier, mono"> 
+  </font><font face="Courier New, Courier, mono"> </font><font face="Courier New, Courier, mono"> 
+  </font><font face="Courier New, Courier, mono"> </font><font face="Courier New, Courier, mono">&nbsp;&nbsp;&nbsp;&nbsp;A 
+  &nbsp;&nbsp;B&nbsp;&nbsp; C&nbsp;&nbsp; D&nbsp;&nbsp; E&nbsp;&nbsp; F&nbsp;&nbsp; 
+  G&nbsp;&nbsp; </font> 
+  <p><font face="Courier New, Courier, mono"><br>
+    </font>The winning Vert chain connects top and bottom. The Horz chain crosses 
+    it without cutting it, but does not itself connect the left and right sides.</p>
+  <h3>Syntax</h3>
+  <p>V moves first. The move syntax is: &nbsp;&nbsp;&nbsp;</p>
+  <p>antipalos move <b>board# userid password b2-c3</b> &nbsp;(place a piece between 
+    points <b>B2</b> and <b>C3</b>)<br>
+    antipalos move <b>board# userid password swap </b> &nbsp;(swap the opening 
+    move - second move only)</p>
+  <p>
+  <p> 
+  <h3>References and History</h3>
+
+  <p>Antipalos rules by Martin Collier 1982.</p>
+  <p>Implementation and help file by <a href="https://web.archive.org/web/20250208033836/mailto:cameronb@optusnet.com.au">Cameron 
+    Browne</a>, March 2004.
+  <p>&nbsp;</p>
+  </div>
+  
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

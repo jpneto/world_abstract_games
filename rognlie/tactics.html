@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h2>Rules of Tactics</h2>
+</a>
+
+<p>
+Tactics uses the same move format as other pbem games:
+<br> &nbsp;&nbsp;&nbsp; 
+tactics board 105 <b>userid</b> <b>password</b> <b>move</b>
+<br>
+where <b>move</b> is replaced by from and to coordinates (ie f1-f4).
+
+<h3>Background:</h3>
+I played this game around 1981 while I was living in Hawaii as a young teenager.  
+I don't know anything about its background other than the fact that the oriental 
+family I was staying with played it and they taught me how to play.
+
+<p>
+In the original game, each piece was a square with rounded corners.  Each piece 
+had arrows drawn on one side showing it as a mobile piece and which direction it 
+could move.  On the other side of the piece, it was the opposite color, had a 
+letter S (for stationary, I assume) and little diamonds where the tips of the 
+arrows would have been.
+
+<p>
+Two sides of white's Rook-like piece:
+
+<pre>
+Mobile side     Frozen side
+(White)         (Black)
+/---------\     /---------\
+|    ^    |     |::::^::::|
+|    |    |     |:::::::::|
+|&lt;---+---&gt;|     |&lt;:::S:::&gt;|
+|    |    |     |:::::::::|
+|    v    |     |::::v::::|
+\---------/     \---------/
+</pre>
+
+<h3>Object of the game:</h3>
+Prevent your opponent from moving.
+
+<h3>Moves and Pieces:</h3>
+Each player starts with 4 Rooks (R), 2 Bishops (B) and 2 Queens (Q).  Rooks move
+orthogonally (vertically and horizontally).  Bishops move diagonally and Queens 
+move both orthogonally and diagonally.  A "*" appears on each side of Black's 
+pieces.  When a piece is frozen, it changes to the opponent's color and is 
+represented by its equivalent lower case letter.  It can be unfrozen in a 
+subsequent move (see examples below).
+ 
+<p>
+Starting board:
+
+<pre>
+    A   B   C   D   E   F   G   H
+  +---+---+---+---+---+---+---+---+
+1 | Q |:B:| R |:R:| R |:R:| B |:Q:| 1
+  +---+---+---+---+---+---+---+---+
+2 |:::|   |:::|   |:::|   |:::|   | 2
+  +---+---+---+---+---+---+---+---+
+3 |   |:::|   |:::|   |:::|   |:::| 3
+  +---+---+---+---+---+---+---+---+
+4 |:::|   |:::|   |:::|   |:::|   | 4
+  +---+---+---+---+---+---+---+---+
+5 |   |:::|   |:::|   |:::|   |:::| 5
+  +---+---+---+---+---+---+---+---+
+6 |:::|   |:::|   |:::|   |:::|   | 6
+  +---+---+---+---+---+---+---+---+
+7 |   |:::|   |:::|   |:::|   |:::| 7
+  +---+---+---+---+---+---+---+---+
+8 |*Q*|*B*|*R*|*R*|*R*|*R*|*B*|*Q*| 8
+  +---+---+---+---+---+---+---+---+
+    A   B   C   D   E   F   G   H 
+</pre>
+
+<p>
+Like Othello, each piece has a black side and a white side.  The white 
+player's pieces are mobile when the white side is showing and frozen when 
+the black side is showing.  Likewise, the black player's pieces are mobile 
+when black and frozen when white. 
+
+<p>
+Pieces are flipped in one of two ways: 
+<p>
+1) Like Othello, a player-colored piece on each end of a line of 
+opponent-colored pieces causes them to flip over. eg:
+
+<p>
+Before white's move:
+
+<pre>
+    A   B   C   D   E   F   G   H
+  +---+---+---+---+---+---+---+---+
+1 | R |*R*|*b*|*R*|*R*|:::|   |:R:| 1
+  +---+---+---+---+---+---+---+---+
+2 |:::|   |:::|   |:::|*R*|:::|   | 2
+  +---+---+---+---+---+---+---+---+
+3 |   |:Q:|   |:Q:|   |*B*|   |:::| 3
+  +---+---+---+---+---+---+---+---+
+4 |:::|   |:::|   |:R:|   |:::|   | 4
+  +---+---+---+---+---+---+---+---+
+5 |*Q*|:::|   |:::|   |*Q*|   |:::| 5
+  +---+---+---+---+---+---+---+---+
+6 |:::|   |:::|   |*b*|   |:::|*B*| 6
+  +---+---+---+---+---+---+---+---+
+7 |   |:::|   |:::| R |:::|   |:::| 7
+  +---+---+---+---+---+---+---+---+
+8 |:::|   |:::|   |:::|   |:::|   | 8
+  +---+---+---+---+---+---+---+---+
+    A   B   C   D   E   F   G   H 
+</pre>
+<p>
+White makes the move h1-f1.  After white's move:
+<pre>
+    A   B   C   D   E   F   G   H
+  +---+---+---+---+---+---+---+---+
+1 | R | r | B |:r:| r |:R:|   |:::| 1
+  +---+---+---+---+---+---+---+---+
+2 |:::|   |:::|   |:::|*R*|:::|   | 2
+  +---+---+---+---+---+---+---+---+
+3 |   |:Q:|   |:Q:|   |*B*|   |:::| 3
+  +---+---+---+---+---+---+---+---+
+4 |:::|   |:::|   |:R:|   |:::|   | 4
+  +---+---+---+---+---+---+---+---+
+5 |*Q*|:::|   |:::|   |*Q*|   |:::| 5
+  +---+---+---+---+---+---+---+---+
+6 |:::|   |:::|   |*b*|   |:::|*B*| 6
+  +---+---+---+---+---+---+---+---+
+7 |   |:::|   |:::| R |:::|   |:::| 7
+  +---+---+---+---+---+---+---+---+
+8 |:::|   |:::|   |:::|   |:::|   | 8
+  +---+---+---+---+---+---+---+---+
+    A   B   C   D   E   F   G   H 
+</pre>
+
+<p>
+Notice that the 4 pieces at b1, c2, d1 and e1 all got flipped over.  
+They were all black-colored pieces: 3 of black's Rooks and 1 of white's 
+frozen Bishops.  After the move, black's Rooks become frozen (lower case 
+and white) and white's Bishop becomes unfrozen (upper case and white).
+<p>
+2) The other way to flip pieces is to move between two opponent-colored 
+pieces.
+<p>
+Continuing our previous example, black makes the move a5-c3.  
+After black's move:
+
+<pre>
+    A   B   C   D   E   F   G   H
+  +---+---+---+---+---+---+---+---+
+1 | R | r | B |:r:| r |:R:|   |:::| 1
+  +---+---+---+---+---+---+---+---+
+2 |:::|   |:::|   |:::|*R*|:::|   | 2
+  +---+---+---+---+---+---+---+---+
+3 |   |*q*|*Q*|*q*|   |*B*|   |:::| 3
+  +---+---+---+---+---+---+---+---+
+4 |:::|   |:::|   |:R:|   |:::|   | 4
+  +---+---+---+---+---+---+---+---+
+5 |   |:::|   |:::|   |*Q*|   |:::| 5
+  +---+---+---+---+---+---+---+---+
+6 |:::|   |:::|   |*b*|   |:::|*B*| 6
+  +---+---+---+---+---+---+---+---+
+7 |   |:::|   |:::| R |:::|   |:::| 7
+  +---+---+---+---+---+---+---+---+
+8 |:::|   |:::|   |:::|   |:::|   | 8
+  +---+---+---+---+---+---+---+---+
+    A   B   C   D   E   F   G   H 
+</pre>
+<p>
+Notice that the pieces at b3 and d3 were flipped.  
+<p>
+Continuing our example and showing a combination flip, white makes 
+the move c1-f4.  After white's move:
+
+<pre>
+    A   B   C   D   E   F   G   H
+  +---+---+---+---+---+---+---+---+
+1 | R | r |   |:r:| r |:R:|   |:::| 1
+  +---+---+---+---+---+---+---+---+
+2 |:::|   |:::|   |:::| r |:::|   | 2
+  +---+---+---+---+---+---+---+---+
+3 |   |*q*|*Q*|*q*|   |:b:|   |:::| 3
+  +---+---+---+---+---+---+---+---+
+4 |:::|   |:::|   |:R:| B |:::|   | 4
+  +---+---+---+---+---+---+---+---+
+5 |   |:::|   |:::|   |:q:|   |:::| 5
+  +---+---+---+---+---+---+---+---+
+6 |:::|   |:::|   |*b*|   |:::|*B*| 6
+  +---+---+---+---+---+---+---+---+
+7 |   |:::|   |:::| R |:::|   |:::| 7
+  +---+---+---+---+---+---+---+---+
+8 |:::|   |:::|   |:::|   |:::|   | 8
+  +---+---+---+---+---+---+---+---+
+    A   B   C   D   E   F   G   H 
+</pre>
+<p>
+Notice that the pieces at f2 and f3 were flipped because they were 
+between f1 and f4.  Also, f5 was flipped because f3 and f5 were 
+black-colored pieces on each side of f4.
+<p>
+Finally, you can't accidentally flip your own colored pieces to your 
+opponents pieces on your own move.  Continuing the example, black 
+makes the move c3-e5.  After black's move:
+
+<pre>
+    A   B   C   D   E   F   G   H
+  +---+---+---+---+---+---+---+---+
+1 | R | r |   |:r:| r |:R:|   |:::| 1
+  +---+---+---+---+---+---+---+---+
+2 |:::|   |:::|   |:::| r |:::|   | 2
+  +---+---+---+---+---+---+---+---+
+3 |   |*q*|   |*q*|   |:b:|   |:::| 3
+  +---+---+---+---+---+---+---+---+
+4 |:::|   |:::|   |:R:| B |:::|   | 4
+  +---+---+---+---+---+---+---+---+
+5 |   |:::|   |:::|*Q*|:q:|   |:::| 5
+  +---+---+---+---+---+---+---+---+
+6 |:::|   |:::|   |*b*|   |:::|*B*| 6
+  +---+---+---+---+---+---+---+---+
+7 |   |:::|   |:::| R |:::|   |:::| 7
+  +---+---+---+---+---+---+---+---+
+8 |:::|   |:::|   |:::|   |:::|   | 8
+  +---+---+---+---+---+---+---+---+
+    A   B   C   D   E   F   G   H 
+</pre>
+
+<p>
+Notice that the pieces at e5 and e6 were *not* flipped even though 
+they are surrounded black pieces bracketed by white pieces at e4 and e7.
+<p>
+Also notice that unlike Othello, diagonal lines are not considered 
+for flipping purposes.
+<p>
+The game is over when a player cannot move either because all of his 
+pieces have been flipped or because he cannot move any pieces that 
+would otherwise be mobile.</p>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+    <h3><font face="Arial" size="2">QUADRATURE</a> by Mark Steere (c) 1996 </font></h3>
+    <p><font face="Arial" size="2">Author's note: Feel free to distribute this document. </font></p>
+    <pre><font face="Arial" size="2">
+QUADRATURE - INTRO
+==================
+
+Quadrature is a two player strategy game.  Each player 
+has a set of 16 checkers.  Players start with 9 checkers 
+on the board with 7 held in reserve.  The board is an 11
+by 11 square grid.  Players also have &quot;markers&quot; explained 
+later in the Rules section.
+</font><font face="Courier" size="1">
+. . . . , , , . . . .	  OOO   White
+. . . . . . . . . . .	  OOOO  |0| &lt;-- White marker
+. O O O O O O O O O .
+. . . . . . . . . . .
+. . . . . . . . . . .
+. . . . . . . . . . .
+. . . . . . . . . . .
+. . . . . . . . . . .
+. # # # # # # # # # .
+. . . . . . . . . . .	  ###   Black
+. . . . , , , . . . .	  ####  |0| &lt;-- Black marker</font><font face="Arial" size="2">
+
+Players take turns making basic moves.
+A basic move is to move a checker *one space* forward, 
+diagonally forward, or sideways.  Players cannot 
+move backwards or diagonally backwards.
+
+In the following diagram, white has moved a checker
+diagonally forward.
+</font><font face="Courier" size="1">
+. . . . , , , . . . .	  OOO   White
+. . . . . . . . . . .	  OOOO  |0|
+. O O O O O O O . O .
+. . . . . . . . . O .
+. . . . . . . . . . .
+. . . . . . . . . . .
+. . . . . . . . . . .
+. . . . . . . . . . .
+. # # # # # # # # # .
+. . . . . . . . . . .	  ###   Black
+. . . . , , , . . . .	  ####  |0|
+</font><font face="Arial" size="2">
+&quot;Squaring&quot; is an aggressive maneuver in Quadrature.
+To &quot;square&quot; an enemy checker, you move to form a rectangle
+on the board with three of your checkers and one enemy 
+checker.  So you have three &quot;squaring&quot; checkers and 
+one &quot;squared&quot; checker.  
+
+For example:
+</font><font face="Courier" size="1">
+. . . . . .     . . . . . .
+. O . . # .     . O . . # .
+. . . . . .     . . . . . .
+. # . . . .     . # . . # .
+. . . # . .     . . . . . .
+. . . . . .     . . . . . .
+Black's turn.   Black's squares
+                a white checker.</font><font face="Arial" size="2">
+
+The enemy &quot;squared&quot; checker is then removed
+from the board and replaced with one of your own
+reserve checkers.  Removed checkers are returned to their
+original owners.  Players do not take ownership of
+each others checkers.
+
+To complete the previous example:
+
+. </font><font face="Courier" size="1">. . . . .     . . . . . .     . . . . . . 
+. O . . # .     . O . . # .     . # . . # .
+. . . . . .     . . . . . .     . . . . . .
+. # . . . .     . # . . # .     . # . . # .
+. . . # . .     . . . . . .     . . . . . .
+. . . . . .     . . . . . .     . . . . . .
+Black's turn.   Black's move.   &quot;Squared&quot; white checker 
+                                is converted to black.
+</font><font face="Arial" size="2">
+Sometimes you can square more than one enemy checker
+at once, as shown in the following example:
+</font><font face="Courier" size="1">
+. . . . . .     . . . . . .     . . . . . .
+. O . . . O     . O . # . O     . # . # . #
+. . . # . .     . . . . . .     . . . . . .
+. . . . . .     . . . . . .     . . . . . .
+. # . # . #     . # . # . #     . # . # . #
+. . . . . .     . . . . . .     . . . . . .
+Black's turn.   Black squares   The two squared white checkers
+                2 checkers.     are converted to black.</font><font face="Arial" size="2">
+
+A chain-reaction can happen in Quadrature.  When
+you replace an enemy checker with one of your
+own reserve checkers, your newly added checker can 
+square additional enemy checkers.   And so on.
+
+Such a chain-reaction occurs in the following
+example:
+</font><font face="Courier" size="1">
+# . # . . .     # . # . . .     # . # . . .     # . # . . .
+. . . . . .     . . . . . .     . . . . . .     . . . . . .
+O . O . . .     O . O . . #     O . # . . #     # . # . . #
+. . . . # .     . . . . . .     . . . . . .     . . . . . .
+. . # . . #     . . # . . #     . . # . . #     . . # . . #
+. . . . . .     . . . . . .     . . . . . .     . . . . . .
+Black's turn.   Black squares   White checker   2nd white checker 
+                one checker.    converted.      converted to black.</font><font face="Arial" size="2">
+
+This basic intro gives the main features of Quadrature.
+Quadrature gameplay is tense, aggressive, and addictive.  It 
+has been described as a &quot;sudden death&quot; game.  Once the aggression
+starts, annihilation can quickly follow.  
+
+QUADRATURE - RULES AND OBJECT
+=============================
+BASIC MOVES AND THE MARKER
+--------------------------
+As explained in the introduction, players move towards each
+other with forward and diagonally forward single-space moves.  
+Players can also make sideways moves, but sideways moves are 
+limited by the use of the &quot;marker&quot;.
+
+Each player has a marker which is a flat square chip.  Each
+player's marker is the same color as his checkers.  The marker
+has a single dot on one face and two dots on the opposite face.
+If you make a non-aggressive, sideways move, you must place
+your marker on the board with the single dot face up.  You can
+put it anywhere on the board.  The location doesn't matter; it's
+just showing that you made one non-aggressive sideways move.
+
+|0|, |1|, and |2| in the examples represent the markers off-board, 
+on-board with one dot showing, and on-board with two dots showing:
+</font><font face="Courier" size="1">
+. . . . . .       . . . . . .
+. . . . . .       . . . . . .
+. O . O . .       . O . O . .
+. . . . . .       . . . . . .
+. # . # . .       . # . . # .
+. . . . . . |0|   . . . . . . |1| &lt;-- Black marker now shows &quot;1&quot;.
+Black's turn.     Sideways move.
+</font><font face="Arial" size="2">
+If your marker is already on the board with the single dot face up,
+and you make a non-aggressive sideways move, you must flip your 
+marker over so that the two-dot face is showing.  This shows that
+you have made two consecutive, non-aggressive sideways moves.
+A non-aggressive sideways move is a sideways move which does not
+kill any enemy checkers.
+
+For example:
+</font><font face="Courier" size="1">
+. . . . . . |0|   . . . . . . |0|   . . . . . . |1|   . . . . . . |1| 
+. . . . . .       . . . . . .       . . . . . .       . . . . . .
+. O . O . .       . O . O . .       . O . . O .       . O . . O .
+. . . . . .       . . . . . .       . . . . . .       . . . . . .
+. # . # . .       . # . . # .       . # . . # .       . # . . . #
+. . . . . . |0|   . . . . . . |1|   . . . . . . |1|   . . . . . . |2|
+Black's turn.     Black sideways    White sideways    2nd black
+                  move.             move.             sideways move.</font><font face="Arial" size="2">
+
+If your marker is on the board with the two-dot face showing,
+you are not allowed to make a non-aggressive sideways move.
+You must make a forward, diagonally forward, or aggressive
+sideways move. An aggressive sideways move kills enemy checkers.
+
+Once you have made a forward, diagonally forward, or aggressive
+sideways move, you must remove your marker from the board.  It
+doesn't matter if it is showing a single dot or two dots; a forward
+move always clears your marker from the board.
+
+For example:
+</font><font face="Courier" size="1">
+. . . . . . |1|   . . . . . . |1|
+. . . . . .       . . . . . .
+. O . . O .       . O . . O .
+. . . . . .       . . . . . #
+. # . . # .       . # . . . .
+. . . . . . |1|   . . . . . . |0| &lt;-- Black marker now shows &quot;0&quot;.
+Black's turn.     Forward move
+                  clears marker.
+</font><font face="Arial" size="2">
+There is no limit to the total number of non-aggressive sideways 
+moves you can make.  You just can't make more than two non-aggressive
+sideways moves consecutively.
+
+This rule was instated because players have a tendency to approach
+each other and then stall the game by making an endless series of 
+non-aggressive sideways moves.  The marker forces players to engage
+each other in combat, no matter how reluctant they may be.  
+
+SQUARING 
+--------
+Squaring was covered in the introduction, but here I give a few more
+details.  A &quot;square&quot; is a rectangle formed by three of your checkers 
+and one enemy checker.  It must have horizontal and vertical sides. The 
+
+square can be anywhere on the board as shown in the following diagrams.
+It doesn't matter if additional checkers are on the lines of the square 
+
+or in the square or whatever.  Just as long as the square exists.
+</font><font face="Courier" size="1">
+. . . . . .     . . . . . .     . . . . . .     . . . . . .
+. . . . . .     . . # . # .     # . . . O .     . . . . . .
+O . . . . #     . . . . . .     . . . . . .     . . # # . .
+# . . . . #     . . . . . .     . . . . . .     . . # O . .
+. . . . . .     . . O . # .     . . . . . .     . . . . . .
+. . . . . .     . . . . . .     # . . . # .     . . . . . .
+</font><font face="Arial" size="2">
+NO SUICIDE MOVES
+----------------
+You must not move an on-board checker to any point that completes 
+an enemy square.  Suicide moves are not allowed, no matter what.
+
+Example of illegal move:
+</font><font face="Courier" size="1">
+. O . O . .     . O . O . .
+. . . . . .     . . . . . .
+. O . . . .     . O . # . .
+. . # . . .     . . . . . .
+. # . # . .     . # . # . .
+. . . . . .     . . . . . .
+Black's turn.   Black's illegal move
+                completes an enemy square.</font><font face="Arial" size="2">
+
+While you cannot *move* to complete an enemy square, you can *add*
+new checkers to the board in places that are squared by enemy
+checkers.  In the following example, black makes a legal move
+to square a white checker:  
+</font><font face="Courier" size="1">
+O . O . O .     O . O . O .     O . O . O .     
+. . . . . .     . . . . . .     . . . . . .     
+O . O . . .     O . O . . #     O . # . . #     
+. . . . # .     . . . . . .     . . . . . .     
+. . # . . #     . . # . . #     . . # . . #     
+. . . . . .     . . . . . .     . . . . . .     
+Black's turn.   Black squares   White checker is converted to black,
+                white checker.  even though now squared by white.</font><font face="Arial" size="2">
+
+When black replaced the white checker with one of his own reserve 
+checkers, the new black checker completed the white square in the upper
+left corner of the board.  However the new black checker remains in 
+place and is not automatically reconverted back to white.
+
+TO CONVERT AN ENEMY CHECKER YOU MUST FORM THE SQUARE
+----------------------------------------------------
+DURING YOUR CURRENT TURN.
+-------------------------
+To square and convert an enemy checker, one of your three squaring 
+checkers must have been moved or added during your current turn.
+
+To continue the previous example, it is now white's turn.  Even though
+the black checker in the center of the board is already squared by 
+white, white cannot immediately convert it back to white, because white 
+
+didn't form that square during his current turn.
+</font><font face="Courier" size="1">
+O . O . O .     O . O . . O     O . O . . O     O . O . . O
+. . . . . .     . . . . . .     . . . . . .     . . . . . .
+O . # . . #     O . # . . #     O . # . . O     O . O . . O
+. . . . . .     . . . . . .     . . . . . .     . . . . . .
+. . # . . #     . . # . . #     . . # . . #     . . # . . #
+. . . . . .     . . . . . .     . . . . . .     . . . . . .
+White's turn    Sideways move   Black checker   2nd black checker
+                squares black.  converted.      converted to white.</font><font face="Arial" size="2">
+
+White's aggressive sideways move squares one black checker on the
+middle right of the board.  By converting the squared black checker to 
+white, white squares an additional black checker in the center of the 
+board.  White then converts this additional black checker to white.  
+Chain reaction moves, such as this one, can lead to large numbers of 
+enemy checkers being killed in a single turn.
+
+Once again, squaring is an aggressive action, not a passive situation.
+You can only convert an enemy checker to your color when at least
+one of your three squaring checkers was moved or added during your
+current turn.
+
+Whenever you remove an enemy checker, you always add one of your own 
+in its place.  So the total number of checkers on the board should 
+always be 18.
+
+OBJECT
+------
+There are two ways to win in Quadrature.  If you kill enough enemy 
+checkers to leave your opponent with two or less checkers on the 
+board, you win.  Also, if you can get three of your checkers onto the 
+enemy &quot;home plate&quot;, you win.  
+
+A player's home plate consists of the three points in the middle of 
+his side of the board.   
+</font><font face="Courier" size="1">
+. . . . # # # . . . .         . . . . , , , . . . .
+. . . . . . . . . . .         . . . . . . . . . . .
+. . # . . . . . # # .         . . # . . . . # # . .
+. . . . . . . . . . .         . . . . . . . . . . .
+. . O O O . O O . . .         . O . # # # # . # . .
+. . . . . . . . . . .         . . O . . . . . . . .
+. . . . . . . . . # .         . . . . # . # # # . .
+. . . . O . . O O . .         . . # # # . . # . . .
+. . . . . . . . . . .         . . . . . . . . . . .
+. . . . . . O O . . .         . . . . . . . . . . .
+. . . . , O , . . . .         . . . . , , , . . . .
+Black wins by getting         Black wins by reducing
+3 checkers into white's       the number of white, 
+home plate.                   on-board checkers to 2.</font><font face="Arial" size="2">
+
+ETIQUETTE
+---------
+When you square an enemy checker, instead of just taking
+it off the board and replacing it with your own, you should
+place your checker *on top of* the enemy checker.  When
+your opponent realizes what happened, he removes his own
+checker from underneath yours.  This will help to resolve
+potential disputes before they happen.  Sometimes you will
+kill several enemy checkers in one turn, and it can take your
+opponent a minute or two to realize what happened to him.
+
+EQUIPMENT
+---------
+The Quadrature board is an unusual design not used in other
+games.  But it should be relatively easy to construct.
+Even though the game calls for 16 black and 16 white checkers,
+a standard set of 30 backgammon chips will suffice.
+
+I have a rather beautiful Quadrature board made of Corean squares
+with resin filled in between the cracks.  The checkers are swirled
+polyester Backgammon chips with felt on the bottom.
+
+ORIGINS
+-------
+For a few weeks I tried to invent a new game playing mechanism.
+Something that would extend the set of basic maneuvers like the 
+Chess take and the Checkers jump.  I found this in squaring.  I 
+particularly liked the chain-reaction effect of squaring.  
+Then I wanted opposing forces to sift through one another as 
+happens in Checkers (Draughts) and Backgammon.
+
+I invented Quadrature in February 1992 and Tanbo in October 1993.
+Since then I've tried to invent more games but I haven't really
+come up with any workable concepts.
+
+Dennis Landon helped in play testing and shaping Quadrature.  The 
+original version was smaller, with a different initial configuration
+and no markers.  Quadrature won the American MENSA award.</font></pre>
+    <p><font face="Arial" size="2">&nbsp;</font></p>
+    </td>
+    <td width="10"></td>
+    <td valign="top">
+</td>
+  </tr>
+  <tr>
+    <td width="126"><font face="Arial" size="2"></font></td>
+    <td width="10"><font face="Arial" size="2"></font></td>
+    <td width="491"><font face="Arial" size="2"><a href="https://web.archive.org/web/20250712170357/http://www.apache.org/"><img src="/web/20250712170357im_/http://www.gamerz.net/images/apache_pb.gif" alt="apac
+he_pb.gif (2326 bytes)" border="0" align="right"></a>
+    </font>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

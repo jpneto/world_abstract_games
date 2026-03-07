@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h3><strong> Introduction</strong></h3>
+<div align="left">Superbo is a tile-placement game in which players strive to form closed groups of their colour.</div>
+<p><strong><em>Note</em></strong>: The game  is much easier to see using the <a href="https://web.archive.org/web/20250907023323/http://www.gamerz.net/pbmserv/List.php?Superbo">graphical web interface</a> than  the ASCII email version!<br>
+</p>
+<h3><strong>Rules </strong></h3>
+<p>Two players, O and X, share a common pool of tiles, where each tile face has a coloured bridge between two corners and a coloured tip on a third corner as  follows:</p>
+<pre>         .--oo          .--xx          .--oo<br>        x   oo\        /    xx        / ooo \<br>       xxx  oo )      oooo    )      oooo    )   O bridge with X tip (Ox) Mambo tile<br>        x   oo/        \ ooo /        \    xx<br>         `--oo          `--oo          `--xx
+
+         .--xx          .--oo          .--xx<br>        o   xx\        /    oo        / xxx \<br>       ooo  xx )      xxxx    )      xxxx    )   X bridge with O tip (Xo) Mambo tile<br>        o   xx/        \ xxx /        \    oo<br>         `--xx          `--xx          `--oo 
+
+         .--oo          .--oo          .--oo<br>        o   oo\        /    oo        / ooo \<br>       ooo  oo )      oooo    )      oooo    )   O bridge with O tip (Oo) Lambo tile<br>        o   oo/        \ ooo /        \    oo<br>         `--oo          `--oo          `--oo 
+
+         .--xx          .--xx          .--xx<br>        x   xx\        /    xx        / xxx \<br>       xxx  xx )      xxxx    )      xxxx    )   X bridge with X tip (Xx) Lambo tile<br>        x   xx/        \ xxx /        \    xx<br>         `--xx          `--xx          `--xx</pre>
+<p align="left">The Ox and Oo  designs are painted front and back on the same tiles, as are the Xo and Xx  designs (i.e. each tile has bridges of the same colour but tips of opposed colour   on the front and back). There are 32  tiles of each  type   for a total of  64 tiles. </p>
+<p align="left"><strong>Start:</strong> The game starts with a single Ox tile in the middle of the playing area. </p>
+<p align="left"><strong>Play:</strong> O  places a single tile adjacent to the starting tile such that edge colours match, then players take turns placing two tiles per turn adjacent to at least one existing tile such that edge colours match.</p>
+<p align="left"><strong>Auto Moves: </strong>Any space enclosed by three corners of mixed colour constitutes an automatic move as only one possible tile in one possible orientation will match those three colours. Players must automatically complete any such moves created by their tile placement (there may be several).</p>
+<pre>                    .--xx                      .--xx    <br>                   o   xx\                    o   xx\<br>              .--oooo  xx )              .--oooo  xx )<br>             x   ooo   xx/              x   ooo   xx/<br>            xxx  oo .--xx              xxx  oo .  xx<br>             x   oo/                    x   oo     xx<br>              )  oo          ----&gt;       )  ooooo    )  <br>             /    oo                    /    oo ooo /<br>            xxxx    `--oo              xxxx    .  oo   <br>             \ xxx x   oo\              \ xxx x   oo\<br>              `--xxxx  oo )              `--xxxx  oo )<br>                   x   oo/                    x   oo/<br>                    `--oo                      `--oo   </pre>
+<p align="left">The moves made each turn,  including auto moves, must form an  adjacent group (i.e. not  separated) and  must contain the colours of both players.</p>
+<p align="left"><strong>Aim:</strong> The game is won by the player who forms a closed group of their colour containing at least one eye (closed white region). Only one tile of any colour(s) need be played if that tile wins the game for either player.</p>
+<p>For example, the following figure  shows a game won by O who has closed an 'o' group containing  an eye.</p>
+<pre>                        .--xx<br>                       / xxx \<br>                      xxxx    `--xx<br>                       \    oo    xx<br>                        )  ooooo    `--oo   <br>                       o   oo  ooo o   oo\ <br>                      ooo  oo .  oooo  oo ) <br>                       o   oo  ooo o   oo/ <br>                        )  ooooo    .--oo  <br>                       x   oo     xx       <br>                      xxx  oo .  xx        <br>                       x   ooo   xx\       <br>                        )  oooo  xx )     <br>                       /    oo   xx/     <br>                      oooo    .--xx        <br>                       \ ooo /             <br>                        `--oo               </pre>
+<p>If a move forms winning groups for both players, then the mover loses. If the tiles run out before either player wins then the game is won by the player with the largest group (counting bridges) otherwise it is  draws.<br>
+</p>
+
+<h3>History </h3>
+
+<p>Mambo/Lambo/Superbo tiles and Superbo rules by   Cameron Browne and copyright (c) Cyberite Ltd,  2008.</p>
+<p align="left">The name Superbo refers to the fact that this is a Supergame combining  Mambo with  Lambo. As well as combining the tiles of these two games, it features the auto moves of Mambo without the null points, and the double move mechanism of Lambo.</p>
+<p align="left">Please see the official Superbo page for further details: <a href="https://web.archive.org/web/20250907023323/http://www.cameronius.com/games/superbo/">http://www.cameronius.com/games/superbo/</a></p>
+<p>Implementation and Help file by Cameron Browne, November 2008.<br>
+</p>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

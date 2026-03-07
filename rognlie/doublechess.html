@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+              
+<h2>Introduction</h2>
+
+Welcome to the network DOUBLE CHESS server. 
+The <a href="#rules">rules of DOUBLE CHESS</a> are below. 
+The move notation is described on the help page for <a href="chess.html">chess</a>.
+Other <a href="commands.html">commands</a> are the same for all pbmserv games.
+
+<a name="rules">
+<h2>Rules of DOUBLE CHESS</h2>
+</a>
+(Copyright (c) 1996 David Short)
+<p>
+DOUBLE CHESS was invented by David Short in 1996. 
+
+<p>DOUBLE CHESS is a very simple chess variant which uses only orthodox
+chess pieces. The setup appears below.  Lay two 8 by 8 boards side by
+side and use two chess sets. Replace the second set of kings with a
+third set of queens. Place the first army in the center of the board
+(rows e-l) and the second army out in the wings (rows a-d, m-p).
+<pre>
+      a   b   c   d   e   f   g   h   i   j   k   l   m   n   o   p
+    +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+ 
+  8 |*R*|*N*|*B*|*Q*|*R*|*N*|*B*|*Q*|*K*|*B*|*N*|*R*|*Q*|*B*|*N*|*R*|  8
+    +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+ 
+  7 |*P*|*P*|*P*|*P*|*P*|*P*|*P*|*P*|*P*|*P*|*P*|*P*|*P*|*P*|*P*|*P*|  7
+    +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+  6 |   |:::|   |:::|   |:::|   |:::|   |:::|   |:::|   |:::|   |:::|  6
+    +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+  5 |:::|   |:::|   |:::|   |:::|   |:::|   |:::|   |:::|   |:::|   |  5
+    +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+  4 |   |:::|   |:::|   |:::|   |:::|   |:::|   |:::|   |:::|   |:::|  4
+    +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+  3 |:::|   |:::|   |:::|   |:::|   |:::|   |:::|   |:::|   |:::|   |  3
+    +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+  2 | P |:P:| P |:P:| P |:P:| P |:P:| P |:P:| P |:P:| P |:P:| P |:P:|  2
+    +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+ 
+  1 |:R:| N |:B:| Q |:R:| N |:B:| Q |:K:| B |:N:| R |:Q:| B |:N:| R |  1
+    +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+ 
+      a   b   c   d   e   f   g   h   i   j   k   l   m   n   o   p
+</pre>
+<p>
+The default (large) board display may be too wide for display in some 
+mail reading software.  It may be desirable to use the small board
+display in that case.  The command to switch to the small board
+display is "<b>doublechess set [userid] [password] small</b>".
+In the diagram below, black pieces appear
+in CAPITAL LETTERS, white pieces in lower case.
+<pre>
+     a b c d e f g h i j k l m n o p
+   +---------------------------------+   
+ 8 | R N B Q R N B Q K B N R Q B N R |  8
+ 7 | P P P P P P P P P P P P P P P P |  7
+ 6 |   -   -   -   -   -   -   -   - |  6
+ 5 | -   -   -   -   -   -   -   -   |  5
+ 4 |   -   -   -   -   -   -   -   - |  4
+ 3 | -   -   -   -   -   -   -   -   |  3
+ 2 | p p p p p p p p p p p p p p p p |  2
+ 1 | r n b q r n b q k b n r q b n r |  1
+   +---------------------------------+
+     a b c d e f g h i j k l m n o p
+</pre>
+<p>
+All of the basic rules of chess, including en passant and pawn
+promotion. The only special rule in DOUBLE CHESS is the castling
+rule. The king may castle with ANY of the rooks, provided that neither piece 
+has moved, that the king doesn't move over or onto a square controlled by an 
+ememy piece, isn't castling while in check, and that all the squares between 
+are vacant. Of course, each player may only castle once during the game. 
+When inside castling, the king moves two squares. When outside castling, the 
+king moves 4 squares. So, for White, inside kingside castling, king goes to 
+k1 and rook goes to j1. For inside queenside castling, king goes to g1 and 
+rook goes to h1. For outside kingside castling, king goes to m1 and rook 
+goes to L1. For outside queenside castling, king goes to e1 and rook goes to 
+f1.
+Likewise for Black instead change the "1" to "8".
+<p>
+The commands on the PBeM server for castling in DOUBLE CHESS are
+as follows:
+<p>
+O-O or Kk1/Kk8 is the command for inside kingside castling<br>
+O-O-O or Kg1/Kg8 is the command for inside queenside castling<br>
+O-O-O-O or Km1/Km8 is the command for outside kingside castling<br>
+O-O-O-O-O or Ke1/Ke8 is the command for outside queenside castling<br>
+<p>
+All other moves are transmitted in standard shorthand english algebraic.
+
+<p>Some sample doublechess games can be found at <a href="http://www.chessvariants.com/large.dir/doublechess/games.html">http://www.chessvariants.com/large.dir/doublechess/games.html</a>
+
+    </td>
+    
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

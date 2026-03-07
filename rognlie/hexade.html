@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+    <p><font face="Arial" size="2">You can find more information about Hexade at <a href="https://web.archive.org/web/20250423115745/http://www.mindsports.nl/">MindSports Arena</a>. </font><a name="rules"></p>
+
+   <h3><font face="Arial" size="2">Hexade Rules</a> Copyright&nbsp;�&nbsp;Christian Freeling
+    </font></h3>
+    <pre><font face="Courier" size="1">                  1 2 3 4 5 6 7 8 9 10
+                 / / / / / / / / / / 11
+             A- . . . . . . . . . . / 12
+            B- . . . . . . . . . . . / 13
+           C- . . . . . . . . . . . . / 14
+          D- . . . . . . . . . . . . . / 15
+         E- . . . . . . . . . . . . . . / 16
+        F- . . . . . . . . . . . . . . . / 17
+       G- . . . . . . . . x x x . . . . . / 18
+      H- . . . . . . . . x x x x . . . . . / 19
+     I- . . . . . . . . x x O x x . . . . . /
+    J- . . . . . . . . . x x x x . . . . . .          
+     K- . . . . . . . . . x x x . . . . . . 
+      L- . . . . . . . . . . . . . . . . . 
+       M- . . . . . . . . . . . . . . . . 
+        N- . . . . . . . . . . . . . . . 
+         O- . . . . . . . . . . . . . . 
+          P- . . . . . . . . . . . . . 
+           Q- . . . . . . . . . . . . 
+            R- . . . . . . . . . . . 
+             S- . . . . . . . . . . 
+
+                      Diagram 1</font></pre>
+    <ul type="circle">
+      <li><font face="Arial" size="2">The game starts on an empty board. Players move in turn to
+        place one stone on an empty cell. White moves first. </font></li>
+      <li><font face="Arial" size="2">Between White's first move and his second, there must be at
+        least a two-cell distance. Diagram 1 shows a random first move with the forbidden area for
+        White's second move. Black has no such restriction. </font></li>
+    </ul>
+    <pre><font face="Courier" size="1">                  1 2 3 4 5 6 7 8 9 10
+                 / / / / / / / / / / 11
+             A- . . . . . . . . . . / 12
+            B- . . . . . . . . . . . / 13
+           C- . . . . . . . . . . . . / 14
+          D- . . . . . . . # . . . . . / 15
+         E- . . . . . . . . # . . . . . / 16
+        F- . . . . . . . . . # . . . . . / 17
+       G- . . . . . . . . . . # . . . . . / 18
+      H- . . . . # # . . . . . # . . . . . / 19
+     I- . . . . # . # . . . . . # . . . . . / 
+    J- . . . . . # # . . . . . . . . . . . .          
+     K- . . . . . . . . . . . . . . . . . . 
+      L- . . . . . . . . . . . . . . . . . 
+       M- . . . . . . . . . . . . . . . . 
+        N- . . . . . . . . . . . . . . . 
+         O- . . . . . # . . . . . . . . 
+          P- . . . . # # . . . . . . . 
+           Q- . . . # # # . . . . . . 
+            R- . . . . . . . . . . . 
+             S- . . . . . . . . . . 
+
+                      Diagram 2</font></pre>
+    <ul type="circle">
+      <li><font face="Arial" size="2">The game is won by the first player to complete a <strong>perfect
+        six</strong>, which means creating </font><ul type="square">
+          <li><font face="Arial" size="2">six stones in a straight row, or </font></li>
+          <li><font face="Arial" size="2">six stones in a compact triangle, or </font></li>
+          <li><font face="Arial" size="2">six stones in a small hexagon, </font></li>
+        </ul>
+        <p><font face="Arial" size="2">as shown in Diagram 2, and well in such a way (here the
+        ``perfect'' comes in) that it outlasts the opponent's next move. If the opponent
+        immediately destroys a six by capture, the game goes on. </font></p>
+      </li>
+    </ul>
+    <p><font face="Arial" size="2">There are no restrictions to whatever like colored stones
+    are connected to a six. It doesn't matter for instance whether (or by whom) the cell
+    inside a hexagon is occupied, or whether or not a straight six is an ``overline'' of seven
+    or more. </font></p>
+    <h3><font face="Arial" size="2">Capture Two adjacent stones of like color are called a
+    ``pair''. If the placement of a stone results in one or more opponent's pairs being
+    enclosed the custodian way (sandwiched between two enemy stones), these pairs are captured
+    and removed from the board in the same turn. </font></h3>
+    <pre><font face="Courier" size="1">                  1 2 3 4 5 6 7 8 9 10
+                 / / / / / / / / / / 11
+             A- . . . . . . . . . . / 12
+            B- . . . . . . . . . . . / 13
+           C- . . . . . . . . . . . . / 14
+          D- . . . . . . . . . . . . . / 15
+         E- . . . . . . . . . . . . . . / 16
+        F- . . . . . . . . . . . . . . . / 17
+       G- . . . # . . . . . . . . . . . . / 18
+      H- . . . B . . . . . . . . . . . . . / 19
+     I- . . . O . . . . . . . . A . . . . . / 
+    J- . . . # . . . . . . . . # # . . . . .          
+     K- . . . . . . . . . . . # . # . . . . 
+      L- . . . . . . . . . . O . # O . . . 
+       M- . . . . . . . . . . . . . . . . 
+        N- . . . . . . . . . . . . . . . 
+         O- . . . . . . . . . . . . . . 
+          P- . . . . . . . . . . . . . 
+           Q- . . . . . . . . . . . . 
+            R- . . . . . . . . . . . 
+             S- . . . . . . . . . . 
+
+                      Diagram 3</font></pre>
+    <p><font face="Arial" size="2">Here a White (Ohs) play at <strong>A</strong> captures two
+    black pairs. A White play at <strong>B</strong> makes the white pair safe (for the
+    moment), because pairs already enclosed cannot be captured. Of course White's capture of
+    an enclosing stone may make his own pair vulnerable again. </font></p>
+    <h3><font face="Arial" size="2">Strategy and tactics Strategy is obvious: you need a
+    simultaneous threat at some point and see if you can force the six to perfect. That's the
+    nice thing about tactical games: you're not in the dark about what's going on. To
+    compensate for the lack in strategical depth, tactics are manifold, subtle and
+    resourceful. </font></h3>
+    <p><font face="Arial" size="2">&nbsp;</font>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

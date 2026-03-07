@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h2>Introduction to playing Gipf on Richards PBeM-server.</h2>
+
+This is not an introduction to Gipf. If you don't know the game yet
+but want to learn then you can go and <a href="https://web.archive.org/web/20241112123812/http://www.gamerz.net/funagain/product?product_id=02105&amp;affil=RPBS">buy it</a> or check the
+<a href="https://web.archive.org/web/20241112123812/http://www.gipf.com/">gipf-website (www.gipf.com)</a> for the rules. In any case, you should
+check the gipf-website to know how the moves of a game are written 
+down.
+<p>
+This implementation always plays according to the GIPF tournament rules.
+(If you are new to Gipf, this means that the game starts with an
+ empty board and each player has 18 pieces. With your first moves you
+ can add as many gipf-pieces as you want to the game, but the moment
+ you add your first single piece, you can't add gipf-pieces anymore.)
+<p>
+The <a href="commands.html">commands</a> are the same for all pbmserv games.
+<p>
+<h3>CHALLENGE</h3>
+  The challenge-command for Gipf is the same as for most games, just
+  give the userid of both players and the fun can start.
+<dl>
+   <dt>Example:
+      <dd>gipf challenge useridplayer1 useridplayer2
+</dl>
+
+<h3>MOVE</h3>
+  The move-command for Gipf is a little more complicated than most
+  games.
+
+<dl>
+  <dt>The basic command is of the form:
+      <dd>gipf move game# userid password gipfmove
+
+</dl>
+<p>
+  When playing a game of GIPF, there are 3 possible actions. Depending 
+  on the situation on the board, the implementation will indicate what 
+  must be done to go on with the game.
+
+<ol>
+<p><li> Normal move, bring a normal piece or a gipf piece into play
+<pre>
+     ex.
+         ga1-c3
+       or
+         na1-c3
+</pre>
+
+     <p>'g' as the first character of your move means add a gipf-piece, 
+     <br>'n' is a normal piece.
+<p>
+     A move always starts on any of the black dots at the edge of 
+     the board. So, you must note down the position of the dot on 
+     which you put your new piece before bringing it into play.
+     Next you give the position of the spot that will be occupied 
+     by the furthest piece you move (= the end of the move).
+<p>
+     REMARK: If this isn't clear then you should read how to write 
+             down a game on the gipf website.
+
+<p><li> Remove one or more gipf-pieces from the board
+<p>
+     If the last row removed from the board contained gipf-pieces
+     then you get the question if you want to remove them or not.
+     (the board-situation has a list of the gipf-pieces that can 
+      be removed)
+<pre>
+     ex.
+         gipfa3       =&gt; remove 1 gipfpiece
+       or
+         gipfa3-b3    =&gt; remove several gipfpieces
+       or
+         gipf         =&gt; remove no gipfpieces
+</pre>
+
+     Even if you don't want to remove any gipf-pieces you still 
+     have to send at least the last version of the command before 
+     the game can continue.
+
+<p><li> Select which row of pieces to remove
+<p>
+     If several rows of 4 or more pieces in your color are
+     on the board then you have to decide which to remove first.
+     (the board-situation has a list of possible rows to remove)
+<pre>
+     ex.
+         rowb1-i4
+</pre>
+</ol>
+<p>
+The extension to the PBeM-server for playing Gipf was written by
+Kurt Van den Branden (kurtvdb@pandora.be). If you find a problem
+or a bug, let him know.
+<p>
+o Gipf, (C) and (R) Don &amp; Co nv, 1997. All rights reserved.
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

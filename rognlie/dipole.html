@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h2>Dipole Rules</h2></a></a> (Copyright (c) 2007 Mark Steere &lt;mark@marksteeregames.com&gt;) </font></h3><br><br>
+
+    <font face="Arial"><h3>Author's Note</h3>
+    Feel free to distribute this document. </font> <br><br>
+    
+<font face="Arial">
+
+
+<h3>Introduction</h3> 
+Dipole is played with a Checkers set.  Only the dark squares are used.
+There should be a dark square in your lower left corner.  
+
+<p>The game starts with two stacks of 12 checkers, one white and one
+black, as shown in Figure 1.  Here (Paren) and &lt;Angle&gt; will be used instead of "White" and "Black".</font>
+
+<pre><font face="courier" size="1">
+        A   B   C   D   E   F   G   H   
+      &lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;      
+  8  |     ..     &lt;12&gt;     ..      .. |  8  
+     |--------------------------------|     
+  7  | ..      ..      ..      ..     |  7
+     |--------------------------------| 
+  6  |     ..      ..      ..      .. |  6
+     |--------------------------------| 
+  5  | ..      ..      ..      ..     |  5
+     |--------------------------------| 
+  4  |     ..      ..      ..      .. |  4
+     |--------------------------------| 
+  3  | ..      ..      ..      ..     |  3
+     |--------------------------------| 
+  2  |     ..      ..      ..      .. |  2
+     |--------------------------------|     
+  1  | ..      ..      (12)    ..     |  1 
+      ()()()()()()()()()()()()()()()()    
+        A   B   C   D   E   F   G   H
+
+       Figure 1 -- 8x8 Initial Setup
+
+</font></pre>
+
+<font face="Arial">
+<p>More advanced players may elect to play Dipole on a 10x10 board with
+two stacks of 20, one in each player's nearest row.  
+
+<p>Use a coin (such as a nickel) to represent five checkers. So for example, a stack of
+two checkers with a coin on top would be equivalent to a stack of seven checkers.
+
+<p>Draws cannot occur in Dipole.</p> <br>
+
+<h3>Object Of The Game</h3>
+To win, all of your opponent's checkers must be removed from the board. <br><br>
+
+<h3>Basic Moves</h3>
+Players take turns moving stacks of their own checkers, one stack 
+per turn.  You can move an entire stack or just a portion of one (also called a stack 
+here).  This holds true for merging and capturing moves as well.  See below.  Basic
+moves can only be made in the forward or diagonally forward directions.  
+
+<p>The number of squares a stack is moved must equal the number of checkers in the 
+moved stack.  This holds true for merging and capturing moves as well. 
+Even though only the dark squares are used, white squares must be included in the 
+count.  In Figure 2, Paren can move his two-stack to any of the squares marked with a "?".  
+Directly forward moves can only be made with even numbered stacks. </font>
+
+
+<pre><font face="courier" size="1">
+      &lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;      
+     |     ..      ..      .. | 
+     |------------------------| 
+     | ..      ..      ..     | 
+     |------------------------| 
+     |      ?       ?       ? | 
+     |------------------------| 
+     | ..      ..      ..     | 
+     |------------------------| 
+     |     ..      (2)     .. | 
+     |------------------------|     
+     | ..      ..      ..     |  
+      ()()()()()()()()()()()()    
+
+   Figure 2 -- Stack Height = Move Distance
+
+</font></pre>
+
+
+<font face="Arial">
+<p>If you move a stack out of bounds, you must remove that stack from play. When
+moving a stack out of bounds pretend the board squares extend outward far beyond
+the boundaries, and make a basic move accordingly. Stacks can only be removed in
+the forward or diagnonally forward directions. Players typically remove singletons
+from their far row because they have nowhere else to go.<br><br>
+
+<p>If you have no moves available, you must sit the game out until you do have a move
+available. If you have any moves available, you must move. There will always be a
+move available to one player or the other.<br><br>
+
+<h3>Merging Moves</h3>
+Stacks can be moved onto other, like-colored stacks.  In 
+Figure 3, Paren takes three checkers from his four-stack and merges them onto his 
+two-stack.  </font>
+
+
+<pre><font face="courier" size="1">
+      &lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;          &lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;
+     |     ..      ..      .. |        |     ..      ..      .. |
+     |------------------------|        |------------------------|
+     | ..      ..      (2)    |        | ..      ..      (5)    |
+     |------------------------|        |------------------------|
+     |     ..      ..      .. |        |     ..      ..      .. |
+     |------------------------|        |------------------------|
+     | ..      &lt;5&gt;     ..     |        | ..      &lt;5&gt;     ..     |
+     |------------------------|        |------------------------|
+     |     (4)     ..      .. |        |     (1)     ..      .. |
+     |------------------------|        |------------------------|
+     | ..      ..      ..     |        | ..      ..      ..     |
+      ()()()()()()()()()()()()          ()()()()()()()()()()()()
+
+      Figure 3a -- Before Merge         Figure 3b -- After Merge
+
+</font></pre>
+
+
+<font face="Arial">
+<p>Note that the white stack jumped over the black 5-stack. Stack movement
+is never obstructed by intervening stacks, regardless of size or color. This holds true
+for basic and capturing moves as well. Merging moves can only be made in the
+forward or diagonally forward directions.<br><br>
+
+<h3>Capturing Moves</h3>
+Capturing moves can be made in any of eight directions.  A 
+stack can capture only an entire enemy stack, which must be of an equal or smaller 
+size than the capturing stack.  In Figure 4, Paren takes four checkers from his 
+five-stack, and captures Angle's three-stack.  Basic, merging, and capturing moves 
+must be made in a straight line. </font>
+
+
+<pre><font face="courier" size="1">
+      &lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;          &lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;
+     |     (5)     ..      .. |        |     (1)     ..      .. |
+     |------------------------|        |------------------------|
+     | ..      ..      &lt;1&gt;    |        | ..      ..      &lt;1&gt;    |
+     |------------------------|        |------------------------|
+     |     ..      ..      .. |        |     ..      ..      .. |
+     |------------------------|        |------------------------|
+     | ..      ..      ..     |        | ..      ..      ..     |
+     |------------------------|        |------------------------|
+     |     &lt;3&gt;     ..      .. |        |     (4)     ..      .. |
+     |------------------------|        |------------------------|
+     | ..      ..      ..     |        | ..      ..      ..     |
+      ()()()()()()()()()()()()          ()()()()()()()()()()()()
+
+     Figure 4a -- Before Capture       Figure 4b -- After Capture
+</font></pre><br>
+
+<font face="Arial">
+
+<h3>Board Options</h3> </font>
+<pre><font face="courier" size="1">
+        A   B   C   D   E   F   G   H   
+      &lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;      
+  8  |     ..     &lt;12&gt;     ..      .. |  8  
+     |--------------------------------|     
+  7  | ..      ..      ..      ..     |  7
+     |--------------------------------| 
+  6  |     ..      ..      ..      .. |  6
+     |--------------------------------| 
+  5  | ..      ..      ..      ..     |  5
+     |--------------------------------| 
+  4  |     ..      ..      ..      .. |  4
+     |--------------------------------| 
+  3  | ..      ..      ..      ..     |  3
+     |--------------------------------| 
+  2  |     ..      ..      ..      .. |  2
+     |--------------------------------|     
+  1  | ..      ..     (12)     ..     |  1 
+      ()()()()()()()()()()()()()()()()    
+        A   B   C   D   E   F   G   H
+
+       Default 8x8 Starting Position
+
+
+        A   B   C   D   E   F   G   H   I   J
+      &lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;      
+ 10  |     ..      ..     &lt;20&gt;     ..      .. |  10
+     |----------------------------------------|   
+  9  | ..      ..      ..      ..      ..     |  9
+     |----------------------------------------| 
+  8  |     ..      ..      ..      ..      .. |  8
+     |----------------------------------------| 
+  7  | ..      ..      ..      ..      ..     |  7
+     |----------------------------------------| 
+  6  |     ..      ..      ..      ..      .. |  6
+     |----------------------------------------| 
+  5  | ..      ..      ..      ..      ..     |  5
+     |----------------------------------------| 
+  4  |     ..      ..      ..      ..      .. |  4
+     |----------------------------------------|  
+  3  | ..      ..      ..      ..      ..     |  3  
+     |----------------------------------------|    
+  2  |     ..      ..      ..      ..      .. |  2
+     |----------------------------------------|     
+  1  | ..      ..     (20)     ..      ..     |  1 
+      ()()()()()()()()()()()()()()()()()()()()    
+        A   B   C   D   E   F   G   H   I   J
+
+           Normal 10x10 Starting Position
+
+
+        A   B   C   D   E   F   G   H   I   J
+      &lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;      
+ 10  |     ..      ..      ..      ..      .. |  10
+     |----------------------------------------|   
+  9  | ..      ..     &lt;20&gt;     ..      ..     |  9
+     |----------------------------------------| 
+  8  |     ..      ..      ..      ..      .. |  8
+     |----------------------------------------| 
+  7  | ..      ..      ..      ..      ..     |  7
+     |----------------------------------------| 
+  6  |     ..      ..      ..      ..      .. |  6
+     |----------------------------------------| 
+  5  | ..      ..      ..      ..      ..     |  5
+     |----------------------------------------| 
+  4  |     ..      ..      ..      ..      .. |  4
+     |----------------------------------------|  
+  3  | ..      ..      ..      ..      ..     |  3  
+     |----------------------------------------|    
+  2  |     ..      ..     (20)     ..      .. |  2
+     |----------------------------------------|     
+  1  | ..      ..      ..      ..      ..     |  1 
+      ()()()()()()()()()()()()()()()()()()()()    
+        A   B   C   D   E   F   G   H   I   J
+
+         Compressed 10x10 Starting Position
+
+
+        A   B   C   D   E   F   G   H   I   J   K   L
+      &lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;      
+ 12 []     ..      ..      ..     &lt;24&gt;     ..      .. ** 12
+    []------------------------------------------------**  
+ 11 [] ..      ..      ..      ..      ..      ..     ** 11
+    []------------------------------------------------**
+ 10 []     ..      ..      ..      ..      ..      .. ** 10
+    []------------------------------------------------**
+  9 [] ..      ..      ..      ..      ..      ..     ** 9
+    []------------------------------------------------**
+  8 []     ..      ..      ..      ..      ..      .. ** 8
+    []------------------------------------------------**
+  7 [][24]     ..      ..      ..      ..      ..     ** 7
+    []------------------------------------------------** 
+  6 []     ..      ..      ..      ..      ..     *24*** 6  
+    []------------------------------------------------**  
+  5 [] ..      ..      ..      ..      ..      ..     ** 5
+    []------------------------------------------------**
+  4 []     ..      ..      ..      ..      ..      .. ** 4
+    []------------------------------------------------**
+  3 [] ..      ..      ..      ..      ..      ..     ** 3
+    []------------------------------------------------**
+  2 []     ..      ..      ..      ..      ..      .. ** 2
+    []------------------------------------------------**    
+  1 [] ..      ..     (24)     ..      ..      ..     ** 1 
+      ()()()()()()()()()()()()()()()()()()()()()()()()    
+        A   B   C   D   E   F   G   H   I   J   K   L
+
+                Four player Starting Position
+
+      </font></pre>
+
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

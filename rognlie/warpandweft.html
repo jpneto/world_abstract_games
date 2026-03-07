@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+    <h3>
+         Rules
+      </h3>
+
+      The default Warp and Weft board is as follows:<br>
+      <pre>
+         A   B   C   D   E   F   G   H   I   J   K   L   M   N   O
+ 
+       +---+           +---+           +---+           +---+
+       |   |           |   |           |   |           |   |
+       |   +-----------|   +-----------|   +-----------|   +-----------+
+15     |   |           |   |           |   |           |   |           | 15
+       |   |---+-------+   |---+-------+   |---+-------+   |---+-------+
+14     |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |     14
+   +-------+---|   +-------+---|   +-------+---|   +-------+---|   |
+13 |           |   |           |   |           |   |           |   |     13
+   +---+-------+   |---+-------+   |---+-------+   |---+-------+   |
+12     |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |     12
+       |   +-------+---|   +-------+---|   +-------+---|   +-------+---+
+11     |   |           |   |           |   |           |   |           | 11
+       |   |---+-------+   |---+-------+   |---+-------+   |---+-------+
+10     |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |     10
+   +-------+---|   +-------+---|   +-------+---|   +-------+---|   |
+ 9 |           |   |           |   |           |   |           |   |     9
+   +---+-------+   |---+-------+   |---+-------+   |---+-------+   |
+ 8     |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |     8
+       |   +-------+---|   +-------+---|   +-------+---|   +-------+---+
+ 7     |   |           |   |           |   |           |   |           | 7
+       |   |---+-------+   |---+-------+   |---+-------+   |---+-------+
+ 6     |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |     6
+   +-------+---|   +-------+---|   +-------+---|   +-------+---|   |
+ 5 |           |   |           |   |           |   |           |   |     5
+   +---+-------+   |---+-------+   |---+-------+   |---+-------+   |
+ 4     |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |     4
+       |   +-------+---|   +-------+---|   +-------+---|   +-------+---+
+ 3     |   |           |   |           |   |           |   |           | 3
+       |   |---+-------+   |---+-------+   |---+-------+   |---+-------+
+ 2     |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |     2
+   +-------+---|   +-------+---|   +-------+---|   +-------+---|   |
+ 1 |           |   |           |   |           |   |           |   |     1
+   +-----------+   |-----------+   |-----------+   |-----------+   |
+               |   |           |   |           |   |           |   |
+               +---+           +---+           +---+           +---+
+ 
+         A   B   C   D   E   F   G   H   I   J   K   L   M   N   O
+      </pre>
+
+      Two players, Warp and Weft (or Vert and Horz), alternate turns.
+      On their turn, they can either place a piece on the board (based
+      on their current state) or use the turn to switch between
+      the two states.<br>
+      <br>
+      The states are as follows:<br>
+      <ul>
+       <li><b>Threads</b>: A Threading player can play on any unclaimed
+       Thread <i>that runs in their direction</i>.  The Threads are the
+       long rectangular pieces on the board.</li>
+       <li><b>Patches</b>: A Patching player can play on any unclaimed
+       Patch <i>that is adjacent to a Thread they control</i>.  The Patches
+       are the squares between the Threads.</li>
+      </ul>
+      <br>
+      A sample section of the board is shown below.<br>
+      <br>
+      <pre>
+          Patch
+           +---+----
+           |   |   |
+   +-------+---|   +
+   |           |   | Warp (Vert)
+   +-----------+   |   Thread
+    Weft (Horz)|   |
+     Thread    +---+  
+      </pre>
+      <br>
+      Players start in the Threading state.<br>
+      <br>
+      The first player to connect their two sides of the board with a continuous
+      chain of Threads and Patches is the winner.  Alternatively, the first
+      player who has no valid play is the loser.<br>
+      <br>
+      The second player may utilize the swap rule if they so desire.<br>
+      <br>
+      <h3>
+         Thread-Primary versus Patch-Primary
+      </h3>
+      Warp and Weft, as describe above, is Thread-Primary.  That is, the players
+      start in the Threading state, and the location of played Threads is
+      unrestricted (other than the matching-direction rule).<br>
+      <br>
+      Warp and Weft can also be played Patch-Primary.  In Patch-Primary Warp and
+      Weft, the players start in the Patching state.  When Patching, players can
+      play on any unclaimed Patch; when Threading, players can only play on
+      unclaimed Threads that <b>both</b> <i>run in their direction <b>and</b> lie
+      adjacent to a Patch they control</i>.<br>
+      <br>
+      Patch-Primary Warp and Weft can be chosen at the start of the game with
+      the <tt>-patches</tt> parameter.  Alternatively, Thread-Primary Warp and
+      Weft can be made explicit with the <tt>-threads</tt> parameter; it is also
+      the default.
+
+      <h3>
+         History
+      </h3>
+
+      Warp and Weft appeared full-formed in Phil Bordelon's head one night
+      in August 2004 as he tried to go to sleep after staring at the
+      weave-like board shown above for a couple of hours.  Mad typing ensued.
+      <br>
+      <br>
+
+      <h3>
+         Endnotes
+      </h3>
+
+      Implementation by Cameron Browne, August 2004.<br>
+      Help file by Phil Bordelon, August 2004.<br>
+      <br>
+      The Warp and Weft board is topologically (and therefore connectively)
+      equivalent to the 4.8.8 octagons-and-squares tiling; the implied
+      directionality of the "Threads" is (topologically) purely aesthetic.
+      
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

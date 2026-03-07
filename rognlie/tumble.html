@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<p>
+  Tumbling Down is Copyright 2000 by Michael Shuck and is used here with
+  his permission.
+
+<dl>
+<dt><a name="move">tumble move <b>boardnumber</b> <b>userid</b> <b>password</b> <b>move</b></a> <br>
+</dt>
+<dd>
+    <b>move</b> consists of a starting location followed by a destination
+    location followed by a letter describing the type of move.
+    The starting and destination locations are given in letter/digit order
+    with an optional hyphen '-' between them.  The type of move is either
+    a 't' or 'T' for a "tumbling" move and either a 'm', 'M', or left 
+    blank for a single man move.  When making a single man move, the
+    destination location must be directly next to the starting location,
+    either one square orthagonally or diagonally.  When making a tumbling
+    move, the destination location may be any square that lies on the line
+    in the direction of the tumble.  Here are some examples of legal moves:
+<p>
+    These are all the same tumbling move:<br>
+    e5h5t<br>
+    E5-F5T<br>
+    E5-G5t<br>
+    Notice that the 'T' or 't' is required; E5F5 is not the same as E5F5T 
+<p>
+    These are all the same non-tumbling move:<br>
+    F2-G2M<br>
+    f2g2m<br>
+    f2g2<br>
+    Notice that the 'M' or 'm' is not required for a single man move.
+</dl>
+
+
+<a name="rules">
+<h2>Rules of Tumbling Down</h2></a>
+
+<p>
+    Tumbling Down is played on an 8 by 8 grid with 29 white men and 29 black
+    men.  The player playing black moves first.  Some of the men are stacked
+    up on top of each other.  A stack may consist of a mix of black and
+    white men.  The owner of the stack is the player whose color is the
+    top-most piece on the stack.  Only the owner of a stack may move or
+    tumble a stack.  
+<p>
+    A single (non-tumbling) move is made by moving the very
+    top man one space in any direction either orthagonally or diagonally
+    either onto an empty space or ontop of another stack.  A tumbling move
+    is made by picking up the entire stack and dropping the bottom piece,
+    one piece per square, in each square in a line in a single direction.
+    If the stack reaches the edge of the board then the tumbling stops and
+    the rest of the pieces are stacked on the last square near the edge.
+<p>
+    For this ascii implementation of the game of Tumbling Down, the pieces
+    are represented by a 'W' for white men or a 'B' for the black men
+    followed by a number for representing the total number of consecutive
+    men of that color.  Here are some examples:
+<pre>
+    A
+ +--------+-
+ |W2 B3   |  
+2|B2 W1 B1|
+ +--------+-
+</pre>
+    The stack above is located at A2 and consists of nine (9) men as
+    follows:<br>
+    B3 &lt;-- this represents three black pieces at the very top<br>
+    W2 &lt;-- this represents two White pieces under the three Black pieces <br>
+    B1 &lt;-- and so on, and so on...<br>
+    W1<br>
+    B2 &lt;-- this is the bottom of the stack <br>
+    Notice that the player playing Black is the owner since a black piece
+    is on the top of the stack.  
+<p>
+    This is an example of a tumbling move, A2-B2T:
+<pre>
+Before Tumbling:
+     A        B        C        D        E        F        G        H
+ +--------+--------+--------+--------+--------+--------+--------+--------+
+ |W2 B3   |        |        |        |        |        |        |        | 
+2|B2 W1 B1|        |W3      |        |        |        |        |W1      |
+ +--------+--------+--------+--------+--------+--------+--------+--------+
+After Tumbling:
+ +--------+--------+--------+--------+--------+--------+--------+--------+
+ |        |        |        |        |        |        |        |        |
+2|        |B1      |W3 B1   |W1      |B1      |W1      |W1      |W1 B3   |
+ +--------+--------+--------+--------+--------+--------+--------+--------+
+</pre>
+ The piece at B2 after tumbling was the very bottom piece at A2 before the
+ tumble took place.  Because the tumble reached the edge of the board, the
+ very top three pieces (which happened to be 3 Black pieces) are deposited
+ at H2 after the tumble move.
+<p>
+ The highest stack of all one color at the beginning of a move is called 
+ the king for the player who owns the stack.  More than one king may exist
+ for a player if for example there are two identical stacks of equal height
+ and the stacks are the tallest stacks consisting of only one player's pieces. 
+<p>
+ The object of the game is to capture at least one of the opponent's kings
+ on your turn by making a move that makes you the new owner of the stack
+ where the opponent's king was located.  As a player makes a move, his kings
+ may move and appear at different locations on the board, but only the
+ opponent's kings that existed at the beginning of the turn are vulnerable
+ to capture.  If a player makes a move that creates a new king for her
+ opponent, that particular stack is not "crowned the king" until after her
+ turn and at the beginning of her opponent's turn; this rule prevents a
+ player from both creating a new king for their opponent and capturing the
+ new king in a single move.  The capture of a king must be such that the
+ resulting stack is composed of only two lengths of opposing men (colors).
+ In other words, the bottom of the captured stack must consist of 1 or more
+ men of the captured player while the top of the stack consists of 1 or more
+ men of the victorious player.  The stack must not consist of further mixes
+ of colors.
+<p>
+ examples of good captures: White is victorious in each example.
+<pre>
+ +--------+     +--------+     +--------+     +--------+
+ |        |     |        |     |        |     |        | 
+ |B1 W1   |     |B1 W3   |     |B3 W1   |     |B3 W3   |
+ +--------+     +--------+     +--------+     +--------+
+</pre>
+ examples of bad captures: Neither side is victorious.
+<pre>
+ +--------+     +--------+     +--------+ 
+ |W1      |     |        |     |B2 W4 B3| 
+ |B1 W1 B1|     |B3 W2 B1|     |W6 B3 W1| 
+ +--------+     +--------+     +--------+ 
+</pre>
+
+This is the initial layout for a standard game of Tumbling Down.
+
+<pre>
+      A        B        C        D        E        F        G        H 
+  +--------+--------+--------+--------+--------+--------+--------+--------+
+ 8|        |        |W1      |W2      |W3      |W4      |W3      |W2      |
+  +--------+--------+--------+--------+--------+--------+--------+--------+
+ 7|        |        |        |W1      |W2      |W3      |W2      |W1      |
+  +--------+--------+--------+--------+--------+--------+--------+--------+
+ 6|        |        |        |        |W1      |W2      |W1      |        |
+  +--------+--------+--------+--------+--------+--------+--------+--------+
+ 5|        |        |        |        |        |W1      |        |        |
+  +--------+--------+--------+--------+--------+--------+--------+--------+
+ 4|        |        |B1      |        |        |        |        |        |
+  +--------+--------+--------+--------+--------+--------+--------+--------+
+ 3|        |B1      |B2      |B1      |        |        |        |        |
+  +--------+--------+--------+--------+--------+--------+--------+--------+
+ 2|B1      |B2      |B3      |B2      |B1      |        |        |        |
+  +--------+--------+--------+--------+--------+--------+--------+--------+
+ 1|B2      |B3      |B4      |B3      |B2      |B1      |        |        |
+  +--------+--------+--------+--------+--------+--------+--------+--------+
+      A        B        C        D        E        F        G        H 
+</pre>
+
+This is an alternative layout with the "-c" option in the challenge command:
+tumble challenge <playerblack> <playerwhite> -c
+
+<pre>
+      A        B        C        D        E        F        G        H 
+  +--------+--------+--------+--------+--------+--------+--------+--------+
+ 8|W4      |W3      |W2      |W2      |W1      |        |        |        |
+  +--------+--------+--------+--------+--------+--------+--------+--------+
+ 7|W3      |W2      |W2      |W1      |        |        |        |        |
+  +--------+--------+--------+--------+--------+--------+--------+--------+
+ 6|W2      |W2      |W1      |        |        |        |        |        |
+  +--------+--------+--------+--------+--------+--------+--------+--------+
+ 5|W2      |W1      |        |        |        |        |        |B1      |
+  +--------+--------+--------+--------+--------+--------+--------+--------+
+ 4|W1      |        |        |        |        |        |B1      |B2      |
+  +--------+--------+--------+--------+--------+--------+--------+--------+
+ 3|        |        |        |        |        |B1      |B2      |B2      |
+  +--------+--------+--------+--------+--------+--------+--------+--------+
+ 2|        |        |        |        |B1      |B2      |B2      |B3      |
+  +--------+--------+--------+--------+--------+--------+--------+--------+
+ 1|        |        |        |B1      |B2      |B2      |B3      |B4      |
+  +--------+--------+--------+--------+--------+--------+--------+--------+
+      A        B        C        D        E        F        G        H 
+</pre>
+
+<p>
+  Note: The program has an option of an alternative display for the pieces
+  within a square.
+<dl>
+<dt>
+  Tumble set <b>userid</b> <b>password</b> [ u | h ]
+<dd>
+  where 'u' is upright (column by column), 'h' is the default (row by row)
+</dl>
+
+<pre>
+   B4  The following examples are the same stack displayed differently:
+   W2  This is 'h' setting:    This is 'u' setting:
+   B3  +--------+              +--------+
+   W3  |B3 W2 B4|              |B2 B3 B4|
+   B2  |W1 B2 W3|              |W1 W3 W2|
+   W1  +--------+              +--------+
+</pre>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

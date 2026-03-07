@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h3>Rules</h3>
+  <p>Cubox is a 3D connection game for two players, X and O. Each player owns 
+    a number of cuboctahedral pieces (called <i>cubox</i>) of their colour. A 
+    cuboctahedron is a polyhedron formed by six squares and eight triangles:</p>
+  <pre>
+     +-------+                +-------+      <br>    / -_   _- \              /|       |\      <br>   /    -+-    \            / +-------+ \   <br>  /     / \     \          /_- \     / -_\  <br> +_    /   \    _+        +-    \   /    -+ <br>  \-_ /     \ _-/          \     \ /     /  <br>   \ +-------+ /            \    _+_    /   <br>    \|       |/              \ _-   -_ /    <br>     +-------+                +-------+</pre>
+  <pre>        Top                    Bottom 
+</pre>
+  <p>The board is a triangular field of cuboctahedral hollows, hexagonal in cross-section, 
+    whose triangular bases all face in the same direction (a bit like a hexagonal 
+    egg carton). The board is initially empty.</p>
+  <p><b>Play:</b> Players take turns adding one of their cubox by either:<br>
+    i) Dropping it on an empty board hollow, or <br>
+    ii) Stacking it on top of a flat triangle formed by three existing cubox. 
+  </p>
+  <p>If the -constrain option is used, then cubox can only be stacked on triplets 
+    consisting of one friendly and two enemy cubox.</p>
+  <p>Players must move if possible, else pass.</p>
+  <p><b>Aim:</b> A player wins by connecting all three sides of the board with 
+    a path of their cubox. Two cubox are connected if they visibly touch, either 
+    corner-to-corner or one stacked directly upon the other.</p>
+  <p>A cubox is deemed to &quot;touch a board edge&quot; if it is one of the outermost 
+    cubox for its level, that is, if it would form part of the outer slope if 
+    the board were completely stacked with pieces.</p>
+  <h3>Examples</h3>
+  <p>The following example shows a legal stacking move. An X cubox is stacked 
+    upon a flat triangle of existing cubox. Note that the stacked cubox is placed 
+    where three squares face each other, and points in the same direction as the 
+    three supporting cubox. Note also that the stacked X cubox cuts the connection 
+    between the two O cubox.</p>
+  <pre>            +-------+                               +-------+      <br>           / -_   _- \                             / -_   _- \<br>          /    -+-    \                           /    -+-    \<br>         /     / \     \                         /     / \     \<br>        +_    / ^ \    _+                       +_    / ^ \    _+<br>         \-_ / ^X^ \ _-/                         \-_ / ^X^ \ _-/<br>          \ +-------+ /                           \ +-------+ /<br>           \|       |/          Stack---&gt;          / -_   _- \<br>    +-------+-------+-------+               +-----/    -+-    \-----+      <br>   / -_   _- \     / -_   _- \             / -_  /     / \     \  _- \ <br>  /    -+-    \   /    -+-    \           /    -+_    / ^ \    _+-    \     <br> /     / \     \ /     / \     \         /     / \-_ / ^X^ \ _-/ \     \     <br>+_    / ^ \    _+_    / ^ \    _+       +_    / ^ \ +-------+ / ^ \    _+<br> \-_ / ^O^ \ _-/ \-_ / ^O^ \ _-/         \-_ / ^O^ \|       |/ ^O^ \ _-/ <br>  \ +-------+ /   \ +-------+ /           \ +-------+-------+-------+ /      <br>   \|       |/     \|       |/             \|       |/     \|       |/      <br>    +-------+       +-------+               +-------+       +-------+      </pre>
+  <p>The following example shows a game won by O. The winning chain touches the 
+    bottom edge via D2, which is an outermost cubox for level 1 deemed to &quot;touch 
+    a board edge&quot; even though it is stacked above board level.</p>
+  <pre>
+                    11--    ^<br> Stack: <br>                  10<br> +---+ <br>  \ /            9--    ^       ^<br>   +<br>               8          +---+   +---+<br>                         / xxx \ / ooo \<br>             7--    ^   +       +       +<br>                         \ xxx / \ ooo /<br>           6  +---+   +---+---+---+---+---+<br>             / ooo \ / ooo \^/ ooo \^/ xxx \<br>         5--+       + +---+ +       +       +<br>             \ ooo / / xxx \ \ ooo / \ xxx /<br>       4      +---+-+       +-+---+   +---+<br>                 / oo\ xxx /xx \<br>     3--    ^   + +---+---+     +   ^       ^<br>                 / ooo \ \ xxx /<br>   2          +-+       +-+---+---+   +---+<br>             / xx\ ooo /xx \^/ xxx \ / ooo \<br> 1--    ^   +     +---+     +       +       +   ^<br>             \ xxx / \ xxx / \ xxx / \ ooo /<br>              +---+   +---+   +---+   +---+<br>     /       /       /       /       /       /<br>    A   B   C   D   E   F   G   H   I   J   K</pre>
+  <p>Possible stacks: D6 F2 F6 (unconstrained)<br>
+  </p>
+  <p>Due to limitations of the ASCII representation, cubox are simply represented 
+    by their hexagonal cross-sections in an effort to reduce clutter and keep 
+    the board display to a reasonable size. </p>
+  <p>Legal moves for the current player are marked '^'. This includes empty board 
+    points (hollows) and possible stack moves. The &quot;Stack&quot; indicator 
+    in the top left corner indicates which direction gaps must be facing to allow 
+    a piece to be stacked there.</p>
+  <p>The board coordinates for possible stack moves are also listed explicitly 
+    below the board, since it becomes increasingly difficult to determine the 
+    coordinate the higher a stack is. If in doubt, the player should read through 
+    the list of possible stack moves to ascertain which coordinate they want.</p>
+  <h3>Notes</h3>
+  <p>The fact that a winning connection must be continuously visible from above 
+    means that it is effectively a 2D connection built upon a 3D structure. This 
+    allows the elegant Cut/Join property of most connection games, and means that 
+    exactly one player must win.</p>
+  <p>Winning paths require successively fewer pieces at higher levels, although 
+    by this point the placement of pieces is entirely dictated by the distribution 
+    of lower-level support pieces.</p>
+  <p>Each stack move breaks exactly one enemy connection. A triangle of same-coloured 
+    pieces constitutes a strong formation whose connections cannot be broken (e.g. 
+    the triangle of X pieces at the bottom of the second example).</p>
+  <p>Once the board level pieces have been placed, it is only possible to stack 
+    higher level cubox facing in the same direction, with square faces meeting 
+    square faces (see the first example). This avoids phase problems when stacking 
+    upon a hexagonal grid. Cubox would not work if spheres were used instead of 
+    cuboctahedrons.</p>
+  <p>The fact that stacks may occur on a majority of enemy pieces subverts the 
+    N-1 reduction rule of Y ni those xaes, as a triangle dominated by one player 
+    becomes dominated by other player after the stack. Such stack move are therefore 
+    equivalent to an inverse N-1 reduction for that triangle of pieces.</p>
+  <p>The option to constrain stacks was originally intended as a balancing mechanism 
+    to encourage stacks while avoiding overly strong plays, but was found to make 
+    the game too cold; no player would willingly play adjacent to a friendly pieces 
+    for fear of giving their opponent a stack, hence the board would fill up with 
+    a sparse network of pieces, and the result predetermined before any stacks 
+    occured and the game really got going.</p>
+  <p><b>Open Problem</b>: I don't believe that deadlocks can occur, but have yet 
+    to prove this. The definition of connectivity may be weakened to &quot;two 
+    cubox are connected if they visibly touch corners or overlap when viewed from 
+    above&quot; to imply a visible rather than physical connection and resolve 
+    such deadlocks (though I don't think this is necessary).</p>
+  <p>Heard of Martian Chess? Well, Cubox could be <a href="https://web.archive.org/web/20250208035623/http://www.exo.net/%7Epauld/Mars/4snowflakes/martiansnowflakes.html">Martian 
+    Y</a>.</p>
+  <h3>Syntax</h3>
+  <p>&nbsp;&nbsp;&nbsp;&nbsp;cubox move <b>board# userid password</b> <b>g4</b> 
+    (move at point <b>G4</b>)<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;cubox move<b><b> <b>board# userid password</b> <b> 
+    </b></b></b>swap (second move only)<b><br>
+    </b>&nbsp;&nbsp;&nbsp;&nbsp;cubox move<b><b> <b>board# userid password</b> 
+    </b></b>pass<b><br>
+    </b></p>
+  <div> </div>
+  <h3>References and History</h3>
+
+  <p>The basic mechanism of Cubox was devised by Cameron Browne in 2002 to demonstrate 
+    how a connection game could avoid phase problems with hexagonal stacking. 
+    The official version implemented above (v1.6) was completed in April 2005.</p>
+  <p>Implementation and help file by <a href="https://web.archive.org/web/20250208035623/http://members.optusnet.com.au/cameronb/">Cameron 
+    Browne</a>, March 2005.<br>
+  </p>
+</div>
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

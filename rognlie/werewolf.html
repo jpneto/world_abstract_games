@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h2>Help For Werewolf</h2>
+<h3>Introduction</h3>
+<p>Werewolf! is a free-form social roleplaying game (kinda):
+
+<p>"free-form" in the sense that players are not limited to turns but may participate when they want. ("kinda" in that there are stages
+to the game that limit some actions.)  
+
+<p>"social" in the sense that players exchange public messages.  It is this social interaction through which players try to glean information about the . . .
+
+<p>"roleplaying" in the sense that each player is assigned a role.  ("kinda" because those roles are secret at first.)
+
+<p>The players represent a village, and each member of the village plays a role.  A player can have only one role, with the usual role
+being that of an ordinary villager.  Roles are kept secret.  A player will only know his or her own role, and will also know which of the other players share that role.  (Ordinary villagers do
+not know who the other ordinary villagers are.)
+
+<p>At least two players are werewolves.  At least one player is a seer.  Optionally, one player may be an angel some players may be masons.
+<p>It is the goal of the villagers to eliminate the werewolves.  The werewolves try to eliminate the villagers; if the number of non-werewolves is equal to or less than 
+the number or werewolves the werewolves win.
+
+<p>In some games there may be a third faction.  Two players may be mafia, with a third player acting as the police.  Optionally, one player may be a medic.  In the three faction game, the police
+and the medic are members of the villager team; they seek a village win.  The mafia seek to eliminate the villagers and the werewolves.  The werewolves must eliminate the villagers and the mafia 
+to gain a werewolf win.
+
+<p>Optionally, there may be an illusionist in the game.  It is the goal of the illusionist for the bad guys to win.  The illusionist knows, in advance, the roles of all of the bad guys and seeks a win for the werewolves or the mafia (if the game has mafia).  Each night the
+illusionist uses the "disguise" command to disguise the role of one villager.  If the seer or the police seeks information on that same villager, the role will be revealed as what the illusionist has specified.
+Additionally, the illusionist always appears as "villager" if info'ed, and the illusionist always gets to know who the target of the seer or police was.
+
+<p>The game is played in cycles of night and day.  At night, the surviving players among the werewolves, the mafia, the seer, the police, the angel and the medic may have the opportunity to select
+a victim.  Once all of these players have made selections, night ends.  The werewolves or the mafia will have selected a victim, who is killed.  That victim's role is now revealed.  The other
+actors during the night will be given information that only they know.  Nighttime commands may be queued up by issuing them during the day phase.  This is highly encouraged as it speeds up the game, and
+has the added benefit that nobody can glean your night role based on the timing of night ending and your online activity.
+
+<p>During the daytime, all players form a lynch mob and take part in voting.  The player who receives the most votes is killed and that player's role is revealed.  The villagers, including
+the bad guys, exchange public messages trying to influence the voting.  Think of the villagers gathered in a central square.  They're afraid.  They hurl accusations.  The bad guys try to pass
+themselves off as good guys.
+
+<p><h3>Commands</h3>
+<p>The following commands are used in the game:
+
+<p>At all times during the game, living players may send discussion that is broadcast to everybody.
+<br><pre>Subject: werewolf chat BOARD USERID PASSWORD</pre><br>
+
+<p>Dead players may communicate among themselves with the haunt command.
+<br><pre>Subject: werewolf haunt BOARD USERID PASSWORD</pre><br>
+
+<p>Each night, the werewolves or the mafia select a victim.
+<br><pre>Subject: werewolf kill BOARD USERID PASSWORD WHO</pre><br>
+
+<p>Werewolves communicate secretly at night with the howl command.
+<br><pre>Subject: werewolf howl BOARD USERID PASSWORD</pre><br>
+
+<p>Mafia communicate secretly at night with the contract command.
+<br><pre>Subject: werewolf contract BOARD USERID PASSWORD</pre><br>
+
+<p>The seer and the police cast runes to determine another player's role.  That information is revealed at dawn.
+<br><pre>Subject: werewolf info BOARD USERID PASSWORD WHO</pre><br>
+
+<p>The angel or the medic can protect one player from a werewolf or mafia attack.  If the protector happens to select the same player as the attacker...  no body in the morning.
+<br><pre>Subject: werewolf protect BOARD USERID PASSWORD WHO</pre><br>
+
+<p>Masons know who each other are.  They can communicate secretly with the meeting command.
+<br><pre>Subject: werewolf meeting BOARD USERID PASSWORD</pre><br>
+
+<p>The illusionist uses the disguise command to hide the role of another villager.  The illusionist will always appear as a villager (or "NOT werewolf" in a limitedinfo game) and also
+finds out who the seers or police investigated at night.
+<br><pre>Subject: werewolf disguise BOARD USERID PASSWORD WHO ROLE</pre><br>
+
+<p>Each day, the villagers are upset that there are werewolves on the prowl.  So they call a meeting, and vote on whom to lynch (in the hopes that they get the werewolves).   Every living player gets a vote.
+<br><pre>Subject: werewolf vote BOARD USERID PASSWORD WHO</pre><br>
+
+<p>In some games certain players can send private messages.
+<br><pre>Subject: werewolf message BOARD USERID PASSWORD RECIPIENT1 RECIPIENT2 . . .</pre><br>
+
+<p>Werewolves win when they survive to kill the village (once they equal/outnumber the villagers... they win)
+
+<p>The surviving villagers win if they get the werewolves.
+
+<p><h3>Forming and Starting a Game</h3>
+<p>To begin a game, issue the challenge command.
+<br><pre>Subject: werewolf challenge USERID OPTIONS</pre><br>
+
+<p>Note that no player names are included with the challenge command, and no players, not even the challenger, are automatically joined to the game.  Game paramters may be changed before the game starts with the change
+command.
+<br><pre>Subject: werewolf change BOARD USERID PASSWORD OPTIONS</pre><br>
+
+<p>The game is actually started with the start command, and it (and the change command) may only be issued by the original challenger specified as "USERID" on the challenge command line.
+<br><pre>Subject: werewolf start BOARD USERID PASSWORD</pre><br>
+
+<p>The voting style depends on the options selected at challenge time.
+
+<ul>
+<li>-slow              means EVERYONE has to vote.  plurality is enough.
+<li>-medium (default)  means voting continues until there is a majority.
+<li>-fast              means voting continues until there is a plurality.
+<li>-secret            voting is done in secret.  you only get notified
+                when the vote is done (and someone is lynched) or
+                when everyone has voted, and it's a tie..
+
+</ul>
+
+<p>FAST examples.
+
+<p>if A has 2 votes, B has 3 votes, and C has 4 votes, and there is
+    1 vote outstanding, it's not over.   the outstanding vote  
+    could vote for B causing a tie that needs an A vote to switch
+    of a B/C vote to switch.
+
+<p>if A has 2 votes, B has 2 votes, and C has 4 votes, and there is
+    1 vote outstanding, it's over.
+
+<p>in any mode, you can switch your vote at any time
+(until voting closes, of course)
+
+Other challenge options
+<ul>
+<li> -angel          Make one player a guardian angel, able to protect
+                one player during the night.
+
+<li> -masons         About 1/4 of all villagers are masons.  They are known
+                to each other, but not the population at large.  A
+                mason can NOT be a werewolf, seer or angel.
+
+<li> -mafia          Add another faction of bad guys plus the police.
+
+<li> -medic          Make one player a medic, able to protect
+                one player during the night.
+
+<li> -illusionist          Make one player an illusionist, who seeks a bad guy win by disguising players' roles for the seer.
+
+<li> -limitedinfo          The seer and the police are not told exactly what their target's role is.  Importantly, the illusionist can still project any role, but it will be 
+                           only reported as, for example "werewolf" or "not werewolf".
+
+<li> -dawn          The game begins with a daytime round of voting rather than at night.
+
+<li> -anonpost          Using "post" instead of "chat", players may send their discussion anonymously.
+
+<li> -seermessage          The seer and the police are able to use the "message" command to send a message directly to another player.  The illusionist can also message but is prevented from messaging any bad guys.
+
+<li> -allmessage          All players are able to use the "message" command to send a message directly to another player.
+
+<li> -deadchat          Ordinarily, only live players may chat.  With "deadchat" the dead players may continue to send in discussion.
+
+<li> -factionimmunity   In games where there is more than one faction of bad guys, a kill can be made by one team against the other.  However, when "factionimmunity" is enabled, this is prevented.  When the number of remaining players falls below 7, factionimmunity goes away.
+
+</ul>
+
+<p><h3>Other commands</h3>
+<p>See the game listing to find out if a werewolf game is forming.  If so, "join" that game!
+<br><pre>Subject: werewolf list</pre><br> 
+<p>Use the join command to join a created but unstarted game.  The last parameter, "ALIAS", is optional, and is the name you will play by in the game.  Your "USERID" will remain secret until you are eliminated from the game.
+<br><pre>Subject: werewolf join BOARD USERID PASSWORD ALIAS</pre><br> 
+
+<p>Use the set command to change the way the server sends you game boards.  By default, player comments appear after game information.  You can place them on top.
+<br><pre>Subject: werewolf set USERID PASSWORD comments top</pre><br>
+
+<p>By default, the list of players still active in the game is randomized each time the board is sent out.  You can shut this off.
+<br><pre>Subject: werewolf set USERID PASSWORD shuffle no</pre><br>
+
+<p><h3>Frequently Asked Questions</h3>
+<ol>
+	<li>I created a game with masons, and it shows only one mason will be assigned!  What good is that?</li><br>
+	The challenge command allows a number after the "-masons" flag, such as "-masons4" if you want to 
+	assign a particular number of masons.  If you leave it unspecified, the server will make approximately
+	one fourth of the players masons.  While the game is still forming, the number of masons will be
+	displayed as 1, but that just indicates that the number hasn't been determined yet.<p>
+	<li>What information does the seer get?</li><br>
+	In a non-"limitedinfo" game (see below), the seer will be told if the player being info-ed is a mason,
+	an angel, another seer or a werewolf.  Any other player will be represented as not being any of these
+	listed.  The seer will not be told that a player is mafia, police or a medic.  These roles will appear
+	to the seer as not being any of the roles the seer does have information on.<p>
+	<li>What information does the police get?</li><br>
+	In a non-"limitedinfo" game (see below), the police will be told if the player being info-ed is a mason,
+	a medic, another police or mafia.  Any other player will be represented as not being any of these
+	listed.  The police will not be told that a player is a werewolf, a seer or an angel.  These roles will
+	appear to the police as not being any of the roles the police does have information on.<p>
+	<li>How does "limitedinfo" affect the seer and police?</li><br>
+	Limited info is off by default in a werewolf-only game but on by default in a werewolf and mafia
+	game.  Limited info makes it so the seer is told only if a targetted player is a werewolf or not.  The
+	police is only told if a targetted player is or is not mafia.<p>
+	<li>How does the illusionist affect the seer and police?</li><br>
+	The illusionist projects a disguise on another player (the illusionist never needs to, but can, disguise
+	him or herself).  If the seer or the police happens to select the same player the illusionist disguised,
+	what they see will be affected.  The information in this answer only pertains to that situation.<p>
+	In a "limitedinfo" game, the only useful disguise is "villager", "werewolf" or "mafia".
+	The seer and police are only told if their target is a bad guy of their side of the battle, so any other
+	disguise would show up as "not a werewolf" or "not a mafia".<p>
+	In a non-"limitedinfo" game, the disguise would be exposed to the seer or the police.  The only exception
+	is if the disguise matches one of the roles that is covered-up as described in the previous answers here.
+	For example, since a medic, when selected by a seer, only shows up as "not a werewolf, an angel a seer or
+	a mason", any player disguised as a medic would result in the seer receiving that message.  Watch spelling!
+	A player disguised as "medci" would be reported to the seer as "a medci".   
+    <li>What is factionimmunity?</li><br>
+    Normally, in a game with more than one faction of bad guys, one team can select to kill a member of the other
+    team at night.  To alleviate this disadvantage, a "factionimmunity" game prevents this.  If, say, the mafia
+    choose a werewolf with the kill command, in the morning the result is "nobody died".  Yes, this is the same
+    result as when the angel successfully protected the target.  Faction immunity stops working when there are
+    6 or fewer players left in the game.
+    <li>Who can send a message in a "seermessage" game, and how?</li><br>
+    When "seermessage" is enabled, the seers and the police have the ability to send a message to any other
+    player.  This is done with the "message" command, which is just like the "chat" command except a list of
+    recipients is included after one's password.  Only those recipients will receive the message.  In 
+    addition, the illusionist has the ability to send messages in a "seermessage" game.  However, the illusionist
+    is always prevented from messaging any other bad guys.
+    <li>Do I have to use an alias?  What is the game theme?</li><br>
+    The most commonly asked question is about aliases. We play each game
+    with a theme, usually picked by the player issuing the initial challenge.  Each player will use an 
+    alias with that theme, with humorous or imaginative aliases being
+    appreciated. You establish your alias with the join command, putting your chosen alias after your password.  Pick your
+    alias wisely: in the early part of the game, before there is real
+    information, many people vote based on aliases. (Avoid hard to type,
+    unpopular, long, or underscored aliases.)
+	<li>Why don't my comments show up when I send in chat?</li><br>
+	Comments are edited to remove an inadvertently sent game board.  In particular, if the comments contain
+	the text "selected . . . as" or "Current Turn" they will be considered "game board" and stripped.  A
+	row of asterisks is a delimeter between a game board and comments, so a row of asterisks may also cause
+	comments to be stripped.<p>
+    <li>How can I subscribe to the werewolf user discussion list and what happens there?</li><br>
+    The werewolf-users@gamerz.net list is mostly used for discussing possible changes to the werewolf game
+    code, but new games being formed are frequently announced there as well.  Subscribe to the list by
+    sending an email to esquire@gamerz.net with the message BODY of <br>
+    <pre>subscribe werewolf-users</pre>
+    Then, respond to the confirmation request.<p>
+</ol>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

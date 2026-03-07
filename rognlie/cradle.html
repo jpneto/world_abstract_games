@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+  <h3>Introduction</h3>
+  <p>Cradle is a simple puzzle game in which players pack  pieces into a hexagonal box. The last player able to place a piece wins.<br>
+</p>
+  <h3>Rules</h3>
+  <p>The board is a hexagon  tessellated by triangles. Players have access to an unlimited number of pieces called <em><strong>cradles</strong></em>, which are polygons formed by four triangles, as shown.</p>
+  <pre>       a  b  c  d  e  f  g<br> <br>          +-----+-----+<br> 4       /             \       4                               <br>        /               \                  +                   +         <br>       +     +     +     +                / \                 / \        <br> 3    /                   \    3         /   \               /   \       <br>     /                     \            +     +-----+       + . . +-----+ <br>    +     +     +     +     +            \         /         \ a . .   / <br>     \                     /              \       /           \ . b . /  <br> 2    \                   /    2           +-----+             +-----+   <br>       +     +     +     +                        <br>        \               /                 A cradle.<br> 1       \             /       1<br>          +-----+-----+<br> <br>       a  b  c  d  e  f  g</pre>
+  <p>Each turn the current player must place a cradle on the board, possibly stacked on top of existing pieces, aligned with the board's triangular grid but otherwise oriented as they wish. The cradle must sit flat and be supported at all of its corners; either of the central triangles (marked 'a' or 'b' above) may sit over empty space, but not both. The cradle cannot exactly cover the four triangles of an existing cradle.</p>
+  <p>Cradles must be lowered down onto the board from above. They cannot be slid in sideways to fill gaps below  overhangs. </p>
+  <p>The last player able to place a cradle wins the game.<br> 
+  </p>
+  <h3>Example</h3>
+  <p>The following example shows a completed game; no more cradles can be placed on this board to sit flatly supported. The number  shown on each  component triangle indicates its height.</p>
+  <pre>       a  b  c  d  e  f  g<br> <br>          +-----+-----+<br> 4       /     /   2 / \       4<br>        /     / 2   / 1 \<br>       +     +-----+-----+<br> 3    /     /   3 / \     \    3<br>     /     / 3   / 2 \     \<br>    +-----+     +-----+-----+<br>     \ 1   \ 3   \ 1     1 /<br> 2    \   1 \   3 \   1   /    2<br>       +-----+-----+-----+<br>        \ 1 /   2 /     /<br> 1       \ / 2   /     /       1<br>          +-----+-----+<br> <br>       a  b  c  d  e  f  g&nbsp;</pre>
+  <h3><br>
+  Notes</h3>
+  <p>Games on the small board are  quick and typically last less than a dozen moves; they are puzzles as much as  games. For a deeper game, use a larger board (say size 4) or the additional  shapes  described below.</p>
+  <p> The cradle  is one of three shapes that can be made from four equilateral triangles, such that each triangle  exactly shares an  edge with at least one other:</p>
+  <pre>      +               +
+     / \             / \
+    +---+           +---+---+        +---+---+       +---+---+
+   / \ / \           \ / \ /          \ / \ / \  =  / \ / \ /
+  +---+---+           +---+            +---+---+   +---+---+   
+   Triangle           Cradle           Snake (L)   Snake (R)</pre>
+  <p>Use the -all_shapes options to use all of these shapes in a game, not just the cradle. The Triangle must be supported flatly at each of its three corners (its central triangle may sit over space). The Snake must be supported flatly at each of its two ends (both of its central triangles may sit over space). Note that the Snake may be turned over to change the directions of its triangles. </p>
+  <p>Games played with the -all_shapes option will last longer than the standard game and be harder to finish. For instance, there are three places at which a Snake can be played in the above example to continue the game. </p>
+  <p>Six of each shape can  be packed onto separate  levels as follows:</p>
+  <pre>      +---+---+             +---+---+             +---+---+     
+     / \     / \           /     \   \           / \       \    
+    +   +   +   +         +---+   +   +         +   +---+---+    
+   /     \ /     \       /     \ /   / \       /   / \       \  
+  +---+---+---+---+     +   +---+---+   +     +   +   +---+---+
+   \     / \     /       \ /   / \     /       \ /   /       /  
+    +   +   +   +         +   +   +---+         +   +---+---+  
+     \ /     \ /           \   \     /           \ /       /   
+      +---+---+             +---+---+             +---+---+    </pre>
+  <p>Two of each shape can be packed onto a single level as follows:</p>
+  <pre>       +---+---+
+      / \       \
+     +   +---+---+
+    /     \   \   \
+   +---+---+   +   +
+    \     /   /   /
+     +   +---+---+
+      \ /       /
+       +---+---+ </pre>
+  <p>The fact that levels can be completely filled means that games can  go on indefinitely if both players conspire to do so. To avoid this, a &quot;must reduce&quot; rule can be used: any placement that results in exact coverage of the level below is not allowed. Each higher level  will therefore reduce in size and the game will converge to a quick solution.</p>
+  <p>A winning strategy may exist for either  player on the small board using only cradles (probably the opening player),  however this strategy is not yet known. </p>
+  <p>If the -num_each option is used, the game ends in a tie if all of the pieces run out before a winner is found. Players are therefore under extra pressure to force a speedy conclusion as the piece limit approaches.</p>
+  <p>Use the &quot;-all_shapes&quot; and &quot;-num_each=6&quot; options to simulate a  game with six of each type of piece.</p>
+  <p><strong>Note:</strong> Unlike most other games, Cradle is a game of restriction and is much better played on the smaller board. If a larger board is used, it is recommended that only the single cradle shape be used. If multiple shapes are used then a fixed limit <em>must</em> be set. <br>
+  </p>
+
+  <h3>History</h3>
+
+  <p>Cradle rules copyright (c) Cameron Browne, May 2007. </p>
+  <p>&quot;Cradle&quot; would probably have been called &quot;Chevron&quot; if the ASCII board display  favoured triangles rotated at 90 degrees (i.e. vertical edges rather than horizontal ones).</p>
+  <p>Implementation and help file by <a href="https://web.archive.org/web/20250121024148/mailto:cameronb@optusnet.com.au">Cameron 
+    Browne</a>, May 2007.</p>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

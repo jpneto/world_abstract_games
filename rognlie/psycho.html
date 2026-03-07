@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h2>Rules of Psycho</h2></a>
+<p>Copyright (c) Christian Freeling</p>
+
+<p>Psycho is a game of simultaneous movement.  
+From 2 to 6 player may compete.</p>
+
+<pre>
+       a   b   c   d   e
+     +---+---+---+---+---+
+   5 |   |   |   |   |   | 5
+     +---+---+---+---+---+
+   4 |   |   |   |   |   | 4
+     +---+---+---+---+---+
+   3 |   |   |   |   |   | 3
+     +---+---+---+---+---+
+   2 |   |   |   |   |   | 2
+     +---+---+---+---+---+
+   1 |   |   |   |   |   | 1
+     +---+---+---+---+---+
+       a   b   c   d   e
+</pre>
+
+<h3>Starting the Game</h3>
+<p>Each player starts with 5 stones in one space.</p>
+<p>The original rules state that the players agree on a starting position.
+This server chooses random spaces for the players to start on, excluding
+the center space.</p>
+<p>You may change the number of stones each player starts with
+by giving a -stones parameter to the challenge command.  e.g.
+<pre>
+     psycho challenge sneezy grumpy bashful doc -stones=3
+</pre>
+</p>   
+
+<h3>Moves</h3>
+<p>On each turn, a player places the same number of stones as he has
+in his fullest space.  Thus on the first turn, each player plays
+five stones.</p>
+
+<p>Moves are specified as a comma separated list of number of stones
+and the coordinates to place them on. <br>e.g.</p>
+<pre>
+     1a2,1a3,3c3
+     5b2
+     3-e1,2-a4
+     1a2,1a2,1a3,1a4,1a5
+</pre>
+
+<h3>Processing a Round</h3>
+<p>When all players have submitted their moves, all stones are placed
+on the board as specified.  Then follows a process of elimination.</p>
+<p>If more than one player occupies a space, one stone of each player
+is removed from that space, until only one player (or no players) 
+remains.</p>
+
+<h3>Winning the Game</h3>
+<p>After the round is processed, whichever player has the most
+5-in-a-rows is the winner.
+Lines of 5 may be horizontal, vertical or diagonal.</p>
+
+<p>If more than one player has the same number of 5-in-a-rows,
+any other players are eliminated, and the game continues.
+Stones belonging to eliminated players remain on the board.</p>
+
+<p>If a player runs out of stones, he is out of the game.</p>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

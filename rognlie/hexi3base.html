@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<p>Hexi is based on Octi.  Octi (c) Donald Green, and a registered trademark of GATC.</p>
+
+<h1>Rules of Hexi (3 base version)</h1>
+
+<h2>Set-up</h2>
+<p>
+   At the start of the game, you have the following:<br>
+   - a piece (called a "pod") on each of your home hexi spaces,<br>
+   - 3 pods stored offboard,<br>
+   - 19 prongs.
+</p>
+
+<h2>Object of the Game</h2>
+<p>To occupy all THREE of your opponent's home hexi spaces.</p> 
+
+<h2>Movement</h2>
+<p>
+1. Add a prong to a pod<br>
+2. Move a prong on a pod to a new location<br>
+3. Add a pod: the pod can be placed on any home hexi space,
+whether empty or occupied by a friendly piece.  If you occupy at least one of 
+your opponent's hexi spaces, you may bring a captured pod back into play; this rescued pod 
+must be placed on top of a friendly piece on a hexi space<br>
+4. Move a pod: move a pod one space in the direction of a prong.
+The pod can move either to an empty space, or to a space occupied by a
+friendly piece(s).<br>
+5. Jump or capture: a pod may jump over an adjacent piece
+(in the direction of a pod), so long as the space beyond is empty.
+Multiple jumps are allowed, so long as each jump is in the direction
+of a prong, and the jumping piece does not jump over the same space more than once.
+At the end of the move, any or all of the pieces jumped may be captured.<br>
+Stacks: any or all of the pieces in a stack may move or jump in the same turn.
+All moving pieces are deemed to be moving simultaneously, so they can't
+jump over each other or get in each others' way.
+</p>
+  
+<h1>Board Display</h1>
+<pre>
+
+                 9                          |Black(x)  Res Cap Prongs
+                  \  +-+                    |          2   0   18
+             8      /   \                   |
+              \  +-+     +-+                |            
+  Y      7      /   \   /   \               |  A   x   x 
+          \  +-+     +-+     +-+            |       \    
+     6      /   \   /   \   /   \           |
+      \  +-+     +-+     +-+     +-+        |
+ 5      /   \   /   \   /   \   /   \       |
+  \  +-+     +-+  A  +-+     +-+     +-+    |
+    /   \   /   \   /   \   /   \   /   \   |
+   +     +-+     +-+     +-+     +-+     +  |
+ 4  \   /   \   /   \   /   \   /   \   /   |
+  \  +-+     +-+     +-+  x  +-+     +-+    |
+    /   \   /   \   /   \   /   \   /   \   |
+   +     +-+     +-+     +-+     +-+     +  |
+ 3  \   /   \   /   \   /   \   /   \   /   |
+  \  +-+     +-+     +-+     +-+  x  +-+    |    F A B
+    /   \   /   \   /   \   /   \   /   \   |     \|/ 
+   +     +-+     +-+     +-+     +-+     +  |      +  
+ 2  \   /   \   /   \   /   \   /   \   /   |     /|\ 
+  \  +-+  o  +-+     +-+     +-+     +-+    |    E D C
+    /   \   /   \   /   \   /   \   /   \   |
+   +     +-+     +-+     +-+     +-+     +  |
+ 1  \   /   \   /   \   /   \   /   \   /   |
+  \  +-+     +-+  o  +-+     +-+     +-+    |
+    /   \   /   \   /   \   /   \   /   \   |
+   +     +-+     +-+     +-+     +-+     +  |
+    \   /   \   /   \   /\| \   /   \   /   |
+     +-+     +-+     +-+  o  +-+     +-+    |
+        \   /   \   /   \   /   \   /       |
+      |  +-+     +-+     +-+     +-+  |     |
+      1     \   /   \   /   \   /     9     |
+          |  +-+     +-+     +-+  |         |
+          2     \   /   \   /     8         |
+              |  +-+     +-+  |             |
+              3     \   /     7             |
+                  |  +-+  |                 |
+                  4       6                 |
+                      |                     |White(o)  Res Cap Prongs
+                      5              X      |          3   0   17
+
+</pre>
+
+<p>The above is a section of the hexi display - sorry for the size,
+but we're trying to fit a lot of information into a fairly small area.</p>
+
+<p>On your left, you can see the board itself.  Board coordinates are
+specified by an XY coordinate; for example, the topmost space is 59.</p>
+
+<p>A pod on its own is shown in the space, with lines showing the
+directions in which it can move.</p>
+
+<p>A stack of pods are shown with a letter (e.g. the letter A in space 67.
+On the right, you'll see the stack letter followed by all the pods in
+that stack, complete with their possible directions of movement.</p>
+
+<p>Over on the right, you'll also see the following:</p>
+<pre>
+Black(x)  Res Cap Prongs
+          1   1   11
+</pre>
+<p>This shows the status of the player (in this case, Black)...<br>
+Res: number of reserve pieces<br>
+Cap: number of pieces that have been captured<br>
+Prongs: number of prongs in reserve</p>
+
+<h1>Notation</h1>
+<h2>Describing a pod</h2>
+<p>When a pod is on its own, the space on which a pod sits is
+sufficient to describe the pod, x co-ordinate then y co-ordinate, e.g. 46.
+Where there is some ambiguity as to which pod is referred to, e.g.
+stacked pods, the complete description is: co-ordinates followed by
+prongs, e.g. 46cdef.  In the move descriptions below, I'll just write this as
+[piece].</p>
+
+<p>Notes: <br>
+1. when only one piece in a stack can make a specific move, then you
+can just use the XY coordinates<br>
+2. when there are two identical pieces in a stack, there is no need
+to distinguish between them</p>
+
+<h2>Describing a prong</h2>
+
+<h2>Moves</h2>
+<p>
+Add a pod: [X][Y]<br>
+Add a prong: [piece]+[new prong]<br>
+Move a prong: [piece]+[new prong]-[old prong]<br>
+Move/jump: [piece]-[X][Y]-[X][Y]-...<br>
+Capture: [piece]-[X][Y]x-...<br>
+Stacks: separate each move with a comma.
+</p>
+
+<h1>Play options</h1>
+<p>-wrap: if you start a game with the -wrap argument, you are 
+playing on a wraparound board (torus) - a piece going off one side 
+of the board will reappear at the other end of the same line.</p>
+<p>The 1-base option is available as a separate game: hexi.</p>
+<p>No other arguments are accepted at present, but watch this space for 
+news on superprongs!</p>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

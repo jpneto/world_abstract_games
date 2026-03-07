@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+  <h3>Rules</h3>
+  <p>It's you against the robots. Each level you are randomly placed in a room  with a number of robots. After each move, all robots take one step directly towards you. If two or more robots try to step onto the same spot they crash and form a scrap heap which you can hide behind, but if a  robot reaches you the game is over. When all robots are destroyed, you move onto the next level. </p>
+  <p>A sample game is shown below.</p>
+  <pre><br>&nbsp;&nbsp; +-----------------+
+&nbsp;&nbsp; | . . . . . . . . |
+ &nbsp;&nbsp;| . . . r . . . . |        @ = You
+&nbsp;&nbsp; | . . . . # . r . |
+&nbsp;&nbsp; | . . r . . # r . |        r = Robot
+&nbsp;&nbsp; | . . . # . . . . |
+&nbsp;&nbsp; | . r r . . @ r . |        # = Scrap heap
+&nbsp;&nbsp; | . . . . . . . . |
+&nbsp;&nbsp; | . . . . . . . . |
+&nbsp;&nbsp; +-----------------+</pre>
+  <pre>  &nbsp; Level     = 1    &lt;---- Current level.
+  &nbsp; Teleports = 2 &nbsp;&nbsp;&nbsp;&lt;---- Number of safe teleports left.
+&nbsp;   Can Blast = 1    &lt;---- Whether blaster is still available.
+  &nbsp;        ------
+  &nbsp; Kills =     6    &lt;---- Total number of robots destroyed.
+  &nbsp;        ======</pre>
+  <p>If @ stays where they are, then a robot will kill them next turn. However moving NW (up and to the left) is a safe move that will win the level after one more turn. </p>
+  <h3>Moves</h3>
+  <p><strong>N, E, S, W, NE, NW, SE, SW</strong><br>
+  Take one step in a direction.</p>
+  <p>  <strong>BN, BE, BS, BW, BNE, BNW, BSE, BSW</strong>&nbsp;<br>
+  Blast in a direction, creating a  scrap heap adjacent to the  current position. The blaster can only be used once per level. If the blaster is not used on a level then a bonus safe teleport is given for the next level.</p>
+  <p><strong>P</strong><br>
+  Pass. Stay where you are  and let the robots take one step towards you. </p>
+  <p><strong>T</strong><br>
+  Teleport to another location. If the &quot;Teleports&quot; indicator is greater than 0, then a safe teleport  is guaranteed. You can still teleport if the  indicator shows 0, but  your safety is not guaranteed  and you are taking a grave risk. Unsafe teleports are marked '*' in the move list. One     safe teleport is  accumulated per level, plus one bonus safe teleport for each level on which the blaster is not used.</p>
+  <p><strong>L</strong><br>
+  Last stand. Continue passing until the robots either reach you or all destroy themselves.</p>
+  <p><strong>Q</strong><br>
+  Quit the game.</p>
+  <p>It is possible to make multiple moves per turn. Up to eight moves per turn can be specified. The server makes as many legal moves as possible, but bails as soon as a bad move, a Last stand or Quit command is encountered, or the level is completed.</p>
+  <h3>Score</h3>
+  <p>You score 1 pt for each robot  destroyed. The total number of turns taken  is subtracted from your final score, so  it is good to queue up multiple moves per turn whenever possible.</p>
+  <p>Since you are not playing an opponent then your rating  is equivalent to your highest score, and the rankings list is effectively a high score table. Improve your rating by beating your high score. The win/loss/tie breakdown shows the number of times you have beaten/fallen below/equalled your previous high score. </p>
+  <h3>Syntax</h3>
+  <p> The move syntax is indicated by the following examples:</p>
+  <p>&nbsp; &nbsp; robots move <b>board# userid password</b> <b>n</b>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;(step to the north)<br>
+    &nbsp; &nbsp; robots move <b>board# userid password</b> <b>p</b>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;(pass  this turn)<br>
+    &nbsp; &nbsp; robots move <b>board# userid password</b> <b>t</b>&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;(teleport)<br>
+    &nbsp; &nbsp; robots move <b>board# userid password</b> <b>bse</b>&nbsp;&nbsp;&nbsp;&nbsp;(blast to the  southeast)<br>
+&nbsp; &nbsp; robots move <b>board# userid password</b> <b>l</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(make your last stand)&nbsp;&nbsp;<br>
+&nbsp; &nbsp; robots move <b>board# userid password</b> <b>q</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(quit)<br>
+    &nbsp; &nbsp; robots move <b>board# userid password</b> <b>n,p,sw,t</b>&nbsp;(step  north,  pause, step southwest, teleport)<br>
+  &nbsp; &nbsp; robots move <b>board# userid password</b> <b>t,t,t,t</b>&nbsp;&nbsp;(teleport a few times)</p>
+  <h3>References and History</h3>
+
+  <p>Robots has been around for donkey's years under various names. </p>
+  <p>Implementation and help file by <a href="https://web.archive.org/web/20241205150954/mailto:cameronb@optusnet.com.au">Cameron 
+    Browne</a>, April 2004.</p>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

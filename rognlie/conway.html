@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+  <h3>Introduction</h3>
+  <p> It's Life, Jim, but not as we know it.</p>
+  <h3>Rules</h3>
+  <p>The board is initially empty. Players take turns placing a number of their 
+    pieces on empty board points. </p>
+  <p>The first player places one piece on the first move, then the second player 
+    places two pieces on the second, increasing until the maximum number of pieces 
+    <i>P</i> is reached on move <i>P</i>. Players may place less than their allowed 
+    number of pieces and may pass.</p>
+  <p>After the second round of moves is complete, the board undergoes one cycle 
+    of life and death each turn according to the Game of Life rules:<br>
+    &nbsp;&nbsp;1. &nbsp;Any piece with 2 or 3 neighbours survives.<br>
+    &nbsp;&nbsp;2. &nbsp;All other pieces die.<br>
+    &nbsp;&nbsp;3. &nbsp;A new piece is born on any empty cell with 3 neighbours.</p>
+  <p>New pieces are assigned to the player who contributed most to their birth 
+    (i.e. who had the most neighbours). If there is no dominat parent then the 
+    new piece becomes a neutral piece '#'. The board is toroidal, that is, it 
+    wraps from top to bottom and from left to right.</p>
+  <p>Players with 0 pieces after any cycle of life and death are removed from 
+    the game. The game is won by the last surviving non-neutral player.</p>
+
+  <h3>References and History</h3>
+
+  <p>Conway was designed by Eric Shultz and Cameron Browne in Februrary 2005, 
+    based on the Game of Life by John Conway.</p>
+  <p>Implementation and help file by <a href="https://web.archive.org/web/20250208040422/http://members.optusnet.com.au/cameronb/">Cameron 
+    Browne</a>, February 2005.</p>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

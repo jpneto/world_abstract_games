@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+              
+<h3>Rules</h3>
+  <p>Malaka is a cross between Backgammon, Plakoto and Lines of Action. Players race to move their pieces around the board, delaying their opponent  while trying  to connect their pieces to  the far end of the board marked with their symbol.</p>
+  <p>O starts with a single die roll, thereafter players roll two dice each turn. The dice are four-sided for the  9x9 board and six-sided for the 12x12 board. The starting position is shown below.</p>
+  <pre>                                                      O = 228   <br>                                                                 <br>                      A    B    C    D    E    F    G    H    I  <br>                   +O---+----+----+----+----+----#X---+X---+X---+<br>                9 / O  /    /    /    /    /    # X  / X  / X  / 9<br>                 +O---+----+----+----+----+----#----+----+----+ <br>              8 / O  /    /    /    /    /    #    /    /    / 8<br>               +O---+----+----+----+----+----#----+----+----+   <br>            7 / O  /    /    /    /    /    #    /    /    / 7 <br>             +----+----+----#----+----+----#----+----+----+   <br>          6 /    /    /    #    /    /    #    /    /    / 6<br>           +----+----+----#----+----+----#----+----+----+  <br>        5 /    /    /    #    /    /    #    /    /    / 5 <br>         +----+----+----#----+----+----#----+----+----+  <br>      4 /    /    /    #    /    /    #    /    /    / 4   <br>       +----+----+----#----+----+----#----+----+X---+  <br>    3 /    /    /    #    /    /    /    /    / X  / 3   <br>     +----+----+----#----+----+----+----+----+X---+   <br>  2 /    /    /    #    /    /    /    /    / X  / 2   <br>   +O---+O---+O---#----+----+----+----+----+X---+      _ <br>1 / O  / O  / O  #    /    /    /    /    / X  / 1    / \ <br> +----+----+----#----+----+----+----+----+----+      / o \ <br>   A    B    C    D    E    F    G    H    I        /     \  <br>                                                   / o   o \ <br>     X = 228 &lt;-- distance to connection            `-------'   </pre>
+  <p>    The board consists of nine subareas, each with a basic direction of forward movement (shown below).</p>
+  <pre>
+    +-------+-------#-------+            +-------+-------#-------+
+    |       .       #       |            |       .       # X X X |   
+    |   &gt;   .   v   #   ^   |            |   v   .   &lt;   #   v   |
+    |       .       #       |            |       .       #       |
+    + . . . # . . . # . . . +            + . . . # . . . # . . . +
+    |       #       #       |            |       #       #       |   
+    |   ^   #   v   #   ^   |            |   v   #   ^   #   v   |
+    |       #       #       |            |       #       #       |
+    + . . . # . . . # . . . +            + . . . # . . . # . . . +
+    |       #       .       |            |       #       .       |   
+    |   ^   #   &gt;   .   ^   |            |   v   #   ^   .   &lt;   |
+    | O O O #       .       |            |       #       .       |
+    +-------#-------+-------+            +-------#-------+-------+
+
+         Directions for O                     Directions for X
+</pre>
+  <p>Pieces may  either step directly forwards, or  jump over a wall. </p>
+  <p>If a piece steps  directly forwards, then it must step in a straight line a number of points equal to the number of pips shown on one of the dice. If the piece   steps onto a single enemy piece, then that enemy piece is pinned until the player moves off. Players may stack as many pieces as they like onto any point, but cannot move to any point at which the enemy controls a block (a pile of two or more pieces).</p>
+  <p>Alternatively,  a piece  may jump over a wall if that jump  lands on a single enemy piece  a number of points away equal to the number of pips shown on one of the dice. The  enemy piece is killed  and removed from the game. Players cannot jump backwards and cannot cross both walls with the same jump.</p>
+  <p>The same piece may take further steps or jumps, possibly changing direction. If a double is rolled, then the player moves four times using the pip value shown. The player must make a move that uses the maximum number of pips.</p>
+  <p>A  player wins by orthogonally connecting all of their remaining pieces  to the far end of the board marked with their symbol. For instance, a win for X is shown below (note that the distance to connection is zero). Pinned pieces, and pieces that pin others, may be counted in a winning connection.</p>
+  <pre>
+        5 /    /    /    #    /    /    #    /    /    / 5 <br>         +----+X---+----#----+----+----#----+----+----+  <br>      4 / X  / O  /    #    /    /    #    /    /    / 4   <br>       +O---+----+----#----+----+----#----+----+----+  <br>    3 / X  /    /    #    /    /    /    /    /    / 3   <br>     +----+----+X---#----+----+----+----+----+----+   <br>  2 / X  /    / X  #    /    /    /    /    /    / 2   <br>   +----+----+----#----+----+----+----+----+----+     <br>1 / X  /    / X  #    /    /    /    /    /    / 1   <br> +----+----+----#----+----+----+----+----+----+      <br>   A    B    C    D    E    F    G    H    I        <br>                                               <br>     X = 0</pre>
+  
+  <p>    A player also wins if an enemy piece is pinned on its home edge.</p>
+  <h3>Notes</h3>
+  <p>Jumping over a wall to kill an  enemy piece is a two-edged sword: it allows the  piece to push forward quickly by taking a shortcut, but also makes the opponent's task easier as they have one less piece to connect.</p>
+  <p>The following example demonstrates the difference between pinning and killing an enemy piece. O has rolled {2, 3} and may therefore   make both the step   E5-E3 which pins the X piece at E3, and the jump  E5-H5 which kills the X piece at H5.</p>
+  <pre>                      A    B    C    D    E    F    G    H    I  <br>                   +----+----+----+----+----+----#X---+----+X---+<br>                9 /    /    /    /    /    /    # X  / X  / X  / 9<br>                 +O---+----+----+----+----+----#----+----+----+ <br>              8 / O  /    /    /    /    /    #    /    /    / 8<br>               +O---+----+----+----+----+----#----+----+----+   <br>            7 / O  /    /    /    /    /    #    /    /    / 7 <br>             +----+----+----#----+----+----#----+----+----+   <br>          6 /    /    /    #    /    /    #    /    /    / 6<br>           +----+----+----#----+O---+----#----+----+----+  <br>        5 /    /    /    #    / O  /    #    / X   /    / 5 <br>         +----+----+----#----+----+----#----+----+----+  <br>      4 /    /    /    #    /    /    #    /    /    / 4   <br>       +----+----+----#----+----+----#----+----+----+  <br>    3 /    /    /    #    / X  /    /    /    / X  / 3   <br>     +----+----+----#----+----+----+----+----+X---+   <br>  2 /    /    /    #    /    /    /    /    / X  / 2   <br>   +O---+O---+O---#----+----+----+----+----+X---+      _          _ <br>1 / O  / O  / O  #    /    /    /    /    / X  / 1    / \        / \ <br> +----+----+----#----+----+----+----+----+----+      / o \      / o \<br>   A    B    C    D    E    F    G    H    I        /     \    /     \<br>                                                   /   o   \  / o   o \ <br>                                                   `-------'  `-------'  </pre>
+  <p>Exactly one player must win.&nbsp;&nbsp;&nbsp;</p>
+  <p>The winning player is entitled to yell  &quot;Malaka!&quot; at their opponent after the winning move. In addition, either player is entitled to yell &quot;Malaka!&quot; at their opponent at any point throughout the game, as they see fit. </p>
+  <h3>Syntax</h3>
+  <p>O moves first. The move syntax is: &nbsp;&nbsp;&nbsp;</p>
+  <pre>&nbsp; malaka move <b>board# userid password</b> <b>c3-c6,c6-c8</b>&nbsp;&nbsp;&nbsp;
+                     (move <strong>C</strong><b>3</b> to <b>C6 </b>then<b> C6 </b>to <b>C8</b>)&nbsp; &nbsp; 
+&nbsp; malaka move <b>board# userid password</b> <b>c3-c6-c8</b>&nbsp;&nbsp;&nbsp;&nbsp;  
+                     (move <strong>C</strong><b>3</b> to <b>C8 </b>via <b>C6</b>)&nbsp; &nbsp;
+&nbsp; malaka move <b>board# userid password</b> <b>c3-c8</b>&nbsp;&nbsp;&nbsp;&nbsp;     
+                     (move <b>C3</b> to <b>C8</b> - not necessarily via<b> C6</b>)&nbsp; &nbsp; 
+&nbsp;&nbsp;malaka move <b>board# userid password</b> <b>3xc3-c6,c1-c4</b>&nbsp;
+                     (move <strong>C</strong><b>3</b> to <b>C6 </b>three times, then <strong>C</strong><b>1 </b>to <b>C4</b>)<br>&nbsp;&nbsp;malaka move <b>board# userid password</b> <b>3xc3:2,b5-b7</b>&nbsp;
+                     (move three pieces at <strong>C</strong><b>3</b> two pips, then <strong>B5</strong> to <b>B7</b>)</pre>
+  <h3>References and History</h3>
+
+  <p>Malaka rules copyright (c) Cameron Browne, August 2004. </p>
+  <p>Malaka is a Greek word.   I assume   it means  &quot;friend&quot; because that's what all the locals   call me when I visit Greece.</p>
+  <p>Implementation and help file by <a href="https://web.archive.org/web/20250621091313/mailto:cameronb@optusnet.com.au">Cameron 
+    Browne</a>, August 2004.</p>
+  <p>&nbsp;</p>
+</div>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

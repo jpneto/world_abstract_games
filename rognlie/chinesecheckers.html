@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+              
+<h3>ChineseCheckers Rules</h3>
+    <p></a>ChineseCheckers is played on a <a href="#board">6-pointed
+    star-shaped board</a>. The goal is to move all ten of your pieces from one point of the
+    star to the opposite point of the star before anyone else does. </p>
+    <p>Pieces may move a single space in any of the six
+    directions, or they may make one or more jumps. When jumping, a piece jumps over another
+    adjacent piece and lands in the empty space on the other side. The same piece may then
+    proceed to make additional jumps if desired. Pieces are never captured in ChineseCheckers
+    and there is no limit to the number of consecutive jumps which may be made in one turn. 
+</p>
+
+
+<a name="super">
+<h3>Super Chinese Checkers</h3><p></a>
+If the -long option is used when creating a game, you can use long jumps
+which increase the complexity of the game.  When making a long jump,
+you must jump a single piece and land the same number of spaces away
+from the piece on the opposite side.</p>
+
+<p>Legal long jumps (from a to b):</p>
+<pre>
+ . . . a x b . . .
+
+ . . a . x . b . .
+
+ . a . . x . . b .
+
+ a . . . x . . . b
+</pre>
+<p>Illegal long jumps (from a to b):</p>
+<pre>
+ . a . x . . b     
+ (not same distance) 
+
+ a . x x . . b
+ (jump two pieces)
+</pre>
+
+
+<a name="board">
+    <h3>Initial Board Positions</h3>
+    <p></a>The default initial board positions for 2, 3, 4, 5, and
+    6 players respectively are shown below. </p>
+    <pre>                        Ohs
+                     Goal-120
+                       (Ohs)
+
+                   1 2 3 4 5 6 7 8 9
+                  / / / / / / / / / 10
+             A -         x         / 11
+            B -         x x         / 12
+           C -         x x x         / 13
+          D -         x x x x         / 14      
+         E - . . . . . . . . . . . . . / 15
+        F -   . . . . . . . . . . . .   / 16
+       G -     . . . . . . . . . . .     / 17
+      H -       . . . . . . . . . .       /
+     I -         . . . . . . . . .         
+      J -       . . . . . . . . . .       -
+       K -     . . . . . . . . . . .     -
+        L -   . . . . . . . . . . . .   -
+         M - . . . . . . . . . . . . . -
+          N -         o o o o         -       
+           O -         o o o         -
+            P -         o o         -
+             Q -         o         -
+                  / / / / / / / / 
+
+                       (Eks)
+                     Goal-120
+                        Eks
+
+
+                        Ohs
+                     Goal-120
+                       (Ohs)
+    
+                   1 2 3 4 5 6 7 8 9
+                  / / / / / / / / / 10
+             A -         .         / 11
+            B -         . .         / 12
+           C -         . . .         / 13
+          D -         . . . .         / 14      
+         E - x x x x . . . . . y y y y / 15
+        F -   x x x . . . . . . y y y   / 16
+       G -     x x . . . . . . . y y     / 17
+      H -       x . . . . . . . . y       /
+     I -         . . . . . . . . .         
+      J -       . . . . . . . . . .       -
+       K -     . . . . . . . . . . .     -
+        L -   . . . . . . . . . . . .   -
+         M - . . . . . . . . . . . . . -
+  (Why)   N -         o o o o         -    (Eks)
+Goal-120   O -         o o o         -    Goal-120
+      Why   P -         o o         -    Eks
+             Q -         o         -
+                  / / / / / / / / 
+
+
+                        Ohs
+                     Goal-120
+                       (Ohs)
+    
+                   1 2 3 4 5 6 7 8 9
+                  / / / / / / / / / 10
+             A -         y         / 11
+      Tee   B -         y y         / 12
+Goal-120   C -         y y y         / 13
+  (Tee)   D -         y y y y         / 14      
+         E - x x x x . . . . . . . . . / 15
+        F -   x x x . . . . . . . . .   / 16
+       G -     x x . . . . . . . . .     / 17
+      H -       x . . . . . . . . .       /
+     I -         . . . . . . . . .         
+      J -       . . . . . . . . . t       -
+       K -     . . . . . . . . . t t     -
+        L -   . . . . . . . . . t t t   -
+         M - . . . . . . . . . t t t t -
+          N -         o o o o         -    (Eks)
+           O -         o o o         -    Goal-120
+            P -         o o         -    Eks
+             Q -         o         -
+                  / / / / / / / / 
+    
+                       (Why)
+                     Goal-120
+                        Why
+
+
+                        Ohs
+                     Goal-120
+                       (Ohs)
+    
+                   1 2 3 4 5 6 7 8 9
+                  / / / / / / / / / 10
+             A -         t         / 11
+      You   B -         t t         / 12   Eks
+Goal-120   C -         t t t         / 13   Goal-120
+  (You)   D -         t t t t         / 14   (Eks)
+         E - y y y y . . . . . . . . . / 15
+        F -   y y y . . . . . . . . .   / 16
+       G -     y y . . . . . . . . .     / 17
+      H -       y . . . . . . . . .       /
+     I -         . . . . . . . . .         
+      J -       x . . . . . . . . u       -
+       K -     x x . . . . . . . u u     -
+        L -   x x x . . . . . . u u u   -
+         M - x x x x . . . . . u u u u -
+          N -         o o o o         -    (Why)
+           O -         o o o         -    Goal-120
+            P -         o o         -    Why
+             Q -         o         -
+                  / / / / / / / / 
+    
+                       (Tee)
+                     Goal-120
+                        Tee
+
+
+                        Ohs
+                     Goal-120
+                       (Ohs)
+    
+                   1 2 3 4 5 6 7 8 9
+                  / / / / / / / / / 10
+             A -         t         / 11
+      Bee   B -         t t         / 12   Eks
+Goal-120   C -         t t t         / 13   Goal-120
+  (Bee)   D -         t t t t         / 14   (Eks)
+         E - y y y y . . . . . u u u u / 15
+        F -   y y y . . . . . . u u u   / 16
+       G -     y y . . . . . . . u u     / 17
+      H -       y . . . . . . . . u       /
+     I -         . . . . . . . . .         
+      J -       x . . . . . . . . b       -
+       K -     x x . . . . . . . b b     -
+        L -   x x x . . . . . . b b b   -
+         M - x x x x . . . . . b b b b -
+  (You)   N -         o o o o         -    (Why)
+Goal-120   O -         o o o         -    Goal-120
+      You   P -         o o         -    Why
+             Q -         o         -
+                  / / / / / / / / 
+    
+                       (Tee)
+                     Goal-120
+                        Tee</pre>
+                        
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

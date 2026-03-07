@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h3>
+         Rules
+   </h3>
+
+      
+<p>Players share a common pool of five tiles. Players 
+  take turns selecting up to four tiles from their pool and placing them on the 
+  board, possibly stacking them on top of existing tiles. Tiles must be placed 
+  adjacent to at least one other tile. The tile may not be stacked on top of a 
+  tile showing the same letter (unless the -repeat option is used). Players may 
+  not pass.</p>
+<p>After the move, new tiles are randomly selected from the remaining tile set 
+  to replenish the pool.</p>
+<p>Players then score points for words formed by the newly placed tiles, according 
+  to the server's Scramble dictionary. Only the highest scoring word formed by 
+  each new tile in each direction (i.e. along each axis) is counted. Therefore 
+  a maximum of two words may be scored for each new tile on the square board, 
+  and a maximum of three new words may be scored for each new tile on the hexagonal 
+  board. Words may be spelt backwards. For multiple tile placements, all tiles 
+  placed that turn must form part of the same valid word.</p>
+<p>The score for each word is given by (total letter value) * (word length - 1). 
+  For instance, the word HAY would score 18 pts as (H=4 + A=1 + Y=4) * (length-1=2).</p>
+<p> If more than one word is formed in a turn, then the combined word score is 
+  multiplied by the number of words.</p>
+<p>The game ends when any player run out of tiles. The player with the highest 
+  score wins.<br>
+</p>
+<h3> Examples</h3>
+<p></p>
+<p>The following example shows a game in its early stages. Fred has just played 
+  the letter I (capitalised) to complete the words IT and BIZ for a total of 60 
+  pts. Note that words do not have to fill the entire line to be counted.</p>
+<pre>   +---+ +---+ +---+ +---+ +---+<br>   | R | | Y | | T | | H | | V |<br>   +---+ +---+ +---+ +---+ +---+<br>     1     4     1     4     4</pre>
+<pre>      a   b   c   d   e
+   
+   1                     1
+        +---+---+
+   2    | z   s |        2
+        +       +---+ 
+   3    | I   t   g |    3
+        +       +---+
+   4    | b   w |        4
+        +---+---+
+   5                     5
+   
+      a   b   c   d   e </pre>
+<pre>fred made the words IT and BIZ for a total of (2 + 28) x 2 = 60 pts.</pre>
+<pre>fred's score is 65.
+ted's score is 12.</pre>
+<p>The following example shows a game of hexagonal Lingo in action. Ted has just 
+  played D and C (capitalised) to form the words DIG, DOC and DYE for a total 
+  of 108 pts. Note that since Ted played more than one tile, they both had to 
+  form part of the the same word (DOC). </p>
+<pre>     __   __   __   __   __
+    /I \ /E \ /T \ /Q \ /G \
+    \__/ \__/ \__/ \__/ \__/
+      1    1    1   10    2</pre>
+<pre>     a  b  c  d  e  f  g
+   1                      1
+   2             __       2
+   3    __    __/e \      3
+   4   /f \__/y  __/      4
+   5   \__ D    /   __    5
+   6      \   i \__/w \   6
+   7      /o  __ g  __/   7
+   8      \  /  \__/      8
+   9      /C \            9
+  10      \__/            10
+  11                      11
+     a  b  c  d  e  f  g</pre>
+<pre>ted made the words DIG, DOC and DYE for a total of (10 + 12 + 14) x 3 = 108 pts.</pre>
+<pre>fred's score is 84.
+ted's score is 157.</pre>
+<h3> Notes</h3>
+<p></p>
+<p>There is no first move equaliser as the game is reasonably balanced. The opening 
+  player gets to score first, but this move generally opens up even better scoring 
+  opportunites for subsequent players.</p>
+<p>The hexagonal game offers more scope for play and allows much higher scores, 
+  as the hexagonal grid has three axes while the square grid only has two axes.</p>
+<p>Having a separate hidden pool for each player allows some different  tactics as players may shape their latter combinations and encourages 
+  longer words and higher scores. It also makes the game easier to play in real 
+  life, since players are able to study their hand with full knowledge during 
+  the opponent's turn, as in Scramble. However, it also seriously penalises any player unlucky enough to get a bad draw of letters (for example, all Is) since their is no exchanging tiles in Lingo; bad tile must be burnt up one by one. For this reason, players share a common pool by default. </p>
+
+<h3> Letter Distribution</h3>
+
+<p>The following table shows the English letter distribution used for Lingo (identical 
+  to Scramble):</p>
+<pre><b>Letter</b>:  <b>A B C D E F G H I J K L M N O P Q R S T U V W X Y Z (-</b>)
+<b>Count</b>:   9 2 2 412 2 3 2 9 1 1 4 2 6 8 2 1 6 4 6 4 2 2 1 2 1 (2)
+<b>Value</b>:   1 3 3 2 1 4 2 4 1 8 5 1 3 1 1 310 1 1 1 1 4 4 8 410 (0)</pre>
+<h3>History </h3>
+<p>Lingo was devised by Cameron Browne in 2005.</p>
+<p>The name &quot;Lingo&quot; refers to the fact that the game involves fragments 
+  of a language (like a lingo), scoring lines of characters (like bingo), a certain 
+  amount of randomness (like Ringo), often throws up bizarre new words (like a 
+  gringo), and is sort of catchy (like a jingo) even though it's a bit of a mongrel (like a dingo).</p>
+<p>Implementation and Help file by Cameron Browne, August 2005.<br>
+</p>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

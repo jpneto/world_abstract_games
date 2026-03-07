@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h3> Introduction</h3>
+<p>Tripod is a pure connection game for two players, a bit like Y played across two boards.</p>
+<h3> Rules </h3>
+<p><strong> </strong>The board consists of two triangular halves. The board is initially empty. </p>
+<p>Players take turns placing a piece of their colour on an empty cell. Any piece played on an edge cell is duplicated on the corresponding cell of the other half-board, hence connections can cross between the two halves. </p>
+<p><strong> </strong>A player wins by surrounding all three corners with a single group of their pieces. </p>
+<p>The second player may elect to swap colours after the first player's opening move. There can be no ties. </p>
+<h3> Example</h3>
+<p>The following example shows a game won by X:</p>
+<pre>             .                          .           <br>            . .                        . .   <br>           o o .                      o . .<br>          . . o o                    . o o o<br>         x . . . .                  x . . . .<br>        . x . . . .                . x x . . .<br>       . . x . . x x              . . . x x x x<br>      . . . x x x . .            . . . x . . . .   <br>     o o . . x . . . o          o . . x . . . . o<br>    . . o . x . . . o .        . o . . x . . . o .   <br>   . . o . x . . . . o .      . . o . x . . . . o .   </pre>
+
+<p>Note that O has surrounded each corner in isolation, but that this is not enough to win - all three corners must be surrounded by the same group.</p>
+<h3>Notes</h3>
+<p> A group surrounds a corner if (considered in isolation) it blocks all possible paths to any other corner. A piece played in a corner will therefore surround that corner. </p>
+<p> Surrounding two corners with a single group will automatically surround the third corner and win the game. </p>
+<p> Superficially, Tripod looks like  Y played on a double board. Similar principles apply, however forming a Y connection in either half in isolation will not necessarily help. For example, the following position is a win for O despite X forming a Y on the left half:</p>
+<pre>
+             .                          .           <br>            . .                        . .   <br>           . . .                      . . .   <br>          . . . .                    . . . .   <br>         x . . . x                  x x x x x<br>        . x . . x .                . . . . . .<br>       . . x x x . .              . . . . . . .   <br>      . . . x . . . .            . . o o o o . .   <br>     . . . . x . . . .          . . o . . . o . .   <br>    . . . . x . . . . .        . . o . . . . o . .   <br>   o o o . . x . . o o o      o o o . . x . . o o o</pre>
+<p> The closer a loop is to a corner the smaller it needs to be, however the further it will be from loops around the other corners. There is a balance between loop size and loop distance: </p>
+<pre>             o                          o  &lt;-------- size=1,  dist=8+8, total=17<br>            . .                        . .   <br>           o o o                      o o o  &lt;------ size=4,  dist=6+6, total=16<br>          . . . .                    . . . .   <br>         o o o o o                  o o o o o  &lt;---- size=8,  dist=4+4, total=16<br>        . . . . . .                . . . . . .    <br>       o o o o o o o              o o o o o o o  &lt;-- size=12, dist=2+2, total=16<br>      . . . . . . . .            . . . . . . . .   <br>     . . . . . . . . .          . . . . . . . . .   <br>    o . . . . . . . . o        o . . . . . . . . o<br>   . o . . . . . . . o .      . o . . . . . . . o .   </pre>
+<p> The two board halves are essentially the front and back of a single spherical board, with the duplicated edge pieces representing pieces played on the equator between the two hemispheres. </p>
+<p> Note that each corner cell has two unique neighbours, both of which have five unique neighbours. All other cells have six unique neighbours. </p>
+<p> Edge cells appear to be stronger as they lie on a direct line between two corners. </p>
+<p>Note that while it is possible to enclose a corner with a single piece (such as the O piece in the example below) it is also possible to virtually enclose a corner with two pieces (such as the two X pieces in the example below). Although the bottom left corner is not technically enclosed yet, O cannot stop X from eventually enclosing it. </p>
+<pre>             o                          o<br>            . .                        . .   <br>           . . .                      . . .   <br>          . . . .                    . . . .   <br>         . x . . .                  . x . . .<br>        . . . . . .                . . . . . .</pre>
+
+<h3>History</h3>
+<p>Tripod rules copyright (c)  Cameron Browne,  March 2007.</p>
+<p>The Tripod board is similar to an Antipod board with half the corners sliced off, as suggested by Bill Taylor. The name &ldquo;Tripod&rdquo; refers to this Antipod lineage, as well as the fact that the board has three bases. </p>
+<p>Implementation and Help file by Cameron Browne, March 2007.</p>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

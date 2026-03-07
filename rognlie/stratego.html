@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h3><font face="Arial" size="2">Rules of Stratego</a> </font></h3>
+    <p><font face="Arial" size="2">These rules are the most popular way of playing Stratego and they 
+    conform to the rules used in Stratego Tournaments.  Some boxed sets may have slightly different
+    rule sets printed in them.  See the <a href="https://web.archive.org/web/20241112121849/http://people.a2000.nl/dmbaas/index.html">
+    ISK Str@tego Pages</a> for more information on playing Stratego.</font></p>
+    <h3><font face="Arial" size="2">Object of the Game</font></h3>
+    <p><font face="Arial" size="2">To capture the opponent's Flag. </font></p>
+    <h3><font face="Arial" size="2">Initial Setup</font></h3>
+    <p><font face="Arial" size="2">The game is played on a 10x10 board (8x8 if the -small
+    options is used) with two lakes in the middle. The lakes may not be moved into or over. </font></p>
+    <p><font face="Arial" size="2">Before starting the game, each player deploys his army
+    using the <a href="#deploy">deploy</a> command. In the regular game, the army fills the
+    four rows closest to the player. In the -small game, the army fills three rows. The
+    opponent does not see what your pieces are; only where they are. (The physical board game
+    uses pieces which stand up. The side with the piece designation faces the player. The
+    other side faces the opponent, and is the same on all pieces.) </font></p>
+    <h3><font face="Arial" size="2">Pieces</font></h3>
+    <p><font face="Arial" size="2">Twelve different types of pieces are used in stratego, as
+    listed below. </font></p>
+    <pre><font face="Courier" size="1">                               Number Deployed
+    Piece Name  Display  regular game  -small game 
+    ----------  -------  ------------  -----------
+    Bomb          /B\          6           4
+    Marshall      /1\          1           0
+    General       /2\          1           1
+    Colonel       /3\          2           1
+    Major         /4\          3           2
+    Captain       /5\          4           2
+    Lieutenant    /6\          4           0        
+    Sergeant      /7\          4           4
+    Miner         /8\          5           4
+    Scout         /9\          8           4
+    Spy           /S\          1           1
+    Flag          /F\          1           1
+                              --          --
+                              40          24</font></pre>
+    <h3><font face="Arial" size="2">Movement</font></h3>
+    <p><font face="Arial" size="2">Bombs(B) and Flags(F) never move. </font></p>
+    <p><font face="Arial" size="2">Other pieces, except the Scout(9), move a single space
+    horizontally or vertically. </font></p>
+    <p><font face="Arial" size="2">The Scout(9) also moves horizontally or vertically, but may
+    move any number of spaces, unless blocked by other pieces or water. </font></p>
+    <p><font face="Arial" size="2">No piece may move into or over the lakes in the middle of
+    the board. </font></p>
+    <h3><font face="Arial" size="2">Conflict and Captures</font></h3>
+    <p><font face="Arial" size="2">When a pieces moves onto the same square as one of the
+    opponent's pieces, a conflict occurs. The identities of both pieces are revealed and the
+    piece with the lowest rank wins. The loser is removed from the board. </font></p>
+    <p><font face="Arial" size="2">If the pieces are equal in rank, both are removed from the
+    board. </font></p>
+    <p><font face="Arial" size="2">The Bomb(B) will win against any piece, except the
+    Miner(8). The Miner(8) is used to defuse Bombs(B). </font></p>
+    <p><font face="Arial" size="2">The Spy(S) may capture the Marshall(1), but only if it is
+    attacking. If the Marshall(1) attacks the Spy(S), the Spy(S) dies. Against other pieces,
+    except the Flag(F), the Spy(S) always loses. </font></p>
+    <p><font face="Arial" size="2">In the -small game, there is no Marshall(1), so the Spy(S)
+    may kill the General(2) instead, but only if it is attacking. </font></p>
+    <p><font face="Arial" size="2">Any piece may capture the Flag(F). </font></p>
+    <h3><font face="Arial" size="2">Discovering your Opponent's Army</font></h3>
+    <p><font face="Arial" size="2">You can always see <i>where</i> the pieces are on the
+    board. Unless a Scout(9) gives itself away by making a long move, the only way to discover
+    <i>what</i> the pieces actually are is through the conflict process, or deduction. </font></p>
+    <p><font face="Arial" size="2">The server conveniently keeps track for you of which pieces
+    have moved, and which have not. </font></p>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

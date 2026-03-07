@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h2>Rules for Focus</h2>
+<p>
+	Focus is played on a square board with some of the corners removed.
+	Below is a board starting with two players.  Starting boards for
+	3 and 4 players will start with pieces located in different
+	locations. 
+<pre>
+      A       B       C       D       E       F       G       H      
+                   -------------------------------                   
+1                 |       |       |       |       |                 1
+           -------|-------|-------|-------|-------|-------           
+2         | R     | R     | G     | G     | R     | R     |         2
+   -------|-------|-------|-------|-------|-------|-------|-------   
+3 |       | G     | G     | R     | R     | G     | G     |       | 3
+  |-------|-------|-------|-------|-------|-------|-------|-------|  
+4 |       | R     | R     | G     | G     | R     | R     |       | 4
+  |-------|-------|-------|-------|-------|-------|-------|-------|  
+5 |       | G     | G     | R     | R     | G     | G     |       | 5
+  |-------|-------|-------|-------|-------|-------|-------|-------|  
+6 |       | R     | R     | G     | G     | R     | R     |       | 6
+   -------|-------|-------|-------|-------|-------|-------|-------   
+7         | G     | G     | R     | R     | G     | G     |         7
+           -------|-------|-------|-------|-------|-------           
+8                 |       |       |       |       |                 8
+                   -------------------------------                   
+      A       B       C       D       E       F       G       H      
+
+Reserves for Player Red    = 0
+Reserves for Player Green  = 0
+</pre>
+<p>
+	The goal of Focus is to control all stacks located on the board
+	so that your opponent(s) cannot move (either a standard move or
+	placing a reserve piece).  A stack at a location can be up to
+	five pieces high but not higher.  The owner of the stack is
+	determined by the owner of the top piece of the stack.  A player
+	may move any number of pieces (1 to 5) off the top of a stack 
+	they own.  The pieces must be moved orthogonally to another 
+	location that is located the same number of spaces away as 
+	the number of pieces that are moved.  
+	An example is shown below:
+<p>
+	before move c3-f3:3 (Red owns the stack at C3 and Green owns the
+	stack at F3)
+<pre>
+            B       C       D       E       F       G
+        -------------------------------------------------
+      3 |       | RGRR  | GG    | R     | G     |       |
+        -------------------------------------------------
+</pre>
+	after move c3-f3:3 (Red now owns the new stack at F3 with two Green
+	pieces on the bottom of the stack and two Red pieces on the top)
+	(Red also owns the stack at C3) 
+<pre>    
+            B       C       D       E       F       G
+        -------------------------------------------------
+      3 |       | R     | GG    | R     | GGRR  |       |
+        -------------------------------------------------
+</pre>
+	When a stack is formed that is over five pieces high then some of
+	the pieces are removed from the bottom of the stack to form a new
+	stack that is no higher than five pieces high.  The pieces that are
+	removed from the bottom of the stack are either captured or placed
+	on reserve.  They are captured and removed from play if they are
+	the opponent's pieces and they are placed in reserve if they are
+	your own pieces.  Reserve pieces may be placed anywhere on the board
+	when it is your turn.  One important rule occurs during a
+	three-player game; each player receives one reserve piece that must
+	be played on an empty location during their very first turn.  
+	A player wins when their opponent(s) cannot make a move nor have 
+	any reserve pieces to place on the board.
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

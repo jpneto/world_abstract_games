@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+ <h3>Rules</h3>
+
+  <p><strong>Start:</strong> The board is initially empty. </p>
+  <p><strong>Play:</strong> O places one of their pieces at an empty cell then X may elect to swap colours in lieu of making the second move (swap option). <br>
+  Players then take turns placing a piece of their colour on an empty cell.</p>
+  <p><strong>Aim: </strong>    A player wins by  connecting three non-adjacent board sides with a chain of their pieces. <br>
+    A player loses by  connecting two opposite  board sides with a chain of their pieces   (without also connecting three non-adjacent  sides).<br>
+    Each corner cell belongs to both sides that meet there. </p>
+  <p>For example, the following boards show a game won by O  (left) and a game won by X (right).
+Exactly one player must win every game. </p>
+  <pre><font face="Courier New, Courier, mono">      </font><font face="Courier New, Courier, mono">&nbsp;. . o . . .                 . . o . . . 
+&nbsp;     . . . o . . .               . . . o . . . 
+&nbsp;   &nbsp;. . . o . . x x             . . . o . . . x
+   &nbsp;x x . . o x x . .           . . . . o . x x .
+   . . x x o x . . . .         . . . . o x x . . . 
+  . . . . x o o . . . .       . . . . x o . . . . . 
+  &nbsp;. . . . o x o o . .         . . x x . o . . . .  
+    . . o o x . . o o           x x . . o . . . . 
+    &nbsp;o o . . x . . .             . . . . o . . . 
+     &nbsp;. . . x . . .               . . . o . . . 
+      &nbsp;. . . x . .                 . . . o . . </font></pre>
+  <h3>Syntax</h3>
+  <p>    The move syntax is:<br>
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<b>F6&nbsp;</b><i>&nbsp;</i>&nbsp;&nbsp;  &nbsp;&nbsp;Place a piece at coordinate F6, which must be empty.<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<b>swap</b>&nbsp;&nbsp;  X may elect to swap colours  as their first play.</p>
+  <h3>History</h3>
+
+  <p>Cross rules copyright (c) Cameron Browne 2008. </p>
+  <p>The Cross rules   were originally devised as   a game using  the Gates tiles that did not  favour  either player, however it was obvious that the rules constituted a fundamental connection game in their own right. They  incorporate a mechanism similar to Yavalath in that players win by achieving a major connection but lose by achieving a minor connection without also achieving the major connection. </p>
+  <p>Cross is similar to Unlur but simplifies it; both players have identical goals and no extended contract phase is required. </p>
+  <p>Implementation and help file by Cameron Browne, June 2008.
+</div>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

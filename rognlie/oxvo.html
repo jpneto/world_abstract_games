@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h3><strong> Introduction</strong></h3>
+<p> Oxvo is a solitaire game in which you  slide 15 knotwork segments  around a 4x4 grid in an effort  to complete closed paths.<br>
+</p>
+<h3><strong>Rules</strong></h3>
+<p>The board is initially set with 15 tiles showing   knotwork segments as follows. The upper right cell is empty and  no paths on any tile cross to neighbouring tiles at this point. </p>
+<pre>   +---------+----#----+----#----+---------+<br>   |  #####  |   # #   |  ## ##  |         |<br>   |##     ##|  #   #  |##     ##|         |<br>   #         #  #   #  #         #         |<br>   |##     ##|   ###   |##     ##|         |<br>   |  #####  |         |  #####  |         |<br>   +----#----+----#----+----#----+----#----+<br>   |  ## #   |  ## ##  |  ## ##  |   # ##  |<br>   |##    #  |##     # | #     ##|  #    ##|<br>   #      #  #       # | #       #  #      #<br>   |##    #  |##     # | #     ##|  #    ##|<br>   |  ## #   |  ###### | ######  |   # ##  |<br>   +----#----+---------+---------+----#----+<br>   |  ####   |  ###### | ######  |   ####  |<br>   |##    #  |##     # | #     ##|  #    ##|<br>   #       # #       # | #       # #       #<br>   |##    #  |##     # | #     ##|  #    ##|<br>   |  ####   |  ## ##  |  ## ##  |   ####  |<br>   +----#----+----#----+----#----+----#----+<br>   |  ## ##  |         |  #####  |   # #   |<br>   |##     ##|   ###   |##     ##|  #   #  |<br>   #         #  #   #  #         #  #   #  |<br>   |##     ##|  #   #  |##     ##|  #   #  |<br>   |  ## ##  |   # #   |  ## ##  |   # #   |<br>   +----#----+----#----+----#----+----#----+</pre>
+<p>Each move involves sliding one, two or three tiles towards  the empty cell, as per any other 15-puzzle.</p>
+<p>If any move results in the formation of one or more closed paths, then the score for that move is <em><strong>p</strong></em> the length of the longest closed path (squared) minus <em><strong>m</strong></em> the number of moves so far. Scores below 0 are not counted:</p>
+<p> &nbsp;&nbsp;&nbsp;&nbsp;score = max(0, <em><strong>p</strong></em> * <em><strong>p</strong></em> - <em><strong>m</strong></em>);</p>
+<p>A path's length is given by the  number of crossings along its length, where self-crossings count twice. </p>
+<p>The game's final score is  the  best score achieved over the entire game.<br>
+</p>
+<p><strong>Rules</strong></p>
+<p>The aim is    to form the longest possible path in the shortest number of turns. </p>
+<p>The longest possible path  length is 32; one such maximal path  is shown below. The maximum possible score is  therefore 32 * 32 = 1,024 minus the number of moves required to form the path. </p>
+<pre>   +---------+---------+---------+---------+<br>   |   ####  |  #####  |  ####   |         |<br>   |  #    ##|##     ##|##    #  |   ###   |<br>   | #       #         #       # |  #   #  |<br>   |  #    ##|##     ##|##    #  |  #   #  |<br>   |   ####  |  ## ##  |  ####   |   # #   |<br>   +---------+----#----+---------+----#----+<br>   |         |   # ##  |  #####  |  ## #   |<br>   |         |  #    ##|##     ##|##    #  |<br>   |         |  #      #         #      #  |<br>   |         |  #    ##|##     ##|##    #  |<br>   |         |   # ##  |  #####  |  ## #   |<br>   +---------+----#----+---------+----#----+<br>   | ######  |  ## ##  |  ###### |   # #   |<br>   | #     ##|##     ##|##     # |  #   #  |<br>   | #       #         #       # |  #   #  |<br>   | #     ##|##     ##|##     # |  #   #  |<br>   |  ## ##  |  ## ##  |  ## ##  |   # #   |<br>   +----#----+----#----+----#----+----#----+<br>   |  ## ##  |  ## ##  |  ## ##  |   # #   |<br>   | #     ##|##     ##|##     # |  #   #  |<br>   | #       #         #       # |  #   #  |<br>   | #     ##|##     ##|##     # |   ###   |<br>   | ######  |  #####  |  ###### |         |<br>   +---------+---------+---------+---------+</pre>
+<div align="center"></div>
+<h3><strong>Syntax</strong></h3>
+<p>The board cells are labelled as follows:</p>
+<pre>
+  a b c d
+  e f g h
+  i j k l
+  m n o p</pre>
+<p>The move syntax is:<br>
+  <br>
+  <tt> </tt><tt> &nbsp;&nbsp;oxvo move <b>board#</b> <b>userid</b> <b>password</b> f </tt></p>
+<p>This command slides the tiles from cell 'f' towards the empty cell.</p>
+<p><tt>  &nbsp;&nbsp;oxvo resign<b> board#</b> <b>userid</b> <b>password</b><br>
+</tt><tt>&nbsp;&nbsp;oxvo move <b>board#</b> <b>userid</b> <b>password</b> quit </tt></p>
+<p>Either of these commands will end the game. The  best score achieved over the entire game is saved to the high score table.</p>
+<h3><br>
+  History </h3>
+<p>Oxvo  rules copyright (c)  Cameron Browne,  April  2008.</p>
+<p>Oxvo is a 15-puzzle played with Osbo dice, hence the  name &quot;OXVo&quot; where XV = 15.</p>
+<p>More details are available at  the <a href="https://web.archive.org/web/20250712154746/http://www.cameronius.com/games/oxvo/">official Oxvo page</a>.</p>
+<p>Implementation and Help file by Cameron Browne, March  2008.<br>
+</p>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

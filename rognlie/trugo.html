@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h3>Rules<br>
+</h3>
+<div align="left">
+  <p align="left"><strong>Equipment:</strong> Two players, O and X, share a common pool of 36 hexagonal tiles called <em>trugo tiles</em>. The front and back of each tile are half light and  half dark, as shown below. In addition, each player has 25  stackable pieces of their colour.</p>
+  <pre align="center"> &nbsp;&nbsp;&nbsp; +--..+           +--..+           +--..+ 
+  &nbsp;&nbsp;/   ....         /    ...         /   .... 
+  &nbsp;..   ... \       ..       \       ........ \ 
+  +...  ..   +     +.....     +     +.....     + 
+   ..   ... /       ........ /       ..       / 
+    \   ....         \   ....         \    ... 
+     +--..+           +--..+           +--..+ 
+ 
+  <em><font size="-1"><strong>Three rotations of a trugo tile. </strong></font></em></pre>
+  <p><strong>Play:</strong> O  starts by placing a tile in the middle of the playing area, oriented as they wish. Thereafter, players take turns making either a tile move or a piece move per turn, as follows. At the end of each turn, surrounded  pieces are captured are removed from the board. </p>
+  <p>The game is in its<em> Waxing phase</em> while pool tiles remain to be played. Once all pool tiles have been played, the halfway point has been reached and the game enters its <em>Waning phase</em>.</p>
+  <p><strong>Tile Placement:</strong> While there are pool tiles remaining to be played (Waxing phase) the current player may place a pool tile adjacent to at least one existing tile, such that its edge positions and colours exactly match those of adjacent neighbours.</p>
+  <p>Each placement may create up to six <em>junctions</em> where the corners of three tiles meet. As each junction is created, a piece of that junction's colour is placed there;  an O piece is placed on  each   ' ' junction and an X piece is placed on each '.' junction. Note that each tile placement may add pieces of both colours. </p>
+  <pre align="center">             +--..+                            +--..+         <br>            /   ....                          /   ....        <br>           ........ \                        ........ \     <br>     +--..+.....     +                 +--..+.....     +    <br>    /   .....       /                 /   .....       /    <br>   ..   ...      ...                 ..   ...      ...       <br>  +...  ..   +--..+                 +...  ..  (o) ..+   <br>   ..   ... /                        ..   ...      ...   <br>    \   ....                          \   .....       \    <br>     +  ..+            ------&gt;         +  .(x)....     + <br>    /    ...                          /    .......... /   <br>   ..       \                        ..           ....     <br>  +.....     +--..+                 +.....    (o) ..+  <br>   ........     ....                 ........     ....  <br>    \   ........... \                 \   ........... \   <br>     +--..+.....     +                 +--..+.....     +    <br>           ..       /                        ..       /  <br>            \    ...                          \    ...   <br>             +--..+                            +--..+       <br>
+  <em><font size="-1"><strong>The placement of the central tile adds three pieces to the board.</strong></font></em></pre>
+<p><strong>Tile Removal:</strong> If, on the other hand, there are no tiles left in the pool (Waning phase) then the current player may remove a tile from the board, provided that it has at least three consecutive free edges and its removal would not disconnect any remaining tiles.</p>
+  <p>If the tile being removed supports pieces on any of its corners then those pieces are also removed from the game. Tile removal is hence a way of capturing pieces. </p>
+  <pre align="center">             +--..+                             +--..+         <br>            /   ....                           /   ....        <br>           ........ \                         ........ \     <br>     +--..+.....     +                  +--..+.....     +    <br>    /   .....       /                  /   .....       /    <br>   ..   ...      ...                  ..   ...      ...       <br>  +...  ..  (o) ..+                  +...  ..  (o) ..+   <br>   ..   ...        \                  ..   ...      ...   <br>    \   ....        \                  \   .....       \    <br>     +  .(x)....     +    ------&gt;       +--..+.....     + <br>    /    .......... /                         ........ /   <br>   ..           ....                           \   ....     <br>  +.....    (o) ..+                             +  ..+  <br>   ........     ....                           /   ....  <br>    \   ........... \                         ........ \   <br>     +--..+.....     +                       +.....     +    <br>           ..       /                         ..       /  <br>            \    ...                           \    ...   <br>             +--..+                             +--..+      <br>
+  <em><strong><font size="-1">T</font></strong><font size="-1"><strong>he removal of the lower left tile removes two pieces from the game.</strong></font></em></pre>
+<p><strong>Piece Move:</strong> Instead of placing/removing a tile, the current player may instead move one of their unpinned pieces. The piece may move to any junction within its current region  then optionally step to an adjacent junction of the other colour. The piece may not move over any intervening pieces, but it may land on   a singleton piece (of either colour) which is pinned until the upper piece moves off it.  No stack may exceed two pieces in height. </p>
+  <p>For example, the following diagram shows legal moves for the top right O  piece. Moves within the  current  region are marked '*' and steps to adjacent junctions are marked '#'. </p>
+  <pre align="center">                     +--..+<br>                    /    ...<br>                   ..       \<br>             +--..+.....     +--..+          +--..+  <br>            /   ...........     ....        /   ....<br>           ........     ........... \      ..   ... \<br>     +--..+.....     *  ..#.....     +--..+...  ..   +<br>    /    ....            ....            ....   ... /<br>   ..            (x)            ....           ....<br>  +.....     *  .(o)....    (o) ..#.....     *  ..+   <br>   ........     ...........     ...........     ....<br>    \   ..#..   ...     .....   ...     .....   ... \<br>     +  .(x)..  ..   +  ..#...  ..   +--..+...  ..   +--..+   <br>    /    ....   ...     .....   ... /      ..   ...     ....<br>   ..        *  ...........  *  ....        \   .....   ... \<br>  +.....    (o) ..+.....    (x) ..+          +  ..#...  ..   +<br>   ........     .....           ....        /    ....   ... /<br>    \   .....   ...      ....   ... \      ..           ....<br>     +  ..+...  ..   +  ..+...  ..   +--..+.....     *  ..+   <br>    /    ....   ...     .....   ...     ...........     ....<br>   ..           ...........     ...........     ........... \<br>  +.....     +--..+.....     +--..+.....     +--..+.....     +<br>   ........ /      ..       /      ..       /      ..       /<br>    \   .../        \    ...        \    ...        \    ...<br>     +--..+          +--..+          +--..+          +--..+         <br> <br>&nbsp;&nbsp;<em><font size="-1"><strong>Possible moves for the top right O piece:<br>&nbsp;&nbsp;  '*' = Moves within the same region.<br>&nbsp;&nbsp;  '#' = Subsequent steps to adjacent junctions.</strong></font></em></pre>
+  <p><strong>Capture:</strong> At the end of each turn, any group of enemy pieces completely surrounded by friendly pieces on all adjacent junctions is captured and removed from the board. Note that any group with a piece adjacent to the edge of the board is temporarily safe from capture. Surrounded enemy groups are captured, then surrounded friendly groups are captured (pieces may commit suicide). </p>
+  <p>When a double stack is captured the topmost piece is captured first. If the underlying piece is of the same colour then it is also captured, else it survives. Capturing is therefore a way of releasing pinned pieces.</p>
+  <pre>     +--..+          +--..+                    +--..+          +--..+        <br>    /    ....       /    ...                  /    ...        /    ...  <br>   ..       \      ..       \                ..       \      ..       \    <br>  +.....     +--..+.....     +              +.....     +--..+.....     +   <br>   ........      .......... /                ........      .......... /   <br>    \   .....           ....                  \   .....           ....   <br>     +  .(x)....    (x) ..+                    +  .(x)....    (x) ..+    <br>    /    ..........      ...                  /    ..........      ...   <br>   ..       (o) .(o).       \                ..           .....       \  <br>  +.....    (x) .(o)....     +   ------&gt;    +.....    (x) ..+.....     +<br>   ........     ........... /                ........     ........... / <br>    \   ...........     ....                  \   ...........     ....  <br>     +--..+.....    (x) ..+                    +  .(X)....    (x) ..+     <br>           ..           ....                  /   .....           .... <br>            \    .......... \                ..   ...      .......... \  <br>             +--..+.....     +              +...  ..   +--..+.....     +<br>                 ....       /                ..   ... /      ..       /  <br>                    \    ...                  \   ....        \    ...  <br>                     +--..+                    +--..+          +--..+  <br>
+  <em><font size="-1"><strong>Adding the bottom left tile adds an X piece that surrounds the O group to capture it.<br>&nbsp;&nbsp;Note that the pinned X piece is released.</strong></font></em></pre>
+  <p><strong>Aim:</strong> A player wins if the opponent has no remaining pieces at any point during the Waning phase. If a move removes all remaining pieces from the board, then the mover wins. <br>
+  </p>
+  <h3>Strategy and Tactics </h3>
+  <p> During the Waxing phase, groups with pieces adjacent to the board perimeter are safe from capture as they cannot be surrounded. However, such peripheral pieces can be captured once the game enters the Waning phase by simply removing the outer tiles that they lie on. There is therefore a balance between keeping pieces away from the edges but keeping them safe from capture.</p>
+</div>
+<p align="left">Landing on an enemy piece can be useful for pinning it and temporarily removing it from the game, especially if the player can later move off the pinned piece to capture it. Landing on a friendly piece can be useful for blocking a key point to stop the opponent crossing it. However, players should be careful that their double stacks do not get surrounded and captured! </p>
+<p align="left">Stepping to an adjacent junction is the only way for a piece to change regions. </p>
+<p align="left">The player leading on piece count will generally want to end the game as quickly as possible. Hence the leading player should remove tiles during the Waning phase, while the losing player should move pieces instead. </p>
+<p align="left">Moving a piece may be more beneficial than adding or removing a tile.<br>
+</p>
+
+<h3 align="left">History</h3>
+
+<p align="left">Trugo tiles and rules copyright (c) Cameron Browne, August 2007.</p>
+<p align="left">Please see the official Trugo page for further details and examples: <a href="https://web.archive.org/web/20241003223814/http://www.cameronius.com/games/trugo/">http://www.cameronius.com/games/trugo/</a></p>
+<p align="left">Trugo is named after its Truchet-like tiles and its Go-like surround capture rule. There is in fact an existing game called Trugo, but since this is a version of lawn bowls played only by railway repair workers in a suburb of Melbourne, there should not be too much confusion between the two games.</p>
+<p align="left">The number of tiles is based on the hexagonal spiral number 3n(n+1) = 0, 6, 18, [36], 60, 90...</p>
+<p>Implementation and Help file by Cameron Browne, August 2007.</p>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

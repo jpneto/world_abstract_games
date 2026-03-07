@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h3> Rules </h3>
+<p><em><strong>Play:</strong></em> Players take turns placing a piece (marble) of their colour at any valid empty point. A  point is valid if it is: 1) a  board point, or 2) supported flatly by four existing pieces. Players may  not  pass.</p>
+<p><em><strong>Connection</strong></em>: Two pieces of the same colour are connected if  they are squarely adjacent to each other, or one rests directly upon the other. A group is a visibly connected set of pieces which may visit multiple levels.</p>
+<p><em><strong>Freedom</strong></em>: A piece has freedom if it is adjacent to at least one valid empty point on the board  level.  A group  has freedom  if at least one of its member pieces has freedom.</p>
+<p><em><strong>Surround capture</strong></em>: After  playing a piece, all   enemy groups without  freedom are  captured and removed from the board,  except for pieces  that  support one or more higher-level  pieces of a different colour either directly or indirectly. Such pieces are not removed and remain alive in the game.</p>
+<p><em><strong>No suicide rule</strong></em>: It is not permitted to place a piece without freedom, unless that move captures neighbours to create its own freedom.</p>
+<p><em><strong>Ko  rule</strong></em>: It is not permitted to repeat a previous board position (this has not been implemented so is up to the players' discretion).</p>
+<p><em><strong>Over/under rule</strong></em>: A connection passing over an enemy connection cuts it. Buried pieces (those with   a piece directly above them) do not count in any connections; groups must be  visibly connected.</p>
+<p><em><strong>Winning</strong></em>: The game ends when the    current player   has no legal  move. The player with  the most pieces in play  wins. <br>
+</p>
+<h3> Examples</h3>
+<pre>
+   An X piece at 'a' captures the O group, which has no remaining freedoms.
+
+
+   |   .     .     .     .            |   .     .     .     .<br>   |        ___                       |  ___   ___<br>   |       /   \                      | /   \ /   \                 <br>   |   a  (  x  )  .     .            |(  X  |  x  )  .     .   <br>   |  ___  \___/  ___                 | \___/ \___/  ___         <br>   | /   \ /   \ /   \                |             /   \        <br>   |(  o  |  o  |  x  )  .            |   .     .  (  x  )  .   <br>   | \___/ \___/ \___/                |             \___/        <br>   | /   \ /   \ /   \                |             /   \        <br>   |(  o  |  o  |  x  )  .            |   .     .  (  x  )  .   <br>   | \___/ \___/ \___/                |             \___/       <br>   | /   \ /   \ /   \                |             /   \        <br>   |(  o  |  o  |  x  )  .            |   .     .  (  x  )  .    <br>   | \___/ \___/ \___/                |             \___/        <br>   +-----------------------           +-----------------------
+
+   An X piece at 'b' does not capture the O group, as it still has two
+   freedoms after the move (marked '*').
+
+   |   .     .     .     .            |   .     .     *     .    <br>   |        ___   ___                 |  ___   ___   ___         <br>   |       /   \_/   \                | /   \ /   \_/   \<br>   |   b  (  x/   \o  )  .            |(  X  |  x/   \o  )  *<br>   |  ___  \_(  o  )_/                | \___/ \_(  o  )_/         <br>   | /   \ /  \___/  \                | /   \ /  \___/  \        <br>   |(  o  |  o  |  x  )   .           |(  o  |  o  |  x  )  .   <br>   | \___/ \___/ \___/                | \___/ \___/ \___/        <br>   | /   \ /   \ /   \                | /   \ /   \ /   \        <br>   |(  o  |  o  |  x  )   .           |(  o  |  o  |  x  )  .   <br>   | \___/ \___/ \___/                | \___/ \___/ \___/       <br>   | /   \ /   \ /   \                | /   \ /   \ /   \        <br>   |(  o  |  o  |  x  )   .           |(  o  |  o  |  x  )  .    <br>   | \___/ \___/ \___/                | \___/ \___/ \___/        <br>   +------------------------          +-----------------------
+
+   An X piece at 'c' captures the O group. Note that captured pieces which
+   support the higher-level X piece are not removed.
+
+   |   .     .     .     .            |   .     .     .     .    <br>   |        ___                       |  ___   ___<br>   |       /   \                      | /   \ /   \                 <br>   |   c  |  x  |  .     .            |(  X  |  x  )  .     .   <br>   |  ___  \___/  ___                 | \___/ \___/  ___         <br>   | /   \ /   \_/   \                |       /   \_/   \        <br>   |(  o  |  o/   \x  )  .            |   .  (  o/   \x  )  .   <br>   | \___/ \_(  x  )_/                |       \_(  x  )_/        <br>   | /   \_/  \___/  \                |       /  \___/  \        <br>   |(  o/   \o/   \x  )  .            |   .  (  o  |  x  )  .   <br>   | \_(  o  |  o  )_/                |       \___/ \___/       <br>   | /  \___/ \___/  \                |             /   \        <br>   |(  o  |  o  |  x  )  .            |   .     .  (  x  )  .    <br>   | \___/ \___/ \___/                |             \___/     <br>   +-----------------------           +-----------------------
+
+   The O overpass cuts the following two X pieces (over/under rule).
+
+   .     .     .     .
+        ___   ___      <br>       /   \_/   \     <br>   .  (  o/   \o  )  .<br>       \_(  o  )_/     <br>       /  \___/  \     <br>   .  (  x/   \x  )  .<br>       \_(  o  )_/     <br>       /  \___/  \     <br>   .  (  o  |  o  )  .<br>       \___/ \___/     <br>
+   .     .     .     .<br>
+</pre>
+
+<h3>Notes</h3>
+<p>Higher level plays are strong, as the lower-level pieces that support them remain fixed and cannot be removed from the board (unless the higher level pieces are themselves captured and removed). It is therefore generally good to stack on friendly pieces but not enemy pieces. </p>
+<p>Multiple groups may be joined by higher-level pieces to create safe supergroups with multiple eyes. However, the fact that players may not voluntarily pass means that they may eventually be forced to fill in their own eyes and render groups unsafe. </p>
+<p>Since pieces are counted rather than territory, scores are tied at the end of each round until a capture occurs. However, the  fact that  players may not pass, and hence   at least one capture is more or less inevitable, ensures that most games will have a clear winner. Territory is therefore an important secondary consideration, as the player that commands the most territory in the end game is the most likely to survive an eye-filling race. </p>
+<p>Adjacent friendly pieces on the outermost row or column of any level cannot be cut, as it's not possible to bury them or separate them with an overpass. Edge moves can therefore be quite strong (especially if they support higher-level pieces) despite the fact that the edge removes a potential freedom. Edge play becomes increasingly predominant as the levels build up and the ratio of edge points to interior points increases. </p>
+<p>The special capture rule (that pieces supporting higher-level enemy pieces are not removed) is necessary to avoid the fiddly problem of retrieving buried pieces after capture, and also avoids the problem of higher-level enemy pieces settling down in random directions if support pieces are removed. It also adds some additional tactical interest to the game, since players will have to carefully weigh up  the benefits of building upwards if  that  move would pin enemy pieces.</p>
+<p>Removing buried pieces from connection calculations means that players do not have to remember the colour of hidden pieces, except when it comes to counting the score at the end of the game. </p>
+<p>The board, when fully stacked, forms a pyramidal or cannonball stacking. The maximum number of pieces that may be played on a board of size <em>n </em>is given by the pyramidal number <em>Pn</em> = <em>n</em> (<em>n</em> + 1) (<em>2n</em> + 1) / 6.</p>
+<pre>   &nbsp;<strong>Board size      </strong><strong>Max pieces
+    </strong>&nbsp;&nbsp;&nbsp;&nbsp;3x3 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp; &nbsp;&nbsp;14
+        4x4             30
+        5x5             55
+        6x6             91
+        7x7            140
+        8x8            204
+        9x9            285
+       10x10           385
+       11x11           506
+       12x12           650
+       13x13           819
+        ...            ...
+       19x19         2,470 
+</pre>
+<p>A game of Margo will therefore take several times as long as a game of Go on the same sized board. For example, a 10x10 Go board has room for 100 pieces whereas a 10x10 Margo board has room for 385 pieces (although these limits will never actually be reached). </p>
+<p>Each ball in a cannonball stacking has up to twelve connected neighbours, however, only   four can possibly count as freedoms for any piece. These are the four squarely adjacent board level neighbours   (as in Go) not diagonally adjacent neighbours on the next level up/down. This is for two main reasons: <br>
+  1) It makes groups easier to surround (otherwise captures would rarely occur); and <br>
+  2) It means that some members of surrounded groups may remain uncovered (otherwise only singleton captures would remove pieces from the board).</p>
+<p>Translating Margo to the hexagonal grid is complicated by phase problems; for any packed level there are two ways to pack the level above, both of which are valid but incompatible. The square grid is better suited to ball-stacking games of this type. <br>
+</p>
+<h3>Display Size</h3>
+<p>You can set  the display size according to  your own perverse taste. The large  display size is recommended for smaller boards (7x7 and less),   the medium display size is the default, and the   small display size is recommended for larger boards (12x12 and over).</p>
+<pre>     _____   _____
+    /     \ /     \ 
+   |  o o  |  x x  | 
+   |  o o  |  x x  |   &quot;margo set &lt;username&gt; &lt;password&gt; large&quot;
+    \_____/ \_____/ 
+
+       ___   ___ 
+      /   \ /   \ 
+     (  o  |  x  )     &quot;margo set &lt;username&gt; &lt;password&gt; medium&quot;
+      \___/ \___/ 
+   
+        .-. .-.
+       ( o | x )       &quot;margo set &lt;username&gt; &lt;password&gt; small&quot;
+        `-' `-'<br>
+</pre>
+<h3>&quot;Can Pass&quot; Version</h3>
+<p>Players wanting a shorter game can either choose a smaller board size or use the <tt>-can_pass</tt> option to allow passing. The  player that achieves the first advantage will generally carry this advantage through the game and win it if they are  allowed to pass.</p>
+<p>If players are not allowed to pass, however, the game enters a further (cold) phase  in which they  are forced to fill in their own eyes or make otherwise disadvantageous moves. The adds to the drama of the game, since the losing player may eventually force a win if they have managed their territory more cleverly than their opponent. Territory plays a much more important role if passing is not allowed.<br>
+</p>
+<h3>Multiplayer Version</h3>
+<p>Multiplayer Margo is played using  the same rules as the two-player version, however a couple of clarifications are warranted.</p>
+<pre>   An X or Y piece at 'd' captures to O group, which has no remaining liberties.<br> 
+   |   .     .     .     .            |   .     .     .     .<br>   |        ___                       |  ___   ___<br>   |       /   \                      | /   \ /   \                 <br>   |   d  (  x  )  .     .            |( X/Y |  x  )  .     .   <br>   |  ___  \___/  ___                 | \___/ \___/  ___         <br>   | /   \ /   \ /   \                |             /   \        <br>   |(  o  |  o  |  y  )  .            |   .     .  (  y  )  .   <br>   | \___/ \___/ \___/                |             \___/        <br>   | /   \ /   \ /   \                |             /   \        <br>   |(  o  |  o  |  x  )  .            |   .     .  (  x  )  .   <br>   | \___/ \___/ \___/                |             \___/       <br>   | /   \ /   \ /   \                |             /   \        <br>   |(  o  |  o  |  y  )  .            |   .     .  (  y  )  .    <br>   | \___/ \___/ \___/                |             \___/        <br>   +-----------------------           +-----------------------
+
+   The X/Y overpass cuts the following two O pieces (over/under rule).
+
+   .     .     .     .
+        ___   ___      <br>       /   \_/   \     <br>   .  (  x/   \x  )  .<br>       \_(  x  )_/     <br>       /  \___/  \     <br>   .  (  o/   \o  )  .<br>       \_(  y  )_/     <br>       /  \___/  \     <br>   .  (  y  |  y  )  .<br>       \___/ \___/     <br>
+   .     .     .     .</pre>
+<p>Some multiplayer Go variants relax the connection definition so that enemy groups may consist of stones of any colour except the current player's. Margo maintains the stricter definition (that any group may only consist of one colour) to encourage captures.<br>
+</p>
+
+<h3>History </h3>
+
+<p>Margo rules copyright (c)  Cameron Browne,  February 2006.</p>
+<p>The name &quot;Margo&quot; = Marbles + Go.</p>
+<p>More details are available at the <a href="https://web.archive.org/web/20250121010301/http://www.cameronius.com/games/margo/">official Margo page</a>.</p>
+<p>Implementation and Help file by Cameron Browne, February 2006.<br>
+</p>
+
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

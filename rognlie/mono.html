@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h3> Introduction</h3>
+<p>Mono is a puzzle game for two to four players. Players try to work out  the positions of their opponent's regions, and score points by locating sequences of  cells  with non-decreasing  values.<br>
+</p>
+<h3> Rules </h3>
+<p><strong>Start:</strong> Each player has a 5x11 square grid, hidden from opponents, which they  split up into   nine regions. Region 1 has one cell of value 1, region 2 has two cells of value 2, region 3 has three cells of value 3, and so on. The following example  shows a game about to start, from  fred's perspective.</p>
+<pre>
+      a b c d e f g h i       a b c d e f g h i<br> <br>  5   6 6 6 6 9 9 7 7 7   5   . . . . . . . . .   5<br>  4   6 6 4 9 9 9 7 8 7   4   . . . . . . . . .   4<br>  3   3 4 4 9 9 9 7 8 7   3   . . . . . . . . .   3<br>  2   3 4 2 9 5 5 8 8 8   2   . . . . . . . . .   2<br>  1   3 1 2 5 5 5 8 8 8   1   . . . . . . . . .   1<br> <br>      a b c d e f g h i       a b c d e f g h i<br> <br>          fred = 0                 ned = 0</pre>
+<p><strong>Play:</strong> Each turn the current player specifies a number of unvisited  positions   on the opponent's board, keeping a list of the opponent's  values at each position. The turn continues until the player uncovers  a value  that is lower than the previous value in the list.</p>
+<p> For example, the player might discover the values {2, 3, 5, 5, 5, 5, 7, 7,  8, 3} on their turn; the 3 ends the turn.</p>
+<p><strong>Score:</strong> The player's score for the turn is the sum of run lengths (squared) for non-decreasing values within the list.</p>
+<p>So for the values {2,  3, 5, 5, 5, 5, 7, 7, 8, 3} the run lengths are 1, 1, 4, 2, 1 and the score is 1*1 + 1*1 + 4*4 + 2*2 + 1*1 = 23 points.</p>
+<p><strong>Aim:</strong> The game finishes at the end of the round in which any  player has all of their values uncovered. The player with the highest score wins (tied game if equal). <br>
+</p>
+<h3>Notes</h3>
+<p align="left">Consecutive positions in a move do not need to be connected or adjacent. </p>
+<p align="left">The game finishes at the end of the final round so that all players get an equal number of moves. This avoids a potential first move advantage.</p>
+<p align="left">Hexadecimal characters are used for  games above size  9, so the sequence of region labels is  1, 2, 3, 4, 5, 6, 7, 8, 9, a, b, c, d, e... </p>
+<p align="left">Players can enter as many moves as they like each turn. If all moves are made without discovering a decreasing value, then the server will continue to make random moves on the player's behalf until a decreasing value is found (unless the -no_auto option is used). This speeds the game along and mimics how an actual player would approach the game. </p>
+<p align="left">Use &quot;end&quot; to end a move if you don't want the server to automatically continue making  random moves on your behalf, for instance if you want to  keep key areas pristine and free from random hits with the intention of saving them for  longer runs later.</p>
+<p align="left">Random moves are useful for opening up  new board areas but will rarely score well, as     higher-valued cells greatly outnumber lower-valued ones hence   random move values tend to  escalate quickly. It is  better to puzzle out likely cell values based on the available information and make as many non-random moves per turn  as possible. </p>
+<p align="left">Finding all  cells belonging to  a region on the one turn  will optimise your score for that region. However, care must be taken   as moving out of a region then back into it will end the turn, one way or the other.</p>
+<p align="left">The size and dimensions of the board  required for <em> r</em> regions are given  by:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;num_cells = <em>r </em>(<em>r</em> + 1) / 2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;height = floor[(<em>r</em> + 1) / 2]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;width = num_cells / height</p>
+<p align="left">Die-hard puzzlers can devise their own region layouts and manually specify them  on their first move. This requires some care, and a good procedure is to jot down the  region layouts on paper then   enter the values as you  read them  left-to-right and top-to-bottom.</p>
+<p align="left">However,  it's much easier to just get the server to  place the regions  randomly on the first move. The following algorithm is used:<br>
+
+&nbsp;&nbsp;&nbsp; generate a list of regions to be placed (1..<em>r</em>)<br> 
+&nbsp;&nbsp; &nbsp;shuffle the list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;while (board not full)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; find the smallest remaining gap on the board<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; find a combination of unused regions whose combined sizes <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;equal the gap size (if none, then start again) <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; randomly place a member of this combination within this gap <br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+</p>
+<h3>Multiplayer Version</h3>
+<p align="left">Multiplayer Mono is similar to the   two-player game except that  the same positions are uncovered on all opponents' boards for each move, possibly giving a choice of more than one value per coordinate. </p>
+<p align="left">By default, the choice  that is best for the player's current list is used; this will be the lowest value that is not lower than the last value in the list.  Alternatively, if the  -take_min option is used then the lowest opponent value is always chosen, or  if the -take_max option is used then the highest opponent value is always chosen (much harder).<br>
+</p>
+
+<h3>History </h3>
+
+<p>Mono  rules copyright (c)  Cameron Browne,  April 2007.</p>
+<p>The name &quot;Mono&quot; refers to the fact that each scoring move is a list of monotonically increasing values. The complete rules  took  less than 30 minutes to devise.</p>
+<p>Implementation and Help file by Cameron Browne, April 2007.<br>
+</p>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

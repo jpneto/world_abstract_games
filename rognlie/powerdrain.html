@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<pre>
+Rules of Powerdrain
+  
+  Imagine you and your opponent are in a powerstation and your goal is
+  to control the powergrid.  One player is positive energy (+) and the
+  other player is negative energy (-).  Each player alternately places
+  powerplugs into the sections of the powergrid.  After a total of 16
+  powerplugs are inserted, the powergrid adjusts the voltages of each
+  section of the powergrid and a winner is determined.  The winner is
+  the player who has more of his own powerplugs still active.  If a tie
+  occurs (both players have an equal number of active powerplugs at the
+  end of the game), then the tie is broken by adding up the power levels
+  of each players' active powerplugs.  The player with the greater 
+  absolute power level will win the game.  There is no further tie breaker.
+  When two powerplugs of opposite polarities touch on their sides, they 
+  drain the energy out of each other.  A player's powerplug voltage may
+  drain to zero (0) but cannot change into the enemy's polarity.  Two
+  powerplugs of the same polarity cannot affect each other (they do not
+  add nor subtract from each other's voltage).  An active powerplug is
+  one that is not at zero (0) voltage at the end of the game when all
+  16 powerplugs have been inserted into the powergrid.  A section of the
+  powergrid that does not have a powerplug inserted into it is not
+  affected.  
+
+  The powergrid is given random voltage potential levels along the left
+  side and top of the grid.  These random potentials are the 5 odd digits
+  1,3,5,7,9.  The powerplugs are given two random even digits.  Each
+  permutation of two even digits is represented by the 16 powerplugs.
+  When a powerplug is inserted into a section of the powergrid, the voltage
+  of the powerplug is determined by adding the absolute values of the 
+  differences of the first digit with the left voltage potential and the
+  second digit with the top voltage potential.  This is illustrated below:
+
+           5  
+       ---------  this is an example of two sections of a powergrid 
+    7  | &lt;2 4^ |  the powerplug "24" was inserted into the section "75"
+       |+6  +2 |  the voltage of this plug is the sums of the absolute 
+       ---------  differences (2 minus 7) plus (4 minus 5) which is 
+   9   | &lt;8 2^ |  5 + 1 = 6 and since the plug was owned by the positive
+       |-4   0 |  player it was given a '+' value. 
+       ---------  The first number under the plug (+6) represents
+		  the value of the plug itself, without any drain from
+		  negative plugs that may be on any of its four sides 
+		  (above, below, on the left and right).  The second number
+		  below the plug is the voltage of the plug after
+		  neighboring enemy plugs are taken into account.  Notice
+		  that a total of 4 volts was drained off of this plug by
+		  negative plugs that were touching this plug.
+
+    Below is an example of a finished game between player1 and player2.
+    Player1 (positive player) won the game because he had 4 active plugs
+    of his voltage while player2 (negative player) only had 2 active plugs
+    left at the end of the game.
+
+    Player1 has four (4) active positive plugs left. 
+    plug 46 at location 91 with a voltage of +10
+    plug 26 at location 93 with a voltage of +6  (4 volts were drained)
+    plug 28 at location 71 with a voltage of +8  (4 volts were drained)
+    plug 48 at location 15 with a voltage of +6
+
+    Player2 only has two (2) active negative plugs left in the grid.  
+    plug 68 at location 31 with a voltage of -10
+    plug 84 at location 37 with a voltage of -8
+
+       1       3       7       5       9       
+   -----------------------------------------   Positive + player1 
+9  | &lt;4 6^ | &lt;2 6^ | &lt;4 2^ | &lt;8 2^ | &lt;2 2^ |   
+   |+10 +10|+10 +6 |+10  0 |-4   0 |+14  0 |   
+   -----------------------------------------   
+7  | &lt;2 8^ | &lt;6 6^ | &lt;4 4^ |       | &lt;2 4^ |   Negative - player2 
+   |+12 +8 |-4   0 |-6   0 |       |-10  0 |   
+   -----------------------------------------   
+1  | &lt;8 8^ | &lt;8 6^ | &lt;6 2^ | &lt;4 8^ |       |   
+   |+14  0 |-10  0 |+10  0 |+6  +6 |       |   
+   -----------------------------------------   
+5  | &lt;6 4^ |       |       |       |       |   
+   |-4   0 |       |       |       |       |   
+   -----------------------------------------   
+3  | &lt;6 8^ |       | &lt;8 4^ |       |       |   
+   |-10 -10|       |-8  -8 |       |       |   
+   -----------------------------------------   
+
+</pre>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

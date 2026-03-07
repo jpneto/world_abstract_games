@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+              
+<h2>Rules of Bughouse</h2></a>
+
+Bughouse is a chess game for four players, played on two boards.
+
+Actually, it is two chess games played simultaneously in teams.
+The black player on board 1 is partnered with the white player on
+board 2, and vice versa.  To win, a team must win on either of
+their boards.
+<p>
+The most notable difference from normal chess is that pieces 
+captured on one board are handed to the partner on the other
+board.  He can drop these pieces on his board for one of his
+turns.  
+<p>
+The notation for drops is similar to Shogi: <tt>P*c6</tt>.
+<p>
+A full description of the game is at <a href="http://www.chessvariants.com/multiplayer.dir/tandem.html">The Chess Variant Pages on Bughouse Chess</a>.
+
+<h3>Opening Position</h3>
+
+For the command "bughouse challenge player1 player2 player3 player4",
+players 1 and 2 will be partners, playing against 3 and 4 respectively.
+Here is a diagram of the positions the players will occupy:
+
+<pre>
+   Black (player3)                        White (player4) TURN
+   Inhand:                                Inhand: 
+                BOARD 1                                BOARD 2
+     a   b   c   d   e   f   g   h          h   g   f   e   d   c   b   a     
+   +---+---+---+---+---+---+---+---+      +---+---+---+---+---+---+---+---+   
+ 8 |*R*|*N*|*B*|*Q*|*K*|*B*|*N*|*R*| 8  1 |:R:| N |:B:| K |:Q:| B |:N:| R | 1 
+   +---+---+---+---+---+---+---+---+      +---+---+---+---+---+---+---+---+   
+ 7 |*P*|*P*|*P*|*P*|*P*|*P*|*P*|*P*| 7  2 | P |:P:| P |:P:| P |:P:| P |:P:| 2 
+   +---+---+---+---+---+---+---+---+      +---+---+---+---+---+---+---+---+   
+ 6 |   |:::|   |:::|   |:::|   |:::| 6  3 |:::|   |:::|   |:::|   |:::|   | 3 
+   +---+---+---+---+---+---+---+---+      +---+---+---+---+---+---+---+---+   
+ 5 |:::|   |:::|   |:::|   |:::|   | 5  4 |   |:::|   |:::|   |:::|   |:::| 4 
+   +---+---+---+---+---+---+---+---+      +---+---+---+---+---+---+---+---+   
+ 4 |   |:::|   |:::|   |:::|   |:::| 4  5 |:::|   |:::|   |:::|   |:::|   | 5 
+   +---+---+---+---+---+---+---+---+      +---+---+---+---+---+---+---+---+   
+ 3 |:::|   |:::|   |:::|   |:::|   | 3  6 |   |:::|   |:::|   |:::|   |:::| 6 
+   +---+---+---+---+---+---+---+---+      +---+---+---+---+---+---+---+---+   
+ 2 | P |:P:| P |:P:| P |:P:| P |:P:| 2  7 |*P*|*P*|*P*|*P*|*P*|*P*|*P*|*P*| 7 
+   +---+---+---+---+---+---+---+---+      +---+---+---+---+---+---+---+---+   
+ 1 |:R:| N |:B:| Q |:K:| B |:N:| R | 1  8 |*R*|*N*|*B*|*K*|*Q*|*B*|*N*|*R*| 8 
+   +---+---+---+---+---+---+---+---+      +---+---+---+---+---+---+---+---+   
+     a   b   c   d   e   f   g   h          h   g   f   e   d   c   b   a     
+                                       
+   White (player1) TURN                   Black (player2)     
+   Inhand:                                Inhand: 
+</pre>
+
+<h3>PBeM Considerations</h3>
+
+Bughouse is normally played in a speed chess setting with rather short
+time limits.  Time is important in strategy.  For example, if one player
+is about to lose, he can simply stop playing, in the hope that his
+partner can win before time runs out.
+<p>
+Time can still be important in PBeM Bughouse, and the default settings
+enforce a limited time for players to make their moves.  
+But the varieties of timezone displacements can sometimes make this
+unfair, so feel free to disable the time limits (or make them longer)
+by including "--timelimit=0" in the challenge command.
+<p>
+At any time, there are always two players who can make a move.  These
+players are indicated at the top ("Waiting for:") and also have the
+word "TURN" after their names.  When two players are playing, they
+are each playing one side of two boards, so it can be ambiguous which
+board they are moving on.  When this occurs, they will need to prefix
+their move with "1:" or "2:" to indicate which board they are moving on.
+
+
+</td>
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

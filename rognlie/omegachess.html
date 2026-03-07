@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+              
+<h3><font face="Arial" size="2">Rules of OmegaChess</font></h3>
+    <p><font face="Arial" size="2">Copyright (c) 1998 Somac, Inc. All rights reserved</a> </font></p>
+    <p><font face="Arial" size="2">The Official OmegaChess Home Page <a href="https://web.archive.org/web/20250423121415/http://www.omegachess.com/">http://www.OmegaChess.com</a> contains a full description
+    of the OmegaChess variant, but here are the highlights... </font></p>
+    <p><font face="Arial" size="2">Omega Chess is played on a 10x10 board with 4 extra squares
+    at the corners. The initial position is shown below. </font></p>
+    <pre><font face="Courier" size="1">     W4                                           W3
+    +---+                                       +---+    Black 
+    |*W*| a   b   c   d   e   f   g   h   i   j |*W*|   
+    +---+---+---+---+---+---+---+---+---+---+---+---+    
+      9 |*C*|*R*|*N*|*B*|*Q*|*K*|*B*|*N*|*R*|*C*| 9
+        +---+---+---+---+---+---+---+---+---+---+    
+      8 |*P*|*P*|*P*|*P*|*P*|*P*|*P*|*P*|*P*|*P*| 8
+        +---+---+---+---+---+---+---+---+---+---+    
+      7 |:::|   |:::|   |:::|   |:::|   |:::|   | 7
+        +---+---+---+---+---+---+---+---+---+---+    
+      6 |   |:::|   |:::|   |:::|   |:::|   |:::| 6
+        +---+---+---+---+---+---+---+---+---+---+    
+      5 |:::|   |:::|   |:::|   |:::|   |:::|   | 5
+        +---+---+---+---+---+---+---+---+---+---+    
+      4 |   |:::|   |:::|   |:::|   |:::|   |:::| 4
+        +---+---+---+---+---+---+---+---+---+---+    
+      3 |:::|   |:::|   |:::|   |:::|   |:::|   | 3
+        +---+---+---+---+---+---+---+---+---+---+    
+      2 |   |:::|   |:::|   |:::|   |:::|   |:::| 2
+        +---+---+---+---+---+---+---+---+---+---+    
+      1 |:P:| P |:P:| P |:P:| P |:P:| P |:P:| P | 1
+        +---+---+---+---+---+---+---+---+---+---+    
+      0 | C |:R:| N |:B:| Q |:K:| B |:N:| R |:C:| 0
+    +---+---+---+---+---+---+---+---+---+---+---+---+    
+    | W | a   b   c   d   e   f   g   h   i   j |:W:|   
+    +---+                                       +---+    White 
+     W1                                           W2</font></pre>
+    <p><font face="Arial" size="2">The two extra pieces are the wizard (W) and the champion
+    (C), which move as follows: </font></p>
+    <blockquote>
+      <pre><font face="Arial" size="2">Wizard (W)</font></pre>
+      <p><font face="Arial" size="2">Similar to a knight, it can *jump* in an L, but its L is
+      3x1 wheres a standard knight's L is 2x1.&nbsp; Additionally, it can move to diagonally
+      adjacent squares.</font></p>
+      <pre><font face="Courier" size="1">            +---+---+---+---+---+---+---+    
+            |   |:::| w |:::| w |:::|   |       
+            +---+---+---+---+---+---+---+    
+            |:::|   |:::|   |:::|   |:::|       
+            +---+---+---+---+---+---+---+    
+            | w |:::| w |:::| w |:::| w |       
+            +---+---+---+---+---+---+---+    
+            |:::|   |:::| W |:::|   |:::|       
+            +---+---+---+---+---+---+---+    
+            | w |:::| w |:::| w |:::| w |
+            +---+---+---+---+---+---+---+    
+            |:::|   |:::|   |:::|   |:::|       
+            +---+---+---+---+---+---+---+    
+            |   |:::| w |:::| w |:::|   |       
+            +---+---+---+---+---+---+---+    </font></pre>
+      <pre><font face="Arial" size="2">Champion (C)</font></pre>
+      <p><font face="Arial" size="2">The champion can *jump* up to two (2) squares horizontally
+      or vertically, and *exactly* two (2) squares diagonally.</font></p>
+      <pre><font face="Courier" size="1">            +---+---+---+---+---+---+---+    
+            |   |:::|   |:::|   |:::|   |       
+            +---+---+---+---+---+---+---+    
+            |:::| c |:::| c |:::| c |:::|       
+            +---+---+---+---+---+---+---+    
+            |   |:::|   |:c:|   |:::|   |       
+            +---+---+---+---+---+---+---+    
+            |:::| c |:c:| C |:c:| c |:::|       
+            +---+---+---+---+---+---+---+    
+            |   |:::|   |:c:|   |:::|   |
+            +---+---+---+---+---+---+---+    
+            |:::| c |:::| c |:::| c |:::|       
+            +---+---+---+---+---+---+---+    
+            |   |:::|   |:::|   |:::|   |       
+            +---+---+---+---+---+---+---+ </font></pre>
+    </blockquote>
+    <p><font face="Arial" size="2">All other rules are the same as standard chess, except for
+    the addition initial move of pawns. In normal chess, pawns can make an initial move of 2
+    squares. In Omega Chess, pawns may move up to 3 squares. The En Passant capture has been
+    augmented to allow en passant capture to either vacant square through which the pawn
+    moved. </font>
+    
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="500">       
+
+<h3>Rules</h3>
+
+  <p>Two players, White (o) and Black (x), take turns placing a piece of their 
+    colour on either the left board or the right board. Pieces connect with adjacent 
+    neighbours, as in Hex. Any piece placed on a board edge <i>belongs to both 
+    boards at once</i>, and a duplicate piece is placed on the corresponding point 
+    of the other board to show this. This allows the connection to pass continuously 
+    from one board to the other.</p>
+  <p>Black wins by connecting the two boards' central points with a chain of 'x's. 
+    White wins by preventing this, i.e. by completing a ring of 'o's around at 
+    least one of the central points. Draws are not possible.</p>
+  <p><font face="Courier New, Courier, mono" size="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
+    &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2 3 4 5 6 7<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    1 2 3 4 5 6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 
+    1 1 1 1 1 1 <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/ 
+    / / / / / 7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 
+    / / / / / / 18<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/ 
+    8&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    &nbsp;&nbsp; / 19<br>
+    &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;&nbsp;&nbsp;&nbsp;o . . . . o &nbsp;&nbsp;/ 
+    9&nbsp;&nbsp;&nbsp; &nbsp; &nbsp;&nbsp; o . . . . o &nbsp; / 20<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b&nbsp;&nbsp;&nbsp; . . . . . . . &nbsp;&nbsp;/ 
+    10 &nbsp;&nbsp;&nbsp; &nbsp;. . . . . . . &nbsp;&nbsp;/ 21<br>
+    &nbsp;&nbsp; &nbsp;c&nbsp;&nbsp;&nbsp; . . . . . . . . &nbsp;&nbsp;/ 11&nbsp; 
+    &nbsp; .&nbsp;. . . . . . . &nbsp;&nbsp;/ 22<br>
+    &nbsp;&nbsp; d&nbsp;&nbsp;&nbsp;&nbsp;. .&nbsp;. . . . . . .&nbsp;&nbsp; / 
+    &nbsp;&nbsp; &nbsp;. . . . . . . . .&nbsp;&nbsp;&nbsp;/ <br>
+    &nbsp;&nbsp;e&nbsp;&nbsp;&nbsp;&nbsp;. . . . . . . . . . &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    . . . . . . . . . . <br>
+    &nbsp;f&nbsp; &nbsp;&nbsp;o . . . . x . . . . o&nbsp; &nbsp; &nbsp;o . . . 
+    . x . . . . o <br>
+    &nbsp;&nbsp;g&nbsp;&nbsp;&nbsp;&nbsp;. . . . . . . . . .&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 
+    . . . . . . . . . .<br>
+    &nbsp; &nbsp;h&nbsp;&nbsp;&nbsp;&nbsp;. . . . . . . . .&nbsp;&nbsp;&nbsp; 
+    &nbsp;&nbsp;&nbsp;&nbsp; . . . . . . . . .<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;i&nbsp;&nbsp;&nbsp;&nbsp;. . . . . . . .&nbsp;&nbsp;&nbsp;&nbsp; 
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; . . . . . .&nbsp;.&nbsp;.<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;j&nbsp;&nbsp;&nbsp;&nbsp;. . . . . . .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    . . . . . . .<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;k&nbsp;&nbsp;&nbsp;&nbsp;o . .&nbsp;. 
+    . o &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;o 
+    . . . . o</font><font face="Courier New, Courier, mono"><br>
+    </font></p>
+  <p>Each game starts with two target points 'x', and an 'o' in each of the six 
+    equatorial corners to balance Black's inherent advantage. White (o) plays 
+    first.</p>
+  <h3>Notes</h3>
+  <p>Antipod models the connection of antipodal points upon a sphere, where the 
+    left and right boards represent the two halves of the sphere. Duplicated edge 
+    pieces are really just two views of the same piece from different sides of 
+    the sphere, and are not necessarily any stronger than non-duplicate moves.</p>
+  <p>This is not a perfect hexagonal mapping on the sphere; the six equatorial 
+    corner points only have four unique neighbours each.</p>
+  <p>Smaller board sizes favour Black while larger board sizes favour White. We 
+    are still experimenting to determine the optimal board size.</p>
+  <h3>Examples</h3>
+  <p>The following example shows a game won by Black, who has connected the central 
+    point of each board with a chain of 'x's.<br>
+  </p>
+  <p> <font face="Courier New, Courier, mono" size="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
+    &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2 3 4 5 6 7<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    1 2 3 4 5 6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 
+    1 1 1 1 1 1 <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/ 
+    / / / / / 7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 
+    / / / / / / 18<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/ 
+    8&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    &nbsp;&nbsp; / 19<br>
+    &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;&nbsp;&nbsp;&nbsp;o o . x . o &nbsp;&nbsp;/ 
+    9&nbsp;&nbsp;&nbsp; &nbsp; &nbsp;&nbsp; o o . x . o &nbsp; / 20<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b&nbsp;&nbsp;&nbsp; x . . o . . . &nbsp;&nbsp;/ 
+    10 &nbsp;&nbsp;&nbsp; &nbsp;x . o o o . . &nbsp;&nbsp;/ 21<br>
+    &nbsp;&nbsp; &nbsp;c&nbsp;&nbsp;&nbsp;&nbsp;x . . . . o o . &nbsp;&nbsp;/ 
+    11&nbsp; &nbsp;&nbsp;x . . x x x . . &nbsp;&nbsp;/ 22<br>
+    &nbsp;&nbsp; d&nbsp;&nbsp;&nbsp;&nbsp;o x&nbsp;x . . . x . o&nbsp;&nbsp; / 
+    &nbsp;&nbsp; &nbsp;o x . x o o x o o&nbsp;&nbsp;&nbsp;/ <br>
+    &nbsp;&nbsp;e&nbsp;&nbsp;&nbsp;&nbsp;o . . x o . . . . . &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    o o x x o x x o . . <br>
+    &nbsp;f&nbsp; &nbsp;&nbsp;o o . x o x x . . . o&nbsp; &nbsp; &nbsp;o . o x 
+    o x . o x . o <br>
+    &nbsp;&nbsp;g&nbsp;&nbsp;&nbsp;&nbsp;. o o x o . x x x x&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 
+    . x o . o o o o x x<br>
+    &nbsp; &nbsp;h&nbsp;&nbsp;&nbsp;&nbsp;x x x x o o o x o&nbsp;&nbsp;&nbsp; 
+    &nbsp;&nbsp;&nbsp;&nbsp; x o o . . . x o o<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;i&nbsp;&nbsp;&nbsp;&nbsp;o . . x o x o x&nbsp;&nbsp;&nbsp;&nbsp; 
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; o . . . . x&nbsp;x&nbsp;x<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;j&nbsp;&nbsp;&nbsp;&nbsp;. . x . o o x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    . . . . x o x<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;k&nbsp;&nbsp;&nbsp;&nbsp;o . x&nbsp;x 
+    o o &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;o 
+    . x x o o</font><font face="Courier New, Courier, mono"><br>
+    </font></p>
+  <p>Black's winning path may not be immediately obvious as it jumps from board 
+    to board several times.</p>
+  <h3>Syntax</h3>
+  <p>The move syntax is: </p>
+  <p> &nbsp;&nbsp;&nbsp;&nbsp;antipod move <b>board userid password coord</b> 
+    <br>
+  </p>
+  <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Where <b>coord</b> is of 
+    the form:<br>
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>f4&nbsp;</b><i>&nbsp;</i>&nbsp;Place 
+    a piece at <b>f4</b> on the left board. &nbsp;&nbsp;&nbsp;&nbsp;<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>f14&nbsp;</b><i>&nbsp;</i>&nbsp;Place 
+    a piece at <b>f14</b> on the right board.</p>
+  <p></p>
+  <p></p>
+  <p>In all cases the point must be vacant. Any piece placed at an edge point 
+    is automatically created on both boards, and the move marked with a '<b>+</b>' 
+    in the move list.</p>
+  <p>
+  <p> 
+  <p> 
+  <h3>References and History</h3>
+
+  <p>Antipod rules copyright (c) 2003 Cameron Browne. </p>
+  <p>Antipod was invented following discussions with Bill Taylor regarding projective 
+    Hex games (games of connection which continue across board edges). Antipod's 
+    method of edge piece duplication has the advantage of explicitly showing edge 
+    crossings on both boards, making the game more comprehensible to the player 
+    than some others of this class. 
+  <p>Antipod was originally named <i>Corpus Callosum</i> for obvious reasons. 
+  <p>Implementation and help file by <a href="https://web.archive.org/web/20241003233639/mailto:cameronb@optusnet.com.au">Cameron 
+    Browne</a>, September 2003.</p>
+    
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

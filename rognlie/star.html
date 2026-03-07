@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+ <h3>Rules</h3>
+
+  <p>Star is played on the following board. Note that the sides alternate short/long 
+    around the board..<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+  </p>
+  <pre>           1-   . . . . . <br>          2-   . . . . . .             <br>         3-   . . . . . . .            <br>        4-   . . . . . . . .           <br>       5-   . . . . . . . . .          <br>      6-   . . . . . . . . . .         <br>       7-   . . . . . . . . .          <br>        8-   . . . . . . . .   \       <br>         9-   . . . . . . .   \ J      <br>         10-   . . . . . .   \ I       <br>                            \ H        <br>                 \ \ \ \ \ \ G         <br>                  A B C D E F          </pre>
+  <p></p>
+  <p></p>
+  <p>Players takes turns placing one of their pieces on the board. Players may 
+    pass. </p>
+  <p>Each chain of a player's pieces that touches an edge scores 1 point for every 
+    external cell it touches minus 2. The player's overall score is the total 
+    score of all of their chains.<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+  <pre>               ? ? ? ? ? ?<br>              ? . . o o . ?<br>             ? . . . o . . ?<br>            ? . . . . o . o ?<br>           ? . . . . . o o . ?<br>          ? . . . . . . o . . ?<br>         ? o . . . . . o . . . ?<br>          ? . . o . . . o . . ?<br>           ? . . o . . . o . ?  <br>            ? . . . . . . o ?    <br>             ? . o . . . o ?    <br>              ? ? ? ? ? ? ?    </pre>
+  <p>For instance, the external cells are marked ? in the above example. Note 
+    that corner cells have three external neighbours and edge cells have two external 
+    neighbours. </p>
+  <p>Player O has scored:<br>
+    &nbsp;&nbsp;&nbsp;+ 1 for the single corner piece (3 external neighbours minus 
+    2)<br>
+    &nbsp;&nbsp;&nbsp;+ 0 for the double interior chain (no external neighbours)<br>
+    &nbsp;&nbsp;&nbsp;+ 0 for the single edge piece (2 external neighbours minus 
+    2) <br>
+    &nbsp;&nbsp;&nbsp;+ 7 for the large chain (9 external neighbours minus 2)<br>
+    &nbsp;&nbsp;------------------<br>
+    &nbsp;&nbsp;&nbsp;= 8 points total<br>
+    &nbsp;&nbsp;==================</p>
+  <p>The game ends when both players pass in succession, and the player with the 
+    highest score wins. Due to the design of the board there will always be an 
+    odd number of external neighbours hence draws are not possible.</p>
+  <p><b>Maxi-Star</b>: As above except that each players' score is the score of 
+    their best group. Games can be tied in this variant, in which case players' 
+    second best, then third best etc chains are compared to determine the winner 
+    (tie-breaker not implemented yet).</p>
+  <h3>Move Syntax</h3>
+  <p>X moves first. The move syntax is: </p>
+  <p> &nbsp;&nbsp;&nbsp; star move <b>board# userid password coord</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+  </p>
+  <p>Where <b>&quot;coord&quot; </b>is an empty board point in the form 'F6'. 
+  </p>
+  <p>&nbsp;&nbsp;&nbsp;&nbsp;star move <b>board# userid password </b>pass<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;star move <b>board# userid password </b>--<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;star move <b>board# userid password </b>-<br>
+  </p>
+  <p>Pass this turn. The game ends when both players pass in succession.</p>
+  <p>&nbsp;&nbsp;&nbsp;&nbsp;star move <b>board# userid password </b>swap<br>
+  </p>
+  <p>Swaps the opening move (second move only).</p>
+  <p><a href="https://web.archive.org/web/20250621085055/http://www.gamerz.net/pbmserv/commands.html">Other commands</a> are the 
+    same as for all pbmserv games. </p>
+  <p>
+  <p> 
+  <h3>History</h3>
+
+  <p>Star was invented by Craige Schensted.</p>
+  <p>Maxi-Star rules by R. Wayne Schmittberger. 
+  <p>Implementation and help file by <a href="https://web.archive.org/web/20250621085055/mailto:cameronb@optusnet.com.au">Cameron 
+    Browne</a>, December 2003. 
+  </div>
+  
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

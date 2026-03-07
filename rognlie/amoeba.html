@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+              
+            <h2>Rules of Amoeba</h2></a>
+
+            (copyright (c) 1997,1999 by Jim Aikin)
+            <p>
+            Amoeba is a chess variant played on an 9x8 board with 64 squares.
+            Eight of the spaces are empty and adjacent squares may slide
+            into the empty spaces, thus altering the shape of the board.
+            <p>
+            The -small variant is played on a 7x7 board with 38 squares and
+            eleven empty spaces.
+            <p>
+            This is the initial layout of the normal Amoeba board:
+            <pre>
+                  a   b   c   d   e   f   g   h
+                +---+---+---+---+---+---+---+---+    
+              9 |*R*|*N*|*B*|*Q*|*K*|*B*|*N*|*R*|  9
+                +---+---+---+---+---+---+---+---+    
+              8 |*P*|*P*|*P*|*P*|*P*|*P*|*P*|*P*|  8
+                +---+---+---+---+---+---+---+---+
+              7 |:::|   |:::|   |:::|   |:::|   |  7
+                +---+---+---+---+---+---+---+---+
+              6 |   |###|   |:::|   |:::|###|:::|  6
+                +---+---+---+---+---+---+---+---+
+              5 |:::|###|:::|###|###|   |###|   |  5
+                +---+---+---+---+---+---+---+---+
+              4 |   |###|   |:::|   |:::|###|:::|  4
+                +---+---+---+---+---+---+---+---+
+              3 |:::|   |:::|   |:::|   |:::|   |  3
+                +---+---+---+---+---+---+---+---+
+              2 | P |:P:| P |:P:| P |:P:| P |:P:|  2
+                +---+---+---+---+---+---+---+---+    
+              1 |:R:| N |:B:| Q |:K:| B |:N:| R |  1
+                +---+---+---+---+---+---+---+---+    
+                  a   b   c   d   e   f   g   h
+            </pre>
+            <p>
+            This is the initial layout of the -small Amoeba board.
+            <pre>
+                  a   b   c   d   e   f   g
+                +---+---+---+---+---+---+---+    
+              7 |###|*R*|*N*|*K*|*N*|*R*|###|  7
+                +---+---+---+---+---+---+---+    
+              6 |###|*P*|*P*|*P*|*P*|*P*|###|  6
+                +---+---+---+---+---+---+---+
+              5 |:::|   |:::|   |:::|   |:::|  5
+                +---+---+---+---+---+---+---+
+              4 |   |:::|###|###|###|:::|   |  4
+                +---+---+---+---+---+---+---+
+              3 |:::|   |:::|   |:::|   |:::|  3
+                +---+---+---+---+---+---+---+
+              2 |###|:P:| P |:P:| P |:P:|###|  2
+                +---+---+---+---+---+---+---+    
+              1 |###| R |:N:| K |:N:| R |###|  1
+                +---+---+---+---+---+---+---+    
+                  a   b   c   d   e   f   g
+            </pre>
+
+            <h3>Movement</h3>
+
+            Each move in Amoeba consists of two parts.  The first is a normal
+            chess move.  The second part is optional, and consists of sliding
+            a square horizontally and/or vertically to an empty space.
+
+            <p>
+            All pieces move the same as in regular chess, with the following exceptions:
+            <ul>
+            <li>Pieces may not move through or land on an empty space,
+            although Knights may jump over them.
+
+            <li>There is no en passant capture.
+
+            <li>In the small version only, pawns do not get an initial 2-space move.
+            </ul>
+
+            <h3>Sliding Squares</h3>
+            <p>
+            When sliding a square, any of your own pieces which are on the square slide with it.
+            You may not slide squares which are occupied by your opponent's pieces.
+            Squares may slide horizontally or verically through any number of 
+            contiguous emtpy spaces, including around corners.
+            (The -single option will restrict squares to moving a single space, 
+            and the -opponent option will allow sliding your opponent's pieces.)
+
+            <p>
+            A square cannot be slid back to the same position it occupied before 
+            the most recent turn by the opponent.  This is the "ko rule" for sliding
+            squares.  For example, if your opponent slides the square at a2 into the
+            empty space at b2, you may not slide it back to a2 on the following turn.
+            You must wait a turn before you may do so, or if there was another empty
+            space nearby, such as at b3, you could slide it to there.
+
+
+            <h3>Pawn Promotion</h3>
+            Pawns promote when they reach the last
+            non-empty space which exists in their column.  In other words, if there
+            are no squares (just empty spaces) in front of the pawn, it promotes.
+            <p>
+            Pawns always promote at the end of the turn of the player who owns the
+            pawn.  This means that a pawn does not promote if it moves to 
+            a promotable position and then slides to a non-promotable position 
+            in the same move.  It also applies to the rare event when you slide 
+            a square out from in front of one of your opponent's pawns, placing
+            it in a promotable position.  In this case the
+            pawn does not promote until the end of the opponent's next move.
+            It is possible to set up a position in Amoeba where 3 pawns can 
+            promote in the same turn. 
+            <p>
+            If the "-promote" option is used, 
+            pawns only promote when they reach the last very rank of the board.  
+            <p>
+            On the -small board, pawns may promote to rook, knight, or bishop,
+            but NOT to a queen.
+
+
+            <h3>Check and Mate</h3>
+
+            Check and Checkmate only only considered at the end of a turn.
+            So it is legal for a king to move into check, as long as the check is
+            removed by sliding a square.  (Slide the king out of check, slide the
+            attacker to a different position, or leave an empty space between the
+            attacker and the king.)
+
+
+            <h3>Differences between Amoeba and Eight-Stone Chess</h3>
+
+            Eight-Stone Chess is Amoeba with the empty spaces represented by
+            stones on the board.  Since it uses stones instead of holes,
+            players may want to use the -promote option to disable early promotions.
+            It restricts most stone moves to single spaces, but it allows a
+            special move of a stone from one end of a straight line of stones to 
+            an unoccupied square at the other end.  The -single option would prohibit this
+            special move, so it is best for players to agree on restricting themselves
+            to a subset of the allowed moves before starting the game.
+
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

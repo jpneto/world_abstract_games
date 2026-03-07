@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h3><font face="Arial" size="2">Terrace Rules</font></a> </h3>
+    <p><font face="Arial" size="2">(Copyright (c) 1995 by Siler/Siler Ventures. All Rights
+    Reserved) </font></p>
+    <p><font face="Arial" size="2">Terrace is played on an 8x8 board consisting of 16 'L'
+    shaped terraces. Two corners of the board are &quot;High&quot; and the other corners are
+    &quot;Low&quot;. A normal 2 player game begins as shown below. Each player has pieces of 4
+    sizes ('A', 'B', 'C' and 'D'). 'A' pieces are the smallest, 'D' pieces are the largest.
+    'T' pieces are the same size as 'A' pieces and are each player's &quot;key&quot; piece. </font></p>
+    <p><font face="Arial" size="2">The object of the game is to capture your opponent's
+    &quot;T&quot; or move your &quot;T&quot; to the lowest square on your opponent's side of
+    the board. </font></p>
+    <pre><font face="Courier" size="1">
+                      H---+---+---+---+---+---+---+---L
+                    8 | D | D | C | C | B | B | A | T |
+                      +---+   +   +   +   +   +   +---+
+                    7 | A   A | B | B | C | C | D   D |
+                      +---+---+   +   +   +   +---+---+
+                    6 |           |   |   |           |
+                      +---+---+---+   +   +---+---+---+
+                    5 |               |               |
+                      +---+---+---+---+---+---+---+---+
+                    4 |               |               |
+                      +---+---+---+   +   +---+---+---+
+                    3 |           |   |   |           |
+                      +---+---+   +   +   +   +---+---+
+                    2 | d   d | c | c | b | b | a   a |
+                      +---+   +   +   +   +   +   +---+
+                    1 | t | a | b | b | c | c | d | d |
+                      L---+---+---+---+---+---+---+---H
+                        a   b   c   d   e   f   g   h  </font><font face="Arial" size="2">
+</font></pre>
+    <dl>
+      <dt><font face="Arial" size="2">Moving on the same level </font></dt>
+      <dd><font face="Arial" size="2">In a single move a piece can move to any vacant square on
+        the same level which it can reach without jumping over an opponent's piece. It can jump
+        over its own pieces. It cannot moves across the centerpoint of the board. </font></dd>
+      <dt><font face="Arial" size="2">Moving up </font></dt>
+      <dd><font face="Arial" size="2">A piece can move straight up or diagonally up one square at
+        a time to a vacant square on the next higher level. </font></dd>
+      <dt><font face="Arial" size="2">Moving down </font></dt>
+      <dd><font face="Arial" size="2">A piece can only move straight down, one square at a time,
+        to a vacant square on the next lower level (diagonal moves down are for capturing only). </font></dd>
+      <dt><font face="Arial" size="2">Capturing </font></dt>
+      <dd><font face="Arial" size="2">A piece can capture any piece which is the same size or
+        smaller by moving diagonally down to the next lower level into its square. The captured
+        piece is removed from the board. You *may* capture your own pieces. </font></dd>
+      <dt><font face="Arial" size="2">Movement Notation </font></dt>
+      <dd><font face="Arial" size="2">The official Terrace notation is: </font><pre><font face="Courier" size="1">
+    s-rc1-rc2        Normal move
+    s-rc1-rc2:d      Capture move
+</font></pre>
+        <p><font face="Arial" size="2">where </font><dl>
+          <dd><font face="Arial" size="2">s is the piece being moved (A,B,C,D,T) </font></dd>
+          <dd><font face="Arial" size="2">rc1 is the starting position of the piece being moved </font></dd>
+          <dd><font face="Arial" size="2">rc2 is the final position of the piece being moved </font></dd>
+          <dd><font face="Arial" size="2">d is the piece being captured by the move </font></dd>
+        </dl>
+      </dd>
+    </dl>
+    <h3><font face="Arial" size="2">Movement Examples</font></h3>
+    <pre><font face="Courier" size="1">
+    Moving on the same Level
+          +---+---+---+---+---+---+---+---+  
+        4 |     C   .   . |               |  
+          +---+---+---+   +   +---+---+---+  
+        3 |           | . |   |           |  
+          +---+---+   +   +   +   +---+---+  
+        2 | d   d | c | c |   |   |       |  
+          +---+   +   +   +   +   +   +---+  
+        1 | t | a | b | b |   |   |   |   |  
+          L---+---+---+---+---+---+---+---H  
+            a   b   c   d   e   f   g   h    
+</font></pre>
+    <p><font face="Arial" size="2">The pieces at d2 and d1 can move to any of the spaces
+    marked with a '.', but can not move to a1 due to the opponent's piece at location b4. </font></p>
+    <pre><font face="Courier" size="1">
+    Moving up
+          +---+---+---+---+---+---+---+---+  
+        4 |     C         |               |  
+          +---+---+---+   +   +---+---+---+  
+        3 |           |   | . |           |  
+          +---+---+   +   +   +   +---+---+  
+        2 | d   d | c | c | . |   |       |  
+          +---+   +   +   +   +   +   +---+  
+        1 | t | a | b | b | . |   |   |   |  
+          L---+---+---+---+---+---+---+---H  
+            a   b   c   d   e   f   g   h    </font><font face="Arial" size="2">
+</font></pre>
+    <p><font face="Arial" size="2">The piece at d2 can move up to any of the spaces marked
+    with a '.' </font></p>
+    <pre><font face="Courier" size="1">
+    Moving down
+          +---+---+---+---+---+---+---+---+  
+        4 |     C         |               |  
+          +---+---+---+   +   +---+---+---+  
+        3 |     .     |   |   |           |  
+          +---+---+   +   +   +   +---+---+  
+        2 | d   d | c | c |   |   |       |  
+          +---+   +   +   +   +   +   +---+  
+        1 | t | a | b | b |   |   |   |   |  
+          L---+---+---+---+---+---+---+---H  
+            a   b   c   d   e   f   g   h    
+</font></pre>
+    <p><font face="Arial" size="2">The piece at b4 can move down only to b3. </font></p>
+    <pre><font face="Courier" size="1">
+    Capturing
+          +---+---+---+---+---+---+---+---+  
+        4 |     C         |               |  
+          +---+---+---+   +   +---+---+---+  
+        3 | d       c |   |   |           |  
+          +---+---+   +   +   +   +---+---+  
+        2 |     d |   | c |   |   |       |  
+          +---+   +   +   +   +   +   +---+  
+        1 | t | a | b | b |   |   |   |   |  
+          L---+---+---+---+---+---+---+---H  
+            a   b   c   d   e   f   g   h    
+</font></pre>
+    <p><font face="Arial" size="2">The piece at b4 can capture the piece at c3, but not the
+    piece at a3. Why? The piece at a3 is larger than the piece at b4. </font></p>
+    <p><font face="Arial" size="2">&nbsp;</font>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

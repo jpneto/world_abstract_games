@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h3> <strong>Rules </strong><strong> </strong></h3>
+<p align="left"><strong>Tiles: </strong>Two players, Light  and Dark, share a common pool of identical hexagonal tiles showing the same pattern of white and blue paths on each side. Each tile side has three three white corners and three blue corners; there are three orientations (<em>a</em>, <em>b</em>, <em>c</em>) in which corners of the same colour lie in the same positions:</p>
+<pre>
+      +o--+       +o--+       +o--+  <br>     /oo   o     oooo  \     oo   oo <br>    + oo  oo+   +   oooo+   +   oooo+<br>     \oo   o     oo   oo     oooo  / <br>      +o--+       +o--+       +o--+  <br>        a           b           c     </pre>
+<p><strong>Board: </strong>The board is a hexagonal field whose shape depends on the version being played.  The board is initially empty.</p>
+<p><strong>Play:</strong> White places a tile on the cell of their choice, rotated as they wish. Blue may then elect to swap colours in lieu of making the second move (swap option). Players then take turns adding a tile to an empty cell in any of the three valid rotations.</p>
+<p><strong>Aim:</strong> A player wins by completing  a path of their colour. The exact type of path required depends on the version being played. Each game will have exactly one winner. </p>
+<p>  <strong>Y Gates:</strong> A player wins by connecting the three sides of the board with a path of their colour. For example, Light ( ) wins the following mini-game. </p>
+
+<pre>      +o--+<br>     ooo   o<br>    + oo  oo+o--+                <br>     ooo    oo   o<br>      +o  + oo  oo+o--+          <br>     oooo   oo   oooo  \<br>    +   oooo+o  +   oooo+o--+    <br>     oo   ooo   ooo   ooo   oo<br>      +o  +   oooo+o  +   oooo+  <br>     oo   ooooo   oo   oooo  /<br>    +   oooo+o  + oo  oo+o--+    <br>     oooo  oooo   oo   o<br>      +o  +   oooo+o--+          <br>     ooo   oo   oo<br>    + oo  oo+o--+                <br>     ooo   o<br>      +o--+</pre>
+<p> <strong>Hex Gates:</strong> A player wins by connecting their  sides of the board with a path of their colour. For example, Dark (o) wins the following mini-game. </p>
+<pre>                        +o--+<br>                       ooo   o<br>       (o)        +o--+ oo  oo+o--+        ( )     <br>                 ooo   ooo   oo   oo<br>            +---+ oo  oo+o  +   oooo+---+          <br>           /     ooo   oooo   ooo  /     \<br>      +---+       +o  +   oooo+o  +       +---+    <br>     /     \     oooo   o   ooooo  \     /     \<br>    +       +---+   oooo+o  +   oooo+o--+       +  <br>     \     /     oo   o oo   oo   ooooo  \     /<br>      +---+       +o  + oo  oo+o  +   oooo+---+    <br>           \     ooo   ooo   oo   ooo   oo<br>            +---+ oo  oo+o  +   oooo+o--+          <br>                 ooo   oo   ooooo  /<br>       ( )        +o--+   oooo+o--+        (o)     <br>                       oooo  /<br>                        +o--+</pre>
+<p> <strong>Cross Gates:</strong> A player wins by connecting  three non-adjacent board sides  with a path  of their colour, but loses if a path of their colour connects two opposite board sides  before  doing so. If a move completes losing paths for  both players then the mover loses. Corner cell edges shared by consecutive sides count as connections to both sides. </p>
+<p>For example, Dark (o) wins the following mini-game; they  have connected two opposite sides but have won by connecting three non-adjacent sides at the same time. </p>
+<pre>                  +---+<br>                 /     \<br>            +o--+       +o--+           <br>           oooo  \     oo   oo<br>      +---+   oooo+o--+   oooo+o--+     <br>     /     oo   ooooo  oooo   oo   o<br>    +       +o--+   oooo+o  + oo  oo+   <br>     \     /     oo   o oo   ooo   o<br>      +---+       +o  + oo  oo+o  +     <br>     /     \     /oo   ooo    oo   o<br>    +       +o--+ oo  oo+o  + oo  oo+   <br>     \     oo   oooo    oo   ooo   o<br>      +o--+   oooo+o  + oo  oo+o  +     <br>     oooo   ooo  oooo   oo   oooo  \<br>    +   oooo+o--+   oooo+o  +   oooo+   <br>     oo   oo     oo   ooo   ooo   oo<br>      +o--+       +o--+   oooo+o--+     <br>           \     /     oooo  /<br>            +---+       +o--+           <br>                 \     /<br>                  +---+</pre>
+<p><strong>Syntax</strong></p>
+<p><tt>gates move &lt;game#&gt; &lt;userid&gt; &lt;passwd&gt; c:d3</tt> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Play tile rotation 'c' at position d3.<tt><br>
+  gates move &lt;game#&gt; &lt;userid&gt; &lt;passwd&gt; swap</tt> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Swap colours (second move only).<br>
+  </p>
+<p><strong>Test Options</strong></p>
+<p>The -<tt>align</tt> option allows all six tile rotations, with colour clashes aligned to the tile just played. A tile cannot cause a colour clash unless it also has at least one matching neighbour (i.e. clashing moves require a support piece).<br>
+  <br>
+  The -<tt>invert_min</tt> option allows all six rotations with colour clashes resolved so that minimal inversions occur. Clashes are aligned to the tile just played if the choice is equal.<br>
+</p>
+<p><strong>History </strong></p>
+<p>Gates rules by  Cameron Browne and copyright &copy; Cyberite Ltd 2008. </p>
+<p>The name &ldquo;Gates&rdquo; refers to the way in which each tile directs connective flow in one direction or another. Any association with famous software monopolists - living, dead or somewhere in between - is coincidental.</p>
+<p> Cross Gates  was designed to address problems with the original Y and Hex and versions. The Y version has  a serious phase problem due to its three-fold radial symmetry;  the three tile rotations connect more strongly to the three board sides as well as the interior for Light  (the -<tt>align</tt> and -<tt>invert_min</tt> options help address this). The Hex version is  rather awkward in shape,   requires large board sizes for meaningful games and may suffer from a winning strategy as  it appears that the first player to establish a strong connection along the short diagonal can extend  it  at will. The Cross version addresses these problems by providing six-fold radial symmetry and equivalent goals within an elegant, compact board shape. </p>
+<p>The Gates tiles are equivalent to duotone (white/blue) <a href="https://web.archive.org/web/20250907023808/http://www.cameronius.com/games/mambo/">Mambo</a> tiles.</p>
+<p>More details are available at  the <a href="https://web.archive.org/web/20250907023808/http://www.cameronius.com/games/gates/">official Gates page</a>.</p>
+<p>Implementation and Help file by Cameron Browne, May  2008.<br>
+</p>
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

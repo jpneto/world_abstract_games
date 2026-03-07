@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h3><font face="Arial" size="2">Rules</a> </font></h3>
+    <h3><font face="Arial" size="2">Board and Setup</font></h3>
+    <p><font face="Arial" size="2">Fanorona is played on the intersections of a 9x5 grid with
+    10 diagonals drawn in. Pieces may only move along the lines on the board. </font></p>
+    <pre><font face="Courier" size="1">     a   b   c   d   e   f   g   h   i  
+
+                                           
+ 5   *---+---*---+---*---+---*---+---*   5 
+     |\  |  /|\  |  /|\  |  /|\  |  /|     
+     | \ | / | \ | / | \ | / | \ | / |       Black (b)
+     |  \|/  |  \|/  |  \|/  |  \|/  |     
+ 4   +---*---+---*---+---*---+---*---+   4 
+     |  /|\  |  /|\  |  /|\  |  /|\  |     
+     | / | \ | / | \ | / | \ | / | \ |     
+     |/  |  \|/  |  \|/  |  \|/  |  \|     
+ 3   *---+---*---+---*---+---*---+---*   3 
+     |\  |  /|\  |  /|\  |  /|\  |  /|     
+     | \ | / | \ | / | \ | / | \ | / |     
+     |  \|/  |  \|/  |  \|/  |  \|/  |     
+ 2   +---*---+---*---+---*---+---*---+   2 
+     |  /|\  |  /|\  |  /|\  |  /|\  |     
+     | / | \ | / | \ | / | \ | / | \ |       White (a)
+     |/  |  \|/  |  \|/  |  \|/  |  \|     
+ 1   *---+---*---+---*---+---*---+---*   1 
+
+                                           
+     a   b   c   d   e   f   g   h   i  </font></pre>
+    <p><font face="Arial" size="2">Each player starts with 22 pieces on the board in the
+    following setup: </font></p>
+    <pre><font face="Courier" size="1">     a   b   c   d   e   f   g   h   i  
+
+    ### ### ### ### ### ### ### ### ###    
+ 5  ###-###-###-###-###-###-###-###-###  5 
+    ### ### ### ### ### ### ### ### ###    
+     | \ | / | \ | / | \ | / | \ | / |       Black (Black)
+    ### ### ### ### ### ### ### ### ###    
+ 4  ###-###-###-###-###-###-###-###-###  4 
+    ### ### ### ### ### ### ### ### ###    
+     | / | \ | / | \ | / | \ | / | \ |     
+    ### OOO ### OOO \|/ ### OOO ### OOO    
+ 3  ###-OOO-###-OOO--*--###-OOO-###-OOO  3 
+    ### OOO ### OOO /|\ ### OOO ### OOO    
+     | \ | / | \ | / | \ | / | \ | / |     
+    OOO OOO OOO OOO OOO OOO OOO OOO OOO    
+ 2  OOO-OOO-OOO-OOO-OOO-OOO-OOO-OOO-OOO  2 
+    OOO OOO OOO OOO OOO OOO OOO OOO OOO    
+     | / | \ | / | \ | / | \ | / | \ |       White (White)
+    OOO OOO OOO OOO OOO OOO OOO OOO OOO    
+ 1  OOO-OOO-OOO-OOO-OOO-OOO-OOO-OOO-OOO  1 
+    OOO OOO OOO OOO OOO OOO OOO OOO OOO    
+
+     a   b   c   d   e   f   g   h   i  </font></pre>
+    <p><font face="Arial" size="2">The object of the game is to capture all of the opponent's
+    pieces. If both sides have pieces left but neither can force any further captures, the
+    players may agree to a draw. </font></p>
+    <h3><font face="Arial" size="2">Moving and Capturing</font></h3>
+    <p><font face="Arial" size="2">Each move consists of sliding a piece along one of the
+    lines on the board to an adjacent intersection. The destination intersection must be
+    empty. </font></p>
+    <p><font face="Arial" size="2">Captures occur on moves in one of two ways, either by
+    approach or by withdrawal. A piece captures by approach if the intersection next to the
+    destination in the direction of movement is occupied by an enemy piece. A piece captures
+    by withdrawal if the intersection next to the source opposite the direction of movement is
+    occupied by an enemy piece. In both cases, all contiguous enemy pieces along the line of
+    movement are captured. A piece may only capture in one direction; if it could capture both
+    ways, the player must choose which. </font></p>
+    <p><font face="Arial" size="2">In the following diagram, the black piece may capture h and
+    i by approach, or c, d, and e by withdrawal (but not both). The white piece on a1 is not
+    captured by withdrawal because it is not contiguous with the others. </font></p>
+    <pre><font face="Courier" size="1">    OOO     OOO OOO OOO ###     OOO OOO    
+ 1  OOO--+--OOO-OOO-OOO-###--+--OOO-OOO  1 
+    OOO     OOO OOO OOO ###     OOO OOO    
+
+     a   b   c   d   e   f   g   h   i  </font></pre>
+    <p><font face="Arial" size="2">In this diagram, the black piece at f has no captures
+    available. It may not capture by approach because there is no piece at h, and it may not
+    capture by withdrawal because e is not an enemy piece. </font></p>
+    <pre><font face="Courier" size="1">    OOO     OOO OOO ### ###         OOO    
+ 1  OOO--+--OOO-OOO-###-###--+---+--OOO  1 
+    OOO     OOO OOO ### ###         OOO    
+
+     a   b   c   d   e   f   g   h   i  </font></pre>
+    <h3><font face="Arial" size="2">Turns</font></h3>
+    <p><font face="Arial" size="2">On a player's turn, he must move one of his pieces. He must
+    capture pieces if he can do so, otherwise he simply moves a single piece and his turn is
+    over. After making a capture, a player may make additional captures with the same piece as
+    long as he is able. Additional captures are optional and he may stop at any time. A piece
+    making additional captures must change direction with each movement and may not revisit
+    any intersections it occupied earlier that turn. </font><a name="notation"></p>
+    <h3><font face="Arial" size="2">Fanorona Move Notation</a> </font></h3>
+    <p><font face="Arial" size="2">Movements are specified using algebraic notation, with a +
+    or - after the move to indicate capturing by approach or withdrawal. Movements may be
+    separated by a non-alphanumeric character such as a comma or semicolon. </font></p>
+    <p><font face="Arial" size="2">The server will allow the player to specify each movement
+    during a turn in separate commands or all together. Because of this, if you choose to end
+    your turn when you could have made additional captures, you must send one of the strings
+    &quot;stop&quot;, &quot;end&quot;, &quot;done&quot;, or &quot;pass&quot; to end your turn.
+    </font></p>
+    <p><font face="Arial" size="2">Some examples of acceptable notations follow. </font><dl>
+      <dt><font face="Arial" size="2">Non-capturing: </font></dt>
+      <dd><font face="Arial" size="2">a1a2<br>
+        a1-a2 </font></dd>
+      <dt><font face="Arial" size="2">Single capturing move: </font></dt>
+      <dd><font face="Arial" size="2">a1a2+<br>
+        a2-a2+<br>
+        a1,a2+ </font></dd>
+      <dt><font face="Arial" size="2">Multiple capturing moves: </font></dt>
+      <dd><font face="Arial" size="2">a1a2+,b2+,b3-<br>
+        a1a2+;a2b2+;b2b3-<br>
+        a1-a2+b2+b3-<br>
+        </font></dd>
+      <dt><font face="Arial" size="2">Second movement command in a turn: </font></dt>
+      <dd><font face="Arial" size="2">a2b2+<br>
+        b2+<br>
+        b2+;b3- </font></dd>
+      <dt><font face="Arial" size="2">Ending a turn without making all possible captures: </font></dt>
+      <dd><font face="Arial" size="2">done<br>
+        b2+,end<br>
+        a1a2+b2+stop </font></dd>
+      <dt><font face="Arial" size="2">&nbsp;</font></dt>
+    </dl>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

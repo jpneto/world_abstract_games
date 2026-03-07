@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h2>Rules of Hnefatafl</h2></a>
+                                       
+<h3>Object of the Game</h3>
+
+The object of the game is different for each player.
+
+<p>The object for player 1 (Ohs) is to prevent the opponent's king 
+from escaping, and ultimately to capture it.
+
+<p>The object for player 2 (Eks) is to help his king escape, by moving the king
+from the throne in the center of the board to one of the four corner spaces.
+
+<p>The opening setup for each size is shown below:
+<pre>
+      A B C D E F G H I 
+
+   9  = . . o o o . . =   9
+   8  . . . . o . . . .   8
+   7  . . . . x . . . .   7
+   6  o . . . x . . . o   6
+   5  o o x x k x x o o   5
+   4  o . . . x . . . o   4
+   3  . . . . x . . . .   3
+   2  . . . . o . . . .   2
+   1  = . . o o o . . =   1
+
+      A B C D E F G H I 
+
+        Figure 1: Hnefatafl -small or -tablut Board
+
+
+      A B C D E F G H I J K 
+
+  11  = . . o o o o o . . =  11
+  10  . . . . . o . . . . .  10
+   9  . . . . . . . . . . .   9
+   8  o . . . . x . . . . o   8
+   7  o . . . x x x . . . o   7
+   6  o o . x x k x x . o o   6
+   5  o . . . x x x . . . o   5
+   4  o . . . . x . . . . o   4
+   3  . . . . . . . . . . .   3
+   2  . . . . . o . . . . .   2
+   1  = . . o o o o o . . =   1
+
+      A B C D E F G H I J K 
+
+        Figure 2: Hnefatafl default Board
+
+
+      A B C D E F G H I J K L M 
+
+  13  = . . . o o o o o . . . =  13
+  12  . . . . . . o . . . . . .  12
+  11  . . . . . . . . . . . . .  11
+  10  . . . . . . x . . . . . .  10
+   9  o . . . . . x . . . . . o   9
+   8  o . . . . . x . . . . . o   8
+   7  o o . x x x k x x x . o o   7
+   6  o . . . . . x . . . . . o   6
+   5  o . . . . . x . . . . . o   5
+   4  . . . . . . x . . . . . .   4
+   3  . . . . . . . . . . . . .   3
+   2  . . . . . . o . . . . . .   2
+   1  = . . . o o o o o . . . =   1
+
+      A B C D E F G H I J K L M 
+
+        Figure 3: Hnefatafl -medium Board
+
+
+      A B C D E F G H I J K L M N O P Q R S 
+
+  19  = . o . . o . . . . . . . o . . o . =  19
+  18  . . . . . . . . . . . . . . . . . . .  18
+  17  o . . . . o . . . . . . . o . . . . o  17
+  16  . . . . . . . o . o . o . . . . . . .  16
+  15  . . . . . . o . x . x . o . . . . . .  15
+  14  o . o . . o . . . . . . . o . . o . o  14
+  13  . . . . o . . . . x . . . . o . . . .  13
+  12  . . . o . . . . x . x . . . . o . . .  12
+  11  . . . . x . . x . x . x . . x . . . .  11
+  10  . . . o . . x . x k x . x . . o . . .  10
+   9  . . . . x . . x . x . x . . x . . . .   9
+   8  . . . o . . . . x . x . . . . o . . .   8
+   7  . . . . o . . . . x . . . . o . . . .   7
+   6  o . o . . o . . . . . . . o . . o . o   6
+   5  . . . . . . o . x . x . o . . . . . .   5
+   4  . . . . . . . o . o . o . . . . . . .   4
+   3  o . . . . o . . . . . . . o . . . . o   3
+   2  . . . . . . . . . . . . . . . . . . .   2
+   1  = . o . . o . . . . . . . o . . o . =   1
+
+      A B C D E F G H I J K L M N O P Q R S 
+
+        Figure 4: Hnefatafl -large Board
+</pre>
+
+<h3>Movement Rules</h3>
+
+Each turn, a player moves one piece horizontally or vertically any
+number of spaces.  (like a chess rook)
+
+<p>Only the king may land on the throne or corner spaces.  Either player's
+pieces may pass over the throne as part of a move.
+
+<h3>Capturing</h3>
+
+Pieces are captured by flanking an opponent's piece on two opposite sides
+(custodial capture).  
+Up to three pieces can be captured in a single turn. 
+The corner and throne (when unoccupied) count as a piece for capturing men.  
+Pieces can safely move between two other pieces.  
+
+<p>In figure 5, the X is captured when O moves B2-B4.
+Figure 6 is an example of a multiple capture of three pieces.
+In figure 7 the X is captured when the O moves C3-C1.
+In figure 8, the O moving C1-C3 is not captured.
+
+<pre>
+   Examples of Captures.
+
+      A B C D E          A B C D E
+   5  . . . . .       5  . . o . . 
+   4  . . x o .       4  . . x . .
+   3  . | . . .       3  o x . x o
+   2  . o . . .       2  . . | . .
+   1  . . . . .       1  . . o . .
+                                  
+      Figure 5           Figure 6 
+        B2-B4              C1-C3
+
+
+      A B C D E          A B C D E 
+   5  . . . . .       5  . . . . . 
+   4  . . . . .       4  . . . . . 
+   3  . . o . .       3  . x . x . 
+   2  . . | . .       2  . . | . . 
+   1  = x . . .       1  . . o . . 
+                     (NOT a capture)
+      Figure 7           Figure 8   
+        C3-C1              C1-C3
+</pre>
+ 
+<p>The king is captured like other men, except when he is on the throne
+or in one of the four spaces next to the throne.  When he is on or next to
+the throne he must be surrounded on four side to be captured, either by
+four enemy pieces when he is one the thrown (figure 9) or by three enemy
+pieces and the throne itself (figure 10) when he is next to the throne.
+The -weak option is the same as the default behavior.
+
+<p>If the -strong option is used, the King must always be surrounded on
+four sides to be captured.  The edge of the board also counts for surrounding
+the king.  This has the side effect that the move in figure 12
+is a capture with the -strong option, but not with the default (-weak) option.
+
+<pre>
+   Various ways to capture a King.
+
+      A B C D E          A B C D E   
+   5  . . . . .       5  . . . . .   
+   4  . . o . .       4  . . . . .   
+   3  . o k o .       3  . . = . .   
+   2  o---. . .       2  . o k o .   
+   1  . . . . .       1  o---. . .   
+                                     
+      Figure 9           Figure 10   
+        C1-C3              A1-C1
+
+
+      A B C D E          A B C D E
+   5  . . . . .       5  . . . . .
+   4  . . . . o       4  . . . . o
+   3  . . . . k       3  . . . . k
+   2  . . o---.       2  . . . | o
+   1  . . . . .       1  . . . o .
+                      (-strong only) 
+      Figure 11          Figure 12
+        C2-E2              D1-D3  
+</pre>
+
+<h2>Hnefatafl Links:</h2>
+<a href="https://web.archive.org/web/20250208042054/http://www.gamecabinet.com/history/Hnef.html">http://www.gamecabinet.com/history/Hnef.html</a>
+<br>
+<a href="https://web.archive.org/web/20250208042054/http://user.tninet.se/~jgd996c/hnefatafl/hnefatafl.html">http://user.tninet.se/~jgd996c/hnefatafl/hnefatafl.html</a>
+<br>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

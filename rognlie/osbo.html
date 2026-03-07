@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h3><strong> Introduction</strong></h3>
+<p> Osbo is a boardless dice  game in which two or more players strive to complete the longest celtic knot.<br>
+</p>
+<h3><strong>Rules</strong></h3>
+<p><strong>Dice: </strong>Players share a common pool of six-sided dice showing knot segments on each face. Note that two of the faces are identical:</p>
+<pre> +-----+   +--#--+   +-----+   +-----+   +-----+   +--#--+  
+ |  #  |   | # # |   |#### |   |#### |   |#####|   |## ##|
+ | # # |   | # # |   #   # |   #   # |   #     #   #     #
+ | # # |   | # # |   |## # |   |## # |   |## ##|   |## ##|
+ +--#--+   +--#--+   +--#--+   +--#--+   +--#--+   +--#--+ </pre>
+<p>Each player has a separate playing area in which they grow their design. The game starts with a  single die in each  playing area showing the face with the  most crossings:</p>
+<pre> +--#--+
+ |## ##|
+ #     #
+ |## ##|
+ +--#--+</pre>
+<p><strong>Play:</strong> Players  take turns rolling a number of dice (equal to the number of players) and playing each   die face   shown to  extend their  and their opponents' paths. Edge crossings must match edge crossings on neighbouring dice, and as many dice as possible  must be played to as many players as possible each turn. </p>
+<p>A typical move will therefore  involve the current player adding  one die  (the best one!) to their own design and one die to each of their opponent's designs. Any dice left over due to players   with closed  designs may instead be played wherever the mover chooses.</p>
+<p>Each player's design must fit within a 5x5 grid;  moves that would allow a design to extend beyond this limit are not allowed. The following example shows an illegal move 'x' that would allow the design to extend beyond a 5x5 grid  and a legal move 'y' that keeps it   within the 5x5 limit.</p>
+<pre>                       +--#--+            +-----+
+                       |## ##|            |#####|
+          Illegal --&gt;  #  x  #            #  y  #  &lt;-- Legal move
+                       |## ##|            |## ##|
+ +--#--+               +--#--+            +--#--+
+ | # # |               | # # |            | # # |
+ | # # |               | # # |            | # # |
+ | # # |               | # # |            | # # |
+ +--#--+               +--#--+            +--#--+
+ |## ##|               |## ##|            |## ##|
+ #     #               #     #            #     #
+ |## ##|               |## ##|            |## ##|
+ +--#--+               +--#--+            +--#--+
+ | # # |               | # # |            | # # |
+ | # # |               | # # |            | # # |
+ | # # |               | # # |            | # # |
+ +--#--+               +--#--+            +--#--+
+ |## ##|               |## ##|            |## ##|
+ #     #               #     #            #     #
+ |#####|               |#####|            |#####|
+ +-----+               +-----+            +-----+
+</pre>
+<p><strong>Aim: </strong>The game ends when no players have any more moves (i.e.  when all designs have been  closed) and is won by the owner of the longest closed path. A path's length is measured by the number of crossings it contains, with self-crossings counting twice. </p>
+<p>For example, the following mini-game between Fred and Ted has ended as both players' designs have been  completed (closed). Ted has won this game with a path of length 6 even though Fred has more total crossings; Ted was able to maintain a single closed path while Fred's design contains two shorter  closed paths of length 4. </p>
+<pre> +-----+-----+      +-----+-----+
+ | ####|#### |      |  #  |  #  |
+ | #   #   # |      | # # | # # |
+ | # ##|## # |      | # # | # # |
+ +--#--+--#--+      +--#--+--#--+
+ | # ##|## # |      | # ##|## # |
+ | #   #   # |      | #   #   # |
+ | ####|#### |      | ####|#### |
+ +-----+-----+      +-----+-----+
+    Fred (4)         Ted (6) wins<br>
+</pre>
+<div align="center">
+  <h3 align="left"><strong>Notes</strong></h3>
+  <p align="left">Players should strive to maintain a single path with as many extension points as possible in their own design while attempting to split enemy designs into multiple shorter paths with limited  extension points.</p>
+  <p align="left">Dice faces with more  crossings are more useful  in the early game, while dice faces with fewer crossing are more useful in the end game.</p>
+  <p align="left">An NxN game with P players will require  NxNxP dice. For instance,  a standard two-player 5x5 game will require 50 dice.</p>
+  <p align="left">Osbo is  perverse in that players with completed designs  - and hence no moves for themselves - still actively participate in the game and  can even decide the eventual winner. This  kingmaker effect is generally taboo in multiplayer game design but  has been  deliberately incorporated so that players must think carefully about who they attack; if A consistently hurts  D, then D will take revenge  when the opportunity arises (McCarthy's Revenge Rule). In fact, players with completed designs have extra blocking power as they no longer need to save the best die for themselves and will have  at least one free die with which to wreak havoc. Players must therefore try to eliminate opponents without  annoying them in the process. Tricky!</p>
+  <p align="left">Another reason that players with closed designs  remain active in the game is that they  may not only decide the winner, but  may go on to win the game themselves. Even players who have resigned and  left the game may still win if they have achieved a closed path of sufficient length before retiring.</p>
+  <p align="left">The fact that players may play to all opponents  each turn  makes move order less important than in other games. This provides a balancing mechanism   which means  that   the last player does not necessarily get the worst deal.</p>
+  <p align="left">The  moves made each turn  are highlighted in the board display so that  players can keep tabs of who is being nice to them and who isn't. <br>
+    <br>
+  </p>
+</div>
+
+<h3>History </h3>
+
+<p>Osbo dice   and rules copyright (c)  Cameron Browne,  March  2008.</p>
+<p>Osbo was inspired by celtic knotwork (or "not work" as my boss Quentin used to call it) and the wish to design a game that produced works of art as it was played. "Osbo" is a Proto-Celtic word meaning "knot".</p>
+<p>The NxN grid constraint was inspired by the game of Tashkent Dominoes. This constraint, used to good effect in many other games such as Trax, ensures that players cannot   indefinitely diverge opponents' paths away to keep them open and that games converge to a solution. </p>
+<p>The -<span class="style1"><tt>auto_tips</tt></span> option is reminiscent of the automatic snake head placement in Schlangennest, as suggested by Stephen Tavener. </p>
+<p>More details are available at  the <a href="https://web.archive.org/web/20250524003840/http://www.cameronius.com/games/osbo/">official Osbo page</a>.</p>
+<p>Implementation and Help file by Cameron Browne, March  2008.<br>
+</p>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

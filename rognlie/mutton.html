@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h3><strong> Introduction</strong></h3>
+<div align="left">
+  <p> All is not well in the farmyard. The cock crows, the farmer wakes and sees another sheep eaten in the night. Grabbing his trusty gun he takes careful aim... but at which blood-spattered suspect? Can he shoot the wolves in sheep's clothing before they eat all his sheep? <br>
+  </p>
+  </div>
+<h3><strong>Rules </strong></h3>
+<p> A match is played over two games. Each game has a Wolf player, who scores 1 point for each dead sheep, and a Farmer who tries to shoot the wolves hidden amongst the flock as quickly as possible, thus minimising the Wolf's score. </p>
+<p> After both players have had a turn at being the Wolf, the player with the highest score wins. </p>
+<p><strong>Start: </strong>The Farmer places  26 sheep labelled 'A' to 'Z' on the board and the 
+
+
+Wolf secretly chooses four sheep to be wolves in sheep's clothing. The Wolf may find it convenient to choose four letters of a common word (e.g. &quot;HIDE&quot;) so that the hidden wolves are easily remembered.</p>
+<pre align="left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1 2 3 4 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; / / / / 5
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; / 6
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; a-&nbsp; A B C D&nbsp;&nbsp; / 7 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; b-&nbsp; E . F . G&nbsp;&nbsp; / 
+&nbsp;&nbsp;&nbsp;&nbsp; c-&nbsp; H I . . J K
+&nbsp;&nbsp;&nbsp; d-&nbsp; L . M . N . O
+&nbsp;&nbsp;&nbsp;&nbsp; e-&nbsp; P Q . . R S
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; f-&nbsp; T . U . V
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; g-&nbsp; W X Y Z</pre>
+<p><strong>Play: </strong>Each round consists of a Wolf move followed by a  Farmer move, as follows.</p>
+<p><strong>1)&nbsp; Wolf Move: 
+
+
+</strong>The Wolf player must kill a sheep adjacent to one of the hidden wolves and indicate its death by turning the corpse upside down. Each immediate neighbour of the corpse (including the killer) then runs away to an empty cell that is not adjacent to the corpse. </p>
+<p>If the <tt>-escape</tt> option is used, then instead of making a kill the Wolf may  remove  any hidden wolf with no immediate  neighbours to make it escape for 3 pts.</p>
+<p><strong>2) &nbsp;Farmer Move: </strong> The Farmer may perform one of the following actions: </p>
+<ul>
+  <li> Pass. </li>
+  <li> Shoot a suspect; the corpse is turned upside down, neighbouring sheep do not run away. </li>
+  <li> Go berserk and shoot multiple suspects. </li>
+</ul>
+<p> If the Farmer shoots a wolf, the Wolf player confirms the kill immediately, in the time-honoured fashion: &ldquo;Aroooo!&rdquo;. If the Farmer shoots a sheep, the Wolf player should say &ldquo;Baaa!&rdquo; as pathetically as possible. </p>
+<p> If the Farmer goes berserk and shoots multiple suspects then the game ends, and any surviving wolf eats the remaining sheep as the Farmer reloads. Multiple shots should be used as a last resort only!</p>
+<p><strong>Aim: </strong>The Wolf scores 1 pt for each  sheep killed (eaten or shot) over the course of the game.</p>
+<p> Each game ends when the farmer succeeds in killing all the remaining wolves. The Wolf scores 1 pt for each sheep killed (eaten or shot) over the course of the game. The Wolf's score is noted and the second game started with the Wolf and Farmer roles reversed. </p>
+<p> The player with the highest score over both games wins the overall contest. </p>
+<h3><strong>Example</strong></h3>
+<p>The following example shows a game in progress. Corpses    are marked  '*';  this position is  not blocked   from use next turn if the <tt>-remove</tt> option is used.</p>
+<div>
+  <pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1 2 3 4 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; / / / / 5
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; / 6
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; a-&nbsp; A B X M&nbsp;&nbsp; / 7 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; b-&nbsp; E . . . O&nbsp;&nbsp; / 
+&nbsp;&nbsp;&nbsp;&nbsp; c-&nbsp; G . * . L P
+&nbsp;&nbsp;&nbsp; d-&nbsp; I V . . . . T
+&nbsp;&nbsp;&nbsp;&nbsp; e-&nbsp; K F . . . N
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; f-&nbsp; Y . . . Z 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; g-&nbsp; U C Q R 
+
+Score: 5 (10 to beat).</pre>
+</div>
+<div>
+  <pre>Sheep&nbsp;&nbsp; : A B C x E F G x I x K L M N O P Q R x T U V x X Y Z
+Round&nbsp; 1:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; +&nbsp;&nbsp; x&nbsp;&nbsp; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+Round&nbsp; 2:&nbsp;&nbsp;&nbsp;&nbsp; + +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+Round&nbsp; 3:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; +&nbsp;&nbsp; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; +&nbsp;&nbsp; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x&nbsp;&nbsp;&nbsp;&nbsp; + </pre>
+</div>
+<p>The table below the board shows a record of killings and sheep movement following each Wolf move. Dead sheep are  marked 'x' in the top row and in the table, dead wolves are marked 'w' (unless the <tt>-no_reveal</tt> option is used) and sheep movements are marked '+'. </p>
+<p>This  information helps the  Farmer deduce which animals are   the hidden wolves. For example, animal F has moved twice and hence been adjacent to two killings; F  should be one of the Farmer's  prime suspects. Knowing which round the  animals moved in can reveal further insights. </p>
+<h3>Frequently Asked Questions</h3>
+<p><strong> How many times can I go berserk?</strong></p>
+<p> Once. After that, you have either caught all the wolves, or the wolves eat all the remaining sheep while you reload. </p>
+<p><strong> Where can sheep run to?</strong></p>
+<p> To any empty cell that is not adjacent to the sheep just killed. Sheep may jump over obstacles. </p>
+<h3>Strategy tips</h3>
+<p> Wolf </p>
+<ul>
+  <li> Avoid incriminating your packmates. If you make a kill that causes several wolves to be moved, you increase the odds that they will be caught. </li>
+  <li> A wolf doesn't necessarily want to be surrounded by sheep. He wants his victim to be surrounded by sheep. </li>
+  <li> Avoid using all your wolves for as long as possible. The farmer can't sensibly go berserk if one of your wolves hasn't been activated yet. </li>
+  <li> Don't split up a group. If multiple suspects from one kill are involved in the next kill, that reduces the information available to the farmer. </li>
+</ul>
+<p> Farmer </p>
+<ul>
+  <li> The farmer has the more difficult job; at the start of the game, it is very difficult to place the wolves with any degree of accuracy so his main job is to get the wolf to give him as much information as possible each turn.&nbsp; Most of the advice below should be read with this in mind. </li>
+  <li> The starting position shown in figure 1 is recommended, since the wolf can move at most 3 suspects after the first kill, compared with a worst case of 6. </li>
+  <li> 101 uses of a dead sheep. The corpses clutter up the board, and work to the farmer's advantage. If you have an equal choice between several suspects, the best choice is usually the one that leaves the remaining sheep with the fewest neighbours. Try to leave the corpses scattered around the board rather than clumped together. </li>
+  <li> The wolf wants to move with as many sheep as possible. If a suspect is relatively isolated, it is unlikely to be a wolf. </li>
+  <li> &quot;Kill them all, and let god work it out.&quot; If you are playing second, and have narrowed down the suspects to one or two candidates for each wolf, consider going berserk -&shy; you may have a guaranteed win.&nbsp; Going first, the decision is more difficult.&nbsp; In terms of ESD (expected sheep deaths), there is no difference between going berserk and sniping, as long as all the suspects stick together.&nbsp; If the suspects are forced to split up, then sniping is better.&nbsp; Of course, this ignores the psychological element. </li>
+  <li> Study your opponent; do they always move the wolf first? Last? Do they always place the wolf near the maximum number of sheep, or do they like to be sneaky? Many are the ways in which a wolf can betray itself. </li>
+  <li> The Wolf maximises confusion by killing sheep surrounded on all six sides. It can therefore be good practice to shoot any sheep thus surrounded even if there's no evidence that it is in fact a wolf; this will likely hamper the Wolf's next move. </li>
+</ul>
+<div>
+  <h3 align="left"><strong>The Mutton Song</strong></h3>
+  <p><em>One dead sheep upon the grass, 25 to go.<br>
+  One dead sheep upon the grass, 25 to go.<br>
+  If any of the wolves out there should want to say "hello", there'd be<br>
+Two dead sheep upon the grass, 24 to go...</em></p>
+  <p>Iterate as required. </p>
+</div>
+
+<h3>History </h3>
+
+<p>Mutton rules and design by Stephen Tavener and   Cameron Browne, copyright (c) Cyberite Ltd  2008.</p>
+<p align="left">Official Mutton page: <a href="https://web.archive.org/web/20251015211712/http://www.cameronius.com/games/mutton/">http://www.cameronius.com/games/mutton/</a></p>
+<p align="left">Graphical web interface: <a href="https://web.archive.org/web/20251015211712/http://www.gamerz.net/pbmserv/List.php?Mutton">http://www.gamerz.net/pbmserv/List.php?Mutton</a></p>
+<p>Implementation and Help file by Cameron Browne, October 2008.<br>
+</p>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

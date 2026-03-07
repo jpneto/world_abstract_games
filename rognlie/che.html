@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h3><strong> Introduction</strong></h3>
+<p>  Che is a boardless tile placement game in which players strive to form closed regions with Truchet tiles. <br>
+</p>
+<p> <strong>Rules </strong><strong> </strong></p>
+<p>Two players, Light and Dark, share a common pool of   duotone Truchet tiles. Each tile has inverted colours on the front and back and may be played oriented either left or right. </p>
+<pre>       +---|---+   +---|---+
+       |    \..|   |../    |
+ Front __    \__   __/    __  (Light dominant)
+       |.\     |   |     /.|
+       |..\    |   |    /..|
+       +---|---+   +---|---+ 
+
+
+       +---|---+   +---|---+
+       |....\  |   |  /....|
+ Back  __....\__   __/....__  (Dark dominant)
+       | \.....|   |...../ |
+       |  \....|   |..../  | 
+       +---|---+   +---|---+ 
+ 
+         Left        Right </pre>
+<p> <strong>Play:</strong> Light places a tile of their choice on the playing area. Players then take turns placing  two   tiles of their choice squarely adjacent to at least one existing tile such that all neighbouring edge colours match (the two tiles being placed to not need to be adjacent themselves).</p>
+<p><strong> Aim:</strong> A player wins by completing a closed region of their colour, which may be any size or shape. If a move achieves this for both players then the mover loses. </p>
+<pre> +---|---+---|---+
+ |../         \..|
+ __/    ___    \__
+ |     /...\     |
+ |    /.....\    |
+ +   |...+...|   +   Dark wins this game
+ |    \...../    |
+ __    \___/    __
+ |.\           /.|
+ |..\         /..|
+ +---|---+---|---+ </pre>
+<p>If the tiles run out before either player wins, then  the owner of the largest region wins. A region's size is given by  the number  of dominant tiles that it contains. For example, Light  has the largest region (size 5) in the following game; Light would win this game if the tiles ran out at this point.</p>
+<pre>         +---|---+                
+         |../    |        
+         __/    __            
+         |     /.|      
+         |    /..|     
+ +---|---+   (...+               +---|---+---|---+ 
+ |....\       \..|               |....\       \..| 
+ __....\___    \_|               __....\___    \__
+ | \.......\     |               | \.......\     |
+ |  \.......\    |               |  \.......\    |
+ +---|---+...\   +---|---+---|---+   \...+...\   +
+         |....\       \...../         \.......\  |
+         __....\___    \___/    ____   \___....\__ 
+         | \.......\           /....\      \.....|
+         |  \.......\         /......\      \....|
+         +---|---+---|---+---|---+---|---+---|---+</pre>
+<p> <strong>Notes</strong><strong> </strong></p>
+<p>It is generally better to play tiles of the opponent's dominant colour each turn. <br>
+</p>
+
+<p><strong>New Rules</strong></p>
+
+<p>The following options trigger new rules that improve the game:<br>
+  <tt>-group_area=n</tt><br>
+  <tt>-group_extent=n</tt>&nbsp;&nbsp;&nbsp;</p>
+<p>The <tt>group_area</tt> option inverts the winning condition so that the aim is to surround an enemy group, but a player loses if any friendly group reaches <tt>n</tt> tiles in area (counting dominant tiles). A player loses if their move achieves a win for both players. </p>
+<p> The <tt>group_extent</tt> option triggers similar rules except that a player loses if any  friendly group   reaches <tt>n</tt> tiles in extent either horizontally or vertically (counting dominant tiles).</p>
+<p>Recommended sizes are <tt>-group_area=16</tt> and  <tt>-group_extent=6.<br>
+</tt></p>
+<p><strong>History </strong></p>
+<p>Che rules copyright Cameron Browne &copy; 2008. </p>
+<p>The name &ldquo;Che&rdquo; is derived from the letters TRUCHET. </p>
+<p>More details are available at  the <a href="https://web.archive.org/web/20241205154706/http://www.cameronius.com/games/che/">official Che page</a>.</p>
+<p>Implementation and Help file by Cameron Browne, March  2008.<br>
+</p>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

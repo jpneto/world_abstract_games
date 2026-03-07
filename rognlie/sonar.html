@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+  <h2>Help For the Game Of Sonar</h2>
+
+  <h3>Introduction</h3>
+
+  <p>Welcome to the network Sonar server. The challenge command is described here. 
+    <a href="https://web.archive.org/web/20250619042838/http://www.gamerz.net/pbmserv/commands.html">Other commands</a> are the 
+    same as for all pbmserv games.</p>
+  <p> &nbsp;&nbsp;&nbsp;sonar challenge   [-one_shot] 
+    [-size=<em>n</em>] [-ships=<em>n</em>] [-hide_hits] <b>userid1</b> <b>userid2 [userid3] [userid4] </b></p>
+  <p>Starts a new game between <b>userid1,</b> <b>userid2</b>... up to four players.<br>
+    <br>
+
+    The -one_shot option specifies that players only get one shot per round. The default behaviour is to fire one shot for every live subs.<br>
+    <br>
+  The -size option specifies the board height [4..24] which must be even (default   is 16). The board width will be  twice the height.</p>
+  <p>The -ships option specifies the number of subs that each player starts with [1..16]. The   default value is 6, allowing one sub per  direction per player  (scaled down accordingly if more than two  players).</p>
+  <p>The -hide_hits option is for masochists who do not want to see  damage to enemy hits after the initial shot (i.e. damaged ships do not leave a trail). </p>
+  <h3>Introduction</h3>
+  <p> Sonar involves a battle between enemy submarine fleets that move around the board  shooting  depth charges at   each other.  It's  like  Warship except that unsuccessful    charges indicate the distance to the nearest object, making it  more a   puzzle-solving exercise than a blind hunt.</p>
+  <h3>Rules</h3>
+  <p>Each player starts with a number of submarines (default 6)  randomly scattered  on an <em>n</em>x2<em>n</em> hexagonal grid and facing in different directions. All subs  share the same board and are placed such that no two  will ever collide. Players' subs are hidden from their opponents.</p>
+  <p>Each turn the current player specifies one or more  board coordinates at which to lay   depth charges. Hits on any sub (including the current player's) are marked 'x' and  misses are marked with a number indicating the distance to the nearest sub (including the current player's). Killer shots that sink a sub are marked &quot;*X*&quot;.</p>
+  <p>Players get one shot per turn for every  sub still alive.  Players  must fire if possible, but do not have to  use all of their allotted shots each turn. Careless shots can hit a player's own subs. Subs are removed from the board as soon as they are sunk. Players with no live subs  are skipped and the last live sub  wins the game (a draw if none). The number of shots is halved for the first player's opening move. </p>
+  <p>All subs move one step forwards at the start of each move. This is worth reiterating; a player's shots will take effect *after all subs have moved one step*. </p>
+  <p>Subs may point in any of the six directions, and will wrap around board edges that they cross (toroidal ocean).</p>
+  <p>The following board shows a battle in progress from the current player's perspective. The current player's subs are shown in round brackets ( ) with a square bracket [ or ] for the propellor indicating  direction of travel. Enemy subs are hidden except for bits that are hit, such as K11 in the example. </p>
+  <pre>                       1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 3 3 3<br>     1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2<br>    / / / / / / / / / / / / / / / / / / / / / / / / / / / / / / / /<br>p  . . . . . . . . . . . . . . . . . . . . . . . . . .(3). . . . . p<br>o . . . . . . . . . . . . . . . . . . . . . . . . . .[3). . . . .  o<br>n  . . . . . . . . . . . . . . . .[2|2). .[3). . . . . . . . . . . n<br>m . . . . 3 . . . . . . . . . . . . . . . .(3). . . . . . . . . .  m<br>l  . . . . . . . . . . . . . . . . . . . . .(3). . . . . . . . . . l  C<br>k . . . . . . . . X . . . . . . . . . . . . . . . . . . . . . . .  k  U<br>j  . . . . . . . . . . . . .(4]. . . . . . . . . . . . . . . . . . j  R<br>i . . . . . . . . . . . . .(x). . . . . . . . . . . . . . . . . .  i  R<br>h  . . . . . . . . . . . .(x). . . . . . . . . . . . . . . . . . . h  E<br>g . . . . . . . . . . . .(4). . .(4|4|4|4]. . . . . . . . . . . .  g  N<br>f  . . .(4). 2 . . . . . . . . . . . . . . . . . . . . . . . . . . f  T<br>e . . . .(4). . . . . . . . . . . . . . . . . . . . . . . . . . .  e<br>d  . . . .(4). . . . . . . . . . . . . . . . . . . . . . . . . . . d<br>c . . . . .(4]. . . . . . . . . . . . . . . . . . . . . . . . . .  c<br>b  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . b<br>a . . . . . . . . . . . . . . . . . . . . . . . . . . .(3). . . .  a<br> / / / / / / / / / / / / / / / / / / / / / / / / / / / / / / / /<br>8 9 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 3 3 3 3 3 3 3 3 3 3<br>    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9</pre>
+  <p>The '3' in the top left of the board    indicates that there is currently an  enemy sub three cells away from M6. The '2' at F11 most likely refers to the current player's nearby 4-length sub, but may also indicate one or more hidden enemy subs nearby.</p>
+  <p>After the first move, the previous board  position is displayed below the current board position. This is  useful for tracking the progress of enemy subs and saves  having to  look up earlier emails. </p>
+  <h3>Notes</h3>
+  <p>All subs are placed so that there will be no collisions during the game. This is done using a sophisticated brute force algorithm that does not always find a good arrangement; if a challenge fails because the subs cannot be placed, try  issuing the challenge again. For a given board size, there will be  a critical number of subs above which placement will be  rare or even impossible. </p>
+  <p>There is no first move equaliser as the opening player suffers the disadvantage of not having the previous move's information to work from.</p>
+  <p>Each player's subs are created with the following lengths: 2, 3, 3, 4, 4, 4, 5, 5, 5, 5, 6... This is  the sequence A003057 &quot;n appears n-1 times&quot; used to read triangular arrays, which yields a  length distribution similar to that used for  Warship but expandable upwards. This  ensures that the number of  smaller (harder) targets remains relatively small.</p>
+  <p>[[** Awooka! Awooka! Evasive action! Sonar originally had an -evasive option which allowed  subs to change direction randomly  when hit (if possible). This added a nice element of intrigue to the game but proved   confusing as hits marked 'x' would then sometimes shift and no longer  correspond to   the shooter's input coordinates for that turn. If anyone can think of a workable solution to this please let me know (simply pivoting about the hit won't work as the sub may take  more than one hit per turn). **]] </p>
+  <h3>Strategy and Tactics</h3>
+  <p>Placing a charge in the same place on subsequent turns may provide  information about 
+the closest sub's direction of travel.</p>
+  <p> Enemy positions may be triangulated by carefully placed charges.</p>
+  <p> The fact that subs never collide may give additional clues to exact enemy positions.</p>
+  <p> Since all  subs are included in the distance calculations, this information 
+  is more useful the further the charges are from your own subs. However, doing this  
+  too often might alert the enemy to where your subs *aren't*.</p>
+  <h3>Multiplayer Sonar</h3>
+  <p>The multiplayer game is identical to the standard game except that more than two players participate.</p>
+  
+  <h3>References and History</h3>
+
+  <p>Sonar rules copyright (c) Cameron Browne 2007.</p>
+  <p>Sonar is based on the traditional game of Warship, modified to incorporate  the stunning observation that ships floating in an ocean will often move, especially if some bastard is shooting at them. The name &quot;Sonar&quot; refers to the fact that   distance information gleaned from explosions is central to the game.</p>
+  <p>Implementation and help file by <a href="https://web.archive.org/web/20250619042838/mailto:cameronb@optusnet.com.au">Cameron 
+    Browne</a>, Jan  2007.<br>
+  </p>
+</div>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

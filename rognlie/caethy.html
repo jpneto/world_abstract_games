@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+      <h3>
+         Rules
+      </h3>
+
+      The default Caeth Y board is as follows:<br>
+      <pre>
+                            1- *
+                           2- / \
+                          3- *-.-*
+                         4- / \ / \
+                        5- *-.-*-.-*
+                       6- / \ / \ / \
+                      7- *-.-*-.-*-.-*
+                     8- / \ / \ / \ / \
+                    9- *-.-*-.-*-.-*-.-*
+                  10- / \ / \ / \ / \ / \
+                 11- *-.-*-.-*-.-*-.-*-.-*
+                12- / \ / \ / \ / \ / \ / \
+               13- *-.-*-.-*-.-*-.-*-.-*-.-*
+              14- / \ / \ / \ / \ / \ / \ / \
+             15- *-.-*-.-*-.-*-.-*-.-*-.-*-.-*
+            16- / \ / \ / \ / \ / \ / \ / \ / \
+           17- *-.-*-.-*-.-*-.-*-.-*-.-*-.-*-.-*
+                \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \
+                 A B C D E F G H I J K L M N O P Q
+      </pre>
+      Players alternate turns, capturing an edge between two vertices on each
+      of their turns.<br>
+      <br>
+      When a player controls half or more of the edges leading into a vertex,
+      they gain control of that vertex.  (Specifically in Caeth Y: control of
+      <b>one</b> edge into a corner vertex, <b>two</b> edges into a side vertex,
+      or <b>three</b> edges into a centre vertex are enough for control.)<br>
+      <br>
+      As in Y, the goal is to make a connected chain of vertices that touches
+      all three sides of the board; the three corners count as members of both
+      sides to which they are adjacent.  Note that the connected chain is a
+      chain of <b>vertices</b>, not of edges.<br>
+      <br>
+      The second player may utilize the swap rule if they so desire.<br>
+      <br>
+
+      <h3>
+         Move Syntax
+      </h3>
+
+      Eks (X) moves first.  The move syntax is:<br>
+      <br>
+      <tt>
+         CaethY move <b>boardnum</b> <b>userid</b> <b>password</b> <b>coord</b>
+      </tt>
+      <br>
+      <br>
+      where <tt><b>coord</b></tt> is an unoccupied edge in the form
+      <tt>L11</tt>.<br>
+      <br>
+      <tt>
+         CaethY swap <b>boardnum</b> <b>userid</b> <b>password</b><br>
+      </tt>
+      <br>
+      will allow the second player to swap positions with the first player;
+      this can only be done as the second move of the game.<br>
+      <br>
+
+      <h3>
+         History
+      </h3>
+
+      Caeth Y was discovered by Phil Bordelon in February 2004 as an application
+      of the Caeth metarule to the game of Y.  The original Caeth game used the
+      same metarule applied to Hex; Caeth Y was an obvious extension of the
+      concept.<br>
+      <br>
+      There are two variations on the Caeth metarule which have to do with the
+      way that vertices are owned; those are not currently implemented in this
+      version of Caeth Y.<br>
+      <br>
+
+      <h3>
+         Endnotes
+      </h3>
+
+      Caeth Y was implemented by Phil Bordelon in February 2004 with the help
+      of Richard Rognlie, Cameron Browne, and the author of the Game of Y
+      implementation on the pbmserv.<br>
+      <br>
+      The help file was written by Phil Bordelon in February 2004, with 
+      suggestions and a basic layout provided by Cameron Browne.<br>
+      <br>
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

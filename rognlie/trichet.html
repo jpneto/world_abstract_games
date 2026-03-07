@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h3><strong> Introduction</strong></h3>
+<p>  Trichet is a  tile placement game of territory closure for two players.<br>
+</p>
+<h3><strong>Rules</strong></h3>
+<p><strong>Equipment:</strong> Two players, Oh and Dot, share a common pool of 96 triangular Trichet tiles. Each side of each tile has a 1/6 arc dividing the tile into two regions, marked  'o'  and '.'. </p>
+<pre align="center"><font face="Courier New, Courier, mono">       +            +
+      ooo          /.\
+     ooooo        /...\
+    /.....\      ooooooo
+   +-------+    +ooooooo+
+
+     Front         Back</font></pre>
+<p><strong>Start: </strong>Oh starts by placing two  tiles  in the middle of the playing area as shown:</p>
+<pre><font face="Courier New, Courier, mono">       + 
+      ooo
+     ooooo 
+    /.....\ 
+   +-------+
+    \...../
+     ooooo
+      ooo
+       +</font></pre>
+<p><strong>Play: </strong>Players then take turns adding a tile of their choice to touch at least one  edge or corner of an existing tile such that all neighbouring regions match in colour.</p>
+<p><strong>Auto Moves: </strong>Each move may  result in one or more positions at which only one tile in one rotation may be placed such that  colours match; all such positions are  automatically made as part of the the move. Each auto move  may result in additional auto moves, hence each player move will usually  result in multiple tile placements.</p>
+<p>For example, the move shown below creates two positions  <em>p</em> and <em>q</em>  (left) which only have  one valid placement each, which are  automatically made (centre). Placement <em>p</em> then creates position <em>r</em> which has only one valid placement, which is also automatically made to complete the move (right).</p>
+<pre><font face="Courier New, Courier, mono">                                                                         +                  
+                                                                        /.\
+                                          <em>r</em>                            /...\
+                                                                      ooooooo           
+       +       +                      +ooooooo+ooo----+              +ooooooo+ooo----+              
+      ooo  <em>p</em>  ooo  <em>q</em>                 ooooooooooooo.../              ooooooooooooo.../             
+     ooooo   /.ooo                  ooooo.../.ooooo./              ooooo.../.ooooo./              
+    /.....\ /...ooo                /.....\./...ooo./              /.....\./...ooooo           
+   +-------+----ooo+     ---&gt;     +-------+----ooo+     ---&gt;     +-------+----ooo+ 
+    \...../                        \...../                        \...../                   
+     ooooo                          ooooo                          ooooo                    
+      ooo                            ooo                            ooo                      
+       +                              +                              +                     </font></pre>
+<p><strong>Aim:</strong> A player wins by completing surrounding a region of their colour that uses at least 10 tiles (i.e. a circle of 6 arcs is not sufficient). For example, Dot wins the following game:</p>
+<pre>                             +                                             <br>                            /.\                                            <br>                           /...\               <br>                          ooooooo                                          <br>                 +----ooo+ooooooo+ooo----+                                 <br>                /.\...ooooooooooooooo.../                                  <br>               /...\.ooooo.\.../.ooooo./    <br>              ooooooooooo...\./...ooooo                                    <br>     +----ooo+ooooooo+ooo----+----ooo+                                     <br>      \...ooooooooooooooo.../.\...ooooo                                    <br>       \.ooooo.\...ooooo.../...o.ooooo.\       <br>        ooooo...\./.....\./...ooooooo...\                                  <br>         +ooo----+-------+----ooo+ooo----+                                 <br>        ooooo.../.\...../.\...ooooooo.../.\                                <br>       /.ooooo./...ooooo...\.ooooo.o.../...o   <br>      /...ooooooooooooooooooooooo...\./...ooo       <br>     +----ooo+ooooooo+ooooooo+ooo----+----ooo+     <br>              ooooooooooooooo                                              <br>               \...ooooo.../                     <br>                \./.....\./                                                <br>                 +-------+                                                 <br>                  \...../                                                  <br>                   ooooo                        <br>                    ooo                                                    <br>                     +                            </pre>
+<p>If a move surrounds regions of both colours then the mover loses. If the tiles run out before either player encloses a region then the game is tied.<br>
+</p>
+<h3><strong>Notes</strong></h3>
+<p>The default number of tiles is 96 as this number allows all tiles to be placed within a hexagonal shape according to the formula <em>f</em>(<em>n</em>) = 6*<em>n*n</em>.</p>
+<div align="left"></div>
+
+<h3><strong>History </strong></h3>
+
+<p>Trichet tiles and rules by Cameron Browne and copyright &copy; Cyberite Ltd 2008.</p>
+<p>The name &ldquo;Trichet&rdquo; refers to the game's origins as a form of triangular Truchet-like tiles.</p>
+<p align="left">Graphical web interface: <a href="https://web.archive.org/web/20250523230859/http://www.gamerz.net/pbmserv/List.php?Trichet">http://www.gamerz.net/pbmserv/List.php?Trichet</a></p>
+<div align="left">
+  <div align="center">
+    <p align="left">More details are available at the <a href="https://web.archive.org/web/20250523230859/http://www.cameronius.com/games/trichet">official Trichet page</a>.</p>
+  </div>
+</div>
+<p>Implementation and Help file by Cameron Browne, December  2008.<br>
+</p>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

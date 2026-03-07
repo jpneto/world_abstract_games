@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h3>Rules</h3>
+  <p>Conhex is an abstract strategy game for two players, Vert and Horz. Vert 
+    aims to complete a contiguous chain of Vert cells between the top and bottom 
+    edges of the board, while Horz aims to complete a contiguous chain of Horz 
+    cells between the left and right sides. Draws are not possible.</p>
+  <p>The board consists of 41 cells, each with a number of holes marked '+'. The 
+    centre cell has five holes, the edge cells have three holes, and all other 
+    cells have six holes each. A cell is conquered by the first player to occupy 
+    at least half of its holes.</p>
+  <p>All cells and holes are initially empty.
+  
+  <pre>
+    A     B C  D E  F G H  I  J K L  M N  O P     Q
+
+  1 +---------------------------------------------+ 1
+    |       |         |         |         |       |
+    |       |         |         |         |       |
+  2 |       +----+----+----+----+----+----+       | 2
+    |      /     |         |         |     \      |
+  3 |-----+      |         |         |      +-----| 3
+  4 |     |      +----+----+----+----+      |     | 4
+    |     |     /     |         |     \     |     |
+  5 |     +----+      |         |      +----+     | 5
+  6 |     |    |      +----+----+      |    |     | 6
+    |     |    |     /     |     \     |    |     |
+  7 |-----+    +----+      |      +----+    +-----| 7
+  8 |     |    |    |     -+-     |    |    |     | 8
+    |     |    |    |    /   \    |    |    |     |
+  9 |     +----+    +---+  +  +---+    +----+     | 9
+    |     |    |    |    \   /    |    |    |     |
+ 10 |     |    |    |     -+-     |    |    |     | 10
+ 11 |-----+    +----+      |      +----+    +-----| 11
+    |     |    |     \     |     /     |    |     |
+ 12 |     |    |      +----+----+      |    |     | 12
+ 13 |     +----+      |         |      +----+     | 13
+    |     |     \     |         |     /     |     |
+ 14 |     |      +----+----+----+----+      |     | 14
+ 15 |-----+      |         |         |      +-----| 15
+    |      \     |         |         |     /      |
+ 16 |       +----+----+----+----+----+----+       | 16
+    |       |         |         |         |       |
+    |       |         |         |         |       |
+ 17 +---------------------------------------------+ 17
+
+    A     B C  D E  F G H  I  J K L  M N  O P     Q   
+  </pre>
+  
+  
+  <p>Each turn the current player places one of their pieces on an empty hole 
+    '+', which may conquer one or more cells. Cells conquered by Vert are coloured 
+    '|' and cells conquered by Horz are coloured '-'.</p>
+  <p>For instance, Vert has conquered the top left cell and Horz has conquered 
+    the other three coloured cells in the following example. The lower Horz cell 
+    is occupied by three pieces of each colour, so we know that Horz must have 
+    placed their third piece there before Vert did.
+    
+    <pre>
+    v---------------------------------------------+
+    |||||||||         |         |---------|       |
+    |||||||||         |         |---------|       |
+    ||||||||+----+----+----+----h----h----+       |
+    |||||||/     |         |---------|     \      |
+    |-----v      |         |---------|      +-----|
+    |     |      +----v----v----h----+      |     |
+    |     |     /     |---------|     \     |     |
+    |     +----+      |---------|      +----+     |
+    |     |    |      h----h----v      |    |     |
+    |     |    |     /     |     \     |    |     |
+    |-----+    +----+      |      +----+    +-----|
+    |     |    |    |     -+-     |    |    |     |     
+    </pre>
+    
+    
+  <h3>Notes</h3>
+  <p>The following board shows a game won by Vert, who has completed a contigous 
+    chain of Vert cells between the top and bottom edges of the board.</p>
+  
+  <pre>
+    A     B C  D E  F G H  I  J K L  M N  O P     Q
+
+  1 +---------------------------------------------+ 1
+    |       |||||||||||         |         |       |
+    |       |||||||||||         |         |       |
+  2 |       v----v||||v----+----+----+----+       | 2
+    |      /     |||||||||||         |     \      |
+  3 |-----+      |||||||||||         |      +-----| 3
+  4 |     |      +----+||||v----h----+      |     | 4
+    |     |     /     |||||||||||-----\     |     |
+  5 |     +----+      |||||||||||------h----+     | 5
+  6 |     |----|      +||||v----v-----------|     | 6
+    |     |----|     /||||||     \----------|     |
+  7 |-----h----v----v|||||||      +----h----+-----| 7
+  8 |----------|||||||||||-h-     |    |----------| 8
+    |----------||||||||||/---\    |    |----------|
+  9 |-----h----h||||v---h--h--+---+    +----h-----| 9
+    |-----|    ||||||--------/    |    |    |-----|
+ 10 |-----|    ||||||------+-     |    |    |-----| 10
+ 11 |-----+    v||||+------|      +----+    h-----| 11
+    |     |    ||||||\-----|     /     |    |     |
+ 12 |     |    |||||||h----h----h      |    |     | 12
+ 13 |     +----+|||||||---------|      +----+     | 13
+    |     |     \||||||---------|     /     |     |
+ 14 |     |      v||||v----v----+----h      |     | 14
+ 15 |-----+      |||||||||||||||||||||      +-----| 15
+    |      \     |||||||||||||||||||||     /      |
+ 16 |       +----+----+----+----v||||v----h       | 16
+    |       |         |         |||||||||||       |
+    |       |         |         |||||||||||       |
+ 17 +---------------------------------------------+ 17
+
+    A     B C  D E  F G H  I  J K L  M N  O P     Q   
+  </pre>
+  
+    
+  <h3>Syntax</h3>
+  
+  <p>Vert moves first. The move syntax is: &nbsp;&nbsp;&nbsp;</p>
+  <p>&nbsp;&nbsp;&nbsp;&nbsp;conhex move <b>board# userid password coord</b> <br>
+  </p>
+  <p>Where <b>&quot;coord</b>&quot; specifies an empty board hole marked '+' in 
+    the form <b>F7</b>. All cells conquered by a move are automatically coloured. 
+  </p>
+  <p>&nbsp;&nbsp;&nbsp;&nbsp;conhex move <b>board# userid password </b>swap</p>
+  <p>Swaps the opening move (available to the second player on the second move 
+    only). The swap option stops the first player making an overly strong opening 
+    move; without it it the opening player could make a strong start and maintain 
+    the initiative throughout the game, putting them in a very advantaged position.</p>
+  <p> 
+  <h3>References and History</h3>
+
+  <p>Conhex board and rules copyright Michail Antonow 2002.</p>
+  <p>Implementation and help file by <a href="https://web.archive.org/web/20241205154541/mailto:cameronb@optusnet.com.au">Cameron 
+    Browne</a>, November 2003.<br>
+</div>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

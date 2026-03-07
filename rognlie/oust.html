@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h2>Oust Rules</h2></a></a> (Copyright (c) 2007 Mark
+    Steere &lt;mark@marksteeregames.com&gt;) </font>
+    <p><font face="Arial">AUTHOR'S NOTE: Feel free to distribute this document. </font></p>
+    <font face="Arial">
+<h3>Introduction </h3>
+Oust is played with a Go set.  The board starts out empty. Each 
+player takes ownership of an entire set of like-colored stones.  Players take turns adding their 
+own stones to the board.  Draws and ties cannot occur in Oust.  Mark Steere designed Oust in 
+July, 2007. 
+<h3>Stone Placement</h3>
+You initiate your turn by adding a single stone to an unoccupied point.
+If you have a placement available on your turn you must make one. If you don't have any
+placements available you must pass your turn. There will always be a move available to at least
+one of the two players.  A "connection" will denote a horizontal or vertical adjacency here.
+
+<h3>Non-Capturing Placements</h3>
+When you make a placement which does not form
+any connections with your own stones, you have made a non-capturing placement. So a noncapturing
+placement either forms no connections with any stones, or forms one or more
+connections only with enemy stones. Making such a placement concludes your turn.
+In Figure 1 the only placements available to Black (#) are non-capturing
+placements and are indicated by ?'s.
+
+<pre><font face="courier" size="1">
+                            # . ? O ?
+                            . # . ? O
+                            # . ? ? ?
+                            . ? O ? .
+                            ? O ? . #
+
+            Figure 1 -- Available placements for Black (#).
+</font></pre>
+
+<h3>Capturing Placements</h3>
+A &quot;group&quot; here can be a singleton (a single stone which is not
+connected to any other like-colored stones), or a set of two or more interconnected, like-colored
+stones. A group includes all of the like-colored stones connected to it.
+<br>
+
+<p>When you place a stone which forms one or more connections with your own groups, you
+create a new, larger group of at least two of your own stones. You can only make such a
+placement if said new group will have one or more connections with enemy groups upon its
+creation and if all said enemy groups are smaller than said new group. In this case all said
+enemy groups are removed from the board.  <br>
+
+<p>After capturing one or more enemy groups and while it is still your turn, you must continue to
+add stones during your turn until you make a non-capturing placement, at which time your turn
+is concluded.<br>
+
+<p>In Figure 2, Black's newly formed group of two captures the three white
+singletons. <br>
+<pre><font face="courier" size="1">
+                            . . . O O
+                            . O . . .
+                            # ? O . .
+                            . O . . .
+                            . . . . .
+
+            Figure 2 -- Black plays at ?, capturing 3 white singletons.
+</font></pre>
+<p>In Figure 3, Black captures the four white singletons connected to his
+newly formed group. <br>
+<pre><font face="courier" size="1">
+                            . O . O .
+                            O # . # .
+                            . # # ? #
+                            O . . . #
+                            # # . O #
+
+            Figure 3 -- Black plays at ?, capturing 4 singletons.
+</font></pre>
+<p>In Figure 4, Black's newly formed group of seven captures White's group
+of six. <br>
+<pre><font face="courier" size="1">
+                            O O O O O
+                            O . . ? .
+                            # . . # .
+                            O . . # #
+                            . . # # #
+
+            Figure 4 -- Black captures connected group.
+</font></pre>
+<p>In Figure 5, it is Black's turn.  He has no placements available and so must pass his turn.<br>
+<pre><font face="courier" size="1">
+                            O O O O O 
+                            O O O O .
+                            . O . . #
+                            # . # # #
+                            # # # . #
+
+            Figure 5 -- Black must pass.
+</font></pre>
+<p>In Figure 6, Black captures all of the white stones and wins the game.<br>
+<pre><font face="courier" size="1">
+                            O . . . O
+                            O O # O O
+                            O . ? . O
+                            O . # . .
+                            . # # # O
+
+            Figure 6 -- Black plays at ? to win.
+</font></pre>
+<h3>Object of the Game</h3>
+If you make a placement which captures all of the enemy stones on
+the board you win. 
+
+<h3>Example Position</h3>
+Figure 7 shows a position from an actual game played at Gamerz Net.  The size of the largest group
+and the total number of stones are shown for each player.  rrognlie's
+largest group consists of 41 stones and he has a total of 46 stones on the board. 
+
+<pre><font face="courier" size="1">
+    x: rrognlie        41/46
+    o: marksteere      20/40
+
+      A B C D E F G H J K L M N 
+
+  13  o . . . o . . o . . o . .  13
+  12  o o o o . o o . o o o o o  12
+  11  . o . o . . . o . . o . o  11
+  10  . . o o o . , o o , . . o  10
+   9  x . . o o o o o . o . . o   9
+   8  . . . . o . o . . . o o o   8
+   7  x x x , . o , . x , . o .   7
+   6  . . x . . X . x . x . . .   6
+   5  x x x x x . . x x . x . x   5
+   4  x . x , . x , . x x x x x   4
+   3  . . x . x . . x x . x . .   3
+   2  . . x x x x x x x x x x x   2
+   1  x x x . . . . . x . . . .   1
+
+      A B C D E F G H J K L M N 
+
+            Figure 7 -- Example position
+</font></pre>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

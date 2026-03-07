@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+  <h2>Help For the Game Of Orion</h2>
+
+<h3>Introduction</h3>
+
+  <p>Welcome to the network Orion server. The Orion challenge command starts a 
+    new game between <b>userid1</b> and <b>userid2. </b> <a href="https://web.archive.org/web/20240917185103/http://www.gamerz.net/pbmserv/commands.html">Other commands</a> are the 
+    same as for all pbmserv games.</p>
+
+  <p class="MsoNormal"> &nbsp;&nbsp;&nbsp;&nbsp;orion challenge [-clicks=<b>number</b>]<b> 
+    </b>[-game=<b>gamename</b>]<b> userid1</b> <b>userid2</b></p>
+  <p class="MsoNormal">The -clicks parameter overrides the default number of clicks 
+    per turn for the current game. This can be any number between 1 and 6.</p>
+  <p class="MsoNormal">The -game parameter specifies which Orion is to be played. 
+    The following games are currently supported: Hydra. The default game is Hydra 
+    if no game name is specified.</p>
+  <h3>The Board</h3>
+  <p>The Orion board is actually a game system on which a number of different 
+    games can be played. The board itself consists of twenty five overlapping 
+    rotors labelled 'a' to 'y'.<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+  </p>
+  <pre>    &nbsp;&nbsp;&nbsp;----- &nbsp;&nbsp;----- &nbsp;&nbsp;----- &nbsp;&nbsp;----- &nbsp;&nbsp;----- 
+     | &nbsp;.-. &nbsp;| &nbsp;.-.&nbsp; | &nbsp;.-. &nbsp;| &nbsp;.-. &nbsp;| &nbsp;.-. &nbsp;| 
+     | ( a ) | ( b ) | ( c ) | ( d ) | ( e ) | 
+     | &nbsp;`-` &nbsp;| &nbsp;`-` &nbsp;| &nbsp;`-` &nbsp;| &nbsp;`-` &nbsp;| &nbsp;`-` &nbsp;| 
+ &nbsp;&nbsp;    ----- &nbsp;&nbsp;----- &nbsp;&nbsp;----- &nbsp;&nbsp;----- &nbsp;&nbsp;----- 
+     | &nbsp;.-. &nbsp;| &nbsp;.-.&nbsp; | &nbsp;.-. &nbsp;| &nbsp;.-. &nbsp;| &nbsp;.-. &nbsp;| 
+     | ( f ) | ( g ) | ( h ) | ( i ) | ( j ) | 
+     | &nbsp;`-` &nbsp;| &nbsp;`-` &nbsp;| &nbsp;`-` &nbsp;| &nbsp;`-` &nbsp;| &nbsp;`-` &nbsp;| 
+ &nbsp;&nbsp;    ----- &nbsp;&nbsp;----- &nbsp;&nbsp;----- &nbsp;&nbsp;----- &nbsp;&nbsp;----- 
+     | &nbsp;.-. &nbsp;| &nbsp;.-.&nbsp; | &nbsp;.-. &nbsp;| &nbsp;.-. &nbsp;| &nbsp;.-. &nbsp;| 
+     | ( k ) | ( l ) | ( m ) | ( n ) | ( o ) | 
+     | &nbsp;`-` &nbsp;| &nbsp;`-` &nbsp;| &nbsp;`-` &nbsp;| &nbsp;`-` &nbsp;| &nbsp;`-` &nbsp;| 
+ &nbsp;&nbsp;    ----- &nbsp;&nbsp;----- &nbsp;&nbsp;----- &nbsp;&nbsp;----- &nbsp;&nbsp;----- 
+     | &nbsp;.-. &nbsp;| &nbsp;.-.&nbsp; | &nbsp;.-. &nbsp;| &nbsp;.-. &nbsp;| &nbsp;.-. &nbsp;| 
+     | ( p ) | ( q ) | ( r ) | ( s ) | ( t ) | 
+     | &nbsp;`-` &nbsp;| &nbsp;`-` &nbsp;| &nbsp;`-` &nbsp;| &nbsp;`-` &nbsp;| &nbsp;`-` &nbsp;| 
+ &nbsp;&nbsp;    ----- &nbsp;&nbsp;----- &nbsp;&nbsp;----- &nbsp;&nbsp;----- &nbsp;&nbsp;----- 
+     | &nbsp;.-. &nbsp;| &nbsp;.-.&nbsp; | &nbsp;.-. &nbsp;| &nbsp;.-. &nbsp;| &nbsp;.-. &nbsp;| 
+     | ( u ) | ( v ) | ( w ) | ( x ) | ( y ) | 
+     | &nbsp;`-` &nbsp;| &nbsp;`-` &nbsp;| &nbsp;`-` &nbsp;| &nbsp;`-` &nbsp;| &nbsp;`-` &nbsp;| 
+ &nbsp;&nbsp;    ----- &nbsp;&nbsp;----- &nbsp;&nbsp;----- &nbsp;&nbsp;----- &nbsp;&nbsp;----- 
+</pre>
+  <p>Each rotor has four surrounding slots within its orbit. Each slot is an eye 
+    shape which may contain a single piece.</p>
+  <p>Clicking a rotor in 90 degreee increments in either the clockwise (+) or 
+    anticlockwise (-) directions will move any pieces within its orbit. For instance, 
+    the 'O' piece in the following example is shuffled from rotor 'a' to rotor 
+    'b' by clicking 'a' once clockwise then clicking 'b' once anticlockwise. This 
+    move is denoted &quot;a+b-&quot;.<br>
+  </p>
+  <pre>                                                    <br>&nbsp;&nbsp;     OOOOO&nbsp;&nbsp; ----- &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;----- &nbsp;&nbsp;----- &nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;-----   ----- 
+     | &nbsp;.-. &nbsp;| &nbsp;.-.&nbsp; |&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;X&nbsp; .-. &nbsp;O&nbsp; .-. &nbsp;|       X  .-.  | &nbsp;.-. &nbsp;| 
+     | ( a ) | ( b ) | &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;X ( a ) O ( b ) |       X ( a ) | ( b ) | 
+     | &nbsp;`-` &nbsp;| &nbsp;`-` &nbsp;| &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;X&nbsp; `-` &nbsp;O&nbsp; `-` &nbsp;|   &nbsp;   X  `-` &nbsp;|  `-`  | 
+ &nbsp;&nbsp;    XXXXX&nbsp;&nbsp; ----- &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ----- &nbsp;&nbsp;----- &nbsp;&nbsp;        -----   OOOOO</pre>
+  <h3>General Rules</h3>
+  <p>1. Once pieces are placed at their starting positions they may only be moved 
+    by turning the appropriate rotors.</p>
+  <p>2. Players may turn only those rotors whose orbits contains at least one 
+    of their pieces.</p>
+  <p>3. Players must continue to move the same piece throughout the duration of 
+    their move.</p>
+  <p>4. Players are not obliged to use their full number of clicks per turn, and 
+    may use fewer clicks or no clicks at all (pass).</p>
+  <p>5. Players may not make a move which simply reverses the opponent's last 
+    move. [Note: This check is not implemented yet.]</p>
+  <p><b>Standard Starting Sequence: </b>Most Orion games allow several clicks 
+    per turn. However, in all cases the first turn consists of a one-click move, 
+    the second turn consists of a two-click move, etc... until the total number 
+    of clicks for that game is reached. <br>
+  </p>
+  <h3>The Games</h3>
+  <p>The following Orion games have been implemented.</p>
+  <p><b>1. Hydra</b></p>
+  <p>Each player starts with sixteen pieces set out as follows. Players have three 
+    clicks per turn after the standard starting sequence. 'X' moves first.</p>
+  <pre>                                                    
+&nbsp;&nbsp;&nbsp;    OOOOO   OOOOO   OOOOO   OOOOO   OOOOO 
+     O&nbsp; .-. &nbsp;O&nbsp; .-.&nbsp; O&nbsp; .-. &nbsp;O&nbsp; .-. &nbsp;O&nbsp; .-. &nbsp;O 
+     O ( a ) O ( b ) O ( c ) O ( d ) O ( e ) O 
+     O&nbsp; `-` &nbsp;O&nbsp; `-` &nbsp;O&nbsp; `-` &nbsp;O&nbsp; `-` &nbsp;O&nbsp; `-` &nbsp;O
+&nbsp;&nbsp;&nbsp;    OOOOO   OOOOO   OOOOO   OOOOO   OOOOO<br>     | &nbsp;.-. &nbsp;| &nbsp;.-.&nbsp; | &nbsp;.-. &nbsp;| &nbsp;.-. &nbsp;| &nbsp;.-. &nbsp;| 
+     | ( f ) | ( g ) | ( h ) | ( i ) | ( j ) | 
+     | &nbsp;`-` &nbsp;| &nbsp;`-` &nbsp;| &nbsp;`-` &nbsp;| &nbsp;`-` &nbsp;| &nbsp;`-` &nbsp;| 
+&nbsp; &nbsp;    ----- &nbsp;&nbsp;----- &nbsp;&nbsp;----- &nbsp;&nbsp;----- &nbsp;&nbsp;----- 
+     | &nbsp;.-. &nbsp;| &nbsp;.-.&nbsp; | &nbsp;.-. &nbsp;| &nbsp;.-. &nbsp;| &nbsp;.-. &nbsp;| 
+     | ( k ) | ( l ) | ( m ) | ( n ) | ( o ) | 
+     | &nbsp;`-` &nbsp;| &nbsp;`-` &nbsp;| &nbsp;`-` &nbsp;| &nbsp;`-` &nbsp;| &nbsp;`-` &nbsp;| 
+ &nbsp;&nbsp;    ----- &nbsp;&nbsp;----- &nbsp;&nbsp;----- &nbsp;&nbsp;----- &nbsp;&nbsp;----- 
+     | &nbsp;.-. &nbsp;| &nbsp;.-.&nbsp; | &nbsp;.-. &nbsp;| &nbsp;.-. &nbsp;| &nbsp;.-. &nbsp;| 
+     | ( p ) | ( q ) | ( r ) | ( s ) | ( t ) | 
+     | &nbsp;`-` &nbsp;| &nbsp;`-` &nbsp;| &nbsp;`-` &nbsp;| &nbsp;`-` &nbsp;| &nbsp;`-` &nbsp;| 
+ &nbsp;&nbsp;    XXXXX&nbsp; &nbsp;XXXXX&nbsp;&nbsp; XXXXX&nbsp;&nbsp; XXXXX&nbsp;&nbsp; XXXXX 
+     X&nbsp; .-. &nbsp;X&nbsp; .-.&nbsp; X &nbsp;.-. &nbsp;X&nbsp; .-. &nbsp;X &nbsp;.-. &nbsp;X 
+     X ( u ) X ( v ) X ( w ) X ( x ) X ( y ) X 
+     X&nbsp; `-` &nbsp;X&nbsp; `-` &nbsp;X&nbsp; `-` &nbsp;X&nbsp; `-` &nbsp;X &nbsp;`-` &nbsp;X
+ &nbsp;&nbsp;    XXXXX&nbsp; &nbsp;XXXXX&nbsp;&nbsp; XXXXX&nbsp;&nbsp; XXXXX&nbsp;&nbsp; XXXXX </pre>
+  <p></p>
+  <p>The first player to form a connected chain of their pieces between their 
+    edge of the board and the opposite edge wins the game. The following example 
+    shows a winning chain for 'X'.<br>
+  </p>
+  <pre>                                                    
+&nbsp;&nbsp;&nbsp;    ----- &nbsp;&nbsp;----- &nbsp;&nbsp;----- &nbsp;&nbsp;----- &nbsp;&nbsp;----- 
+     | &nbsp;.-. &nbsp;| &nbsp;.-.&nbsp; X&nbsp; .-. &nbsp;| &nbsp;.-. &nbsp;| &nbsp;.-. &nbsp;| 
+     | ( a ) | ( b ) X ( c ) | ( d ) | ( e ) | 
+     | &nbsp;`-` &nbsp;| &nbsp;`-` &nbsp;X&nbsp; `-` &nbsp;| &nbsp;`-` &nbsp;| &nbsp;`-` &nbsp;| 
+ &nbsp;&nbsp;    ----- &nbsp;&nbsp;----- &nbsp;&nbsp;XXXXX&nbsp; &nbsp;----- &nbsp;&nbsp;----- 
+     | &nbsp;.-. &nbsp;| &nbsp;.-.&nbsp; | &nbsp;.-. &nbsp;X&nbsp; .-. &nbsp;| &nbsp;.-. &nbsp;| 
+     | ( f ) | ( g ) | ( h ) X ( i ) | ( j ) | 
+     | &nbsp;`-` &nbsp;| &nbsp;`-` &nbsp;| &nbsp;`-` &nbsp;X &nbsp;`-` &nbsp;| &nbsp;`-` &nbsp;| 
+ &nbsp;&nbsp;    ----- &nbsp;&nbsp;----- &nbsp;&nbsp;----- &nbsp;&nbsp;XXXXX&nbsp; &nbsp;----- 
+     | &nbsp;.-. &nbsp;| &nbsp;.-.&nbsp; | &nbsp;.-. &nbsp;| &nbsp;.-. &nbsp;X&nbsp; .-. &nbsp;| 
+     | ( k ) | ( l ) | ( m ) | ( n ) X ( o ) | 
+     | &nbsp;`-` &nbsp;| &nbsp;`-` &nbsp;| &nbsp;`-` &nbsp;| &nbsp;`-` &nbsp;X&nbsp; `-` &nbsp;| 
+ &nbsp;&nbsp;    ----- &nbsp;&nbsp;XXXXX &nbsp;&nbsp;----- &nbsp;&nbsp;XXXXX &nbsp;&nbsp;----- 
+     | &nbsp;.-. &nbsp;X&nbsp; .-.&nbsp; X &nbsp;.-. &nbsp;X&nbsp; .-. &nbsp;| &nbsp;.-. &nbsp;| 
+     | ( p ) X ( q ) X ( r ) X ( s ) | ( t ) | 
+     | &nbsp;`-` &nbsp;X &nbsp;`-` &nbsp;X&nbsp; `-` &nbsp;X&nbsp; `-` &nbsp;| &nbsp;`-` &nbsp;| 
+ &nbsp;&nbsp;    ----- &nbsp;&nbsp;----- &nbsp;&nbsp;XXXXX &nbsp;&nbsp;----- &nbsp;&nbsp;----- 
+     | &nbsp;.-. &nbsp;X &nbsp;.-.&nbsp; | &nbsp;.-. &nbsp;| &nbsp;.-. &nbsp;| &nbsp;.-. &nbsp;| 
+     | ( u ) X ( v ) | ( w ) | ( x ) | ( y ) | 
+     | &nbsp;`-` &nbsp;X&nbsp; `-` &nbsp;| &nbsp;`-` &nbsp;| &nbsp;`-` &nbsp;| &nbsp;`-` &nbsp;| 
+ &nbsp;&nbsp;    ----- &nbsp;&nbsp;----- &nbsp;&nbsp;----- &nbsp;&nbsp;----- &nbsp;&nbsp;----- 
+</pre>
+
+  <h3>History</h3>
+
+  <p>Orion was invented in the 1970s. A scanned copy of the complete rules can 
+    be found at the Hasbro site: <a href="https://web.archive.org/web/20240917185103/http://www.hasbro.com/common/instruct/Orion.PDF">http://www.hasbro.com/common/instruct/Orion.PDF</a></p>
+  <p>The Unofficial Orion Home Page contains an interesting look at the game with 
+    some nice photographs and descriptions: <a href="https://web.archive.org/web/20240917185103/http://www.ludism.org/orion/">http://www.ludism.org/orion/</a> 
+  </p>
+  <p>Implementation and help file by <a href="https://web.archive.org/web/20240917185103/mailto:cameronb@optusnet.com.au">Cameron 
+    Browne</a>, December 2003. 
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

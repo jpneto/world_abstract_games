@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+  <h3>Rules</h3>
+
+  <p>The board is randomly filled with an equal number of red, green and blue 
+    pieces.</p>
+  <pre><font face="Courier New, Courier, mono">
+   &nbsp;&nbsp;&nbsp;&nbsp;1-  b
+   &nbsp;&nbsp;&nbsp;2-  b b
+    &nbsp;3-  b g r
+   &nbsp;4-  g r g g
+   5-  r b g r r
+    &nbsp;&nbsp;&nbsp;&nbsp;\ \ \ \ \
+     &nbsp;&nbsp;&nbsp;&nbsp;A B C D E</font></pre>
+  <pre> &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;R   G   B   Score
+      &nbsp;&nbsp;&nbsp;~   ~   ~   ~~~~~
+Fred &nbsp;&nbsp;&nbsp;&nbsp;0   0   0     0
+Ted &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0   0   0     0</pre>
+  <p>Players take turns grabbing either a single piece or a contiguous line of 
+    pieces from the board. </p>
+  <p>The game ends when there are no pieces left on the board. Players count the 
+    number of colours for which they've grabbed an even number of pieces, and 
+    the winner is the player with the highest count.</p>
+  <p>For instance, the following game has been won by Fred, who has grabbed an 
+    even number of red pieces and an even number of green pieces. Ted has only 
+    grabbed an even number of blue pieces.</p>
+  <pre><font face="Courier New, Courier, mono">
+   &nbsp;&nbsp;&nbsp;&nbsp;1-  .
+   &nbsp;&nbsp;&nbsp;2-  . .
+    &nbsp;3-  . . .
+   &nbsp;4-  . . . .
+   5-  . . . . .
+    &nbsp;&nbsp;&nbsp;&nbsp;\ \ \ \ \
+     &nbsp;&nbsp;&nbsp;&nbsp;A B C D E</font></pre>
+  <pre> &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;R   G   B   Score
+      &nbsp;&nbsp;&nbsp;~   ~   ~   ~~~~~
+Fred &nbsp;&nbsp;&nbsp;&nbsp;4   0   1     2
+Ted &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1   5   4     1</pre>
+  <p>If more than one player has the best count (possible in the three-player 
+    version) then the game is drawn. The counts of resigned players are ignored.</p>
+
+  <h3>References and History</h3>
+
+  <p>Trinim rules by Joan Josep.</p>
+  <p>Implementation and help file by <a href="https://web.archive.org/web/20241112133600/http://members.optusnet.com.au/cameronb/home-1.htm">Cameron 
+    Browne</a>, April 2005.</p>
+  </div>
+  
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

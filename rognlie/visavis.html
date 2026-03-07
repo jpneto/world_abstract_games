@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="561">       
+
+<h3>Rules</h3>
+  <p>Two players, X and O, take turns placing a bridge between any two of their 
+    adjacent pegs not blocked by an existing bridge. The first player to complete 
+    a connected chain of bridges between their sides wins. Ties are not possible.</p>
+  <p>For instance, X has placed a bridge between the two 'x' pegs C5 and E3 in 
+    the following example. This move blocks O from playing a bridge between the 
+    two 'o' pegs at C4 and E4.</p>
+  <p><font face="Courier New, Courier, mono" size="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X<br><br>
+    &nbsp;&nbsp;&nbsp;A B C D E F G H I <br>
+    &nbsp;&nbsp;1 &nbsp;&nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x 
+    &nbsp;1<br>
+    &nbsp;&nbsp;&nbsp;2 o &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o 
+    2<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;3&nbsp;&nbsp; &nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x 
+    &nbsp;&nbsp;x &nbsp;3 &nbsp;<br>
+    &nbsp;&nbsp;O&nbsp;&nbsp;4 o &nbsp;&nbsp;o/&nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o 
+    4&nbsp;&nbsp;O<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5&nbsp;&nbsp;&nbsp; x &nbsp;&nbsp;x &nbsp;&nbsp;x 
+    &nbsp;&nbsp;x &nbsp;5<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6 o &nbsp;&nbsp;o &nbsp;&nbsp;o 
+    &nbsp;&nbsp;o &nbsp;&nbsp;o 6&nbsp;<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7&nbsp;&nbsp;&nbsp; x &nbsp;&nbsp;x 
+    &nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;7&nbsp;&nbsp;<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A B C D E F G 
+    H I&nbsp;&nbsp;</p>
+  <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X<br>
+    </font></p>
+  <p>The next example shows a game won by X, who has completed a continuous chain 
+    of 'x' bridges from the top edge to the bottom edge.<font face="Courier New, Courier, mono" size="2"><br>
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X</font></p>
+  <p><font face="Courier New, Courier, mono" size="2">&nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x 
+    &nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x 
+    &nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x<br>
+    o &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;\o 
+    &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o<br>
+    &nbsp;&nbsp; &nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x 
+    &nbsp;&nbsp;x &nbsp;&nbsp;x---x---x &nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x<br>
+    &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o 
+    &nbsp;\o/&nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;\o &nbsp;&nbsp;o &nbsp;&nbsp;o 
+    &nbsp;&nbsp;o<br>
+    &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;x&nbsp;&nbsp; x &nbsp;&nbsp;x &nbsp;&nbsp;x 
+    &nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x 
+    &nbsp;&nbsp;x &nbsp;&nbsp;x <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o 
+    &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o/&nbsp;&nbsp;o &nbsp;&nbsp;o 
+    &nbsp;&nbsp;o &nbsp;&nbsp;o<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x 
+    &nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x 
+    &nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o 
+    &nbsp;&nbsp;o &nbsp;&nbsp;o/&nbsp;\o &nbsp;&nbsp;o/&nbsp;&nbsp;o &nbsp;&nbsp;o 
+    &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x 
+    &nbsp;&nbsp;x\&nbsp;&nbsp;x &nbsp;&nbsp;x---x &nbsp;&nbsp;x &nbsp;&nbsp;x 
+    &nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o 
+    &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;\o &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o 
+    &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x 
+    &nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;/x &nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x 
+    &nbsp;/x\&nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;o &nbsp;&nbsp;o 
+    &nbsp;&nbsp;o---o&nbsp;&nbsp;&nbsp;o/&nbsp;&nbsp;o &nbsp;&nbsp;o---o &nbsp;&nbsp;o---o---o 
+    &nbsp;&nbsp;o &nbsp;&nbsp;o <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;O&nbsp;&nbsp; &nbsp; &nbsp;&nbsp;x &nbsp;/x 
+    &nbsp;&nbsp;x &nbsp; x &nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x 
+    &nbsp;&nbsp;x &nbsp;&nbsp;x\&nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp; &nbsp;&nbsp;O<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;o---o---o 
+    &nbsp;&nbsp;o &nbsp;\o &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o 
+    &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    x &nbsp;&nbsp;x\&nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x---x 
+    &nbsp;&nbsp;x &nbsp;&nbsp;x\&nbsp;&nbsp;x &nbsp;/x <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    o &nbsp;&nbsp;o &nbsp;&nbsp;o---o &nbsp;\o &nbsp;&nbsp;o &nbsp;&nbsp;o/&nbsp;&nbsp;o 
+    &nbsp;\o &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    x &nbsp;&nbsp;x &nbsp;&nbsp;x\&nbsp;&nbsp;x---x---x &nbsp;/x\&nbsp;&nbsp;x 
+    &nbsp;&nbsp;x &nbsp;&nbsp;x\&nbsp;/x &nbsp;&nbsp;x <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;o 
+    &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o---o &nbsp;&nbsp;o---o &nbsp;&nbsp;o 
+    &nbsp;\o &nbsp;&nbsp;o---o &nbsp;&nbsp;o &nbsp;&nbsp;o<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    x &nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x\&nbsp;/x &nbsp; x &nbsp;&nbsp;x 
+    &nbsp;&nbsp;x &nbsp;/x &nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;o 
+    &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o 
+    &nbsp;&nbsp;o/&nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o 
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    &nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp; x &nbsp;&nbsp;x---x 
+    &nbsp; x\&nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;o 
+    &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;\o 
+    &nbsp;&nbsp;o---o &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    x &nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x 
+    &nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;o 
+    &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o/&nbsp;&nbsp;o 
+    &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;&nbsp;o &nbsp;o<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    &nbsp;&nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x 
+    &nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x &nbsp;&nbsp;x 
+    &nbsp;x<br>
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X 
+    </font></p>
+  <h3>Notes</h3>
+  <p>Visavis is a Shannon switching game on the edges and belongs to the same 
+    class of connection games as Bridg-It and TwixT (and to some extend Trellis). 
+    Even though a trivial winning strategy has been found for Bridg-It (called 
+    Connexxions on the server) Visavis consists of a more complex system of overlaid 
+    triangular grids that allows richer variety of play, and no winning strategy 
+    is known.</p>
+  <p>Michail Antonow points out that different tactics must be applied when blocking 
+    an opponent's rightward path as opposed to a leftward path. The path can be 
+    abruptly cut by a single piece in one direction only; in the opposite direction 
+    a single bridge will only divert the path and two bridges are needed for a 
+    successful block.</p>
+  <p>The rules state that a bridge can be placed between any two adjacent pegs 
+    of the same colour. However since it can never help to place a bridge between 
+    the opponent's pegs, then it is assumed that all moves are made between the 
+    current player's pegs. This also simplifies the board notation.</p>
+  <p>The original rules only provide 120 bridges (60 per player). After the 120th 
+    move players would have to scavenge an existing bridge of theirs from the 
+    board and play it elsewhere. This feature has not been implemented.</p>
+  <p></p>
+  
+  <h3>References and History</h3>
+
+  <p>Visavis was invented by Michail Antonow in 1995 and copyrighted in 1996. 
+    It was originally called Nexus.</p>
+  <p>Implementation and help file by <a href="https://web.archive.org/web/20250319115714/mailto:cameronb@optusnet.com.au">Cameron 
+    Browne</a>, December 2003.<br>
+</div>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

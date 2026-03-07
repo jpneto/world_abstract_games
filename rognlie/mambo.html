@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h3><strong> Introduction</strong></h3>
+<p>Mambo is a boardless tile-laying game in which players strive to isolate enemy groups in the patterns that emerge. </p>
+<p align="left"><strong><em>Note</em></strong>: The game  is much easier to see in the graphical web interface than in the ASCII version!<br>
+</p>
+<h3><strong>Rules </strong></h3>
+<p>Two players, O and X, share a common pool of 48 hexagonal tiles called <em>mambo tiles</em>. One side of each tile has two O corners joined by a stripe and one X corner. The reverse side of each tile has the colours reversed.</p>
+<pre>         .--oo            .--xx<br>        x   oo\          o   xx\<br>       xxx  oo )        ooo  xx )<br>        x   oo/          o   xx/<br>         `--oo            `--xx</pre>
+<p> O starts by choosing a tile and placing it (either side up) in the middle of the playing area, oriented as they wish. Thereafter, players take turns placing a tile (either side up) adjacent to at least one existing tile. Tiles must be placed so that their edge positions and colours exactly match those of adjacent tiles.</p>
+<p><strong>Null Points:</strong> Any space enclosed by three corners of the same colour is described as a <em>null point,</em> since no tile can possibly be played there to match all three colours. Null points are marked '-' and indicate dead end  points that stop growth.</p>
+<pre>                    .--xx    <br>                   /    xx<br>              .--ooooo    )<br>             x   oo  ooo /<br>            xxx  oo .--oo   <br>             x   oo/<br>              )  oo   -<br>             /    oo<br>            xxxx    `--oo   <br>             \ xxx x   oo\<br>              `--xxxx  oo )<br>                   x   oo/<br>                    `--oo   </pre>
+<p align="left"><strong>Auto Moves: </strong>Any space enclosed by three corners of mixed colours constitutes an automatic as only one possible tile in one possible orientation will match those three colours. Players must automatically complete any such  moves created by their tile placement (there may be several).</p>
+<pre>                    .--xx                      .--xx    <br>                   o   xx\                    o   xx\<br>              .--oooo  xx )              .--oooo  xx )<br>             x   ooo   xx/              x   ooo   xx/<br>            xxx  oo .--xx              xxx  oo .  xx<br>             x   oo/                    x   oo     xx<br>              )  oo           ----&gt;      )  ooooo    )  <br>             /    oo                    /    oo ooo /<br>            xxxx    `--oo              xxxx    .  oo   <br>             \ xxx x   oo\              \ xxx x   oo\<br>              `--xxxx  oo )              `--xxxx  oo )<br>                   x   oo/                    x   oo/<br>                    `--oo                      `--oo   </pre>
+<p><strong>Aim: </strong>A player wins by blocking   any enemy group from further growth. If a move kills groups of  more than one colour then the mover loses.</p>
+<p>If the tiles run out before the game has been won, then the player with the largest group wins (tied game if equal). Only the dominant tiles in each group are counted. <br>
+</p>
+<h3><strong>Examples</strong></h3>
+<p>The following two examples show wins for O who has killed an X group in each case. The losing X group on the left also demonstrates a single loop. </p>
+<pre>    .--oo                             .--oo       .--xx  <br>   / ooo \                           / ooo \     / xxx \<br>  oooo    `--oo                     oooo    )   xxxx    )<br>   \    xx    oo                     \    xx     \    oo<br>    )  xxxxx    `--oo                 )  xx   -   )  oo    <br>   o   xx  xxx x   oo\               o   xx\     x   oo\<br>  ooo  xx .  xxxx  oo )             ooo  xx `--xxxx  oo )<br>   o   xx  xxx x   oo/               o   xx  xxx x   oo/<br>    )  xxxxx    .--oo                 )  xxxxx    .--oo  <br>   /    xx    oo                     /    xx    oo<br>  oooo    .--oo                     oooo    .--oo    <br>   \ ooo /                           \ ooo /<br>    `--oo                             `--oo </pre>
+<p><strong>Ladders: </strong>Any group with a single mouth (playable acute empty corner) constitutes a ladder, as the enclosed group must grow at the mouth point next turn or die. The following example shows a ladder in progress, with the mouth point marked 'm' in each case.</p>
+<pre>    .--oo                        .--oo   m   .--oo<br>   / ooo \                      / ooo \     x   oo\
+  oooo    )             a --&gt;  oooo    `--xxxx  oo )  <br>   \    xx                      \    xx xxx x   oo/<br>    )  xx   m                    )  xxxxx    .--oo<br>   /    xx                      /    xx    oo<br>  oooo    )             b --&gt;  oooo    .--oo    <br>   \ ooo /                      \ ooo /<br>    `--oo                        `--oo </pre>
+<p>It is generally bad to be laddered. However, the &quot;-largest_wins&quot; option largely  removes the importance  and danger  of ladders from the game. It is  generally   ill-advised  to force a ladder as that just allows the defending  opponent    to grow  their laddered group, especially if the defender  makes the ladder zig-zag so that the    enclosing pieces  are broken up into multiple groups. <br>
+</p>
+<h3 align="left"><strong>Variants</strong></h3>
+<p align="left"><strong>Mamba (&quot;Snake Eyes&quot;): </strong>Mamba is played as per the standard game except that a  player wins by forming a group of their colour with two loops. If a move achieves this for both players  then the mover loses.</p>
+<p>If the tiles run out before the game has been won, then the player with the largest group loses (tied game if equal). Only the dominant tiles in each group are counted.</p>
+<p>  <strong>Mamboa</strong>: Mamboa is a combination of Mambo and Mamba; a player wins by killing an enemy group (as per Mambo) and/or forming a group of their colour with two loops (as per Mamba). If a move achieves either or both of these conditions for both players then the mover loses. </p>
+<p align="left">If the tiles run out before the game has been won, then the player with the largest group wins (tied game if equal). Only the dominant tiles in each group are counted. [<em>Note</em>: Mamboa uses the rule that the largest group wins rather than loses as this solves ladder problems that may arise when playing with the "kill a group" rule.]</p>
+<p align="left">The above figure also shows a Red win in Mamboa. Red has achieved both winning conditions, although only one is requried.</p>
+<p><strong>Mambogo:</strong> Mambogo is a territorial game played with full auto moves; pieces are automatically placed at spaces with two corners of the same colour. The game ends when the tiles run out, and is won by the owner of the group with most territory (enlcosed junctions). If both players are tied on territory, then the player who achieved their territory with the smallest group wins (only dominant tiles are counted) otherwise the game is a draw.</p>
+<pre align="left">                      .--oo  <br>                     /    oo<br>                .--xxxxx    )<br>               / xxx   xxx /<br>          .--xxxxx    .  xx  <br>         o   xx     oo   xx\<br>        ooo  xx .  oooo  xx )<br>         o   xxx   ooo   xx/<br>          )  xxxx  oo .  xx  <br>         / xxx x   ooo   xx\    A position worth 10 pts<br>    .--xxxxx    .  oooo  xx )    for X and 0 pts for O.<br>   o   xx     oo ooo o   xx/<br>  ooo  xx .  ooooo    .  xx  <br>   o   xx     oo    xx xxx \<br>    `--xxxxx    .  xxxxx    )<br>         \ xxx   xxx      oo<br>          `--xxxxx    .  oo  <br>               \    oo ooo \<br>                `--ooooo    )<br>                     \    xx<br>                      `--xx   </pre>
+<p align="left">For example, the position shown above is worth 10 pts for X, as they have a group that encloses 10 junctions. O has not scored any points of territory in this position.<br>
+  </p>
+
+<h3>History </h3>
+
+<p>Mambo tiles and rules copyright (c)  Cameron Browne,  June 2007.</p>
+<p>Mambo is named for the abstract patterns that emerge during play, which can be reminiscent of the weird tribal artwork of Reg Mombassa. </p>
+<p>Many thanks to the gamerz.net playtesters who  patiently stress tested  many rule combinations, in particular mrraow, wyons, fritzd, ndzied1, hhornet, gemini6ice and ctralau. Special thanks to Stephen Tavener (mrraow) for his excellent  analysis of the game and suggesting the &quot;largest group wins&quot; rule which solved many problems. </p>
+<p>Please see the official Mambo page for further details and examples: <a href="https://web.archive.org/web/20240917190256/http://www.cameronius.com/games/mambo/">http://www.cameronius.com/games/mambo/</a></p>
+<p>Implementation and Help file by Cameron Browne, June 2007.<br>
+</p>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+              
+<h3>Rules for ChuShogi and DaiShogi</a></h3>
+    ChuShogi is a large Shogi variant played on a 12x12 board with 92 pieces. DaiShogi is even
+    larger, played on a 15x15 board and with 130 pieces. Both games follow the same rules as <a href="shogi.html">shogi</a>, with the addition of many new pieces, and a few extra rules
+    as noted below. 
+    <p>The most notable piece in ChuShogi and DaiShogi is the
+    Lion. The movement of the Lion is quite unusual, but can be summed up as follows: The Lion
+    may jump to any space within two spaces of its starting space, OR is may make two
+    consecutive king moves, capturing on either or both moves. A more complete list of the
+    possibilites is: <ul>
+      <li>The Lion may move or capture to any neighboring space, like
+        a king. </li>
+      <li>The Lion may jump (and capture) to any of the 16 spaces
+        which are two spaces away. </li>
+      <li>The Lion may move to a neighboring space and back again,
+        which accomplishes nothing, but allows the player to pass if he really wants to. </li>
+      <li>The Lion may capture a neighboring piece, and then make
+        another king-move away from where the piece was captured. </li>
+      <li>The Lion may capture a neighboring piece, and then move back
+        to its original space, thus seeming to capture without moving. This is referred to as an
+        &quot;igui&quot; capture in Shogi variants, and can be notated as &quot;Lnx!4f&quot;. </li>
+      <li>The Lion may capture two pieces in one turn, but capturing a
+        piece on a neighboring space, and then making a second king-move to capture a piece next
+        to that one. </li>
+    </ul>
+    <p>Note that the promoted Dragon Horse (Horned Falcon) and the
+    promoted Dragon King (Soaring Eagle) have lion powers which are limited to certain
+    directions, allowing them to occasionally make a double capture or igui capture as well.
+    The promoted Kylin IS a Lion. </p>
+    <p>These are the differences between Shogi and ChuShogi or
+    DaiShogi. <ol>
+      <li>Both ChuShogi and DaiShogi are normally played without
+        drops. (If you want a really long game, you can play with drops by specifying the
+        &quot;-drops&quot; option on the challenge command.) </li>
+      <li>The promotion zone is the last four rows in ChuShogi, and
+        the last five rows in DaiShogi. </li>
+      <li>The promoted Drunk Elephant, or Crown Prince, is a second
+        royal piece. If a player promotes his Drunk Elephant, he essentially has two kings, and
+        both must be captured or checkmated to win. </li>
+      <li>The Lion is a very exceptional piece, and has some
+        exceptional rules in ChuShogi. The net effect of these rules is to prevent the exchange of
+        Lions in most circumstances, which keeps the game more interesting. (DaiShogi does not
+        normally use these rules, but they can be enabled with the &quot;-lion&quot; challenge
+        option. e.g. &quot;chushogi challenge -dai -lion&quot;) <ul>
+          <li>A Lion may not capture another Lion which is two spaces away
+            unless the Lion it is capturing is unprotected. There is no restriction on capturing a
+            Lion in a neighboring space. </li>
+          <li>If your Lion is captured by a piece other than a Lion, you
+            may not capture the opponent's Lion on the next move, except with another Lion. </li>
+          <li>Both of the above rules do not apply if the Lion is captured
+            as part of a double capture, and the the first piece captured is not an unpromoted Pawn or
+            Go-Between. </li>
+        </ul>
+      </li>
+      <li>There are a couple extra restrictions on promotions in
+        ChuShogi. (Again these are not normally used in DaiShogi, but are also enabled with the
+        &quot;-lion&quot; challenge option.) <ul>
+          <li>If a piece declines promotion when is first enters the
+            promotion zone, it may not promote on its next move unless it makes a capture. </li>
+          <li>If a pawn declines promotion when it enters the promotion
+            zone, it may not promote until it reaches the last rank. </li>
+        </ul>
+      </li>
+    </ol>
+    <h3>Pieces used in ChuShogi and DaiShogi</h3>
+    <ul>
+      <li>An 'x' indicates a square which the piece may move or jump
+        to. </li>
+      <li>A line indicates the piece may move any number of squares in
+        that direction. </li>
+      <li>A number indicates the piece may move in that direction up
+        to that number of squares, but not jumping. </li>
+      <li>'a' and 'b' indicate Lion moves. The piece may jump to any
+        of the squares, or it may make two consecutive king-moves on these squares. </li>
+      <li>The Angry Boar, Cat Sword, Evil Wolf, Flying Dragon, Iron
+        General, Knight, Stone General and Violent Ox only appear in -daishogi. </li>
+    </ul>
+    <pre>
+    x                                 x x x
+  x ABx   Angry Boar (dai)            x+ABx   Gold General
+    x     promotes to Gold General      x     promoted Angry Boar
+
+  \   /                               \ x /
+    B     Bishop                      x+B x   Dragon Horse
+  /   \   promotes to Dragon Horse    / x \   promoted Bishop
+
+  x   x                               x | x
+  x BTx   Blind Tiger                 x+BTx   Flying Stag
+  x x x   promotes to Flying Stag     x | x   Promoted Blind Tiger
+
+  x x x                                 x
+    C     Copper General             --+C --  Side Mover
+    x     promotes to Side Mover        x     promoted Copper General
+
+  x   x                               x x x
+    CS    Cat Sword (dai)             x+CSx   Gold General
+  x   x   promotes to Gold General      x     promoted Cat Sword
+
+  x x x                               x x x
+  x DEx   Drunk Elephant              x+DEx   Crown Prince
+  x   x   promotes to Crown Prince    x x x   promoted Drunk Elephant
+
+                                        b
+  \ x /                               \ a /
+  x DHx   Dragon Horse               --+DH--  Horned Falcon
+  / x \   promotes to Horned Falcon   / | \   promoted Dragon Horse
+
+                                    b       b
+  x | x                               a | a
+ -- DK--  Dragon King                --+DK--  Soaring Eagle
+  x | x   promotes to Soaring Eagle   / | \   promoted Dragon King
+
+  x x x                               x x x
+  x EWx   Evil Wolf (dai)             x+EWx   Gold General
+          promotes to Gold General      x     promoted Evil Wolf
+
+  2   2                               x x x
+    FD    Flying Dragon (dai)         x+FDx   Gold General
+  2   2   promotes to Gold General      x     promoted Flying Dragon
+
+  \ | /
+ -- FK--  Free King                           (none)
+  / | \   does not promote
+
+  x x x                               \   /
+    FL    Ferocious Leopard            +FL    Bishop
+  x x x   promotes to Bishop          /   \   promoted Ferocious Leopard
+
+  x x x                                 |
+  x G x   Gold General               --+G --  Rook
+    x     promotes to Rook              |     promoted Gold General
+
+    x                                 x x x
+    GB    Go-Between                  x+GBx   Drunk Elephant
+    x     promotes to Drunk Elephant  x   x   promoted Go-Between
+
+  x x x                               x x x
+    IG    Iron General (dai)          x+IGx   Gold General
+          promotes to Gold General      x     promoted Iron General
+
+  x x x
+  x K x   King                                (none)
+  x x x   does not promote
+
+    x                               b b b b b
+  x   x                             b a a a b
+x   Ky  x Kylin                     b a+Kya b Lion
+  x   x   promotes to Lion          b a a a b promoted Kylin
+    x                               b b b b b
+
+    |                                 \ | /
+    L     Lance                        +L     White Horse
+          promotes to White Horse       |     promoted Lance
+
+b b b b b
+b a a a b
+b a Lna b Lion                                (none)
+b a a a b does not promote
+b b b b b
+
+  x   x                               x x x
+          Knight (dai)                x+N x   Gold General
+    N     promotes to Gold General      x     promoted Knight
+
+    x                                 x x x
+    P     Pawn                        x+P x   Tokin
+          promotes to Tokin             x     promoted Pawn
+
+x       x
+    x                                 \ | /
+  x Phx   Phoenix                    --+Ph--  Free King
+    x     promotes to Free King       / | \   promoted Phoenix
+x       x
+
+    |                                 x | x
+ -- R --  Rook                       --+R --  Dragon King
+    |     promotes to Dragon King     x | x   promoted Rook
+
+    |                                   |
+    RC    Reverse Chariot              +RC    Whale
+    |     promotes to Whale           / | \   promoted Reverse Chariot
+
+  x x x                                 |
+    S     Silver General              x+S x   Vertical Mover
+  x   x   promotes to Vertical Mover    |     promoted Silver General
+
+  x   x                               x x x
+    St    Stone General (dai)         x+Stx   Gold General
+          promotes to Gold General      x     promoted Stone General
+
+    x                                 \   /
+ -- SM--  Side Mover                 --+SM--  Free Boar
+    x     promotes to Free Boar       /   \   promoted Side Mover
+
+    |                                 \ | /
+  x VMx   Vertical Mover               +VM    Flying Ox
+    |     promotes to Flying Ox       / | \   promoted Vertical Mover
+
+    2                                 x x x
+  2 VO2   Violent Ox (dai)            x+VOx   Gold General
+    2     promotes to Gold General      x     promoted Violent Ox
+</pre>
+<p>&nbsp;</p>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

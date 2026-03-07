@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+   <p><font face="Arial" size="2">The <a href="terrace.html#rules">rules of Terrace6x6</a>
+    are exactly the same as Terrace and can be found on the <a href="terrace.html">Terrace
+    help page</a>. </font><dl>
+      <dt><font face="Arial" size="2"><a name="challenge">terrace6x6 challenge <b>userid1</b> <b>userid2</b>
+        <br>
+        or<br>
+        terrace6x6 challenge [ -short | -medium | -long | -master ] <b>userid1</b> <b>userid2</b> <br>
+        or<br>
+        terrace6x6 challenge <b>userid1</b> <b>userid2</b> [ <b>userid3</b> [ <b>userid4</b> ] ]</a>
+        </font></dt>
+      <dd><font face="Arial" size="2">Start a new game. Specify up to four userids. If three
+        userids are specified and the third userid is &quot;long&quot;, &quot;medium&quot; or
+        &quot;short&quot;, this starts a 2 player game. The 2 player long game is the default. </font><p><font face="Arial" size="2">The initial game boards are: </font></p>
+      </dd>
+    </dl>
+    <pre><font face="Courier" size="1">
+      Two Player (Long/Default)        Two Player (Medium)
+        a   b   c   d   e   f            a   b   c   d   e   f
+      H---+---+---+---+---+---L        H---+---+---+---+---+---L
+    6 | C | C | B | B | A | T | 6    6 |   | C | B | B | T |   | 6
+      +---+   +   +   +   +---+        +---+   +   +   +   +---+
+    5 | A   A | B | B | C   C | 5    5 |       |   |   |       | 5
+      +---+---+   +   +---+---+        +---+---+   +   +---+---+
+    4 |           |           | 4    4 |           |           | 4
+      +---+---+---+---+---+---+        +---+---+---+---+---+---+
+    3 |           |           | 3    3 |           |           | 3
+      +---+---+   +   +---+---+        +---+---+   +   +---+---+
+    2 | c   c | b | b | a   a | 2    2 |       |   |   |       | 2
+      +---+   +   +   +   +---+        +---+   +   +   +   +---+
+    1 | t | a | b | b | c | c | 1    1 |   | t | b | b | c |   | 1
+      L---+---+---+---+---+---H        L---+---+---+---+---+---H
+        a   b   c   d   e   f            a   b   c   d   e   f
+    
+      Two Player (Short)               Two Player (Master)
+        a   b   c   d   e   f            a   b   c   d   e   f
+      H---+---+---+---+---+---L        H---+---+---+---+---+---L
+    6 |   | T | B | B | C |   | 6    6 | C | C | B | B | A | T | 6
+      +---+   +   +   +   +---+        +---+   +   +   +   +---+
+    5 |       |   |   |       | 5    5 | A   A | B | B | C   C | 5
+      +---+---+   +   +---+---+        +---+---+   +   +---+---+
+    4 |           |           | 4    4 |           |           | 4
+      +---+---+---+---+---+---+        +---+---+---+---+---+---+
+    3 |           |           | 3    3 |           |           | 3
+      +---+---+   +   +---+---+        +---+---+   +   +---+---+
+    2 |       |   |   |       | 2    2 |       |   |   |       | 2
+      +---+   +   +   +   +---+        +---+   +   +   +   +---+
+    1 |   | c | b | b | t |   | 1    1 |   | c | b | b | t |   | 1
+      L---+---+---+---+---+---H        L---+---+---+---+---+---H
+        a   b   c   d   e   f            a   b   c   d   e   f
+    
+      Three/Four Players
+        a   b   c   d   e   f  
+      H---+---+---+---+---+---L
+    6 |   | T | B | B | C |   | 6
+      +---+   +   +   +   +---+
+    5 | t     |   |   |     C'| 5
+      +---+---+   +   +---+---+
+    4 | b         |         B'| 4
+      +---+---+---+---+---+---+
+    3 | b         |         B'| 3
+      +---+---+   +   +---+---+
+    2 | c'    |   |   |     T'| 2
+      +---+   +   +   +   +---+
+    1 |   | c | b | b | t |   | 1
+      L---+---+---+---+---+---H
+        a   b   c   d   e   f  </font><font face="Arial" size="2">
+</font></pre>
+    <dl>
+      <dt><font face="Arial" size="2"><a name="move">terrace6x6 move <b>board</b> <b>userid</b> <b>password</b>
+        <b>move</b>[#<b>moveno</b>]</a> </font></dt>
+      <dd><font face="Arial" size="2">Make a move on the specified board (if it is your turn). A
+        move is in one of the following forms: </font><pre><font face="Courier" size="1">
+      rc1-rc2
+    s-rc1-rc2
+      rc1-rc2:d
+    s-rc1-rc2:d
+</font><font face="Arial" size="2"></font></pre>
+        <p><font face="Arial" size="2">where </font><dl>
+          <dd><font face="Arial" size="2">s is the piece being moved (A,B,C,D,T) [ optional ] </font></dd>
+          <dd><font face="Arial" size="2">rc1 is the starting position of the piece being moved </font></dd>
+          <dd><font face="Arial" size="2">rc2 is the final position for the piece </font></dd>
+          <dd><font face="Arial" size="2">d is the piece being captured [ optional ] </font></dd>
+        </dl>
+      </dd>
+    </dl>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

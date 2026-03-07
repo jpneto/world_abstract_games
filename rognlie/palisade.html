@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h2>Palisade Rules</h2></a></a> (Copyright (c) 2007 Mark
+    Steere &lt;mark@marksteeregames.com&gt;) </font>
+    <p><font face="Arial">AUTHOR'S NOTE: Feel free to distribute this document. </font></p>
+
+<font face="Arial">
+<h3>Introduction </h3>
+Palisade is played with a Go set. The board starts out
+empty as shown in Figure 1. The stones shown surrounding the board don't
+have to actually be placed there, but the game is played as though they were
+there.<br><br>
+Each player takes possession of all of the stones of one color. Draws and ties
+cannot occur in Palisade. Mark Steere designed Palisade in June, 2007.
+
+
+<pre><font face="courier" size="3">
+        A B C D E F G 
+
+        o x o x o x o 
+   7  o . . . . . . . o  7
+   6  x . . . . . . . x  6
+   5  o . . . . . . . o  5
+   4  x . . . . . . . x  4
+   3  o . . . . . . . o  3
+   2  x . . . . . . . x  2
+   1  o . . . . . . . o  1
+        o x o x o x o 
+
+        A B C D E F G 
+
+  Figure 1 -- 7x7 Palisade Board - Initially Empty
+</font></pre>
+
+
+<font face="Arial">
+<h3>Stone Placement</h3> Players take turns adding their own stones to
+unoccupied points on the board, one stone per turn.<br><br>
+
+Points available to X are interspersed with points available to O, in a
+checkerboard pattern. In Figure 2, the coordinates of the X are (3,1).
+Note that 3+1 = 4, an even number. The coordinates of the O are (2,3).
+Note that 2+3 = 5, an odd number. X's can only be placed onto points
+whose sum of coordinates is even. Likewise for O's and odd sums. In
+practice it's not very complicated. You'll quickly develop an understanding of
+where stones can be placed and where they can't. X adds the first stone..
+</font>
+
+<pre><font face="courier" size="3">
+   4  . . . . .
+   3  . . O . .
+   2  . . . . .
+   1  . . . X .
+   0  . . . . .
+
+      0 1 2 3 4
+
+  Figure 2 -- Coordinates
+</font></pre>
+
+
+<font face="Arial">
+Sometimes a newly added stone completes the formation of a loop. Here a
+'loop' is a closed path of like-colored stones. Each stone in the loop is
+connected to neighboring stones in the loop via diagonal adjacencies.<br><br>
+
+When you form a loop, if there are any enemy stones within (surrounded
+by) your loop, then you must remove said enemy stones from the board. Loops
+are not 'protected' in any sense. If you form a loop around an enemy loop, you
+capture said enemy loop as well as all other enemy stones within your loop.<br><br>
+
+In Figure 3a, X adds a stone, forming a loop which surrounds two O's.
+ X concludes his turn in Figure 3b by removing the two O's.
+</font>
+
+
+<pre><font face="courier" size="3">
+    . . x . . . . 
+    . x o x o . . 
+    ? . . o x o . 
+    o x . x . x o 
+    . o x . x . . 
+    . . o x o . o 
+    x . . o . . . 
+
+  Figure 3a -- X Initiates Turn (?)
+
+
+    . . x . . . . 
+    . x . x o . . 
+    x . . . x o . 
+    o x . x . x o 
+    . o x . x . . 
+    . . o x o . o 
+    x . . o . . . 
+
+  Figure 3b -- X Concludes Turn
+
+</font></pre>
+
+<font face="Arial">
+Sometimes an added stone will form two or more loops simultaneously. In this
+case, all enemy stones within all of the loops are removed.<br><br>
+
+The owner of a loop owns all of the points occupied by the loop stones as well as
+all points within the loop, occupied or unoccupied.<br><br>
+
+A player must never place a stone within a loop (of either color). Figure 4 shows
+all of the placements available to X, marked with ?'s. Note the
+O drawn next to the board. (See Figure 1.)
+</font>
+
+<pre><font face="courier" size="3">
+    x o ? o x . x 
+    . ? . ? o x o 
+    x o ? o . o . o
+    o . o . . . o 
+    x o x o . o x 
+    . x . ? o x . 
+    x . x . x . x 
+
+  Figure 4 -- Placements Available to X (?)
+
+</font></pre>
+
+<font face="Arial">
+Each player will always have a placement available, an unobvious property of
+Palisade. You must make a placement on your turn.
+</font>
+
+
+<font face="Arial">
+<h3>Object of the Game</h3> When the players own all of the points (occupied
+and unoccupied), the player who owns the majority of points wins.
+</font>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

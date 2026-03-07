@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<p>
+  Quoridor is Copyright 1997 by Gigamic Games and is used here with
+  their permission.
+
+
+<h3>Quoridor Command Summary</h3>
+<dl>
+<dt><a name="challenge">quoridor challenge <b>userid1 userid2 [ userid3 [userid4]] [-noselftrap] [-meet=n] [-nfences=n]</b> 
+<dd>
+    start a game with up to four players
+<br>
+    the "-noselftrap" option will give you an error when you attempt
+    to block yourself from your own goal.
+<br>
+        The "-meet" option will start the pawns closer toward each other
+           and closer towards the center of the board by 'n' rows or columns;
+<br>
+          "-meet"  or  "-meet=3"  will start the pawns three rows closer to
+           each other;
+<br>
+          "-meet=2" will start the pawns two rows closer to each other;
+<br>
+          "-meet=1" will start the pawns one row closer to each other.
+<br>
+        The "-nfences" option will start the game with the number of fences
+        between 0 and 10 (inclusive).
+<br>
+        For example: "-nfences=8" will give each player eight fences.
+        If the "-nfences" option is not used then the default will give
+        each player in a two-player game 10 fences and will give each player
+        in a four-player game 5 fences.
+
+<dt><a name="move">quoridor move <b>board</b> <b>userid</b> <b>password</b> <b>move</b></a>
+<dd>
+    where move is either a movement of the pawn, a jump of the
+ 
+    pawn, or a placement of a fence. Your pawn may only move one
+    space orthogonally; either N (north), S (south), E (east), or W
+    (west) as long as it is not blocked by a fence in the way. To
+    place a fence designate the col/row of the location where you
+    wish to place the center of the fence and then designate
+    whether the fence should be placed horizontally (with a '-') of
+    vertically (with a '/'). For example; d7- will designate that a
+    fence be placed from c7 to e7. d7/ will designate that a fence
+    be placed from d6 to d8.
+<p> 
+    In order to jump your opponent, he must be next to you. If
+    there is no fence directly behind your opponent then you may
+    only jump across to the open spot directly behind your
+    opponent. If there is a fence blocking the spot directly behind
+    your opponent, then you may change direction of your jump while
+    in mid-air. To designate a jump directly behind your opponent,
+    use the compass direction repeated twice (NN, SS, WW, or EE) of
+    the direction you are jumping. To designate a jump that changes
+    direction in mid-air, use the a combination of compass
+    directions stating the two directions your pawn will move (NW,
+    NE, SW, SE, EN, ES, WN, or WS) The following examples will
+    illustrate the moves.
+<p>
+<pre>
+                         [S]
+
+            H   G   F   E   D   C   B   A   
+            |   |   |   |   |   |   |   |
+        +-----------------------------------+
+        |                                   |          
+     1--|   +   +   +   +   +   +   +   +   |--1        playerA (O)
+        |       |                           |           Fences - 5
+     2--|   +   |   +   +-------+-------+   |--2        ===========
+        |       |       |                   |            | | | | |
+     3--|-------+-------|-------+-------+   |--3        
+        |               |                   |          
+     4--|   +   +   +   +   +   +   +   +   |--4        
+[E]     |               |                   |     [W]
+     5--|   +   +   +   |   +   +   +-------|--5        
+        |               |     y             |          
+     6--|   +   +   +   +-------+   +   +   |--6        PlayerB (X)
+        |                 a   O   a         |           Fences - 3
+     7--|   +   +   +   +   +   +   +   +   |--7        ===========
+        |                 b   X |           |            | | |
+     8--|   +   +   +   +   +   |   +   +   |--8        
+        |                     z |           |          
+        +-----------------------------------+
+            |   |   |   |   |   |   |   |
+            H   G   F   E   D   C   B   A   
+
+                         [N]
+</pre>
+
+  In this example, player O may move to either 'a' location or may jump to
+  location 'z' (with the move NN : this would win the game for player O).  
+  Player O may not jump to location 'b' since there is no fence directly
+  behind player X (no fence between D8 and C8).  
+<p>
+  Player X may move to either locations 'b' or 'z' or may jump to either
+  'a' locations (with moves of SE or SW depending on which 'a' she wishes
+  to jump to).  Player X may not jump to location 'y' since there is a
+  fence directly behind player O.
+<p>
+   The following diagram shows the board set-up at the very beginning of the
+   game.  The object of the game is to move your pawn to the opposite side
+   of the board.  The pawn may be located at any location touching the
+   opposite side of the board to win.
+<p>
+<pre>
+			 [S]
+
+            H   G   F   E   D   C   B   A   
+            |   |   |   |   |   |   |   |
+        +-----------------------------------+
+        |                 O                 |          
+     1--|   +   +   +   +   +   +   +   +   |--1        playerA (O)
+        |                                   |           Fences - 10
+     2--|   +   +   +   +   +   +   +   +   |--2        ===========
+        |                                   |            | | | | |
+     3--|   +   +   +   +   +   +   +   +   |--3         | | | | |
+        |                                   |          
+     4--|   +   +   +   +   +   +   +   +   |--4        
+[E]     |                                   |     [W]
+     5--|   +   +   +   +   +   +   +   +   |--5        
+        |                                   |          
+     6--|   +   +   +   +   +   +   +   +   |--6        PlayerB (X)
+        |                                   |           Fences - 10
+     7--|   +   +   +   +   +   +   +   +   |--7        ===========
+        |                                   |            | | | | |
+     8--|   +   +   +   +   +   +   +   +   |--8         | | | | |
+        |                 X                 |          
+        +-----------------------------------+
+            |   |   |   |   |   |   |   |
+            H   G   F   E   D   C   B   A   
+
+                         [N]
+</pre>
+<p>
+<dt><a name="set">quoridor set <b>userid</b> <b>password</b> <b>setcommand</b></a>
+<dd>
+    where <b>setcommand</b> is one of:
+<dl>
+<dt>      crosses <dd> use crosses as gridpoints (default)
+<dt>      dots <dd> use dots as gridpoints instead of crosses (NOTE: the dots may not show on some computers and you may need to use crosses)
+<dt>      thinfences <dd> use thin lines for fences (default) 
+<dt>      thickfences <dd> use a thick line for the fences
+
+</dl>
+</dl>
+   
+<a name="rules">
+<h3>Rules for Quoridor</h3>
+</a>
+    Quoridor is played on a 9 by 9 square board with two players/pawns.
+  The players may place fences (of length equal to two spaces) on the board
+  in an attempt to slow down their opponent's progress.  The object of the
+  game is to be the first to move your pawn to the opposite side of the
+  board.  When placing fences, you may not completely block off your
+  opponent from his goal.  In other words, you must always leave a path for
+  your opponent to reach his goal.  You may accidentally block yourself off
+  from your goal but that is not an illegal move so be careful of where 
+  you place your fences.  Fences may touch one another but may not overlap
+  or fall on top of one another nor may the fences stick off the edge of the
+  board.
+<p>
+<h4>Four-Player Quoridor</h4>
+Quoridor can played with four players.  In this mode the players start
+on each of the four sides of the board, and try to be the first to reach
+the opposite side.  Players have only 5 fences instead of 10.
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

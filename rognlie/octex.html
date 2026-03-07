@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h3><strong>Rules </strong></h3>
+<p><strong>Tiles: </strong>Two players, O and X, share a common pool of octagonal tiles divided into four coloured regions:</p>
+<pre>    ---      ---   
+   /o|x\    /x|o\  
+  |--+--|  |--+--| 
+   \x|o/    \o|x/ 
+    ---      ---  </pre>
+<p>The front and back faces of  each tile  have a square coloured bump that connects two opposite corners of that colour, giving four unique rotations:</p>
+<pre>    ---      ---      ---      ---   
+   /o|x\    /x|o\    /o|x\    /x|o\  
+  |--o--|  |--o--|  |--x--|  |--x--| 
+   \x|o/    \o|x/    \x|o/    \o|x/ 
+    ---      ---      ---      ---  </pre>
+<p align="left"><strong>Start:</strong> The board consists of an 5x5 grid of square holes which is initially empty. </p>
+<p align="left"><strong>Play:</strong> Players take turns placing a piece to nestle in either:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1) An empty board hole, or<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2) The square hole formed where four tiles meet on the same level.</p>
+<p align="left">The following example shows  a stacking move in which a tile is placed to nestle in the square hole formed by four mutually adjoining tiles. Note that that there is initially an X path running from top left to bottom right (left) but that the move breaks this path (right).</p>
+<pre>    ---   ---              ---   ---   
+   /x o\ /o x\            /x o\ /o x\  
+  |  x  |  o  |          |  x --- o  | 
+   \o x/ \x o/            \o /x o\ o/ 
+    ---   ---    ----&gt;     -|  o  |-   
+   /x o\ /x o\            /x \o x/ o\  
+  |  o  |  x  |          |  o --- x  | 
+   \o x/ \o x/            \o x/ \o x/ 
+    ---   ---              ---   ---   
+</pre>
+<p><strong>Aim:</strong> A player wins by forming an orthogonal or diagonal line of three bumps of their colour, such that a path of the same colour (not including any bumps)  can be traced between the bumps at each end of the line. If a move achieves this for both players then the mover loses.</p>
+<p>The following example shows a game won by X, who has formed a vertical line of three X bumps with a bumpless path between them:</p>
+<pre>       +     +     +     +     +   
+ 
+
+                  ---   --- 
+                 /o x\ /o x\ 
+       +     +  |  x --- x  |  +
+                 \x /o x\ o/
+            ---   -|  o  |-
+           /o x\ /x \x o/ o\ 
+       +  |  x --- x --- o  |  +
+           \x /x o\ x/ \o x/
+            -|  o  |-   ---
+           /o \o x/ x\       
+       +  |  o --- x  |  +     +
+           \x o/ \x o/ 
+            ---   ---   
+
+       +     +     +     +     +
+</pre>
+
+<h3>History </h3>
+<div align="center">
+  <p align="left">Octex tiles and rules by Cameron Browne and copyright (c) Cyberite Ltd 2008. Thanks to Stephen Tavener for suggesting the &quot;N bumps in a row&quot; winning condition. </p>
+  <p align="left">The name Octex refers to the tiles having eight (oct) sides and six (hex) distinct coloured parts, in addition to the 'X' shaped colouring patterns on the tiles.</p>
+</div>
+<p>Official Octex rules: <a href="https://web.archive.org/web/20250208033753/http://www.cameronius.com/games/octex/">http://www.cameronius.com/games/octex/</a></p>
+<p>Graphical web interface: <a href="https://web.archive.org/web/20250208033753/http://www.gamerz.net/pbmserv/List.php?Dna">http://www.gamerz.net/pbmserv/List.php?Octex</a></p>
+<p>Implementation and Help file by Cameron Browne, October 2008.<br>
+</p>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

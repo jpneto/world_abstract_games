@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h3><strong> Introduction</strong></h3>
+<p> Trilbert  is boardless strategy game for two  players. Players takes turns adding pieces called trilberts; the aim is to form a loop of your colour. </p>
+<p>Each trilbert is like a jigsaw piece with four arms, with each half coloured a different player colour: </p>
+<pre>         _---_                   _---_
+        /     \                 /     \
+       |       |               |       |
+        \     /                 \     /
+         |   |                   |   |
+         |   |       _---_       |   |
+        /     \_   _/     \_   _/     \
+       |        ---         ---        |   
+       |                               |
+        \_    __---_       _---__    _/
+          ----      \     /      ----
+                     |...|                  
+         _----__   _/.....\_   __----_ 
+        /.......---.........---.......\
+       |...............................|
+        \......_---_......._---_....../  
+         |..../     \_..._/     \....|   
+         |...|        ---        |...|
+        /.....\                 /.....\ 
+       |.......|               |.......|     
+        \_..._/                 \_..._/ 
+          ---                     ---    </pre>
+<h3><strong>Rules </strong></h3>
+<p>To start, a trilbert is placed on the playing surface.</p>
+<p>Players then take turns adding a trilbert to extend the existing group. Trilberts can only be placed where they would be held securely by existing pieces and not move unless lifted out. For instance:</p>
+<pre>        x---x   o---o          
+  o       o |   |      
+  |       | x---o    
+  o---o---o |   |   
+      | x---x   o---o  
+  x---x---x  
+  |       |
+  x       x</pre>
+<p>Players win by completing a loop of their colour. The loop may pass through touching pieces of the same colour but may not jump across gaps. The enclosed region may be empty or occupied by enemy pieces. If this  is achieved simultaneously   for both players then the game is a draw. </p>
+<p>For example, the following position shows a winning loop for X: </p>
+<pre>        o       o      
+        |       |
+        o---o---o
+            | 
+        x---x---x
+  o---o | x---x | x---x   o---o          
+      | x | o   x   o |   |      
+      o---x |       | x---o    
+      |   | o---o---o |   |   
+  o---o   x---x | x---x   o---o  
+            x---x---x  
+            |       |
+            x       x</pre>
+<p>If the tiles run out before either player wins, then the player with the largest connected  group loses.</p>
+<div align="center"></div>
+<h3 align="left"><strong>Syntax</strong></h3>
+<p>The move syntax is:<br>
+  <br>
+  <tt> </tt><tt> &nbsp;&nbsp;trilbert move <b>board#</b> <b>userid</b> <b>password</b> b13</tt></p>
+<p>Place tile rotation b at move position 13.<br>
+</p>
+<h3>History </h3>
+<p>Trilbert pieces and rules copyright (c)  Cameron Browne,  December 2007.</p>
+<p>More details are available at  the <a href="https://web.archive.org/web/20241112114209/http://www.cameronius.com/games/trilbert/">official Trilbert page</a>.</p>
+<p>The name &quot;trilbert&quot; is a contraction of &quot;Truchet Hilbert&quot;, as the piece shapes are actually a mathematical curves called Truchet contours and the H-like motif is reminiscent of the Hilbert curve generator.</p>
+<p>Implementation and Help file by Cameron Browne, December 2007.<br>
+</p>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

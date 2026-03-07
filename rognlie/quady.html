@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+  <h3>Rules</h3>
+
+  <p>First let's recap the game of Y, which is played on a hexagonally tiled triangle. 
+    Two players, X and O, take turns placing a piece of their colour on an empty 
+    point, and the first player to connect all three sides with a chain of their 
+    colour wins. Eactly one player must win.</p>
+  <p>Quadrant Y is identical to standard Y except that in addition to the standard 
+    game the board is divided into four smaller triangles, each containing a subgame 
+    played according to the same rules. The perimeter of each subgame is marked 
+    '+' (subgames share borders with neighbouring subgames).<br>
+    <br>
+    <font face="Courier New, Courier, mono">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1- 
+    +<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2- 
+    + +<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3- 
+    + . +<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4- 
+    + . . +<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5- 
+    + . . . +<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6- + . . 
+    . . +<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;7- + . . . . . +<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8- + + + + + + + +<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 9- + + . . . . . + +<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10- + . + . . . . + . +<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;11- + . . + . . . + . . +<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;12- + . . . + . . + . . . +<br>
+    &nbsp;&nbsp;&nbsp;13- + . . . . + . + . . . . +<br>
+    &nbsp;&nbsp;14- + . . . . . + + . . . . . +<br>
+    &nbsp;15- + + + + + + + + + + + + + + +<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \<br>
+    &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;A B C D E F G H I J K L M N O</font> 
+  </p>
+  <p>This gives a total of 5 pts: 1 pt for the standard game and 1 pt for each 
+    of the four subgames. A player wins the overall game as soon as they score 
+    3 pts, which may involve winning the standard game plus at least two subgames, 
+    or winning at least three subgames.</p>
+  <h3>Example Game</h3>
+  The following example shows a game won by X.<br>
+  <font face="Courier New, Courier, mono"><br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ 
+  x<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ 
+  x +<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x 
+  x . +<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;o o 
+  x . +<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ x o x . 
+  +<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;+ . x o x . +<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ + + x o x + +<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; + + . . x o x + x<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x . + . x o o x x o<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; + x . + x o . o o o +<br>
+  &nbsp;&nbsp;&nbsp;&nbsp; + . x x x o . x . . . x<br>
+  &nbsp;&nbsp;&nbsp; + . x o o o . + x x x x +<br>
+  &nbsp;&nbsp; + . x o . . + + . . . x . +<br>
+  &nbsp; + + x o + + + + + + + + x + +<br>
+  </font> 
+  <p>Even though O has won the standard game by connecting all three sides (plus 
+    one subgame), X has won three of the subgames to give them 3 pts and the overall 
+    win. This can be demonstrated by examining each subgame in isolation:</p>
+  <p><font face="Courier New, Courier, mono">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    +<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    + x<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    + x +<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    x x . +<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    o o x . +<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    + x o x . +<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; 
+    + . x o x . +<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; + 
+    + + x o x + +<br>
+    <br>
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ 
+    + + x o x + + <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+&nbsp;. 
+    . x o x +<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ &nbsp;&nbsp;&nbsp;&nbsp; 
+    +&nbsp;. x o o x &nbsp;&nbsp;&nbsp; &nbsp;+<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; + + &nbsp;&nbsp;&nbsp;&nbsp; +&nbsp;x 
+    o . o&nbsp; &nbsp;&nbsp;&nbsp; + x<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x . + &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x o . x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x 
+    x o<br>
+    &nbsp;&nbsp;&nbsp;&nbsp; + x . + &nbsp;&nbsp;&nbsp;&nbsp; o . +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    o&nbsp;o o +<br>
+    &nbsp;&nbsp;&nbsp; + . x x x &nbsp;&nbsp; &nbsp; + + &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x&nbsp;. 
+    . . x<br>
+    &nbsp; &nbsp;+ . x o o o &nbsp; &nbsp;&nbsp; + &nbsp;&nbsp;&nbsp; &nbsp;+ 
+    x x x x +<br>
+    &nbsp; + . x o . . + &nbsp;&nbsp;&nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;+ . 
+    . . x . +<br>
+    &nbsp;+ + x o + + + + &nbsp;&nbsp; &nbsp; &nbsp;&nbsp;&nbsp;+ + + + + x + 
+    +<br>
+    </font></p>
+  <h3>Notes</h3>
+  <p>Exactly one player must win Quadrant Y.</p>
+  <p>The central (upside down) triangle may appear to the the strongest subgame 
+    as it is the only one that touches all three sides. However, winning this 
+    central subgame does not necessarily help a player, as demonstrated by the 
+    above example.<br>
+  </p>
+  <p>Quadrant Y applies the principle introduced in Steven Meyer's game Quadrant 
+    Hex to Y. This principle constitutes a metarule that may be applied to a number 
+    of connection games. This metarule may also be recursively applied to any 
+    of the Quadrant game themselves, splitting each subgame into four subsubgames 
+    for a total of 16 + 4 + 1 = 21 pts up for grabs, and each subsubgame split 
+    further into four subsubsubgames for a total of 64 + 16 + 4 + 1 = 85 pts, 
+    and so on.</p>
+  <h3>Syntax</h3>
+  <p>X moves first. The move syntax is:<br>
+    <br>
+    quady move &lt;board#&gt; &lt;username&gt; &lt;password&gt; <b>F6<br>
+    -- </b>Place a piece at coordinate F6, which must be empty.</p>
+  <p>quady move &lt;board#&gt; &lt;username&gt; &lt;password&gt; <b></b><b>swap</b><br>
+    -- Swap colours (second move only).</p>
+  <p>
+  <p> 
+  <h3>References and History</h3>
+
+  <p>Quadrant Y rules by Cameron Browne, March 2005.</p>
+  <p>Implementation and help file by <a href="https://web.archive.org/web/20251119095909/http://members.optusnet.com.au/cameronb/home-1.htm">Cameron Browne</a>, March 2005.</p>
+  </div>
+  
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

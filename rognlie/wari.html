@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<p align="left"><font face="Arial" size="3">In Wari, TWO players compete against each
+    other to see who can be the first to capture 25 or more stones. </font><a name="rules"></p>
+    <h3 align="left"><font face="Arial" size="3">HOW TO PLAY WARI</font></h3>
+    <p align="left"></a><font face="Arial" size="3">Wari is deceptively simple to play, but to
+    win, you will have to plan ahead, and use your wits. Wari will take a minute to learn, but
+    it will take a lifetime to master! </font></p>
+    <p><font face="Arial" size="3">What chess is to Europe, Wari is to Africa. It has been
+    played continuously for thousands of years, and there are sophisticated opening, middle
+    game, and end game strategies. Don't feel discouraged if you don't win right away. </font></p>
+    <p><font face="Arial" size="3">Wari opens with twelve bowls, called &quot;houses&quot;.
+    Six houses are on your side, six on your opponent's. Each house is filled with 4 stones,
+    for a total of 48. The object of the games is to be the first player to capture the
+    majority of stones (25 or more wins!). The rules are simple: </font><ol>
+      <li><font face="Arial" size="3">When it is your turn, select a house by specifying it's
+        letter in a move command. e.g. wari move 1234 myname mypass c The computer will pick up
+        the stones in that house, and will drop them one at a time in each successive house
+        counter clockwise. </font><pre><font face="Courier" size="1">
+                     &lt;---------+     The game
+                               |     moves in this
+                               |     direction
+                      +--------+
+</font><font face="Arial" size="3"></font></pre>
+      </li>
+      <li><font face="Arial" size="3">If you move a house with enough stones to go completely
+        around the board (12 or more), the original house is skipped and left empty. </font></li>
+      <li><font face="Arial" size="3">If the last stone is dropped into a house on your opponent's
+        side, resulting in that house having with 2 or 3 stones, you capture all the stones in
+        that house. (See example game below). </font></li>
+      <li><font face="Arial" size="3">A capture includes consecutive previous houses which also
+        contain 2 or 3 stones (See &quot;Grand Slam&quot; below). </font></li>
+      <li><font face="Arial" size="3">If all your opponent's houses are empty, you must make a
+        move which will give him stones. If no such move can be made, you capture all the
+        remaining stones on the board. </font></li>
+      <li><font face="Arial" size="3">The game is over when one player has taken a total of 25 or
+        more stones, both players have taken 24 stones each (tie), or if the computer determines
+        that the game is a stalemate, in which case each player takes the stones on his side of
+        the board. </font></li>
+    </ol>
+    <h3><font face="Arial" size="3">EXAMPLE GAME</font></h3>
+    <p><font face="Arial" size="3">The easiest way to learn Wari is by following a detailed
+    example. The bones are rolled to decide who goes first. For this example, let's presume
+    that your opponent wins the roll, and therefore becomes the first player. The opening game
+    board is displayed as follows: </font></p>
+    <pre><font face="Courier" size="1">
+   2nd Player (your side of the board)
+
+      f     e     d     c     b     a
+   +-----+-----+-----+-----+-----+-----+  Each player
+   |  4  |  4  |  4  |  4  |  4  |  4  |  begins with
+   +-----+-----+-----+-----+-----+-----+  four stones
+   |  4  |  4  |  4  |  4  |  4  |  4  |  in each
+   +-----+-----+-----+-----+-----+-----+  house
+      a     b     c     d     e     f
+
+   1st Player (your opponent's side of the board)</font><font face="Arial" size="3">
+</font></pre>
+    <p><font face="Arial" size="3">Let's say your opponent decides to move the stones in his
+    second house. </font></p>
+    <pre><font face="Courier" size="1">
+   wari move 1234 him xxxx b
+
+   Your side of the board
+
+      f     e     d     c     b     a
+   +-----+-----+-----+-----+-----+-----+
+   |  4  |  4  |  4  |  4  |  4  |  4  |
+   +-----+-----+-----+-----+-----+-----+  After your
+   |  4  |     |  5  |  5  |  5  |  5  |  opponent's
+   +-----+-----+-----+-----+-----+-----+  first move
+      a     b     c     d     e     f
+           XXX  -------------------&gt;
+
+   Opponent's side of the board
+</font><font face="Arial" size="3"></font></pre>
+    <p><font face="Arial" size="3">As you can see in the diagram above, the 4 stones were
+    removed from the second house (marked with XXX) and have been deposited one at a time in
+    each house to the right, so that they now have 5 stones each. </font></p>
+    <p><font face="Arial" size="3">Your Move . . . </font></p>
+    <p><font face="Arial" size="3">Let's presume that you decide to move the stones in your
+    fourth house (d): </font></p>
+    <pre><font face="Courier" size="1">
+   wari move 1234 me xxxx d
+
+   Your side of the board
+
+ +-------------- XXX
+ |    f     e     d     c     b     a
+ | +-----+-----+-----+-----+-----+-----+  After your
+ | |  5  |  5  |     |  4  |  4  |  4  |  first move
+ | +-----+-----+-----+-----+-----+-----+
+ | |  5  |  1  |  5  |  5  |  5  |  5  |
+ | +-----+-----+-----+-----+-----+-----+
+ |    a     b     c     d     e     f
+ +----------&gt;
+   Opponent's side of the board
+</font><font face="Arial" size="3"></font></pre>
+    <p><font face="Arial" size="3">As you can see from the above diagram, the computer has
+    moved the 4 stones in your fourth house, and placed one additional stone in your fifth and
+    sixth houses, and in your opponent's first and second houses. </font></p>
+    <p><font face="Arial" size="3">Your Opponent's Turn to Move . . . </font></p>
+    <p><font face="Arial" size="3">Your opponent now moves the five stones in his sixth house:
+    </font></p>
+    <pre><font face="Courier" size="1">
+   wari move 1234 him xxxx f
+
+   Your side of the board
+
+           &lt;----------------------------+
+      f     e     d     c     b     a   |
+  +-----+-----+-----+-----+-----+-----+ |
+  |  5  |  6  |  1  |  5  |  5  |  5  | |
+  +-----+-----+-----+-----+-----+-----+ | After your
+  |  5  |  1  |  5  |  5  |  5  |     | | opponent's
+  +-----+-----+-----+-----+-----+-----+ | second move
+      a     b     c     d     e     f   |
+                                   XXX -+
+
+   Opponent's side of the board
+</font><font face="Arial" size="3"></font></pre>
+    <p><font face="Arial" size="3">As you can see in the diagram above, your opponent has left
+    himself open so that you can capture the stones in his second house! You gain the first
+    points of the game in your next move . . . </font></p>
+    <p><font face="Arial" size="3">How to Capture . . . </font></p>
+    <h3><font face="Arial" size="3">CAPTURING</font></h3>
+    <p><font face="Arial" size="3">Move the five stones in your third house, and watch what
+    happens: </font></p>
+    <pre><font face="Courier" size="1">
+   wari move 1234 me xxxx c
+
+   Your side of the board
+
+ +-------------------- XXX
+ |    f     e     d     c     b     a
+ | +-----+-----+-----+-----+-----+-----+  After your
+ | |  6  |  7  |  2  |     |  5  |  5  |  second move
+ | +-----+-----+-----+-----+-----+-----+
+ | |  6  |  2* |  5  |  5  |  5  |     |
+ | +-----+-----+-----+-----+-----+-----+
+ |    a     b     c     d     e     f
+ +---------&gt; *
+
+   Opponent's side of the board
+</font><font face="Arial" size="3"></font></pre>
+    <p><font face="Arial" size="3">Since your final stone landed in your opponent's second
+    house (designated by a * in the above diagram), which, after you deposited your last
+    stone, has TWO stones, you capture the stones in this house. The previous house has 6
+    stones, so you capture stops with the second house. The score is now 2 to 0 in your
+    favour. </font></p>
+    <p><font face="Arial" size="3">Opponent Gets Revenge . . . </font></p>
+    <p><font face="Arial" size="3">But wait, by capturing your opponent's two stones, he has
+    &quot;set you up&quot; so he can capture THREE of yours! He moves the 5 stones in his
+    fifth house: </font></p>
+    <pre><font face="Courier" size="1">
+   wari move 1234 him xxxx e
+
+   Your side of the board
+
+                  * &lt;-------------------+
+      f     e     d     c     b     a   |
+  +-----+-----+-----+-----+-----+-----+ |
+  |  6  |  7  |  3* |  1  |  6  |  6  | |
+  +-----+-----+-----+-----+-----+-----+ |
+  |  6  |     |  5  |  5  |     |  1  | | After his
+  +-----+-----+-----+-----+-----+-----+ | third move
+      a     b     c     d     e     f   |
+                            XXX --------+
+
+   Opponent's side of the board
+</font><font face="Arial" size="3"></font></pre>
+    <p><font face="Arial" size="3">His final stone landed in your fourth house (marked with an
+    * in the diagram above). As you can see, after his last stone was dropped, this left 3
+    stones in this house, which your opponent captures. The score is now 2 to 3, in your
+    opponent's favour. </font></p>
+    <p><font face="Arial" size="3">it's Not Over Until it's Over . . . </font></p>
+    <h3><font face="Arial" size="3">MULTIPLE CAPTURES</font></h3>
+    <p><font face="Arial" size="3">You have just learned how to capture stones on your
+    opponent's side of the board, but you can win real big by using the &quot;move in
+    hand&quot; strategy to gain control of the board, and set the other player up for a
+    &quot;Grand Slam&quot;. Here's how it works: </font></p>
+    <pre><font face="Courier" size="1">
+   wari move 2346 me xxxx a
+
+   Your side of the board
+                              &lt;--- [1]
+      f     e     d     c     b     a
+   +-----+-----+-----+-----+-----+-----+
+   |  17 |  1  |  4  |     |  1  |     |
+   +-----+-----+-----+-----+-----+-----+
+   |     |  3  |     |     |     |     |
+   +-----+-----+-----+-----+-----+-----+
+      a     b     c     d     e     f
+
+   Opponent's side of the board</font><font face="Arial" size="3">
+</font></pre>
+    <p><font face="Arial" size="3">A &quot;move in hand&quot; is a small move which help you
+    keep as many stones as possible on your side of the board. in the example above you moved
+    1 stone from your first house into your second house. Using this strategy over and over
+    again, you have built your sixth house to 17 stones, waiting for a &quot;grand slam&quot;
+    opportunity. Remember: Avoid doubling up stones when you can. Your opponent has only one
+    move: </font></p>
+    <pre><font face="Courier" size="1">
+   wari move 2346 him xxxx b
+
+   Your side of the board
+
+      f     e     d     c     b     a
+   +-----+-----+-----+-----+-----+-----+
+   |  17 |  1  |  4  |     |  1  |     |
+   +-----+-----+-----+-----+-----+-----+
+   |     |     |  1  |  1  |  1  |     |
+   +-----+-----+-----+-----+-----+-----+
+      a     b     c     d     e     f
+           [3] ---------------&gt;
+   Opponent's side of the board
+</font><font face="Arial" size="3"></font></pre>
+    <p><font face="Arial" size="3">Now hit him with a GRAND SLAM by moving the 17 stones from
+    your sixth house twice around the board: </font></p>
+    <pre><font face="Courier" size="1">
+   wari move 2346 me xxxx f
+
+ +------------------------------------------+
+ | +---[17]                                 |
+ | |     f     e     d     c     b     a    |
+ | |  +-----+-----+-----+-----+-----+-----+ |
+ | |  |     |  2  |  5  |  1  |  2  |  1  | |
+ | |  +-----+-----+-----+-----+-----+-----+ |
+ | |  |  2* |  2* |  3* |  3* |  3* |  2* | |
+ | |  +-----+-----+-----+-----+-----+-----+ |
+ | |     a     b     c     d     e     f    |
+ | +----------------------------------------+
+ +-------------------------------------&gt;*</font><font face="Arial" size="3">
+</font></pre>
+    <p><font face="Arial" size="3">You take 15 stones in a single move and win the game! </font></p>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

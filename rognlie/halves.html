@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h3><strong>Rules </strong></h3>
+<p>  Each player starts with  12 hexagonal tiles of their colour in hand.</p>
+<p><span class="style1">Waxing phase:</span> All tiles are randomly placed in a single connected group. In real life, this would just involve placing the tiles quickly and without much thought, by either one or both players.</p>
+
+<p>If the <tt>manual_start</tt> option is specified then the game starts with one of each player's tiles arranged as follows, then players take turns adding a tile of their colour adjacent to at least one enemy tile.</p>
+<pre>   _____                _____
+  /     \              /     \
+ /       \            /       \_____
+ \       /            \       / _ _ \
+  \_____/              \_____/ _ _ _ \
+  / . . \              / . . \  _ _  /
+ / . . . \            / . . . \_____/
+ \  . .  /            \  . .  /
+  \_____/              \_____/ </pre>
+<pre> Two-player            Three-player
+   start                  start</pre>
+<p><span class="style1">Contract phase:</span> If the game is played with a contract, player A then elects which colour to play and player B makes the next move.</p>
+<p><em><strong>Waning phase: </strong></em>When all tiles have been placed, players take turns removing a tile of their colour. If this removal  splits the remaining tiles into two or more disconnected subsets, then the largest subset is kept and all  other subsets removed. If there are two equal largest subsets, then the mover chooses which subset survives.</p>
+<p><em><strong>End: </strong></em>The game is won by the first player with no tiles left on the board.<br>
+</p>
+<h3><strong>Example</strong></h3>
+<p>White to move in the waning  (i.e. tile removal) stage. Black is two moves away from a win:</p>
+<pre>                 _____
+                /     \
+          _____/       \_____
+         /     \       / . . \
+   _____/       \_____/ . . . \
+  /     \       / . . \  . .  /
+ /       \_____/ . . . \_____/
+ \       /     \  . .  /
+  \_____/       \_____/ </pre>
+<p>  White removes their central bridging piece to create two disconnected subsets...</p>
+<pre>                 _____
+                /     \
+               /       \_____
+               \       / . . \
+   _____        \_____/ . . . \
+  /     \       / . . \  . .  /
+ /       \     / . . . \_____/
+ \       /     \  . .  /
+  \_____/       \_____/ </pre>
+<p>...and  removes the smaller (left) subset as part of the move:</p>
+<pre>                 _____
+                /     \
+               /       \_____
+               \       / . . \
+                \_____/ . . . \
+                / . . \  . .  /
+               / . . . \_____/
+               \  . .  /
+                \_____/ </pre>
+<p>White has  now turned the game around  and will win on their next move.<br>
+</p>
+
+<h3><strong>Notes</strong></h3>
+
+<p align="left">Disconnect and remove subsets  to get rid of as many of your pieces as quickly as possible. </p>
+<p align="left"><em><strong>First move advantage:</strong></em> The opening player has an advantage in that they will win if no groups are disconnected. However, this is balanced out somewhat by the second player&rsquo;s advantage of having last reply to the opening player&rsquo;s placements; in particular, the second player gets to place the very last tile. </p>
+<p align="left"><em><strong>Three-player game:</strong></em> The three-player game is played according to the rules described above. If two players win on the same move then the game is a tie  between those two players. </p>
+<p align="left">Thanks to Richard Rognlie for suggesting the <tt>-invert_win</tt> option. </p>
+<div align="center"></div>
+
+<h3>History </h3>
+
+<p>Halves rules copyright (c)  Cameron Browne,  October 2007.</p>
+<p>Halves was one of those games that occurred in a flash - it  took about 15 minutes to think the rules through and jot them  down. Some embellishments were considered then abandoned for the sake of simplicity.</p>
+<p>Halves is a &quot;take away&quot; reduction game in the style of Nim and Steven Meyers' excellent Forms. </p>
+<p>Implementation and Help file by Cameron Browne, October 2007.</p>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

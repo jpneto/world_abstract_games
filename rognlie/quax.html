@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+ <h3>Rules</h3>
+
+  <p>Player Vert (<font face="Courier New, Courier, mono"><b>V</b></font>) wins 
+    by connecting the top and bottom edges of the board with a chain of <font face="Courier New, Courier, mono"><b>V</b></font> 
+    pieces, while player Horz (<font face="Courier New, Courier, mono"><b>H</b></font>) 
+    wins by connecting the left and right edges of the board with a chain of <font face="Courier New, Courier, mono"><b>H</b></font>&nbsp;pieces.</p>
+  <p>The board is initially empty. Vert starts then players alternate taking turns. 
+  </p>
+  <p>Each turn the current player must either:<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(a) Add one of their pieces to an empty board 
+    point; or<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(b) Link two of their diagonally adjacent pieces 
+    (unless a link already exists there to block it).</p>
+  <p>Two pieces of the same colour are connected if they are orthogonally (squarely) 
+    adjacent, or diagonally adjacent and a link exists between them. For instance 
+    the following diagrams show a link connecting two <font face="Courier New, Courier, mono"><b>H</b></font> 
+    pieces and link connecting two <font face="Courier New, Courier, mono"><b>V</b></font>&nbsp;pieces. 
+  </p>
+  <p><font face="Courier New, Courier, mono">&nbsp;&nbsp;&nbsp; . &nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+    &nbsp;&nbsp;&nbsp; . &nbsp;&nbsp;<b>V&nbsp;&nbsp;&nbsp;H</b>&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;<b>V&nbsp;&nbsp;&nbsp;H</b>&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;</b><br>
+    &nbsp; &nbsp;&nbsp;. &nbsp;&nbsp;<b>H&nbsp;&nbsp;&nbsp;V</b>&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;<b>H&nbsp;&nbsp;&nbsp;V</b>&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+    &nbsp;&nbsp;&nbsp; </font><font face="Courier New, Courier, mono">. &nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;<br>
+    </font></p>
+  <p>Once a link is placed the opponent cannot link over it and no other link 
+    can be placed across it. Note however that the rules allow players to replace 
+    an existing link of theirs with a new one in the same direction, effectively 
+    allowing them to pass for that turn.</p>
+  <h3>Example Game</h3>
+  <p>Below is an 8x8 game of Quax won by Vert, who has completed a chain of <font face="Courier New, Courier, mono"><b>V</b></font> 
+    pieces from top to bottom.</p>
+  <p><font face="Courier New, Courier, mono">&nbsp;&nbsp;&nbsp;&nbsp;A &nbsp;&nbsp;B&nbsp;&nbsp; 
+    C&nbsp;&nbsp; D&nbsp;&nbsp; E&nbsp;&nbsp; F&nbsp;&nbsp; G&nbsp;&nbsp; H</font></p>
+  <font face="Courier New, Courier, mono">&nbsp;8&nbsp;&nbsp;. &nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;<b>V</b>&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;8<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+  &nbsp;7&nbsp;&nbsp;. &nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;<b>V&nbsp;&nbsp;&nbsp;H&nbsp;&nbsp;&nbsp;H&nbsp;&nbsp;&nbsp;H&nbsp;&nbsp;&nbsp;H</b>&nbsp;&nbsp;8<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>\</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+  &nbsp;6&nbsp;&nbsp;<b>H&nbsp;&nbsp;&nbsp;H&nbsp;&nbsp;&nbsp;H&nbsp;&nbsp;&nbsp;H&nbsp;&nbsp;&nbsp;V</b>&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;8<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+  &nbsp;5&nbsp;&nbsp;. &nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;<b>V</b>&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;8<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+  &nbsp;4&nbsp;&nbsp;. &nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;<b>V&nbsp;&nbsp;&nbsp;V</b>&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;8<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>/</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+  &nbsp;3&nbsp;&nbsp;. &nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;<b>V&nbsp;&nbsp;&nbsp;H 
+  &nbsp;&nbsp;V&nbsp;&nbsp; H&nbsp;&nbsp;&nbsp;H</b>&nbsp;&nbsp;8<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>&nbsp;&nbsp;&nbsp;&nbsp;\ 
+  &nbsp; /&nbsp;&nbsp;&nbsp;&nbsp;</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+  &nbsp;2&nbsp;&nbsp;. &nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;<b>V&nbsp;&nbsp;&nbsp;V&nbsp;&nbsp;&nbsp;</b>.<b>&nbsp;&nbsp;&nbsp;H&nbsp;&nbsp;&nbsp;V</b>&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;8<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+  &nbsp;</font><font face="Courier New, Courier, mono">1</font><font face="Courier New, Courier, mono">&nbsp;&nbsp;. 
+  &nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;<b>V</b>&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;<b>V</b>&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;8<br>
+  &nbsp;</font><font face="Courier New, Courier, mono">&nbsp;&nbsp;</font><font face="Courier New, Courier, mono">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font face="Courier New, Courier, mono">&nbsp;&nbsp;&nbsp;<br>
+  </font><font face="Courier New, Courier, mono"> </font><font face="Courier New, Courier, mono"> 
+  </font><font face="Courier New, Courier, mono"> </font><font face="Courier New, Courier, mono"> 
+  </font><font face="Courier New, Courier, mono"> </font><font face="Courier New, Courier, mono"> 
+  </font><font face="Courier New, Courier, mono"> </font><font face="Courier New, Courier, mono">&nbsp;&nbsp;&nbsp;&nbsp;A 
+  &nbsp;&nbsp;B&nbsp;&nbsp; C&nbsp;&nbsp; D&nbsp;&nbsp; E&nbsp;&nbsp; F&nbsp;&nbsp; 
+  G&nbsp;&nbsp; H</font> 
+  <p><font face="Courier New, Courier, mono"><br>
+    </font>The winning Vert chain consists of a number of orthogonally (squarely) 
+    adjacent <font face="Courier New, Courier, mono"><b>V</b></font> pieces, as 
+    well as two pairs of diagonally adjacent <b><font face="Courier New, Courier, mono"><b>V</b></font></b> 
+    pieces connected by the link symbols <font face="Courier New, Courier, mono"><b>\</b></font> 
+    and <b><font face="Courier New, Courier, mono"><b>/</b></font></b>.</p>
+  <h3>Syntax</h3>
+  Moves are specified in the usual format &quot;quax move<b> board# userid password 
+  action&quot;</b> where <b>action</b> is one of:<br>
+  <pre>
+&nbsp;&nbsp;&nbsp;&nbsp;<b>F6&nbsp;</b><i>&nbsp;</i>&nbsp;&nbsp;  Place a piece at coordinate <b>F6</b>, which must be empty.
+
+&nbsp;&nbsp;&nbsp;&nbsp;<b>B2-C3&nbsp;</b><i>&nbsp; P</i>lace a link between the diagonally adjacent pieces at <b>B2</b> and <b>C3</b>,
+			both of which must belong to the current player.<br><br>&nbsp;&nbsp;&nbsp;&nbsp;<b>swap</b>&nbsp;&nbsp;  Horz may elect to swap Vert's opening move as their first play.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This ensures that Vert does not start with too strong an opening move.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</pre>
+  <p>
+  <p> 
+  <h3>References and History</h3>
+
+  <p>Quax rules copyright (c) 2000 Bill Taylor.</p>
+  <p>The official rules can be found on the Quax website (<a href="https://web.archive.org/web/20241205162706/http://www.di.fc.ul.pt/%7Ejpn/gv/_S_quax.htm">http://www.di.fc.ul.pt/~jpn/gv/_S_quax.htm</a>). 
+  <p>Implementation and help file by <a href="https://web.archive.org/web/20241205162706/mailto:cameronb@optusnet.com.au">Cameron Browne</a>, May 2003.</p>
+  </div>
+  
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

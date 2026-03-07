@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h3><strong>Rules </strong></h3>
+<p><strong><em>Tiles</em>:</strong> A <em>holomino</em> is a hexagonal tile with bites taken out of alternating corners and each of the three remaining corners assigned a different number between 1 and 6. There are 40 unique holominoes, which are kept in a sack.</p>
+<pre>    ____      
+   /    \
+  /  2   \____  
+  \           \ 
+   \        3  \
+   /           / 
+  /       ____/
+  \  1   /
+   \____/    </pre>
+<p><strong><em>Start</em>: </strong>Each player randomly draws three holominoes to form their <em>pool</em>. Pools must be visible to opponents and constitute  the subset of tiles that the current player may play from each turn. </p>
+<p align="left">To start the game, a tile is drawn randomly from the sack and placed in the middle of the playing area.</p>
+<p align="left"><strong><em>Play</em>:</strong> Each turn, the current player draws a random tile from the sack to supplement their pool, giving them four tiles to choose from (unless the sack is empty). They must play one their pool tiles adjacent to at least one existing tile such that all neighbouring tile edges and numbers match.</p>
+<p align="left">Players must move if possible. If the current player has no legal moves they must return one of their pool tiles to the sack and pass that turn.</p>
+<p align="left"><strong><em>Scoring</em>:</strong> Players score points for any circular holes formed on their move. Each hole is worth the sum of the three matching number pairs around the hole.</p>
+<pre>   __<br>  /1 \__<br>  \    2\__<br>  /   __/2 \__        For example, this hole is worth:<br>  \3_/  \    6\       <br>  /3 \__/   __/           (3 + 2 + 5) = 10 pts.<br>  \    5\5_/              <br>  /   __/<br>  \4_/ </pre>
+<p>If two or three holes are formed on the same move, then the scores from each hole are multiplied together. </p>
+<p><strong><em>Aim</em>: </strong>The game ends when any player runs out of tiles or all players pass in succession. The player with the highest score wins.<br>
+</p>
+<h3><strong>Notes</strong></h3>
+<p>The minimum score for any hole is (1 + 2 + 3) = 6 pts. The maximum score for any hole is (4 + 5 + 6) = 15 pts. </p>
+<pre>   __                               __
+  /. \__                           /. \__
+  \    2\__                        \    5\__
+  /   __/2 \__                     /   __/5 \__
+  \1_/  \    .\  = 6 pts           \4_/  \    .\  = 15 pts
+  /1 \__/   __/                    /4 \__/   __/
+  \    3\3_/                       \    6\6_/
+  /   __/                          /   __/
+  \._/                             \._/</pre>
+<p> The maximum score for any move is to form three maximal holes for (4 + 5 + 6) x (4 + 5 + 6) x (4 + 5 + 6) = 3,375 pts. This is rare! </p>
+<pre>         __
+        /. \__
+   __   \    6\__
+  /. \__/   __/6 \__
+  \    4\4_/  \    .\
+  /   __/4 \__/   __/
+  \5_/  \    5\5_/     = 3,375 pts
+  /5 \__/   __/5 \__
+  \    6\6_/  \    .\
+  /   __/6 \__/   __/
+  \._/  \    4\4_/
+        /   __/
+        \._/ </pre>
+<p><strong><em>Blocking</em>:</strong> The following figure  shows a <em>blocked</em> point (x). No tile can be played there as no tile has two <strong>3</strong>s, 
+  hence this hole will never be closed.</p>
+<pre>         __
+     x  /3 \__<br>   __   \    2\       <br>  /3 \__/   __/      A blocked point (x).<br>  \    5\5_/         <br>  /   __/<br>  \1_/ </pre>
+<p>There are 20 ways to combine the digits {1, 2, 3, 4, 5, 6} into triplets: 123, 124, 125, 126, 134, 135, 136, 145, 146, 156, 234, 235, 236, 245, 246, 256, 345, 346, 356, 456. <br>
+  However, each combination may be oriented either clockwise or anticlockwise around each tile, as shown below. There are hence two unique tiles for each triplet of digits and a total of 40 unique holominoes.</p>
+<pre>      __                 __
+     /2 \__             /3 \__
+ CW: \    3\       ACW: \    2\
+     /   __/            /   __/
+     \1_/               \1_/ </pre>
+<p>Considered in isolation, there are nine tiles that will match one existing corner, four tiles that will match two existing corners (unless identical), and one tile that will match three existing corners.</p>
+<p>Most games are won or lost on double hole plays. Single hole plays don't score enough points to swing a game, while triple whole plays (which certainly *would* score enough to swing a game!) are difficult to achieve.</p>
+<h3><strong><br>
+  Variants</strong></h3>
+<p>If the <tt>-limit_scores</tt> parameter is used,  then the score for each move is the sum of hole scores  multiplied by the number of holes. This drastically reduces multiple hole scores and makes  the game less dramatic; if a player builds a strong lead they will generally win. The standard game with unlimited scoring is much more volatile, as the losing player at least has the possibility of winning no matter how bad their position looks.</p>
+<p>If the <tt>-non_unique</tt> parameter is used, then there will be 76 tiles rather than 40. Tiles will be easier to play and partially formed holes harder to block. <br>
+</p>
+
+<h3>History </h3>
+
+<p>Holomino tiles and rules copyright (c)  Cameron Browne,  July 2007.</p>
+<p>Holominoes are named for their ability to form holes with neighbouring tiles.</p>
+<p>Please see the official Holomino page for further details and strategy and tactics: <a href="https://web.archive.org/web/20241112134126/http://members.optusnet.com.au/helen.gilbert/holomino/">http://members.optusnet.com.au/helen.gilbert/holomino/</a></p>
+<p>Implementation and Help file by Cameron Browne, July 2007.<br>
+</p>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

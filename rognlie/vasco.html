@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h3><strong> Introduction</strong></h3>
+<p>  Vasco is a  tile placement game of path completion for two players.<br>
+</p>
+<h3><strong>Rules</strong></h3>
+<p><strong>Equipment:</strong> Two players, O and X, share a common pool of 54 triangular Vasco tiles. Each side of each tile has an 'o'  arc joining two edges and  an 'x'  arc joining two edges; the section where the two arcs overlap is marked '*'. </p>
+<pre align="center"><font face="Courier New, Courier, mono">       +            +
+      / \          / \
+     oo xx        xx oo
+    /  *  \      /  *  \
+   +---*---+    +---*---+
+     Front         Back</font></pre>
+<p>Each tile side  therefore has a different coloured path end on each edge: 'o', 'x' and '*'.</p>
+<p><strong>Start: </strong>Red places a tile of their choice in the middle of the playing area to start the game. </p>
+<p><strong>Play: </strong>Players then take turns adding a tile of their choice such that all tiles form single connected group and all path ends exactly match position and colour with their neighbours after the move. The following example  shows an opening move by O (left) and a typical reply by X (right).</p>
+<pre><font face="Courier New, Courier, mono">       +                  +---*---+
+      / \                / \  *  /
+     oo xx              oo xxx oo
+    /  *  \            /  *  \ /
+   +---*---+          +---*---+</font></pre>
+<p><strong>Auto Moves: </strong>It is allowed to place tiles corner-to-corner with existing tiles provided that at least one of the acute gaps thus created can be filled by forced placements. Tiles are automatically placed at any position at which only one possible tile rotation can be placed.</p>
+<p>The following  example  shows a move <em><strong>c </strong></em>that creates two acute gaps at <em><strong>d</strong></em> and {<em><strong>e</strong></em> + <em><strong>f</strong></em>}, resulting in those positions being filled with the appropriate tile sides in the appropriate rotations (right).</p>
+<pre><font face="Courier New, Courier, mono">       +---*---+           +---*---+                 +---*---+
+      / \  *  /           / \  *  /                 / \  *  / \
+     oo xxx oo           oo xxx oo <em><strong>d</strong></em>               oo xxx ooo xx
+    /  *  \ /           /  *  \ /                 /  *  \ /  *  \
+   +---*---+           +---*---+---*---+         +---*---+---*---+
+                                \  *  /           \  *  / \  *  /
+                           <em><strong>e</strong></em>  <em><strong>f</strong></em>  oo<em><strong>c</strong></em>xx             oo xxx ooo xx
+                                  \<em><strong> </strong></em>/               \ /  *  \ /
+                                   +                 +---*---+</font></pre>
+<p>The fact that tile <em><strong>d</strong></em> is a forced move is obvious. The fact that the two tiles filling <em><strong>e</strong></em> and <em><strong>f</strong></em> are also forced is less obvious, but should become clear when you consider that no other pair of tiles can be placed there.</p>
+<p>This example demonstrates a general rule of thumb: <em>Any gap with an acute angle enclosed by two sides of different colour constites a forced move; one tile for gaps of 60&deg; and two tiles for gaps of 120&deg;.</em></p>
+<p>In no event may a tile be placed to create any point enclosed by two path ends of the same colour, as such a point would be unplayable. The following example shows an illegal tile placement. </p>
+<pre align="center"><font face="Courier New, Courier, mono">       +       +
+      / \     / \
+     oo xx   xx oo &lt;---- illegal placement  
+    /  *  \ /  *  \ 
+   +---*---+---*---+</font></pre>
+<p><strong>Aim:</strong> A player wins by completing a closed loop of their colour, of any size. O and X  paths pass continuously through sections of overlap *. </p>
+<pre>       +---o---+                                  <br>      / \  o  / \                                 <br>     oo xxxx*** oo<br>    /  *  \ /  x  \                               <br>   +---*---+---x---+    A game won by X.                      <br>    \  *  / \  x  / \                             <br>     oo xxx ooo *** oo      <br>      \ /  *  \ /  x  \                           <br>       +---*---+---x---+                          <br>        \  *  / \  x  /                           <br>         oo xxxx*** oo<br>          \ /  o  \ /                             <br>           +---o---+                              <br>
+</pre>
+<p>If a move completes closed loops for both players then the owner of the longest closed loop loses, else the game is a draw if tied for length.</p>
+<p>If the tiles run out before either player completes a closed loop then the owner of the longest path loses, else the game is a draw if tied for length.<br>
+</p>
+<h3><strong>Notes</strong></h3>
+<p>While learning the game, players may accidentally make illegal moves such as that shown above. It is sporting to let such  players take the offending tile(s) back and make a different move. Advanced players, however, may wish to enforce a less forgiving rule that a player making an illegal move must remove the offending tile(s) and lose their turn.</p>
+<p>The default number of tiles is 54 as this number allows all tiles to be placed within a hexagonal shape according to the formula <em>f</em>(<em>n</em>) = 6*<em>n*n</em>. </p>
+<p align="left"><strong>Three-Player Version:</strong> Vasco might work with a third arc (green?) per tile side, or it might not.<br>
+  </p>
+<div align="left"><div align="center"></div>
+</div>
+
+<h3><strong>History </strong></h3>
+
+<p>Vasco rules by Cameron Browne and copyright &copy; Cyberite Ltd 2008.</p>
+<p>The name &ldquo;Vasco&rdquo; refers to the fact that the networks of  paths that form as games progress resemble textbook diagrams  of the human vascular system (if the paths are red and blue).</p>
+<p>It's  a little known falsehood that the famous Portuguese explorer Vasco da Gama  (meaning literally &quot;Vasco the Gamer&quot;) was so named due to his penchant for whiling away long hours at sea  with countless games of Vasco. The extent of his nautical achievements may  even be due to how badly he played it, losing most evening's  rum rations to his pet monkey Archibald which left  him    nothing to do but study   navigational charts  while his drunken shipmates caroused into the night [reference to be invented].</p>
+<div align="left">
+  <div align="center">
+    <p align="left">More details are available at  the <a href="https://web.archive.org/web/20241205160845/http://www.cameronius.com/games/vasco">official Vasco page</a>.</p>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

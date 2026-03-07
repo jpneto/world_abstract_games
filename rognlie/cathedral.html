@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h3>Rules</h3>
+
+The <a href="https://web.archive.org/web/20250121004940/http://www.cathedral-game.co.nz/">official
+rules</a> can be found on the Cathedral website (<a href="https://web.archive.org/web/20250121004940/http://www.cathedral-game.co.nz/">http://www.cathedral-game.co.nz/</a>).
+What follows is a quick summary along with some observations on
+basic strategy.
+<p>
+The fundamental goal of Cathedral is to place all your pieces while making it impossible for your opponent to place his.  The Cathedral belongs to neither player and is placed by the first player (light).  If a region of squares is completely bounded by your pieces and the wall, the opponent cannot play into this region. Completely bounded means solid not diagonal connections.  The Cathedral cannot form part of this boundary.  These are the fundamental rules.  There is one other important concept.  
+
+<p>Buildings may be captured.  A &quot;captured&quot; building is given back to its owner who then places it again.  Practically speaking, however, having to place a building twice is often the difference in the game.  Many games have no captures but threatening is strategically important.  To capture A building you must surround if completely with buildings of your color (or the wall of the board) and it must not be touching another building of its own color or the cathedral <i>even diagonally</i>.
+<p>
+ There are two more somewhat obscure rules.
+ <p>
+ <ol>
+ <li> A player can &quot;capture&quot; the Cathedral in which case it does not ever get placed again on the board.
+<p> 
+<li> You cannot claim territory on your very first turn.  This means you cannot place the W-shaped piece or U shaped, etc. in such a way as to claim 1-3 points as your first move.
+</ol>
+<p>
+<h3>Example of a board. </h3>
+<pre>
+ Summary of Cathedral Board 
+
+ It is player1's turn.
+
+    Light          Dark
+    player1        player2
+    1 CAnF5        2 CSnE8
+
+         A   B   C   D   E   F   G   H   I   J
+        _______________________________________
+     1 |                                       | 1
+       |   .   .   .   .   .   .   .   .   .   |
+     2 |                                       | 2
+       |   .   .   .   .   .   .   .   .   .   |
+     3 |                                       | 3
+       |   .   .   .   .   .   .   .   .   .   |
+     4 |                                       | 4
+       |   .   .   .   .    ___    .   .   .   |
+     5 |                   | + |               | 5
+       |   .   .   .    ___|   |___    .   .   |
+     6 |               | +   +   + |           | 6
+       |   .   .   .   |___     ___|   .   .   |
+     7 |                   | + |               | 7
+       |   .   .    _______|   |   .   .   .   |
+     8 |           | x   x | + |               | 8
+       |   .   .   |    ___|___|   .   .   .   |
+     9 |           | x |                       | 9
+       |   .   .   |   |___    .   .   .   .   |
+    10 |           | x   x |                   | 10
+       |___________|_______|___________________|
+
+         A   B   C   D   E   F   G   H   I   J
+
+ Available Pieces:
+
+     Light (player1)
+         TA  TA  ST  ST  IN  IN  BR  SQ  MA  AB  IF  CS  TO  AC
+                  ^   ^   ^   ^   ^   ^#  ^   ^   #  #^    ^  ^
+          ^   ^   #   #   ##  ##  #   ## ###  ## #^# #    ## ##
+                                  #            #  #  ##  ##   ##
+
+     Dark  (player2)
+         TA  TA  ST  ST  IN  IN  BR  SQ  MA  AB  IF  TO  AC
+                  ^   ^   ^   ^   ^   ^#  ^   ^   #    ^  ^
+          ^   ^   #   #   ##  ##  #   ## ### ##  #^#  ##  ##
+                                  #          #    #  ##  ##   
+</pre>
+<p>
+The move syntax is
+<p>
+<ol>
+<li> CAnF5  
+means Place piece CA facing north with its turning point (signified in the list of pieces by the character "^") on F5. 
+<p>
+<li> CSnE8  means Place piece CS facing north with its turning point on E8. 
+</ol>
+<p>
+If player1 should make the following move: 3 TOwG5 this would the result  
+<p>
+<pre>
+ Summary of Cathedral Board 231
+
+ It is player2's turn.
+
+    Light          Dark
+    Player1        Player2
+    1 CAnF5        2 CSnE8
+    3 TOwG5
+
+         A   B   C   D   E   F   G   H   I   J
+        _______________________________________
+     1 |                                       | 1
+       |   .   .   .   .   .   .   .   .   .   |
+     2 |                                       | 2
+       |   .   .   .   .   .   .   .   .   .   |
+     3 |                                       | 3
+       |   .   .   .   .   .   .   .   .   .   |
+     4 |                                       | 4
+       |   .   .   .   .    ___ _______    .   |
+     5 |                   | + | o   o |       | 5
+       |   .   .   .    ___|   |___    |___    |
+     6 |               | +   +   + | o   o |   | 6
+       |   .   .   .   |___     ___|___    |   |
+     7 |                   | + |       | o |   | 7
+       |   .   .    _______|   |   .   |___|   |
+     8 |           | x   x | + |               | 8
+       |   .   .   |    ___|___|   .   .   .   |
+     9 |           | x |                       | 9
+       |   .   .   |   |___    .   .   .   .   |
+    10 |           | x   x |                   | 10
+       |___________|_______|___________________|
+
+         A   B   C   D   E   F   G   H   I   J
+
+ Available Pieces:
+
+     Light (player1)
+         TA  TA  ST  ST  IN  IN  BR  SQ  MA  AB  IF  CS  TO  AC
+                  ^   ^   ^   ^   ^   ^#  ^   ^   #  #^    ^  ^
+          ^   ^   #   #   ##  ##  #   ## ###  ## #^# #    ## ##
+                                  #            #  #  ##  ##   ##
+
+     Dark  (player2)
+         TA  TA  ST  ST  IN  IN  BR  SQ  MA  AB  IF  TO  AC
+                  ^   ^   ^   ^   ^   ^#  ^   ^   #    ^  ^
+          ^   ^   #   #   ##  ##  #   ## ### ##  #^#  ##  ##
+                                  #          #    #  ##  ##
+</pre>
+
+<p>
+<h3>References and History</h3>
+
+Cathedral was invented by Bob Moore circa 1979.  There is a <a href="https://web.archive.org/web/20250121004940/http://www.cathedral-game.co.nz/">Cathedral</a> homepage containing rules
+and strategy information.
+<p>
+Helpfile courtesy of <a href="https://web.archive.org/web/20250121004940/mailto:lhurd@yahoo.com">Lyman Hurd &lt;lhurd@yahoo.com&gt;</a>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<p>Welcome to the network DVONN server. 
+DVONN is the fourth game in Kris Burm's wholly remarkable <a href="https://web.archive.org/web/20250621080602/http://www.gipf.com/">Project GIPF</a> series.</p>
+
+The rules of DVONN are below. The challenge command is described below.  
+<a href="commands.html">Other commands</a> are the same for all pbmserv games.</p>
+<p>
+dvonn challenge [ -random | -symmetry ] userid1 userid2<br>
+Start a game of DVONN between userid1 and userid2:
+<ul>
+<li>The default option creates an empty board; players start by dropping their pieces</li>
+<li>The -random option will start the game with all pieces placed on the board at random.  The algorithm tries to ensure that neither side has too great a disadvantage by:
+  <ul>
+      <li>Making sure no piece is completely surrounded by friendly pieces</li>
+      <li>Making sure both sides have roughly the same number of pieces at the edge of the board</li>
+      <li>Making sure each half of the board has roughly the same number of pieces of each colour</li>
+  </ul>
+</li>
+<li>The -symmetry option will start the game with all pieces placed on the board.  There will always be a dvonn in the centre.  The other pieces are placed symmetrically so
+neither side is at a disadvantage.</li>
+</ul>
+
+<h2>Typical random board layout:</h2>
+<pre>
+
+         5
+      4   \ __
+   3   \ __/w \__
+    \ __/b \__/w \__
+  2  /w \__/b \__/w \__
+   \ \__/b \__/D \__/w \__
+  1  /b \__/w \__/w \__/b \__
+   \ \__/b \__/b \__/b \__/b \__
+     /w \__/w \__/w \__/D \__/w \__
+     \__/b \__/b \__/w \__/b \__/b \__
+      | \__/b \__/b \__/b \__/b \__/b \
+      A  | \__/w \__/w \__/w \__/w \__/
+         B  | \__/b \__/b \__/w \__/D \
+            C  | \__/b \__/w \__/w \__/
+               D  | \__/w \__/w \__/b \
+                  E  | \__/w \__/w \__/
+                     F  | \__/b \__/|
+                        G  | \__/|  K
+                           H  |  J
+                              I
+</pre>
+<h2>Typical symmetrical layout:</h2>
+<pre>
+
+         5
+      4   \ __
+   3   \ __/w \__
+    \ __/b \__/b \__
+  2  /b \__/b \__/b \__
+   \ \__/b \__/w \__/b \__
+  1  /w \__/b \__/w \__/w \__
+   \ \__/w \__/b \__/w \__/w \__
+     /w \__/b \__/w \__/b \__/b \__
+     \__/D \__/w \__/D \__/b \__/D \__
+      | \__/w \__/w \__/b \__/w \__/b \
+      A  | \__/b \__/b \__/w \__/b \__/
+         B  | \__/b \__/b \__/w \__/b \
+            C  | \__/w \__/b \__/w \__/
+               D  | \__/w \__/w \__/w \
+                  E  | \__/w \__/w \__/
+                     F  | \__/b \__/|
+                        G  | \__/|  K
+                           H  |  J
+                              I
+</pre>
+
+
+</p>
+
+
+<h1>Rules of DVONN</h1>
+
+<h2>Aim</h2>
+<p>Control as many pieces as possible by stacking them on top of each other and 
+try to keep your stacks linked to the red DVONN pieces. When no more moves can 
+be made, the player who controls the most pieces wins the game. </p>
+
+<h2>Placing pieces</h2>
+<p><i>Skip this if playing with -symmetry or -random options</i></p>
+
+<p>The game starts with an empty board. The players take turns dropping their pieces on the board, one at a time. 
+They must start with the DVONN pieces and then continue with their own color.  At this stage in the game, 
+pieces do not have to be connected to DVONN pieces.</p>
+
+<p>This stage continues until the board is full.</p>
+
+<p><i>To drop a piece just send the coordinates where you want to play the piece.  The server will work out the details, e.g.:
+<br>
+DVONN MOVE boardno userid password F3</i>
+</p>
+
+<h2>Stacking pieces</h2>
+<p>
+<ul>
+<li>IMPORTANT: the player who started the placement phase also starts the stacking phase! In other words: after White has put his last piece on the board, he must immediately play again. Then the players alternate turns. (As Black is the first to put a piece of his own color on the board in the 1st phase, so now it is White who may first move one of his pieces.)</li>
+<li>Each turn a player must move one piece or one stack. He may only move a piece or a stack of his own color. When two or more pieces are stacked on top of each other, the color of the topmost piece determines who owns the stack, and thus which player may move it.</li>
+<li>A single piece may move one space in any direction, but only to an occupied space (i.e. on top of another piece or stack of any color).</li>
+<li>A stack must always be moved as a whole and moves as many spaces as there are pieces in the stack. Thus, a stack of 3 pieces (regardless of their color) must be moved exactly 3 spaces. Just like a single piece, a stack may be moved in any direction, but always in a straight line. 
+<li>A move may never end in an empty space, but it is allowed to move across one or more empty spaces. When making a move, each space must be counted, no matter whether it is empty or occupied.</li>
+<li>Important: a piece or stack that is surrounded on all 6 sides may not be moved. So, at the beginning of the game only the pieces at the edge of the board may move. The pieces that are not positioned at the edge remain blocked for as long as they remain completely surrounded.</li>
+<li>A single DVONN piece may not be moved, but a piece or stack may move on top of it. When a DVONN pieces is part of a stack, it is perfectly legal to move the stack containing the DVONN piece - but, as explained above, only by the player who controls the stack.</li>
+<li>You may not pass a turn, unless you cannot make any more moves.</li>
+</ul>
+</p>
+<p><i>To move a piece just send the coordinates of the piece you want to move, and where you want it to end up, e.g.:
+<br>
+DVONN MOVE boardno userid password A3-A5</i>
+</p>
+
+<h2>Losing pieces</h2>
+<li>Pieces and stacks must somehow remain in contact with at least one DVONN piece to remain in play. "In contact" means that there must always be a link (directly or through a chain of other pieces) with at least one DVONN piece. Each and every piece and/or stack that is not linked to any of the DVONN pieces, must be removed from the board at once.
+Be careful: it may happen that a great number of pieces are suddenly removed as a result of one single move!</li>
+<li>All removed pieces go out of the game. It doesn't matter who makes the move through which the pieces and/or stacks become isolated. Watch out for this, especially in the endgame. Since you may not pass, you may be forced to make a move that isolates one or more of your own stacks.</li>
+<li>All 3 DVONN pieces remain in play until the end of the game, even if one of them becomes isolated, as it will always remain in contact with itself.</li>
+
+<h2>The end</h2>
+<li>The players must play for as long as they can do so. If one player can't make a move any more, the other must continue to play until he, too, has made his very last possible move. In the rare event that a player who must pass gets the opportunity to make a move again, he must do so. This can happen when one or more of his pieces are blocked (i.e. completely surrounded).</li>
+<li>The game ends when the last move is made. When this stage is reached, each player puts all of the stacks he controls on top of each other. The player with the highest stack wins the game, regardless of the color of the pieces in his stack.</li>
+<li>If both players end up with an equal stack, then the game ends in a tie.</li>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

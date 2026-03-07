@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="521">       
+
+<h3>Rules for Trellis</h3>
+<i>Copyright (c) 1999 Steven Meyers</i></a> 
+<p> Trellis is a connection game played on a checkered board. 
+<p>More details about Trellis including the complete official rules can be found 
+  at <a href="https://web.archive.org/web/20250121021242/http://home.fuse.net/swmeyers/trellis.htm">http://home.fuse.net/swmeyers/trellis.htm</a> 
+<p>Implementation by Cameron Browne, March 2003. 
+<p>&nbsp; 
+<h4>Object of the game:</h4>
+<p>The vertical player (<b>V</b>) aims to connect the top and bottom edges of 
+  the board with a chain of <b>V</b> pieces, while the horizontal player (<b>H</b>) 
+  aims to connect the left and right sides of the board with a chain of <b>H</b> 
+  pieces.</p>
+<p>&nbsp;</p>
+<h4>Board layout:</h4>
+<p>Below is a standard 15x15 game won by Vert, who has completed a chain of their 
+  pieces from top to bottom.</p>
+<p><font face="Courier New, Courier, mono" size="2">&nbsp;&nbsp;&nbsp;A &nbsp;&nbsp;B&nbsp;&nbsp; 
+  C&nbsp;&nbsp; D&nbsp;&nbsp; E&nbsp;&nbsp; F&nbsp;&nbsp; G&nbsp;&nbsp; H&nbsp;&nbsp; 
+  I&nbsp;&nbsp; J&nbsp;&nbsp; K &nbsp;&nbsp;L &nbsp;&nbsp;M&nbsp;&nbsp; N &nbsp;&nbsp;O</font></p>
+<p><font face="Courier New, Courier, mono" size="2"> 15&nbsp; --- --- --- --- ---<b>V</b>--- 
+  --- --- --- --- --- --- --- --- &nbsp;15<br>
+  &nbsp;&nbsp;&nbsp;| : | - | : | - | : | - | : | - | : | - | : | - | : | - |<br>
+  14 &nbsp;--- --- --- --- ---<b>V</b>--- --- --- --- --- --- --- --- --- &nbsp;14<br>
+  &nbsp;&nbsp;&nbsp;| - | : | - | : | - | : | - | : | - | : | - | : | - | : |<br>
+  13&nbsp; --- --- --- --- --- ---<b>V</b>--- --- ---<b>V</b>---<b>V</b>--- --- 
+  --- --- &nbsp;13<br>
+  &nbsp;&nbsp;&nbsp;| : | - | : | - | : | - | : | - | : | - | : | - | : | - |<br>
+  12&nbsp; --- --- --- --- --- ---<b>V</b>---<b>V</b>---<b>V</b>--- --- ---<b>V</b>--- 
+  --- --- &nbsp;12<br>
+  &nbsp;&nbsp;&nbsp;| - | : | - | : | - | : | - | : | - | : | - | : | - | : |<br>
+  11 &nbsp;--- --- --- --- --- --- --- --- --- --- ---<b>V</b> --- --- --- &nbsp;11<br>
+  &nbsp;&nbsp;&nbsp;| : | - | : | - | : | - | : | - | : | - | : | - | : | - |<br>
+  10 &nbsp;--- --- --- --- --- --- --- --- --- --- ---<b>V</b>--- --- --- &nbsp;10<br>
+  &nbsp;&nbsp;&nbsp;| - | : | - | : | - | : | - | : | - | : | - | : | - | : |<br>
+  &nbsp;9 &nbsp;--- --- --- --- --- --- --- --- --- --- ---<b>V</b>--- --- --- 
+  &nbsp;9<br>
+  &nbsp;&nbsp;&nbsp;| : | - | : | - | : | - | : | - | : | - | : | - | : | - |<br>
+  &nbsp;8 &nbsp;--- --- --- --- --- --- --- --- --- ---<b>V</b>--- --- --- --- 
+  &nbsp;8<br>
+  &nbsp;&nbsp;&nbsp;| - | : | - | : | - | : | - | : | - | : | - | : | - | : |<br>
+  &nbsp;7 <b>H</b>---<b>H</b>---<b>H</b>---<b>H</b>---<b>H</b>---<b>H</b>---<b>H</b>---<b>H</b>---<b>H</b>---<b>V</b>--- 
+  --- --- --- --- &nbsp;7<br>
+  &nbsp;&nbsp;&nbsp;| : | - | : | - | : | - | : | - | : | - | : | - | : | - |<br>
+  &nbsp;6 &nbsp;--- --- --- --- --- --- --- ---<b>V</b>---<b>H</b>---<b>H</b>---<b>H</b>---<b>H</b>---<b>H</b>---<b>H</b>&nbsp;6<br>
+  &nbsp;&nbsp;&nbsp;| - | : | - | : | - | : | - | : | - | : | - | : | - | : |<br>
+  &nbsp;5 &nbsp;--- --- --- --- --- --- --- ---<b>V</b>--- --- --- --- --- --- 
+  &nbsp;5<br>
+  &nbsp;&nbsp;&nbsp;| : | - | : | - | : | - | : | - | : | - | : | - | : | - |<br>
+  &nbsp;4 &nbsp;--- --- --- --- --- --- --- ---<b>V</b>--- --- --- --- --- --- 
+  &nbsp;4<br>
+  &nbsp;&nbsp;&nbsp;| - | : | - | : | - | : | - | : | - | : | - | : | - | : |<br>
+  &nbsp;3 &nbsp;--- --- --- --- --- --- --- ---<b>V</b>--- --- --- --- --- --- 
+  &nbsp;3<br>
+  &nbsp;&nbsp;&nbsp;| : | - | : | - | : | - | : | - | : | - | : | - | : | - |<br>
+  &nbsp;2&nbsp; --- --- --- --- --- --- --- ---<b>V</b>--- --- --- --- --- --- 
+  &nbsp;2<br>
+  &nbsp;&nbsp;&nbsp;| - | : | - | : | - | : | - | : | - | : | - | : | - | : |<br>
+  &nbsp;1&nbsp; --- --- --- --- --- --- --- ---<b>V</b>--- --- --- --- --- --- 
+  &nbsp;1</font></p>
+<p><font face="Courier New, Courier, mono" size="2"> &nbsp;&nbsp;&nbsp;A &nbsp;&nbsp;B 
+  &nbsp;&nbsp;C &nbsp;&nbsp;D&nbsp;&nbsp; E&nbsp;&nbsp; F&nbsp;&nbsp; G &nbsp;&nbsp;H 
+  &nbsp;&nbsp;I &nbsp;&nbsp;J &nbsp;&nbsp;K &nbsp;&nbsp;L &nbsp;&nbsp;M &nbsp;&nbsp;N 
+  &nbsp;&nbsp;O <br>
+  </font></p>
+<p>Note that dark squares (denoted by ':') belong to Vert and light squares (denoted 
+  by '-') belong to Horz. Connections follow orthogonally adjacent lines between 
+  points ('|' and '---') as well as conditional connections: each player connects 
+  diagonally across their squares. </p>
+<p>Horz has not won in the above example because their connection is broken at 
+  I7-J6 where it crosses a Vert square. No diagonal connection exists for Horz 
+  across this square but a diagonal connection does exist for Vert, giving Vert 
+  the win.</p>
+<p>&nbsp;</p>
+<h4>Movement:</h4>
+<p>One or two pieces can be placed on empty board points per turn, provided that 
+  if two pieces are played then they are three points apart (either a knight's 
+  move from each other or in a line). For instance, if Vert plays <b>V</b> (below) 
+  they can then place a second piece at any of the points marked <b>x</b>.</p>
+<font face="Courier New, Courier, mono"> </font><font face="Courier New, Courier, mono">&nbsp; 
+&nbsp;&nbsp;--- --- --- --- --- --- --- --- --- <br>
+&nbsp;&nbsp;&nbsp;| : | - | : | - | : | - | : | - | : | <br>
+</font><font face="Courier New, Courier, mono">&nbsp; &nbsp;&nbsp;--- --- --- 
+---<b>x</b>--- --- --- --- --- <br>
+&nbsp;&nbsp;&nbsp;| - | : | - | : | - | : | - | : | - |<br>
+</font><font face="Courier New, Courier, mono">&nbsp; &nbsp;&nbsp;--- --- ---<b>x</b>--- 
+---<b>x</b>--- --- --- --- <br>
+</font><font face="Courier New, Courier, mono">&nbsp;&nbsp;&nbsp;| : | - | : | 
+- | : | - | : | - | : | <br>
+</font><font face="Courier New, Courier, mono">&nbsp; &nbsp;&nbsp;--- ---<b>x</b>--- 
+--- --- ---<b>x</b>--- --- --- <br>
+&nbsp;&nbsp;&nbsp;| - | : | - | : | - | : | - | : | - |<br>
+</font><font face="Courier New, Courier, mono">&nbsp; &nbsp;&nbsp;---<b>x</b>--- 
+--- ---<b>V</b>--- --- ---<b>x</b>--- --- <br>
+</font><font face="Courier New, Courier, mono">&nbsp;&nbsp;&nbsp;| : | - | : | 
+- | : | - | : | - | : | <br>
+</font><font face="Courier New, Courier, mono">&nbsp; &nbsp;&nbsp;--- ---<b>x</b>--- 
+--- --- ---<b>x</b>--- --- --- <br>
+&nbsp;&nbsp;&nbsp;| - | : | - | : | - | : | - | : | - |<br>
+</font><font face="Courier New, Courier, mono">&nbsp; &nbsp;&nbsp;--- --- ---<b>x</b>--- 
+---<b>x</b>--- --- --- --- <br>
+</font><font face="Courier New, Courier, mono">&nbsp;&nbsp;&nbsp;| : | - | : | 
+- | : | - | : | - | : | <br>
+</font><font face="Courier New, Courier, mono">&nbsp; &nbsp;&nbsp;--- --- --- 
+---<b>x</b>--- --- --- --- --- <br>
+&nbsp;&nbsp;&nbsp;| - | : | - | : | - | : | - | : | - |<br>
+</font><font face="Courier New, Courier, mono">&nbsp; &nbsp;&nbsp;--- --- --- 
+--- --- --- --- --- --- <br>
+</font> 
+<p>&nbsp;</p>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

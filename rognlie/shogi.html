@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+              
+<pre><font face="Arial" size="2"><a name="rules">S H O G I  R U L E S
+====================
+</a>
+Shogi is a Japanese board game played by two players.
+The object of the game is to capture the opponent's King.
+Shogi is played on a nine-by-nine board. The vertical rows are called files,
+the horizontal ones ranks or just rows. Each player has twenty pieces:
+one King, two Gold Generals, two Silver Generals, two kNights,
+two Lances, one Rook, one Bishop and nine Pawns.
+The player moving up the board and making the first move is referred to as
+black and his opponent white, although in Shogi sets all pieces have the
+same colour. They are differentiated only in direction: pieces pointing
+away from a player are his. The pieces lie flat on the board and have
+their Japanese name written on them.
+The notation system and the initial setup in ASCII representation can be
+found in the file SHOGI.BOARD.
+
+
+THE MOVES
+---------
+
+King:           one step in any direction per move
+Gold General:   one step per move any way except diagonally backward
+                (as a king but not diagonally backward)
+Silver General: one step per move forwards or diagonally
+                (as a king but not sideways or vertically backward)
+Knight:         one step to left or right, and two steps forward
+                (the only piece which may jump over other pieces)
+Rook:           moves vertically or horizontally any distance
+Bishop:         moves diagonally any distance
+Lance:          moves forward any distance
+Pawn:           one step forward
+
+Apart from the King and the Gold General all pieces can promote.
+After promotion their moves are as follows:
++ Promoted Silver, promoted kNight, promoted Lance and promoted Pawn all
+  move as a Gold.
++ The promoted Rook in addition to the moves of the unpromoted Rook can
+  move one step in the diagonal directions. It either moves like a Rook
+  or like a King.
++ The promoted Bishop in addition to the moves of the unpromoted Bishop
+  can move one step horizontally or vertically. It either moves like a
+  Bishop or like a King.
+
+
+PROMOTION
+---------
+
+The three rows furthest away from a player are called the promotion zone. Apart
+from the King and the Gold, any piece can be promoted to a more powerful piece
+when it makes a move completely or partly in the promotion zone. So, when a
+piece moves into, out of or fully inside the promotion zone it may be promoted
+upon completion of its move. Promotion is optional, provided that the piece
+still can make a legal move in case it is not promoted: if a Pawn or a Lance
+move to the last row, or a Knight moves to either of the last two rows, it must
+be promoted. In Shogi sets promoting a piece is done by turning this piece
+upside down. Its promoted name is written on its other side.
+
+
+CAPTURING AND DROPPING PIECES
+-----------------------------
+
+When one piece moves onto the same square as an opponent's piece, the
+opponent's piece is captured. All pieces capture in the same way that they
+move. Captured pieces become part of the capturer's force. In a later move,
+instead of moving a piece on the board, a player may put a piece that he
+has captured from his opponent back onto the board, in an empty square.
+This is called dropping a piece. Pieces are always dropped unpromoted: if
+a promoted piece is captured, it reverts to its unpromoted rank.
+Pieces may be dropped on any empty square on the board with only three
+restrictions:
+ 1) After dropping a piece it must be able to make a legal move. This applies
+    to Pawns, Knights or Lances. They may not be dropped onto a square from
+    which they will never be able to move.
+ 2) Attacking the King by dropping a Pawn on the square in front of him is not
+    allowed if the King cannot prevent being captured on the following move.
+    To use the Chess expression: checkmating the King with a Pawn drop is
+    prohibited.
+ 3) A pawn may only be dropped on a file (vertical row) if there is no other
+    unpromoted pawn of the same player on that file.
+
+
+DRAWS
+-----
+
+The game of Shogi has very few draws (roughly 1 percent), mainly because of
+the possibility to drop pieces. Draws cannot be offered and can arise from
+two situations:
+ 1) A position (including the pieces in hand) occurs 4 times with the same
+    player to move (&quot;Sennichite&quot;). However, if this is caused by consecutive
+    checks (direct attacks on the King, threatening to capture it on the next
+    move) by one side, the player giving these checks loses the game.
+ 2) Both players have moved their King into the the promotion zone (or they
+    cannot be prevented to do so) and the Kings cannot be checkmated. In
+    that case the players may decide to count their pieces where the King does
+    not count, the Rook and Bishop count as 5 points, and all other pieces as
+    one point. Promotion is disregarded. If both players have at least 24
+    points the game is a draw (&quot;Jishogi&quot;). If a player has less, he loses the
+    game.
+    Of course, a player can refuse to count pieces when he still has mating
+    chances or chances to gain material which would affect the outcome of the
+    counting. There is no strict rule about what to do if this is not the case,
+    but nonetheless a player refuses to count up (e.g. because he does not have
+    enough points for a draw). It has been generally accepted that in such a
+    case the game ends and the pieces are counted after one player has managed
+    to get all his pieces protected in the promotion zone.
+
+Chris Sterritt and Pieter Stouten, 12-th June 1990.
+Last revision 9-th October 1991 - Draws (Jishogi rule).
+
+</font></pre>
+    <p><font face="Arial" size="2">This document is used with permission from Pieter Stouten.
+    For more information on Shogi, please see Pieter Stouten's excellent web page at <a href="https://web.archive.org/web/20231206074605/http://www.shogi.net/shogi.html">http://www.shogi.net/shogi.html</a>
+    </font></p>
+    <pre><font face="Arial" size="2">N O T A T I O N  A N D  I N I T I A L  S E T U P
+================================================
+
+
+NOTATION
+--------
+
+Moves are represented by the abbreviation of a piece, followed by the 
+indication of the square where the piece goes to. Abbreviations are: 
+K = King, R = Rook, B = Bishop, G = Gold, S = Silver, N = kNight, 
+L = Lance, P = Pawn. If the representation is ambiguous then the starting
+square is given too (e.g. G4a-5b). Captures are indicated by an x
+(e.g. Px5e). Drops are indicated by ' or * (e.g. P'8f or P*8f). Since an
+asterisk can easily be mistaken for an &quot;x&quot;, the preferred notation for
+drops is an apostrophe (e.g. P'8f). Promotion is indicated by a + behind
+the move (e.g. B7g+). A promoted piece is represented by a + followed by
+the abbreviation of the unpromoted piece (e.g. +S3d). Sometimes not
+promoting a piece that could have promoted is indicated by = behind the
+move (e.g. S3c=).
+
+
+INITIAL SETUP
+-------------
+
+The representation of the board with the initial setup (which has become
+the de facto standard in electronic correspondence Shogi) is given below.
+The w and b in front of the abbreviations indicate white and black
+respectively. When a piece promotes, it will be shown on the e-mail board
+with a preceding &quot;+&quot;, as in &quot;+bL&quot;.
+Captured pieces are kept in the boxes at the right side of the board.
+When sending games back and forth between players, the moves are listed
+above the board. This works well, as you can see the latest moves and the
+board as well at the bottom of the file.
+</font><font face="Courier" size="1">
+   9    8    7    6    5    4    3    2    1
++--------------------------------------------+       White in hand:
+| wL | wN | wS | wG | wK | wG | wS | wN | wL |  a   +---------------+
++--------------------------------------------+      |               |
+|    | wR |    |    |    |    |    | wB |    |  b   |               |
++--------------------------------------------+      +---------------+
+| wP | wP | wP | wP | wP | wP | wP | wP | wP |  c
++--------------------------------------------
+|    |    |    |    |    |    |    |    |    |  d
++--------------------------------------------+
+|    |    |    |    |    |    |    |    |    |  e
++--------------------------------------------+
+|    |    |    |    |    |    |    |    |    |  f
++--------------------------------------------+
+| bP | bP | bP | bP | bP | bP | bP | bP | bP |  g
++--------------------------------------------+      Black in hand:
+|    | bB |    |    |    |    |    | bR |    |  h   +---------------+
++--------------------------------------------+      |               |
+| bL | bN | bS | bG | bK | bG | bS | bN | bL |  i   |               |
++--------------------------------------------+      +---------------+</font><font face="Arial" size="2">
+
+The rules of Shogi can be found in the file &quot;shogi.rules&quot;.
+
+Chris Sterritt and Pieter Stouten, 13-th June 1990.
+Last revision 1-st July 1990 - Preferred notation for drops.</font></pre>
+    <p><font face="Arial" size="2">This document is used with permission from Pieter Stouten.
+    For more information on Shogi, please see Pieter Stouten's excellent web page at <a href="https://web.archive.org/web/20231206074605/http://www.shogi.net/">http://www.shogi.net</a></font></p>
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

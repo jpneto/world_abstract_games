@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+  <h3>Rules</h3>
+
+  <p>First let's recap the rules of Hex. Two players, Vert and Horz, take turns 
+    placing one of their pieces on a hexagonally tiled rhombus. Vert wins by connecting 
+    the top and bottom edges with a chain of V pieces, while Horz wins by connecting 
+    the left and right sides with a chain of H pieces.</p>
+  <p>Quadrant Hex is identical to standard Hex except that in addition to the 
+    standard game the board is divided into four equal quadrants, each containing 
+    a subgame played according to the same rules. </p>
+  <p>This gives a total of 5 pts: 1 pt for the standard game and 1 pt for each 
+    of the four subgames. A player wins the overall game as soon as they score 
+    3 pts, which may involve winning the standard game plus two subgames, or winning 
+    three subgames.</p>
+  <p>Quadrant Hex retains the wonderful purity of standard Hex (one player must 
+    win) while introducing interesting side play. The <a href="https://web.archive.org/web/20241112135013/http://home.fuse.net/swmeyers/qhru.htm">official 
+    rules</a> can be found on the Quadrant Hex website (<a href="https://web.archive.org/web/20241112135013/http://home.fuse.net/swmeyers/quadrant.htm">http://home.fuse.net/swmeyers/quadrant.htm</a>). 
+  </p>
+  <h3>Example Game</h3>
+  <p>Below is a 14x14 game of Quadrant Hex won by Horz.<br>
+  </p>
+  <p><font face="Courier New, Courier, mono">&nbsp;&nbsp;&nbsp;A B C D E F G H 
+    I J K L M N <br>
+    &nbsp;&nbsp;1 . . . V . . . - - - - - - - 1<br>
+    &nbsp;&nbsp;&nbsp;2 . . . V . . . - - - - - - - 2<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;3 . . . V . . . - - - - - - - 3<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4 . . . V . . . H H H H H H H 4<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5 . . . V . . . - - - - - - - 5<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6 . . . V . . . - - - - - - - 6<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7 . . . V . . . - - - - - 
+    - - 7<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8 - - - V - - - . . 
+    . . . . . 8<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;9 - - - V - - 
+    - H H H H H H H 9<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10 - - - V - - 
+    - . . . . . . . 10<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;11 - - - 
+    V V V V V V V V . . . 11<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;12 
+    - - - - - - - . . . V . . . 12<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;13 
+    H H H H H H H . . . V . . . 13<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;14 
+    - - - - - - - . . . V . . . 14<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A 
+    B C D E F G H I J K L M N </font></p>
+  <p>Even though Vert has won the standard 14x14 game (plus one 7x7 subgame), 
+    Horz has won three of the 7x7 subgames to give them the 3 pts and the overall 
+    win. This becomes clear if we examine each subgame in isolation:</p>
+  <p><font face="Courier New, Courier, mono">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;. . 
+    . V . . . &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- - - - - - - <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; . . . V . . . &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- 
+    - - - - - - <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; . . . V . . . &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- 
+    - - - - - - <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; . . . V . . . &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;H 
+    H H H H H H <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; . . . V . . . &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- 
+    - - - - - - <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; . . . V . . . &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- 
+    - - - - - - <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; . . . V . . . 
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- - - - - - - </font></p>
+  <p><font face="Courier New, Courier, mono"><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - 
+    - - V - - - &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;. . . . . . . <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    - - - V - - - &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;H H H H H H H <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    &nbsp;- - - V - - - &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;. . . . . . . <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    &nbsp;- - - V V V V &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V V V V . . . <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    &nbsp;- - - - - - - &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;. . . V . . . <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    H H H H H H H &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;. . . V . . . <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    - - - - - - - &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;. . . V . . .</font></p>
+  <h3>Syntax</h3>
+  <pre>Vert moves first.
+
+
+The move syntax is:
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;<b>F6&nbsp;</b><i>&nbsp;</i>&nbsp;&nbsp;  Place a piece at coordinate F6, which must be empty.
+
+&nbsp;&nbsp;&nbsp;&nbsp;<b>swap</b>&nbsp;&nbsp;  Horz may elect to swap Vert's opening move as their first play.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This ensures that Vert does not start with too strong an opening move.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</pre>
+  <p>
+  <p> 
+  <h3>References and History</h3>
+
+  <p>Quadrant Hex was invented by Steven Meyers in 2000 as a variant of Trellis. 
+    It was originally introduced as quadrant Trellis in his October 2001 GAMES 
+    Magazine article, but this name was later changed to quadrant Hex in keeping 
+    with the game's fundamental nature.</p>
+  <p> Quadrant Hex rules copyright (c) 2000 Steven Meyers
+  <p>Implementation and help file by <a href="https://web.archive.org/web/20241112135013/mailto:cameronb@optusnet.com.au">Cameron Browne</a>, April 2003.</p>
+  </div>
+  
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

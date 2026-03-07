@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h3><strong> Introduction</strong></h3>
+<p>  Ankor is a 3D connection game played with coloured cubes.<br>
+</p>
+<p> <strong>Rules </strong><strong> </strong></p>
+<p>Two players (O and X) each have 28 cubes of their colour.</p>
+<p align="left">The board is a triangular grid of triangular holes (six per side), where each hole will snugly hold a cube placed corner-downward.</p>
+<p><strong>Start:</strong> The board is initially empty. O places a cube on the hole of their choice, then X may elect to swap colours in lieu of making the second move (swap option). </p>
+<p><strong>Play: </strong>Players then take turns either:<br>
+  1) adding a cube of their colour to an empty board hole, or<br>
+  2) moving a cube of their colour to a valid destination point.</p>
+<p>A destination point is valid if it can be reached through a series of connected or adjacent steps through friendly pieces (two pieces are connected if they visibly share a face). The destination point need not be connected to the source point after the move.</p>
+<p>A cube can only be moved if:<br>
+  1) it has at least two exposed faces, and<br>
+  2) it does not directly support more than one column.</p>
+<p>If the cube being moved directly supports a column above it, then the cubes in that column will naturally drop down to fill the gap. </p>
+<p><strong>Aim:</strong> The game ends as soon as a player forms a connected path of their colour that touches at least the tip of each board side. For example, the following game has been  won by X who has formed an 'x' path between all three board sides (this path only touches a tip of the left  side). </p>
+<pre>      +---+<br>     /   . \<br>    + . .   +---+                             <br>     \   . /o\ooo\<br>      +---+ooo+---+---+                       <br>     /   . \o/o\ooo\xxx\<br>    + . .   +ooo+---+---+---+                 <br>     \   . /o\o/x\xxx\xxx\ooo\<br>      +---+ooo+xxx+---+---+---+---+           <br>     /o\ooo\o/x\x/xxx/xxx/ooo/   . \<br>    +ooo+---+xxx+---+---+---+ . .   +---+     <br>     \o/x\xxx\x/xxx/ooo/   . \   . /   . \<br>      +xxx+---+---+---+ . .   +---+ . .   +   <br>     /o\x/xxx/x\xxx\ooo\   . /   . \   . /<br>    +ooo+---+xxx+---+---+---+ . .   +---+     <br>     \o/ooo/o\x/X\XXX\ooo\xxx\   . /<br>      +---+ooo+XXX+---+---+---+---+           <br>     /   . \o/x\X/XXX/ooo/xxx/<br>    + . .   +xxx+---+---+---+                 <br>     \   . /o\x/xxx/xxx/<br>      +---+ooo+---+---+                       <br>     /   . \o/ooo/<br>    + . .   +---+                             <br>     \   . /<br>      +---+</pre>
+<p> <strong>Notes</strong><strong> </strong></p>
+<p>Ankor is essentially Akron played with a hexagonal stacking of tilted cubes. Akron was in fact originally designed for the hexagonal grid until phase problems were discovered; the tiled cube stacking solves these problems. The <em>Abstract Games </em>magazine article posted on the <a href=",,.akron">official Akron page</a> has more details.</p>
+<p>It is possible for games to deadlock and not produce a winner, however this is extremely rare.</p>
+<p align="left">The maximum  number of cubes required for a given board size is given by the tetrahedral number <em><strong>Tn</strong></em> = <em><strong>n</strong></em> (<em><strong>n</strong></em> + 1) (<em><strong>n</strong></em> + 2) / 6.</p>
+<div align="left">  </div>
+<div align="left"><div align="center"></div>
+</div>
+<p><strong>Syntax</strong></p>
+<p><tt>ankor move &lt;game#&gt; &lt;userid&gt; &lt;passwd&gt; d3</tt> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Play a cube of your colour at position d3.<br>
+  <tt>ankor move &lt;game#&gt; &lt;userid&gt; &lt;passwd&gt; d3-f4</tt> &nbsp;&nbsp;&nbsp;&nbsp; Move your cube at position d3 to  position f4.<tt></tt><tt><br>
+  ankor move &lt;game#&gt; &lt;userid&gt; &lt;passwd&gt; swap</tt> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Swap colours (second move only).<br>
+</p>
+<div align="left">
+  <div align="center"></div>
+</div>
+<p><strong>Test Options</strong></p>
+<p align="left"> If the -<tt>win_height</tt> option may be used to test various winning conditions.<br>
+  -<tt>win_height</tt>=0 specifies that the winning path must actually touch each board side (easier to deadlock).<br>
+  -<tt>win_height</tt>=1 specifies that the winning path need only touch a tip of  each board side.<br>
+  -<tt>win_height</tt>=-1 specifies that the winning path may touch the each board side at any height, i.e. it cat  touch each of the  three exposed pyramidal faces formed by the board at any height.<br>
+</p>
+<p><strong>History </strong></p>
+<p>Ankor rules copyright Cameron Browne &copy; 2008. </p>
+<p>The name &ldquo;Ankor&rdquo; is a reworking of "Akron"... which is more or less what the game is.</p>
+<p>The Boche board with six holes per side is equivalent to the <a href="https://web.archive.org/web/20250524004942/http://www.iqideas.com/Default.aspx?tabid=99">Foursite 3D</a> board available from <a href="https://web.archive.org/web/20250524004942/http://www.iqideas.com/Home/tabid/36/Default.aspx">IQideas Ltd</a>. </p>
+<p>More details are available at  the <a href="https://web.archive.org/web/20250524004942/http://www.cameronius.com/games/ankor/">official Ankor page</a>.</p>
+<p>Implementation and Help file by Cameron Browne, May  2008.</p>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

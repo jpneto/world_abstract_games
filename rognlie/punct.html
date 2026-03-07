@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h2>Pünct Pieces</h2>
+</a>
+
+The Pünct pieces are shown below.  Each player starts with 18 pieces:
+6 T, 2 SC, 4 SE, 2 AM, 2 AR, and 2 AL.
+
+<pre>
+    __          __         __       __           __     __    
+   /o \__      /o \       /o \     /o \       __/o \   /o \__ 
+   \   o \     \  /       \  /     \  /      /o  __/   \__ o \
+   /@  __/     /@ \       /o \     /@ \__    \  /         \  /
+   \__/        \  /       \  /     \__ o \   /@ \         /@ \
+               /o \       /@ \        \__/   \__/         \__/
+               \__/       \__/                              
+
+  Triangle   Straight   Straight   Angle     Angle      Angle 
+             Center     End        Middle    Right      Left
+     T       SC or C    SE or E    AM or M   AR or R    AL or L
+</pre>
+
+The Pünct of the piece is marked with a "@" or "#".
+The other spaces on the piece are marked with "o" or "x".
+
+
+<a name="board">
+<h2>Initial Board</h2>
+</a>
+
+<pre>
+                          17
+                       16 __    __
+                    15 __/. \__/. \__                      player1
+                 14 __/.     .     . \__                   (White)
+              13 __/.     .     .     . \__                T   6
+           12 __/.     .     .     .     . \__             SC  2
+        11 __/.     .     .     .     .     . \__          SE  4
+     10 __/.     .     .     .     .     .     . \__       AM  2
+  9    /.     .     .     .     .     .     .     . \      AR  2
+       \   .     .     .     .     .     .     .    /      AL  2
+  8  __/.     .     .     .     .     .     .     . \__
+    /.     .     .     .     .     .     .     .     . \
+  7 \   .     .     .     .     .     .     .     .    /
+    /.     .     .     .     :     .     .     .     . \
+  6 \   .     .     .     :     :     .     .     .    /
+    /.     .     .     :     :     :     .     .     . \
+  5 \   .     .     .     :     :     .     .     .    /
+    /.     .     .     :     :     :     .     .     . \
+  4 \   .     .     .     :     :     .     .     .    /
+    /.     .     .     :     :     :     .     .     . \
+  3 \   .     .     .     :     :     .     .     .    /
+    /.     .     .     .     :     .     .     .     . \
+  2 \   .     .     .     .     .     .     .     .    /
+    /.     .     .     .     .     .     .     .     . \
+  1 \__ .     .     .     .     .     .     .     .  __/
+       \   .     .     .     .     .     .     .    /
+       /.     .     .     .     .     .     .     . \      player2
+     A \__ .     .     .     .     .     .     .  __/Q     (Black)
+        B \__ .     .     .     .     .     .  __/P        T   6
+           C \__ .     .     .     .     .  __/O           SC  2
+              D \__ .     .     .     .  __/N              SE  4
+                 E \__ .     .     .  __/M                 AM  2
+                    F \__ .  __ .  __/L                    AR  2
+                       G \__/  \__/K                       AL  2
+                          H  I  J
+
+</pre>
+<a name="rules">
+<h2>Pünct Rules Summary</h2>
+</a>
+
+<h3>The Goal</h3>
+
+There are two ways to win Pünct.
+<p>
+1. The primary goal is to connect two opposite sides of the board with
+your color of pieces.  
+<p>
+2. The secondary goal is to control the most spaces in the central section
+of the board.
+<p>
+The game ends when a player connects two opposite sides of the board,
+or when either player places his last piece on the board.
+If a player places his last piece, and neither player has connected
+opposite sides, the winner is the player who controls the most spaces
+in the central section of the board.  If they both control the same
+number of spaces, the game is a tie.
+
+<h3>Movement</h3>
+
+There are two types of movement: Adding a piece, and moving a piece.
+<p>
+1. To add a piece, a player places a new piece on the board,
+with the following restrictions:
+<p>
+a. No part of the piece may be in the central section of the board.
+<p>
+b. All parts of the piece must be placed in empty spaces.  (The bottom level of the board.)
+<p>
+The notation for adding a piece is to specify the 3 spaces occupied by the piece, with the Pünct first.  For example:
+<pre>
+     d3,d4,e4            (Triangle with Pünct at D3)
+     AR-L10L9K8          (Angle Right with Pünct at L10)
+     C-C3,B2,D4          (Straight Center with Pünct at C3)
+</pre>
+<p>
+2. To move a piece, a player moves the Pünct of the piece in a straight line
+on the board.  He may then rotate the piece around the Pünct.  The piece
+may be moved into the central section or placed on top of other pieces.
+When moving on top of other pieces, the following restrictions apply:
+<p>
+a. The Pünct must always rest on another piece of your own color.
+<p>
+b. The end points must both rest on the same level.  The T piece has no
+middle, so all three points must be on the same level.
+<p>
+c. You may form a bridge, with the middle point over a lower level.
+When the SC and AM pieces form bridges, the Pünct (middle point) must
+be over another point of the same color; it may not be over an empty
+space.
+<p>
+d. A piece may not move if any part of it in under another piece.
+<p>
+For purposes of connection and control, only the top piece is considered
+for each space.
+<p>
+The notation for moving a piece is to specify the Pünct of the moving piece,
+then the 3 spaces it moves to, Pünct first.  For example:
+<pre>
+     Td3-i8h7h8         (move Triangle Pünct from d3 to i8 and rotate)
+     RL10-L11,L10,K9    (move Angle Right one space up)
+     SCc3-c3b3d3        (rotate Straight Center without moving)
+</pre>
+
+<h2>Credits</h2>
+
+Pünct is copyrighted by Kris Burm, who has kindly given his permission
+to have it on this server.
+It is the last game to be published in Project Gipf.
+Sharkey is to blame for any bugs.
+<p>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

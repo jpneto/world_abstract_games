@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+              
+<p>For complete rules and strategy, see the <a href="https://web.archive.org/web/20250225134710/http://www.colina.demon.co.uk/tenjiku.html">online book on Tenjiku Shogi</a> by Colin Adams.</p>
+
+<h2>Tenjiku Shogi</h2>
+
+<p>Tenjiku may be translated as "Exotic".  Be sure to read <a href="#notefi">note Fi</a> on the Fire Demon before attempting to play.</p>
+
+<p>Here is the opening board setup:</p>
+
+<pre>
++----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+| wL | wN | wFL| wI | wC | wS | wG | wDE| wK | wG | wS | wC | wI | wFL| wN | wL |
++----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+| wRC|    | wCh| wCh|    | wBT| wPh| wFK| wLn| wKy| wBT|    | wCh| wCh|    | wRC|
++----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+| wSS| wVS| wB | wDH| wDK| wWB| wFi| wFE| wLH| wFi| wWB| wDK| wDH| wB | wVS| wSS|
++----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+| wSM| wVM| wR | wHF| wSE| wBG| wRG| wVG| wGG| wRG| wBG| wSE| wHF| wR | wVM| wSM|
++----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+| wP | wP | wP | wP | wP | wP | wP | wP | wP | wP | wP | wP | wP | wP | wP | wP |
++----+----+----+----+----*----+----+----+----+----+----*----+----+----+----+----+
+|    |    |    |    | wDg|    |    |    |    |    |    | wDg|    |    |    |    |
++----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+|    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
++----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+|    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
++----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+|    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
++----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+|    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
++----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+|    |    |    |    | bDg|    |    |    |    |    |    | bDg|    |    |    |    |
++----+----+----+----+----*----+----+----+----+----+----*----+----+----+----+----+
+| bP | bP | bP | bP | bP | bP | bP | bP | bP | bP | bP | bP | bP | bP | bP | bP |
++----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+| bSM| bVM| bR | bHF| bSE| bBG| bRG| bGG| bVG| bRG| bBG| bSE| bHF| bR | bVM| bSM|
++----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+| bSS| bVS| bB | bDH| bDK| bWB| bFi| bLH| bFE| bFi| bWB| bDK| bDH| bB | bVS| bSS|
++----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+| bRC|    | bCh| bCh|    | bBT| bKy| bLn| bFK| bPh| bBT|    | bCh| bCh|    | bRC|
++----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+| bL | bN | bFL| bI | bC | bS | bG | bK | bDE| bG | bS | bC | bI | bFL| bN | bL |
++----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+</pre>
+
+
+<h3 id="pieces">Tenjiku Shogi Pieces</h3>
+<p>
+    <ul>
+      <li>An 'x' indicates a square which the piece may move or jump
+        to. </li>
+      <li>A line indicates the piece may move any number of squares in
+        that direction. </li>
+      <li>A number indicates the piece may move in that direction up
+        to that number of squares, but not jumping. </li>
+      <li>'a' and 'b' indicate Lion moves. The piece may jump to any
+        of the squares, or it may make two consecutive king-moves on these squares. </li>
+      <li>A dot is used as a reminder of the 3-step area move which Fire Demons
+        and Vice Generals have.</li>
+    </ul>
+</p>
+<pre>
+  \   /                               \ x /
+    B     Bishop                      x+B x   Dragon Horse
+  /   \   promotes to Dragon Horse    / x \   promoted Bishop
+
+                                    . . . . . . .
+                                    . . . . . . .
+  \   /                             . . \ . / . .
+    BG    Bishop General [<a href="#noteg">note G</a>]   . . .+BH. . . Vice General [<a href="#noteg">see note G</a>]
+  /   \   promotes to Vice General  . . / . \ . . promoted Bishop General
+                                    . . . . . . .
+                                    . . . . . . .
+
+  x   x                               x | x
+  x BTx   Blind Tiger                 x+BTx   Flying Stag
+  x x x   promotes to Flying Stag     x | x   Promoted Blind Tiger
+
+                                    \       /
+  \ | /                               ! ! !   The Heavenly Tetrarchs
+  2 Ch2   Chariot Soldier           3 !+Ch! 3 [<a href="#noteht">see note HT</a>]
+  / | \   promotes to                 ! ! !   promoted Chariot Soldier
+            Heavenly Tetrarchs      /       \
+
+  x x x                                 x
+    C     Copper General             --+C --  Side Mover
+    x     promotes to Side Mover        x     promoted Copper General
+
+    x                                   |
+    Dg    Dog                          +Dg    Multi General
+  x   x   promotes to Multi General   /   \   promoted Dog
+
+  x x x                               x x x
+  x DEx   Drunk Elephant              x+DEx   Crown Prince
+  x   x   promotes to Crown Prince    x x x   promoted Drunk Elephant
+
+                                        b
+  \ x /                               \ a /
+  x DHx   Dragon Horse               --+DH--  Horned Falcon
+  / x \   promotes to Horned Falcon   / | \   promoted Dragon Horse
+
+                                    b       b
+  x | x                               a | a
+ -- DK--  Dragon King                --+DK--  Soaring Eagle
+  x | x   promotes to Soaring Eagle   / | \   promoted Dragon King
+
+    x
+  \ | /
+x-- FE--x Free Eagle                          (none)
+  / | \   does not promote
+    x
+
+                                        x
+  \ | /                               \ | /
+ -- FK--  Free King                 x--+FK--x Free Eagle
+  / | \   promotes to Free Eagle      / | \   promoted Free King
+                                        x
+
+  x x x                               \   /
+    FL    Ferocious Leopard            +FL    Bishop
+  x x x   promotes to Bishop          /   \   promoted Ferocious Leopard
+
+. . . . . . .
+. . . . . . .
+. . \ | / . .
+. . . Fi. . . Fire Demon [<a href="#notefi">see note Fi</a>]            (none)
+. . / | \ . . does not promote
+. . . . . . .
+. . . . . . .
+
+  \ | /
+ -- GG--  Great General [<a href="#noteg">see note G</a>]          (none)
+  / | \   does not promote
+
+  x x x                                 |
+  x G x   Gold General               --+G --  Rook
+    x     promotes to Rook              |     promoted Gold General
+
+    b
+  \ a /                               \ | /
+ -- HF--  Horned Falcon              --+HF--  Bishop General [<a href="#noteg">see note G</a>]
+  / | \   promotes to Bishop General  / | \   promoted Horned Falcon
+
+  x x x                                 |  
+    I     Iron General                2+I 2   Vertical Soldier
+          promotes to Gold General      x     promoted Iron General
+
+  x x x
+  x K x   King                                (none)
+  x x x   does not promote
+
+    x                               b b b b b
+  x   x                             b a a a b
+x   Ky  x Kylin                     b a+Kya b Lion
+  x   x   promotes to Lion          b a a a b promoted Kylin
+    x                               b b b b b
+
+    |                                 \ | /
+    L     Lance                        +L     White Horse
+          promotes to White Horse       |     promoted Lance
+
+b b b b b                           \ b b b /
+b a a a b                           b a a a b Modern Lion Hawk 
+b a Lna b Lion                      b a+Lna b (moves as Lion or Bishop)
+b a a a b does not promote          b a a a b promoted Lion
+b b b b b                           / b b b \
+
+\ b b b /
+b a a a b Modern Lion Hawk
+b a LHa b (moves as Lion or Bishop)           (none)
+b a a a b does not promote
+/ b b b \
+
+  x   x                                 2  
+          Knight                     --+N --  Side Soldier
+    N     promotes to Gold General      x     promoted Knight
+
+    x                                 x x x
+    P     Pawn                        x+P x   Tokin
+          promotes to Tokin             x     promoted Pawn
+
+x       x
+    x                                 \ | /
+  x Phx   Phoenix                    --+Ph--  Free King
+    x     promotes to Free King       / | \   promoted Phoenix
+x       x
+
+    |                                 x | x
+ -- R --  Rook                       --+R --  Dragon King
+    |     promotes to Dragon King     x | x   promoted Rook
+
+    |                                   |
+    RC    Reverse Chariot              +RC    Whale
+    |     promotes to Whale           / | \   promoted Reverse Chariot
+
+    |                                 \ | /
+ -- RG--  Rook General [<a href="#noteg">see note G</a>]  --+RG--  Great General [<a href="#noteg">see note G</a>]
+    |     promotes to Great General   / | \   promoted Rook General
+
+    x                                 \   /
+ -- SM--  Side Mover                 --+SM--  Free Boar
+    x     promotes to Free Boar       /   \   promoted Side Mover
+
+    2                                 \ 2 /
+ -- SS--  Side Soldier               --+SM--  Water Buffalo
+    x     promotes to Water Buffalo   / 2 \   promoted Side Soldier
+
+  x x x                                 |
+    S     Silver General              x+S x   Vertical Mover
+  x   x   promotes to Vertical Mover    |     promoted Silver General
+
+b       b
+  a | a                                 |
+ -- SE--  Soaring Eagle              --+SE--  Rook General [<a href="#noteg">see note G</a>]
+  / | \   promotes to Rook General      |     promoted Soaring Eagle
+
+. . . . .
+. \ . / .
+. . VG. .  Vice General [<a href="#noteg">see note G</a>]           (none)
+. / . \ . does not promote
+. . . . .
+
+    |                                 \ | /
+  x VMx   Vertical Mover               +VM    Flying Ox
+    |     promotes to Flying Ox       / | \   promoted Vertical Mover
+
+    |                                 \ | /
+  2 VS2   Vertical Soldier            2+VS2   Chariot Soldier
+    x     promotes to Chariot Soldier / | \   promoted Vertical Soldier
+
+                                    . . . . .
+  \ 2 /                             . \ | / .
+ -- WB--  Water Buffalo             . .+WB. . Fire Demon [<a href="#notefi">note Fi</a>]
+  / 2 \   promotes to Fire Demon    . / | \ . promoted Water Buffalo
+                                    . . . . .
+</pre>
+
+<h3 id="notefi">Note Fi (Fire Demon)</h3>
+<pre>
+. . . . .
+. \ | / .
+. . Fi. .  Fire Demon
+. / | \ .  does not promote
+. . . . .
+</pre>
+<p>The Fire Demon moves any number of squares in the directions shown.
+It may also move as a 3-step area mover.
+Which means it may make a move consisting of 1-3 steps, where each step 
+is like a king move, but only the last move may be a capture,
+and it may not end up on its starting square.</p>
+
+<p>Any pieces in the 8 squares adjacent to the destination square are burned
+(captured). Any opposing piece ending its move adjacent to a Fire Demon is
+burned (a suicide move).  If a Fire Demon moves adjacent to an opposing 
+Fire Demon, all pieces adjacent to the moving Fire Demon are burned except for
+the stationary Fire Demon, and the moving Fire Demon is itself burned.</p>
+
+
+<h3 id="noteg">Note G (The Jumping Generals)</h3>
+
+<p>The Great General, Vice General, Rook General and Bishop General are ranging 
+jumping pieces.  They may move any distance in the directions indicated,
+or they may capture by jumping over any intervening pieces (of either player).
+The only limit to their jumping is that they may not jump over a King or 
+Generals who are equal or higher in the following jumping hierarchy:</p>
+<pre>
+   (King)
+ a  Great General
+ b  Vice General
+ c  Rook General or Bishop General
+</pre>
+<p>Traditional Tenjiku Shogi rules do not allow the generals
+to capture equal or higher members in the heirarchy.  These rules
+restrict jumping but not capturing, which allows for some
+"nice mating threats right from the opening".</p>
+
+<p>In addition, the Vice General has the same 3-step area move
+which the Fire Demon has.</p>
+
+
+<h3 id="noteht">Note HT (The Heavenly Tetrarchs)</h3>
+<pre>
+ \       /
+   ! ! !   
+ 3 !+Ch! 3 The Heavenly Tetrarchs
+   ! ! !   promoted Chariot Soldier
+ /       \
+</pre>
+<p>The Heavenly Tetrarchs cannot move to the eight adjacent squares.  They may
+igui capture (like a lion) any piece on those squares.  They may jump over
+any piece on those squares in order to complete the other moves.<p>
+
+<p>In other words, they may (1) igui capture an adjacent piece, (2) move horizonally
+2 or 3 squares, jumping a piece on the first square, but not on the second square,
+or (3) move diagonally any number of squares, jumping an adjacent piece if necessary.</p>
+
+
+<h3 id="noteli">Note Li (Lion moves)</h3>
+
+<p>A Lion may make two consecutive king moves, both or either of which may be a 
+capture.  It may also jump to any of the 'b' squares.  
+This allows it to "igui capture" any piece on a 'a' square without moving (capture and move back). </p>
+<p>The Lion Hawk may move as a Lion or a Bishop.</p>
+<p>The Horned Falcon and Soaring Eagle have the Lion power only in certain directions.
+This is indicated by the 'a' and 'b' squares.</p>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

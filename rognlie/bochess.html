@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+              
+<p>Copyright (c) 1999 Peter Blanchard All rights reserved</a> </p>
+    <h3>Rules of B.O. Chess</h3>
+
+    <p>
+
+<h2>Intro and motivation</h2> 
+
+<p>B.O. Chess is designed with two goals in mind. 
+First, as with many large chess variants, B.O. Chess hopes to provide a
+spacious game.  The second goal for B.O. Chess is to de-emphasize the
+center of the board by providing "outer" pieces which actually lose power
+when they move close to the center. </p>
+
+<p>The board is 12 by 12 with an additional squares on each corner extending
+the main diagonals. The board is divided into 3 zones: The central zone
+consists of the 16 squares in the center of the board.  The mid-zone
+surrounds the center and consists of the 48 squares which are no more than
+2 squares away from a central square (diagonally or orthogonally). The
+outer zone consists of the remaining 84 squares around the edge of the
+board which are more then 2 squares away from the center. As will be
+explained fully below, the three outer pieces, the (outer) Knight, the
+Matriarch (Outer Queen), and the (outer) Jumper lose range as they move
+closer to the center.  The Matriarch, for example, has the full power of a
+queen from the outer zone, but can't attack the king's square from the
+central zone!  On the other hand, while she can attack the king's square
+from the mid-zone, she can't attack outer squares on the opposite side of
+the board.  The initial position is shown here.  </p>
+
+<pre>
+
+     Z4                                                   Z3
+    +---+                                               +---+
+    |*N*| a   b   c   d   e   f   g   h   i   j   k   l |*N*|
+    +---+---+---+---+---+---+---+---+---+---+---+---+---+---+    
+     12 |*J*|*R*|*M*|*G*|*B*|*Q*|*K*|*B*|*G*|*M*|*R*|*J*|12  
+        +---+---+---+---+---+---+---+---+---+---+---+---+    
+     11 |*P*|*P*|*P*|*P*|*P*|*P*|*P*|*P*|*P*|*P*|*P*|*P*|11  
+        +---+---#---#---#---#---#---#---#---#---#---+---+    
+     10 |   |:::|   |:::|   |:::|   |:::|   |:::|   |:::|10  
+        +---+---#---+---+---+---+---+---+---+---#---+---+    
+      9 |:::|   |:::|   |:::|   |:::|   |:::|   |:::|   | 9  
+        +---+---#---+---#---#---#---#---#---+---#---+---+    
+      8 |   |:::|   |:::|   |:::|   |:::|   |:::|   |:::| 8  
+        +---+---#---+---#---+---+---+---#---+---#---+---+    
+      7 |:::|   |:::|   |:::|   |:::|   |:::|   |:::|   | 7  
+        +---+---#---+---#---+---+---+---#---+---#---+---+    
+      6 |   |:::|   |:::|   |:::|   |:::|   |:::|   |:::| 6  
+        +---+---#---+---#---+---+---+---#---+---#---+---+    
+      5 |:::|   |:::|   |:::|   |:::|   |:::|   |:::|   | 5  
+        +---+---#---+---#---#---#---#---#---+---#---+---+    
+      4 |   |:::|   |:::|   |:::|   |:::|   |:::|   |:::| 4  
+        +---+---#---+---+---+---+---+---+---+---#---+---+    
+      3 |:::|   |:::|   |:::|   |:::|   |:::|   |:::|   | 3  
+        +---+---#---#---#---#---#---#---#---#---#---+---+    
+      2 | P |:P:| P |:P:| P |:P:| P |:P:| P |:P:| P |:P:| 2  
+        +---+---+---+---+---+---+---+---+---+---+---+---+    
+      1 |:J:| R |:M:| G |:B:| Q |:K:| B |:G:| M |:R:| J | 1  
+    +---+---+---+---+---+---+---+---+---+---+---+---+---+---+    
+    |:N:| a   b   c   d   e   f   g   h   i   j   k   l | N |
+    +---+                                               +---+
+     Z1                                                   Z2
+</pre>
+
+<h3>Basic Rules</h3>
+<p>      As a main stream chess variant, B.O. Chess gets most of its rules
+from standard chess.  All rules concerning draws, perpetual check, etc.
+apply.  The game ends in the same way standard chess does: by check-mating
+the opposing king. </p>
+<h3>Piece Movement</h3>
+<p>Pawns may move up to 4 squares on their first move.  After the
+first move a pawn may always move forward one or two squares except when
+moving to the last rank.  A pawn may only move to the last rank by moving
+forward one square.  A pawn reaching the last rank promotes to any piece
+except king or pawn.  Thus it takes at least five moves for a pawn to
+promote.  Except for en passent, pawns capture exactly as they do in
+standard chess.  En Passent capture is allowed immediately following a
+turn in which a pawn has moved over the square attacked by an opposing
+pawn on an adjacent file.  The capturing pawn moves in the usual way to
+the square it attacks.  Note that En Passent capture is not only a
+possibility after a pawn's first move, but also after any pawn move of 2
+squares. 
+</p>
+
+<p>The standard chess pieces: Rook (R,*R*), Bishop (B,*B*), Queen
+(Q,*Q*), and King (K,*K*) move and capture exactly as in standard chess. 
+The ranges of the Rook, Bishop, and Queen extend to the entire board. </p>
+
+<p>Castling is permitted under exactly the same rules as
+ordinary chess, except that the King moves 3 squares instead of 2.  The
+squares between the King and the rook to be moved must all be empty and
+not under attack, and the King the rook may not have moved. </p>
+
+<p>The Guard (G,*G*) takes the place of the ordinary knight in
+B.O. Chess.  The guard moves and captures at any adjacent diagonal square,
+and also leaps and captures in a 3x1 "L"-shape: 3 squares forward,
+backward or sideways followed by one square in a perpendicular direction. </p>
+
+<p>The Matriarch (M, *M*) (or Outer Queen) moves as a standard
+queen from the outer zone.  A Matriarch on a square in the mid-zone moves
+as a standard queen, but no more than 6 squares in any direction.  A
+Matriarch on a square in the central zone moves as a standard queen, but
+no more than than 3 squares in any direction. </p>
+
+<p>The Jumper (J, *J*) is an outer piece which can always move
+and capture like a king, one square in any direction.  In addition, a
+jumper in the outer zone may leap and capture exactly 3 squares forward, backward,
+sideways, or diagonally.  In the same way, a jumper in the mid-zone may
+move one square in any direction, or leap and capture exactly 2 squares forward,
+backward, sideways, or diagonally.  Jumpers in the central zone may move
+and capture only one square in any direction. </p>
+
+<p>From the central zone the Outer Knight (N, *N*) leaps and
+captures exactly as an ordinary knight.  From the mid-zone an Outer Knight
+leaps and captures "3x1"  or "2x2":  i.e. 3 squares forward or backward and 
+1 square sideways, 3 squares sideways and 1 squares forward or backward, or 2
+squares forward or backward and 2 squares sideways.  From the outer zone
+the Outer Knight leaps and captures "4x1" or "3x2". </p>
+
+<p>
+Here is a diagrammatic explanation of the piece movements:
+<pre>
+                Outer Zone         Middle Zone      Inner Zone
+            =================     =============    ============  
+
+                    *                             
+                    *                             
+                    m                             
+Pawn              c m c                SAME            SAME 
+                    P                             
+                                                  
+                    |                             
+Rook             -- R --               SAME            SAME 
+                    |                             
+                                                  
+                  \   /                           
+Bishop              B                  SAME            SAME 
+                  /   \                           
+                                                  
+                  \ | /                           
+Queen            -- Q --               SAME            SAME 
+                  / | \                           
+                                                  
+                  x x x                           
+King              x K x                SAME            SAME 
+                  x x x                           
+                                                  
+                  x . x                           
+                    .                             
+              x   x . x   x                       
+Guard         . . . G . . .            SAME            SAME 
+              x   x . x   x                       
+                    .                             
+                  x . x                           
+                                                  
+                                    6   6   6       3   3   3
+                  \ | /               \ | /           \ | /
+Matriarch        -- M --            6 - M - 6       3 - M - 3
+                  / | \               / | \           / | \ 
+                                    6   6   6       3   3   3
+
+              x     x     x                       
+                .   .   .           x   x   x     
+                  x x x               x x x           x x x
+Jumper        x . x J x . x         x x J x x         x J x
+                  x x x               x x x           x x x
+                .   .   .           x   x   x     
+              x     x     x                       
+
+                  x . x                           
+                x . . . x             x . x       
+              x . . . . . x         x . . . x         x . x
+            x . . . . . . . x     x . . . . . x     x   .   x
+kNight      . . . . N . . . .     . . . N . . .     . . N . .
+            x . . . . . . . x     x . . . . . x     x   .   x
+              x . . . . . x         x . . . x         x . x
+                x . . . x             x . x       
+                  x . x                           
+</pre>
+</td>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

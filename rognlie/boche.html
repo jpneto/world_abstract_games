@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h3><strong> Introduction</strong></h3>
+<p>  Boche is a 3D connection game played with cubed Truchet tiles.<br>
+</p>
+<p> <strong>Rules </strong><strong> </strong></p>
+<p>Two players, Light and Dark, share a common pool of 56 Boche cubes. The cubes contain    a duotone Truchet tile on each face and  have eight unique rotations (labelled 'a' to 'h') when fitted to a cubic lattice and viewed corner-on.</p>
+<pre>    +---oo+        +---oo+        +---oo+        +---oo+   <br>   / \ ooooo      / \   ooo      / \ ooooo      / \   ooo  <br>  ooooooooo \    ooooooo   \    o   oooo  \    o   ooo   \ <br> +ooooo+oo---+  +ooooo+oo---+  +oo oo+oo---+  +oo oo+oo---+<br>  ooooooooo /    ooooooo   /    o   ooo   /    o   oooo  / <br>   \ / ooooo      \ /   ooo      \ /   ooo      \ / ooooo  <br>    +---oo+        +---oo+        +---oo+        +---oo+   <br>       a              b              c              d      
+
+    +ooo--+        +ooo--+        +ooo--+        +ooo--+   <br>   oooo    \      ooooooo \      oooo    \      ooooooo \  <br>  /   \    oo    /   \  oooo    /ooo\    oo    /ooo\  oooo <br> +     +--ooo+  +     +--ooo+  +  oo +--ooo+  +  oo +--ooo+<br>  \   /    oo    \   /  oooo    \ooo/  oooo    \ooo/    oo <br>   oooo    /      ooooooo /      ooooooo /      oooo    /  <br>    +ooo--+        +ooo--+        +ooo--+        +ooo--+   <br>       e              f              g              h        </pre>
+<p>The board is a triangular grid of triangular holes which will each snugly hold a cube placed corner-downward, sort of like a triangular egg carton for tilted cubes. A small size 4 board is shown below. </p>
+<pre>
+      +-----+<br>     /     . \<br>    /     .   \<br>   + . . .     +-----+                       <br>    \     .   /     . \<br>     \     . /     .   \<br>      +-----+ . . .     +-----+              <br>     /     . \     .   /     . \<br>    /     .   \     . /     .   \<br>   + . . .     +-----+ . . .     +-----+     <br>    \     .   /     . \     .   /     . \<br>     \     . /     .   \     . /     .   \<br>      +-----+ . . .     +-----+ . . .     +  <br>     /     . \     .   /     . \     .   /<br>    /     .   \     . /     .   \     . /<br>   + . . .     +-----+ . . .     +-----+     <br>    \     .   /     . \     .   /<br>     \     . /     .   \     . /<br>      +-----+ . . .     +-----+              <br>     /     . \     .   /<br>    /     .   \     . /<br>   + . . .     +-----+                       <br>    \     .   /<br>     \     . /<br>      +-----+</pre>
+<p> <strong>P</strong><strong>lay:</strong> The board is initially empty. Light places a cube on the hole of their choice, rotated as they wish. Dark may then elect to swap colours in lieu of making the next move. Players then take turns adding a cube, rotated as they wish.</p>
+<p>Each cube may be placed on a board hole or stacked to nestle in the intersection formed by three mutual neighbours. The only constraint is  that  edge colours must match neighbours at all times. </p>
+<p><strong> Aim:</strong> The game is won by enclosing a group of the opponent's colour of at least size 4. The group must be completely enlosed, that is, it must not connect to any board side. A group's size is given by the number of "blobs" that it contains. </p>
+<p align="left">If the board fills up before any groups are surrounded, then the game is won by the owner of the path connecting the three sides of the board. </p>
+<p>For example, the following game has been won by Dark (o) who has completed an 'o' path between all three  sides of the board. </p>
+<pre>
+      +---oo+<br>     / \   ooo<br>    ooooooo   \<br>   +ooooo+ooo--+---oo+                       <br>    ooooooooooo \   ooo<br>     \ /   \  oooooo   \<br>      +     +---oo+ooo--+---oo+              <br>     / \   / \   ooooooo \ ooooo<br>    ooooooooooooo   \  ooooooo  \<br>   +ooooo+ooooo+ooo--+---oo+ooo--+---oo+     <br>    ooooooooooooooooo \ ooooooooo \   ooo<br>     \ /ooo\ /   \  ooooooo  \  oooooo   \<br>      +  oo +     +--ooo+oo---+--ooo+oo---+  <br>     / \ooo/ \   /  oooooo   /    ooooo  /<br>    o   ooo   ooooooo /   oooo    / ooooo<br>   +oo oo+oo oo+ooo--+---oo+ooo--+---oo+     <br>    o   ooo   oooo  /  oooooooo /<br>     \ /ooo\ / ooooooooo / ooooo<br>      +  oo +---oo+ooo--+---oo+               <br>     / \ooo/  oooooo   /<br>    o   ooooooo /   ooo<br>   +oo oo+ooo--+---oo+                        <br>    o   oooo  /<br>     \ / ooooo<br>      +---oo+</pre>
+<p>There will always be such a winning path connecting all three sides on a full board; every game will have exactly one winner. </p>
+<p><strong>Notes</strong><strong> </strong></p>
+<p>The cube rotations fall into two parity groups: Dark  corner uppermost  (<em>a, b, c, d</em>) and Light corner uppermost (<em>e, f, g, h</em>). Once a cube is placed on the board, all other cubes on the board level will be of the same parity then higher levels will alternate: level 1 will be the opposite parity, level 2 will be the same parity, level 3 will be the opposite parity, etc. </p>
+<p>It makes sense for the mover to play the rotation with the most connections of their colour each turn (<em>a</em> for Dark and <em>e</em> for Light). However, players are only able to do this on every second level.</p>
+<p align="left">The first player has the advantage of setting the board level to their preferred parity with the opening move, however the second player has the advantage of playing the last move, which may prove decisive. For example, the last piece played on the pyramid's apex in the above figure  decided the result of that particular game. These two advantages are significant but balance each out over the course of the game; Boche is different to other connection games in this respect. </p>
+<p align="left">The number of cubes per layer is given by the triangular number <em><strong>Ln</strong></em> = <em><strong>n</strong></em> (<em><strong>n</strong></em> + 1) / 2. The maximum  number of cubes required for a given board size is given by the tetrahedral number <em><strong>Tn</strong></em> = <em><strong>n</strong></em> (<em><strong>n</strong></em> + 1) (<em><strong>n</strong></em> + 2) / 6.</p>
+<p align="left">Board sizes that give an odd number of cubes (1, 5, 9, 13, 17, ...) should be avoided as the opening player would then get the double advantage of having first and last move.</p>
+<div align="left"><div align="center">
+  <p align="left">The "connect three sides" winning condition makes this game functionally equivalent to Y. The fact that edge colours must match their neighbours at all times means that, like Y, every game must be won by exactly one player. </p>
+    <p align="left">Truchet tiles are a way of resolving potential connection deadlocks on square (non-trivalent) grids.<br>
+      <br>
+    </p>
+    </div>
+</div>
+<p><strong>Syntax</strong></p>
+<p><tt>boche move &lt;game#&gt; &lt;userid&gt; &lt;passwd&gt; c:d3</tt> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Play rotation 'c' at position d3.<tt><br>
+  boche move &lt;game#&gt; &lt;userid&gt; &lt;passwd&gt; swap</tt> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Swap colours (second move only).<br>
+</p>
+<p><strong>Test Options</strong></p>
+<p>The -<tt>fill_board</tt> option specifies that the game continues until the board fills up (complete pyramidal stacking).<br>
+  The -<tt>adjacent</tt> option specifies that each board level piece must be placed adjacent to at least one existing piece.<br>
+  The -<tt>join_face</tt> option specifies that pieces along the winning path must touch  face-to-face.<br>
+  The -<tt>join_any</tt> option specifies that pieces along the winning path need not touch face-to-face.</p>
+<p align="left">Beginners may want to play with the -<tt>adjacent</tt> option on for the first few games. This makes colour matching more explicit and may give a clearer understanding of cube parity.</p>
+<p align="left">If the -<tt>join_face</tt> option is used then the pieces along the winning path must touch face-to-face. This makes &quot;-immediate win&quot; games last longer and allows them to be played on smaller boards. Use -<tt>join_any</tt> to relax this constraint.</p>
+<p align="left"> If the -<tt>kill=n</tt> option is used then the game ends as soon as a player surrounds an enemy group of that size. If the board fills up before this occurs, then the winner is the owner of the path joining all three sides of the board.<br>
+</p>
+<p><strong>History </strong></p>
+<p>Boche rules copyright Cameron Browne &copy; 2008. </p>
+<p>The name &ldquo;Boche&rdquo; is derived from  the fact that the game is effectively played with cubed <a href="https://web.archive.org/web/20250121021556/http://www.cameronius.com/games/che/">Che</a> tiles within the corner of a box. </p>
+<p>The Boche board with six holes per side is equivalent to the <a href="https://web.archive.org/web/20250121021556/http://www.iqideas.com/Default.aspx?tabid=99">Foursite 3D</a> board available from <a href="https://web.archive.org/web/20250121021556/http://www.iqideas.com/Home/tabid/36/Default.aspx">IQideas Ltd</a>. </p>
+<p>More details are available at  the <a href="https://web.archive.org/web/20250121021556/http://www.cameronius.com/games/boche/">official Boche page</a>.</p>
+<p>Implementation and Help file by Cameron Browne, May  2008.<br>
+</p>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<h3><strong>Rules </strong></h3>
+<p><strong>Equipment: </strong>Two players, Light and Dark, each have  ten pieces with two  unique numbers on front and back in the range 1 to 4. Each player therefore has the following pieces:  11, 12, 13, 14, 22, 23, 24, 33, 34, 44.</p>
+<p><strong>Start: </strong>Players place their ten pieces on the two closest rows of the 5x5 board such that the largest  number on each piece faces towards them. Each player then shuffles the opponent's pieces (piece placement and shuffling are done randomly on the server). The following example shows a typical board setup from the Light player's perspective.</p>
+<pre>                   ,---,   ,---,   ,---,   ,---,   ,---,<br>                  +---+|  +---+|  +---+|  +---+|  +---+|<br>                  |:1:||--|:3:||--|:1:||--|:2:||--|:1:||--+<br>             5  ,---,:|/,---,:|/,---,:|/,---,:|/,---,:|/ /<br>               +---+|-++---+|-++---+|-++---+|-++---+|-+ /   5<br>               |:2:||--|:1:||--|:2:||--|:4:||--|:3:||--+<br>          4   /|:::|/ /|:::|/ /|:::|/ /|:::|/ /|:::|/ /<br>             / +---+ / +---+ / +---+ / +---+ / +---+ /   4<br>            +-------+-------+-------+-------+-------+<br>       3  ,---,   ,---,   ,---,   ,---,   ,---,    /<br>         +---+|  +---+|  +---+|  +---+|  +---+|   /   3<br>         | 4 ||--| 4 ||--| 2 ||--| 2 ||--| 3 ||--+<br>    2  ,---, |/,---, |/,---, |/,---, |/,---, |/ /<br>      +---+|-++---+|-++---+|-++---+|-++---+|-+ /   2<br>      | 4 ||--| 4 ||--| 1 ||--| 3 ||--| 3 ||--+<br> 1   /|   |/ /|   |/ /|   |/ /|   |/ /|   |/ /<br>    / +---+ / +---+ / +---+ / +---+ / +---+ /   1<br>   +-------+-------+-------+-------+-------+<br> <br>      a       b       c       d       e</pre>
+<p><strong>Play: </strong>Players take turns moving one of their pieces in a straight unimpeded line, orthogonally or diagonally, a distance not exceeding the piece's visible number. The piece may land on an enemy piece of less or equal visible value to capture it by replacement, following which the capturing pieces is turned around.</p>
+<p>For example, here is what the above board might look like after Light has moved the 2 piece at d2 to capture Dark's 1 piece at b4:</p>
+<pre>                   ,---,   ,---,   ,---,   ,---,   ,---,<br>                  +---+|  +---+|  +---+|  +---+|  +---+|<br>                  |:1:||--|:3:||--|:1:||--|:2:||--|:1:||--+<br>             5  ,---,:|/,---,:|/,---,:|/,---,:|/,---,:|/ /<br>               +---+|-++---+|-++---+|-++---+|-++---+|-+ /   5<br>               |:2:||--| 3 ||--|:2:||--|:4:||--|:3:||--+<br>          4   /|:::|/ /|   |/ /|:::|/ /|:::|/ /|:::|/ /<br>             / +---+ / +---+ / +---+ / +---+ / +---+ /   4<br>            +-------+-------+-------+-------+-------+<br>       3  ,---,   ,---,   ,---,    /      ,---,    /<br>         +---+|  +---+|  +---+|   /      +---+|   /   3<br>         | 4 ||--| 4 ||--| 2 ||--+------+| 3 ||--+<br>    2  ,---, |/,---, |/,---, |/,---,   ,---, |/ /<br>      +---+|-++---+|-++---+|-++---+|  +---+|-+ /   2<br>      | 4 ||--| 4 ||--| 1 ||--| 3 ||--| 3 ||--+<br> 1   /|   |/ /|   |/ /|   |/ /|   |/ /|   |/ /<br>    / +---+ / +---+ / +---+ / +---+ / +---+ /   1<br>   +-------+-------+-------+-------+-------+<br> <br>      a       b       c       d       e</pre>
+<p> Note that the 2 piece was  turned around following the capture to reveal a 3 on the other side - both players now know that this is a 23 piece.</p>
+<p><strong>Aim: </strong>A player wins by capturing all of the opponent's royal pieces, which are those pieces containing the highest number 4. </p>
+<p>If a situation develops in which no further captures are possible (e.g. each player only has one piece each left) then the game is drawn. </p>
+<div>
+  <h3 align="left"><strong>Strategy and Tactics</strong></h3>
+  <p>The fact that pieces are placed with the  largest number facing the owner  means that players can make some deductions about the opponent's pieces. For instance, if a player sees a 3 on an opponent's piece then they know that the piece's other number must be 3 or 4 (unless that piece  has performed a capture). For this reason, physical  sets would probably benefit from an arrow marked on top of each piece indicating the direction of largest/smallest number.</p>
+  <p>Initially move  pieces less distance than their range limit in order to hide their true value from the opponent.</p>
+  <div>
+
+<h3>History </h3>
+
+<p>Curio  rules by   Stephen Tavener and Cameron Browne, copyright (c) Cyberite Ltd  2008.</p>
+<p>Implementation and Help file by Cameron Browne, October 2008.</p>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

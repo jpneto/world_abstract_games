@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<pre>
+Meet me at Cooper and Young
+
+(c) Luke Pebody 2003
+
+CONCEPT
+===*===
+
+Two players secretly choose a row and column which combine to give a
+meeting point. The players then take turns placing tiles on the board.
+Whoever places their tile on the meeting point wins.
+
+CHALLENGE
+====*====
+
+The challenge command is as follows
+ cooperyoung challenge <player1> <player2> 
+        (options: -london -chicago -sydney -vegas)
+Variants:
+ London - default
+  Each player places their own tiles only.
+ Sydney
+  Each player places their opponents tiles only.
+ Chicago
+  Each player chooses which tile to play.
+ Vegas
+  Before the player chooses where to play, a tile is randomly selected
+
+  for him.
+
+MOVE NOTATION
+======*======
+
+The move command is as follows
+cooperyoung move <player> <password> <move>
+where <move> is
+(i)
+ on player 1's first move the chosen column in the format D
+(ii)
+ on player 2's second move the chosen row in the format 5
+(iii)
+ thereafter a square in the format C7 (with the letter x or o after it
+if playing Chicago variant)
+
+WIN CONDITION
+======x======
+
+The players first moves together choose a square, the target square. A
+player wins if his/her tile is placed (by either player) on the target
+square.
+</pre>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>

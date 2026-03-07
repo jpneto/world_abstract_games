@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <title>Richard's PBeM Server</title>
+  </head>
+
+  <body background="images/back.gif">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top" width="126"><img src="images/banner_gamerz.gif" alt="banner"></td>
+          <td width="10"></td>
+          <td width="491">       
+
+<pre>
+Rules of Blackbox.
+
+	There is a black box before you and you cannot see where the
+	atoms are located inside.  YOu may send in probes from any of
+	the 28 locations around the outside of the board to help you
+	guess where the atoms are located.  If a probe (think of it as
+	a laser light probe) hits an atom dead on then it registers
+	with a hit sign (#).  If the probe bounces back to the same
+	location it entered then it registers with a reflection sign
+	(%).  Otherwise the probe may bounce off atoms and come out at
+	another location.  This is signaled by corresponding letters
+	of the alphabet at both ends of the probe (a to a or b to b
+	and so on).  It is your job to deduce where your opponent hid
+	the 4 atoms in your black box.
+
+	Here is how a probe bounces off an edge of an atom (the atom
+	is designated with an @). Think of a laser shooting a beam of
+	light from one letter then bouncing off the atom in the middle
+	of the board (making a 90 degree turn) and exiting the board
+	at the location of the corresponding letter (a to a, b to b, c
+	to c, or d to d)
+
+	     |a |  |b |
+	   --|--|--|--|--
+	   a |  |  |  |b
+	   --|--|--|--|--
+	     |  |@ |  |
+	   --|--|--|--|--
+	   d |  |  |  |c
+	   --|--|--|--|--
+	     |d |  |c |
+
+	Here are examples of reflections of the probe.  If the atom is
+	located on the very edge of the board then notice how a
+	reflection is signaled for a probe shot in right next to the
+	atom.
+
+	   --|--|--|--|--
+	     |  |  |  |%
+	   --|--|--|--|--
+	     |  |  |@ | 
+	   --|--|--|--|--
+	   % |  |  |  |%
+	   --|--|--|--|--
+	     |  |  |@ | 
+	   --|--|--|--|--
+	     |  |% |  |
+
+	Here is a game in progress. Player dzander1 has marked three
+	locations on his board where he thinks atoms are located
+	(+b2,+b4,+12m).  These first two boards are from dzander1's
+	point of view.  The board on the left is his board that he is
+	attempting to solve.  The board on the right is his opponent's
+	board with the secret atom locations that dzander1 placed in
+	his opponent's board along with the guesses his opponent has
+	made (+c2,+m13) (The atom markers are marked with a question
+	mark.)
+
+Player dzander1's board on left.  Player dzander2's board on right.
+
+      A  B  C  D  E  F  G             A  B  C  D  E  F  G       
+     |d |  |  |b |  |% |  |          |  |  |  |  |  |  |b |     
+     |====================|          |====================|     
+ 1|d |  |  |  |  |  |  |  |  |8  1|  |  |  |  |  |  |  |  |  |8 
+  |--|--|--|--|--|--|--|--|--|    |--|--|--|--|--|--|--|--|--|  
+ 2|  |  |? |  |  |  |  |  |% |9  2|  |  |  |?@|  | @|  |  |  |9 
+  |--|--|--|--|--|--|--|--|--|    |--|--|--|--|--|--|--|--|--|  
+ 3|  |  |  |  |  |  |  |  |% |10 3|a |  |  |  |  |  |  |  |  |10
+  |--|--|--|--|--|--|--|--|--|    |--|--|--|--|--|--|--|--|--|  
+ 4|  |  |? |  |  |  |  |  |  |11 4|  |  |  |  |  |  |  |  |  |11
+  |--|--|--|--|--|--|--|--|--|    |--|--|--|--|--|--|--|--|--|  
+ 5|a |  |  |  |  |  |? |  |  |12 5|# |  |  |  |  |  |  |  |b |12
+  |--|--|--|--|--|--|--|--|--|    |--|--|--|--|--|--|--|--|--|  
+ 6|  |  |  |  |  |  |  |  |c |13 6|  |  |  |  |  |  |?@|  |# |13
+  |--|--|--|--|--|--|--|--|--|    |--|--|--|--|--|--|--|--|--|  
+ 7|  |  |  |  |  |  |  |  |  |14 7|  |  |  |  |  |  | @|  |  |14
+     |====================|          |====================|     
+     |a |  |  |b |  |  |c |          |  |a |# |  |% |  |  |     
+      H  I  J  K  L  M  N             H  I  J  K  L  M  N       
+Player dzander1 has 3 guesses left.  Player dzander2 has 3 guesses left.
+
+************************************************************
+
+	These two boards are views of dzander2's email.  Notice that
+	dzander2 has sent 6 probes into the board so far and has
+	marked 2 of the 4 atoms in his board, while dzander1 has sent
+	7 probes into the board so far and has correctly marked the
+	locations of 3 of the 4 atoms in his board.
+
+
+Player dzander2's board on left.  Player dzander1's board on right.
+
+      A  B  C  D  E  F  G             A  B  C  D  E  F  G       
+     |  |  |  |  |  |  |b |          |d |  |  |b |  |% |  |     
+     |====================|          |====================|     
+ 1|  |  |  |  |  |  |  |  |  |8  1|d |  |  |  |  |  |  | @|  |8 
+  |--|--|--|--|--|--|--|--|--|    |--|--|--|--|--|--|--|--|--|  
+ 2|  |  |  |? |  |  |  |  |  |9  2|  |  |?@|  |  |  |  |  |% |9 
+  |--|--|--|--|--|--|--|--|--|    |--|--|--|--|--|--|--|--|--|  
+ 3|a |  |  |  |  |  |  |  |  |10 3|  |  |  |  |  |  |  |  |% |10
+  |--|--|--|--|--|--|--|--|--|    |--|--|--|--|--|--|--|--|--|  
+ 4|  |  |  |  |  |  |  |  |  |11 4|  |  |?@|  |  |  |  |  |  |11
+  |--|--|--|--|--|--|--|--|--|    |--|--|--|--|--|--|--|--|--|  
+ 5|# |  |  |  |  |  |  |  |b |12 5|a |  |  |  |  |  |?@|  |  |12
+  |--|--|--|--|--|--|--|--|--|    |--|--|--|--|--|--|--|--|--|  
+ 6|  |  |  |  |  |  |? |  |# |13 6|  |  |  |  |  |  |  |  |c |13
+  |--|--|--|--|--|--|--|--|--|    |--|--|--|--|--|--|--|--|--|  
+ 7|  |  |  |  |  |  |  |  |  |14 7|  |  |  |  |  |  |  |  |  |14
+     |====================|          |====================|     
+     |  |a |# |  |% |  |  |          |a |  |  |b |  |  |c |     
+      H  I  J  K  L  M  N             H  I  J  K  L  M  N       
+Player dzander2 has 3 guesses left.  Player dzander1 has 3 guesses left.
+
+************************************************************
+
+</pre>
+
+          </td> 
+        </tr>
+      </table>
+  </body>
+</html>
