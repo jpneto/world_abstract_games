@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connect 4 AI - Strategic Analysis</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="connect4.css">
+</head>
+<body>
+
+<div class="game-wrapper">
+    <header>
+        <h1>Connect 4 AI</h1>
+        <div class="turn-indicator">
+            <span id="p1-label">Red (P1)</span>
+            <span id="p2-label">Yellow (P2)</span>
+        </div>
+        <div id="game-result" class="result-message"></div>
+    </header>
+
+    <div id="game-board"></div>
+
+    <div class="toolbar">
+        <div class="btn-group">
+            <button onclick="jumpTo(0)" title="Start">⏮️</button>
+            <button onclick="undo()" title="Undo">◀️</button>
+            <button onclick="redo()" title="Redo">▶️</button>
+            <button onclick="jumpTo(moveSequence.length)" title="End">⏭️</button>
+        </div>
+        
+        <div class="ai-controls">
+            <input type="checkbox" id="cpu-toggle" checked>
+            <label for="cpu-toggle">CPU</label>
+            <select id="ai-depth">
+                <option value="4">Depth 4</option>
+                <option value="6" selected>Depth 6</option>
+                <option value="8">Depth 8 (Expert)</option>
+            </select>
+            <button id="resume-btn" onclick="resumeFromHere()" style="display:none;" title="Resume AI">⏯️</button>
+        </div>
+
+        <button id="sim-btn" onclick="toggleSimulation()" class="btn-random">Simulate</button>
+    </div>
+
+    <div class="history-panel">
+        <div class="panel-header">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <h3>Move Sequence <span id="move-stats" style="font-weight: normal; text-transform: none; color: #8e8e93;">(Step 0)</span></h3>
+                <span id="thinking-indicator" style="display:none; font-size: 0.75rem; color: #007aff; font-weight: bold; font-style: italic;">Thinking...</span>
+            </div>
+            <div class="panel-actions">
+                <span onclick="saveToClipboard()" title="Copy Sequence" class="action-icon">📋</span>
+                <span onclick="saveASCII()" title="Copy ASCII Board" class="action-icon">▦</span>
+                <span onclick="loadFromClipboard()" title="Paste Sequence" class="action-icon">📥</span>
+            </div>
+        </div>
+        <div id="sequence-display" class="sequence-box">
+            <span class="placeholder">Waiting for first move...</span>
+        </div>
+    </div>
+</div>
+
+    <script src="ai.js"></script>
+    <script src="connect4.js"></script>
+</body>
+</html>

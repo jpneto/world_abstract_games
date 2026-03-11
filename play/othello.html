@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Othello AI</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="othello.css">
+</head>
+<body>
+<div class="game-wrapper">
+    <header>
+        <h1>Othello AI</h1>
+        <div class="turn-indicator">
+            <span id="p1-label">Black: 2</span>
+            <span id="p2-label">White: 2</span>
+        </div>
+        <div id="game-result" class="result-message"></div>
+    </header>
+    <div id="game-board"></div>
+    <div class="toolbar">
+        <div class="btn-group">
+            <button onclick="jumpTo(0)">⏮️</button>
+            <button onclick="undo()">◀️</button>
+            <button onclick="redo()">▶️</button>
+            <button onclick="jumpTo(moveSequence.length)">⏭️</button>
+        </div>
+        <div class="ai-controls">
+            <input type="checkbox" id="cpu-toggle" checked> <label>CPU</label>
+            <select id="ai-depth">
+                <option value="2">Depth 2</option>
+                <option value="4" selected>Depth 4</option>
+                <option value="6">Depth 6</option>
+            </select>
+            <button id="resume-btn" onclick="resumeFromHere()" style="display:none;">⏯️</button>
+        </div>
+        <button id="sim-btn" onclick="toggleSimulation()" class="btn-random">Simulate</button>
+    </div>
+    <div class="history-panel">
+        <div class="panel-header">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <h3>Sequence <span id="move-stats">(Step 0)</span></h3>
+                <span id="thinking-indicator" style="display:none; color:#007aff;">Thinking...</span>
+            </div>
+            <div class="panel-actions">
+                <span onclick="saveToClipboard()" class="action-icon">📋</span>
+                <span onclick="saveASCII()" class="action-icon">▦</span>
+                <span onclick="loadFromClipboard()" class="action-icon">📥</span>
+            </div>
+        </div>
+        <div id="sequence-display" class="sequence-box"></div>
+    </div>
+</div>
+<script src="ai.js"></script>
+<script src="othello.js"></script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+#game-board {
+    display: grid;
+    /* 19 columns of 31.5px each = ~600px */
+    grid-template-columns: repeat(19, 31.5px);
+    grid-template-rows: repeat(19, 31.5px);
+    width: 600px;
+    height: 600px;
+    background-color: #deb887;
+    border: 2px solid #8b4513;
+    margin: 20px auto;
+    position: relative;
+    box-sizing: content-box;
+}
+
+.cell {
+    position: relative;
+    width: 31.5px;
+    height: 31.5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+/* Intersection Lines */
+.cell::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 1px;
+    background: rgba(0,0,0,0.3);
+    top: 50%;
+    left: 0;
+    z-index: 1;
+}
+
+.cell::after {
+    content: "";
+    position: absolute;
+    width: 1px;
+    height: 100%;
+    background: rgba(0,0,0,0.3);
+    left: 50%;
+    top: 0;
+    z-index: 1;
+}
+
+.hoshi-dot {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: #000;
+    border-radius: 50%;
+    z-index: 2;
+    /* Center it perfectly over the cross */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.stone {
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    z-index: 10; /* High z-index to stay on top */
+}
+
+.stone.white {
+    background: radial-gradient(circle at 30% 30%, #ffffff, #d1d1d1);
+    box-shadow: 1px 2px 3px rgba(0,0,0,0.4);
+}
+
+.stone.black {
+    background: radial-gradient(circle at 30% 30%, #4a4a4a, #000000);
+    box-shadow: 1px 2px 3px rgba(0,0,0,0.5);
+}

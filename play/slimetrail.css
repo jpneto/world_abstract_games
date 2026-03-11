@@ -1,0 +1,57 @@
+/* slimetrail.css - Precision Alignment */
+:root {
+    --hex-width: 44px;
+    --hex-height: 50px;
+}
+
+#game-board {
+    display: flex;
+    flex-direction: column;
+    padding: 60px;
+    background: #d1d1d6; /* Muted board background */
+    border-radius: 12px;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.1);
+    margin: 20px auto;
+    margin-left: -120px;
+    width: fit-content;
+    line-height: 0; /* Prevents stray vertical spacing */
+}
+
+.row-wrapper {
+    display: flex;
+    /* This negative margin is what "interlocks" the hexagons vertically */
+    margin-top: -13px; 
+}
+
+.hex-svg {
+    width: var(--hex-width);
+    height: var(--hex-height);
+    overflow: visible;
+    transition: transform 0.1s;
+}
+
+.hex-shape {
+    fill: #fdfdfd;
+    stroke: #8e8e93;
+    stroke-width: 2;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke; /* Keeps border crisp */
+}
+
+/* State Colors */
+.hex-svg[data-value="black"] .hex-shape { fill: #2c3e50; stroke: #1a1a1a; }
+.hex-svg[data-goal="1"] .hex-shape { fill: #ffdbdb; stroke: #ff3b30; stroke-width: 3; }
+.hex-svg[data-goal="2"] .hex-shape { fill: #dbeaff; stroke: #007aff; stroke-width: 3; }
+
+/* The Ball */
+.ball-main { fill: white; stroke: #7f8c8d; stroke-width: 1; }
+.ball-highlight { fill: rgba(255,255,255,0.6); }
+
+.valid-move:hover {
+    cursor: pointer;
+    transform: scale(1.1);
+    z-index: 10;
+}
+.valid-move:hover .hex-shape {
+    fill: #e5e5ea;
+}

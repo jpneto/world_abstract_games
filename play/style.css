@@ -1,0 +1,131 @@
+:root {
+    --bg: #f4f1ea;
+    --text: #1c1c1e;
+    --panel-bg: #ffffff;
+    --grey-light: #e5e5ea;
+    --grey-border: #d1d1d6;
+}
+
+body {
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+.game-wrapper { text-align: center; width: 95%; max-width: 600px; padding: 20px; }
+h1 { font-weight: 300; letter-spacing: 2px; margin-bottom: 10px; }
+
+.toolbar {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    background: var(--panel-bg);
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    align-items: center;
+}
+
+.btn-group { display: flex; gap: 4px; }
+
+button {
+    background: var(--grey-light);
+    color: var(--text);
+    border: 1px solid var(--grey-border);
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+button:hover { background: var(--grey-border); }
+
+.btn-group button {
+    font-size: 1.1rem;
+    width: 45px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ai-controls {
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    border-left: 1px solid var(--grey-border);
+    border-right: 1px solid var(--grey-border);
+    gap: 8px;
+    font-size: 0.9rem;
+}
+
+.history-panel {
+    margin-top: 15px;
+    background: var(--panel-bg);
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid var(--grey-border);
+    text-align: left;
+}
+
+.panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+
+.panel-header h3 {
+    margin: 0;
+    font-size: 0.75rem;
+    color: #8e8e93;
+    text-transform: uppercase;
+    display: flex;
+    gap: 5px; /* Space between "Move Sequence" and "(Step X)" */
+    white-space: nowrap;
+}
+
+.panel-actions {
+    display: flex;
+    gap: 12px; /* Increased gap slightly */
+    align-items: center;
+}
+
+.action-icon {
+    cursor: pointer;
+    font-size: 1.1rem;
+    opacity: 0.6;
+    transition: all 0.2s ease;
+}
+
+.action-icon:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.sequence-box {
+    font-family: 'Courier New', monospace;
+    font-size: 1rem;
+    padding: 10px;
+    background: #f8f8fa;
+    border-radius: 6px;
+    word-break: break-all;
+}
+
+.sequence-box span { cursor: pointer; padding: 2px 4px; border-radius: 3px; }
+.sequence-box span:hover { background-color: var(--grey-light); }
+
+.result-message { height: 30px; margin-top: 5px; font-weight: 800; font-size: 1.2rem; text-transform: uppercase; }
+.turn-indicator span { padding: 5px 15px; opacity: 0.2; font-weight: bold; }
+.turn-indicator span.active { opacity: 1; border-bottom: 3px solid #8b5a2b; }
+
+#thinking-indicator {
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.4; }
+    50% { opacity: 1; }
+    100% { opacity: 0.4; }
+}

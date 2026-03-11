@@ -1,0 +1,85 @@
+/* gomoku.css - Game Specific Layer */
+:root {
+    --board-wood: #e3c18d;
+    --grid-line: rgba(0,0,0,0.15);
+    --stone-black: #1a1a1a;
+    --stone-white: #ffffff;
+    --label-color: #5d3a1a;
+}
+
+#game-board {
+    background: var(--board-wood);
+    display: grid;
+    /* 1 column for row labels + 15 columns for the grid */
+    grid-template-columns: 25px repeat(15, 1fr);
+    gap: 1px;
+    padding: 10px;
+    border: 3px solid #8b5a2b;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    margin: 20px auto;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Coordinate Labels (A-O, 1-15) */
+.coord {
+    font-size: 0.7rem;
+    font-weight: bold;
+    color: var(--label-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    user-select: none;
+}
+
+/* Cell & Stones */
+.cell {
+    background: var(--grid-line);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.1s;
+}
+
+.cell:hover { background: rgba(0,0,0,0.2); }
+
+.cell[data-value="1"] { 
+    background: var(--stone-black); 
+    box-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+}
+
+.cell[data-value="2"] { 
+    background: var(--stone-white); 
+    box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Last Move Marker Dot */
+.cell.last-move::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 2;
+}
+
+/* Contrasting dots for different stone colors */
+.cell[data-value="1"].last-move::after { background: #ffffff; opacity: 0.7; }
+.cell[data-value="2"].last-move::after { background: #ff3b30; }
+
+/* Sequence Highlighting */
+.sequence-current { 
+    font-weight: bold; 
+    text-decoration: underline; 
+    color: #d32f2f; 
+    background: rgba(211, 47, 47, 0.1); 
+}
+.sequence-past { color: #aeaeb2; }
+.result-red { color: var(--stone-black); }
+.result-yellow { color: #555; }

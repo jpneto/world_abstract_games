@@ -1,0 +1,51 @@
+/* connect4.css - Game Specific Layer */
+:root {
+    --board: #A47449;
+    --grid-line: rgba(255,255,255,0.3);
+    --stone-p1: #ff3b30; /* Red */
+    --stone-p2: #ffcc00; /* Yellow */
+}
+
+#game-board {
+    background: var(--board);
+    display: grid;
+    /* 1 column for row labels + 7 columns for the grid */
+    grid-template-columns: 25px repeat(7, 1fr);
+    gap: 8px;
+    padding: 15px;
+    border: 5px solid #002699;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    margin: 20px auto;
+    width: 100%;
+    max-width: 450px;
+    box-sizing: border-box;
+}
+
+.cell {
+    background: #001a66; /* "Empty hole" look */
+    aspect-ratio: 1;
+    border-radius: 50%;
+    cursor: pointer;
+    position: relative;
+    border: 2px solid rgba(0,0,0,0.2);
+}
+
+.cell:hover { background: #002699; }
+
+/* Player Stones */
+.cell[data-value="1"] { background: var(--stone-p1); box-shadow: inset -3px -3px 6px rgba(0,0,0,0.3); }
+.cell[data-value="2"] { background: var(--stone-p2); box-shadow: inset -3px -3px 6px rgba(0,0,0,0.3); }
+
+/* Last Move Marker (White Ring) */
+.cell.last-move::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60%;
+    height: 60%;
+    border-radius: 50%;
+    border: 3px solid rgba(255,255,255,0.5);
+}
