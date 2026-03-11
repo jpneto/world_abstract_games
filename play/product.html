@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product AI - Hex Size 5</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="product.css">
+</head>
+<body>
+
+<div class="game-wrapper">
+    <header>
+        <h1>Product</h1>
+        <div class="turn-indicator">
+            <span id="p1-label">Player 1 (Black)</span>
+            <span id="p2-label">Player 2 (White)</span>
+        </div>
+        <div id="game-result" class="result-message"></div>
+    </header>
+
+    <div class="color-picker">
+        <label>Placement Color:</label>
+        <div class="toggle-group">
+            <input type="radio" id="color-black" name="stone-color" value="2" checked>
+            <label for="color-black">⚫ Black</label>
+            <input type="radio" id="color-white" name="stone-color" value="1">
+            <label for="color-white">⚪ White</label>
+        </div>
+    </div>
+
+    <div id="game-board" class="hex-grid"></div>
+
+    <div class="toolbar">
+        <div class="btn-group">
+            <button onclick="jumpTo(0)" title="Start">⏮️</button>
+            <button onclick="undo()" title="Undo">◀️</button>
+            <button onclick="redo()" title="Redo">▶️</button>
+            <button onclick="jumpTo(moveSequence.length)" title="End">⏭️</button>
+        </div>
+        
+        <div class="ai-controls">
+            <input type="checkbox" id="cpu-toggle" checked>
+            <label for="cpu-toggle">CPU</label>
+            <select id="ai-depth">
+                <option value="1">Depth 1</option>
+                <option value="2" selected>Depth 2</option>
+            </select>
+        </div>
+
+        <button id="sim-btn" onclick="toggleSimulation()" class="btn-random">Simulate</button>
+    </div>
+
+    <div class="history-panel">
+        <div class="panel-header">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <h3>Move History <span id="move-stats" style="font-weight: normal; text-transform: none; color: #8e8e93;">(Step 0)</span></h3>
+                <span id="thinking-indicator" style="display:none; font-size: 0.75rem; color: #007aff; font-weight: bold;">AI Thinking...</span>
+            </div>
+            <div class="panel-actions">
+                <span onclick="saveToClipboard()" title="Copy JSON" class="action-icon">📋</span>
+                <span onclick="copyBoardASCII()" title="Copy ASCII" class="action-icon">▦</span>
+                <span onclick="pasteFromClipboard()" title="Paste JSON" class="action-icon">📥</span>
+            </div>
+        </div>
+        
+        <div id="product-score" class="score-tracker">
+            <div class="score-card">
+                <strong>Black Product:</strong> <span id="score-b">0</span>
+                <div class="group-details" id="details-b">Groups: 0 × 0</div>
+            </div>
+            <div class="score-card">
+                <strong>White Product:</strong> <span id="score-w">0</span>
+                <div class="group-details" id="details-w">Groups: 0 × 0</div>
+            </div>
+        </div>
+
+        <div id="sequence-display" class="sequence-box">
+            <span class="placeholder">Awaiting first drop...</span>
+        </div>
+    </div>
+</div>
+
+<script src="ai.js"></script>
+<script src="product.js"></script>
+</body>
+</html>
