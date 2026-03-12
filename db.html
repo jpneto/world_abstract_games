@@ -31,7 +31,7 @@
     }
     th.sorted-desc::after {
       content: " ↓";
-    }    
+    }
     input[type="text"] {
       font-family: Courier New;
       width: 380px;
@@ -68,20 +68,20 @@
       text-decoration: underline;
     }
     input[type="text"],
-    input[type="text"]:focus   
+    input[type="text"]:focus
     {
          background: transparent;
          <!--border: none;-->
          outline-width: 0;
-    }    
-    
+    }
+
   </style>
 </head>
 
-<body background = "back-wood3.jpg" onload="sortTable(0)"> 
+<body background = "back-wood3.jpg" onload="sortTable(0)">
 
   <h1>World of Abstract Games Database</h1>
-  
+
   <details>
      <summary>About this page</summary>
      <blockquote>
@@ -91,7 +91,7 @@
      The columns are sortable. The search box allows users to select rows having (or not having) certain strings, and to include year ranges. For eg, "8x8 >1999 <2005 !BGG" will select all games played on a 8x8 grid between [2000,2004] not indexed at BGG (BoardGameGeek).
      </blockquote>
   </details>
-  
+
   <details>
      <summary>Goal Categories</summary>
      <ul>
@@ -119,7 +119,7 @@
       <li>vigil - constant line-of-sight to some board area</li>
      </ul>
   </details>
-  
+
   <details>
      <summary>Ludemes</summary>
      <ul>
@@ -204,12 +204,12 @@
       <li>+ [non-minimalist abstract game, i.e., does not fit WAG's criteria]
      </ul>
   </details>
-  
+
   <input type="text" id="searchInput" onkeyup="filterTable()"
          placeholder="Search (!word for exclusion, >year <year for ranges)" autofocus>
   <br>
-  <span id="list-length"></span> 
-  
+  <span id="list-length"></span>
+
   <table id="dataTable">
     <thead>
       <tr>
@@ -229,74 +229,74 @@
 
   <script>
     const data = [
-      { 
+      {
         year: NaN,
-        name: "Three Colors", 
-        author: "Unknown", 
-        type: "score", 
-        features: "setup,short-jump,multiple-jump", 
-        boardType: "8x8", 
-        link: "3colors.htm", 
+        name: "Three Colors",
+        author: "Unknown",
+        type: "score",
+        features: "setup,short-jump,multiple-jump",
+        boardType: "8x8",
+        link: "3colors.htm",
         linkNames: "WAG"
       },
-      { 
-        year: 2001, 
-        name: "Three Crowns", 
-        author: "Larry Black", 
-        type: "capturing,promotion", 
-        features: "setup,move,jump", 
-        boardType: "8x8", 
-        link: "3crowns.htm,https://boardgamegeek.com/boardgame/29675", 
+      {
+        year: 2001,
+        name: "Three Crowns",
+        author: "Larry Black",
+        type: "capturing,promotion",
+        features: "setup,move,jump",
+        boardType: "8x8",
+        link: "3crowns.htm,https://boardgamegeek.com/boardgame/29675",
         linkNames: "WAG,BGG"
       },
-      { 
-        year: 1969, 
-        name: "Three Musketeers", 
-        author: "Haar Hoolim", 
-        type: "stalemate,pattern", 
-        features: "move,replacement", 
-        boardType: "5x5", 
-        link: "3musketeers.htm,https://boardgamegeek.com/boardgame/21861", 
+      {
+        year: 1969,
+        name: "Three Musketeers",
+        author: "Haar Hoolim",
+        type: "stalemate,pattern",
+        features: "move,replacement",
+        boardType: "5x5",
+        link: "3musketeers.htm,https://boardgamegeek.com/boardgame/21861",
         linkNames: "WAG,BGG"
       },
-      { 
-        year: 2000, 
-        name: "Three Stones", 
-        author: "Andy Daniel", 
-        type: "moku", 
-        features: "drop,color3", 
-        boardType: "misc", 
-        link: "3stones.htm,https://boardgamegeek.com/boardgame/7834", 
+      {
+        year: 2000,
+        name: "Three Stones",
+        author: "Andy Daniel",
+        type: "moku",
+        features: "drop,color3",
+        boardType: "misc",
+        link: "3stones.htm,https://boardgamegeek.com/boardgame/7834",
         linkNames: "WAG,BGG"
       },
-      { 
-        year: 1998, 
-        name: "4D Tic-Tac-Toe", 
-        author: "Sean Bridges", 
-        type: "moku", 
-        features: "drop", 
-        boardType: "9x3x3", 
-        link: "4dttt.htm,https://boardgamegeek.com/boardgame/32596", 
+      {
+        year: 1998,
+        name: "4D Tic-Tac-Toe",
+        author: "Sean Bridges",
+        type: "moku",
+        features: "drop",
+        boardType: "9x3x3",
+        link: "4dttt.htm,https://boardgamegeek.com/boardgame/32596",
         linkNames: "WAG,BGG"
       },
-      { 
-        year: 2009, 
-        name: "Four Squared", 
-        author: "Martin Windischer", 
-        type: "stalemate", 
-        features: "drop,move,short,replacement", 
-        boardType: "4x5x5", 
-        link: "4squared.htm", 
+      {
+        year: 2009,
+        name: "Four Squared",
+        author: "Martin Windischer",
+        type: "stalemate",
+        features: "drop,move,short,replacement",
+        boardType: "4x5x5",
+        link: "4squared.htm",
         linkNames: "WAG"
       },
-      { 
-        year: 1980, 
-        name: "7 Sages", 
-        author: "Max Gerchambeau", 
-        type: "score", 
-        features: "move,bounce", 
-        boardType: "15x15", 
-        link: "7sages.htm,https://boardgamegeek.com/boardgame/37237", 
+      {
+        year: 1980,
+        name: "7 Sages",
+        author: "Max Gerchambeau",
+        type: "score",
+        features: "move,bounce",
+        boardType: "15x15",
+        link: "7sages.htm,https://boardgamegeek.com/boardgame/37237",
         linkNames: "WAG,BGG"
       },
       {
@@ -308,7 +308,7 @@
         boardType: "12x12",
         link: "16.htm,https://boardgamegeek.com/boardgame/17228",
         linkNames: "WAG,BGG"
-      },      
+      },
       {
         year: 2000,
         name: "90 Grad",
@@ -318,7 +318,7 @@
         boardType: "7x7",
         link: "90grad.htm,https://boardgamegeek.com/boardgame/990",
         linkNames: "WAG,BGG"
-      },      
+      },
       {
         year: 1995,
         name: "3 6 9",
@@ -328,7 +328,7 @@
         boardType: "9x9",
         link: "369.htm,https://boardgamegeek.com/boardgame/32597",
         linkNames: "WAG,BGG"
-      },      
+      },
       {
         year: 1987,
         name: "Abalone",
@@ -338,7 +338,7 @@
         boardType: "hexhex5",
         link: "abalone.htm,https://boardgamegeek.com/boardgame/526",
         linkNames: "WAG,BGG"
-      },      
+      },
       {
         year: 2005,
         name: "Abande",
@@ -348,7 +348,7 @@
         boardType: "7x7 hexhex4",
         link: "abande.htm,https://boardgamegeek.com/boardgame/21324",
         linkNames: "WAG,BGG"
-      },      
+      },
       {
         year: 2003,
         name: "Abstract Chess",
@@ -358,7 +358,7 @@
         boardType: "8x8",
         link: "abchess.htm,https://boardgamegeek.com/boardgame/441851",
         linkNames: "WAG,BGG"
-      },      
+      },
       {
         year: 1968,
         name: "Abstract Crosse",
@@ -368,7 +368,7 @@
         boardType: "10x10",
         link: "abcrosse.htm",
         linkNames: "WAG"
-      },      
+      },
       {
         year: 1995,
         name: "Aboyne",
@@ -378,7 +378,7 @@
         boardType: "hexhex5",
         link: "aboyne.htm,https://boardgamegeek.com/boardgame/32350",
         linkNames: "WAG,BGG"
-      },      
+      },
       {
         year: 2002,
         name: "Abstract Puluc",
@@ -388,7 +388,7 @@
         boardType: "10x5",
         link: "abpuluc.htm",
         linkNames: "WAG"
-      },      
+      },
       {
         year: 2002,
         name: "Abyss",
@@ -398,7 +398,7 @@
         boardType: "5x5",
         link: "abyss.htm,https://boardgamegeek.com/boardgame/32564",
         linkNames: "WAG,BGG"
-      },      
+      },
       {
         year: 2004,
         name: "Accasta Pari",
@@ -408,7 +408,7 @@
         boardType: "hexhex4",
         link: "accastapari.htm",
         linkNames: "WAG"
-      },      
+      },
       {
         year: 1996,
         name: "Agora",
@@ -418,7 +418,7 @@
         boardType: "6x6",
         link: "agora.htm,https://boardgamegeek.com/boardgame/11680",
         linkNames: "WAG,BGG"
-      },      
+      },
       {
         year: 1000,
         name: "Alquerque",
@@ -428,7 +428,7 @@
         boardType: "5x5",
         link: "alquerque.htm,https://boardgamegeek.com/boardgame/11464,https://ludii.games/details.php?keyword=Alquerque",
         linkNames: "WAG,BGG,Ludii"
-      },      
+      },
       {
         year: 1500,
         name: "Awithlaknannai",
@@ -438,7 +438,7 @@
         boardType: "hexhex16x3",
         link: "alquerque.htm#awithlak0nai,https://boardgamegeek.com/boardgame/13766",
         linkNames: "WAG,BGG"
-      }, 
+      },
       {
         year: NaN,
         name: "Dablot Prejjesne",
@@ -448,7 +448,7 @@
         boardType: "misc",
         link: "alquerque.htm#dablot,https://boardgamegeek.com/boardgame/13777,https://ludii.games/details.php?keyword=Dablot%20Prejjesne",
         linkNames: "WAG,BGG,Ludii"
-      }, 
+      },
       {
         year: NaN,
         name: "Damiano",
@@ -458,7 +458,7 @@
         boardType: "7x7",
         link: "alquerque.htm#damiano",
         linkNames: "WAG"
-      }, 
+      },
       {
         year: NaN,
         name: "Zamma",
@@ -4460,7 +4460,7 @@
         boardType: "9x9",
         link: "persivic.htm,https://boardgamegeek.com/boardgame/18426",
         linkNames: "WAG,BGG"
-      },    
+      },
       {
         year: 1977,
         name: "Pikk-pakk",
@@ -6543,7 +6543,7 @@
       },
       {
         year: 2006,
-        name: "Alea",  
+        name: "Alea",
         author: "Mauro Giorgi",
         type: "moku,pattern",
         features: "dice,move,capture,stack",
@@ -6562,7 +6562,7 @@
         linkNames: "WAG,BGG"
       },
       {
-        year: 2006,   
+        year: 2006,
         name: "Attangle",
         author: "Dieter Stein",
         type: "pattern",
@@ -11310,7 +11310,7 @@
         boardType: "19x19",
         link: "https://boardgamegeek.com/boardgame/264583",
         linkNames: "BGG"
-      },      
+      },
       {
         year: 2017,
         name: "Tendrils",
@@ -11790,7 +11790,7 @@
         boardType: "hexhex5",
         link: "modern_rules/2011_Offboard.pdf,https://boardgamegeek.com/boardgame/89951",
         linkNames: "WAG,BGG"
-      },      
+      },
       {
         year: 1981,
         name: "Plop",
@@ -15022,7 +15022,7 @@
         linkNames: "WAG,BGG"
       },
       {
-        year: 2024, 
+        year: 2024,
         name: "Eater",
         author: "Mitsuo Yamamoto",
         type: "score",
@@ -18029,7 +18029,7 @@
         type: "score,block",
         features: "setup,asymmetric,drop,grow",
         boardType: "5x5",
-        link: "modern_rules/2020_Dandelions.pdf", 
+        link: "modern_rules/2020_Dandelions.pdf",
         linkNames: "WAG"
       },
       {
@@ -20131,7 +20131,7 @@
         boardType: "7x7",
         link: "modern_rules/2001_Jericho.pdf,https://boardgamegeek.com/boardgame/73765",
         linkNames: "WAG,BGG"
-      }, 
+      },
       {
         year: 1999,
         name: "Ming",
@@ -20327,7 +20327,7 @@
     ];  // ★☆
 
     let n_filtered = data.length;
-    
+
     let currentSort = {
       column: -1,
       direction: 'asc'
@@ -20369,8 +20369,8 @@
         // If search box is empty, show all rows
         rows.forEach(row => row.style.display = "");
         n_filtered = data.length;
-        document.getElementById("list-length").textContent = 
-           "Total Games: " + n_filtered + "/" + data.length;        
+        document.getElementById("list-length").textContent =
+           "Total Games: " + n_filtered + "/" + data.length;
         return;
       }
 
@@ -20408,21 +20408,21 @@
           row.style.display = "none";
         }
       });
-      
+
       n_filtered = count_filter;
-      document.getElementById("list-length").textContent = 
+      document.getElementById("list-length").textContent =
           "Total Games: " + n_filtered + "/" + data.length;
 
     }
 
     function sortTable(columnIndex) {
-      const direction = currentSort.column === columnIndex && 
+      const direction = currentSort.column === columnIndex &&
                         currentSort.direction === 'asc' ? 'desc' : 'asc';
       currentSort = { column: columnIndex, direction };
 
       //TODO: should be more stable, but it is not working for the last two columns
-      //const keyMap = ["year", "name", "author", "type", "features", "boardType", "link"];      
-      
+      //const keyMap = ["year", "name", "author", "type", "features", "boardType", "link"];
+
       const sortedData = [...data].sort((a, b) => {
         let valueA = a[Object.keys(a)[columnIndex]].toString().toLowerCase();
         let valueB = b[Object.keys(b)[columnIndex]].toString().toLowerCase();
@@ -20464,9 +20464,9 @@
 
     // Populate the table initially
     populateTable();
-    
+
     // Show total number of games at the top of the page
-    document.getElementById("list-length").textContent = 
+    document.getElementById("list-length").textContent =
         "Total Games: " + n_filtered + "/" + data.length;
   </script>
 
@@ -20505,20 +20505,20 @@ yearCountsDiv.innerHTML = html;
 <!-- BGG Hyper-parameterized mega-search of Abstract Games -->
 
 <script>
-  function searchBGG() { 
+  function searchBGG() {
     let url1 =  "https://boardgamegeek.com/geeksearch.php?action=search&advsearch=1&objecttype=boardgame&q=&include%5Bdesignerid%5D=&geekitemname=&geekitemname=&include%5Bpublisherid%5D=&range%5Byearpublished%5D%5Bmin%5D=";
-    
+
     let url2 = "&range%5Byearpublished%5D%5Bmax%5D=";
-    
+
     let url3 =  "&range%5Bminage%5D%5Bmax%5D=&floatrange%5Bavgrating%5D%5Bmin%5D=&floatrange%5Bavgrating%5D%5Bmax%5D=&range%5Bnumvoters%5D%5Bmin%5D=&floatrange%5Bavgweight%5D%5Bmin%5D=&floatrange%5Bavgweight%5D%5Bmax%5D=&range%5Bnumweights%5D%5Bmin%5D=&colfiltertype=&searchuser=joaopedroneto&nosubtypes%5B%5D=boardgameexpansion&range%5Bminplayers%5D%5Bmax%5D=2&range%5Bmaxplayers%5D%5Bmin%5D=2&playerrangetype=normal&range%5Bleastplaytime%5D%5Bmin%5D=&range%5Bplaytime%5D%5Bmax%5D=&propertyids%5B%5D=1009&nopropertyids%5B%5D=1023&nopropertyids%5B%5D=1117&nopropertyids%5B%5D=1002&nopropertyids%5B%5D=1039&nopropertyids%5B%5D=1094&nopropertyids%5B%5D=1072&nopropertyids%5B%5D=1042&nopropertyids%5B%5D=1104&nopropertyids%5B%5D=1045&nopropertyids%5B%5D=1040&nopropertyids%5B%5D=1054&nopropertyids%5B%5D=1026&nopropertyids%5B%5D=1030&nopropertyids%5B%5D=1037&nopropertyids%5B%5D=1115&nopropertyids%5B%5D=1027&nopropertyids%5B%5D=1101&nopropertyids%5B%5D=1025&nopropertyids%5B%5D=2916&nopropertyids%5B%5D=2014&nopropertyids%5B%5D=2957&nopropertyids%5B%5D=2913&nopropertyids%5B%5D=2857&nopropertyids%5B%5D=2013&nopropertyids%5B%5D=3004&nopropertyids%5B%5D=2072&nopropertyids%5B%5D=3096&nopropertyids%5B%5D=2967&nopropertyids%5B%5D=2891&nopropertyids%5B%5D=2987&nopropertyids%5B%5D=3000&nopropertyids%5B%5D=2904&nopropertyids%5B%5D=2900&nopropertyids%5B%5D=2047&nopropertyids%5B%5D=2915&nopropertyids%5B%5D=3102&nopropertyids%5B%5D=2831&nopropertyids%5B%5D=2028&nopropertyids%5B%5D=2016&nopropertyids%5B%5D=2020&B1=Submit";
-    
+
     let start_date = document.forms["bgg"]["start_date"].value;
     let end_date   = document.forms["bgg"]["end_date"].value;
     url = url1 + start_date + url2 + end_date + url3;
     window.open(url, "_blank");  // open new tab in browser
   }
 
-  function searchBGGForum() { 
+  function searchBGGForum() {
     const searchElement = document.forms["bggforum"]["what"].value;
     const url =  `https://boardgamegeek.com/forums/search?objecttype=family&objectid=4666&searchTerm=${searchElement}&forumuid=743500`;
     window.open(url, "_blank");  // open new tab in browser
@@ -20532,21 +20532,21 @@ yearCountsDiv.innerHTML = html;
  <input type="text" class="bgg" id="start_date" name="start_date" value="2024"></input>
  to
  <input type="text" class="bgg" id="end_date" name="end_date" value="2025"></input>
-    
+
  <input type="submit" value="🔍" onclick="searchBGG()"></input>
 </form>
 
 <form name="bggforum" onsubmit="return false">
  Search BGG Abstract Games Forum
- <input type="text" class="bggforum" id="what" name="what" value=""></input>   
+ <input type="text" class="bggforum" id="what" name="what" value=""></input>
  <input type="submit" value="🔍" onclick="searchBGGForum()"></input>
 </form>
 
 <!-- Form to search WAG using google -->
 <!--
 <script>
-  function searchGoogle() { 
-    let url =  "site:https://jpneto.github.io/world_abstract_games/ ";     
+  function searchGoogle() {
+    let url =  "site:https://jpneto.github.io/world_abstract_games/ ";
     let token = document.forms["google"]["token"].value;
 
     window.open("http://www.google.com/search?q=" + url + token, "_blank");
@@ -20556,7 +20556,7 @@ yearCountsDiv.innerHTML = html;
 <form name="google" onsubmit="return false">
  Search WAG using Google
  <input type="text" class="google" id="token" name="token" value="Abalone"></input>
-    
+
  <input type="submit" value="🔍" onclick="searchGoogle()"></input>
 </form>
 -->
