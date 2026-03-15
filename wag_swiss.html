@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>μSwiss</title>
+
+<style>
+
+body{
+    font-family: Courier;
+    font-size: 90%;
+    margin:20px;
+}
+
+.section{
+    margin-top:30px;
+}
+
+.match{
+    margin:6px 0;
+}
+
+button{
+    margin-left:5px;
+}
+
+table{
+    border-collapse:collapse;
+    margin-top:10px;
+}
+
+td,th{
+    border:1px solid #777;
+    padding:4px 8px;
+    text-align:center;
+}
+
+th{
+    background:#e2e2e2;
+}
+
+/* Round buttons: Normal state */
+.choice-btn {
+  background-color: #f0f0f0;
+  border: 2px solid #ccc;
+  cursor: pointer;
+}
+
+/* Round buttons: State for the one that was picked */
+.choice-btn.selected {
+  background-color: #4CAF50 !important; /* Green */
+  color: white;
+  border-color: #2e7d32;
+  opacity: 1 !important; /* Prevent it from looking "faded" when disabled */
+}
+
+/* Round buttons: State for buttons not clicked */
+.choice-btn:disabled:not(.selected) {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+</style>
+</head>
+
+<body background="back-wood3.jpg">
+
+<h2>μSwiss Tournament Manager</h2>
+
+Tournament: <input id="tournament-id" type="string" value=""   size=4>
+Players:    <input id="players"       type="number" value="12" size=2>
+Rounds:     <input id="rounds"        type="number" value="4"  size=2>
+
+<button onclick="createPlayers()">Create Players</button>
+
+<div id="playerNames"></div>
+
+<div id="tournament" class="section"></div>
+<div id="standings"  class="section"></div>
+<div id="crosstable" class="section"></div>
+<div id="matrix"     class="section"></div>
+
+<script>
+
+let players        = [];
+let rounds         = 0;
+let currentRound   = 0;
+let pairings       = [];
+let roundResults   = [];
+let resultsEntered = 0;
+let byePlayer      = null;
+let rngPairings;
+
+function createPlayers(){
+    const input = document.getElementById('tournament-id');
+    if (input.value == "") {
+        alert("Tournament needs a name!");
+        return;
+    }
+    document.title = input.value;
+    
+    let n   = parseInt(document.getElementById("players").value)
+    let div = document.getElementById("playerNames")
+
+    div.innerHTML="<h3>Enter Player Names</h3>"
+
+    for(let i=0;i<n;i++){
+        div.innerHTML += `Player ${(i+1).toString().padStart(2, "\u00A0")}: <input id="p${i}" value="Player ${i+1}"><br>`
+    }
+
+    div.innerHTML += `<br><button id="start-tournament" onclick="start()">Start Tournament</button>`
+}
+
+function start(){
+    let n  = parseInt(document.getElementById("players").value);
+    rounds = parseInt(document.getElementById("rounds").value);
+    players = [];
+    rngPairings = mulberry32(202);
+
+    const startButton = document.getElementById("start-tournament");
+    startButton.disabled = true; // disable to prevent accidentally restarting the tournament
+
+    for(let i=0;i<n;i++){
+        players.push({
+            id:i,
+            name:document.getElementById("p"+i).value,
+            score:0,
+            opponents:[],
+            hadBye:false,
+            results:[],
+            games:{},
+            roundScores:[]
+        })
+    };
+
+    players = shuffle(players); // uses seed=101; choose other seed number for diff initial pairing
+    currentRound = 1;
+    updateStandings();
+    updateCrossTable();
+    updateMatrix();
+    nextRound();
+}
+
+function nextRound(){
+
+/* Pairings inside score groups
+   Floating player if group is odd
+   Avoid repeat opponents
+   Stable ranking order */
+
+    if(currentRound>rounds){
+        finalRanking()
+        return
+    }
+
+    pairings=[]
+    roundResults=[]
+    resultsEntered=0
+    byePlayer=null
+
+    let sorted=[...players].sort((a,b) => sortRankings(a,b));
+/*
+    let sorted=[...players].sort((a,b) => {
+
+        if (b.score != a.score)
+          return b.score - a.score;
+
+        let bh = buchholz(b) - buchholz(a);
+        if (bh!=0)
+          return bh;
+
+        let pr = progressive(b) - progressive(a)
+        if (pr!=0)
+          return pr;
+
+        return buchholzCut1(b) - buchholzCut1(a)
+    });
+*/
+
+    if(sorted.length%2==1){
+        for(let i=sorted.length-1;i>=0;i--){
+            if(!sorted[i].hadBye){
+                byePlayer=sorted[i]
+                byePlayer.score+=1
+                byePlayer.hadBye=true
+                byePlayer.results[currentRound-1]="BYE"
+                byePlayer.roundScores[currentRound-1]=byePlayer.score
+                sorted.splice(i,1)
+                break
+            }
+        }
+    }
+
+    /* build score groups */
+
+    let groups={}
+    sorted.forEach(p=>{
+        if(!groups[p.score]) groups[p.score]=[]
+        groups[p.score].push(p)
+    })
+
+    let scores=Object.keys(groups)
+        .map(Number)
+        .sort((a,b)=>b-a)
+
+    let floatPlayer=null
+
+    scores.forEach(score=>{
+
+        let group=groups[score]
+
+        if(floatPlayer){
+            group.unshift(floatPlayer)
+            floatPlayer=null
+        }
+
+        if(group.length%2==1){
+            floatPlayer=group.pop()
+        }
+
+        for(let i=0;i<group.length;i+=2){
+
+            let A=group[i]
+            let B=group[i+1]
+
+            if(A && B){
+
+                if(A.opponents.includes(B.id)){
+
+                    /* try swap */
+
+                    for(let j=i+2;j<group.length;j++){
+
+                        if(!A.opponents.includes(group[j].id)){
+
+                            let tmp=group[i+1]
+                            group[i+1]=group[j]
+                            group[j]=tmp
+
+                            B=group[i+1]
+                            break
+                        }
+                    }
+                }
+
+                if (rngPairings() < 0.5) {
+                  pairings.push([A,B]);
+                } else {
+                  pairings.push([B,A]);
+                }
+            }
+        }
+
+    })
+
+    displayRound();
+}
+
+function displayRound(){
+    let div=document.getElementById("tournament");
+    div.innerHTML="<h3>Round "+currentRound+"</h3>";
+
+    if(byePlayer){
+        div.innerHTML+="<p>"+byePlayer.name+" receives a BYE (1 point)</p>";
+    }
+
+    let [width1, width2] = getMaxWidths(pairings);
+    pairings.forEach((p,i) => {
+        let d = document.createElement("div");
+        d.className = "match";
+        d.innerHTML =
+            p[0].name.toString().padEnd(width1, "\u00A0") + " vs. " +
+            p[1].name.toString().padEnd(width2, "\u00A0") +
+            `<button id="${i}-btn-win"  class="choice-btn" onclick="result(${i},1,this)">1-0</button>
+             <button id="${i}-btn-draw" class="choice-btn" onclick="result(${i},0,this)">½</button>
+             <button id="${i}-btn-lost" class="choice-btn" onclick="result(${i},2,this)">0-1</button>`;
+        div.appendChild(d);
+    })
+
+    div.innerHTML += `<button onclick="printRound()">Print Round</button>`;
+}
+
+function getMaxWidths(pairs) {
+   // find the largest widths for first and second players
+   let result1 = 0;
+   let result2 = 0;
+   pairings.forEach((p,i) => {
+     result1 = Math.max(result1, p[0].name.toString().length);
+     result2 = Math.max(result2, p[1].name.toString().length);
+   });
+   return [result1, 1+result2]; // give an extra at the right column
+}
+
+function result(index,res,btn){
+    roundResults[index]=res
+    btn.parentElement.querySelectorAll("button").forEach(b=>b.disabled=true);
+
+    if (res==1) {
+      const myButton = document.getElementById(`${index}-btn-win`);
+      myButton.classList.add('selected');
+    }
+    if (res==2) {
+      const myButton = document.getElementById(`${index}-btn-lost`);
+      myButton.classList.add('selected');
+    }
+    if (res==0) {
+      const myButton = document.getElementById(`${index}-btn-draw`);
+      myButton.classList.add('selected');
+    }
+
+    resultsEntered++;
+    if (resultsEntered == pairings.length) {
+        showConfirmation();
+    }
+}
+
+function showConfirmation(){
+    let div = document.getElementById("tournament");
+    let controls = document.createElement("div");
+
+    controls.innerHTML = `<br><button onclick="confirmRound()">Confirm Round</button>
+                              <button onclick="resetRound()">Reset Results</button>`;
+    div.appendChild(controls);
+}
+
+function resetRound(){
+    roundResults = [];
+    resultsEntered = 0;
+    document.getElementById("tournament").innerHTML = "";
+    displayRound();
+}
+
+function confirmRound(){
+    pairings.forEach((p,i) => {
+        let A = p[0];
+        let B = p[1];
+        let res = roundResults[i];
+        A.opponents.push(B.id);
+        B.opponents.push(A.id);
+
+        if (res == 1) { // Player 1 (A) WINS
+            A.score += 1;
+            A.results[currentRound-1] = "W";
+            B.results[currentRound-1] = "L";
+            A.games[B.id] = "1";
+            B.games[A.id] = "0";
+        }
+        else if (res == 2 ) { // Player 2 (B) WINS
+            B.score += 1;
+            A.results[currentRound-1] = "L";
+            B.results[currentRound-1] = "W";
+            A.games[B.id] = "0";
+            B.games[A.id] = "1";
+        } else { // Players 1 and 2 have drawn
+            A.score += 0.5;
+            B.score += 0.5;
+            A.results[currentRound-1] = "D";
+            B.results[currentRound-1] = "D";
+            A.games[B.id] = "½";
+            B.games[A.id] = "½";
+        }
+    });
+
+    players.forEach(p => {
+        p.roundScores[currentRound-1] = p.score;
+    })
+
+    updateStandings();
+    updateCrossTable();
+    updateMatrix();
+    currentRound++;
+    nextRound();
+}
+
+//////////////// Tie-breaks ////////////////
+
+function buchholz(p){
+    let scores = p.opponents.map(o => {
+        let opp = players.find(x => x.id == o);
+        return opp ? opp.score : 0;
+    })
+    return scores.reduce((a,b) => a+b, 0);
+}
+
+function buchholzCut1(p){
+    let scores = p.opponents.map(o => {
+        let opp = players.find(x => x.id == o);
+        return opp ? opp.score : 0;
+    });
+
+    if (scores.length <= 1)
+       return 0;
+    scores.sort((a,b) => a-b);
+    scores.shift(); // remove first element
+    return scores.reduce((a,b) => a+b, 0);
+}
+
+function progressive(p) {
+    let sum = 0;
+    p.roundScores.forEach(s => {
+        sum += s
+    });
+    return sum;
+}
+
+function sortRankings(a, b) {
+    if (b.score != a.score)
+      return b.score - a.score;
+
+    let bh = buchholz(b) - buchholz(a);
+    if (bh!=0)
+      return bh;
+
+    let pr = progressive(b) - progressive(a)
+    if (pr!=0)
+      return pr;
+
+    return buchholzCut1(b) - buchholzCut1(a)
+}
+
+//////////////// Update Tables ////////////////
+
+function updateStandings() {
+    let sorted = [...players];
+    sorted.sort((a,b) => sortRankings(a,b));
+
+    let html="<h3>Standings</h3>";
+    html += "<table>";
+    html += `
+    <tr>
+        <th>Rank</th>
+        <th>Player</th>
+        <th>Points</th>
+        <th>Buchholz</th>
+        <th>Progressive</th>
+        <th>Buchholz Cut-1</th>
+    </tr>`;
+
+    sorted.forEach((p,i) => {
+        html+=`
+        <tr>
+            <td>${i+1}</td>
+            <td>${p.name}</td>
+            <td>${p.score}</td>
+            <td>${buchholz(p)}</td>
+            <td>${progressive(p)}</td>
+            <td>${buchholzCut1(p)}</td>
+        </tr>`
+    });
+
+    html += "</table>";
+    html += `<button onclick="exportCSV()">Export Standings to CSV</button>`;
+
+    document.getElementById("standings").innerHTML = html;
+}
+
+function updateCrossTable(){
+    let html = "<h3>Cross Table</h3>";
+    html += "<table>";
+    html += "<tr><th>Player</th>";
+
+    for(let r=1;r<=rounds;r++){
+        html += "<th>R"+r+"</th>"
+    };
+
+    html += "<th>Pts</th></tr>";
+
+    players.forEach(p=>{
+        html += "<tr>"
+        html += "<td>"+p.name+"</td>"
+        for(let r=0;r<rounds;r++) {
+            html += "<td>"+(p.results[r]||"")+"</td>"
+        };
+        html += "<td>"+p.score+"</td>";
+        html += "</tr>";
+    });
+
+    html += "</table>";
+    document.getElementById("crosstable").innerHTML = html;
+}
+
+function updateMatrix(){
+    let html="<h3>Result Matrix</h3>";
+
+    html+="<table>";
+    html+="<tr><th></th>";
+
+    players.forEach(p => {
+        html += "<th>"+p.name+"</th>";
+    })
+
+    html += "</tr>";
+
+    players.forEach(row => {
+        html += "<tr>";
+        html += "<th>"+row.name+"</th>";
+        players.forEach(col => {
+            if (row.id==col.id) {
+                html+="<td>—</td>";
+            }
+            else {
+                let r = row.games[col.id]||"";
+                html += "<td>"+r+"</td>";
+            }
+        })
+        html+="</tr>";
+    })
+
+    html+="</table>";
+    document.getElementById("matrix").innerHTML = html;
+}
+
+//////////////// Output Functions ////////////////
+
+function printRound(){
+    let html=`<h2>Tournament ${document.getElementById('tournament-id').value} ▶ Round ${currentRound}</h2>`
+
+    html += "<table>"
+    html += "<tr><th>Board</th><th>Result</th><th>First Player&nbsp;&nbsp;</th><th>Second Player</th><th>Result</th></tr>"
+
+    pairings.forEach((p,i)=>{
+        html+=
+        "<tr>"+
+        "<td align=\"center\">"+(i+1)+"</td>"+
+        "<td style='width:150px'></td>"+
+        "<td>"+p[0].name+"</td>"+
+        "<td>"+p[1].name+"</td>"+
+        "<td style='width:150px'></td>"+
+        "</tr>"
+    })
+
+    html += "</table>";
+
+    if (byePlayer){
+        html += "<p><b>BYE:</b> " + byePlayer.name + "</p>";
+    }
+
+    html += `<br><font size="2">${now()}</font>`;
+
+    let w = window.open("","","width=800,height=600");
+    w.document.write("<html><head><title>Round "+currentRound+"</title>");
+    w.document.write("<style>");
+    w.document.write("body{font-family:Arial}");
+    w.document.write("table{border-collapse:collapse;margin-top:20px}");
+    w.document.write("td,th{border:1px solid black;padding:6px}");
+    w.document.write("</style>");
+    w.document.write("</head><body>");
+    w.document.write(html);
+    w.document.write("</body></html>");
+    w.document.close();
+    w.print();
+}
+
+function finalRanking() {
+    updateStandings();
+    updateCrossTable();
+    updateMatrix();
+    document.getElementById("tournament").innerHTML = "<h3>Tournament Finished</h3>";
+}
+
+function exportCSV(){
+    let sorted = [...players];
+    sorted.sort((a,b) => sortRankings(a,b));
+
+    let csv = "Rank,Player,Points,Buchholz,Progressive,BuchholzCut1\n"
+    sorted.forEach((p,i) => {
+        csv += (i+1) + "," +
+               p.name + "," +
+               p.score + "," +
+               buchholz(p) + "," +
+               progressive(p) + ","+
+               buchholzCut1(p) + "\n";
+    });
+
+    let blob = new Blob([csv],{type:"text/csv"});
+    let url  = URL.createObjectURL(blob);
+    let a    = document.createElement("a");
+
+    a.href = url;
+    a.download=`${document.getElementById('tournament-id').value}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+//////////////// Helper Functions ////////////////
+
+function mulberry32(seed) {
+    return function() {
+      let t = seed += 0x6D2B79F5;
+      t = Math.imul(t ^ t >>> 15, t | 1);
+      t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    }
+}
+
+function shuffle(array, seed=101) {
+    const rng = mulberry32(seed);
+    const shuffled = [...array]; // Create a copy to keep it "pure"
+
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        // Generate a random index between 0 and i
+        const j = Math.floor(rng() * (i + 1));
+        // Swap elements
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+
+    return shuffled;
+}
+
+function now() {
+    const formatter = new Intl.DateTimeFormat('en-GB', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+    const clockFormatter = new Intl.DateTimeFormat('en-GB', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    });
+
+    const now = new Date();
+    return formatter.format(now).toString() + " | " + clockFormatter.format(now).toString();
+}
+
+</script>
+
+</body>
+</html>
