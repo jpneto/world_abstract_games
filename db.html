@@ -207,6 +207,10 @@
 
   <input type="text" id="searchInput" onkeyup="filterTable()"
          placeholder="Search (!word for exclusion, >year <year for ranges)" autofocus>
+
+  <!-- applies filtering when it comes with the url; use eg: db.html?q=connection !hex -->
+  <button id="hiddenSubmit" onclick="filterTable()" style="display: none;"></button>
+
   <br>
   <span id="list-length"></span>
 
@@ -20482,8 +20486,18 @@
       });
     }
 
-    // Populate the table initially
-    populateTable();
+    // check if user includes serch parameters with URL, like: db.html?q=connection
+    const urlParams = new URLSearchParams(window.location.search);
+	const queryData = urlParams.get('q');
+	if (queryData) {
+		const btn = document.getElementById('hiddenSubmit');
+		const queryBox = document.getElementById("searchInput");
+		queryBox.value = queryData;		
+		// wait browser to fully "paint" the button before the script tries to press it
+		setTimeout(() => {btn.click();}, 100);
+    } else {
+		populateTable(); // Populate the table initially
+	}
 
     // Show total number of games at the top of the page
     document.getElementById("list-length").textContent =
