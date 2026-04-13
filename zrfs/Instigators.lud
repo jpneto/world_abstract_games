@@ -1,0 +1,204 @@
+// Instigator
+ 
+//-----------------------------------------
+// Moves
+(define "FollowUpMoves"
+ (or
+  (move Add
+   (to
+    (sites Around (last To) "Direction"
+     if:(and
+      (is Mover (who at:(to)))
+      (= 1 (count Stack at:(to)))
+   )))
+   count:1
+   stack:True
+   (then (addScore Mover -1))
+  )
+  (move 
+   (from
+    (sites Around (last To) "Direction"
+     if:(and
+      (is Mover (who at:(to)))
+      (= 2 (count Stack at:(to)))
+     )
+    )
+    level:0
+   )
+   (to 
+    (sites Around
+     (from)
+     "Direction"
+     if:(not (is Mover (who at:(to))))
+    )
+    (apply
+     (seq
+      {
+       (remove (last To) count:1)     
+       (set Var "Captures" (count Stack at:(to)))
+       (remove (to) count:(count Stack at:(to)))
+      }
+   )))
+   count:1// stack:True
+   (then
+    (and
+     {
+      (add (to (last To)) count:1 stack:True)
+      (addScore Mover 2)
+      (addScore Next (if (= 1 (var "Captures")) -1 0))
+      (if
+       (can Move ("SecondCapture"))
+       (moveAgain)
+      )
+     }
+)))))
+
+(define "SecondCapture"
+ (if 
+  (and (< 0 (var "Captures")) (> 2 (var "Captures")))
+  (move 
+   (from (last To))
+   (to
+    (sites Around (last To) "Direction"
+     if:(and
+      (is Next (who at:(to)))
+      (= 1 (count Stack at:(to)))
+    ))
+    (apply
+     (and
+      {
+       (set Var "Captures" 0)
+       (remove (to) count:1)
+       (addScore Next (if (= 1 (var "Captures")) -1 0))
+      }
+   )))
+   count:2 
+   stack:True
+)))  
+  
+(define "Move"
+ (if
+  ("NewTurn")
+  (move Add
+   (to (sites Empty))
+   count:2 
+   stack:True
+   (then
+    (if
+     (can Move ("FollowUpMoves"))
+     (moveAgain)
+  )))
+  (priority
+   ("SecondCapture")
+   ("FollowUpMoves")
+)))
+  
+   
+//-----------------------------------------------
+// Main routine
+
+(game "Instigator"
+ (players 2)
+ (equipment
+  {
+   <Board:type>
+   (piece "Disc" Each)   
+  }
+ )
+ (rules
+  (play
+   ("Move")
+  )
+  (end
+   {
+    (if 
+     (and
+      (and ("NewTurn") (no Moves Mover))
+      (= (score P1) (score P2))
+     )
+     (byScore {(score P1 (count Pieces P1)) (score P2 (count Pieces P2))})
+    )
+    (if 
+     (and
+      (and ("NewTurn") (no Moves Mover))
+      (!= (score P1) (score P2))
+     )
+     (byScore)
+    )
+   }
+)))
+
+//-----
+//-------------------------------------------------
+// Defines for Options
+
+(define "SquareGrid" (board (square Diamond <BoardEdge:size>) use:Cell))
+(define "HexBoard" (board (hex <BoardEdge:size> ) use:Cell))
+
+//-----------------------------------------
+// Options 
+
+(define "Direction"  <Board:connectivity>)
+(option "Board Type" <Board> args:{ <type> <connectivity> }
+ {
+  (item "Hex" <("HexBoard")> <Orthogonal> "Played on a hex-hex board.")
+  (item "Square-Omni" <("SquareGrid")> <Adjacent> "Played on a square board with orthogonal and diagonal adjacencies.")
+ }
+)
+ 
+(option "Board Size" <BoardEdge> args:{ <size> <size2> }
+ {
+  (item "3x3" <3> <3> "Size 3x3")
+  (item "3x4" <3> <4> "Size 3x4")
+  (item "4x4" <4> <4> "Size 4x4")** 
+  (item "5x5" <5> <5> "Size 5x5")
+ }
+)
+
+
+//---------------------------------------------
+
+(metadata
+ (info
+  {
+   (description "Instigator"
+   )
+   (rules "Goal: most 1-stacks, tiebreaker: most stacks.
+   
+   Board starts empty.
+   On your turn, first place a 2-stack on an empty space.
+   Then, if available to play, you must choose to play either of the 2 follow-up options:
+   
+   Option A 
+   1. Take a piece from the top of the placed two stack, together with a piece from the top of an adjacent 2-stack and combine them into a new 2-stack.
+   2.- Then, place this 2-stack next to the contributing stack, on a space that you do not occupy, capturing any enemy stack which may be there, and 
+   3. Then if possible, move this stack to capture an adjacent 1-stack.
+   Restriction: 
+   -- This stack must not capture more than 1 2-stack or 2 1-stacks. 
+   -- This stack must not move more than 1 step after placement
+   
+   Option B. 
+   Add a piece to an adjacent friendly 1-stack.
+   
+   You must play one of these options if your stack placement allows you to do so.
+   The game ends when the board is full.
+   "
+   )
+   (source "Author")
+   (version "1.3.14")
+   (classification "board/space/group")
+   (author "Dale Walton")
+   (credit "Dale Walton")
+   (date "2026-02-16")
+  }
+ )
+ 
+ (define "BackgroundColour" (colour 250 230 200 100))
+ (define "BoardColour" (colour 175 215 125))
+ 
+ (graphics
+  {
+   (board Colour Phase0 "BoardColour")
+   (board Background fillColour:"BackgroundColour")
+  }
+))
