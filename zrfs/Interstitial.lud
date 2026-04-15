@@ -1,0 +1,127 @@
+// Interstitial
+
+(define "SitesPhase"
+ (forEach (sites Board) if:(= #1 (% (+ (column of:(site)) (row of:(site))) 2)))
+)
+
+(define "AddOpponentNextTo"
+ (move Add (piece (next))
+  (to
+   (sites Board) 
+   if:(and
+    {
+     (is Empty (to))
+     (is In (to) ("SitesPhase" 1))
+     (<= #1
+      (count Sites
+       in:(sites Around (to) Orthogonal
+        if:(and
+         (= (mover) (who at:(to)))
+         (is In (to) ("SitesPhase" 0))
+     ))))
+    }
+))))
+ 
+(game "Interstitial" 
+ (players 2) 
+ (equipment
+  { 
+   (board (<Board:grid> <Board:size>) use:Cell)
+   (piece "Disc" Each)
+   (regions P1 {(sites Row 0) (sites Row (- <Board:size> 1))})
+   (regions P2 {(sites Column 0) (sites Column (- <Board:size> 1))})
+   (regions "P0" ("SitesPhase" 0))   
+   (regions "P1" ("SitesPhase" 1))
+  }
+ )
+ (rules
+  (play
+   (if 
+    ("NewTurn")
+    (priority
+     <Adjacencies:count>
+     (then (moveAgain))
+    )
+    (move Add (piece (mover)) (to ("SitesPhase" 0) if:(is Empty (to))))
+  ))
+  (end
+   {
+    (if
+     (and
+      (= 1 (who at:(last To)))
+      (is Connected at:(last To) Adjacent P1) 
+     )
+     (result P1 Win)
+    )
+    (if
+     (and
+      (= 2 (who at:(last To)))
+      (is Connected at:(last To) Adjacent P2) 
+     )
+     (result P2 Win)
+    )
+   }
+  )
+))
+//-------------------------------------
+// Options
+
+
+(option "Board" <Board> args:{<grid> <size> <r1> <r2> <regions>}
+ {
+  (item "4"  <square> <4>  <0> <90> "Size 4")
+  (item "6"  <square> <6>  <0> <90> "Size 6")
+  (item "8"  <square> <8>  <0> <90> "Size 8")
+  (item "10" <square> <10> <0> <90> "Size 10")**
+  (item "12" <square> <12> <0> <90> "Size 12")
+  (item "18" <square> <18> <0> <90> "Size 18")
+  (item "Hex 6" <hex Diamond> <6> <120> <60>  "Size 6 hex")
+  (item "Hex 8" <hex Diamond> <8> <120> <60>  "Size 8 hex")
+ }
+)
+
+(option "Enemy to light space next to" <Adjacencies> args:{<count>}
+ {
+  (item "friend, if possible"
+   <
+    {
+     ("AddOpponentNextTo" 1)
+     ("AddOpponentNextTo" 0)
+    }
+   >
+  "First place the enemy piece on an empty light colored space - orthogonally next to a friendly piece, if possible.")
+  (item  "most friends possible"
+   <
+    {
+     ("AddOpponentNextTo" 4)
+     ("AddOpponentNextTo" 3)
+     ("AddOpponentNextTo" 2)
+     ("AddOpponentNextTo" 1)
+     ("AddOpponentNextTo" 0)
+    }
+   >
+  "First place the enemy piece on an empty light colored space - orthogonally next to as many friendly pieces as possible.")
+ }
+)
+
+(metadata
+ (graphics
+  {
+   (board Style Board)
+   (board Colour InnerEdges (colour DarkGrey))
+   (region Colour "P0" (colour Orange))
+   (region Colour "P1" (colour LightOrange))
+   (board Background image:"Square-alt1.svg"
+    fillColour:(colour HumanLight) edgeColour:(colour HumanLight) scale:1.2
+   )
+   (show Symbol "I" Edge 
+    (union (sites Column Edge 0) (sites Column Edge (- (count Columns Edge) 1)))  
+    fillColour:(colour Black) edgeColour:(colour Black) rotation:<Board:r1>
+   )
+   (show Symbol "I" Edge
+    (union (sites Row Edge 0) (sites Row Edge (- (count Rows Edge) 1)))  
+    fillColour:(colour White) edgeColour:(colour White) rotation:<Board:r2>
+   )
+   (show Symbol "thinCross.svg" Cell ("SitesPhase" 1) scale:.3 rotation:45)
+  }
+))
