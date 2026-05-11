@@ -209,7 +209,7 @@
      (move Add  (piece (mover))
       (to
        (sites Empty) 
-       if:(>= 1
+       if:(= 0
         (abs
          (- 
           (count Steps (to) (sites Outer))
@@ -603,7 +603,7 @@
 
 (define "NatalRules" 
  (rules "Natal Seas - Pods Rules
-The pieces are called pods. Orca (Black with a white spot) plays first. Humpback (Grey) plays Second
+The pieces are called pods. Orca (White) plays first. Humpback (Grey) plays Second
 
 The goal is territorial - To win, confine the opponents Pods to less than half the board.
 
@@ -617,7 +617,8 @@ Dives have two restrictions:
 - The destination of the dive must not be under Enemy influence.
 
 Play:
-To start, Orca and Humpback in turn place a pod on any space except the center. Then regular turns continue in alternation.
+To start, Orca places a pod on any space except the center. Humpback places a pod on a different space at the same distance from the outer edge.
+When each player has placed a pod on the board, regular turns continue in succession.
 
 On your turn do either (1) or (2):
 Place a pod onto a space where you already have influence.
