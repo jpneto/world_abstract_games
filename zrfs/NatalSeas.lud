@@ -1,0 +1,727 @@
+// Pods - Single-Action version of Natal Seas.
+ 
+(define "OpponentOf" (- 3 #1))
+
+(define "PiecesOf" (sites Occupied by:(player #1)))
+(define "IsAPieceOf" (= #1 (who at:(to))))
+
+(define "SitesInfluenceOfFor"
+ (difference
+  (sites Around (sites Occupied by:All) <Board:dir>)
+  (forEach
+   (players All if:(!= (player) #2))
+   (sites Around (sites Occupied by:All) //(player #2)) 
+    <Board:dir>
+    if:(and
+     (is Empty (to))    
+     (!=
+      #1
+      (-
+       (count Pieces of:#2 in:(sites Around (to) <Board:dir>))
+       (count Pieces of:(player) in:(sites Around (to) <Board:dir>))
+)))))))
+
+(define "NeighborCountAt"
+ (size Array (array (sites Around #1 <Board:dir>)))
+)
+
+(define "NaturalTerritoryOf" // Pieces; majority surrounded sites; and pairs of half surrounded sites
+ (union 
+  {
+   (sites Occupied by:(player #1))
+   (forEach
+    (sites Around (sites Occupied by:All) <Board:dir>)
+    if:(or
+     (<
+      ("NeighborCountAt" (site))
+      (* 2 (count Pieces of:#1 in:(sites Around (site) <Board:dir>)))
+     )
+     
+     (and
+      (=
+       ("NeighborCountAt" (site))
+       (* 2 (count Pieces of:#1 in:(sites Around (site) <Board:dir>)))
+      )
+      (< 0
+       (size Array
+        (array
+         (sites Around (site) <Board:dir>
+          if:(and
+           (is Empty (to))
+           (=
+            ("NeighborCountAt" (to))
+            (* 2 (count Pieces of:#1 in:(sites Around (to) <Board:dir>)))
+     )))))))
+   ))
+  }
+))
+
+ 
+(define "SkirtSites"
+ (sites Around
+  (union
+   (sites Occupied by:(player (mover))) 
+   (sites Occupied by:(player #1))
+  )
+  <Board:dir>
+))
+
+(define "DestinationsOnlyforSkirting"  // but need to check accessibility - not used right now.
+ (union
+  {
+   (intersection ("SitesInfluenceOfFor" 0 #1) ("SkirtSites" #1)) // "NeutralSites"  
+   (difference ("SitesInfluenceOfFor" -1 #1) (sites Around (var "LF") <Board:dir>))
+  }
+))  
+// -------------------------------------------
+/// Skirting
+
+(define "MaintainsContact"  // The original location must be treated as empty.
+ (not
+  (no Pieces
+   in:(difference
+    (intersection
+     (sites Around (from) <Board:dir>
+      if:(or (= (mover) (who at:(to))) (= #1 (who at:(to))))
+     )
+     (sites Around (to) <Board:dir>
+      if:(or (= (mover) (who at:(to))) (= #1 (who at:(to))))
+    ))
+    (sites {(var "LF")})
+))))
+
+(define "HasEnoughInfluenceWhileSkirting"
+ (>=
+  (+ 
+   (if   // For the moving piece without double counting at origin
+    (is In (var "LF") (sites Around (from) <Board:dir>))
+    0 
+    1
+   ) 
+   (count Pieces of:(mover)
+    in:(intersection (sites State 0) (sites Around (from) <Board:dir>))
+  ))
+  (count Pieces of:#1
+   in:(intersection (sites State 0) (sites Around (from) <Board:dir>))
+)))
+
+(define "CanSkirtThereForAnyGiven" // for mover during move
+ (and 
+  {
+   (!= #1 (mover)) // bug fix, influence is based on nonmovers
+   (is Empty (from))
+   ("MaintainsContact" #1)
+   ("HasEnoughInfluenceWhileSkirting" #1)
+  }
+))
+
+(define "CanMultiPlayerSkirt"
+ (is In (to)
+  (forEach of:(sites {1..<Player:count>})
+   (if
+    (!= Infinity
+     (count Steps <Board:dir>
+      (step <Board:dir>
+       (to
+        if:("CanSkirtThereForAnyGiven" (site)) // site === player index here
+      ))
+      #2
+      #1 // switch direction to test
+    ))
+    (sites {(to)})
+))))
+
+(define "Skirting"
+ (forEach Piece 
+  (do
+   (set Var "LF" (from))
+   next:(move
+    (from)
+    (to
+     #1 // (sites Empty)
+     if:(and
+      {
+       (!= (to) (from))
+       ("CanMultiPlayerSkirt" (var "LF") (to))
+      }
+))))))
+
+(define "PlacementSitesFor"
+ (difference
+  (sites Around (sites Occupied by:All) <Board:dir>)
+  (forEach
+   (players All if:(!= (player) #1))
+   (sites Around (sites Occupied by:All) //(player #1)) 
+    <Board:dir>
+    if:(and
+     (is Empty (to))    
+     (<=
+      (count Pieces of:#1 in:(sites Around (to) <Board:dir>))
+      (count Pieces of:(player) in:(sites Around (to) <Board:dir>))
+))))))
+ 
+(define "DestinationSkirting"
+ (move Select
+  (from 
+   (difference
+    (sites To ("Skirting" (sites Empty)))
+    ("PlacementSitesFor" (mover))
+  ))
+  (to
+   (sites Occupied by:Mover)
+   if:(is In (from)
+    (sites To
+     (do
+      (set Var "LF" (to))
+      next:(move
+       (from (var "LF"))
+       (to
+        (sites Empty)
+        if:(and
+         {
+          (!= (to) (from))
+          ("CanMultiPlayerSkirt" (var "LF") (to))
+         }
+  )))))))
+  (then
+   (fromTo
+    (from (last To))
+    (to
+     (last From)
+)))))
+
+(define "Placement"
+ (priority
+  {
+   (if 
+    (> <Player:count> (count Pieces All))
+    (if
+     (or (no Pieces of:1) (is Mover (who at:(last To))))
+     (move Add (piece (mover))
+      (to
+       (sites Empty)
+       if:(<
+        (count Steps (to) (sites Outer))
+        (count Steps (centrePoint) (sites Outer))
+       )
+       (apply (set Var "StartRadius" (count Steps (to) (sites Outer))))
+     ))
+     (move Add  (piece (mover))
+      (to
+       (sites Empty) 
+       if:(>= 1
+        (abs
+         (- 
+          (count Steps (to) (sites Outer))
+          (var "StartRadius")
+   )))))))
+   (move Add  (piece (mover))
+    (to 
+     ("PlacementSitesFor" (mover))
+   ))
+  }
+))
+
+//---------------------------------------
+// Main routine
+//---------------------------------------
+  
+(game "Natal Seas - Pods"
+ (players <Player:count>)
+ (equipment
+  {
+   (board <Board:size> use:Vertex)
+   (piece "Disc" Each maxState:15)  // was 11
+  }
+ )
+ (rules 
+  (play
+   (do
+    (remove (intersection (sites Occupied by:Mover) (sites State 1))) 
+    next:(or
+     {
+      ("Placement")
+      (<Mode:forSkirting>) // "DestinationSkirting" "Skirting"
+     }
+    ) 
+    (then (if (< 2 (counter)) ("SetExtendedTerritoryForAll"))) // ("SetScores")) 
+  ))
+  (end 
+   {
+    (forEach Player  
+     if:(and
+      ("IsLargestActivePLayer" Player)
+      (or
+       ("HasMoreThanHalfTheSpacesAvailableToTheNextLargestActivePlayer")
+       (and
+        {
+         (!= (player) (mover))
+         (<= (count Vertices) (* <Player:count> (count Pieces Mover)))
+         ("IsLargestActivePLayer" Mover)
+         (= 0           // mover has no Empty skirting mover available 
+          (count Sites
+           in:(intersection (sites Empty) (sites To ("Skirting" (sites Empty))))
+         )) 
+        }
+     )))
+     (result Player Win) // this exposes A/B bug if 2 win sumultaneously with different scores...
+    )
+    (if
+     (or
+      (=
+       (count Vertices)
+       (count Pieces All)
+      )
+      (= 1
+       (size Array (players All if:(is Active (player))))
+     ))
+     (byScore {(score P1 (value Player P1)) (score P2 (value Player P2)) <Player:score>})
+    ) 
+    (if 
+     (<=
+      (count Vertices)
+      (* 2 (value Player Mover))
+     )
+     (result Mover Win)
+    ) 
+   }  
+)))
+
+//-------------------------------
+// End Conditions
+  
+(define "PieceCountOfLargestActiveNonMover" 
+ (max
+  (results // for each player... Hack
+   from:(forEach
+    (sites {1..<Player:count>})
+    if:(and
+     {
+      (!= (player) (site))
+      (is Active (site))
+     }
+   )) 
+   to:(from)
+   (count Pieces of:(from))
+)))
+(define "IsLargestActivePLayer"
+ (>= (count Pieces #1) ("PieceCountOfLargestActiveNonMover"))
+)
+
+(define "HasMoreThanHalfTheSpacesAvailableToTheNextLargestActivePlayer"
+ (<=
+  (+ (count Sites in:(sites Empty)) ("PieceCountOfLargestActiveNonMover")) 
+  (count Pieces Player)
+))
+
+//-----------------------------
+// Territory Filling
+
+(define "PivotSites"
+ (intersection
+  (sites Around (from) <Board:dir>)
+  (sites Around (to) <Board:dir>)
+))
+
+(define "HasAPivot"
+ (< 0
+  (+
+   // Pieces and Non-player territory sites
+   (count Pieces All
+    in:(difference
+     ("PivotSites")
+     (intersection  //to exclude territory markers of the blocking player
+      (sites Occupied by:Player) 
+      (sites State 1)
+   )))
+   // sites under consideration
+   (count Sites
+    in:(intersection
+     {
+      ("PivotSites")
+      (sites (values Remembered))
+      (sites Empty) // to prevent double counting of Non-player territory
+     }
+)))))
+
+(define "IsConnectedToOthersAtBecause"
+ (!= Infinity
+  (count Steps <Board:dir>
+   #2 // step definition
+   #1
+   ("SitesOthersPiecesAndTerritory")
+)))
+
+(define "OpponentInfluenceAtFrom"
+ (and
+  {
+   (is Empty (from))
+   (#1                // i.e. = or >
+    (size Array
+     (array
+      (sites Around (from) <Board:dir> 
+       if:(or
+        (is In (to) (sites (values Remembered)))
+        (not (is Empty (to))) 
+    ))))
+    (* 2
+     (count Pieces Player
+      in:(intersection (sites State 0) (sites Around (from) <Board:dir>))
+   )))
+  }
+))
+
+(define "OpponentCanStepFrom" 
+ (and
+  (!= (player) (who at:(to)))
+  (or
+   ("OpponentInfluenceAtFrom" >)
+   (and
+    ("OpponentInfluenceAtFrom" =)
+    (or
+     ("HasAPivot")
+     (< 2 <Player:count>)
+)))))
+
+(define "OpponentReachableSites"
+ (forEach
+  (difference (sites Empty) (sites (values Remembered)))
+  if:(!= Infinity
+   (count Steps
+    (step (to if:("OpponentCanStepFrom")))
+    (site)
+    (difference
+     (sites Occupied by:All)
+     (sites Occupied by:Player)
+)))))
+
+(define "FindNonTerritoryFor" 
+ (seq
+  {
+   (set Var "TC" -2 )
+   (while
+    (< (var "TC") (count Sites in:(sites (values Remembered))))
+    (seq
+     {
+      (set Var "TC" (count Sites in:(sites (values Remembered))))
+      (forEach Site ("OpponentReachableSites")
+       (remember Value (site) unique:True)
+      )
+     }
+   ))
+  }
+))
+
+(define "SitesOwnPlayersPiecesAndTerritory"
+ (sites Occupied by:Player)
+)
+
+(define "SitesOthersPiecesAndTerritory"
+ (difference
+  (sites Occupied by:All)
+  (sites Occupied by:Player)
+))
+
+(define "CountAroundOf"
+ (count Sites 
+  in:(sites Around #1 <Board:dir>
+   if:(is In (to)  
+    #2
+))))
+
+(define "SetTerritoryFor" 
+ (add
+  (piece (player))
+  (to
+   (difference (sites Empty) (sites (values Remembered)))       
+   if:(!= Infinity
+    (count Steps <Board:dir>
+     (step <Board:dir>
+      (to
+       if:(and
+        (or (is Empty (from)) (= (player) (who at:(to))))
+        (>= 
+         ("CountAroundOf" (from) "SitesOwnPlayersPiecesAndTerritory") 
+         ("CountAroundOf" (from) "SitesOthersPiecesAndTerritory")
+     ))))
+     (site)
+     (sites Occupied by:(player (player)))
+   ))
+   (apply (set State at:(to) 1))
+)))
+
+(define "SetExtendedTerritoryForAll"
+ (forEach Player
+  (seq
+   {
+    (forget Value All)
+    ("FindNonTerritoryFor")
+    ("SetTerritoryFor")
+    (set Value Player (count Pieces Player))
+    (set Score Player ("HeuristicScoreOf" (player)))
+   }
+)))
+
+//---------------------------------------
+
+(define "Tri46Bug"  (tri {4 6 4 7 4}))
+(define "Tri56Bug"  (tri {5 6 5 7 5}))
+(define "Tri57Bug"  (tri {5 7 5 8 5}))
+(define "Tri67Bug"  (tri {6 7 6 9 5}))
+(define "Tri68Bug"  (tri {6 8 6 10 5}))
+(define "Tri78Bug"  (tri {7 8 7 10 6}))
+
+(option "Players" <Player> args:{<count> <score> } 
+ {
+  (item "2" <2>  <> "Two players")
+  
+  (item "3" <3> 
+   <(score P3 (value Player P3))>
+   "For Multiplayer games, a player wins when they have:
+ 1. At least tied with a moving player that has no space left to expand, when both have more than their share of the board.
+ 2. Taking up at least half of the space available to the 2 largest players in the game.
+ 3. Has more than half the board.
+ 4. By score if there are no moves left.
+
+ Three players")
+   
+  (item "4" <4> 
+   <(score P3 (value Player P3)) (score P4 (value Player P4))>
+   "For Multiplayer games, a player wins when they have:
+ 1. At least tied with a moving player that has no space left to expand, when both have more than their share of the board.
+ 2. Taking up at least half of the space available to the 2 largest players in the game.
+ 3. Has more than half the board.
+ 4. By score if there are no moves left.
+
+
+  Four players")
+ }
+)
+
+(option "Board Size" <Board> args:{ <size> <diag> <dir>} 
+ {  
+  (item "Snub-square" <(trim (remove (dual (trim (dual (trim (dual (remove (dual (tiling T33434 7)) cells:{0..11 13 45 54 60 65..67 76..78 83..84 90..93 102..105 111..112 117..118 129..130 135 141 150 151 155 160 167..168 171..172 174..176 179..181 183..195})))))) vertices:{0 1 60 67 88}))>   <ThinDashed> <All> "ArchWorm Vertices and diagonals")
+  (item "Snub-square - 129" <(trim (dual (remove (dual (tiling T33434 7)) cells:{0..11 13 45 54 60 65..67 76..78 83..84 90..93 102..105 111..112 117..118 129..130 135 141 150 151 155 160 167..168 171..172 174..176 179..181 183..195})))>   <ThinDashed> <All> "ArchWorm Vertices and diagonals")
+ (item "Snub Square 6 R4"
+  <(remove (renumber (rotate 45 (tiling T33434 3)))
+   vertices:{61..47 43 42 35 34 27 26 19 18 11 10 3} 
+  )>   
+  <ThinDashed> <All> "ArchWorm Vertices and diagonals")
+ (item "Snub Square 8 R4"
+  <(remove (renumber (rotate 45 (tiling T33434 4)))
+   vertices:{ 97..79 74 73 64 63 54 53 44 43 34 33 24 23 14 13 4 } 
+  )>   
+  <ThinDashed> <All> "ArchWorm Vertices and diagonals")
+ (item "Snub Square 10 R4"
+  <(remove (renumber (rotate 45 (tiling T33434 5)))
+   vertices:{ 141..119 113 112 101 100 89 88 77 76 65 64 53 52 41 40 29 28 17 16 5 }
+  )> 
+  <ThinDashed> <All> "ArchWorm Vertices and diagonals")
+ (item "Snub Square 12 R4"
+  <(remove (renumber (rotate 45 (tiling T33434 6)))
+   vertices:{ 193..167 160 159 146 145 132 131 118 117 104 103 90 89 76 75 62 61 48 47 34 33 20 19 6 }
+  )> 
+  <ThinDashed> <All> "ArchWorm Vertices and diagonals")
+  (item "Square 9"  <(square 9)>  <ThinDashed> <All> "Board & size: Square 11")
+  (item "Square 11"  <(square 11)>  <ThinDashed> <All> "Board & size: Square 11")
+  (item "Square 13"  <(square 13)>  <ThinDashed> <All> "Board & size: Square 13")
+  
+//  (item "H1 2-3 (12)"   <(tri {2 3 2 3 2})> <Hidden> <Orthogonal> "Board & size: H1 Hexhex with edges alternating 2 and 4")
+  (item "H2 2-4 (18)"   <(tri {2 4 2 4 2})> <Hidden> <Orthogonal> "Board & size: H2 Hexhex with edges alternating 2 and 4")
+  (item "H2 3-5 (36)"   <(tri {3 5 3 5 3})> <Hidden> <Orthogonal> "Board & size: H2 Hexhex with edges alternating 3 and 5")
+//  (item "H1 4-5 (48)"   <(tri {4 5 4 5 4})> <Hidden> <Orthogonal> "Board & size: H1 Hexhex with edges alternating 4 and 5")
+  (item "H2 4-6 (60)"   <"Tri46Bug">        <Hidden> <Orthogonal> "Board & size: H2 Hexhex with edges alternating 4 and 6")
+//  (item "Special (78)"   <(trim (remove (tri Hexagon 7) vertices:{0..34 42 43 44 45 54 55 56 57 67 68 69 80 81 92}))> <Hidden> "Board & size: Hexhex with opposing edges 4, 6 and 7")
+//  (item "H2 5-7 (90)"   <"Tri57Bug">        <Hidden> <Orthogonal> "Board & size: H2 Hexhex with edges alternating 5 and 7")*
+//  (item "H2 5-7 truncated (84)"   <(trim (remove ("Tri57Bug") vertices:{0 6 34 44 85 89}))>        <Hidden> "Board & size: H2 Hexhex with edges alternating 5 and 7")
+//  (item "H1 6-7 (108)"  <"Tri67Bug">        <Hidden> <Orthogonal> "Board & size: Hexhex with edges alternating 6 and 7")
+//  (item "Natal Seas (128)"
+//   <(trim (remove (tri Rectangle 11 17) vertices:{0 4..6 13..16 21 32..33 49..50 66..67 83 99..100 114..117 130..134  146..151 158..168 172..181}))>  <Hidden> <Orthogonal> 
+//   "Board & size: Natal Seas - Pacific Board"
+//  )
+//  
+//  (item "Natal Seas (174)" 
+//   <(trim (remove (tri Rectangle 13 20) vertices:{0 5..8 15..19 25..27 37..39 58..59 78..79 98..99 117..119 136..138 154..158 173..178 192..198 211..219 226..239 243..253}))>  <Hidden> <Orthogonal> 
+//   "Board & size: Natal Seas - Large Pacific Board"
+//  )
+  
+  (item "H 3 (19)"      <(tri Hexagon 3)>   <Hidden> <Orthogonal> "Board & size: Hexhex 3")
+  (item "H1 3-4 (27)"   <(tri {3 4 3 4 3})> <Hidden> <Orthogonal> "Board & size: H1 Hexhex with edges alternating 3 and 4")
+  (item "H 4 (37)"      <(tri Hexagon 4)>   <Hidden> <Orthogonal> "Board & size: Hexhex 4")
+  (item "H 5 (61)"      <(tri Hexagon 5)>   <Hidden> <Orthogonal> "Board & size: Hexhex 5")** 
+  (item "H1 5-6 (75)"   <"Tri56Bug">        <Hidden> <Orthogonal> "Board & size: H1 Hexhex with edges alternating 5 and 6")
+  (item "H 6 (91)"      <(tri Hexagon 6)>   <Hidden> <Orthogonal> "Board & size: Hexhex 6")*
+  (item "H2 6-8 (126)"  <"Tri68Bug">        <Hidden> <Orthogonal> "Board & size: H2 Hexhex with edges alternating 6 and 8")
+  (item "H 7 (127)"     <(tri Hexagon 7)>   <Hidden> <Orthogonal> "Board & size: Hexhex 7")
+  (item "H1 7-8 (147)"  <"Tri78Bug">        <Hidden> <Orthogonal> "Board & size: H1 Hexhex with edges alternating 7 and 8")
+  (item "H 8 (169)"     <(tri Hexagon 8)>   <Hidden> <Orthogonal> "Board & size: Hexhex 8")
+  (item "Archworm" <(trim (remove (dual (tiling T33434 7)) cells:{0..11 13 45 54 60 65..67 76..78 83..84 90..93 102..105 111..112 117..118 129..130 135 141 150 151 155 160 167..168 171..172 174..176 179..181 183..195}))>   <ThinDotted> <All> "ArchWorm Vertices and diagonals")
+ }
+)  
+
+(option "Selection Mode" <Mode> args:{<forSkirting> <destinations> }
+ {
+  (item "Move or Place"
+   <("Skirting" (sites Empty))>
+   <("SkirtSites" (player))>
+   "Selection Mode: As described in the rules:
+   Move by selecting a pod placement, or a pod to move followd by its destination."
+  )
+  (item "Moves limited to non-placement"
+   <("Skirting" (difference (sites Empty) ("PlacementSitesFor" (mover))))>
+   <("DestinationsOnlyforSkirting" (player))>
+   "Selection Mode: Movement Restricted:
+   Move by selecting a pod placement, or a pod to move --
+   but only to a destination that cannot be reached by placement.
+   
+   Note: This option is increase AI depth by reducing its choices. It rarely affects play, because is better to place to a space than to move there, except when you need to simultaneously open a movement channel and move to a location where a placement cannot be made. 
+   
+   "
+  )
+//  (item "Destination then Source"
+//   <("DestinationSkirting")>
+//   <("DestinationsOnlyforSkirting" (player))>
+//   "Selection Mode: Destination First:
+//   Move by selecting destination and then source if the destination cannot /be reached by placement."
+//  )
+ }
+)
+
+(option "Debug" <Heuristics> args:{<isVisible>}
+ {
+  (item "Off"
+   <(show Score P1 (value Player P1))
+    (show Score P2 (value Player P2))
+    (show Score P3 (value Player P3))
+    (show Score P4 (value Player P4))>
+   ""
+  )
+  (item "Show Heuristic Scores" <> "Show Heuristic Scores") 
+ }
+)
+//----------------------------------------------------------
+
+(define "NatalRules" 
+ (rules "Natal Seas - Pods Rules
+The pieces are called pods. Orca (Black with a white spot) plays first. Humpback (Grey) plays Second
+
+The goal is territorial - To win, confine the opponents Pods to less than half the board.
+
+Terminology
+-- a player has 'influence' at a space surrounded by more friendly pods than other pods.
+-- a 'dive' is the movement of a pod to an adjacent empty space.
+-- To 'migrate' is to send a pod on a successive series of dives.
+
+Dives have two restrictions:
+- There must be a pod of either player that is adjacent, both to where the dive starts, and also to where it ends.
+- The destination of the dive must not be under Enemy influence.
+
+Play:
+To start, Orca and Humpback in turn place a pod on any space except the center. Then regular turns continue in alternation.
+
+On your turn do either (1) or (2):
+Place a pod onto a space where you already have influence.
+Migrate a pod.
+
+Note: With multiple players you choose one player to skirt and only consider that player's influence. The other players' pieces block movement, but have no influence. 
+
+Game End (2 player)
+You win the game when you can show that your opponent can never reach more than half the board.
+
+Natal Seas Tactics:
+Create territory by completely surrounding it with solid and/or diagonal walls of pods, or with pairs of pods next to an edge.
+
+Your territory also includes adjacent pairs of spaces if each of the pair has at least 3 friendly pods around it. 
+
+Each piece played also counts as your territory.
+
+But it is also important to move into regions that your opponent is trying to wall off. This is especially important early in the game. You can afford to build up a few pieces first, if you don't wait to long, or have good control over an important area of the board.
+"
+))
+
+(define "WhalePieces"
+    (board Background fillColour:(colour 190 228 255) edgeColour:(colour 170 160 140) scale:1.3)
+    (piece Foreground state:1 image:"disc.svg" fillColour:(colour 190 228 255 150) edgeColour:(colour 190 228 255 150) scale:.8)
+)
+
+(define "HalfSurroundedSitesOf"
+ (forEach
+  (sites Around (sites Occupied by:All) <Board:dir>)
+  if:(=
+   ("NeighborCountAt" (site))
+   (* 2 (count Pieces of:#1 in:(sites Around (site) <Board:dir>)))
+)))
+
+
+(define "PlayerInfluencedSites"
+ (difference
+  ("SitesInfluenceOfFor" #2 #1) 
+  (union
+   ("NaturalTerritoryOf" #1)
+   ("HalfSurroundedSitesOf" #1)
+))) 
+
+
+(metadata
+ (info 
+  {
+    
+   (description "Pods is a stand-alone script variant of Natal Seas.
+   
+The script has now been updated to calculate permanent territory and end the game promptly, instead of playing it out until there are no moves left..  The AI uses heuristics based on the heavy calculations needed to determine the game ending. Use the A/B ai setting and make sure that the time is sufficient to complete at least the first level throughout the game.
+ The heuristics are detailed enough to guide play reasonably with just 1 or 2 severch levels - but therefore they do miss long-range strategy.
+"
+   )
+   ("NatalRules")
+   (version "1.3.12")
+   (classification "board/space/blocking")
+   (author "Dale W. Walton")   
+   (credit "Dale W. Walton")
+   (date "2024-02-25")
+  }
+ )
+
+ (graphics 
+  {
+    (board Style Graph)
+    (board Colour InnerEdges (colour 62 72 55 150))
+    (board Colour OuterEdges (colour 62 72 55 150))
+    (board Colour InnerVertices (colour LightGrey)) // (colour 170 160 140))
+    (board Colour OuterVertices (colour LightGrey)) // (colour 170 160 140))
+    (board StyleThickness InnerVertices 1.35)
+    (board StyleThickness OuterVertices 1.35)
+    (board StyleThickness OuterEdges .15)
+    (board StyleThickness InnerEdges .15)
+    (board Background fillColour:(colour HumanLight) edgeColour:(colour 170 160 140) scale:1.3)
+    (show Edges Diagonal <Board:diag> (colour 62 72 55))
+    (player Colour P2 (colour Grey))
+    (player Colour P1 (colour White)) 
+    ("WhalePieces")
+    (piece Scale "Disc" 0.8)
+    <Heuristics:isVisible>
+  }
+ )
+ (ai
+  (bestAgent "Alpha-Beta")
+  (heuristics
+   {
+    (score weight:20) //to prevent the abandonment of large scoring regions
+   }
+ )) 
+)
+
+(define "HeuristicScoreOf" // Note: converges to 2 * Territory when board is full
+ (+ 
+  (* 3 (count Pieces of:#1))
+  (+
+   (results
+    from:(union
+     (sites Empty) 
+     (intersection
+      (sites State 1) 
+      (sites Occupied by:(player #1))
+    ))
+    to:(sites Around (from) <Board:dir> if:(= #1 (who at:(to))) includeSelf:True)
+    (if (= (to) (from)) 1 2)
+))))
+
