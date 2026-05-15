@@ -1,0 +1,454 @@
+// Scrunch  - Based on Saïd Galdseid's game Serpent
+//------------------------------------
+// Looping snakes handling
+
+(define "Opponent" (- 3 (mover)))
+
+(define "StonesOfAround"
+ (sites Around #2 #3
+  if:(and
+   (= #1 (who at:(to)))
+   (!= (to) (var "WriggleFrom"))
+)))
+
+(define "SnakeCountOf"
+ (count Groups "DSnake" if:(is Mover (who at:(to))))
+)
+
+(define "SnakeCountOfx"
+ (count Sites
+  in:(sites
+   (results
+    from:(sites Occupied by:#1)
+    to:(regionSite (sites Group at:(from) "DSnake") index:0) 
+    (to)
+))))
+
+(define "NotFormingALoopOfAt"
+ (or
+  (> 2 (size Array (array ("StonesOfAround" #1 #2 "DSnake"))))
+  (= Infinity 
+   (count Steps  "DSnake"
+    (step "DSnake" (to if:(and { (!= (to) #2) (!= (to) (var "WriggleFrom")) (= #1 (who at:(to))) })))
+    (min (array ("StonesOfAround" #1 #2 "DSnake")))
+    (max (array ("StonesOfAround" #1 #2 "DSnake")))
+))))
+
+(define "ThereAreNoLoopsOrForksOfAt"
+ (and
+  {
+   (> 3 (count Pieces of:#1 in:(sites Around (#2) "DSnake" if:(!= (to) (var "WriggleFrom")))))
+   // Above is >=,  not > because the piece detects itself, as it has not moved yet.
+   ("NotFormingALoopOfAt" #1 (#2))
+   (all Values
+    (array
+     (sites Around #2 "DSnake"
+      if:(and
+       (= #1 (who at:(to)))
+       (!= (to) (var "WriggleFrom"))
+    )))
+    if:(and
+     {
+      (> 3 (count Pieces of:#1 in:(sites Around (value) "DSnake" if:(!= (to) (var "WriggleFrom")))))
+      ("NotFormingALoopOfAt" #1 (value))
+     }
+   ))
+  }
+))
+
+(define "Wriggle"
+ (do
+  (forEach Piece
+   (if
+    (and
+     (!= (from) (var "LT"))
+     (is In (from)
+      (sites Group at:(var "LT") "DSnake" if:(is Mover (who at:(to)))) 
+    ))
+    (do
+     (set Var "WriggleFrom" (from))
+     next:(move 
+      (from (from))
+      (to
+       (sites Around (from) "DSnake" if:(is Empty (to)))
+  )))))    
+  ifAfterwards:(and
+   {
+    (>= (score Mover) ("SnakeCountOf" Mover)) 
+    ("ThereAreNoLoopsOrForksOfAt" (mover) (last To)) 
+    ("ThereAreNoLoopsOrForksOfAt" (mover) (var "LT")) 
+   }
+ ))
+)
+
+(define "SizeOfSmallestMoverSnake"  (min (sizes Group "DSnake" Mover)))
+(define "SizeOfThisSnake" (size Array (array (sites))))
+
+(define "IsSnakeToRemove" // used for option <AddTo:isRequiredForThese>
+ (=
+  ("SizeOfThisSnake")
+  ("SizeOfSmallestMoverSnake") 
+))
+
+(define "NoSnakeMovesYet" (>= 0 (value Player Mover)))
+(define "FlagSnakeMoveMade" (set Value Mover 1))
+    
+(define "AddToSnakeIf" // see Options <AddTo:theseSnakes>
+ (do
+  (if
+   ("NoSnakeMovesYet") 
+   ("FlagSnakeMoveMade")
+   (then
+    (set Score Mover ("SnakeCountOf" Mover))
+  ))
+  next:(move Add 
+   (to
+    (sites Around
+     (forEach (sites Occupied by:Mover) if:#1) 
+      "DSnake" if:(is Empty (to))
+    )
+    (apply (set Var "LT" (to)))
+   )
+   (then
+    (and
+     ("OrientPieces")
+     (moveAgain)    
+  )))
+  ifAfterwards:(can Move ("Wriggle"))
+))
+
+(define "TheSnakeToRemove"  (sites Group at:(last From) "DSnake"))
+
+(define "RemoveImobilizedSnakes"
+ (forEach Group "DSnake" if:(is Mover (who at:(to)))
+  (if 
+   <AddTo:isRequiredForThese>
+   (move Select
+    (from (sites))
+    (then
+     (remove ("TheSnakeToRemove") count:1)
+  )))
+  (then
+   (set Score Mover
+    (count Groups "DSnake" if:(is Mover (who at:(to)))) 
+    (then
+     (if
+      (no Pieces Mover) 
+      (set Value Mover 0)
+      (if
+       (not (can Move ("AddToSnakeIf" <AddTo:theseSnakes>))) 
+       (moveAgain)
+)))))))
+
+(define "AddIsolatedStones"
+ (move Add
+  (to (sites Empty) 
+   if:(no Pieces Mover in:(sites Around (to) "DSnake"))
+  )
+  (then
+   (and
+    (set Score Mover ("SnakeCountOf" Mover))
+    ("OrientPieces")
+))))
+
+//--------------------------------------------------------- 
+// Main routine
+//------------------------------------
+
+(game "Scrunch" 
+ (players <Player:count>)
+ (equipment
+  {
+   (board <Board:type> use:Cell)
+   (piece "Disc" Each)
+  }
+ )
+ (rules
+  (play
+   (if
+    ("NewTurn")
+    (if
+     ("NoSnakeMovesYet")     
+     (priority
+      (if
+       (not (can Move ("AddToSnakeIf" <AddTo:theseSnakes>))) 
+       ("RemoveImobilizedSnakes")
+      )
+      (or     
+       ("AddIsolatedStones")        
+       ("AddToSnakeIf" <AddTo:theseSnakes>)   
+     ))
+     (priority
+      {
+       ("AddToSnakeIf" <AddTo:theseSnakes>)   
+       ("RemoveImobilizedSnakes")
+      }
+    ))
+    (priority
+     {
+      ("Wriggle")
+      ("RemoveImobilizedSnakes")
+     }
+     (then
+      (and
+       (set Score Mover ("SnakeCountOf" Mover))
+       ("OrientPieces")
+  )))))
+  (end 
+   {
+    <Player:end>
+   }
+)))
+
+(define "OrientPieces"
+ (set State at:(last To)
+  (if
+   (< 0
+    (count Sites
+     in:(difference
+//      (sites {(ahead (last To) N) (ahead (last To) S)})
+      (sites {(ahead (last To) NW) (ahead (last To) SE)})
+      (last To)
+   )))
+   0 1
+)))
+//----------------------------------
+(option "Restriction" <AddTo> args:{<theseSnakes> <isRequiredForThese>}
+ {
+  (item "Smallest Snake"
+   <(= (size Group at:(site) "DSnake") ("SizeOfSmallestMoverSnake"))> 
+   <("IsSnakeToRemove")> 
+   "Wriggle only the smallest of snakes"
+  )
+  (item "Any Snake" <(= (site) (site))> <True> "Wriggle any snake")
+ }
+)
+
+(option "Board" <Board> args:{ <type> <pieceA> <pieceO> }
+ {
+  (item "Hex 232323" <(hex Limping 2)> <"HexPieces"> <"HexPieces"> "Board: 232323 Hexagon")
+  (item "Hex3"       <(hex Hexagon 3)> <"HexPieces"> <"HexPieces"> "Board: 3 Hexagon")
+  (item "Hex 343434" <(hex Limping 3)> <"HexPieces"> <"HexPieces"> "Board: 343434 Hexagon")
+  (item "Hex4"       <(hex Hexagon 4)> <"HexPieces"> <"HexPieces"> "Board: 4 Hexagon")
+  (item "Hex 454545" <(hex Limping 4)> <"HexPieces"> <"HexPieces"> "Board: 454545 Hexagon")
+  (item "Hex5"       <(hex Hexagon 5)> <"HexPieces"> <"HexPieces"> "Board: 5 Hexagon")
+  (item "Hex 565656*" <(hex Limping 5)> <"HexPieces"> <"HexPieces"> "Board: 565656 Hexagon")*
+  (item "Hex6"       <(hex Hexagon 6)> <"HexPieces"> <"HexPieces"> "Board: 6 Hexagon")
+  (item "Hex7"       <(hex Hexagon 7)> <"HexPieces"> <"HexPieces"> "Board: 7 Hexagon")
+  (item "Snub-square" <(trim (dual (remove (dual (trim (dual (trim (dual (remove (dual (tiling T33434 7)) cells:{0..11 13 45 54 60 65..67 76..78 83..84 90..93 102..105 111..112 117..118 129..130 135 141 150 151 155 160 167..168 171..172 174..176 179..181 183..195})))))) vertices:{0 1 60 67 88})))>
+  <"CairoAPieces"> <"CairoOPieces"> "Snub-square")
+  (item "Snub-square - 129" <(trim (remove (dual (tiling T33434 7)) cells:{0..11 13 45 54 60 65..67 76..78 83..84 90..93 102..105 111..112 117..118 129..130 135 141 150 151 155 160 167..168 171..172 174..176 179..181 183..195}))>
+  <"CairoAPieces"> <"CairoOPieces">  "Snub-square - 129")
+ (item "Snub Square 4 R4"
+  <(trim (dual (remove (renumber (rotate 45 (tiling T33434 3)))
+   vertices:{61..47 43 42 35 34 27 26 19 18 11 10 3} 
+  )))>   
+  <"CairoA45Pieces"> <"CairoO45Pieces"> "Snub Square 4 R4")
+ (item "Snub Square 6 R4"
+  <(trim (dual (remove (renumber (rotate 45 (tiling T33434 4)))
+   vertices:{ 97..79 74 73 64 63 54 53 44 43 34 33 24 23 14 13 4 } 
+  )))>   
+  <"CairoA45Pieces"> <"CairoO45Pieces"> "Snub Square 6 R4")
+ (item "Snub Square 8 R4"
+  <(trim (dual (remove (renumber (rotate 45 (tiling T33434 5)))
+   vertices:{ 141..119 113 112 101 100 89 88 77 76 65 64 53 52 41 40 29 28 17 16 5 }
+  )))> 
+  <"CairoA45Pieces"> <"CairoO45Pieces"> "Snub Square 8 R4")
+ (item "Snub Square 10 R4"
+  <(trim (dual (remove (renumber (rotate 45 (tiling T33434 6)))
+   vertices:{ 193..167 160 159 146 145 132 131 118 117 104 103 90 89 76 75 62 61 48 47 34 33 20 19 6 }
+  )))> 
+  <"CairoA45Pieces"> <"CairoO45Pieces"> "Snub Square 10 R4")
+  (item "Square 9"  <(square 9)>  <"SquarePiecesA"> <"SquarePiecesO"> "Board & size: Square 11")
+  (item "Square 11"  <(square 11)>  <"SquarePiecesA"> <"SquarePiecesO"> "Board & size: Square 11")
+  (item "Square 13"  <(square 13)>  <"SquarePiecesA"> <"SquarePiecesO"> "Board & size: Square 13")
+ 
+ }
+)
+
+(define "PieceGraphicsA" <Board:pieceA>)
+(define "PieceGraphicsO" <Board:pieceO>)
+(define "HexPieces" (piece Foreground "Disc" image:"Disc" scale:1.1 offsetX:-1 offsetY:-1))
+(define "SquarePiecesO" (piece Foreground "Disc" image:"Disc" scale:1.1 offsetX:-1 offsetY:-1))
+(define "SquarePiecesA" (piece Foreground "Disc" image:"Square" scale:1.3 offsetX:-1 offsetY:-1))
+(define "CairoAPieces"
+ (piece Foreground "Disc" state:0 image:"Disc" scaleX:1.6 scaleY:1.1 offsetX:-1 offsetY:-5)
+ (piece Foreground "Disc" state:1 image:"Disc" scaleX:1.1 scaleY:1.6 offsetX:-5 offsetY:-1)
+)
+(define "CairoA45Pieces"
+ (piece Foreground "Disc" state:0 image:"Disc" scaleX:1.6 scaleY:1.1 rotation:315 offsetX:-1.5 offsetY:-4.5)
+ (piece Foreground "Disc" state:1 image:"Disc" scaleX:1.1 scaleY:1.6 rotation:315 offsetX:-5 offsetY:-.5)
+)
+ 
+(define "CairoOPieces"
+ (piece Foreground "Disc" state:0 image:"Disc" scaleX:.9 scaleY:1.2 offsetX:1 offsetY:-.5)
+ (piece Foreground "Disc" state:1 image:"Disc" scaleX:1.2 scaleY:.9 offsetX:-1 offsetY:1)
+)
+(define "CairoO45Pieces"
+ (piece Foreground "Disc" state:0 image:"Disc" scaleX:1 scaleY:1.1 rotation:45 offsetX:1 offsetY:-2)
+ (piece Foreground "Disc" state:1 image:"Disc" scaleX:1.1 scaleY:1 rotation:45 offsetX:0 offsetY:1)
+)
+(define "DSnake" <Direction:snake>)
+
+(option "Connectivity" <Direction> args:{<snake> <diag> <piece>}
+ {
+  (item "Ortho-Snakes" <Orthogonal>  <Hidden> <"PieceGraphicsO"> "Snakes are defined by Orthogonal connections." 
+  )
+  (item "Contact-Snakes" <Adjacent>  <ThinDashed> <"PieceGraphicsA"> "Snakes are defined by corner connections." 
+  )
+ }
+)
+
+(option "Players" <Player> args:{<count> <end>}
+ {
+  (item "2" <2>
+   <
+    (if
+     (and (< 2 (counter)) (no Pieces P1))
+     (result P1 Loss)
+    )
+    (if
+     (and (< 2 (counter)) (no Pieces P2))
+     (result P2 Loss)
+    )>
+  "Two Players"
+  )
+  (item "3" <3>
+   <
+    (if
+     (and (< 2 (counter)) (no Pieces P1))
+     (result P1 Loss)
+    )
+    (if
+     (and (< 2 (counter)) (no Pieces P2))
+     (result P2 Loss)
+    )
+    (if
+     (and (< 2 (counter)) (no Pieces P3))
+     (result P3 Loss)
+    )
+   >
+   "Three Players"
+  )
+  (item "3 Rebirth" <3>
+   <
+    (if
+     (and
+      {
+       (< 2 (counter)) 
+       (no Pieces P1)
+       (no Pieces P2)
+      }
+     )
+     (byScore)
+    )
+    (if
+     (and
+      {
+       (< 2 (counter)) 
+       (no Pieces P3)
+       (no Pieces P2)
+      }
+     )
+     (byScore)
+    )
+    (if
+     (and
+      {
+       (< 2 (counter)) 
+       (no Pieces P1)
+       (no Pieces P3)
+      }
+     )
+     (byScore)
+    )
+   >
+   "Three Players. 
+   When all your snakes have been eliminated, you begin the creation phase again on the next turn on which you are able to add an egg that can grow,-- provided that more than one player still has stones in play."
+  )
+ }
+)
+//----------------------------------
+
+(metadata
+ (info
+  {
+   (description "Scrunch a finite placement-capture game loosely inspired by Said Galdseid's game Serpent.
+    
+It is a two-phase blocking-annihilation game for two or more players. Eggs are placed in the Creation Phase, which ends independently for each player whenever they choose. 
+
+The Wriggling Phase is mainly characterized growth of the smallest of snakes. The growth must be accompanied by movement. When such growth is not possible for those snakes, they self-destruction. The player that survives longest wins.  A variant allows the choice of snakes without respect to size.
+
+The game is played on the cells of an initially empty hexagonal board. The recommended size is 4 or more cells per side.
+"
+   ) 
+   
+   (rules "Goal: Annihilation.
+  
+Definitions:
+- An 'egg' is a stone isolated from its own color.
+- A 'snake' is a group of connected stones of one color. An egg is a minimal snake.
+- A 'mutant' snake is a snake that contains a stone adjacent to more than 2 friendly stones.
+- The 'smallest of (a player's) snakes' is any snake that is as small as that player's smallest snake.
+
+Play
+Creation Phase
+Players alternately place eggs on isolated empty cells.
+
+The creation phase ends independently for each player, as soon as that player places a stone next to a friendly stone; after which that player may no longer use a turn to increase the number of their snakes.
+
+Note: The creation phase can also potentially end with a player's losing, due to the removal of all their eggs, when none of them is able to grow into a snake.
+
+Wriggling Phase 
+This phase always applies only to the smallest of friendly snakes a player has on the board.
+
+A turn for a player in this phase consists of either:
+A. The growth AND movement of a snake, if possible; - or else 
+B. The death and removal of one or more friendly snakes or eggs because they are incapable of growth and movement.
+
+Growth and Movement
+-- On your turn, you must first place a stone next to one of the smallest of your snakes. This new stone may extend a snake, merge two snakes, or temporarily create a mutant snake.
+
+-- Then you must move a different stone, which also belongs to the resultant snake, a single step to an empty space in any direction. If the placement had merged two or more snakes, the movement can redivide them. If the placement had caused a mutation, the movement must remedy it. 
+
+The result of this growth and movement must not leave any snake in a mutant form, nor may it increase the number of snakes in play.
+
+Death and Removal
+If growth and movement is not possible for any of your smallest of snakes, then you must remove dead snakes according to the selected removal option, shown below.
+
+You win when the other player(s) no longer have stones remaining in play."
+   )
+
+   (version "1.3.14")
+   (classification "board/space/blocking")
+   (author "Dale Walton")
+   (credit "Dale W. Walton")
+   (date "2026-05-14")
+  }
+ )
+ 
+ (graphics
+  {
+   (board Colour Phase0 (colour 250 200 150 120))
+   (board Colour OuterEdges (colour Black))
+   (board Colour InnerEdges (colour Black))
+   (board StyleThickness OuterEdges 1.5)
+   (board StyleThickness InnerEdges 0.4)
+   (board StyleThickness InnerVertices 0.4)
+   (board StyleThickness OuterVertices 0.4)
+   (show Edges Diagonal <Direction:diag> (colour 62 72 55))
+    
+   <Direction:piece>
+//   (piece Foreground "Disc" state:0 image:"Disc" scaleX:.9 scaleY:1.2 offsetX:1 offsetY:-.5)
+//   (piece Foreground "Disc" state:1 image:"Disc" scaleX:1.2 scaleY:.9 offsetX:-1 offsetY:1)
+//   (piece Foreground "Disc" state:0 image:"Disc" scaleX:1.6 scaleY:1.1 offsetX:-1 offsetY:-5)
+//   (piece Foreground "Disc" state:1 image:"Disc" scaleX:1.1 scaleY:1.6 offsetX:-5 offsetY:-1)
+   (piece Scale .10)
+   (player Colour P1 (colour DarkGrey))
+   (player Colour P2 (colour Cream))
+   (player Colour P3 (colour Red))
+//   (show Piece Value Middle scale:.5)
+//   (show Piece State scale:.7)
+  }
+))
+
