@@ -90,8 +90,9 @@
   ("SizeOfSmallestMoverSnake") 
 ))
 
-(define "NoSnakeMovesYet" (>= 0 (value Player Mover)))
-(define "FlagSnakeMoveMade" (set Value Mover 1))
+(define "NoSnakeMovesYet" (> 0 (value Player Mover)))
+(define "FlagSnakeMoveMade" (set Value Mover 2))
+(define "FlagReStartCreationFor" (set Value #1 1))
     
 (define "AddToSnakeIf" // see Options <AddTo:theseSnakes>
  (do
@@ -111,8 +112,10 @@
    )
    (then
     (and
-     ("OrientPieces")
-     (moveAgain)    
+     { 
+      <Board:pieceOrienting> // ("OrientPieces")
+      (moveAgain)
+     }    
   )))
   ifAfterwards:(can Move ("Wriggle"))
 ))
@@ -134,7 +137,7 @@
     (then
      (if
       (no Pieces Mover) 
-      (set Value Mover 0)
+      (set Value Mover 1)  // 0 to immediately reset; 1 to force a pass first; 2 is Wriggle phase
       (if
        (not (can Move ("AddToSnakeIf" <AddTo:theseSnakes>))) 
        (moveAgain)
@@ -143,12 +146,25 @@
 (define "AddIsolatedStones"
  (move Add
   (to (sites Empty) 
-   if:(no Pieces Mover in:(sites Around (to) "DSnake"))
+   if:(no Pieces Mover in:(sites Around (to) "DSnake"))   
   )
   (then
    (and
-    (set Score Mover ("SnakeCountOf" Mover))
-    ("OrientPieces")
+    {
+     (set Score Mover ("SnakeCountOf" Mover))
+     <Board:pieceOrienting> //("OrientPieces")
+     (if
+      (= 0
+       (count Sites
+        in:(sites To
+         (add 
+          (to
+           (sites Empty) 
+           if:(no Pieces Mover in:(sites Around (to) "DSnake"))
+      )))))
+      ("FlagSnakeMoveMade")
+     )
+    }
 ))))
 
 //--------------------------------------------------------- 
@@ -169,15 +185,17 @@
     ("NewTurn")
     (if
      ("NoSnakeMovesYet")     
-     (priority
-      (if
-       (not (can Move ("AddToSnakeIf" <AddTo:theseSnakes>))) 
-       ("RemoveImobilizedSnakes")
-      )
-      (or     
-       ("AddIsolatedStones")        
-       ("AddToSnakeIf" <AddTo:theseSnakes>)   
-     ))
+     (or 
+      (priority  
+       { 
+        ("AddIsolatedStones")      
+        ("RemoveImobilizedSnakes")
+//        (move Set NextPlayer (array {(next)}) (then ("FlagReStartCreation")))
+//        (do ("FlagReStartCreation") next:(move Pass)) // pass once before rebirth
+       }
+      )   
+      ("AddToSnakeIf" <AddTo:theseSnakes>)   
+     )
      (priority
       {
        ("AddToSnakeIf" <AddTo:theseSnakes>)   
@@ -191,23 +209,27 @@
      }
      (then
       (and
-       (set Score Mover ("SnakeCountOf" Mover))
-       ("OrientPieces")
-  )))))
+       {
+        (set Score Mover ("SnakeCountOf" Mover))
+        <Board:pieceOrienting> // ("OrientPieces")
+       }
+    )))
+    (then (if (> 2 (value Player Next)) (set Value Next (max -1 (- (value Player Next) 1)))))
+  ))
   (end 
    {
     <Player:end>
    }
 )))
 
-(define "OrientPieces"
+(define "Orient"
  (set State at:(last To)
   (if
    (< 0
     (count Sites
      in:(difference
 //      (sites {(ahead (last To) N) (ahead (last To) S)})
-      (sites {(ahead (last To) NW) (ahead (last To) SE)})
+      (sites {(ahead (last To) #1) (ahead (last To) #2)})
       (last To)
    )))
    0 1
@@ -224,44 +246,45 @@
  }
 )
 
-(option "Board" <Board> args:{ <type> <pieceA> <pieceO> }
+(option "Board" <Board> args:{ <type> <pieceA> <pieceO> <pieceOrienting> }
  {
-  (item "Hex 232323" <(hex Limping 2)> <"HexPieces"> <"HexPieces"> "Board: 232323 Hexagon")
-  (item "Hex3"       <(hex Hexagon 3)> <"HexPieces"> <"HexPieces"> "Board: 3 Hexagon")
-  (item "Hex 343434" <(hex Limping 3)> <"HexPieces"> <"HexPieces"> "Board: 343434 Hexagon")
-  (item "Hex4"       <(hex Hexagon 4)> <"HexPieces"> <"HexPieces"> "Board: 4 Hexagon")
-  (item "Hex 454545" <(hex Limping 4)> <"HexPieces"> <"HexPieces"> "Board: 454545 Hexagon")
-  (item "Hex5"       <(hex Hexagon 5)> <"HexPieces"> <"HexPieces"> "Board: 5 Hexagon")
-  (item "Hex 565656*" <(hex Limping 5)> <"HexPieces"> <"HexPieces"> "Board: 565656 Hexagon")*
-  (item "Hex6"       <(hex Hexagon 6)> <"HexPieces"> <"HexPieces"> "Board: 6 Hexagon")
-  (item "Hex7"       <(hex Hexagon 7)> <"HexPieces"> <"HexPieces"> "Board: 7 Hexagon")
+  (item "Hex 232323" <(hex Limping 2)> <"HexPieces"> <"HexPieces"> <> "Board: 232323 Hexagon")
+  (item "Hex3"       <(hex Hexagon 3)> <"HexPieces"> <"HexPieces"> <> "Board: 3 Hexagon")
+  (item "Hex 343434" <(hex Limping 3)> <"HexPieces"> <"HexPieces"> <> "Board: 343434 Hexagon")
+  (item "Hex4"       <(hex Hexagon 4)> <"HexPieces"> <"HexPieces"> <> "Board: 4 Hexagon")
+  (item "Hex 454545" <(hex Limping 4)> <"HexPieces"> <"HexPieces"> <> "Board: 454545 Hexagon")
+  (item "Hex5"       <(hex Hexagon 5)> <"HexPieces"> <"HexPieces"> <> "Board: 5 Hexagon")
+  (item "Hex 565656*" <(hex Limping 5)> <"HexPieces"> <"HexPieces"> <("Orient" N S)> "Board: 565656 Hexagon")*
+  (item "Hex6"       <(hex Hexagon 6)> <"HexPieces"> <"HexPieces"> <> "Board: 6 Hexagon")
+  (item "Hex7"       <(hex Hexagon 7)> <"HexPieces"> <"HexPieces"> <> "Board: 7 Hexagon")
   (item "Snub-square" <(trim (dual (remove (dual (trim (dual (trim (dual (remove (dual (tiling T33434 7)) cells:{0..11 13 45 54 60 65..67 76..78 83..84 90..93 102..105 111..112 117..118 129..130 135 141 150 151 155 160 167..168 171..172 174..176 179..181 183..195})))))) vertices:{0 1 60 67 88})))>
-  <"CairoAPieces"> <"CairoOPieces"> "Snub-square")
+  <"CairoAPieces"> <"CairoOPieces"> <("Orient" N S)> "Snub-square")
   (item "Snub-square - 129" <(trim (remove (dual (tiling T33434 7)) cells:{0..11 13 45 54 60 65..67 76..78 83..84 90..93 102..105 111..112 117..118 129..130 135 141 150 151 155 160 167..168 171..172 174..176 179..181 183..195}))>
-  <"CairoAPieces"> <"CairoOPieces">  "Snub-square - 129")
+  <"CairoAPieces"> <"CairoOPieces"> <("Orient" N S)>  "Snub-square - 129")
  (item "Snub Square 4 R4"
   <(trim (dual (remove (renumber (rotate 45 (tiling T33434 3)))
    vertices:{61..47 43 42 35 34 27 26 19 18 11 10 3} 
   )))>   
-  <"CairoA45Pieces"> <"CairoO45Pieces"> "Snub Square 4 R4")
+  <"CairoA45Pieces"> <"CairoO45Pieces"> <("Orient" NW SE)> "Snub Square 4 R4")
  (item "Snub Square 6 R4"
   <(trim (dual (remove (renumber (rotate 45 (tiling T33434 4)))
    vertices:{ 97..79 74 73 64 63 54 53 44 43 34 33 24 23 14 13 4 } 
   )))>   
-  <"CairoA45Pieces"> <"CairoO45Pieces"> "Snub Square 6 R4")
+  <"CairoA45Pieces"> <"CairoO45Pieces"> <("Orient" NW SE)> "Snub Square 6 R4")
  (item "Snub Square 8 R4"
   <(trim (dual (remove (renumber (rotate 45 (tiling T33434 5)))
    vertices:{ 141..119 113 112 101 100 89 88 77 76 65 64 53 52 41 40 29 28 17 16 5 }
   )))> 
-  <"CairoA45Pieces"> <"CairoO45Pieces"> "Snub Square 8 R4")
+  <"CairoA45Pieces"> <"CairoO45Pieces"> <("Orient" NW SE)> "Snub Square 8 R4")
  (item "Snub Square 10 R4"
   <(trim (dual (remove (renumber (rotate 45 (tiling T33434 6)))
    vertices:{ 193..167 160 159 146 145 132 131 118 117 104 103 90 89 76 75 62 61 48 47 34 33 20 19 6 }
   )))> 
-  <"CairoA45Pieces"> <"CairoO45Pieces"> "Snub Square 10 R4")
-  (item "Square 9"  <(square 9)>  <"SquarePiecesA"> <"SquarePiecesO"> "Board & size: Square 11")
-  (item "Square 11"  <(square 11)>  <"SquarePiecesA"> <"SquarePiecesO"> "Board & size: Square 11")
-  (item "Square 13"  <(square 13)>  <"SquarePiecesA"> <"SquarePiecesO"> "Board & size: Square 13")
+  <"CairoA45Pieces"> <"CairoO45Pieces"> <("Orient" NW SE)> "Snub Square 10 R4")
+  (item "Square 5"  <(square 5)>  <"SquarePiecesA"> <"SquarePiecesO"> <> "Board & size: Square 5")
+  (item "Square 9"  <(square 9)>  <"SquarePiecesA"> <"SquarePiecesO"> <> "Board & size: Square 9")
+  (item "Square 11"  <(square 11)>  <"SquarePiecesA"> <"SquarePiecesO"> <> "Board & size: Square 11")
+  (item "Square 13"  <(square 13)>  <"SquarePiecesA"> <"SquarePiecesO"> <> "Board & size: Square 13")
  
  }
 )
@@ -364,7 +387,7 @@
     )
    >
    "Three Players. 
-   When all your snakes have been eliminated, you begin the creation phase again on the next turn on which you are able to add an egg that can grow,-- provided that more than one player still has stones in play."
+   When all your snakes have been eliminated, you must pass on your next turn. After you pass, You begin the creation phase again on the next turn on which you are able to add an egg that can grow,-- provided that more than one player still has stones in play."
   )
  }
 )
@@ -395,12 +418,16 @@ Play
 Creation Phase
 Players alternately place eggs on isolated empty cells.
 
-The creation phase ends independently for each player, as soon as that player places a stone next to a friendly stone; after which that player may no longer use a turn to increase the number of their snakes.
+The creation phase ends independently for each player, as soon as:
+1: no placement is possible, or
+2. the player places a stone next to a friendly stone.
 
-Note: The creation phase can also potentially end with a player's losing, due to the removal of all their eggs, when none of them is able to grow into a snake.
+Once the creation phase ends, the player may no longer use a turn to increase the number of their snakes.
+
+Note: If you cannot grow an egg into a snake when your creation phase ends, all your pieces are immediaely removed. (see wriggling phase below)
 
 Wriggling Phase 
-This phase always applies only to the smallest of friendly snakes a player has on the board.
+In the standard game you are only allowed to wriggle the smallest of the snakes that you have on the board.
 
 A turn for a player in this phase consists of either:
 A. The growth AND movement of a snake, if possible; - or else 
@@ -414,7 +441,7 @@ Growth and Movement
 The result of this growth and movement must not leave any snake in a mutant form, nor may it increase the number of snakes in play.
 
 Death and Removal
-If growth and movement is not possible for any of your smallest of snakes, then you must remove dead snakes according to the selected removal option, shown below.
+If growth and movement is not possible for any of the snakes that you are allowed to wriggle, then you must remove your smallest dead snake and continue removing such snakes until there is a snake that you could wriggle on your next turn.
 
 You win when the other player(s) no longer have stones remaining in play."
    )
@@ -429,7 +456,7 @@ You win when the other player(s) no longer have stones remaining in play."
  
  (graphics
   {
-   (board Colour Phase0 (colour 250 200 150 120))
+   (board Colour Phase0 (colour 250 200 150 200))
    (board Colour OuterEdges (colour Black))
    (board Colour InnerEdges (colour Black))
    (board StyleThickness OuterEdges 1.5)
@@ -444,9 +471,9 @@ You win when the other player(s) no longer have stones remaining in play."
 //   (piece Foreground "Disc" state:0 image:"Disc" scaleX:1.6 scaleY:1.1 offsetX:-1 offsetY:-5)
 //   (piece Foreground "Disc" state:1 image:"Disc" scaleX:1.1 scaleY:1.6 offsetX:-5 offsetY:-1)
    (piece Scale .10)
-   (player Colour P1 (colour DarkGrey))
-   (player Colour P2 (colour Cream))
-   (player Colour P3 (colour Red))
+   (player Colour P1 (colour 50 50 50 200)) //(colour DarkGrey))
+   (player Colour P2 (colour 255 255 230 200)) // Cream))
+   (player Colour P3 (colour 255 0 0 200)) // Red))
 //   (show Piece Value Middle scale:.5)
 //   (show Piece State scale:.7)
   }
