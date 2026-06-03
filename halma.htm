@@ -68,7 +68,8 @@ HALMA FAMILY</font></strong></h1>
   </tr>
 </table>
 <p align="left"><font size="3" face="Arial">The goal is stated this way to
-prevent that players keep some of their stones on their own base, to achieve trivial draws.
+prevent that players keep some of their stones on their own base, to achieve trivial draws, 
+and was proposed by David Parlett.
 However, other trivial draws are still possible, check the second example. In
 this case, a further fix to the goal must be added. A proposal from <a href="mailto:ploog@mathematik.hu-berlin.de">David
 Ploog</a> is the following:</font></p>
@@ -125,6 +126,54 @@ boardgv2diag("ur,8,8,5xxX/5xx:/5xxx/5x.x/8/8/8/8");
       </td>
     </tr>
 </table>
+<p><font face="Arial">As a
+<a href="https://boardgamegeek.com/thread/3706389/unspoiling-halma-redux">
+summary</a>, here are the rules I found that try to deal with this drawish 
+problem:<br>
+<br>
+A) If one player has left his base, the other player must also leave his base 
+(or move towards the exit of his base). Other moves are not permitted. (Ralf 
+Gering&#39;s quoting a rule practiced in Germany)<br>
+B) Any piece in a player&#39;s home-base must make progress towards the enemy camp 
+whenever this is possible by jumping over an enemy piece (Zillions&#39; rule quoting 
+Sid Sackson)<br>
+C) Budget of 50 moves (for the 10x10 variant) to empty home-base, with no 
+come-back moves to home-base (Dan Troyka&#39;s proposal, Brainking&#39;s ruleset)<br>
+D) Forward moves in the home-base are mandatory while it is not empty<br>
+E) Forbid backward moves while home-base is not empty<br>
+F1) A player wins if he cannot move any of his stones nearer to the opposing 
+corner and if all of his stones left his base (David Ploog&#39;s proposal)<br>
+F2) Player wins when further forward movement is impossible due to blockages in 
+his opponent&#39;s starting area<br>
+F3) The game is won when all the available points within the opposite home-base 
+are occupied<br>
+G) If a player is prevented from winning because of the presence of an opposing 
+peg in the destination area, the player is entitled to swap the opposing peg 
+with that of his own peg. This applies for both a single hole move and any part 
+of a hopping move.<br>
+H) Collection of rules at Super Halma&#39;s AGM article by Andrew Perkins<br>
+I) No friendly stone inside the opponent home-base can leave again. After 50 
+moves (again, for the 10x10 variant) without entering new stones at the 
+opponent&#39;s home-base, the game ends. The player with more pieces inside the 
+opponent&#39;s home-base wins the game, otherwise it is a draw. [João Neto]<br>
+J) A player with a stone in the destination zone wins when there is no path to a 
+space next to his largest group of stones inside the destination from one of his 
+other stones, where a path is any series of steps that does not cross the 
+opponent&#39;s stones twice consecutively. [Dale Walton]<br>
+<br>
+I find rules A/B/C the better ones (considering both simplicity and efficiency), 
+while D/E are too intrusive of Halma&#39;s rules, and F123/G/J feel too hard to code 
+(assuming they are well-defined). To make matters worse, Andrew Perkins shows 
+examples that cannot be solved by A-G, and his own proposal H seems excessively 
+complex.</font></p>
+<p><font face="Arial">I implemented Halma (and Super-Halma) at
+<a href="https://play.abstractplay.com/games/halma">AbstractPlay</a> using the 
+following ruleset: (a) a player wins if the opposite home-base is complete with 
+at least one friendly stone (David Parlett&#39;s criteria); (b) Any piece in the 
+player&#39;s home-base must make progress towards the enemy camp whenever this is 
+possible by jumping over an enemy piece. (Zillions rule, to remove drawish 
+strategies); (c) No stone can return to its home-base.</font></p>
+<p align="center">§</p>
 <p><font size="3" face="Arial">There is a ZRF to play Halma
 and (Chinese Checkers) with <a href="http://www.zillionsofgames.com">Zillions</a>,
 both games are included in the Zillions original game set. Another ZRF available 

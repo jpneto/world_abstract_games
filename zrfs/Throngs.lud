@@ -6,11 +6,16 @@
 
 
 
-(define "ValueEnemyAtSite" (min -1 (- <Grid:enemySite> (* <Strength:amount> <Grid:boostFactor>))))
-(define "ValueMoverAtSite" (max 1 (+ <Grid:friendSite> (* <Strength:amount> <Grid:boostFactor>))))     
-(define "ValueEnemyAroundSite" <Grid:enemyVicinity>)   
-(define "ValueMoverAroundSite" <Grid:friendVicinity>)   
+(define "ValueMoverAtSite"
+ (if
+  (> 0 <Strength:type> )
+  0  
+  (* <Grid:boostFactor> (+ <Strength:amount> (* <Grid:siteInfluence>  <Strength:type> )))
+))
 
+(define "ValueMoverAroundSite" <Grid:boostFactor> )
+(define "ValueEnemyAtSite" (- 0 ("ValueMoverAtSite")))
+(define "ValueEnemyAroundSite" (- 0 ("ValueMoverAroundSite")))
 (define "NeighborCountOfAt" 
  (+
   {
@@ -108,7 +113,7 @@
  (if (> 0 (counter)) 
   (or
    {
-    (move Add (to (sites Around (sites Outer) if:(no Pieces All in:(sites Around (to)))))) // (intersection (sites Outer) (union (sites Row (- (count Rows) 1)) (sites Row (- (count Rows) 2))))))
+    (move Add (to (sites Around (sites Outer) if:(no Pieces All in:(sites Around (to) includeSelf:True))))) // (intersection (sites Outer) (union (sites Row (- (count Rows) 1)) (sites Row (- (count Rows) 2))))))
     (move Propose "Start With Pie"
      (then
       (seq
@@ -140,7 +145,7 @@
    (if (> 1 (counter))
     (move Add
      (to
-      (sites Around (sites Outer) if:(no Pieces All in:(sites Around (to))))// (union (sites Row 0) (sites Row 1)))
+      (sites Around (sites Outer) if:(no Pieces All in:(sites Around (to) includeSelf:True)))// (union (sites Row 0) (sites Row 1)))
     ))
     ("MakeADecisionMove")
 ))))
@@ -239,6 +244,44 @@
 // Hex 7-8  variants: <{143}> <{27 37}> ;  <{127}> <{40 47}>  and not as good - <{12}> <{103 111}> ;
 // ---------------------------------------------
 
+(define "SmallBoardSharpTeeth" <Grid:smallSharpTeeth>)
+(define "LargeBoardSharpTeeth" <Grid:largeSharpTeeth>)
+(define "SmallBoardDullTeeth" <Grid:smallDullTeeth>)
+(define "LargeBoardDullTeeth" <Grid:largeDullTeeth>)
+(define "SmallBoard" <Grid:smallType>)
+(define "LargeBoard" <Grid:largeType>)
+
+(option "Board" <Board> args:{ <type> }
+ {
+  (item "Small and Plain" <("SmallBoard")> "
+  Small Board, 
+  Edges as smooth as possible.")
+  (item "Large and Plain" <"LargeBoard"> "
+  Large Board, 
+  Edges as smooth as possible.")
+  (item "Small and Spiky" <("SmallBoardSharpTeeth")> "
+   Small Board, 
+   Edges with sharp spikes that are only secure as end points of secure lines, or part of a triangle or loop."
+  )*
+  (item "Large and Spiky" <"LargeBoardSharpTeeth"> "
+   Large Board, 
+   Edges with sharp spikes that are only secure as end points of secure lines, or part of a triangle or loop."
+  )
+  (item "Small and Knobby" <("SmallBoardDullTeeth")> "
+   Small Board, 
+   Knobby edges that assist in stabilizing pairs of pieces.
+   -- Regular grids (3,4,6,8): Dull cogs.
+   -- Snub Grids (5,7): Bulges."
+  )
+  (item "Large and Knobby" <"LargeBoardDullTeeth"> "
+   Large Board, 
+   Knobby edges that assist in stabilizing pairs of pieces.
+   -- Regular grids (3,4,6,8): Dull cogs.
+   -- Snub Grids (5,7): Bulges."
+  )
+ }
+)
+
 (define "GridVicinity"
  (difference
   (sites Around #1 Adjacent)
@@ -257,7 +300,7 @@
   <smallType> <largeType>
   <smallSharpTeeth> <largeSharpTeeth>  
   <smallDullTeeth> <largeDullTeeth> 
-  <friendVicinity> <friendSite> <enemyVicinity> <enemySite> <boostFactor>
+  <siteInfluence> <boostFactor>
   }
  {
   (item "3"
@@ -265,125 +308,150 @@
    <"Grid3Plain73"> <"Grid3Plain121"> 
    <"Grid3Sharp69"> <"Grid3Sharp117"> 
    <"Grid3Dull61"> <"Grid3Dull97"> 
-   <2> <1> <-2> <-1> <1>   
-   "Throngs-3 (Nodes of Hex Grid)
-    Vicinity influence is 2; center influence is 1"
+   <0> <2>   
+   "Uses an hex grid to define the nodes for play (Throngs-3)
+   
+   ---------------------------------
+    Calculating Influence
+    
+    NOTE WELL: For this board, the value of each stone is 2.
+    "
   )
   (item "4"
    <"GridVicinity"> <"CannotCrossConsecutiveOf"> <Diagonal Hidden>
    <"Grid4Plain81"> <"Grid4Plain121">
    <("Grid4Sharp" 6 {60 55 5 0})> <("Grid4Sharp" 8 {112 105 7 0})>
    <("Grid4Dull" 9 "VertexDull73" "EdgeDull73")> <("Grid4Dull" 11 "VertexDull113" "EdgeDull113")> 
-   <2> <1> <-2> <-1> <1>
-   "Throngs-4 (Nodes of Square Grid)
-    Vicinity influence is 2; center influence is 1"
+   <0> <2>
+   "Uses a square grid to define the nodes for play (Throngs-4)
+   ---------------------------------
+    Calculating Influence
+    
+    NOTE WELL: For this board, the value of each stone is 2.
+    "
   )
   (item "5"
    <"GridVicinity"> <"CannotCrossConsecutiveOf"> <Diagonal Hidden> 
    <"Grid5Plain81"> <"Grid5Plain121">
    <"Grid5Sharp55"> <"Grid5Sharp107"> 
    <"Grid5Dull59"> <"Grid5Dull115"> 
-   <1> <1> <-1> <-1> <1>
-   "Throngs-5 (Nodes of Snub-square Grid)
-    Vicinity influence is 1; center influence is 1"
-  )
+   <1> <1>
+   "Uses a snub-square grid to define the nodes for play (Throngs-5)
+   
+   ---------------------------------
+    Calculating Influence
+    "
+  )*
   (item "6"
    <"GridVicinity"> <"CannotCrossConsecutiveOf"> <Diagonal Hidden> 
    <"Grid6Plain61"> <"Grid6Plain127">
    <"Grid6Sharp55"> <"Grid6Sharp121">
    <"Grid6Dull85"> <"Grid6Dull133"> 
-   <1> <2> <-1> <-2> <1> // <1> <2> <-1> <-1> <2>
-   "Throngs-6 (Nodes of Triangle Grid)
-    Vicinity influence is 1; center influence is 2."
-  )**
+   <2> <1> 
+   "Uses a triangular grid to define the nodes for play (Throngs-6)
+   
+   ---------------------------------
+    Calculating Influence
+    "
+  )
   (item "7"
    <"GridVicinity"> <"CannotCrossConsecutiveOf"> <Outer Thin> 
    <"Grid7Plain81"> <"Grid7Plain121">
    <"Grid7Sharp59"> <"Grid7Sharp115"> 
    <"Grid7Dull59"> <"Grid7Dull115"> 
-   <1> <2> <-1> <-2> <1>
-   "Throngs-7 (Snub-square Grid - diagonal connections)
-    Vicinity influence is 1; center influence is 2"
+   <2> <1>
+   "Uses a snub-square grid with diagonal connections  to define the nodes for play (Throngs-7)
+   
+   ---------------------------------
+    Calculating Influence
+    "
   )
   (item "8"
    <"GridVicinity"> <"CannotCrossConsecutiveOf"> <Outer Thin> 
    <"Grid8Plain61"> <"Grid8Plain113">   
    <("Grid8Sharp" 6 {60 55 5 0})> <("Grid8Sharp" 8 {112 105 7 0})> // 57 and 107
    <("Grid8Dull" 9 "VertexDull73" "EdgeDull73")> <("Grid8Dull" 11 "VertexDull113" "EdgeDull113")> 
-   <1> <3> <-1> <-3> <1>
-   "Throngs-8 (Square Grid with diagonals)
-    Vicinity influence is 1; center influence is 3"
+   <3> <1>
+   "Uses a square grid with diagonals to define the nodes for play (Throngs-8)
+   
+   ---------------------------------
+    Calculating Influence
+    "
    )
  }
 )
 
-(define "SmallBoardSharpTeeth" <Grid:smallSharpTeeth>)
-(define "LargeBoardSharpTeeth" <Grid:largeSharpTeeth>)
-(define "SmallBoardDullTeeth" <Grid:smallDullTeeth>)
-(define "LargeBoardDullTeeth" <Grid:largeDullTeeth>)
-(define "SmallBoard" <Grid:smallType>)
-(define "LargeBoard" <Grid:largeType>)
-
-(option "Board" <Board> args:{ <type> }
+(option "Influence" <Strength> args:{<amount> <type>}
  {
-  (item "Small and Plain" <("SmallBoard")> "
-  Small Board, Edges as smooth as possible.")
-  (item "Large and Plain" <"LargeBoard"> "
-  Large Board, Edges as smooth as possible.")
-  (item "Small and Spiky" <("SmallBoardSharpTeeth")> "
-   Small Board, 
-   Having edges with sharp spikes that are only secure as end points of secure lines, or part of a triangle or loop."
-  )
-  (item "Large and Spiky" <"LargeBoardSharpTeeth"> "
-   Large Board, 
-   Having edges with sharp spikes that are only secure as end points of secure lines, or part of a triangle or loop."
-  )
-  (item "Small and Knobby" <("SmallBoardDullTeeth")> "
-   Small Board, 
-   Having knobby edges that assist in stabilizing pairs of pieces.
-   -- Regular grids (3,4,6,8): Dull cogs.
-   -- Snub Grids (5,7): Bulges."
-  )
-  (item "Large and Knobby" <"LargeBoardDullTeeth"> "
-   Large Board, 
-   Having knobby edges that assist in stabilizing pairs of pieces.
-   -- Regular grids (3,4,6,8): Dull cogs.
-   -- Snub Grids (5,7): Bulges."
-  )
- }
-)
-
-(option "Center Influence" <Strength> args:{<amount>}
- {
-  (item "No Boost" <0> 
-  ""
-  )**
-  (item "Boost by 1" <1> "
-   Center Boost:
-   Center influence is increased by 1 over the value stated above.
-   This stabilizes against attacks on: 
-   Grid 3 5 or 6, for pairs next to a single enemy;
-   Grid 5 or 6, for singletons next to 2 enemies;
-   Grid 8, for angles and mid-lines already surrounded.
-   
-   Also can strengthen edge stability.")
-  (item "Weaken by 1" <-1> "
-   Center Weakening:
-   Center influence is reduced by 1 from the value stated above.
-   This increases vulnerability to capture for:
-   Grid 3, isolated singletons;
-   Grid 3, pairs next to 1 enemy;
-   Grid 4 or 5, singletons next to 1 enemy;
-  
-   Grid 4-7, angles and mid-lines when surrounded;
-   (Grid 8 is already vulnerable)
-  
-   Grid 5, pairs next to 2 enemies; 
-   Grid 6 or 7, singletons next to 2 enemies;   
-   Grid 6 7 or 8, pairs next to 3 enemies;
+  (item "Standard Center Values" <0> <1>
+   "Influence is calculated as the combined values of all stones within 1 step of the chosen location:
     
-   It also can affect edge vulnerabilities.
-  ")
+   Your stones count positive. 
+   Enemy stones count negative. 
+  
+   According to the grid you are playing on, use the table below to determine the influence values for:
+   -- the stone at the location itself ('Center'), and 
+   -- the influence value for the stones one step away ('Adjacent'). 
+
+--------------------------------------------
+Table of Influence for the Different Grids
+Grid Center Adjacent 
+#3 ..... 0 ...... 2    -- Nodes of hexagon grid
+#4 ..... 0 ...... 2    -- Nodes of square grid
+#5 ..... 1 ...... 1    -- Nodes of snub-square grid (triangle-square grid)
+#6 ..... 2 ...... 1    -- Nodes of triangular grid
+#7 ..... 2 ...... 1    -- Nodes of snub-square grid (diagonal connections)
+#8 ..... 3 ...... 1    -- Nodes of square grid (diagonal connections)
+
+Note: These values are chosen to allow any stones between two friendly stones to be secure anywhere on the board for grids 3,5, 6, and  for three neighbor stones to be secure on grids 4,7, and 8.
+This encourages formations with thin connections to the edge or between groups.
+
+-------------------------------------------
+   "
+  )*
+  (item "Boosted Center values" <1> <1>
+   "Influence is calculated as the combined values of all stones within 1 step of the chosen location:
+    
+   Your stones count positive. 
+   Enemy stones count negative. 
+  
+   From the table below, find the influence value of the center stone (if any) at the location, and the influence value for the stones one step away. 
+
+--------------------------------------------
+Table of Influence for the Different Grids
+Grid Center Adjacent 
+#3 ..... 2 ...... 2    -- Nodes of hexagon grid
+#4 ..... 2 ...... 2    -- Nodes of square grid
+#5 ..... 2 ...... 1    -- Nodes of snub-square grid (triangle-square grid)
+#6 ..... 3 ...... 1    -- Nodes of triangular grid
+#7 ..... 3 ...... 1    -- Nodes of snub-square grid (diagonal connections)
+#8 ..... 4 ...... 1    -- Nodes of square grid (diagonal connections)
+
+Note: These values are chosen to allow any stones between two friendly stones to be secure anywhere on the board for grids 3 through 8, and  for pairs to be safe on any edge.
+This encourages edge invasions an formations with thin connections to the edge or between groups.
+-------------------------------------------
+   "
+  )
+  (item "Center Not Counted" <1> <-1>
+   "Influence is calculated as the combined values of the stones that are 1 step away from the chosen location: 
+   
+   Your stones count positive. 
+   Enemy stones count negative.  
+   Do not include the contents of the location itself, if any.
+
+This option means that an isolated stone next to an enemy can always be captured.
+   ---------------------------------
+   "
+  )
+  (item "Center Equal to Adjacent" <1> <0>
+   "Influence is calculated as the combined values of all stones within 1 step of the chosen location: 
+   
+   Your stones count positive. 
+   Enemy stones count negative. 
+   Include the stone at the location itself, if any.
+   ---------------------------------
+   "
+  )
  }
 )
 
@@ -410,6 +478,7 @@
    (show Symbol text:"8" ("AtSitesInfluence" 8))
    (show Symbol text:"9" ("AtSitesInfluence" 9))
    >
+   <>
    "Help: Mover's pieces are labled with their action potential"
   )
   (item "Show Both" 
@@ -479,6 +548,7 @@ Additionally, due to the fact that movenent depends on local influence, the geom
 The result is this modified offering of a family of Throngs games called: 'Throngs on the Grid'
       "
    ) 
+   
    (rules 
 "Goal: A player's overall goal is to achieve a majority of stones when the board is full. 
     
@@ -488,20 +558,7 @@ Alternatively, the first player may ask the 2nd player to make a pie offer of 3 
 
 Play
 
-To start your turn, choose a location with positive influence, as calculated based on the grid you are playing on, using the table of influence below. The amount of this influence will limit how far your stone will be able to move. 
-
---------------------------------------------
-Table of Influence for the Different Grids
-Grid Center Adjacent 
-#3 ..... 0 ...... 2    -- Nodes of hexagon grid
-#4 ..... 2 ...... 2    -- Nodes of square grid
-#5 ..... 1 ...... 1    -- Nodes of snub-square grid (triangle-square grid)
-#6 ..... 2 ...... 1    -- Nodes of triangular grid
-#7 ..... 2 ...... 1    -- Nodes of snub-square grid (diagonal connections)
-#8 ..... 3 ...... 1    -- Nodes of square grid (diagonal connections)
-
-Influence is calculated as the combined values of your stones minus the values of your opponent's stones, in the area around the location to be played. From the table find the influence value of the center stone (if any) at the location, and the influence value for all the stones one step away.
--------------------------------------------
+To start your turn, choose a location with positive influence (see Calulating Influence under the 'Option' for your board below). The amount of this influence will limit how far your stone will be able to move.
 
 Depending on the location chosen, either:
 -- Place a new active stone to the empty location;
@@ -514,8 +571,10 @@ Movement restriction:
 The stone may not move across two enemy stones in succession.
 
 Note: There are also two restrictions that prevent stalling moves:
--- You are not allowed to move your existing stone to a location where you could simply place a new stone.
 -- On a capturing turn, you are not allowed to move your stone to a location where it may then be captured on the opponent's next turn.
+-- You are not allowed to move your existing stone to a location where you could simply place a new stone. 
+
+(These restrictions might prevent some starting locations from being selected.)
 
 Voluntary passing is not allowed; your move must change the state of the game.
 
