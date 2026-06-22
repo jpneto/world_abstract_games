@@ -1,0 +1,565 @@
+// // Interflow (Halma Variant)
+
+// restriction -- revoked: not a good idea
+// priority to initial turn moves that keep score above score at previous turn.
+// all subsequent hops Must obey this resriction.
+
+//-------------------------------
+// Pieces are Neutral Balls, colored by state.
+// Piece ownership is by the phase of the board they rest on, Light or Dark Tan.
+// moves never change the piece ownership.
+// Goal is to exchange all your pieces to all the opposite homes
+//------------------------------
+// Moves
+
+(define "NotAgainAt" (remember Value #1))
+
+(define "AHop"
+ (move Hop 
+  (from #1) // Occupied mover phase sites.
+  <Hop:direction> // All // Orthogonal
+  (between
+   if:(and
+    {
+     (is In (between) (sites Occupied by:Neutral))
+     (not (is In (between) (sites (values Remembered))))
+    }
+   )
+   <Hop:noRehops>
+  )
+  (to
+   if:(and
+    {
+     (!= (state at:(from)) (state at:(to)))
+     (not (is In (to) (sites (values Remembered))))
+    }
+   )
+   (apply
+    (and
+     {
+      (set Var "FromState" (state at:(to)))
+      <Hop:noReturns>
+     }
+  )))
+  (then
+   (if
+    (< 0 (var "FromState")) 
+    (add (piece "Ball0")
+     (to
+      (last From)
+      (apply (set State at:(to) (var "FromState")))
+))))))
+ 
+(define "Hop"
+ (forEach Piece
+  (if
+   (= (- (mover) 1) (phase of:(from)))
+   ("AHop" (from))
+  )
+  Neutral
+))
+
+(define "Step"
+ (move Select
+  (from (sites Occupied by:Neutral) if:(= (- (mover) 1) (phase of:(from))))
+  (to (sites Around (from) Diagonal if:(!= (state at:(from)) (state at:(to)))))
+  (then   
+   (do
+    (and
+     {
+      (set Var "LFState" (state at:(last From)))
+      (set Var "LTState" (state at:(last To)))
+     }
+    )
+    next:(move Swap Pieces
+     (then
+      (if
+       (< 0 (var "LTState"))
+       (and
+        {
+         (set State at:(last To) (var "LFState"))
+         (set State at:(last From) (var "LTState"))
+        }
+  ))))))
+))
+
+(define "HeuristicDistance" // Drive AI
+ (count Steps (step Diagonal (to if:True))
+  (from)
+  (<Equipment:seed> (state at:(from)))
+))
+
+(define "Score"
+ (seq
+  {
+   (forEach Player
+    (set Score Player 0)
+   )
+   (forEach Piece 
+    (addScore
+     (player (+ 1 (phase of:(from))))
+     (if
+      (is In (from) (<Equipment:home> (state at:(from))))
+      0//1
+      (- 0 (^ ("HeuristicDistance") 1))
+    ))
+    Neutral 
+   )
+  }
+)) 
+
+(define "RepeatHopIfPossible"
+ (if
+  (can Move ("AHop" (last To)))
+  (moveAgain)
+  (forget Value All)
+))
+
+(define "InitialMove"
+ (or 
+  (or
+   {("Hop")}
+   (then ("RepeatHopIfPossible"))
+  )
+  ("Step")
+))
+
+//------------------------------------------------------------------------------
+
+(game "InterFlow"
+ (players 2) 
+ (equipment
+  {
+   (<Equipment:type>)
+   (piece "Ball" Neutral)
+  }
+ )
+ (rules 
+  (meta (no Repeat PositionalInTurn))
+  (<Equipment:start>)
+  (play 
+   (if
+    ("NewTurn")
+    (or 
+     (or // to append the (then) 
+      {("Hop")}
+      (then ("RepeatHopIfPossible"))
+     )
+     ("Step")
+    )
+    (or 
+     (or // to append the (then)
+      {("AHop" (last To))}
+      (then ("RepeatHopIfPossible"))
+     )  
+     (move Pass
+      (then (forget Value All))
+    ))
+    (then ("Score"))
+  ))
+  (end
+   {
+    (if (= 0 (score Mover)) (result Mover Win))
+   }
+)))
+
+//---------------------
+// Options
+
+(define "FillStartRegionIf" (place "Ball0" #1 state:#2))
+(define "Home2Start"
+ (start
+  {
+   ("FillStartRegionIf" (<Equipment:home> 2) 1)
+   ("FillStartRegionIf" (<Equipment:home> 1) 2)
+  }
+))
+(define "Home4Start"
+ (start
+  {
+   ("FillStartRegionIf" (<Equipment:home> 3) 1)
+   ("FillStartRegionIf" (<Equipment:home> 4) 2)
+   ("FillStartRegionIf" (<Equipment:home> 1) 3)
+   ("FillStartRegionIf" (<Equipment:home> 2) 4)
+  }
+))
+//---------------------------
+// Rectangle
+(define "RectangleSeedOf"
+ (if
+  (= 1 #1)
+  (sites Left)
+  (sites Right)
+)) 
+(define "RectangleHomeOf" (expand (<Equipment:seed> #1) steps:"RH" Orthogonal))
+(define "RectangleBoard"
+ (board (rectangle <Board:r1> <Board:r2>) use:Cell)
+)
+
+//--------------------------
+// Diamond both
+
+(define "IsAtCorner" (= 4 (count Neighbours at:(site))))
+(define "SmallHome" (expand (<Equipment:seed> #1) steps:(/ #2 2) Diagonal)) 
+(define "BigHome" (expand (<Equipment:seed> #1) steps:(- #2 1) Orthogonal))
+
+//-------------------------
+// Diamond2
+
+(define "Diamond2SeedOf"
+ (if
+  (= 1 #1)
+  (forEach (sites Side SE) if:"IsAtCorner")
+  (forEach (sites Side NW) if:"IsAtCorner")
+)) 
+(define "Diamond2HomeOf" (<Board:home> #1 "D2H"))
+(define "Diamond2Board"
+ (board
+  (trim
+   (remove
+    (renumber
+     (rotate 90
+      (remove
+       (renumber
+        (rotate 180
+         (remove
+          (renumber (rotate 45 (square Diamond (+ 3 <Board:d2h>))))
+          cells:{0..<Board:d2h> 0 1}
+       )))
+       cells:{0..<Board:d2h> 0 1}
+    )))
+    cells:{0..<Board:d2h> 0..<Board:d2h> 0}
+  ))
+  use:Cell
+))
+
+//--------------------------------
+(define "Diamond4SeedOf"
+ (if
+  (> 3 #1)
+  (if
+   (= 1 #1)
+   (forEach (sites Side SE) if:"IsAtCorner")
+   (forEach (sites Side SW) if:"IsAtCorner")
+  )
+  (if
+   (= 3 #1)
+   (forEach (sites Side NW) if:"IsAtCorner")
+   (forEach (sites Side NE) if:"IsAtCorner")
+  )
+)) 
+(define "Diamond4HomeOf" (<Board:home> #1 (- "D4H" 1)))
+(define "Diamond4Board"
+ (board
+  (trim
+   (remove
+    (renumber
+     (rotate 90
+      (remove  
+       (renumber
+        (rotate 180
+         (remove
+          (renumber (rotate 45 (square Diamond (+ 3 <Board:d4h>))))
+          cells:{0..<Board:d4h> 0 1}  
+       )))
+       cells:{0..<Board:d4h> 0 1}
+    )))
+    cells:{0..<Board:d4h> 0..<Board:d4h> 0}
+  ))
+  use:Cell
+))
+
+//---------------------
+// Diamond Edge
+(define "DiamondEdgeSeedOf"
+ (if
+  (= 1 #1)
+  (sites Around (sites Left) Orthogonal includeSelf:True)
+  (sites Around (sites Right) Orthogonal includeSelf:True)
+)) 
+(define "DiamondEdgeHomeOf" (expand (<Equipment:seed> #1) steps:(* 2 "DH") Orthogonal))
+(define "DiamondEdgeBoard"
+ (board
+  (trim
+   (remove
+    (renumber
+     (rotate 90
+      (remove
+       (renumber
+        (rotate 45
+         (square Diamond (+ 2 <Board:d2h>))
+       ))
+       cells:{0..<Board:d2h> 0}  // column is 1 longer than rows, the 0 takes care of the extra length
+    )))
+    cells:{0..<Board:d2h> 0..<Board:d2h> 0..<Board:d2h>} // each repetition removes a row.
+  ))
+  use:Cell
+))
+//----------------------------------
+//
+(define "Corner2SeedOf"
+ (if
+  (= 1 #1)
+  (sites Side SE)
+  (sites Side NW)
+)) 
+(define "CornerHomeOf" (expand (<Equipment:seed> #1) steps:2 Orthogonal))
+
+(define "Board2Corners"
+ (board
+  (trim (renumber (rotate 45
+   (remove (renumber (rotate 180
+    (remove (renumber (rotate 45
+     (rectangle <Board:rc> (- <Board:rc> 1))))
+     <Board:corners>))
+    )
+    <Board:corners>))
+  ))
+  use:Cell
+))
+
+(define "Corner4SeedOf"
+ (if
+  (> 3 #1)
+  (if
+   (= 1 #1)
+   (sites Side SE)
+   (sites Side SW)
+  )
+  (if
+   (= 3 #1)
+   (sites Side NW)
+   (sites Side NE)
+  )
+)) 
+(define "Board4Corners"
+ (board
+  (trim (renumber (rotate 45
+   (remove (renumber (rotate 90 
+    (remove (renumber (rotate 90
+     (remove (renumber (rotate 90
+      (remove (renumber (rotate 45
+       (rectangle (+ 1 <Board:rc>) (+ 2 <Board:rc>)))) 
+       <Board:corners>))
+      )
+      <Board:corners>))
+     )
+     <Board:corners>))
+    )
+    <Board:corners>))
+  ))
+  use:Cell
+))
+(define "CornersBoard" <Board:corners>)
+//-----------------------------------------
+// Options
+
+(option "Board Type" <Equipment> args:{ <type> <seed> <home> <start> <homeGraphic> }
+ {
+  (item "Rectangle" <"RectangleBoard"> <"RectangleSeedOf"> <"RectangleHomeOf">  <"Home2Start"> 
+   <
+   ("RectangleColourHomeOutlineFor" (colour White) 2)
+   ("RectangleColourHomeOutlineFor" (colour DarkGrey) 1)
+   >
+  "Rectangular board with homes on opposite sides.")
+  
+  (item "Rectangle 2 Corners" <"Board2Corners"> <"Corner2SeedOf"> <"CornerHomeOf">  <"Home2Start"> 
+   <
+   ("ColourHomeOutlineFor" (colour White) 2)
+   ("ColourHomeOutlineFor" (colour DarkGrey) 1)
+   >
+  "Rectangular board with a pair of homes on opposite corners.")**
+  
+    (item "Rectangle 4 Corners" <"Board4Corners"> <"Corner4SeedOf"> <"CornerHomeOf">  <"Home4Start"> 
+   <
+   ("ColourHomeOutlineFor" (colour White) 2) 
+   ("ColourHomeOutlineFor" (colour DarkGrey) 1)
+   ("ColourHomeOutlineFor" (colour Blue) 3)
+   ("ColourHomeOutlineFor" (colour Green) 4)
+   >
+  "Rectangular Board with 2 pairs of opposite homes, one on each corner.")
+  
+  (item "Diamond Edges" <"DiamondEdgeBoard">  <"DiamondEdgeSeedOf"> <"DiamondEdgeHomeOf"> <"Home2Start">
+   <
+   ("ColourHomeOutlineFor" (colour White) 2)
+   ("ColourHomeOutlineFor" (colour DarkGrey) 1)
+   >
+  "Diamond Board with homes on opposite sides.")
+  (item "Diamond 2 corners" <"Diamond2Board"> <"Diamond2SeedOf"> <"Diamond2HomeOf"> <"Home2Start"> 
+   <
+   ("ColourHomeOutlineFor" (colour White) 2)
+   ("ColourHomeOutlineFor" (colour DarkGrey) 1)
+   >
+  "Diamond Shaped Board witha pair of homes on opposite corners.")
+  
+  (item "Diamond 4 corners" <"Diamond4Board"> <"Diamond4SeedOf"> <"Diamond4HomeOf"> <"Home4Start">
+   <
+   ("ColourHomeOutlineFor" (colour White) 2) 
+   ("ColourHomeOutlineFor" (colour DarkGrey) 1)
+   ("ColourHomeOutlineFor" (colour Blue) 3)
+   ("ColourHomeOutlineFor" (colour Green) 4)
+   > 
+   "Diamond Shaped Board with 2 pairs of opposite homes, one on each corner.")
+ }
+)
+
+(define "D2H" <Board:d2h>) 
+(define "D4H" <Board:d4h>)
+//(define "D4H" (+ (/ (- <Board:d4h> 2) 2) 1))
+(define "DH"  (- <Board:rh> 2))
+(define "RH"  (- <Board:rh> 1))
+(define "DRH" (+ (* 2 (/ "RH" 2)) 1))
+
+(option "Board & Home" <Board> args:{ <r1> <r2> <rh> <d2h> <d4h> <home> <corners> <rc> }
+ {
+  (item "Small - "
+   <5> <8> <2>
+   <3> <3> <"SmallHome">
+   <cells:{0}> <7>
+   "Small board with small homes"
+  )
+  (item "Small +"
+   <4> <10> <3>
+   <4> <4> <"BigHome">
+   <cells:{0..2}> <8>
+   "Small board with expanded homes"
+  )
+  (item "Medium -"
+   <8> <8> <2>
+   <5> <5> <"SmallHome">
+   <cells:{0}> <8>
+   "Medium board with small homes"
+  )**
+  (item "Medium +"
+   <6> <10> <3>
+   <5> <5> <"BigHome">
+   <cells:{0..2}>  <9>
+   "Medium board with expanded homes"
+  )
+  (item "Large -"
+   <10> <10> <3>
+   <6> <7> <"SmallHome">
+   <cells:{0}> <9>
+   "Large board with small homes"
+  )
+  (item "Large +"
+   <8> <12> <4>
+   <6> <6> <"BigHome">
+   <cells:{0..2}> <10>
+   "Large board with expanded homes"
+  )
+ }
+)
+
+(option "Hops" <Hop> args:{ <direction> <noReturns> <noRehops> }
+ {
+  (item "No Returns" <All> <("NotAgainAt" (from))> <> "Paths are allowed to cross themselves")
+  (item "No Returns - No Re-Hops" <All> <("NotAgainAt" (from))> <(apply ("NotAgainAt" (between)))> "")*
+  (item "Orthogonal - No Returns" <Orthogonal> <("NotAgainAt" (from))> <> "Paths are allowed to cross themselves
+  Stones can only hop orthogonally.")
+ }
+)
+   
+//-------------------------------
+// Home Graphic Defines
+
+
+(define "HomeOutlineOf"
+ (difference
+  (sites
+   (results
+     from:#1
+    to:(sites Incident Edge of:Cell at:(from))
+    (if
+     (= 1
+      (size Array
+       (array
+        (intersection
+         #1 
+         (sites Incident Cell of:Edge at:(to))
+     ))))
+     (to)
+     (centrePoint Edge)
+  )))
+  (centrePoint Edge)   
+))
+
+(define "ColourHomeOutlineFor"
+ (region Colour Edge ("HomeOutlineOf" (<Equipment:home> #2)) regionSiteType:Edge #1)
+)
+
+(define "RectangleColourHomeOutlineFor"
+ (region Colour Edge ("HomeOutlineOf" ("RectangleHomeOf" #2)) regionSiteType:Edge #1)
+)
+
+//------------------------------------------------------------------------------
+
+(metadata 
+ 
+ (info
+  {
+   (description "InterFlow is an interspesed, by-directional Halma variant.  Several possible boards have been implemented for evaluation. The inspiration for this is a desire toavoid long puzzle like openings and end games where decisions are independent of the other player.
+   
+   Here the colors are non-partisan, but the stones are partisan with permanent ownership that depends on the color of the space they rest on.
+   
+   An important difference from Halma is that each individual step and/or hop can be either to an empty destination as in Halma, or be an exchange of places with a differently colored stone.
+   
+   Serial hops are not allowed to return, nor cross their path of travel. 
+   "
+   )
+   (rules "You own all the stones that lie on your space-color, no matter what color the stones are.
+   
+    Your goal is to move all your stones across the board to fill the home spaces of your space-color with the stones that belong there, leaving none of your stones outside.
+    
+    The stones all start across the board from their respective homes.
+    
+    On your turn, you may either:
+    
+    -- 1. Move a stone to a diagonally adjacent space. If the space is occupied with a stone of a different color, exchange the two stones instead.
+    
+    -- 2. Hop over an adjacent stone to the next position unless blocked by the same color stone there. 
+    The stone at the new position is simultaneously removed and relocated to the position of the moving stone just before the hop.
+    
+    Hops may be orthogonal or diagonal.
+        
+    After a hop, you may hop again, and may repeat this process for as long you like, provided that the path your stone takes does not cross itself, or end on a space it previously occupied.   
+   "
+   )
+   (source "https://boardgamegeek.com/thread/3724038/wip-interflow-a-way-to-make-halma-endgames-interac")
+   (version "1.3.14")
+   (classification "board/race/fill")
+   (credit "Dale W. Walton")
+   (author "Dale W. Walton")
+   (date "2026-06-18")
+  }
+ )
+ (define "Colour1" (colour 200 150 90))
+ (define "Colour2" (colour 245 220 150))
+ (graphics
+  {
+   (player Colour P1 "Colour1")
+   (player Colour P2 "Colour2")
+   (region Colour (sites Phase 0) "Colour1")
+   (region Colour (sites Phase 1) "Colour2")
+   (region Colour (sites (values Remembered)) (colour 150 150 150 150))
+   (piece Colour state:0 fillColour:(colour Red))
+   (piece Colour state:1 fillColour:(colour DarkGrey))
+   (piece Colour state:2 fillColour:(colour White))
+   (piece Colour state:3 fillColour:(colour Blue))
+   (piece Colour state:4 fillColour:(colour Green))
+   (board StyleThickness InnerEdges 0)
+   (board StyleThickness OuterEdges 3.5)
+   (board Colour OuterEdges (colour 222 185 120))
+   (board Background image:"Square-alt1" fillColour:(colour lightGrey) edgeColour:(colour lightGrey) scale:1.1)
+   <Equipment:homeGraphic>
+   (show Symbol "Disc" All (sites Board) fillColour:(colour 50 50 50 50) edgeColour:(colour DarkGrey) scale:.45)
+//   (show Score Never)
+  }
+ )
+ 
+ (ai 
+  (bestAgent "Alpha-Beta")
+  (heuristics (score))
+)) 
+
+

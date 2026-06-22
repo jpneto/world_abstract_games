@@ -1,0 +1,198 @@
+// Implode to move // step orthogonal, after removing all LoS Ortho pieces not in direction of move; Lose  when opponent has no pieces.
+// Game last longer if dont't remove along line of travel at all (i.e. not behind or in front)
+// Try with full board... Pie remove a piece,then opponent chooses first or second...
+
+(define "Move"
+  (move 
+   (from (from))
+   (to
+    (sites Around (from)
+     if:(and
+      {
+       (is Empty (to))
+       #1
+      }
+    ))
+    if:(or (!= (from) (last To)) (!= (to) (var "LF"))) // no move reversal
+    (apply (set Var "LF" (from)))
+   )
+   (then 
+    (remove
+     (difference
+      (sites LineOfSight Piece at:(last From) Orthogonal) //  (difference Orthogonal OppositeDirection))
+      (last To)
+  ))))
+)
+(define "Leap"
+  (move 
+   (from (from))
+   (to
+    (sites { { F F R F } { F F L F } })
+    if:(and
+     (is Empty (to))
+     (or (!= (from) (last To)) (!= (to) (var "LF"))) // no move reversal
+    )    
+    (apply (set Var "LF" (from)))
+   )
+   (then 
+    (remove
+     (difference
+      (sites LineOfSight Piece at:(last From) Orthogonal) //  (difference Orthogonal OppositeDirection))
+      (last To)
+  ))))
+)
+
+(game "Implode" 
+ (players 2)
+ (equipment  
+  {
+   (board (square <Board:size>) use:Cell)
+   (piece "Ball" Neutral)
+  }
+ )
+ (rules 
+  (start
+   <Start:setup>
+  )
+  (play
+   (if
+    <Start:moves> 
+    (move Remove (sites Phase (- 2 (mover))))
+    (forEach Piece 
+     (if
+      (and
+       {
+        (= (mover) (+ 1 (phase of:(from))))
+       }
+      )
+      (if
+       (> (count Cells) (+ 2 (count Sites in:(sites Empty)))) // 3 is standard
+       (<Move:type>)
+       ("Move" (= (- (mover) 1) (phase of:(to)))) // end game move type
+     ))
+     Neutral
+     (then
+      (and
+       (set Score P1
+        (count Sites in:(difference (sites Phase 0) (sites Empty)))
+       )
+       (set Score P2
+        (count Sites in:(difference (sites Phase 1) (sites Empty)))
+       )
+  )))))
+  (end
+   {
+    (if
+     (no Pieces All in:(sites Phase (- (mover) 1)))
+     (result Next Win)
+    )
+   }
+)))
+
+//--------------------------------
+// Options
+
+(option "Board" <Board> args:{<size>}
+ {
+  (item "8x8" <8> "Play on an 8x8 Board")
+  (item "10x10" <10> "Play on a 10x10 Board")*
+  (item "12x12" <12> "Play on an 12x12 Board")
+ }
+)
+
+(option "Start" <Start> args:{ <setup> <moves> }
+ {
+  (item "Full Board"
+   <(place "Ball0" (sites Empty))>
+   <(> 1 (counter))>
+   "Start with a board full of stones, then each player removes one."
+  )
+  (item "Half filled"
+   <
+    {
+     (place "Ball0" (forEach (sites Board) if:(= 0 (% (+ { 3 (count Columns) (column of:(site)) (row of:(site)) }) 4))))
+     (place "Ball0" (forEach (sites Board) if:(= 0 (% (- (+ 2 (column of:(site))) (row of:(site))) 4))))
+    }
+   >
+   <False>
+   "Start with the board half filled in alternating 2x2 areas.
+   "
+  )*
+  (item "5 at Random"
+   <
+    {
+     (place "Ball0" (sites Random (intersection (sites Phase 1) (sites Empty))))
+     (place "Ball0" (sites Random (sites Board) num:4))
+    }
+   >
+   <False>
+   "Start with 5 stones randomly placed, where at least one can move."
+  )
+ }
+)
+
+(option "Move by" <Move> args:{<type>}
+ {
+  (item "Orthogonal Step" <("Move" (= (- 2 (mover)) (phase of:(to))))> "Play:
+  Move by stepping to an adjacent empty square of the opposite color.
+   Then remove the first stone in each of the other grid directions from the moving stone's origin.
+
+   Restriction: You may not move a piece back to where it started on the previous player's move.
+   
+   Exception: When there are only 2 stones left on the board, the stones instead move one step diagonally and capture in any of the 4 regular grid directions."
+  )
+  (item "Knight's Leap" <"Leap"> "Play:
+  Move leaping a distance of 2 to an empty square of the opposite color.
+   Then remove the first stone in each of the grid directions from the moving stone's origin.  
+    
+   Restriction: You may not move a piece back to where it started on the previous player's move.
+   
+   Exception: When there are only 2 stones left on the board, the stones instead move one step diagonally and capture in any of the 4 regular grid directions."
+  )
+ }
+)
+    
+(metadata 
+ 
+ (info
+  {
+   (description "Implode is a 2 player, line-of-sight, elimination game, played on a Chess Board with stones of one color.
+   
+   Implode uses the concept of ownership by location, and uses moves that sacrifice the moving piece to the opponent, while capturing by line-of-sight, prior to the movement.
+   "
+   )
+   (rules "You own the stones that lie on your space-color. Goal is to eliminate the stone on the opponent's color.
+   
+   "
+   )
+   (source "https://boardgamegeek.com/thread/3726238/wip-game-implode")
+   (version "1.3.14")
+   (classification "board/war/direction/LoS/orthogonal")
+   (credit "Dale W. Walton")
+   (author "Dale W. Walton")
+   (date "2026-06-20")
+  }
+ )
+ (define "Colour1" (colour 200 150 90))
+ (define "Colour2" (colour 245 220 150))
+ (graphics
+  {
+   (player Colour P1 "Colour1")
+   (player Colour P2 "Colour2")  
+   (region Colour (sites Phase 0) "Colour1")
+   (region Colour (sites Phase 1) "Colour2")
+   (region Colour (sites (values Remembered)) (colour 150 150 150 150))
+   (piece Colour state:0 fillColour:(colour White))
+   (board StyleThickness InnerEdges 0)
+   (board StyleThickness OuterEdges 3.5)
+   (board Colour OuterEdges (colour 222 185 120))
+   (board Background image:"Square-alt1" fillColour:(colour lightGrey) edgeColour:(colour lightGrey) scale:1.1)
+//   (show Score Never)
+  }
+ )
+ 
+ (ai 
+  (bestAgent "Alpha-Beta")
+  (heuristics (score))
+)) 
+
