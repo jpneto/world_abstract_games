@@ -1,0 +1,212 @@
+// Experiment
+
+(define "Dir" Orthogonal) // experiment with: Diagonal 
+
+(define "ScoreFor"
+ (do
+  (forget Value  All)
+  next:(do 
+   (forEach Group Adjacent
+    if:(= #1 (who at:(to)))
+    (remember Value (size Array (array (sites))) unique:True)
+   )
+   next:(set Score (player #1) (max (values Remembered )))
+)))
+
+//-----------------------------------------------
+// Main routine
+
+(game "On Agar"
+ (players <Players:count>)
+ (equipment {
+  <Grid:boardUsed>
+  (piece "Disc" Each)
+ })
+ (rules
+//  (meta (no Repeat Positional))
+  (play
+   (or
+    (move Pass
+     (then
+      (forEach
+       (players All if:(< 0 (count Pieces of:(player))))
+       ("ScoreFor" (player))
+    )))
+    (move Add
+     (to (sites Empty)
+      if:(or
+       (no Pieces All in:(sites Around (to) "Dir" if:(!= (mover) (who at:(to)))))
+       (>= 
+        (* 2 (count Pieces Mover in:(sites Around (to) "Dir")))
+        (+ <Grid:extra> (count Pieces All in:(sites Around (to) "Dir")))
+      ))
+      (apply (set Var "LT" (to)))
+     )
+     (then 
+      (seq
+       {       
+        (forEach Site
+         (sites Around (var "LT") "Dir" if:(!= (mover) (who at:(to))))
+         (if
+          (<
+           (* 2 (count Pieces of:(who at:(site)) in:(sites Around (site) "Dir")))
+           (+ <Grid:extra> (count Pieces All in:(sites Around (site) "Dir")))
+          )
+          (remove (site))
+        ))
+       }
+  )))))
+  (end 
+   {
+    (if 
+     (all Passed)
+     (byScore)
+    )
+   }
+)))   
+//-------------------------------------------------
+// Options
+
+(option "Players" <Players> args:{ <count> }
+ {
+  (item "2" <2> "Two Players")
+  (item "3" <3> "Three Players")
+  (item "4" <4> "Four Players")
+ }
+)
+
+(option "Board" <Grid> args:{<boardUsed> <extra>}
+ {
+ (item "Square 8"  <(board (square 8) use:Vertex)>   <2>  "8x8 Square Grid")
+ (item "Square 10" <(board (square 10) use:Vertex)>  <2>  "10x10 Square Grid")
+ (item "Square 13" <(board (square 13) use:Vertex)>  <2>  "13x13 Square Grid")*
+ (item "Square 19" <(board (square 19) use:Vertex)>  <2>  "19x19 Square Grid")
+ 
+ (item "Snub Square 8 R4"
+  <(board
+    (remove (renumber (rotate 45 (tiling T33434 4)))
+     vertices:{ 97..79 74 73 64 63 54 53 44 43 34 33 24 23 14 13 4 } 
+    ) 
+    use:Vertex
+  )> 
+  <2>  "Edge 8, R-4 Snub Square Grid."
+ )
+ (item "Snub Square 10 R4"
+  <(board
+    (remove (renumber (rotate 45 (tiling T33434 5)))
+     vertices:{ 141..119 113 112 101 100 89 88 77 76 65 64 53 52 41 40 29 28 17 16 5 }
+    ) 
+    use:Vertex
+  )> 
+  <2> "Edge 10, R-4 Snub Square Grid"
+ )
+ (item "Snub Square 12 R4"
+  <(board
+    (remove (renumber (rotate 45 (tiling T33434 6)))
+     vertices:{ 193..167 160 159 146 145 132 131 118 117 104 103 90 89 76 75 62 61 48 47 34 33 20 19 6 }
+    ) 
+    use:Vertex
+  )> 
+  <2> "Edge 12, R-4 Snub Square Grid"
+ )
+ 
+ (item "Hex 6"  <(board (hex 6) use:Cell)> <2> "Order 6, Hex Grid")
+ (item "Hex 8"  <(board (hex 8) use:Cell)> <2> "Order 8, Hex Grid")
+ (item "Hex 11"  <(board (hex 11) use:Cell)> <2> "Order 11, Hex Grid")
+ 
+// (item "Hex 4,5" <(board (tri Limping 4) use:Vertex)> <2> "Order 4-5, Hex Grid")
+// (item "Hex 5"  <(board (tri Hexagon 5) use:Vertex)> <2> "Order 5, Hex Grid")
+// (item "Hex 5,6" <(board (tri Limping 5) use:Vertex)> <2> "Order 5-6, Hex Grid")
+// (item "Hex 6,7" <(board (tri Limping 6) use:Vertex)> <2> "Order 6-7, Hex Grid") 
+// (item "Hex 7"  <(board (tri Hexagon 7) use:Vertex)> <2> "Order 7, Hex Grid") 
+
+// (item "Hex 6 No Capture"  <(board (tri Hexagon 6) use:Vertex)> <3> "Order 6, Hex Grid")
+// (item "Hex 8 No Capture"  <(board (tri Hexagon 8) use:Vertex)> <3> "Order 8, Hex Grid")
+// (item "Hex 11 No Capture"  <(board (tri Hexagon 11) use:Vertex)> <3> "Order 11, Hex Grid")
+
+// (item "SquareDiag 8"  <(board (complete (square 8) eachCell:True) use:Vertex)>   <3>  "Order 8 Square Grid")
+// (item "SquareDiag 10" <(board (complete (square 10) eachCell:True) use:Vertex)>  <3>  "Order 10 Square Grid")
+// (item "SquareDiag 13" <(board (complete (square 13) eachCell:True) use:Vertex)>  <3>  "Order 13 Square Grid")
+// (item "SquareDiag 19" <(board (complete (square 19) eachCell:True) use:Vertex)>  <3>  "Order 19 Square Grid")
+ }
+)
+
+(define "Graphics"  ("GraphicsOption" "counter.svg" 0.98  "disc.svg" 0.75))
+
+(define "BoardColour"  (colour 221 210 203)) // (colour 241 220 203)) //(colour 145 116 29 110))
+(define "P1Colour" (colour DarkGreen))
+(define "P2Colour" (colour Cream))
+(define "P3Colour" (colour LightBlue))
+(define "P4Colour" (colour Red))
+(define "GraphicsOption" 
+ (graphics
+  {
+  (player Colour Neutral (colour 80 80 80 170)) // was black
+  (player Colour P1 "P1Colour")
+  (player Colour P2 "P2Colour")
+  (player Colour P3 "P3Colour")
+  (player Colour P4 "P4Colour")
+  (board Style Board) //Graph)
+  (board Colour InnerEdges (colour 150 148 145))
+  (board Colour Phase0 (colour 236 215 193))
+  (board Colour Phase1 (colour 236 215 193))
+  (board StyleThickness InnerEdges .65)
+  (board Colour OuterEdges (colour DarkRed)) //(colour 140 138 135))
+  (board StyleThickness OuterEdges 3)
+  (board Background image:"Square.svg"
+   fillColour:("BoardColour") 
+   edgeColour:(colour 200 184 177)
+   scale:1.25
+  )
+  (piece Colour P1 strokeColour:(colour Black))
+  (piece Colour P3 strokeColour:(colour DarkBlue))
+  (piece Colour P2 strokeColour:(colour DarkGrey))
+  (piece Colour P4 strokeColour:(colour VeryDarkBrown))
+  (piece Scale 1) 
+  (no Sunken True)
+  (show Score AtEnd)
+  }
+))
+
+//---------------------------------------------
+
+(metadata
+ (info
+  {
+  (description "On Agar is a largest group game. 
+  
+  Growth is by placement, but placement is heavily restricted by the presence of opponents' stones, so strategic early placements are essential.
+  
+  With sufficient support from friendly stones, placement is possible next to enemy stones, usually leading to their removal. However, only individual stones are removed, not groups; so the game is a test of how to enable your separate groups to eventually link up more than the opponent can, and to keep the opponent's groups separated.
+  
+  In the end, the groups are mostly separated by open margins where growth has been repressed.
+  
+  The game can be enjoyed by 2 or more players."
+)
+  (rules "The goal is the form the largest group of connected stones.
+   
+   The board starts empty.
+   
+   On your turn, you place a stone to either:
+   -- an empty intersection that is not adjacent to the opponent's stones, or
+   -- an empty intersection surrounded by at least 2 more friendly stones than opponent's stones.
+   
+   When placing next to an opponent's stone, you remove it unless it has enough friends of its own to allow it to be placed back there on the next turn. 
+   
+   Continue until both players pass consecutivetly. Then the player with the largest group wins.
+   
+   The game can be played with 2 or more players. A 13x13 go board or an order 8 hex is recommended. For a challenge, try a snub-square grid."
+  )
+  (source "https://boardgamegeek.com/thread/3729251/game-on-agar-dominant-colony-in-a-petri-dish")
+  (version "1.3.14")
+  (classification "board/space/group")
+  (author "Dale W. Walton")
+  (credit "Dale W. Walton")
+  (date "2026-06-28")
+  }
+ )
+ 
+ ("Graphics")
+ 
+)
+
