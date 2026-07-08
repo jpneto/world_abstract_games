@@ -1,0 +1,197 @@
+// Trawlers 
+// Each player's pieces stay on their own squares: Light squares for the player of the white stnoes, and dark squares for the player of the black stones.
+
+// The stones move diagonally dragging an imaginary net behind them. After moving everything on the net spaces is removed.
+// Since the net includes both color squares, these removals can include either or both player's pieces.
+
+// A player must move to capture if possible. This could be one's own stone, and/or the opponent's stone or stones.
+// If no capture can be made, a move must be made without capture.
+
+(define "SitesOfPiecesToCaptureAfter"
+ (union
+  (intersection 
+   (sites #2 { { F F R F } { F F L F } }) 
+   (union
+    (sites #1 { { F F R F } { F F L F } }) 
+    (sites Around #1 Orthogonal)
+  ))
+  (difference
+   (sites {(ahead #2 steps:2 (directions Cell from:#2 to:#1))})
+   (sites {#2})
+)))
+
+(define "SitesOfPiecesToCapture"
+ ("SitesOfPiecesToCaptureAfter" (from) (to))
+)
+
+(define "CaptureMove"
+ (forEach Piece
+  (move 
+   (from (from))
+   (to
+    (sites Around (from) Diagonal if:(is Empty(to)))
+    if:(not (no Pieces All in:("SitesOfPiecesToCapture")))
+    (apply (remove ("SitesOfPiecesToCapture")))
+))))
+
+(define "Move"
+ (forEach Piece
+  (move 
+   (from (from))
+   (to
+    (sites Around (from) Diagonal if:(is Empty(to)))
+))))
+
+(game "Trawlers" 
+ (players 2)
+ (equipment  
+  {
+   (board (square <Board:size>) use:Cell)
+   (piece "Ball" Each)
+  }
+ )
+ (rules 
+  (start
+   <Start:setup>
+  )
+  (play
+   (if
+    <Start:moves> 
+    (move Remove (sites Phase (- 2 (mover))))
+    (priority
+     ("CaptureMove")
+     ("Move")
+  )))
+  (end
+   {
+    (if
+     (no Pieces Mover)
+     (result Next Win)
+    )
+   }
+)))
+
+//--------------------------------
+// Options
+
+(option "Board" <Board> args:{<size>}
+ {
+  (item "8x8" <8> "Play on an 8x8 Board")
+  (item "10x10" <10> "Play on a 10x10 Board")**
+  (item "12x12" <12> "Play on an 12x12 Board")
+ }
+)
+
+(option "Start" <Start> args:{ <setup> <moves> }
+ {
+  (item "Full Board"
+   <
+    {
+     (place "Ball1" (sites Phase 0))
+     (place "Ball2" (sites Phase 1))
+    }
+   >
+   <(> 1 (counter))>
+   "Start with a board full of stones, then each player removes one."
+  )
+  (item "Half filled"
+   <
+    {
+     (place "Ball1" (forEach (sites Board) if:(= 0 (% (+ { 3 (count Columns) (column of:(site)) (row of:(site)) }) 4))))
+     (place "Ball2" (forEach (sites Board) if:(= 0 (% (- (+ 2 (column of:(site))) (row of:(site))) 4))))
+    }
+   >
+   <False>
+   "Start with the board half filled in alternating 2x2 areas.
+   "
+  )*
+  (item "Quarter filled"
+   <
+    {
+     (place "Ball1"
+      (forEach
+       (sites Phase (% (/ (count Columns) 2) 2)) 
+       if:(<= (/ (count Columns) 2) (abs (- (- (column of:(site)) (row of:(site))))))
+     ))
+     (place "Ball2"
+      (forEach
+       (sites Phase (- 1 (% (/ (count Columns) 2) 2))) 
+       if:(<= (/ (count Columns) 2) (abs (- (+ (column of:(site)) (row of:(site))) (- (count Columns) 1))))
+     ))
+    }
+   >
+   <False>
+   "Start with the board half filled in alternating 2x2 areas.
+   "
+  )
+ }
+)
+
+(metadata 
+ 
+ (info
+  {
+   (description "Trawlers is a game in the Checkers-Chess family, it has only one piece type, and forced captures, but the movement and capture patterns are more relatedto fairy chess than to checkers. The exact nature of the piece is novel as far as I know, As is the starting position, which I have used for the game Implode, that I recently released.
+   
+   Players play on oppositely colored spaces, starting with a 50% full board arranged in alternating 2x2 squares. - Or looking at it in a different way, arranged in spaced out diagonal lines with the lines of one color crossing the lines of the other.
+    
+    The goal is to eliminate the other player's stones. On a turn the stones move a single step diagonally, with an imaginary net trailing behind. Any pieces that fall on the new net spaces are immediately captured and the turn ends. The net squares include both colors, so self-capture is possible, and sometimes might be forced.
+    
+    Capture is mandatory, so non-capturing moves must only be made when no captures are available. 
+    Passing is not allowed.
+    
+    Forced self-caputure functions to help balance the game, and to make sacrifices plays more meaningful. They also serve to keep pieces spread out, helping to reduce the advantace of being in the center. 
+    
+    A piece advantage in the end game will generally allow the advantaged player to pin the other player's pieces to the board's edges. In this case trying to find a sacrifice play may be the only way to restore balance.    
+    
+    Trawlers was inspired by reducing the end movement rules for Implode from Line-of-Sight captures, to captures at a minimal set of locations; then applying the result to the entire game.
+    "
+   )
+   (rules "Goal: Eliminate your opponent.
+    Start by placing stones in diagonal lines on the squares of one color so that your lines cross your opponent's lines and alternating 2x2 regions are left empty.
+    
+    Turns alternate.
+    
+    On your turn move one of your stones diagonally, and then remove all the stones on the 'net' spaces behind it. 
+    These net spaces are: 
+    -- The space of your color directly behind where your stone started, and 
+    -- The 4 spaces of the opponent's color that are behind your destination, 2 steps away. (i.e. at a knight's move distance.)
+    
+    Restriction: If it is possible to do so, you must choose a move that causes a stone to be removed.
+
+    The owner of the removed stone does not matter for deciding how to fulfill this restriction, nor does the number of stones to be removed matter. But, in any case, after moving, ALL the stones on the net must be removed.
+    
+    Passing is not alowed.
+   "
+   )
+   (source "https://boardgamegeek.com/thread/3728583/new-game-trawlers")
+   (version "1.3.14")
+   (classification "board/war/pattern/eliminate/all")
+   (credit "Dale W. Walton")
+   (author "Dale W. Walton")
+   (date "2026-06-20")
+  }
+ )
+// (define "Colour1" (colour 200 150 90))
+// (define "Colour2" (colour 245 220 150))
+ (define "Colour1" (colour 129 157 239)) // (colour 105 125 236))
+ (define "Colour2" (colour 131 202 249))
+ (define "Colour3" (colour 90 90 90 110))
+ (graphics
+  {
+   (player Colour P2 (colour DarkGrey))
+   (region Colour (sites Phase 0) "Colour1")
+   (region Colour (sites Phase 1) "Colour2")
+   (show Symbol "ThinCross" (if (<= 0 (counter)) ("SitesOfPiecesToCaptureAfter" (last From) (last To))) fillColour:"Colour3" edgeColour:"Colour3" scale:1)
+   (board StyleThickness InnerEdges 0)
+   (board StyleThickness OuterEdges 3.5)
+   (board Colour OuterEdges  (colour 130 180 244)) // (colour 222 185 120))
+   (board Background image:"Square-alt1" fillColour:(colour LightGrey) edgeColour:(colour LightGrey) scale:1.1)
+  }
+ )
+ 
+ (ai 
+  (bestAgent "Alpha-Beta")
+//  (heuristics (score))
+)) 
+
