@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta charset="UTF-8">
+<title>Hexagonal Abstract Game</title>
+<style>
+body { display: flex; flex-direction: column; align-items: center; font-family: sans-serif; background: #222; color: #eee; margin: 0; padding: 10px; }
+#ui { display: flex; gap: 20px; margin-bottom: 10px; }
+.panel { padding: 10px; background: #333; border-radius: 5px; }
+.active { border: 2px solid #4caf50; }
+button { margin: 2px; padding: 5px; cursor: pointer; background: #555; color: white; border: 1px solid #777; font-size: 14px; }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+.selected { background: #4caf50; }
+canvas { background: #111; border: 1px solid #444; cursor: pointer; }
+#message { height: 20px; margin-top: 10px; font-weight: bold; color: #ffeb3b; }
+#rules-btn { position: absolute; top: 15px; right: 15px; background: #2196f3; font-weight: bold; padding: 8px 15px; border-radius: 4px; }
+.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10; align-items: center; justify-content: center; }
+.modal-content { background: #333; padding: 25px; border-radius: 8px; max-width: 450px; border: 2px solid #555; position: relative; line-height: 1.5; }
+.close-btn { position: absolute; top: 10px; right: 15px; cursor: pointer; font-size: 24px; color: #aaa; font-weight: bold; }
+.close-btn:hover { color: #fff; }
+.modal-content ul { padding-left: 20px; }
+.modal-content li { margin-bottom: 8px; }
+#history-controls { margin-top: 10px; display: flex; gap: 10px; align-items: center; }
+</style>
+</head>
+<body>
+<button id="rules-btn">Rules</button>
+<div id="rules-modal" class="modal" style="display: none;">
+<div class="modal-content">
+<span class="close-btn" id="close-modal">×</span>
+<h2 style="margin-top: 0;">Game Rules</h2>
+<ul>
+<li><strong>Goal:</strong> Have the highest score when both players run out of pieces.</li>
+<li><strong>Scoring:</strong> 1 point for every piece on the board, PLUS 1 point for every empty hex that is adjacent ONLY to your pieces.</li>
+<li>🌺 <strong>Carnivore (6):</strong> At the end of a turn, the active 
+player's carnivores destroy enemy pieces touching 2+ of them. Surviving 
+enemy carnivores then retaliate.</li>
+<li>🌪️ <strong>Wind (6):</strong> When placed next to a piece, it must push that piece away in a straight line until it hits another piece or the edge.</li>
+<li>🌻 <strong>Throwing (6):</strong> When placed, move any adjacent piece into another empty space adjacent to the Throwing flower.</li>
+<li>🌼 <strong>Dandelion (3):</strong> Place on an empty hex, then 
+select an adjacent piece (friendly or enemy, excluding Dandelions) to 
+return it to its owner's reserve. <em>Ko Rule: An enemy piece returned this way cannot be immediately placed back on the exact same hex on their next turn.</em></li>
+</ul>
+<center>(c) 2026 Francesco Salerno</center>
+</div>
+</div>
+<div id="ui">
+<div id="p1-panel" class="panel ">
+<div>Player 1 (Blue) Score: <span id="p1-score">20</span></div>
+<div id="p1-reserve"></div>
+</div>
+<div id="p2-panel" class="panel active">
+<div>AI (Red) Score: <span id="p2-score">30</span></div>
+<div id="p2-reserve"></div>
+</div>
+</div>
+<canvas id="game" width="600" height="600"></canvas>
+<div id="message">Game Over! P1: 20, P2: 30</div>
+<div id="history-controls">
+<button id="btn-prev">&lt; Prev</button>
+<span id="history-step">48 / 48</span>
+<button id="btn-next">Next &gt;</button>
+</div>
+<script>
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+const hexSize = 25;
+const boardRadius = 4;
+const hexOrigin = { x: canvas.width / 2, y: canvas.height / 2 };
+const DIRS = [[1, 0, -1], [1, -1, 0], [0, -1, 1], [-1, 0, 1], [-1, 1, 0], [0, 1, -1]];
+const GRAPHICS = { carnivore: '🌺', wind: '🌪️', throwing: '🌻', dandelion: '🌼' };
+let board = new Map();
+let currentPlayer = 1;
+let selectedPiece = null;
+let waitState = null;
+let actionData = null;
+let koRestriction = null;
+const initialReserve = { carnivore: 6, wind: 6, throwing: 6, dandelion: 3 };
+let reserves = { 1: { ...initialReserve }, 2: { ...initialReserve } };
+let gameHistory = [];
+let historyIndex = -1;
+let involvedHexesThisTurn = [];
+const modal = document.getElementById('rules-modal');
+document.getElementById('rules-btn').onclick = () => modal.style.display = 'flex';
+document.getElementById('close-modal').onclick = () => modal.style.display = 'none';
+window.onclick = (e) => { if (e.target === modal) modal.style.display = 'none'; };
+document.getElementById('btn-prev').onclick = () => { if (historyIndex > 0) { historyIndex--; updateView(); } };
+document.getElementById('btn-next').onclick = () => { if (historyIndex < gameHistory.length - 1) { historyIndex++; updateView(); } };
+function cubeToPixel(q, r, s) {
+    const x = hexSize * (Math.sqrt(3) * q + Math.sqrt(3) / 2 * r);
+    const y = hexSize * (3 / 2 * r);
+    return { x: x + hexOrigin.x, y: y + hexOrigin.y };
+}
+function pixelToCube(x, y) {
+    const pt = { x: (x - hexOrigin.x) / hexSize, y: (y - hexOrigin.y) / hexSize };
+    const q = (Math.sqrt(3) / 3 * pt.x - 1 / 3 * pt.y);
+    const r = (2 / 3 * pt.y);
+    return cubeRound(q, r, -q - r);
+}
+function cubeRound(q, r, s) {
+    let rq = Math.round(q), rr = Math.round(r), rs = Math.round(s);
+    const qDiff = Math.abs(rq - q), rDiff = Math.abs(rr - r), sDiff = Math.abs(rs - s);
+    if (qDiff > rDiff && qDiff > sDiff) rq = -rr - rs;
+    else if (rDiff > sDiff) rr = -rq - rs;
+    else rs = -rq - rr;
+    return { q: rq, r: rr, s: rs };
+}
+function hexKey(q, r) { return `${q},${r}`; }
+function parseKey(k) { const pts = k.split(','); return { q: parseInt(pts[0]), r: parseInt(pts[1]), s: -parseInt(pts[0]) - parseInt(pts[1]) }; }
+function initBoard() {
+    board.clear();
+    for (let q = -boardRadius; q <= boardRadius; q++) {
+        for (let r = Math.max(-boardRadius, -q - boardRadius); r <= Math.min(boardRadius, -q + boardRadius); r++) {
+            board.set(hexKey(q, r), null);
+        }
+    }
+    saveHistory([]);
+}
+function getNeighbors(q, r, s) {
+    return DIRS.map(d => ({ q: q + d[0], r: r + d[1], s: s + d[2] })).filter(h => board.has(hexKey(h.q, h.r)));
+}
+function drawBoard() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const displayBoard = gameHistory[historyIndex] ? gameHistory[historyIndex].board : board;
+    const displayHexes = gameHistory[historyIndex] ? gameHistory[historyIndex].hexes : [];
+    for (const [key, piece] of displayBoard.entries()) {
+        const h = parseKey(key);
+        const center = cubeToPixel(h.q, h.r, h.s);
+        ctx.beginPath();
+        for (let i = 0; i < 6; i++) {
+            const angle = 2 * Math.PI / 6 * (i + 0.5);
+            const x = center.x + hexSize * Math.cos(angle);
+            const y = center.y + hexSize * Math.sin(angle);
+            if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        ctx.fillStyle = piece ? (piece.player === 1 ? '#1e88e5' : '#e53935') : '#2a2a2a';
+        ctx.fill();
+        ctx.strokeStyle = displayHexes.includes(key) ? '#00e5ff' : '#555';
+        ctx.lineWidth = displayHexes.includes(key) ? 3 : 1;
+        ctx.stroke();
+        ctx.lineWidth = 1;
+        if (piece) {
+            ctx.font = '18px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(GRAPHICS[piece.type], center.x, center.y);
+        }
+        if (waitState && actionData?.origin === key && historyIndex === gameHistory.length - 1) {
+            ctx.strokeStyle = '#ffeb3b';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+            ctx.lineWidth = 1;
+        }
+        if (waitState === 'THROW_SELECT_DEST' && actionData?.pieceToThrow === key && historyIndex === gameHistory.length - 1) {
+            ctx.strokeStyle = '#e91e63';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+            ctx.lineWidth = 1;
+        }
+        if (koRestriction && koRestriction.player === currentPlayer && key === koRestriction.hexKey && historyIndex === gameHistory.length - 1 && !board.get(key)) {
+            ctx.fillStyle = 'rgba(255, 0, 0, 0.2)';
+            ctx.fill();
+        }
+    }
+}
+function updateUI() {
+    const displayReserves = gameHistory[historyIndex] ? gameHistory[historyIndex].reserves : reserves;
+    const isPresent = historyIndex === gameHistory.length - 1;
+    [1, 2].forEach(p => {
+        const container = document.getElementById(`p${p}-reserve`);
+        container.innerHTML = '';
+        for (const [type, count] of Object.entries(displayReserves[p])) {
+            if (count > 0) {
+                const btn = document.createElement('button');
+                btn.textContent = `${GRAPHICS[type]} (${count})`;
+                if (p === 1 && currentPlayer === 1 && selectedPiece === type && isPresent) btn.classList.add('selected');
+                btn.onclick = () => { if (p === 1 && currentPlayer === 1 && !waitState && isPresent) { selectedPiece = type; updateUI(); } };
+                container.appendChild(btn);
+            }
+        }
+    });
+    document.getElementById('p1-panel').className = `panel ${currentPlayer === 1 && isPresent ? 'active' : ''}`;
+    document.getElementById('p2-panel').className = `panel ${currentPlayer === 2 && isPresent ? 'active' : ''}`;
+    const displayBoard = gameHistory[historyIndex] ? gameHistory[historyIndex].board : board;
+    const scores = calculateScores(displayBoard);
+    document.getElementById('p1-score').textContent = scores[1];
+    document.getElementById('p2-score').textContent = scores[2];
+    document.getElementById('history-step').textContent = `${historyIndex} / ${Math.max(0, gameHistory.length - 1)}`;
+}
+function updateView() {
+    drawBoard();
+    updateUI();
+}
+function calculateScores(boardState) {
+    let scores = { 1: 0, 2: 0 };
+    for (const piece of boardState.values()) { if (piece) scores[piece.player]++; }
+    for (const [key, piece] of boardState.entries()) {
+        if (!piece) {
+            const h = parseKey(key);
+            const n = getNeighbors(h.q, h.r, h.s);
+            let p1Adj = false, p2Adj = false;
+            n.forEach(nh => {
+                const np = boardState.get(hexKey(nh.q, nh.r));
+                if (np) { if (np.player === 1) p1Adj = true; if (np.player === 2) p2Adj = true; }
+            });
+            if (p1Adj && !p2Adj) scores[1]++;
+            if (p2Adj && !p1Adj) scores[2]++;
+        }
+    }
+    return scores;
+}
+function processCarnivores(boardState, activePlayer) {
+    let toRemoveActive = [];
+    for (const [key, piece] of boardState.entries()) {
+        if (piece && piece.player !== activePlayer) {
+            const h = parseKey(key);
+            let enemyCarnivores = 0;
+            getNeighbors(h.q, h.r, h.s).forEach(nh => {
+                const np = boardState.get(hexKey(nh.q, nh.r));
+                if (np && np.player === activePlayer && np.type === 'carnivore') enemyCarnivores++;
+            });
+            if (enemyCarnivores >= 2) toRemoveActive.push(key);
+        }
+    }
+    toRemoveActive.forEach(k => boardState.set(k, null));
+    let toRemoveInactive = [];
+    for (const [key, piece] of boardState.entries()) {
+        if (piece && piece.player === activePlayer) {
+            const h = parseKey(key);
+            let enemyCarnivores = 0;
+            getNeighbors(h.q, h.r, h.s).forEach(nh => {
+                const np = boardState.get(hexKey(nh.q, nh.r));
+                if (np && np.player !== activePlayer && np.type === 'carnivore') enemyCarnivores++;
+            });
+            if (enemyCarnivores >= 2) toRemoveInactive.push(key);
+        }
+    }
+    toRemoveInactive.forEach(k => boardState.set(k, null));
+}
+function applyWindPush(boardState, startKey, targetKey) {
+    const h = parseKey(startKey);
+    const target = parseKey(targetKey);
+    let dq = target.q - h.q, dr = target.r - h.r;
+    let cq = target.q, cr = target.r;
+    while (boardState.has(hexKey(cq + dq, cr + dr)) && !boardState.get(hexKey(cq + dq, cr + dr))) {
+        cq += dq; cr += dr;
+    }
+    const tKey = hexKey(target.q, target.r);
+    if (cq !== target.q || cr !== target.r) {
+        boardState.set(hexKey(cq, cr), boardState.get(tKey));
+        boardState.set(tKey, null);
+    }
+    return hexKey(cq, cr);
+}
+function hasPieces(p) { return Object.values(reserves[p]).some(v => v > 0); }
+function checkEnd() {
+    if (!hasPieces(1) && !hasPieces(2)) {
+        const s = calculateScores(board);
+        document.getElementById('message').textContent = `Game Over! P1: ${s[1]}, P2: ${s[2]}`;
+        return true;
+    }
+    return false;
+}
+function saveHistory(hexes) {
+    let b = new Map();
+    for (const [k, v] of board.entries()) b.set(k, v ? { ...v } : null);
+    let r = { 1: { ...reserves[1] }, 2: { ...reserves[2] } };
+    gameHistory.push({ board: b, reserves: r, hexes: hexes });
+    historyIndex = gameHistory.length - 1;
+}
+function endTurn() {
+    processCarnivores(board, currentPlayer);
+    saveHistory(involvedHexesThisTurn);
+    if (koRestriction && currentPlayer === koRestriction.player) koRestriction = null;
+    updateView();
+    if (checkEnd()) return;
+    currentPlayer = currentPlayer === 1 ? 2 : 1;
+    if (!hasPieces(currentPlayer)) currentPlayer = currentPlayer === 1 ? 2 : 1;
+    selectedPiece = null;
+    waitState = null;
+    involvedHexesThisTurn = [];
+    updateUI();
+    if (currentPlayer === 2) setTimeout(aiTurn, 50);
+}
+canvas.addEventListener('click', (e) => {
+    if (currentPlayer !== 1 || historyIndex !== gameHistory.length - 1) return;
+    const rect = canvas.getBoundingClientRect();
+    const h = pixelToCube(e.clientX - rect.left, e.clientY - rect.top);
+    const key = hexKey(h.q, h.r);
+    if (!board.has(key)) return;
+    if (waitState === 'WIND') {
+        const origin = parseKey(actionData.origin);
+        if (getNeighbors(origin.q, origin.r, origin.s).some(n => hexKey(n.q, n.r) === key) && board.get(key)) {
+            const endPos = applyWindPush(board, actionData.origin, key);
+            involvedHexesThisTurn.push(endPos);
+            document.getElementById('message').textContent = "Wind resolved.";
+            endTurn();
+        }
+        return;
+    }
+    if (waitState === 'DANDELION') {
+        const origin = parseKey(actionData.origin);
+        if (getNeighbors(origin.q, origin.r, origin.s).some(n => hexKey(n.q, n.r) === key)) {
+            const targetPiece = board.get(key);
+            if (targetPiece && targetPiece.type !== 'dandelion') {
+                if (targetPiece.player !== currentPlayer) {
+                    koRestriction = { hexKey: key, player: targetPiece.player, type: targetPiece.type };
+                }
+                reserves[targetPiece.player][targetPiece.type]++;
+                board.set(key, null);
+                involvedHexesThisTurn.push(key);
+                document.getElementById('message').textContent = "Piece returned.";
+                endTurn();
+            }
+        }
+        return;
+    }
+    if (waitState === 'THROW_SELECT_PIECE') {
+        const origin = parseKey(actionData.origin);
+        if (getNeighbors(origin.q, origin.r, origin.s).some(n => hexKey(n.q, n.r) === key)) {
+            if (board.get(key)) {
+                actionData.pieceToThrow = key;
+                waitState = 'THROW_SELECT_DEST';
+                document.getElementById('message').textContent = "Select empty adjacent space to throw to.";
+                drawBoard();
+            }
+        }
+        return;
+    }
+    if (waitState === 'THROW_SELECT_DEST') {
+        const origin = parseKey(actionData.origin);
+        if (getNeighbors(origin.q, origin.r, origin.s).some(n => hexKey(n.q, n.r) === key)) {
+            if (!board.get(key)) {
+                let pieceToMove = board.get(actionData.pieceToThrow);
+                board.set(key, pieceToMove);
+                board.set(actionData.pieceToThrow, null);
+                involvedHexesThisTurn.push(actionData.pieceToThrow);
+                involvedHexesThisTurn.push(key);
+                document.getElementById('message').textContent = "Piece thrown.";
+                endTurn();
+            }
+        }
+        return;
+    }
+    if (!selectedPiece || board.get(key)) return;
+    if (koRestriction && currentPlayer === koRestriction.player && selectedPiece === koRestriction.type && key === koRestriction.hexKey) {
+        document.getElementById('message').textContent = "Ko rule: Cannot place that piece back there this turn.";
+        return;
+    }
+    board.set(key, { player: 1, type: selectedPiece });
+    reserves[1][selectedPiece]--;
+    involvedHexesThisTurn.push(key);
+    if (selectedPiece === 'wind') {
+        const n = getNeighbors(h.q, h.r, h.s).filter(nh => board.get(hexKey(nh.q, nh.r)));
+        if (n.length > 0) {
+            actionData = { origin: key };
+            waitState = 'WIND';
+            document.getElementById('message').textContent = "Wind Flower: Select adjacent piece to push.";
+            drawBoard();
+            return;
+        }
+    } else if (selectedPiece === 'dandelion') {
+        const n = getNeighbors(h.q, h.r, h.s).filter(nh => board.get(hexKey(nh.q, nh.r)) && board.get(hexKey(nh.q, nh.r)).type !== 'dandelion');
+        if (n.length > 0) {
+            actionData = { origin: key };
+            waitState = 'DANDELION';
+            document.getElementById('message').textContent = "Dandelion: Select adjacent piece to return.";
+            drawBoard();
+            return;
+        }
+    } else if (selectedPiece === 'throwing') {
+        const n = getNeighbors(h.q, h.r, h.s);
+        const hasPieces = n.some(nh => board.get(hexKey(nh.q, nh.r)));
+        const hasEmpty = n.some(nh => !board.get(hexKey(nh.q, nh.r)));
+        if (hasPieces && hasEmpty) {
+            actionData = { origin: key };
+            waitState = 'THROW_SELECT_PIECE';
+            document.getElementById('message').textContent = "Throwing Flower: Select adjacent piece to throw.";
+            drawBoard();
+            return;
+        }
+    }
+    endTurn();
+});
+function randomRollout(startBoard, res1, res2, startPlayer, depth, currentKo) {
+    let simBoard = new Map();
+    for (const [k, v] of startBoard.entries()) simBoard.set(k, v ? { ...v } : null);
+    let simRes = { 1: { ...res1 }, 2: { ...res2 } };
+    let simKo = currentKo ? { ...currentKo } : null;
+    let p = startPlayer;
+    for (let d = 0; d < depth; d++) {
+        if (!hasPieces(1) && !hasPieces(2)) break;
+        if (!Object.values(simRes[p]).some(v => v > 0)) { p = p === 1 ? 2 : 1; continue; }
+        let moves = [];
+        for (const [type, count] of Object.entries(simRes[p])) {
+            if (count > 0) {
+                for (const [key, piece] of simBoard.entries()) {
+                    if (!piece) {
+                        if (simKo && p === simKo.player && type === simKo.type && key === simKo.hexKey) continue;
+                        if (type === 'wind') {
+                            const h = parseKey(key);
+                            const n = getNeighbors(h.q, h.r, h.s).filter(nh => simBoard.get(hexKey(nh.q, nh.r)));
+                            if (n.length > 0) n.forEach(t => moves.push({ type, key, pushTarget: hexKey(t.q, t.r) }));
+                            else moves.push({ type, key, pushTarget: null });
+                        } else if (type === 'dandelion') {
+                            const h = parseKey(key);
+                            const n = getNeighbors(h.q, h.r, h.s).filter(nh => simBoard.get(hexKey(nh.q, nh.r)) && simBoard.get(hexKey(nh.q, nh.r)).type !== 'dandelion');
+                            if (n.length > 0) n.forEach(t => moves.push({ type, key, bounceTarget: hexKey(t.q, t.r) }));
+                            else moves.push({ type, key, bounceTarget: null });
+                        } else if (type === 'throwing') {
+                            const h = parseKey(key);
+                            const n = getNeighbors(h.q, h.r, h.s);
+                            const adjPieces = n.filter(nh => simBoard.get(hexKey(nh.q, nh.r)));
+                            const adjEmpty = n.filter(nh => !simBoard.get(hexKey(nh.q, nh.r)));
+                            if (adjPieces.length > 0 && adjEmpty.length > 0) {
+                                adjPieces.forEach(pt => {
+                                    adjEmpty.forEach(et => {
+                                        moves.push({ type, key, throwTarget: hexKey(pt.q, pt.r), throwDest: hexKey(et.q, et.r) });
+                                    });
+                                });
+                            } else moves.push({ type, key });
+                        } else moves.push({ type, key });
+                    }
+                }
+            }
+        }
+        if (moves.length === 0) break;
+        let m = moves[Math.floor(Math.random() * moves.length)];
+        simRes[p][m.type]--;
+        simBoard.set(m.key, { player: p, type: m.type });
+        if (simKo && p === simKo.player) simKo = null;
+        if (m.type === 'wind' && m.pushTarget) applyWindPush(simBoard, m.key, m.pushTarget);
+        if (m.type === 'dandelion' && m.bounceTarget) {
+            let tgt = simBoard.get(m.bounceTarget);
+            if (tgt.player !== p) simKo = { hexKey: m.bounceTarget, player: tgt.player, type: tgt.type };
+            simRes[tgt.player][tgt.type]++;
+            simBoard.set(m.bounceTarget, null);
+        }
+        if (m.type === 'throwing' && m.throwTarget && m.throwDest) {
+            let pieceToMove = simBoard.get(m.throwTarget);
+            simBoard.set(m.throwDest, pieceToMove);
+            simBoard.set(m.throwTarget, null);
+        }
+        processCarnivores(simBoard, p);
+        p = p === 1 ? 2 : 1;
+    }
+    let s = calculateScores(simBoard);
+    return s[2] - s[1];
+}
+function evaluateStatic(simBoard, moveParams, player) {
+    let opponent = player === 1 ? 2 : 1;
+    processCarnivores(simBoard, player);
+    let s = calculateScores(simBoard);
+    let h = parseKey(moveParams.key);
+    let dist = Math.max(Math.abs(h.q), Math.abs(h.r), Math.abs(-h.q - h.r));
+    return (s[player] - s[opponent]) + ((4 - dist) * 0.1);
+}
+function aiTurn() {
+    let candidateMoves = [];
+    involvedHexesThisTurn = [];
+    for (const [type, count] of Object.entries(reserves[2])) {
+        if (count > 0) {
+            for (const [key, piece] of board.entries()) {
+                if (!piece) {
+                    if (koRestriction && koRestriction.player === 2 && type === koRestriction.type && key === koRestriction.hexKey) continue;
+                    if (type === 'wind') {
+                        const h = parseKey(key);
+                        const n = getNeighbors(h.q, h.r, h.s).filter(nh => board.get(hexKey(nh.q, nh.r)));
+                        if (n.length > 0) n.forEach(t => candidateMoves.push({ type, key, pushTarget: hexKey(t.q, t.r) }));
+                        else candidateMoves.push({ type, key, pushTarget: null });
+                    } else if (type === 'dandelion') {
+                        const h = parseKey(key);
+                        const n = getNeighbors(h.q, h.r, h.s).filter(nh => board.get(hexKey(nh.q, nh.r)) && board.get(hexKey(nh.q, nh.r)).type !== 'dandelion');
+                        if (n.length > 0) n.forEach(t => candidateMoves.push({ type, key, bounceTarget: hexKey(t.q, t.r) }));
+                        else candidateMoves.push({ type, key, bounceTarget: null });
+                    } else if (type === 'throwing') {
+                        const h = parseKey(key);
+                        const n = getNeighbors(h.q, h.r, h.s);
+                        const adjPieces = n.filter(nh => board.get(hexKey(nh.q, nh.r)));
+                        const adjEmpty = n.filter(nh => !board.get(hexKey(nh.q, nh.r)));
+                        if (adjPieces.length > 0 && adjEmpty.length > 0) {
+                            adjPieces.forEach(pt => {
+                                adjEmpty.forEach(et => {
+                                    candidateMoves.push({ type, key, throwTarget: hexKey(pt.q, pt.r), throwDest: hexKey(et.q, et.r) });
+                                });
+                            });
+                        } else candidateMoves.push({ type, key });
+                    } else candidateMoves.push({ type, key });
+                }
+            }
+        }
+    }
+    if (candidateMoves.length === 0) return endTurn();
+    candidateMoves.forEach(move => {
+        let simBoard = new Map();
+        for (const [k, v] of board.entries()) simBoard.set(k, v ? { ...v } : null);
+        simBoard.set(move.key, { player: 2, type: move.type });
+        if (move.type === 'wind' && move.pushTarget) applyWindPush(simBoard, move.key, move.pushTarget);
+        if (move.type === 'dandelion' && move.bounceTarget) simBoard.set(move.bounceTarget, null);
+        if (move.type === 'throwing' && move.throwTarget && move.throwDest) {
+            let pieceToMove = simBoard.get(move.throwTarget);
+            simBoard.set(move.throwDest, pieceToMove);
+            simBoard.set(move.throwTarget, null);
+        }
+        move.evalScore = evaluateStatic(simBoard, move, 2);
+        move.simBoard = simBoard;
+    });
+    candidateMoves.sort((a, b) => b.evalScore - a.evalScore);
+    let topMoves = candidateMoves.slice(0, 8);
+    let bestMove = topMoves[0];
+    let bestAvg = -Infinity;
+    topMoves.forEach(move => {
+        let totalScore = 0;
+        let simReserves1 = { ...reserves[1] };
+        let simReserves2 = { ...reserves[2] };
+        simReserves2[move.type]--;
+        let simKo = koRestriction ? { ...koRestriction } : null;
+        if (move.type === 'dandelion' && move.bounceTarget) {
+            let tgt = board.get(move.bounceTarget);
+            if (tgt.player !== 2) simKo = { hexKey: move.bounceTarget, player: tgt.player, type: tgt.type };
+            if (tgt.player === 1) simReserves1[tgt.type]++;
+            else simReserves2[tgt.type]++;
+        }
+        for (let i = 0; i < 20; i++) {
+            totalScore += randomRollout(move.simBoard, simReserves1, simReserves2, 1, 4, simKo);
+        }
+        let avg = totalScore / 20;
+        if (avg > bestAvg) { bestAvg = avg; bestMove = move; }
+    });
+    reserves[2][bestMove.type]--;
+    board.set(bestMove.key, { player: 2, type: bestMove.type });
+    involvedHexesThisTurn.push(bestMove.key);
+    if (bestMove.type === 'wind' && bestMove.pushTarget) {
+        const endPos = applyWindPush(board, bestMove.key, bestMove.pushTarget);
+        involvedHexesThisTurn.push(endPos);
+    }
+    if (bestMove.type === 'dandelion' && bestMove.bounceTarget) {
+        let targetPiece = board.get(bestMove.bounceTarget);
+        if (targetPiece.player !== 2) koRestriction = { hexKey: bestMove.bounceTarget, player: targetPiece.player, type: targetPiece.type };
+        reserves[targetPiece.player][targetPiece.type]++;
+        board.set(bestMove.bounceTarget, null);
+        involvedHexesThisTurn.push(bestMove.bounceTarget);
+    }
+    if (bestMove.type === 'throwing' && bestMove.throwTarget && bestMove.throwDest) {
+        let pieceToMove = board.get(bestMove.throwTarget);
+        board.set(bestMove.throwDest, pieceToMove);
+        board.set(bestMove.throwTarget, null);
+        involvedHexesThisTurn.push(bestMove.throwTarget);
+        involvedHexesThisTurn.push(bestMove.throwDest);
+    }
+    endTurn();
+}
+initBoard();
+updateView();
+</script>
+
+
+</body></html>
