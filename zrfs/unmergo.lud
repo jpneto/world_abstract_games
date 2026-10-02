@@ -1,0 +1,183 @@
+(define "OwnNeighbours" (sites Around (to) if:(= (who at:(to)) (mover))))
+
+(define "NoMerge"
+    (all Sites "OwnNeighbours"
+        if:(is In (site) (sites Group at:(regionSite "OwnNeighbours" index:0)))
+    )
+)
+
+(define "CanPlace"
+    (can Move (add (piece (id "Disc" Mover)) (to (sites Empty) if:"NoMerge")))
+)
+
+(define "CanRelocate"
+    (can Move (forEach Piece (move Step (to if:(is Empty (to)))) Next))
+)
+
+(define "Groups" (count Groups if:(= (who at:(to)) #1)))
+
+(define "GroupsOfAtLeast" (count Groups if:(= (who at:(to)) #1) min:#2))
+
+(define "HighestDifferingLevel"
+    (max (results
+        from:(centrePoint)
+        to:(sites Board)
+        (if (= ("GroupsOfAtLeast" P1 (+ 1 (to))) ("GroupsOfAtLeast" P2 (+ 1 (to))))
+            0
+            (+ 1 (to))
+        )
+    ))
+)
+
+(define "Over" (and (>= (var "Passes") 2) (> (count Pieces All) 0)))
+
+//-----------------------------------------------------------------------------
+
+(game "UNMERGO"
+    (players 2)
+
+    (equipment {
+        (board (tri Hexagon ) use:Vertex)
+        (piece "Disc" Each)
+    })
+
+    (rules
+        (start {})
+
+        (play
+            (if (= 1 (var "Phase"))
+                
+                (if "CanPlace"
+                    (move Add
+                        (piece (id "Disc" Mover))
+                        (to (sites Empty) if:"NoMerge")
+                        (then (and {
+                            (set Var "Passes" 0)
+                            <Relocation:>
+                        }))
+                    )
+                    (move Pass (then (set Var "Passes" (+ 1 (var "Passes")))))
+                )
+            )
+        )
+
+        (end {
+            (if (and "Over" (> ("Groups" P1) ("Groups" P2))) (result P1 Win))
+            (if (and "Over" (< ("Groups" P1) ("Groups" P2))) (result P2 Win))
+            (if (and { "Over" (= ("Groups" P1) ("Groups" P2)) (= 0 "HighestDifferingLevel") })
+                (result Mover Draw))
+            (if (and {
+                    "Over" (= ("Groups" P1) ("Groups" P2))
+                    (< ("GroupsOfAtLeast" P1 "HighestDifferingLevel")
+                       ("GroupsOfAtLeast" P2 "HighestDifferingLevel"))
+                })
+                (result P1 Win))
+            (if (and {
+                    "Over" (= ("Groups" P1) ("Groups" P2))
+                    (> ("GroupsOfAtLeast" P1 "HighestDifferingLevel")
+                       ("GroupsOfAtLeast" P2 "HighestDifferingLevel"))
+                })
+                (result P2 Win))
+        })
+    )
+)
+
+//-----------------------------------------------------------------------------
+
+(option "Board Size" <Board> args:{ <side> } {
+    (item "3 per side"  <3> "The board is a hexagon 3 points per side (19 points).")
+    (item "4 per side"  <4> "The board is a hexagon 4 points per side (37 points).")
+    (item "5 per side"  <5> "The board is a hexagon 5 points per side (61 points), as originally published.")****
+    (item "6 per side"  <6> "The board is a hexagon 6 points per side (91 points).")
+    (item "7 per side"  <7> "The board is a hexagon 7 points per side (127 points).")
+})
+
+(option "Second Phase" <Relocation> args:{ <rule> <onPlace> } {
+    (item "Optional"
+        <(or
+            (move Pass (then (set Var "Phase" 0)))
+            (forEach Piece
+                (move Step (to if:(is Empty (to))) (then (set Var "Phase" 0)))
+                Next
+            )
+        )>
+        <(and { (set Var "Phase" 1) (moveAgain) })>
+        "After placing, you may optionally relocate one opponent piece. As originally published."
+    )****
+    (item "Mandatory (Chris Huntoon's proposal, with his opening exception)"
+        <(if "CanRelocate"
+            (forEach Piece
+                (move Step (to if:(is Empty (to))) (then (set Var "Phase" 0)))
+                Next
+            )
+            (move Pass (then (set Var "Phase" 0)))
+        )>
+        <(if (>= (var "TurnNumber") 2)
+            (and {
+                (set Var "Phase" 1)
+                (set Var "TurnNumber" (+ 1 (var "TurnNumber")))
+                (moveAgain)
+            })
+            (set Var "TurnNumber" (+ 1 (var "TurnNumber")))
+        )>
+        "The first three plies are placement only; from the fourth on, relocating an opponent's piece is required whenever one is legal."
+    )
+})
+
+(rulesets {
+    (ruleset "Ruleset/Standard" { "Board Size/5 per side" "Second Phase/Optional" })*
+    (ruleset "Ruleset/Chris Huntoon's Proposal" { "Board Size/5 per side" "Second Phase/Mandatory (Chris Huntoon's proposal, with his opening exception)" })
+})
+
+//-----------------------------------------------------------------------------
+
+(metadata
+    (info
+        {
+            (description "A two-player abstract strategy game on a hexagonal board. Designed by Kashio Fujii in 2026.")
+            (rules "
+Goal
+End the game with more separate groups of your own colour than your opponent.
+
+Placing (mandatory)
+- Place one piece of your colour on any empty point.
+- Your placement may not merge two or more of your own existing groups into
+  one. Starting a new, isolated group is fine, and adding to a single
+  existing group is fine.
+- If you have no legal placement, you pass: your whole turn is skipped, and
+  you do not get to move an opponent's piece either.
+
+Moving an opponent's piece (optional)
+- After placing, you may move ONE of your opponent's pieces a single step to
+  an adjacent empty point. This is never required, and there is no
+  restriction on the outcome -- you may use it to force two of their groups
+  together.
+
+Group
+Pieces of the same colour connected by ordinary adjacency, as in Go.
+
+Ending
+The game ends the moment neither player has a legal placement. A single pass
+does not end it. Whoever has more groups wins; if tied, whoever's largest
+group is smaller wins.")
+            (id "unmergo")
+            (version "1.0")
+            (classification "board/space/territory")
+            (author "Kashio Fujii")
+            (credit "Kashio Fujii")
+            (date "2026")
+        }
+    )
+
+    (graphics {
+        (player Colour P1 (colour White))
+        (player Colour P2 (colour VeryDarkGrey))
+        (piece Scale 1)
+        (board Style Graph)
+        (board Colour InnerVertices (colour Grey))
+        (board Colour InnerEdges (colour Grey))
+        (board Colour OuterVertices (colour Grey))
+        (board Colour OuterEdges (colour Grey))
+        (board Background fillColour:(colour LightGrey))
+    })
+)

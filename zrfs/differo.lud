@@ -1,0 +1,116 @@
+(define "Metior"
+    (intersection {
+        (sites Distance
+            from:(from)
+            (exact (+ {
+                1
+                (count Sites in:(intersection {
+                    (sites Direction from:(from) (union (directions #1) (directions #2)))
+                    (sites Occupied by:Mover)
+                }))
+                (- (count Sites in:(intersection {
+                    (sites Direction from:(from) (union (directions #1) (directions #2)))
+                    (sites Occupied by:Next)
+                })))
+            }))
+        )
+        (sites Direction
+            from:(from)
+            (if (is Mover P1)
+                (directions #1)
+                (directions #2)
+            )
+        )
+    })
+)
+
+//------------------------------------------------------------------------------
+
+(game "DIFFERO"
+    (players 2)
+
+    (equipment {
+        (board (tri Hexagon 5) use:Vertex)
+        (piece "Disc" Each)
+        (regions P1 (sites Top))
+        (regions P2 (sites Bottom))
+    })
+
+    (rules
+        (start {
+            (place "Disc1" { "B2" "B3" "B4" "C2" "C4" "D2" "D3" "D4" "E2" "E4" "F3" "F4" "G4" })
+            (place "Disc2" { "C6" "D6" "D7" "E6" "E8" "F6" "F7" "F8" "G6" "G8" "H6" "H7" "H8" })
+        })
+
+        (play
+            (forEach Piece
+                (move
+                    (from (from))
+                    (to (intersection {
+                        (union {
+                            ("Metior" { Leftward Rightward } { Leftward Rightward })
+                            ("Metior" { FL } { BL })
+                            ("Metior" { FR } { BR })
+                        })
+                        (sites Empty)
+                    }))
+                )
+            )
+        )
+
+        (end {
+            (if (is In (last To) (sites Mover))
+                (result Mover Win)
+            )
+
+            (if (no Moves Next)
+                (result Next Loss)
+            )
+        })
+    )
+)
+
+//------------------------------------------------------------------------------
+
+(metadata
+    (info
+        {
+            (description "Differo was invented by Kashio Fujii in 2022. It is a two-player abstract strategy game played on a hexagonal board with five spaces per side.")
+            (rules "
+Goal
+Be the first to move any one of your pieces to your goal line, the edge of the board opposite your starting side.
+
+Movement
+- On your turn, choose one of your pieces and move it along one of the hexagonal grid's line directions.
+- The distance moved is exactly: (your pieces on that line) minus (your opponent's pieces on that line). 'The line' means the full straight line of sites running through the piece's position in the chosen direction.
+- If this value is zero or less, the piece cannot move in that direction.
+- Pieces may jump over any piece, friend or foe, while moving.
+- Pieces cannot move backwards.
+- A piece cannot land on a site already occupied by another piece.
+
+Game End
+- Reaching your goal line wins immediately.
+- A player with no legal move on their turn loses.")
+            (source "<a href=\"https://kashio-games.netlify.app/\" target=\"_blank\" class=\"style1\" style=\"color: #0000EE\" />kashio-games.netlify.app</a>")
+            (version "1.0")
+            (classification "board/race/reach")
+            (author "Kashio Fujii")
+            (credit "Kashio Fujii")
+            (date "2026-05-22")
+        }
+    )
+
+    (graphics {
+        (player Colour P1 (colour White))
+        (player Colour P2 (colour VeryDarkGrey))
+        (piece Scale 1)
+        (board Style Graph)
+        (board Colour InnerVertices (colour Grey))
+        (board Colour InnerEdges (colour Grey))
+        (board Colour OuterVertices (colour Grey))
+        (board Colour OuterEdges (colour Grey))
+        (region Colour (sites P1) (colour White))
+        (region Colour (sites P2) (colour VeryDarkGrey))
+        (board Background fillColour:(colour LightGrey))
+    })
+)

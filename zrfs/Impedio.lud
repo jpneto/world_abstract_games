@@ -1,0 +1,116 @@
+(game "Impedio"
+    (players 2)
+    (equipment {
+        (board (tri Hexagon 5) use:Vertex)
+        (piece "Disc" Each)
+    })
+    (rules
+
+        (start {
+            // Each side gets one White and one Black pile of 5, at the two
+            // ends of that side's interior vertices (mirroring the digital
+            // demo's setup). Pile size is tracked via piece value (not the
+            // physical Count system), so it can be displayed larger.
+            (place "Disc1" (sites {"I8" "H4" "D1" "A2" "B6" "F9"}) value:5)
+            (place "Disc2" (sites {"I6" "F2" "B1" "A4" "D8" "H9"}) value:5)
+        })
+
+        (play
+            (forEach Site
+                (sites Occupied by:Mover)
+                (if (> (value Piece at:(site)) 1)
+                    (forEach Value
+                        min:1
+                        max:(- (value Piece at:(site)) 1)
+                        (move
+                            (from (site))
+                            (to
+                                (intersection {
+                                    (sites Distance from:(site) (exact (value)))
+                                    (sites Direction from:(site) All)
+                                    (union {
+                                        (sites Empty)
+                                        (sites Occupied by:Mover)
+                                    })
+                                })
+                                (apply
+                                    (and {
+                                        (set Var "OrigTotal" (value Piece at:(site)))
+                                        (set Var "LeftBehind" (value))
+                                        (set Var "DestExisting" (if (not (is Empty (to))) (value Piece at:(to)) 0))
+                                    })
+                                )
+                            )
+                            (then
+                                (and {
+                                    (add (piece (id "Disc" Mover)) (to (last From)))
+                                    (set Value at:(last From) (var "LeftBehind"))
+                                    (set Value at:(last To) (+ (var "DestExisting") (- (var "OrigTotal") (var "LeftBehind"))))
+                                })
+                            )
+                        )
+                    )
+                )
+            )
+        )
+
+        (end
+            (if
+                (or {
+                    // "opposite pair" connection
+                    (is Connected 2 { (sites Side N)  (sites Side S)  })
+                    (is Connected 2 { (sites Side NE) (sites Side SW) })
+                    (is Connected 2 { (sites Side SE) (sites Side NW) })
+                    // "non-adjacent triple" connection
+                    (is Connected 3 { (sites Side N)  (sites Side SE) (sites Side SW) })
+                    (is Connected 3 { (sites Side NE) (sites Side S)  (sites Side NW) })
+                })
+                (result Mover Win)
+            )
+        )
+    )
+)
+
+//------------------------------------------------------------------------------
+
+(metadata
+    (info
+        {
+            (description "Impedio was invented by Kashio Fujii in 2026. It is a two-player connection game played on a hexagonal board with five spaces per side.")
+            (rules "
+Goal
+Connect a pair of opposite sides of the board, or three mutually non-adjacent sides, with a single connected group of your own pieces.
+
+Setup
+Each side of the board starts with one White and one Black pile of five pieces.
+
+Movement
+- On your turn, choose one of your piles containing more than one piece.
+- Decide how many pieces to leave behind; the pieces that move travel exactly that many spaces in a straight line.
+- The destination must be empty, or already hold a pile of your own colour, in which case the two piles merge into one.
+- Pieces may jump over any pile, friend or foe, while moving.
+
+Game End
+- Connecting the required sides with a single group wins immediately.")
+            (source "<a href=\"https://kashio-games.netlify.app/\" target=\"_blank\" class=\"style1\" style=\"color: #0000EE\" />kashio-games.netlify.app</a>")
+            (version "1.0")
+            (classification "board/space/connection")
+            (author "Kashio Fujii")
+            (credit "Kashio Fujii")
+            (date "2026-08-28")
+        }
+    )
+
+    (graphics {
+        (player Colour P1 (colour White))
+        (player Colour P2 (colour VeryDarkGrey))
+        (piece Scale 1)
+        (board Style Graph)
+        (board Colour InnerVertices (colour Grey))
+        (board Colour InnerEdges (colour Grey))
+        (board Colour OuterVertices (colour Grey))
+        (board Colour OuterEdges (colour Grey))
+        (board Background fillColour:(colour LightGrey))
+        (show Piece Value Middle)
+    })
+)

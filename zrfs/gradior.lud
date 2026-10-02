@@ -1,0 +1,82 @@
+(game "Gradior"
+    (players 2)
+
+    (equipment {
+        (board (tri Hexagon 4) use:Vertex)
+        (piece "Disc" Each)
+    })
+
+    (rules
+        (start {
+            (place "Disc1" (sites {"E5" "F7" "F4" "G6" "D3" "E2" "B2" "C1" "C4" "A3" "D6" "B5"}) value:1)
+            (place "Disc2" (sites {"E4" "F6" "F3" "G5" "C3" "D2" "A2" "B1" "D5" "B4" "E7" "C6"}) value:1)
+        })
+
+        (play
+            (forEach Piece
+                (move
+                    (from (from))
+                    (to
+                        (intersection {
+                            (sites Distance from:(from) (exact (value Piece at:(from))))
+                            (sites Direction from:(from) All)
+                            (sites Empty)
+                        })
+                        (apply (set Var "MoveValue" (value Piece at:(from))))
+                    )
+                    (then
+                        (set Value at:(last To) (+ 1 (var "MoveValue")))
+                    )
+                )
+            )
+        )
+
+        (end {
+            (if (= 5 (value Piece at:(last To))) (result Mover Win))
+            (if (no Moves Next) (result Next Loss))
+        })
+    )
+)
+
+//------------------------------------------------------------------------------
+
+(metadata
+    (info
+        {
+            (description "Gradior was invented by Kashio Fujii in 2026. It is a two-player abstract strategy game played on a hexagonal board with four spaces per side.")
+            (rules "
+Goal
+Be the first to move any one of your pieces for the fourth time.
+
+Setup
+Each player has 12 pieces, spread across the board in a pattern symmetric under 120-degree rotation.
+
+Movement
+- On your turn, move exactly one of your pieces in a straight line, in any of the six directions.
+- The distance moved must be exactly: (the number of times that piece has already moved) + 1.
+- A piece may jump over any other piece, friend or foe, along the way. It must land on an empty space.
+
+Game End
+- The first player to move a single piece for the fourth time wins immediately.
+- If you have no legal move on your turn, you lose.")
+            (version "1.0")
+            (classification "board/space/race")
+            (author "Kashio Fujii")
+            (credit "Kashio Fujii")
+            (date "2026-08-29")
+        }
+    )
+
+    (graphics {
+        (player Colour P1 (colour White))
+        (player Colour P2 (colour VeryDarkGrey))
+        (piece Scale 1)
+        (show Piece Value Middle)
+        (board Style Graph)
+        (board Colour InnerVertices (colour Grey))
+        (board Colour InnerEdges (colour Grey))
+        (board Colour OuterVertices (colour Grey))
+        (board Colour OuterEdges (colour Grey))
+        (board Background fillColour:(colour LightGrey))
+    })
+)
