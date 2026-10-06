@@ -31,11 +31,11 @@ HALMA FAMILY</font></strong></h1>
     <td width="100%">
       <ul>
 		<li><font size="3" face="Arial"><strong>BASE - </strong>The player's
-          base is the set of cells occupied by his stones before the game
+          base is the set of cells occupied by their stones before the game
           starts.</font>
             </li>
 		<li><font size="3" face="Arial"><strong>MOVE - </strong>On each turn,
-          each player moves one of his stones. A stone may:</font>
+          each player moves one of their stones. A stone may:</font>
             <ul>
 				<li><font size="3" face="Arial">Move to an adjacent (orthogonal or
               diagonal) empty cell</font>
@@ -60,7 +60,7 @@ HALMA FAMILY</font></strong></h1>
 		</ul>
 		</li>
 		<li><font size="3" face="Arial"><b>GOAL</b>
-            - Wins the first player that moves at least one of his stones to the
+            - Wins the first player that moves at least one of their stones to the
           enemy base, while that base is totally occupied.</font>
             </li>
 		</ul>
@@ -74,23 +74,23 @@ However, other trivial draws are still possible, check the second example. In
 this case, a further fix to the goal must be added. A proposal from <a href="mailto:ploog@mathematik.hu-berlin.de">David
 Ploog</a> is the following:</font></p>
 <blockquote>
-  <p align="left"><font size="3" face="Arial"><i>&quot;A player wins if he
-  cannot move any of his stones nearer to the opposing corner and if all of his
-  stones left his base.&quot;</i></font></p>
+  <p align="left"><font size="3" face="Arial"><i>&quot;A player wins if they
+  cannot move any of their stones nearer to the opposing corner and if all of their
+  stones left their base.&quot;</i></font></p>
 </blockquote>
-<p align="left"><font size="3" face="Arial"><i>Then he adds: [...] use
+<p align="left"><font size="3" face="Arial"><i>Then they add: [...] use
 &quot;nearer&quot; with respect to geometric distance of cells. So if one player has a piece
-trapped while his opponent doesn't, then he may as well resign. If both players
+trapped while their opponent doesn't, then they may as well resign. If both players
 have pieces trapped the games is drawn because neither of them will open a path
-for his opponent. In any case it is a bad idea to keep pieces behind on purpose.
+for their opponent. In any case it is a bad idea to keep pieces behind on purpose.
 [...] The aesthetic point is this: When you declare a game as won when the base
 is full (regardless of inhabitants) you cover still not all possibilities. Hence
 there's need of another rule. But I tried to state this additional in such a way
 that it also covers ordinary games.</i></font></p>
 <p align="left"><font size="3" face="Arial">Ralf Gering notes<i>: I would like
 to describe another solution to the problem which is known in Germany for at
-least half a century: &quot;<u>If one player has left his base, the other player
-must also leave his base (or move towards the exit of his base). Other moves are
+least half a century: &quot;<u>If one player has left their base, the other player
+must also leave their base (or move towards the exit of their base). Other moves are
 not permitted</u>.&quot; The beauty of this solution is that the original
 winning condition of Halma remains unchanged.</i></font></p>
 <table border="1" width="600" cellspacing="3" cellpadding="2" bordercolorlight="#333366" bordercolordark="#000000">
@@ -131,8 +131,8 @@ boardgv2diag("ur,8,8,5xxX/5xx:/5xxx/5x.x/8/8/8/8");
 summary</a>, here are the rules I found that try to deal with this drawish 
 problem:<br>
 <br>
-A) If one player has left his base, the other player must also leave his base 
-(or move towards the exit of his base). Other moves are not permitted. (Ralf 
+A) If one player has left their base, the other player must also leave their base 
+(or move towards the exit of their base). Other moves are not permitted. (Ralf 
 Gering&#39;s quoting a rule practiced in Germany)<br>
 B) Any piece in a player&#39;s home-base must make progress towards the enemy camp 
 whenever this is possible by jumping over an enemy piece (Zillions&#39; rule quoting 
@@ -141,15 +141,15 @@ C) Budget of 50 moves (for the 10x10 variant) to empty home-base, with no
 come-back moves to home-base (Dan Troyka&#39;s proposal, Brainking&#39;s ruleset)<br>
 D) Forward moves in the home-base are mandatory while it is not empty<br>
 E) Forbid backward moves while home-base is not empty<br>
-F1) A player wins if he cannot move any of his stones nearer to the opposing 
-corner and if all of his stones left his base (David Ploog&#39;s proposal)<br>
+F1) A player wins if they cannot move any of their stones nearer to the opposing 
+corner and if all of their stones left their base (David Ploog&#39;s proposal)<br>
 F2) Player wins when further forward movement is impossible due to blockages in 
-his opponent&#39;s starting area<br>
+their opponent&#39;s starting area<br>
 F3) The game is won when all the available points within the opposite home-base 
 are occupied<br>
 G) If a player is prevented from winning because of the presence of an opposing 
 peg in the destination area, the player is entitled to swap the opposing peg 
-with that of his own peg. This applies for both a single hole move and any part 
+with that of their own peg. This applies for both a single hole move and any part 
 of a hopping move.<br>
 H) Collection of rules at Super Halma&#39;s AGM article by Andrew Perkins<br>
 I) No friendly stone inside the opponent home-base can leave again. After 50 
@@ -157,14 +157,14 @@ moves (again, for the 10x10 variant) without entering new stones at the
 opponent&#39;s home-base, the game ends. The player with more pieces inside the 
 opponent&#39;s home-base wins the game, otherwise it is a draw. [João Neto]<br>
 J) A player with a stone in the destination zone wins when there is no path to a 
-space next to his largest group of stones inside the destination from one of his 
+space next to their largest group of stones inside the destination from one of their 
 other stones, where a path is any series of steps that does not cross the 
 opponent&#39;s stones twice consecutively. [Dale Walton]<br>
 <br>
 I find rules A/B/C the better ones (considering both simplicity and efficiency), 
 while D/E are too intrusive of Halma&#39;s rules, and F123/G/J feel too hard to code 
 (assuming they are well-defined). To make matters worse, Andrew Perkins shows 
-examples that cannot be solved by A-G, and his own proposal H seems excessively 
+examples that cannot be solved by A-G, and their own proposal H seems excessively 
 complex.</font></p>
 <p><font face="Arial">I implemented Halma (and Super-Halma) at
 <a href="https://play.abstractplay.com/games/halma">AbstractPlay</a> using the 
@@ -196,7 +196,7 @@ Grec</b> (by Dominique Huguenin and Yves Chédel) played in the next diagram. Th
 Move one friendly stone (orthogonal or diagonal) to an empty cell, or jump over
 an enemy stone (no jumps over friendly stones) landing on the immediate next
 cell. Every move/jump must be forwards or sideways never backwards. (2) Wins the
-player that moves his stones to the last two rows.&nbsp;</font></p>
+player that moves their stones to the last two rows.&nbsp;</font></p>
     <center>
       <table border="1" width="98" cellspacing="1" bordercolorlight="#333366" bordercolordark="#000000">
         <tr>
@@ -211,7 +211,7 @@ player that moves his stones to the last two rows.&nbsp;</font></p>
 with friendly stones (so, 18 stones each). Stones&nbsp; move like chess knights:
 either to an empty square, which ends the turn, or to a square with an opponent piece.
 In the latter case, the piece must make another jump or jumps (there is no
-capturing) until it lands on an empty cell. Winner is who has all his stones at the two rows at the opposite of
+capturing) until it lands on an empty cell. Winner is who has all their stones at the two rows at the opposite of
 the board. Check WAG's <a href="renpaarden.htm">page</a>.</font></p>
 <p><font size="3" face="Arial"><a name="lezug"></a><b>
 <a href="http://jeuxstrategie.free.fr/Zug_complet.php">Zug</a></b> <a href="zrfs/Le_Zug.zip">
@@ -416,13 +416,13 @@ a 1992 Halma-like game with some original touches:</font></p>
 <p align="left"><font face="Arial">There is a setup phase where players 
 alternate dropping adversary pieces in empty hexes in the central area. Then, 
 each player must slide, jump over, or swap a friendly piece with an adjacent 
-piece. The first to have his home-base completely occupied wins the game. These 
+piece. The first to have their home-base completely occupied wins the game. These 
 rules however are not complete, given that the BGG description states &quot;<i>A pawn 
 may be stranded if it has no neighbors.</i>&quot; but then do not describe the 
 details...</font></p>
 <p align="left"><font size="3" face="Arial"><a name="prog_halma"></a> </font>
 <font face="Arial"><b>Progressive Halma</b> is a 1964&#39;s game by Sid Sackson 
-proposed in his diaries:</font></p>
+proposed in their diaries:</font></p>
 <p align="center">
 <img border="0" src="icons/Progressive-halma_1.jpg" width="795" height="284"></p>
 <p align="center">
@@ -434,10 +434,10 @@ followers. Here are the board and the rules taken from
 GARD</a>, the gamesboard database:</font></p>
 <p align="center">
 <img border="0" src="icons/Caesar-c1900_board.jpg" width="303" height="322"></p>
-<p><font size="3" face="Arial">Each player places their 17 stones into his half 
-of the board (only the central three cells start empty) and try to move his army 
+<p><font size="3" face="Arial">Each player places their 17 stones into their half 
+of the board (only the central three cells start empty) and try to move their army 
 to the other side. Pieces may not move backwards and a blocked player must pass 
-his turn.</font></p>
+their turn.</font></p>
 <p align="center">
 <img border="0" src="icons/Caesar-c1900_rules.jpg" width="390" height="546"></p>
 <p><font face="Arial"><a name="Torno"></a>Another old game based on Halma is <b>Torno</b>, date c.1890-1910:</font></p>
