@@ -1,0 +1,291 @@
+// Foliage <Variant:maxPlacementCoverage>
+//------------------------------------
+(define "StartingCount" <Variant:piecesPerColor>)
+(define "StartingCountx4" <Variant:totalPieces>)
+(define "MinOverlap" <Variant:minPlacementCoverage>) //1)
+(define "MaxOverlap" <Variant:maxPlacementCoverage>) // 3) // 2)
+(define "CoveredAreaAt" (difference (sites Around #1 Orthogonal includeSelf:True) (sites Empty)))
+
+(define "ScoreFor"
+ (seq
+  {
+   (set Score (player #1) 0)
+//   (addScore (player #1) (value Player #1)) //  (amount (player #1)))
+   (forEach Group Orthogonal if:(and (= #1 (who at:(to))) (= (value Piece at:(to)) (value Piece at:(from)))) 
+    (if 
+     (= 0 
+      (size Array
+       (difference 
+        (array {1..4}) 
+        (results 
+         from:(sites Around (sites) Orthogonal includeSelf:True) 
+         to:0
+         (% (state at:(from)) 5)
+     ))))
+     (and
+      {
+       (addScore (player #1) (count Sites in:(sites)))
+       (forEach Value
+        (array (sites))
+        (set State at:(value) (+ 5 (% (state at:(value)) 5)))
+       )
+      } 
+     )
+     (forEach Value
+      (array (sites))
+      (if 
+       (!= (state at:(value)) (% (state at:(value)) 5))
+       (set State at:(value) (% (state at:(value)) 5))
+   ))))
+  }
+))
+
+(define "PlaceAndScore"
+ (do
+  (move 
+   (from (sites Hand Mover))
+   (to (sites Inner)
+    if:(or
+     (= -1 (counter))
+     (and
+      {
+       (<= "MinOverlap" 
+        (count Sites in:("CoveredAreaAt" (to)))
+       )
+       (>= "MaxOverlap" 
+        (count Sites in:("CoveredAreaAt" (to)))
+       )
+       (all Sites  // no covered site is the last one
+        ("CoveredAreaAt" (to))
+        if:(is In (value Piece at:(site))
+         (results
+          from:(difference (difference (sites Board) (sites Empty)) ("CoveredAreaAt" (to)))
+          to:0
+          (value Piece at:(from)) 
+       )))
+      }
+    ))
+    (apply (remove ("CoveredAreaAt" (to))))
+   )
+   (then
+    (seq
+     {
+      (set Var "LT" (last To))
+      (set Var "PieceColorState" (state at:(var "LT")))
+      (set Value at:(var "LT") (+ 2 (counter)))
+      (forEach Site 
+       (sites Around (var "LT") Orthogonal)
+       (add
+        (to (site) 
+         (apply 
+          (and
+           {
+            (set State at:(to) (state at:(var "LT"))) 
+            (set Value at:(to) (+ 2 (counter)))
+           }
+      )))))   
+     }
+  )))
+  ifAfterwards:(and
+   (or 
+    (< 0 (counter))
+    (no Pieces in:(expand (sites Outer) steps:2 Adjacent))
+   )
+   (all Sites
+    (sites Around 
+     (sites Around (var "LT") Orthogonal includeSelf:True) 
+     Adjacent 
+    )
+    if:(!= (% (var "PieceColorState") 5) (% (state at:(site)) 5)) // doesn't touch its own color
+  ))
+  (then
+   (and
+    ("ScoreFor" 1)
+    ("ScoreFor" 2)
+))))
+//--------------------------------------------------------- 
+// Main routine
+//------------------------------------
+
+(game "Foliage" 
+ (players 2)
+ (equipment
+  {
+   (board (tri Hexagon <Variant:boardSize>) use:Cell)
+   (hand Each size:2)
+   (piece "Triangle" Each maxState:10 maxValue:"StartingCountx4") // number of turns possible, i.e. one per tile.
+  }
+ )
+ (rules
+  (start
+   {
+    (set Score P1 0)
+    (set Score P2 0)
+    (set Amount P1 2)
+    (set Amount P2 0)
+    (place "Triangle1" (handSite P1 0) count:"StartingCount" state:1)
+    (place "Triangle1" (handSite P1 1) count:"StartingCount" state:2)
+    (place "Triangle2" (handSite P2 0) count:"StartingCount" state:3)
+    (place "Triangle2" (handSite P2 1) count:"StartingCount" state:4)
+   }
+  )
+  (play
+   (or
+    {
+     (if 
+      (> 0 (counter))
+      (move Bet P1 (range 0 5)
+       (then
+        (seq
+         {
+          (set Pot (amount P1)) 
+          (set Value P1 (amount P1))
+          (swap Players P1 P2)
+         }
+      )))
+      (if
+       (and (!= 1 (var "Swapped")) (no Pieces in:(sites Board))) 
+       (move Swap Players P1 P2
+        (then (set Var "Swapped" 1))
+       )
+      )
+      (then
+       (set Value P1 (amount P1)
+        (then (set Value P2 0))
+     )))
+     (if 
+      (> 0 (counter)) // use default komi
+      (do 
+       (set Value P1 (amount P1)
+        (then (set Pot (amount P1)))
+       ) 
+       next:"PlaceAndScore"
+      )
+      "PlaceAndScore"
+     )
+    }
+  ))  
+  (end 
+   { 
+    (if 
+     (and {(< 2 (counter)) (was Pass) (>= (+ (score (player 1)) (value Player 1)) (score (player 2)))} ) (result P1 Win))(if 
+     (and {(< 2 (counter)) (was Pass) (< (+ (score (player 1)) (value Player 1)) (score (player 2)))} ) (result P2 Win))
+   }
+)))
+
+//----------------------------------
+
+(option "Variant" <Variant> args:{<boardSize> <piecesPerColor> <totalPieces> <minPlacementCoverage> <maxPlacementCoverage> }
+ {
+  (item "Order 4 Variant" <5> <8> <32> <0> <4> "Board:
+   Order 4 (96 playable locations)
+   
+   Variant Restrictions:
+   Placement need not overlap existing pieces, but may do so.")
+  (item "Order 3 Variant" <4> <6> <24> <0> <4> "Board:
+   Order 4 (36 playable locations)
+   
+   Variant Restrictions:
+   Placement need not overlap existing pieces, but may do so.")
+  (item "Order 3" <4> <6> <24> <1> <4> "Board:
+   Order 4 (36 playable locations)
+   
+   Variant Restrictions:
+   Placement need not overlap existing pieces, but may do so.")
+  (item "Large Board" <8> <8> <32> <1> <4> "Board:
+   Order 7 (296 piece locations)")
+  (item "Partial Coverage" <8> <8> <32> <1> <3> "Board:
+   Order 7 (296 piece locations)
+   
+   Variant Restrictions:
+   Placement must overlap both existing pieces and open triangles, at the same time.")
+ }
+)
+
+(option "History" <History> args:{ <on> }
+ {
+  (item "Off" <> "Show History is off.")
+  (item "On" <(show Piece Value Middle)> "Show history is on.")
+ }
+)
+
+//----------------------------------
+(define "Color1" (colour VeryLightBlue))
+(define "Color2" (colour LightBlue))
+(define "Color3" (colour TangerineDream))
+(define "Color4" (colour HumanDark))
+
+(metadata
+ (info
+  {
+   (description "Foliage is an overlapping tile laying game, where players each have a limited supply of order 2 triangles that must be placed to to cover exactly 3 or 4 empty spaces, and never fully bury any other player's triangle, nor touch their own color at any visible point or edge..
+   
+   At the end of the game points are scored for the area of each of a player's regions that shares edges with all three other colors.
+   "
+   ) 
+   
+   (rules "Equipment:
+-- The Foliage board is a large triangular grid.
+-- There are triangular pieces in 4 colors. Each piece is the size of 4 grid unit triangles.
+-- The players each receive a fixed number of the pieces of 2 colors, for their use in play.
+
+Overview:
+The game is played by placing triangles at least partially over-top of one or more triangles already in play.
+
+No triangle may be fully covered in this process, and no triangle may be placed in contact with a visible part of the same color (not even at corners)
+
+The goal is to have areas of your color with edges that abut all three of the other colors.
+
+The winner is the player whose colors cover the most unit triangles in those areas -- plus a 2 point bonus for the first player to place a piece. (i.e. standard Komi of 2.5)
+
+-- Optionally, the komi amount can be changed by a bid from the first player. The other player then chooses to play first, or else to pass by swapping.
+
+Play 
+-- The first placement is a triangle near the center of the board.
+-- Play alternates without passing
+-- The game ends and is scored when one player cannot move. 
+-- Ties go to the player that placed first. (Blue)"
+   )
+
+   (version "1.3.14")
+   (classification "board/space/blocking")
+   (author "Dale Walton")
+   (credit "Dale W. Walton")
+   (date "2026-09-21")
+  }
+ )
+ 
+ (graphics
+  {
+   (board Colour Phase0 (colour White))
+   (board Colour OuterEdges (colour White))
+   (board Colour InnerEdges (colour Black))
+   (board StyleThickness OuterEdges 1.5)
+   (board StyleThickness InnerEdges 0.4)
+   (board StyleThickness InnerVertices 0.4)
+   (board StyleThickness OuterVertices 0.4)
+   (player Colour P1  "Color1")
+   (player Colour P2  "Color3")
+   (region Colour (union (sites State 1) (sites State 6)) "Color1")
+   (region Colour (union (sites State 2) (sites State 7)) "Color2")
+   (region Colour (union (sites State 3) (sites State 8)) "Color3")
+   (region Colour (union (sites State 4) (sites State 9)) "Color4")
+//   (region Colour (intersection (sites Outer) (sites State 0)) (colour Black))
+   (piece Colour P1 state:1 fillColour:"Color1" strokeColour:(colour 0 0 0 0))
+   (piece Colour P1 state:2 fillColour:"Color2" strokeColour:(colour 0 0 0 0)) 
+   (piece Colour P2 state:3 fillColour:"Color3" strokeColour:(colour 0 0 0 0)) 
+   (piece Colour P2 state:4 fillColour:"Color4" strokeColour:(colour 0 0 0 0))
+   (piece Colour P1 state:6 fillColour:"Color1" strokeColour:(colour 0 0 0 0))
+   (piece Colour P1 state:7 fillColour:"Color2" strokeColour:(colour 0 0 0 0))
+   (piece Colour P2 state:8 fillColour:"Color3" strokeColour:(colour 0 0 0 0))
+   (piece Colour P2 state:9 fillColour:"Color4" strokeColour:(colour 0 0 0 0))
+   (piece Foreground "Triangle" state:6 image:"Disc.svg" fillColour:(colour 0 0 0 0) edgeColour:(colour Black))
+   (piece Foreground "Triangle" state:7 image:"Disc.svg" fillColour:(colour 0 0 0 0) edgeColour:(colour Black))
+   (piece Foreground "Triangle" state:8 image:"Disc.svg" fillColour:(colour 0 0 0 0) edgeColour:(colour Black))
+   (piece Foreground "Triangle" state:9 image:"Disc.svg" fillColour:(colour 0 0 0 0) edgeColour:(colour Black))
+   (hand Placement P1 scale:.2 offsetX:0.05 offsetY:0.2 vertical:True)
+   (hand Placement P2 scale:.2 offsetX:0.95 offsetY:0.2 vertical:True)
+   <History:on>   
+  }
+))
+
