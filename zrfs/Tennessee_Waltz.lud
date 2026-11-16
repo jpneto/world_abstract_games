@@ -1,0 +1,568 @@
+// Tennessee Waltz
+// Add anywhere, if placement forms a pair the triplet, mof the placed piece away from the far piece and the mid piece to the placement site.
+// End both pass, most pairs wins (last player in the lead wins) pairs count 2 points last lead count 1 point.
+// potentially using triplets, too.
+// Game is in stopping while ahead.
+//---------------------------------
+// Shifting consequences and utilities
+
+(define "Adj" <Variant:directionsUsed> )
+
+(define "CurrentCountOf" (count Sites in:(sites Occupied by:<Variant:roleNotPushedOff>)))
+(define "PushDirection" (directions Vertex from:(var "LF") to:(var "LT")))
+
+//----------------------------------
+// Original version
+
+(define "IsAPairOfAt"
+ (and
+  (= 1 (count Pieces #1 in:(sites Around #2 "Adj")))
+  (no Pieces #1 in:(sites Around (sites Around #2 "Adj" if:(is #1 (who at:(to))) includeSelf:True) "Adj"))
+))
+
+(define "PushThePair"
+ (if
+  (= (var "PairedSite") (var "LT"))
+  (push (from (var "LF")) "PushDirection")
+  // else
+  (if
+   (= (var "LF") (ahead (var "PairedSite") "PushDirection"))
+   (push (from (var "PairedSite")) "PushDirection" )
+   // else
+   (forEach Site
+    (sites State 1)
+    (push (from (site)) "PushDirection") 
+  ))
+  // Push does not retain states, so add them back in
+  (then 
+   (set State at:(ahead (var "LF") "PushDirection") 1
+    (then
+     (set State at:(ahead (var "PairedSite") "PushDirection") 1)
+)))))    
+
+(define "RecordThenPush"
+ (set Var "LF" (last From)
+  (then
+   (set Var "LT" (last To)
+    (then
+     (set Var "PairedSite" (regionSite (sites Around (var "LF") "Adj" if:(= 1 (state at:((to))))) index:0)
+      (then ("PushThePair"))
+))))))
+ 
+(define "PairMove"
+ (do
+  (set Var "StartTurnEnemy" ("CurrentCountOf" <Variant:roleNotPushedOff>))
+  next:(do
+   (move Select
+    (from (sites State 1))
+    (to
+     (sites Around (from) <Variant:sashayDirections> )
+     if:(all Sites
+      (sites State 1)
+      if:(!= (site) (ahead Vertex (site) (directions Vertex from:(from) to:(to))))
+     )
+    )
+    (then ("RecordThenPush"))
+   )
+   ifAfterwards:(and
+    (= ("CurrentCountOf" <Variant:roleNotPushedOff>) (var "StartTurnEnemy"))
+    (no Pieces
+     in:(forEach 
+      (sites State 1) 
+      if:(< 2 (count Pieces Mover in:(sites Around (site) "Adj")))
+   )))
+   (then
+    (forEach Site (sites State 1) (set State at:(site) 0))
+))))
+
+(define "CreatePair" 
+ (do
+  (move Add
+   (to (sites Empty) 
+    if:("IsAPairOfAt" Mover (to))
+   )
+   (then
+    (and
+     (forEach Site 
+      (sites Around (last To) "Adj" if:(is Mover (who at:(to))) includeSelf:True)
+      (set State at:(site) 1)
+     )
+     (moveAgain)
+  )))
+  ifAfterwards:(can Move ("PairMove"))
+))
+
+//-------------------------------
+// Stealing Version
+
+(define "RecordThenSteal"
+ (set Var "LF" (last From)
+  (then
+   (set Var "LT" (last To)
+    (then 
+     (seq
+      {
+       (remove (sites Around (var "DistantPartner") if:(is Mover (who at:(to)))))
+       (push (from (var "LF")) "PushDirection")
+       (add (to (var "LF")))
+      }
+))))))
+ 
+(define "PairSteal"
+ (do
+  (set Var "StartTurnEnemy" ("CurrentCountOf" <Variant:roleNotPushedOff>))
+  next:(do
+   (move Select
+    (from (last To))
+    (to
+     (sites Around (from) <Variant:sashayDirections> )
+    )
+    (then ("RecordThenSteal"))
+   )
+   ifAfterwards:(and
+    {
+     (= ("CurrentCountOf" <Variant:roleNotPushedOff>) (var "StartTurnEnemy"))
+     (not (is In (last To) (sites Around (var "DistantPartner"))))
+     // no branch at moving piece
+     (no Pieces
+      in:(forEach 
+       (sites State 1) 
+       if:(< 2 (count Pieces Mover in:(sites Around (site) "Adj")))
+     ))
+    }
+   )
+   (then
+    (forEach Site (sites State 1) (set State at:(site) 0)
+)))))
+
+(define "DistantPartnerOfAt"
+ (regionSite
+  (sites Around
+   (sites Around #2 "Adj" if:(is #1 (who at:(to))) includeSelf:True) 
+   "Adj" 
+   if:(is #1 (who at:(to)))
+  )
+  index:0
+))
+
+(define "IsATripletOfAt"
+ (and
+  {
+   (= 1 (count Pieces #1 in:(sites Around #2 "Adj")))
+   (= 1
+    (count Pieces #1
+     in:(sites Around
+      (sites Around #2 "Adj" if:(is #1 (who at:(to))) includeSelf:True) 
+      "Adj"
+   )))
+   (= 1 (count Pieces #1 in:(sites Around ("DistantPartnerOfAt" #1 #2) "Adj")))
+  }
+))
+
+(define "PlaceToSteal" 
+ (do
+  (move Add
+   (to (sites Empty) 
+    if:("IsATripletOfAt" Mover (to))
+    (apply (set State at:(to) 1))
+   )
+   (then
+    (and
+     (set Var "DistantPartner" ("DistantPartnerOfAt" Mover (last To)))
+     (moveAgain)
+  )))
+  ifAfterwards:(can Move ("PairSteal"))
+))
+
+//---------------------------------------------------
+
+(game "Tennessee Waltz" 
+ (players 2)
+ (equipment
+  {
+   (board <Variant:gridType> use:Vertex)
+   (hand Each size:1)
+   (piece "Disc" Each) 
+  }
+ )
+ (rules
+  (play
+   (if 
+    ("NewTurn")
+    (or
+     {
+      (if (no Pieces in:(sites Hand All)) (move Pass))
+      (move Add (to (sites Empty) if:<Variant:addCondition>))
+      (<Variant:placeToStealOrMakePair>) 
+     }
+    )
+    (<Variant:pairConsequence>) 
+    (then
+     (and
+      {
+       ("ShiftTokenFromToAndScore" Next Mover)
+       ("ShiftTokenFromToAndScore" Mover Next)
+      }
+  ))))
+  (end 
+   {
+    (if
+     ("IsLosingCondition" Mover)
+     (result Next Win)
+    )
+    (if
+     ("IsLosingCondition" Next)
+     (result Mover Win)
+    )
+   }
+)))
+
+
+//-------------------------------------------------
+// Winning 
+
+(define "IncompleteTripletRegion"
+ (forEach 
+  (union (sites Empty) (sites Occupied by:#1))
+  if:(or
+   (= 0 (count Pieces #1 in:(sites Around (site) "Adj")))
+   (and 
+    {
+     (= 1 (count Pieces #1 in:(sites Around (site) "Adj")))
+     (> 2 (count Pieces #1 in:(sites Around (sites Around (site) "Adj" if:(is #1 (who at:(to)))) "Adj")))
+     (> 2 (count Pieces #1 in:(sites Around (sites Around (sites Around (site) "Adj" if:(is #1 (who at:(to)))) "Adj" if:(is #1 (who at:(to)))) "Adj")))
+    }
+))))
+
+(define "NoPossiblePairOrStealBy"
+ (not 
+  (can Move
+   (select
+    (from (<Variant:endCondition> #1)) 
+    (to 
+     (intersection 
+      (sites Around (from) "Adj" if:(is Empty (to))) 
+      (<Variant:endCondition> #1) 
+))))))
+
+(define "IncompletePairRegion"
+ (forEach 
+  (union (sites Empty) (sites Occupied by:#1))
+  if:(or
+   (= 0 (count Pieces #1 in:(sites Around (site) "Adj")))
+   (and 
+    {
+     (= 1 (count Pieces #1 in:(sites Around (site) "Adj")))
+     (= 0 (count Pieces #1 in:(sites Around (sites Around (site) "Adj" if:(is #1 (who at:(to)))) "Adj")))
+    }
+))))
+
+(define "IsLosingCondition"
+ (and
+  (is Empty (handSite #1 0))
+  (or
+   {
+    (and
+     {
+      (< 2 (counter))
+      (no Pieces in:(sites State 1))
+      ("NoPossiblePairOrStealBy" #1) 
+     }
+    )
+    (all Passed)
+   }
+)))
+
+//------------------------------------------
+// Scoring
+
+(define "PairSitesOf"
+ (results 
+  from:(intersection (sites Board) (sites Occupied by:#1))
+  to:(forEach
+   (sites Around (from) "Adj")
+   if:(and
+    (is #1 (who at:(site)))
+    (= 2 (count Pieces #1 in:(union (sites Around (from) "Adj") (sites Around (site) "Adj"))))
+  ))
+  (from)
+))
+
+(define "ShiftTokenFromToAndScore"
+ (and
+  (set Score #2 (/ (size Array ("PairSitesOf" #2)) 2))   
+  (if
+   (>
+    (size Array ("PairSitesOf" #2))
+    (size Array ("PairSitesOf" #1))
+   )
+   (if
+    (no Pieces #2 in:(sites Hand #2))
+    (add
+     (piece (id "Disc" #2))
+     (to (handSite #2))
+     stack:False
+     (then
+      (remove (sites Hand #1))
+))))))
+
+//------------------------------------
+// Options
+
+(define "LongEdge" <BoardSize:longestEdge>)
+(define "TriGridType" <BoardSize:type>)
+
+(option "Version" <Variant> args:{ <gridType> <directionsUsed> <sashayDirections> <DiagShow> <roleNotPushedOff>  <endCondition> <addCondition> <placeToStealOrMakePair> <pairConsequence>} 
+  {
+   (item "Original on Square Grid" 
+   <(square (- "LongEdge" 2))> 
+   <Orthogonal> 
+   <All> 
+   <ThinDotted> 
+   <Next>
+   <"IncompletePairRegion">
+   <(not ("IsAPairOfAt" Mover (to)))>
+   <("CreatePair")>
+   <("PairMove")>
+   
+    "Square Board
+   
+   On a square board two pieces are considered to be a pair if they are ORTHOGONALLY adjacent to each other, and not to any other friendly pieces. However, they can move together in any of the 8 directions, as long as the move is otherwise legal.
+   "
+   )
+   (item "Original on Triangle Grid"
+    <(tri "TriGridType" (/ "LongEdge" 2))> 
+    <Orthogonal> 
+    <Orthogonal> 
+    <Hidden> 
+    <Next>
+    <"IncompletePairRegion">
+    <(not ("IsAPairOfAt" Mover (to)))>
+    <("CreatePair")>
+    <("PairMove")>
+       
+    "Triangle Grid"
+   )
+   (item "Stolen Love on Square Grid" 
+   <(square (- "LongEdge" 2))> 
+   <Orthogonal> 
+   <Orthogonal> 
+   <Hidden> 
+   <Next>
+   <"IncompleteTripletRegion">
+   <(not ("IsATripletOfAt" Mover (to)))>
+   <("PlaceToSteal")>
+   <("PairSteal")>
+   
+    "Square Board
+   
+   On a square board, pair connections and movements are only orthogonal.
+   "
+   )
+   (item "Stolen Love on Triangle Grid" 
+   <(tri "TriGridType" (/ "LongEdge" 2))> 
+   <Orthogonal> 
+   <Orthogonal> 
+   <Hidden> 
+   <Next>
+   <"IncompleteTripletRegion">
+   <(not ("IsATripletOfAt" Mover (to)))>
+   <("PlaceToSteal")>
+   <("PairSteal")>
+   
+   "Triangle Grid"
+   )***
+  }
+)
+
+(option "Size" <BoardSize> args:{ <longestEdge> <type>}
+ {
+  (item "XS" <6> <Hexagon> "Small Size (Hex 3 / Limping 2,3 / Square 4)")
+  (item "S" <7>  <Limping> "Medium Size (Hex 3,4 / Square 5)")
+  (item "MS" <8> <Hexagon> "Medium Large Size (Hex 4 / Square 6)")***
+  (item "M" <9> <Limping> "Large Size (Hex 4,5 / Square 7)")
+  
+  (item "ML" <10>  <Hexagon> "Large Size (Hex 5 / Square 8)")
+  (item "L" <11> <Limping> "Large Size (Hex 5,6 / Square 9)")
+  (item "XL" <15>  <Hexagon> "Large Size (Hex 7 / Square 13)")
+ }
+)
+
+(rulesets
+ {
+  (ruleset "Ruleset/Stolen Love on Triangle Grid" {"Version/Stolen Love on Triangle Grid"})
+  (ruleset "Ruleset/Stolen Love on Square Grid" {"Version/Stolen Love on Square Grid"})
+  (ruleset "Ruleset/Original on Triangle Grid" {"Version/Original on Triangle Grid"})
+  (ruleset "Ruleset/Original on Square Grid" {"Version/Original on Square Grid"})
+ }
+)
+(define "RulesForOriginalGame"
+ (rules 
+    "Equipment: 
+    -- Board with a triangular grid or square grid. (Play on the nodes of the grid.)
+    -- Sufficient stones (Enough for each color to fill half of the board.)
+    
+    Goal:
+    The goal is to end up with the most pairs of your own color.
+    A 'pair' is 2 stones of the same color that are orthogonally adjacent, but not orthogonally adjacent to any other of their color.
+
+    
+    The board starts empty and the dark color plays first.
+    
+    Players alternate placing a stone of their color onto an empty node of the board. 
+    
+    When this placement forms an adjacent pair, the mover must choose a grid direction along which to move that pair one step, pushing all the stones in front of them.
+   
+    Note: A pair may not be created unless it can move.
+    
+    The movement is allowed to bring pairs into contact with other stones of its color, in which case they are no longer a pair at the end of the move. Similarly, the pushed pieces may form new pairs.
+    
+    MOVE RESTRICTIONS: 
+    -- No opponent's stone may be pushed of the board.
+    -- Neither stone of the moving pair may leave the board.
+    Note that pushing off OTHER friendly stones IS allowed.
+    
+    After the move and/or push is completed, the mover receives the leader's token if he now has more pairs than the other player.
+    
+    Players may pass. 
+    
+    The game ends when either:
+    -- 1. The player without the token has nowhere left to place an isolated piece, nor to make a pair. 
+    -- 2. Both pass consecutively.
+    
+    The player with the token wins.
+    
+    "
+))
+
+(define "RulesForStealingVersion"
+ (rules 
+    "Equipment: 
+    -- Board with a triangular grid or square grid. (Play on the nodes of the grid.)
+    -- Sufficient stones (Enough for each color to fill half of the board.)
+    
+    Goal:
+    The goal is to end up with the most pairs of your own color.
+    A 'pair' is 2 stones of the same color that are orthogonally adjacent, but not orthogonally adjacent to any other of their color.
+
+    
+    The board starts empty and the dark color plays first.
+    
+    Players alternate placing a stone of their color onto an empty node of the board. 
+    
+    MOVES THAT STEAL A PARTNER: 
+    When a placement is added to a pair to form a chain of exactly 3 stones, the player performs a 2-step move to steal the adjacent partner of the pair, if possible. 
+    
+    -- 1. The placed stone (called the stealer) moves away from the far stone of the triplet, pushing the stones in front of it, provided that it can do so without pushing an enemy stone off the board.
+    
+    Note: A friendly stones is allowed to be pushed off, and is returned to the player's pool of stones.    
+        
+    Note also: The pushing movement is allowed to merge the new pair with other stones of its color. It might also create or destroy other pairs or triplets of either color. However there are no cascading actions to be taken. 
+    
+    -- 2. After the stealer pushes the stones, the turn ends with the middle stone following the stealer by moving to the position where the stealer was first placed. The far stone is thus left isolated.
+
+    After each turn, if the mover now has more pairs in play than the other player, he  receives the leader token.
+    
+    Players may pass. 
+    
+    The game ends when either:
+    -- 1. The player without the token has nowhere left to place an isolated piece, nor to make a pair. 
+    -- 2. Both pass consecutively.
+    
+    The player with the token wins.
+    
+    "
+))
+(define "SizeOptionsForTriangleGrid"
+ (rules 
+  "Triangle Grid (Hexagonal Boards)
+   Board Size Options:
+   XS: - Hex 3
+   S : - Hex 3,4 Alternating edges 
+   MS: - Hex 4
+   M : - Hex 4,5 Alternating edges 
+   ML: - Hex 5
+   L : - Hex 5,6 Alternating edges 
+   XL: - Hex 7
+  "
+))
+(define "SizeOptionsForSquareGrid"
+ (rules 
+  "Square Grid
+  
+   Board Size Options:
+   XS: - 4x4
+   S : - 5x5
+   MS: - 6x6
+   M : - 7x7
+   ML: - 8x8
+   L : - 9x9
+   XL: - 13x13
+  "
+))
+
+(define "PairConnectionStateOf"
+ (forEach
+  (sites Board Edge) 
+  if:(and
+   (= 2 (count Pieces #2 in:(intersection (sites Incident Vertex of:Edge at:(site)) (sites State #1))))  
+   (no Pieces #2 in:(sites Around (sites Incident Vertex of:Edge at:(site)) "Adj"))
+)))
+
+(metadata
+  (info
+    {
+    (description "Tennessee Waltz is a game of making and breaking couples.
+    It was designed as a tactical game that involves the whole board.
+    On large boards there are some territorial aspects.
+    
+    First presented for Hex grids. Later, a square grid version was added.
+    ")
+    (useFor "Ruleset/Stolen Love on Square Grid" "RulesForStealingVersion")
+    (useFor "Ruleset/Stolen Love on Triangle Grid" "RulesForStealingVersion")
+    (useFor "Ruleset/Original on Square Grid" "RulesForOriginalGame")
+    (useFor "Ruleset/Original on Triangle Grid" "RulesForOriginalGame")
+    (useFor "Ruleset/Stolen Love on Square Grid" "SizeOptionsForSquareGrid")
+    (useFor "Ruleset/Stolen Love on Triangle Grid" "SizeOptionsForTriangleGrid")
+    (useFor "Ruleset/Original on Square Grid" "SizeOptionsForSquareGrid")
+    (useFor "Ruleset/Original on Triangle Grid" "SizeOptionsForTriangleGrid")
+    (rules "")
+
+    (source "Author's Script")
+    (version "1.3.4")
+    (classification "experimental")
+    (author "Dale W. Walton")
+    (credit "Dale W. Walton")
+    (date "18-Jun-2022")
+    }
+  )
+  (graphics 
+   {
+    (player Colour P1 (colour DarkGreen))
+    (player Colour P2 (colour 190 175 245)) //205 189 255))
+    (piece Colour P1 state:0 fillColour:(colour 0 115 0 150) strokeColour:(colour 50 50 50 150))
+    (piece Colour P2 state:0 fillColour:(colour 190 175 245 150) strokeColour:(colour 50 50 50 150))
+    (board Style Graph)
+    (board Background image:"Square" fillColour:(colour Cream) edgeColour:(colour 186 163 255 40) scale:1.5 rotation:90)
+    (board StyleThickness InnerEdges .2)
+    (board StyleThickness OuterEdges .2)
+    (board StyleThickness InnerVertices .5)
+    (show Edges Diagonal <Variant:DiagShow>)
+    (show Symbol "Disc.svg" Edge ("PairConnectionStateOf" 0 P1) fillColour:(colour DarkGreen) edgeColour:(colour 0 0 0 0) scale:1)
+    (show Symbol "Disc.svg" Edge ("PairConnectionStateOf" 0 P2) fillColour:(colour 190 175 245) edgeColour:(colour 170 160 235) scale:1)
+    (show Symbol "Disc.svg" Edge ("PairConnectionStateOf" 1 P1) fillColour:(colour 0 115 0 100) edgeColour:(colour 0 0 0 0) scale:1)
+    (show Symbol "Disc.svg" Edge ("PairConnectionStateOf" 1 P2) fillColour:(colour 190 175 245 100) edgeColour:(colour 0 0 0 0) scale:1)
+//    (show Symbol "Disc.svg" Vertex ("TripletRegion" Mover) fillColour:(colour Red) edgeColour:(colour 0 0 0 0) scale:.2)
+   }
+  )
+ (ai
+  (heuristics
+   {
+    (score weight:.3)
+  //    (influence weight:.4)
+  //    (influenceAdvanced weight:.4)
+  //    (mobilityAdvanced weight:.1)
+  //      (mobilitySimple weight:.1)
+   } 
+ ))
+)
