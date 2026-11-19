@@ -25,7 +25,7 @@ a.card:hover,a.card:focus-visible{border-color:var(--hi);transform:translateY(-2
 .body p{margin:0 0 8px;color:var(--mute);font-size:.95rem}
 .tags{display:flex;flex-wrap:wrap;gap:6px}
 .tags span{font-size:.8rem;color:var(--mute);border:1px solid var(--line);border-radius:999px;padding:1px 9px}
-.search{display:block;width:100%;max-width:240px;box-sizing:border-box;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin:0 0 16px}
+.search{display:block;width:100%;max-width:420px;box-sizing:border-box;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin:0 0 16px}
 .search:focus{outline:2px solid var(--hi);outline-offset:1px}
 .empty{color:var(--mute)}
 </style>
@@ -58,14 +58,13 @@ var GAMES=[
    file:"hexsprawl.html",
    blurb:"Territorial game where stacks sprawl in several directions.",
    img:"images/hexsprawl.png",
-   tags:["HexHex7","stacks","2 players","vs computer","draft"]},
+   tags:["HexHex7","stack","2 players","vs computer","draft"]},
 
   {title:"Relay",
    file:"relay.html",
    blurb:"Hand a chain of supported pieces from your base to the far edge before your opponent does.",
    img:"images/relay.png",
    tags:["Hex15","2 players","vs computer","draft"]}
-   
 ];
 
 /* ---------------------------- rendering ---------------------------- */
@@ -86,7 +85,17 @@ function show(){
   });
   grid.innerHTML=list.length?list.map(card).join(""):'<p class="empty">'+(GAMES.length?"No games match your search.":"No games yet.")+'</p>';
 }
-box.oninput=show;
+box.oninput=function(){
+  show();
+  // keep the address bar in sync so the search can be bookmarked or shared
+  try{
+    var u=new URL(location.href),v=box.value.trim();
+    if(v)u.searchParams.set("q",v);else u.searchParams.delete("q");
+    history.replaceState(null,"",u);
+  }catch(e){}
+};
+// start with a search if the URL has ?q=word
+try{box.value=new URLSearchParams(location.search).get("q")||""}catch(e){}
 show();
 </script>
 </body>
