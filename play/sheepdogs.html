@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sheepdogs</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
+<style>
+:root{--bg:#eef0e6;--ink:#1f2a1c;--mute:#5d6a56;--grass:#8fb36b;--grass2:#9dbf7a;--diag:#c9d98f;--ring:#d9dcc9;--bk:#26302a;--wh:#fbfaf2;--wool:#fffdf4;--hi:#e0803a;--panel:#fff;--line:#c5cab4;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--grass:#4d6b3a;--grass2:#557543;--diag:#6f8a44;--ring:#252d21;--panel:#1f271c;--line:#37422f}}
+:root[data-theme="dark"]{--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--grass:#4d6b3a;--grass2:#557543;--diag:#6f8a44;--ring:#252d21;--panel:#1f271c;--line:#37422f}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+main{max-width:1080px;margin:0 auto;padding:16px 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.right>.bar:first-child{margin-top:0}
+@media (min-width:860px){.layout{grid-template-columns:minmax(0,600px) minmax(300px,1fr);gap:28px;align-items:start}}
+h1{font:700 2rem/1.1 "Bricolage Grotesque",Georgia,serif;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+select,button.ctl{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.ctl:disabled,select:disabled,input:disabled{opacity:.45;cursor:default}
+label.f{color:var(--mute);font-size:.9rem}
+input[type=number]{width:4.5em;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+button.ctl.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.pl{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:8px 12px;display:flex;justify-content:space-between;align-items:baseline}
+.pl.on{border-color:var(--hi)}
+.pl b{font:700 1.6rem "Bricolage Grotesque",Georgia,serif}
+.pl small{color:var(--mute)}
+#status{min-height:1.5em;font-weight:600;margin:6px 0}
+#board{display:grid;grid-template-columns:repeat(11,minmax(0,1fr));grid-template-rows:repeat(11,minmax(0,1fr));width:100%;max-width:600px;margin:0 auto;aspect-ratio:1;border-radius:12px;overflow:hidden;border:2px solid var(--line)}
+.c{position:relative;min-width:0;min-height:0;overflow:hidden;border:0;margin:0;padding:0;background:var(--grass);display:flex;align-items:center;justify-content:center;font-size:min(5.4vw,30px);cursor:default;box-shadow:inset 0 0 0 .5px rgba(0,0,0,.12)}
+.c:nth-child(odd){background:var(--grass2)}
+.c.ring{background:var(--ring)}
+.c.den{background:var(--ring);color:var(--mute);font-size:min(2.6vw,12px)}
+.c.diag{background:var(--diag)}
+.c.sel{outline:3px solid var(--hi);outline-offset:-3px;z-index:1}
+.c.tgt{cursor:pointer}
+.c.ko{cursor:pointer}
+.c.ko::after{content:"✕";color:#c0392b;font-weight:700;font-size:.8em;position:absolute}
+.c.tgt::after{content:"";width:34%;height:34%;border-radius:50%;background:var(--hi);opacity:.8;position:absolute}
+.c.mine{cursor:pointer}
+.d{display:flex;align-items:center;justify-content:center;line-height:1}
+.d svg{width:1.2em;height:1.2em;filter:drop-shadow(0 0 1px #fff) drop-shadow(0 0 1px #fff)}
+.c:focus-visible{outline:3px solid var(--hi);outline-offset:-3px}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+details li{margin:4px 0}
+.legend{color:var(--mute);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+<h1 id="gtitle"></h1>
+<p class="sub" id="gsub"></p>
+<div class="layout">
+<div class="left">
+<div id="board"></div>
+<p class="legend">Select one of your dogs, then choose an orange dot.</p>
+</div>
+<aside class="right">
+<div class="bar">
+  <select id="mode" aria-label="Mode"><option value="ai">Play the computer</option><option value="2p">Two players</option></select>
+  <select id="level" aria-label="Computer strength"><option value="1">Easy</option><option value="3" selected>Medium</option><option value="4">Hard</option><option value="5">Expert</option></select>
+  <select id="side" aria-label="Your side"></select>
+  <button class="ctl primary" id="new">New game</button>
+  <button class="ctl" id="undo">Undo</button>
+</div>
+<div class="score">
+  <div class="pl" id="p0"><span><span id="n0"></span> <small id="d0"></small></span><b id="s0">0</b></div>
+  <div class="pl" id="p1"><span><span id="n1"></span> <small id="d1"></small></span><b id="s1">0</b></div>
+</div>
+<div id="status" aria-live="polite"></div>
+<div id="last" class="legend" style="min-height:2.6em;margin:0 0 8px"></div>
+<div class="bar">
+  <label class="f">Simulation games <input id="simN" type="number" min="10" max="1000" value="100"></label>
+  <label class="f">Random opening moves <input id="simR" type="number" min="0" max="20" value="6"></label>
+  <button class="ctl" id="sim">Simulation</button>
+</div>
+<div id="simout" class="legend" style="white-space:pre-line;margin:0 0 8px"></div>
+<details>
+<summary>Rules</summary>
+<ul id="rules"></ul>
+</details>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+/* =====================================================================
+   HOW THIS PAGE IS ORGANISED
+   1. GAME DEFINITION   - everything specific to this game (the only part
+                          to replace when making a different game).
+   2. ENGINE            - generic: legal moves with an optional Ko rule,
+                          minimax computer opponent, simulations.
+   3. INTERFACE         - generic: board drawing, clicks, controls.
+   The engine assumes a square board, pieces coded 1 and 2 (one per player)
+   and an optional neutral piece, and a turn = moving one of your pieces
+   one step in one of that player's allowed directions.
+   ===================================================================== */
+
+/* ============================ 1. GAME DEFINITION ============================ */
+var HEAD='M20 8C28 8 33 14 32 22C31 29 26 34 20 36C14 34 9 29 8 22C7 14 12 8 20 8Z';
+var GSD='<svg viewBox="0 0 40 40" aria-hidden="true"><polygon points="6,2 16,11 7,19" fill="#2b1d12"/><polygon points="8,6 13,11 8,15" fill="#c98a3d"/><polygon points="34,2 24,11 33,19" fill="#2b1d12"/><polygon points="32,6 27,11 32,15" fill="#c98a3d"/><path d="'+HEAD+'" fill="#c98a3d" stroke="#2b1d12" stroke-width="1"/><path d="M20 8C23 8 25 9 26 11C24 14 22 16 20 17C18 16 16 14 14 11C15 9 17 8 20 8Z" fill="#2b1d12"/><ellipse cx="20" cy="29" rx="7" ry="5.5" fill="#3a2a1a"/><ellipse cx="20" cy="26" rx="3" ry="2" fill="#000"/><circle cx="14.5" cy="20" r="1.9" fill="#1a1208"/><circle cx="25.5" cy="20" r="1.9" fill="#1a1208"/><circle cx="15" cy="19.4" r=".6" fill="#fff"/><circle cx="26" cy="19.4" r=".6" fill="#fff"/></svg>';
+var BC='<svg viewBox="0 0 40 40" aria-hidden="true"><polygon points="5,8 15,8 15,18 8,17" fill="#111"/><polygon points="35,8 25,8 25,18 32,17" fill="#111"/><path d="'+HEAD+'" fill="#111" stroke="#000" stroke-width="1"/><path d="M20 9C22 9 23 12 23 16C23 20 22 22 24 26L16 26C18 22 17 20 17 16C17 12 18 9 20 9Z" fill="#fff"/><ellipse cx="20" cy="29.5" rx="7" ry="5.5" fill="#fff"/><ellipse cx="20" cy="26.5" rx="3" ry="2" fill="#000"/><circle cx="13.5" cy="19" r="2" fill="#d9a441"/><circle cx="26.5" cy="19" r="2" fill="#d9a441"/><circle cx="13.5" cy="19" r="1" fill="#000"/><circle cx="26.5" cy="19" r="1" fill="#000"/></svg>';
+
+var GAME={
+  title:"Sheepdogs",
+  subtitle:"Push the flock off the board: German Shepherd scores at the east edge, Border Collie at the north edge.",
+  size:9,
+  ko:true,                        // forbid recreating the position before the opponent's last move
+  neutral:3,                      // code of the neutral piece (sheep)
+  neutralIcon:"\ud83d\udc11",
+  sides:[                         // piece code = index + 1
+    {name:"German Shepherd",icon:GSD,dirs:[[-1,1],[0,1],[1,1]]},   // moves east
+    {name:"Border Collie",  icon:BC, dirs:[[-1,-1],[-1,0],[-1,1]]} // moves north
+  ],
+  chars:{x:1,o:2,"#":3},          // meaning of the setup characters
+  setup:[
+    ". . . . . . . . .",". . . . . . . . .",
+    "x . # # # # # . .","x . # # # # # . .","x . # # # # # . .","x . # # # # # . .","x . # # # # # . .",
+    ". . . . . . . . .",". . o o o o o . ."],
+  rules:[
+  "German Shepherd dogs move one step east, north-east or south-east. Border Collie dogs move one step north, north-west or north-east.",
+  "If the target square is occupied, the whole connected line of pieces in that direction is pushed one step. Pieces pushed past the edge leave the board.",
+  "A sheep pushed off the east edge scores 1 for German Shepherd; off the north edge it scores 1 for Border Collie. The west and south edges score nothing.",
+  "Only sheep pushed off the board score. Dogs never score, and nothing scores for pieces that stay on the board.",
+  "Diagonal exception: a sheep on i9 (top-right corner) pushed off the board diagonally, along the a1-i9 diagonal, scores 1 for the player who moved, not for the edge owner.",
+  "The first player to have all their dogs off the board gets 0.5 points.",
+  "Ko: a move may not recreate the board as it was before the opponent’s last move.",
+  "The game ends when the player to move has no legal move. The higher score wins."],
+  // Extra state fields beyond b (board), sc (scores), turn, ev (last-move events)
+  init:function(b){
+    var dogs=[0,0];b.forEach(function(v){if(v===1)dogs[0]++;if(v===2)dogs[1]++});
+    return{sc:[0,0],dogs:dogs,bonus:null,ev:null};
+  },
+  // Play one move: dog at (r,c) steps by (dr,dc), pushing the line in front of it.
+  apply:function(s,r,c,dr,dc){
+    var N=GAME.size,b=s.b.slice(),sc=s.sc.slice(),dogs=s.dogs.slice(),side=s.turn,bonus=s.bonus,
+        ev={e0:0,e1:0,diag:0,off:0,bonus:null};
+    var chain=[[r,c]],nr=r+dr,nc=c+dc;
+    while(inb(nr,nc)&&b[nr*N+nc]){chain.push([nr,nc]);nr+=dr;nc+=dc}
+    for(var i=chain.length-1;i>=0;i--){
+      var pr=chain[i][0],pc=chain[i][1],v=b[pr*N+pc];b[pr*N+pc]=0;
+      var tr=pr+dr,tc=pc+dc;
+      if(inb(tr,tc))b[tr*N+tc]=v;
+      else if(v===3){   // a sheep leaves the board
+        if(pr===0&&pc===N-1&&dr===-1&&dc===1){sc[side]+=1;ev.diag++}   // i9 corner, diagonal push: mover scores
+        else if(tc>N-1){sc[0]+=1;ev.e0++}                              // east edge: German Shepherd
+        else if(tr<0){sc[1]+=1;ev.e1++}                                // north edge: Border Collie
+      }else{dogs[v-1]--;ev.off++}
+    }
+    if(bonus===null){
+      if(dogs[side]===0){bonus=side;sc[side]+=.5;ev.bonus=side}
+      else if(dogs[1-side]===0){bonus=1-side;sc[1-side]+=.5;ev.bonus=1-side}
+    }
+    return{b:b,sc:sc,dogs:dogs,turn:1-side,bonus:bonus,ev:ev};
+  },
+  // Position value from side 0's point of view, used by the computer opponent.
+  eval:function(s){
+    var N=GAME.size,h=0;
+    for(var r=0;r<N;r++)for(var c=0;c<N;c++)if(s.b[r*N+c]===3)h+=c-(N-1-r);
+    return s.sc[0]-s.sc[1]+.08*h;
+  },
+  // Text shown under the board describing the last move.
+  describe:function(s){
+    var e=s.ev;if(!e)return"";var nm=[GAME.sides[0].name,GAME.sides[1].name],who=nm[1-s.turn],p=[];
+    if(e.e0)p.push(e.e0+" sheep off the east edge ("+nm[0]+" +"+e.e0+")");
+    if(e.e1)p.push(e.e1+" sheep off the north edge ("+nm[1]+" +"+e.e1+")");
+    if(e.diag)p.push(e.diag+" sheep pushed off at i9 ("+who+" +"+e.diag+")");
+    if(e.off)p.push(e.off+" dog"+(e.off>1?"s":"")+" off the board (no points)");
+    if(e.bonus!==null)p.push(nm[e.bonus]+" +0.5 for clearing all dogs");
+    return who+" moved: "+(p.length?p.join("; "):"no points")+".";
+  },
+  tally:function(s,i){return"\u00b7 "+s.dogs[i]+" dogs"}   // small text beside each score
+};
+
+/* ================================ 2. ENGINE ================================ */
+var $=function(i){return document.getElementById(i)};
+var N=GAME.size;
+function inb(r,c){return r>=0&&r<N&&c>=0&&c<N}
+function step(s,r,c,dr,dc){var ns=GAME.apply(s,r,c,dr,dc);ns.prev=s.key;ns.key=ns.b.join("");return ns}
+function initState(){
+  var b=[];
+  GAME.setup.forEach(function(row){row.split(" ").forEach(function(ch){b.push(GAME.chars[ch]||0)})});
+  var s=GAME.init(b);s.b=b;s.turn=0;s.prev=null;s.key=b.join("");return s;
+}
+function legal(s){
+  var out=[],dirs=GAME.sides[s.turn].dirs,v=s.turn+1;
+  for(var r=0;r<N;r++)for(var c=0;c<N;c++)if(s.b[r*N+c]===v){
+    for(var k=0;k<dirs.length;k++){
+      var d=dirs[k],ns=step(s,r,c,d[0],d[1]);
+      if(!GAME.ko||ns.key!==s.prev)out.push({r:r,c:c,dr:d[0],dc:d[1],ns:ns});
+    }}
+  return out;
+}
+function nega(s,d,sign,al,be){   // negamax with alpha-beta pruning
+  if(d===0)return sign*GAME.eval(s);
+  var ms=legal(s);
+  if(!ms.length){var df=s.sc[0]-s.sc[1];return sign*(df>0?1000:df<0?-1000:0)}
+  var best=-1e9;
+  for(var i=0;i<ms.length;i++){var v=-nega(ms[i].ns,d-1,-sign,-be,-al);if(v>best)best=v;if(best>al)al=best;if(al>=be)break}
+  return best;
+}
+var NOISE=[0,1.2,.4,.2,.05,.02];   // random jitter per level: weaker levels are noisier
+function aiMove(s){
+  var ms=legal(s),best=-1e9,pick=null,sign=s.turn===0?1:-1,lv=+$("level").value;
+  for(var i=0;i<ms.length;i++){
+    var v=-nega(ms[i].ns,lv-1,-sign,-1e9,1e9)+Math.random()*NOISE[lv];
+    if(v>best){best=v;pick=ms[i]}
+  }
+  return pick;
+}
+var sim=null;
+function runSim(){   // computer vs computer, to look for first/second-player advantage
+  if(sim){sim.stop=true;return}
+  var me=sim={stop:false},TOTAL=Math.max(10,Math.min(1000,+$("simN").value||100)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?6:+$("simR").value)),
+      done=0,w=[0,0],dw=0,un=0,tot=[0,0],g=initState(),plies=0,lvName=$("level").options[$("level").selectedIndex].text,nm=GAME.sides.map(function(x){return x.name});
+  ["mode","side","level","new","undo","simN","simR"].forEach(function(i){$(i).disabled=true});
+  $("sim").textContent="Stop simulation";
+  $("simout").textContent="Simulating at "+lvName+" level\u2026 0/"+TOTAL;
+  function fin(stopped){
+    sim=null;$("sim").textContent="Simulation";
+    $("mode").disabled=$("new").disabled=$("simN").disabled=$("simR").disabled=false;
+    $("level").disabled=$("side").disabled=$("mode").value==="2p";
+    var mg=done?(196*Math.sqrt((w[0]/done)*(1-w[0]/done)/done)).toFixed(1):"0";
+    var pc=function(n){return done?(100*n/done).toFixed(1)+"%":"n/a"};
+    $("simout").textContent=(stopped?"Stopped after ":"")+done+" games at "+lvName+" level (computer vs computer), first "+RND+" moves random.\n"+
+      "First player ("+nm[0]+") won "+pc(w[0])+" ("+w[0]+" games, margin \u00b1"+mg+" points at 95% confidence). Second player ("+nm[1]+") won "+pc(w[1])+" ("+w[1]+" games). Draws: "+pc(dw)+"."+(un?" Unfinished (stopped at 400 moves): "+un+".":"")+
+      (done-un>0?"\nAverage score: "+(tot[0]/(done-un)).toFixed(2)+" to "+(tot[1]/(done-un)).toFixed(2)+".":"");
+    render();
+  }
+  function stepSim(){
+    if(me.stop){fin(true);return}
+    var t0=Date.now();
+    while(Date.now()-t0<40){
+      var ms=legal(g);
+      if(!ms.length||plies>=400){
+        if(!ms.length){tot[0]+=g.sc[0];tot[1]+=g.sc[1];if(g.sc[0]>g.sc[1])w[0]++;else if(g.sc[1]>g.sc[0])w[1]++;else dw++}
+        else un++;
+        done++;g=initState();plies=0;
+        if(done>=TOTAL){fin(false);return}
+        continue;
+      }
+      g=(plies<RND?ms[Math.floor(Math.random()*ms.length)]:aiMove(g)).ns;plies++;
+    }
+    $("simout").textContent="Simulating at "+lvName+" level\u2026 "+done+"/"+TOTAL;
+    setTimeout(stepSim,0);
+  }
+  stepSim();
+}
+
+/* =============================== 3. INTERFACE =============================== */
+var hist,sel,over,busy,note="",kbG={};
+function cur(){return hist[hist.length-1]}
+function humanTurn(){return $("mode").value==="2p"||cur().turn===+$("side").value}
+function start(){
+  hist=[initState()];sel=null;note="";$("level").disabled=$("side").disabled=$("mode").value==="2p";over=false;busy=false;
+  render();maybeAI();
+}
+function render(){
+  var s=cur(),ms=legal(s),tg={},kb={},sd=GAME.sides;
+  if(sel&&GAME.ko)sd[s.turn].dirs.forEach(function(d){var t=step(s,sel.r,sel.c,d[0],d[1]);if(t.key===s.prev)kb[(sel.r+d[0])+","+(sel.c+d[1])]=1});
+  kbG=kb;
+  if(!ms.length)over=true;
+  if(sel&&!over)ms.forEach(function(m){if(m.r===sel.r&&m.c===sel.c)tg[(m.r+m.dr)+","+(m.c+m.dc)]=m});
+  var bd=$("board");bd.innerHTML="";
+  for(var r=-1;r<=N;r++)for(var c=-1;c<=N;c++){
+    var el=document.createElement("button");el.type="button";el.className="c";
+    var inside=inb(r,c),key=r+","+c;
+    if(!inside){el.className+=" ring";el.disabled=!tg[key]}
+    else{
+      var v=s.b[r*N+c];
+      if(v===GAME.neutral)el.textContent=GAME.neutralIcon;
+      else if(v){var d=document.createElement("span");d.className="d";d.innerHTML=sd[v-1].icon;el.appendChild(d);
+        el.setAttribute("aria-label",sd[v-1].name+", row "+(N-r)+" column "+String.fromCharCode(97+c))}
+      if(sel&&sel.r===r&&sel.c===c)el.className+=" sel";
+      if(!over&&humanTurn()&&!busy&&v===s.turn+1)el.className+=" mine";
+    }
+    if(tg[key])el.className+=" tgt";else if(kb[key])el.className+=" ko";
+    el.onclick=(function(r,c,key){return function(){click(r,c,key,tg)}})(r,c,key);
+    bd.appendChild(el);
+  }
+  for(var i=0;i<2;i++){$("s"+i).textContent=s.sc[i];$("d"+i).textContent=GAME.tally(s,i);
+    $("p"+i).className="pl"+(!over&&s.turn===i?" on":"")}
+  var names=sd.map(function(x){return x.name}),st;
+  if(over){
+    var a=s.sc[0],b=s.sc[1];
+    st="Game over: "+names[s.turn]+" has no legal move. "+(a===b?"It\u2019s a draw.":(a>b?names[0]:names[1])+" wins "+Math.max(a,b)+" to "+Math.min(a,b)+".");
+  }else st=names[s.turn]+" to move"+(humanTurn()?"":" (computer thinking\u2026)");
+  $("status").textContent=st;
+  $("last").textContent=(GAME.describe(s)+" "+note).trim();
+  $("undo").disabled=hist.length<2||busy;
+}
+function click(r,c,key,tg){
+  if(over||busy||!humanTurn())return;
+  var s=cur();note="";
+  if(kbG[key]&&!tg[key]){note="That move is blocked by the Ko rule: it would recreate the board as it was before the opponent\u2019s last move.";render();return}
+  if(tg[key]){hist.push(tg[key].ns);sel=null;render();maybeAI();return}
+  if(inb(r,c)&&s.b[r*N+c]===s.turn+1){sel=(sel&&sel.r===r&&sel.c===c)?null:{r:r,c:c}}
+  else sel=null;
+  render();
+}
+function maybeAI(){
+  if(over||$("mode").value!=="ai"||cur().turn===+$("side").value)return;
+  busy=true;render();
+  setTimeout(function(){
+    var m=aiMove(cur());busy=false;
+    if(m)hist.push(m.ns);
+    render();
+  },350);
+}
+// Fill titles, names and rules from the GAME definition
+document.title=GAME.title;$("gtitle").textContent=GAME.title;$("gsub").textContent=GAME.subtitle;
+$("rules").innerHTML=GAME.rules.map(function(t){return"<li>"+t+"</li>"}).join("");
+$("side").innerHTML=GAME.sides.map(function(x,i){return'<option value="'+i+'">You are '+x.name+'</option>'}).join("");
+for(var i=0;i<2;i++)$("n"+i).textContent=GAME.sides[i].name;
+$("new").onclick=start;$("sim").onclick=runSim;
+$("mode").onchange=$("side").onchange=start;
+$("undo").onclick=function(){
+  if(busy||hist.length<2)return;
+  hist.pop();
+  if($("mode").value==="ai"&&hist.length>1&&cur().turn!==+$("side").value)hist.pop();
+  sel=null;over=false;render();
+};
+start();
+})();
+</script>
+</body>
+</html>
