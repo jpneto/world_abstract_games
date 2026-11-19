@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Relay</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
+<style>
+:root{--bg:#eef0e6;--ink:#1f2a1c;--mute:#5d6a56;--cell:#dfe3cf;--edge:#b9bfa3;--hi:#e0803a;--panel:#fff;--line:#c5cab4;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f}}
+:root[data-theme="dark"]{--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+main{max-width:1080px;margin:0 auto;padding:16px 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.right>.bar:first-child{margin-top:0}
+@media (min-width:860px){.layout{grid-template-columns:minmax(0,600px) minmax(300px,1fr);gap:28px;align-items:start}}
+h1{font:700 2rem/1.1 "Bricolage Grotesque",Georgia,serif;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+select,button.ctl{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.ctl:disabled,select:disabled,input:disabled{opacity:.45;cursor:default}
+label.f{color:var(--mute);font-size:.9rem}
+input[type=number]{width:4.5em;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+button.ctl.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.pl{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:8px 12px;display:flex;justify-content:space-between;align-items:baseline}
+.pl.on{border-color:var(--hi)}
+.pl b{font:700 1.6rem "Bricolage Grotesque",Georgia,serif}
+.pl small{color:var(--mute)}
+#status{min-height:1.5em;font-weight:600;margin:6px 0}
+#board svg{display:block;width:100%;max-width:600px;margin:0 auto;touch-action:manipulation}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+details li{margin:4px 0}
+.legend{color:var(--mute);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+<h1 id="gtitle"></h1>
+<p class="sub" id="gsub"></p>
+<div class="layout">
+<div class="left">
+<div id="board"></div>
+<p class="legend">Click an empty hex of your base edge to place a piece, or click one of your supported pieces to see where it can go: a filled dot means the piece is still supported there and may keep moving, a red ring means it stops there unsupported and will be lost. “Remove 2 + 1” sacrifices two of your supported pieces to take one enemy piece. Dashed pieces are unsupported and are lost if still unsupported at the end of their owner’s turn. Tinted edges: solid tint = base, dashed outline = terminal.</p>
+</div>
+<aside class="right">
+<div class="bar">
+  <select id="mode" aria-label="Mode"><option value="ai">Play the computer</option><option value="2p">Two players</option></select>
+  <select id="level" aria-label="Computer strength"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select>
+  <select id="side" aria-label="Your side"></select>
+  <button class="ctl primary" id="new">New game</button>
+  <button class="ctl" id="undo">Undo</button>
+  <button class="ctl" id="redo">Redo</button>
+  <button class="ctl" id="rem">Remove 2 + 1</button>
+</div>
+<div class="score">
+  <div class="pl" id="p0"><span><span id="n0"></span> <small id="d0"></small></span><b id="s0">0</b></div>
+  <div class="pl" id="p1"><span><span id="n1"></span> <small id="d1"></small></span><b id="s1">0</b></div>
+</div>
+<div id="status" aria-live="polite"></div>
+<div id="last" class="legend" style="min-height:2.6em;margin:0 0 8px"></div>
+<div class="bar">
+  <label class="f">Simulation games <input id="simN" type="number" min="10" max="1000" value="10"></label>
+  <label class="f">Random opening moves <input id="simR" type="number" min="0" max="20" value="4"></label>
+  <button class="ctl" id="sim">Simulation</button>
+</div>
+<div id="simout" class="legend" style="white-space:pre-line;margin:0 0 8px"></div>
+<details>
+<summary>Rules</summary>
+<ul id="rules"></ul>
+</details>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+/* =====================================================================
+   1. GAME DEFINITION  - Relay rules, hex geometry, support, move generation
+   2. ENGINE           - minimax (beam-limited) computer opponent, simulations
+   3. INTERFACE        - SVG board, click handling, controls
+   A move is {t:"new"|"move"|"cap", ..., ns:resulting state}.
+   A state is {o:cells (0 empty, 1 Red, 2 Blue), turn, sup:[supportRed,supportBlue], w:winner or -1}.
+   ===================================================================== */
+var $=function(i){return document.getElementById(i)};
+
+/* ============================ 1. GAME DEFINITION ============================ */
+var GAME={
+  title:"Relay",
+  subtitle:"Hex 15\u00d715. Hand a chain of supported pieces from your base towards the far edge before your opponent does.",
+  sides:[{name:"Red",color:"#c0392b"},{name:"Blue",color:"#2b6cb0"}],
+  rules:[
+  {h:"Board",items:[
+    "A Hex board of size 15 (15\u00d715 hexes). Each player starts with 5 pieces on the 5 central hexes of his base; everything else is empty.",
+    "Each player owns two opposite edges: Red the top and bottom edges, Blue the left and right edges. One owned edge is the player\u2019s base (Red: top, Blue: left), the other is the terminal (Red: bottom, Blue: right). Corner hexes belong to both of their edges. Red moves first."]},
+  {h:"Supported pieces",items:[
+    {t:"A piece is supported if:",sub:[
+      "it is in its base; or",
+      "it is connected, through a chain of friendly pieces, to its base or to another supported piece (so a piece next to a supported friendly piece is supported); or",
+      "it is adjacent to an empty hex that is itself adjacent to a supported friendly piece, provided that the empty hex is not adjacent to an enemy piece."]},
+    "Support is recomputed on the current position, so it changes as pieces move or are removed.",
+    "At the end of a player\u2019s turn, every unsupported piece of that player is removed from the board. A piece left unsupported by the opponent\u2019s turn therefore has exactly one turn to be made supported again."]},
+  {h:"Turn: choose one",items:[
+    "a) Place one new piece on an empty hex of your base.",
+    "b) Move one supported piece to an adjacent empty hex. While the piece is supported after a step, it may keep moving (step after step, within the same turn); every step after the first must go to an empty hex that is not adjacent to any enemy piece. Pieces that are unsupported cannot move or be used for removal.",
+    "c) Remove two of your own supported pieces that are not at the base, together with any one enemy piece."]},
+  {h:"End of the game",items:[
+    "The first player to have a supported piece, of either colour, in his terminal wins. This is checked after every turn, the player who just moved first.",
+    "A supported piece of yours on the opponent\u2019s terminal hands him the win, so a corner shared between your base and his terminal is a trap."]}],
+  stats:function(s,i){var p=i+1,n=0,u=0,best=0;
+    for(var k=0;k<NC;k++)if(s.o[k]===p){n++;if(s.sup[i][k]){u++;if(ADV[i][k]>best)best=ADV[i][k]}}
+    return{big:best,text:"\u00b7 "+n+" pieces, "+u+" supported"}},
+  describe:function(s){return s.ev||""}
+};
+var N=15,NC=N*N,DIRS=[[1,0],[1,-1],[0,-1],[-1,0],[-1,1],[0,1]],CELLS=[],NB=[],ADV=[[],[]],BASE=[[],[]],TERM=[[],[]],BASEL=[[],[]],TERML=[[],[]];
+for(var r=0;r<N;r++)for(var q=0;q<N;q++)CELLS.push([q,r]);   // cell index = r*N+q, axial coordinates (q,r)
+CELLS.forEach(function(c,i){
+  NB[i]=[];DIRS.forEach(function(d){var x=c[0]+d[0],y=c[1]+d[1];if(x>=0&&y>=0&&x<N&&y<N)NB[i].push(y*N+x)});
+  ADV[0][i]=c[1];ADV[1][i]=c[0];                       // progress towards the terminal
+  BASE[0][i]=c[1]===0?1:0;BASE[1][i]=c[0]===0?1:0;
+  TERM[0][i]=c[1]===N-1?1:0;TERM[1][i]=c[0]===N-1?1:0;
+  for(var P=0;P<2;P++){if(BASE[P][i])BASEL[P].push(i);if(TERM[P][i])TERML[P].push(i)}
+});
+function cn(i){return String.fromCharCode(97+CELLS[i][0])+(CELLS[i][1]+1)}
+// supported pieces of player p (1 or 2)
+function support(o,p){
+  var sup=new Uint8Array(NC),Q=[],B=BASE[p-1],i,k,h,j,e,m,x,y,nbe,clean;
+  for(i=0;i<NC;i++)if(o[i]===p&&B[i]){sup[i]=1;Q.push(i)}
+  for(h=0;h<Q.length;h++){                                   // relay through clean empty hexes
+    y=Q[h];
+    for(k=0;k<NB[y].length;k++){
+      e=NB[y][k];
+      if(o[e]===p){if(!sup[e]){sup[e]=1;Q.push(e)}continue}   // chain: a friendly neighbour of a supported piece is supported
+      if(o[e])continue;
+      nbe=NB[e];clean=true;
+      for(m=0;m<nbe.length;m++)if(o[nbe[m]]===3-p){clean=false;break}
+      if(!clean)continue;
+      for(m=0;m<nbe.length;m++){x=nbe[m];if(o[x]===p&&!sup[x]){sup[x]=1;Q.push(x)}}
+    }
+  }
+  return sup;
+}
+// build a state; "by" is the player who just moved (checked first for the win)
+function mk(o,turn,by,txt){
+  var sA=[support(o,1),support(o,2)],w=-1,ord=[by,1-by],a,k,i,L;
+  for(a=0;a<2&&w<0;a++){L=TERML[ord[a]];
+    for(k=0;k<L.length;k++){i=L[k];if(o[i]&&sA[o[i]-1][i]){w=ord[a];break}}}
+  return{o:o,turn:turn,sup:sA,w:w,ev:txt||""};
+}
+function newState(){   // each player starts with 5 pieces on the 5 central hexes of his base
+  var o=new Uint8Array(NC);
+  for(var k=5;k<=9;k++){o[k]=1;o[k*N]=2}   // Red: top row, q=5..9; Blue: left column, r=5..9
+  return mk(o,0,1,"");
+}
+function nameOf(s){return GAME.sides[s.turn].name}
+// end of turn: the mover's unsupported pieces are removed (the position is then re-evaluated)
+function purge(st,P,txt){
+  var o=null,n=0;
+  for(var i=0;i<NC;i++)if(st.o[i]===P+1&&!st.sup[P][i]){if(!o)o=st.o.slice();o[i]=0;n++}
+  if(!o){st.ev=txt;return st}
+  return mk(o,st.turn,P,txt+" "+n+" unsupported "+GAME.sides[P].name+" piece"+(n>1?"s were":" was")+" lost.");
+}
+// a) placement at the base
+function placeMove(s,i){
+  var o=s.o.slice();o[i]=s.turn+1;
+  return{t:"new",i:i,ns:purge(mk(o,1-s.turn,s.turn,""),s.turn,nameOf(s)+" placed a piece on "+cn(i)+".")};
+}
+function nearEnemy(o,j,p){for(var m=0;m<NB[j].length;m++)if(o[NB[j][m]]===3-p)return true;return false}
+// b) every cell the supported piece on hex i can reach this turn (breadth-first; a piece may keep moving while supported).
+//    Every step after the first must go to an empty hex that is not adjacent to an enemy piece.
+function reach(s,i){
+  var p=s.turn+1,P=s.turn,seen={},res=[],q=[{c:i,st:s}],h=0,nd,k,j,o,ns;
+  seen[i]=1;
+  while(h<q.length){
+    nd=q[h++];
+    if(!nd.st.sup[P][nd.c]||nd.st.w>=0)continue;
+    for(k=0;k<NB[nd.c].length;k++){
+      j=NB[nd.c][k];if(nd.st.o[j]||seen[j]||(nd.c!==i&&nearEnemy(nd.st.o,j,p)))continue;seen[j]=1;
+      o=nd.st.o.slice();o[nd.c]=0;o[j]=p;
+      ns=mk(o,1-P,P,"");
+      res.push({t:"move",i:i,j:j,live:ns.sup[P][j],ns:purge(ns,P,nameOf(s)+" moved "+cn(i)+" to "+cn(j)+".")});q.push({c:j,st:ns});
+    }
+  }
+  return res;
+}
+// c) sacrifice two supported non-base pieces to remove one enemy piece
+function capMove(s,a,b,e){
+  var o=s.o.slice();o[a]=0;o[b]=0;o[e]=0;
+  return{t:"cap",a:a,b:b,e:e,ns:purge(mk(o,1-s.turn,s.turn,""),s.turn,nameOf(s)+" gave up "+cn(a)+" and "+cn(b)+" to remove the enemy piece on "+cn(e)+".")};
+}
+function canRemove(s){          // own supported pieces that are not at the base
+  var P=s.turn,out=[];
+  for(var i=0;i<NC;i++)if(s.o[i]===P+1&&s.sup[P][i]&&!BASE[P][i])out.push(i);
+  return out;
+}
+// move generator (used by the engine). All placements and all moves are generated;
+// removals are pruned to the 4 cheapest own pieces and the 5 most dangerous enemy pieces.
+function legal(s){
+  var out=[],P=s.turn,p=P+1,i,k;if(s.w>=0)return out;
+  for(k=0;k<BASEL[P].length;k++){i=BASEL[P][k];if(!s.o[i])out.push(placeMove(s,i))}
+  for(i=0;i<NC;i++)if(s.o[i]===p&&s.sup[P][i])reach(s,i).forEach(function(m){out.push(m)});
+  var own=canRemove(s);
+  if(own.length>=2){
+    own.sort(function(a,b){return ADV[P][a]-ADV[P][b]});own=own.slice(0,4);
+    var en=[];for(i=0;i<NC;i++)if(s.o[i]===2-P)en.push(i);
+    en.sort(function(a,b){return(s.sup[1-P][b]?ADV[1-P][b]+20:ADV[1-P][b])-(s.sup[1-P][a]?ADV[1-P][a]+20:ADV[1-P][a])});en=en.slice(0,5);
+    for(var x=0;x<own.length;x++)for(var y=x+1;y<own.length;y++)en.forEach(function(e){out.push(capMove(s,own[x],own[y],e))});
+  }
+  return out;
+}
+
+/* ================================ 2. ENGINE ================================ */
+function fval(s,P){
+  var p=P+1,sp=s.sup[P],o=s.o,best=0,sum=0,a;
+  for(var i=0;i<NC;i++)if(o[i]===p){a=ADV[P][i];if(sp[i]){sum+=a+2;if(a>best)best=a}else sum+=a*.2}
+  return 6*best+best*best/3+sum;
+}
+function ev(s){   // value from Red's point of view
+  if(s.w>=0)return s.w===0?1000:-1000;
+  return fval(s,0)-fval(s,1);
+}
+var BEAM=[0,0,8,4],NOISE=[0,1.0,.3,.1];
+function nega(s,d,sign,al,be){
+  if(d===0||s.w>=0)return sign*ev(s);
+  var ms=legal(s),best=-1e9;
+  if(!ms.length)return -1000;
+  if(d===1){ms.forEach(function(m){var v=sign*ev(m.ns);if(v>best)best=v});return best}
+  ms.forEach(function(m){m.v=sign*ev(m.ns)});
+  ms.sort(function(a,b){return b.v-a.v});ms=ms.slice(0,BEAM[3]);
+  for(var i=0;i<ms.length;i++){var v=-nega(ms[i].ns,d-1,-sign,-be,-al);if(v>best)best=v;if(best>al)al=best;if(al>=be)break}
+  return best;
+}
+function aiMove(s){
+  var ms=legal(s),lv=+$("level").value,sign=s.turn===0?1:-1,best=-1e9,pick=null;
+  if(!ms.length)return null;
+  if(lv>1){ms.forEach(function(m){m.v=sign*ev(m.ns)+Math.random()*.5});ms.sort(function(a,b){return b.v-a.v});ms=ms.slice(0,BEAM[2]+2)}
+  for(var i=0;i<ms.length;i++){
+    var v=(lv===1?sign*ev(ms[i].ns):-nega(ms[i].ns,lv-1,-sign,-1e9,1e9))+Math.random()*NOISE[lv];
+    if(v>best){best=v;pick=ms[i]}
+  }
+  return pick;
+}
+var sim=null;
+function runSim(){   // computer vs computer, to look for first/second-player advantage
+  if(sim){sim.stop=true;return}
+  var CAP=300,me=sim={stop:false},TOTAL=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?4:+$("simR").value)),
+      done=0,w=[0,0],un=0,g=newState(),plies=0,lvName=$("level").options[$("level").selectedIndex].text,nm=GAME.sides.map(function(x){return x.name});
+  ["mode","side","level","new","undo","redo","rem","simN","simR"].forEach(function(i){$(i).disabled=true});
+  $("sim").textContent="Stop simulation";
+  $("simout").textContent="Simulating at "+lvName+" level\u2026 0/"+TOTAL;
+  function fin(stopped){
+    sim=null;$("sim").textContent="Simulation";
+    $("mode").disabled=$("new").disabled=$("simN").disabled=$("simR").disabled=false;
+    $("level").disabled=$("side").disabled=$("mode").value==="2p";
+    var mg=done?(196*Math.sqrt((w[0]/done)*(1-w[0]/done)/done)).toFixed(1):"0";
+    var pc=function(n){return done?(100*n/done).toFixed(1)+"%":"n/a"};
+    $("simout").textContent=(stopped?"Stopped after ":"")+done+" games at "+lvName+" level (computer vs computer), first "+RND+" moves random.\n"+
+      "First player ("+nm[0]+") won "+pc(w[0])+" ("+w[0]+" games, margin \u00b1"+mg+" points at 95% confidence). Second player ("+nm[1]+") won "+pc(w[1])+" ("+w[1]+" games)."+(un?" Unfinished (stopped at "+CAP+" plies): "+un+".":"");
+    render();
+  }
+  function stepSim(){
+    if(me.stop){fin(true);return}
+    var t0=Date.now();
+    while(Date.now()-t0<40){
+      var ms=legal(g);
+      if(g.w>=0||!ms.length||plies>=CAP){
+        if(g.w>=0)w[g.w]++;else if(!ms.length)w[1-g.turn]++;else un++;
+        done++;g=newState();plies=0;
+        if(done>=TOTAL){fin(false);return}
+        continue;
+      }
+      if(plies<RND)g=ms[Math.floor(Math.random()*ms.length)].ns;
+      else g=aiMove(g).ns;
+      plies++;
+    }
+    $("simout").textContent="Simulating at "+lvName+" level\u2026 "+done+"/"+TOTAL;
+    setTimeout(stepSim,0);
+  }
+  stepSim();
+}
+
+/* =============================== 3. INTERFACE =============================== */
+var hist,redo=[],sel,remMode=false,remPicks=[],over,busy,note="";
+var S3=Math.sqrt(3),PX=[],PY=[],x0=1e9,x1=-1e9,y0=1e9,y1=-1e9,GREEN="#2e9e4f",RED="#d33",GOLD="#e0a800";
+CELLS.forEach(function(c,i){PX[i]=S3*(c[0]+c[1]/2);PY[i]=1.5*c[1];x0=Math.min(x0,PX[i]-S3/2);x1=Math.max(x1,PX[i]+S3/2);y0=Math.min(y0,PY[i]-1);y1=Math.max(y1,PY[i]+1)});
+function pts(i){var a=[];for(var k=0;k<6;k++){var t=Math.PI/180*(30+60*k);a.push((PX[i]+Math.cos(t)*.97).toFixed(3)+","+(PY[i]+Math.sin(t)*.97).toFixed(3))}return a.join(" ")}
+var HEXP=CELLS.map(function(c,i){return pts(i)});
+function cur(){return hist[hist.length-1]}
+function humanTurn(){return $("mode").value==="2p"||cur().turn===+$("side").value}
+function start(){
+  hist=[newState()];redo=[];sel=null;remMode=false;remPicks=[];note="";$("level").disabled=$("side").disabled=$("mode").value==="2p";over=false;busy=false;
+  render();maybeAI();
+}
+function dotColor(ns,P){return ns.w===P?GOLD:ns.w===1-P?RED:GREEN}
+function render(){
+  var s=cur(),sd=GAME.sides,h=[],P=s.turn,i,k;
+  over=s.w>=0;
+  h.push('<svg viewBox="'+[x0-.1,y0-.1,x1-x0+.2,y1-y0+.2].map(function(v){return v.toFixed(2)}).join(" ")+'" role="img" aria-label="Relay board">');
+  for(i=0;i<NC;i++){
+    h.push('<polygon data-i="'+i+'" points="'+HEXP[i]+'" fill="var(--cell)" stroke="var(--edge)" stroke-width=".04"/>');
+    for(var Q=0;Q<2;Q++){
+      if(BASE[Q][i])h.push('<polygon data-i="'+i+'" points="'+HEXP[i]+'" fill="'+sd[Q].color+'" fill-opacity=".42" pointer-events="none"/>');
+      if(TERM[Q][i])h.push('<polygon data-i="'+i+'" points="'+HEXP[i]+'" fill="'+sd[Q].color+'" fill-opacity=".14" stroke="'+sd[Q].color+'" stroke-width=".1" stroke-dasharray=".22 .14" pointer-events="none"/>');
+    }
+  }
+  var canAct=!over&&humanTurn()&&!busy;
+  if(canAct&&!sel&&!remMode)BASEL[P].forEach(function(i){
+    if(!s.o[i])h.push('<circle data-i="'+i+'" cx="'+PX[i]+'" cy="'+PY[i]+'" r=".2" fill="'+dotColor(placeMove(s,i).ns,P)+'" fill-opacity=".85"/>')});
+  for(i=0;i<NC;i++)if(s.o[i]){
+    var p=s.o[i],sp=s.sup[p-1][i],on=(sel&&sel.i===i)||remPicks.indexOf(i)>=0,tgt=remMode&&remPicks.length===2&&p===2-P;
+    h.push('<circle data-i="'+i+'" cx="'+PX[i]+'" cy="'+PY[i]+'" r=".62" fill="'+sd[p-1].color+'" stroke="'+(on||tgt?'var(--hi)':'#fff')+'" stroke-width="'+(on?.15:tgt?.12:.07)+'"'+(!sp&&!on?' stroke-dasharray=".16 .12"':'')+(!sp?' fill-opacity=".7"':'')+'/>');
+  }
+  if(sel)for(k=0;k<sel.list.length;k++){
+    var m=sel.list[k],f=m.j,ok=m.live,col=ok?dotColor(m.ns,P):RED;
+    h.push('<circle data-i="'+f+'" cx="'+PX[f]+'" cy="'+PY[f]+'" r=".3" fill="'+(ok?col:'none')+'" stroke="'+col+'" stroke-width=".13" fill-opacity=".85"/>');
+  }
+  h.push('</svg>');
+  $("board").innerHTML=h.join("");
+  var names=sd.map(function(x){return x.name}),st;
+  for(i=0;i<2;i++){var t=GAME.stats(s,i);$("s"+i).textContent=t.big;$("d"+i).textContent=t.text;
+    $("p"+i).className="pl"+(!over&&s.turn===i?" on":"")}
+  if(over)st="Game over: "+names[s.w]+" wins with a supported piece in "+names[s.w]+"\u2019s terminal.";
+  else if(remMode)st=names[P]+": "+(remPicks.length<2?"choose two of your supported pieces that are not at the base ("+remPicks.length+"/2)":"now click the enemy piece to remove")+".";
+  else if(sel)st=names[P]+": click a dot to move there, or the piece again to deselect.";
+  else st=names[P]+" to move"+(humanTurn()?"":" (computer thinking\u2026)");
+  $("status").textContent=st;
+  $("last").textContent=(GAME.describe(s)+" "+note).trim();
+  $("undo").disabled=hist.length<2||busy;
+  $("redo").disabled=!redo.length||busy;
+  $("rem").disabled=over||busy||!humanTurn()||(!remMode&&(canRemove(s).length<2||s.o.indexOf(2-P)<0));
+  $("rem").textContent=remMode?"Cancel removal":"Remove 2 + 1";
+}
+function play(ns){hist.push(ns);redo=[];sel=null;remMode=false;remPicks=[];render();maybeAI()}
+function click(i){
+  if(over||busy||!humanTurn())return;
+  var s=cur(),P=s.turn,p=P+1;note="";
+  if(remMode){
+    if(s.o[i]===p){
+      var at=remPicks.indexOf(i);
+      if(at>=0)remPicks.splice(at,1);
+      else if(!s.sup[P][i])note="Only supported pieces can be removed.";
+      else if(BASE[P][i])note="Pieces at your base cannot be removed.";
+      else if(remPicks.length<2)remPicks.push(i);
+      else note="You already chose two pieces: click an enemy piece, or click a chosen piece to unselect it.";
+    }else if(s.o[i]){
+      if(remPicks.length<2)note="First choose two of your supported pieces that are not at your base.";
+      else{play(capMove(s,remPicks[0],remPicks[1],i).ns);return}
+    }
+    render();return;
+  }
+  if(sel){
+    var m=sel.list.filter(function(x){return x.j===i})[0];
+    if(m){play(m.ns);return}
+    var same=i===sel.i;sel=null;
+    if(same){render();return}
+  }
+  if(!s.o[i]){
+    if(BASE[P][i]){play(placeMove(s,i).ns);return}
+    note="Place new pieces on an empty hex of your base edge, or select a supported piece to move it.";
+  }else if(s.o[i]===p){
+    if(!s.sup[P][i])note="That piece is unsupported, so it cannot move.";
+    else{var list=reach(s,i);if(list.length)sel={i:i,list:list};else note="That piece has no free adjacent hex to move to (it must be empty and not next to an enemy piece)."}
+  }else note="That is an enemy piece. To remove one, use \u201cRemove 2 + 1\u201d.";
+  render();
+}
+function maybeAI(){
+  if(over||$("mode").value!=="ai"||cur().turn===+$("side").value)return;
+  busy=true;render();
+  setTimeout(function(){
+    var c=cur(),m=aiMove(c);busy=false;
+    if(m)hist.push(m.ns);else{c.w=1-c.turn;c.ev=GAME.sides[c.turn].name+" has no legal move."}
+    render();
+  },60);
+}
+document.title=GAME.title;$("gtitle").textContent=GAME.title;$("gsub").textContent=GAME.subtitle;
+function li(x){return"<li>"+(typeof x==="string"?x:x.t+"<ul>"+x.sub.map(li).join("")+"</ul>")+"</li>"}
+$("rules").innerHTML=GAME.rules.map(function(sec){return"<li><b>"+sec.h+"</b><ul>"+sec.items.map(li).join("")+"</ul></li>"}).join("");
+$("side").innerHTML=GAME.sides.map(function(x,i){return'<option value="'+i+'">You are '+x.name+'</option>'}).join("");
+for(var i=0;i<2;i++)$("n"+i).textContent=GAME.sides[i].name;
+$("board").onclick=function(e){var t=e.target.closest("[data-i]");if(t)click(+t.getAttribute("data-i"))};
+$("new").onclick=start;$("sim").onclick=runSim;
+$("mode").onchange=$("side").onchange=start;
+$("rem").onclick=function(){
+  if(over||busy||!humanTurn())return;
+  remMode=!remMode;remPicks=[];sel=null;note="";render();
+};
+$("redo").onclick=function(){
+  if(busy||!redo.length)return;
+  hist.push(redo.pop());
+  if($("mode").value==="ai"&&redo.length&&cur().turn!==+$("side").value)hist.push(redo.pop());
+  sel=null;remMode=false;remPicks=[];note="";render();
+};
+$("undo").onclick=function(){
+  if(busy||hist.length<2)return;
+  redo.push(hist.pop());
+  if($("mode").value==="ai"&&hist.length>1&&cur().turn!==+$("side").value)redo.push(hist.pop());
+  sel=null;remMode=false;remPicks=[];over=false;render();
+};
+start();
+})();
+</script>
+</body>
+</html>
