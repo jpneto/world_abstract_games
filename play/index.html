@@ -25,6 +25,8 @@ a.card:hover,a.card:focus-visible{border-color:var(--hi);transform:translateY(-2
 .body p{margin:0 0 8px;color:var(--mute);font-size:.95rem}
 .tags{display:flex;flex-wrap:wrap;gap:6px}
 .tags span{font-size:.8rem;color:var(--mute);border:1px solid var(--line);border-radius:999px;padding:1px 9px}
+.search{display:block;width:100%;max-width:240px;box-sizing:border-box;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin:0 0 16px}
+.search:focus{outline:2px solid var(--hi);outline-offset:1px}
 .empty{color:var(--mute)}
 </style>
 </head>
@@ -32,13 +34,14 @@ a.card:hover,a.card:focus-visible{border-color:var(--hi);transform:translateY(-2
 <main>
 <h1 id="title"></h1>
 <p class="sub" id="sub"></p>
+<input class="search" id="search" type="search" placeholder="Search games" aria-label="Search games" autocomplete="off">
 <div class="grid" id="grid"></div>
 </main>
 <script>
 /* =====================================================================
    TO ADD A GAME:
    1. Put its HTML file in the /games folder (e.g. games/mygame.html).
-   2. Put a thumbnail PNG in the /images folder (about 1200x480 works well).
+   2. Put a thumbnail PNG in the /images folder (about 840x600 works well).
    3. Add one entry to GAMES below. That's it.
    Fields: title, file, img (PNG thumbnail in /images), blurb, tags (short labels).
    ===================================================================== */
@@ -71,9 +74,20 @@ function thumb(g){return g.img?'<img src="'+esc(g.img)+'" alt="" loading="lazy">
 document.title=SITE.title;
 document.getElementById("title").textContent=SITE.title;
 document.getElementById("sub").textContent=SITE.subtitle;
-document.getElementById("grid").innerHTML=GAMES.length?GAMES.map(function(g){
+var grid=document.getElementById("grid"),box=document.getElementById("search");
+function card(g){
   return '<a class="card" href="'+esc(g.file)+'"><div class="thumb">'+thumb(g)+'</div><div class="body"><h2>'+esc(g.title)+'</h2><p>'+esc(g.blurb||"")+'</p><div class="tags">'+(g.tags||[]).map(function(t){return"<span>"+esc(t)+"</span>"}).join("")+'</div></div></a>';
-}).join(""):'<p class="empty">No games yet.</p>';
+}
+function show(){
+  var words=box.value.toLowerCase().split(/\s+/).filter(Boolean);
+  var list=GAMES.filter(function(g){
+    var hay=(g.title+" "+(g.blurb||"")+" "+(g.tags||[]).join(" ")).toLowerCase();
+    return words.every(function(w){return hay.indexOf(w)>=0});
+  });
+  grid.innerHTML=list.length?list.map(card).join(""):'<p class="empty">'+(GAMES.length?"No games match your search.":"No games yet.")+'</p>';
+}
+box.oninput=show;
+show();
 </script>
 </body>
 </html>
