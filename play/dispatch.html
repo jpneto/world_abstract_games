@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dispatch</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
+<style>
+:root{--bg:#eef0e6;--ink:#1f2a1c;--mute:#5d6a56;--cell:#dfe3cf;--edge:#b9bfa3;--hi:#e0803a;--panel:#fff;--line:#c5cab4;--wood:#dcb875;--sq1:#ece8d6;--sq2:#a9b58a;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f;--wood:#9a7b45;--sq1:#46513d;--sq2:#28301f}}
+:root[data-theme="dark"]{--wood:#9a7b45;--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f;--sq1:#46513d;--sq2:#28301f}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+main{max-width:1080px;margin:0 auto;padding:16px 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.right>.bar:first-child{margin-top:0}
+@media (min-width:860px){.layout{grid-template-columns:minmax(0,600px) minmax(300px,1fr);gap:28px;align-items:start}}
+h1{font:700 2rem/1.1 "Bricolage Grotesque",Georgia,serif;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+select,button.ctl{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.ctl:disabled,select:disabled,input:disabled{opacity:.45;cursor:default}
+label.f{color:var(--mute);font-size:.9rem}
+input[type=number]{width:4.5em;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+button.ctl.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.pl{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:8px 12px;display:flex;justify-content:space-between;align-items:baseline}
+.pl.on{border-color:var(--hi)}
+.pl b{font:700 1.6rem "Bricolage Grotesque",Georgia,serif}
+.pl small{color:var(--mute)}
+#status{min-height:1.5em;font-weight:600;margin:6px 0}
+#board svg{display:block;width:100%;max-width:600px;margin:0 auto;touch-action:manipulation}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+details li{margin:4px 0}
+.legend{color:var(--mute);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+<h1 id="gtitle"></h1>
+<p class="sub" id="gsub"></p>
+<div class="layout">
+<div class="left">
+<div id="board"></div>
+<p class="legend">Click one of your stones, then a green dot (where the dispatched stone can stop). The shape then starts on that cell: click empty cells next to it to grow it (2 to 5 cells), click a shape cell to remove it, then press Place. Small squares mark each player&rsquo;s territory when the game ends.</p>
+</div>
+<aside class="right">
+<div class="bar">
+  <select id="mode" aria-label="Mode"><option value="ai">Play the computer</option><option value="2p">Two players</option></select>
+  <select id="level" aria-label="Computer strength"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select>
+  <select id="side" aria-label="Your side"></select>
+  <button class="ctl primary" id="new">New game</button>
+  <button class="ctl" id="undo">Undo</button>
+  <button class="ctl" id="redo">Redo</button>
+</div>
+<div class="score"><div class="pl" id="p0"><span id="n0"></span></div><div class="pl" id="p1"><span id="n1"></span></div></div>
+<div id="status" aria-live="polite"></div>
+<div class="bar"><button class="ctl primary" id="place">Place shape</button><button class="ctl" id="pass">Pass</button></div>
+<div id="last" class="legend" style="min-height:2.6em;margin:0 0 8px"></div>
+<div class="bar">
+  <label class="f">Simulation games <input id="simN" type="number" min="10" max="1000" value="10"></label>
+  <label class="f">Random opening moves <input id="simR" type="number" min="0" max="20" value="4"></label>
+  <button class="ctl" id="sim">Simulation</button>
+</div>
+<div id="simout" class="legend" style="white-space:pre-line;margin:0 0 8px"></div>
+<details><summary>Rules</summary><ul id="rules"></ul></details>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+/* =====================================================================
+   1. GAME DEFINITION  - Dispatch rules, move generation, capture, scoring
+   2. ENGINE           - sampling computer opponent, simulations
+   3. INTERFACE        - SVG Go board, click handling, controls
+   A move is {src, cells} (cells[0] is the stop cell of the dispatched stone) or a pass.
+   A state is {b: owner per intersection (0 empty, 1 White, 2 Black), turn, pass: consecutive passes,
+               fd: first dispatch still pending, w: winner (0, 1, 2 = draw) or -1, lm: last move info}.
+   Intersection index = rank*13+file (rank 0 = rank 1).
+   ===================================================================== */
+var $=function(i){return document.getElementById(i)};
+
+/* ============================ 1. GAME DEFINITION ============================ */
+var GAME={
+  title:"Dispatch",
+  subtitle:"Send a stone sliding across the board and grow a shape where it lands. Surround, capture and claim territory on a 13\u00d713 Go board.",
+  sides:[{name:"White",color:"#f6f2e7",edge:"#555"},{name:"Black",color:"#2d2d2d",edge:"#ddd"}],
+  rules:[
+  {h:"Board and setup",items:[
+    "13\u00d713 Go board; stones are played on the intersections.",
+    "Initially White has stones on c3 and k11, and Black has stones on c11 and k3. White moves first."]},
+  {h:"Turn",items:[
+    "Each turn a player either passes or dispatches a stone: pick a friendly stone already on the board and send a stone from it in an orthogonal direction, as far as you like, provided it never meets a non-empty cell. The origin stone stays where it is.",
+    "When the dispatched stone stops, it grows a pentomino, a tetromino, a trimino or a domino (any orientation) that includes the stop cell. All its cells must be empty."]},
+  {h:"Move equalizer",items:["The first dispatch of the game may only grow a trimino."]},
+  {h:"Capture",items:["A group of stones with no liberty (none of its stones is adjacent to an empty cell) is captured and removed from the board. After a placement, enemy groups are checked first, then the mover\u2019s own."]},
+  {h:"Goal",items:[
+    "When both players pass in a row the game ends. Each player scores the stones they have on board plus the empty cells inside their territory, that is, empty cells where the adversary cannot dispatch stones (a cell is reachable by the adversary if some legal dispatch could place a stone there, as its stop cell or as part of the grown shape). The player with more points wins."]}],
+  describe:function(s){var l=s.lm;if(!l)return"";var by=GAME.sides[l.p].name;if(l.pass)return by+" passed.";
+    var t=by+" dispatched a stone from "+cn(l.src)+" to "+cn(l.cells[0])+", growing a "+["","","domino","trimino","tetromino","pentomino"][l.cells.length]+" ("+l.cells.map(cn).join(", ")+")";
+    if(l.ce)t+=", capturing "+l.ce+" stone"+(l.ce>1?"s":"");
+    if(l.co)t+=", losing "+l.co+" of its own";
+    return t+"."}
+};
+var W=13,N=169,DIRS=[[1,0],[-1,0],[0,1],[0,-1]],FX=[],FY=[],NB=[];
+(function(){for(var i=0;i<N;i++){FX[i]=i%W;FY[i]=(i/W)|0;NB[i]=[];DIRS.forEach(function(d){var x=FX[i]+d[0],y=FY[i]+d[1];if(x>=0&&y>=0&&x<W&&y<W)NB[i].push(y*W+x)})}})();
+function cn(i){return String.fromCharCode(97+FX[i])+(FY[i]+1)}
+function newState(){var b=new Uint8Array(N);b[2*W+2]=1;b[10*W+10]=1;b[10*W+2]=2;b[2*W+10]=2;return{b:b,turn:0,pass:0,fd:true,w:-1,lm:null}}
+function hasEmpty(b,i){for(var k=0;k<NB[i].length;k++)if(!b[NB[i][k]])return true;return false}
+// cells where a stone sent from stone i can stop (and still grow at least a domino)
+function stopsOf(b,i){var out=[];DIRS.forEach(function(d){var x=FX[i]+d[0],y=FY[i]+d[1];
+  while(x>=0&&y>=0&&x<W&&y<W&&!b[y*W+x]){var j=y*W+x;if(hasEmpty(b,j))out.push(j);x+=d[0];y+=d[1]}});return out}
+function allStops(b,p){var list=[],src={};for(var i=0;i<N;i++)if(b[i]===p)stopsOf(b,i).forEach(function(j){if(src[j]===undefined){src[j]=i;list.push(j)}});return{list:list,src:src}}
+function connected(c){var seen=[c[0]],q=[c[0]];while(q.length){var x=q.pop();c.forEach(function(y){if(seen.indexOf(y)<0&&NB[x].indexOf(y)>=0){seen.push(y);q.push(y)}})}return seen.length===c.length}
+function grp(b,i,seen){var c=b[i],st=[i],g=[i],lib=0,ls={};seen[i]=1;
+  while(st.length){var q=st.pop();NB[q].forEach(function(n){if(!b[n]){if(!ls[n]){ls[n]=1;lib++}}else if(b[n]===c&&!seen[n]){seen[n]=1;st.push(n);g.push(n)}})}
+  return{g:g,lib:lib}}
+function sweep(b,c){var seen=new Uint8Array(N),n=0;for(var i=0;i<N;i++)if(b[i]===c&&!seen[i]){var r=grp(b,i,seen);if(!r.lib)r.g.forEach(function(k){b[k]=0;n++})}return n}
+function dispatch(s,src,cells){var p=s.turn+1,b=s.b.slice();cells.forEach(function(c){b[c]=p});
+  var ce=sweep(b,3-p),co=sweep(b,p);
+  return{b:b,turn:1-s.turn,pass:0,fd:false,w:-1,lm:{p:s.turn,src:src,cells:cells,ce:ce,co:co}}}
+function passS(s){var ns={b:s.b,turn:1-s.turn,pass:s.pass+1,fd:s.fd,w:-1,lm:{p:s.turn,pass:true}};
+  if(ns.pass>=2){var sc=scores(s.b);ns.w=sc[0]>sc[1]?0:sc[1]>sc[0]?1:2}return ns}
+// empty cells player p could put a stone on (stop cell, or within a shape of at most 5 cells grown from a stop)
+function reach(b,p){var r=new Uint8Array(N),d=new Int8Array(N).fill(-1),q=[],i,h=0;
+  for(i=0;i<N;i++)if(b[i]===p)stopsOf(b,i).forEach(function(j){if(d[j]<0){d[j]=0;q.push(j)}});
+  while(h<q.length){i=q[h++];r[i]=1;if(d[i]<4)NB[i].forEach(function(n){if(!b[n]&&d[n]<0){d[n]=d[i]+1;q.push(n)}})}
+  return r}
+function scores(b){var r1=reach(b,1),r2=reach(b,2),s=[0,0],i;
+  for(i=0;i<N;i++){if(b[i]===1)s[0]++;else if(b[i]===2)s[1]++;else{if(!r2[i])s[0]++;if(!r1[i])s[1]++}}return s}
+
+/* ================================ 2. ENGINE ================================ */
+/* Engine: the number of possible shapes is huge, so the computer samples random dispatches
+   (random stop, random shape) and keeps the one that maximises (own points - enemy points).
+   Hard also checks the best candidates against sampled replies. It passes when nothing improves its score. */
+var LV=[0,40,250,700],simulating=false;
+function rn(n){return Math.floor(Math.random()*n)}
+function grow(b,T,n){var c=[T],f;
+  while(c.length<n){f=[];c.forEach(function(x){NB[x].forEach(function(y){if(!b[y]&&c.indexOf(y)<0&&f.indexOf(y)<0)f.push(y)})});if(!f.length)break;c.push(f[rn(f.length)])}
+  return c.length>=2?c:null}
+function sample(s,m){var T=m.list[rn(m.list.length)],c=grow(s.b,T,s.fd?3:[2,3,4,4,5,5,5][rn(7)]);
+  if(!c||(s.fd&&c.length!==3))return null;return{src:m.src[T],cells:c}}
+function vP(b,p){var s=scores(b);return s[p]-s[1-p]}
+function aiMove(s){
+  var p=s.turn,lv=+$("level").value,n=Math.max(8,LV[lv]*(simulating?.2:1)|0),cur=vP(s.b,p),m=allStops(s.b,p+1),c=[],k,t,ns;
+  if(s.pass&&cur>0)return passS(s);
+  for(k=0;k<n&&m.list.length;k++){t=sample(s,m);if(!t)continue;ns=dispatch(s,t.src,t.cells);c.push({ns:ns,v:vP(ns.b,p)+(lv===1?(Math.random()-.5)*8:0)})}
+  c.sort(function(a,b){return b.v-a.v});
+  if(lv===3&&!simulating)c=c.slice(0,6).map(function(x){
+    var m2=allStops(x.ns.b,2-p),w=x.v,j,t2;
+    for(j=0;j<60&&m2.list.length;j++){t2=sample(x.ns,m2);if(t2)w=Math.min(w,vP(dispatch(x.ns,t2.src,t2.cells).b,p))}
+    return{ns:x.ns,v:w}}).sort(function(a,b){return b.v-a.v});
+  return c.length&&c[0].v>cur?c[0].ns:passS(s);
+}
+var sim=null;
+function runSim(){   // computer vs computer, to look for first/second-player advantage
+  if(sim){sim.stop=true;return}
+  var CAP=200,me=sim={stop:false},TOTAL=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?4:+$("simR").value)),
+      done=0,w=[0,0],dr=0,un=0,g=newState(),plies=0,lvName=$("level").options[$("level").selectedIndex].text,nm=GAME.sides.map(function(x){return x.name}),ids=["mode","side","level","new","undo","redo","simN","simR","pass","place"];
+  ids.forEach(function(i){$(i).disabled=true});simulating=true;
+  $("sim").textContent="Stop simulation";
+  $("simout").textContent="Simulating at "+lvName+" level\u2026 0/"+TOTAL;
+  function fin2(stopped){
+    sim=null;simulating=false;$("sim").textContent="Simulation";
+    $("mode").disabled=$("new").disabled=$("simN").disabled=$("simR").disabled=false;
+    $("level").disabled=$("side").disabled=$("mode").value==="2p";
+    var mg=done?(196*Math.sqrt((w[0]/done)*(1-w[0]/done)/done)).toFixed(1):"0";
+    var pc=function(n){return done?(100*n/done).toFixed(1)+"%":"n/a"};
+    $("simout").textContent=(stopped?"Stopped after ":"")+done+" games at "+lvName+" level (computer vs computer), first "+RND+" moves random.\n"+
+      "First player ("+nm[0]+") won "+pc(w[0])+" ("+w[0]+" games, margin \u00b1"+mg+" points at 95% confidence). Second player ("+nm[1]+") won "+pc(w[1])+" ("+w[1]+" games). Draws: "+dr+"."+(un?" Unfinished (stopped at "+CAP+" plies): "+un+".":"");
+    render();
+  }
+  function stepSim(){
+    if(me.stop){fin2(true);return}
+    var t0=Date.now();
+    while(Date.now()-t0<40){
+      if(g.w>=0||plies>=CAP){
+        if(g.w===2)dr++;else if(g.w>=0)w[g.w]++;else un++;
+        done++;g=newState();plies=0;
+        if(done>=TOTAL){fin2(false);return}
+        continue;
+      }
+      if(plies<RND){var m=allStops(g.b,g.turn+1),t=null,q;for(q=0;q<6&&m.list.length&&!t;q++)t=sample(g,m);g=t?dispatch(g,t.src,t.cells):passS(g)}
+      else g=aiMove(g);
+      plies++;
+    }
+    $("simout").textContent="Simulating at "+lvName+" level\u2026 "+done+"/"+TOTAL;
+    setTimeout(stepSim,0);
+  }
+  stepSim();
+}
+
+/* =============================== 3. INTERFACE =============================== */
+var hist,redo=[],ui,over,busy,note="",RED="#d33",GREEN="#2e9e4f";
+function newUI(){return{src:-1,stops:[],stop:-1,cells:[]}}
+function cur(){return hist[hist.length-1]}
+function humanTurn(){return $("mode").value==="2p"||cur().turn===+$("side").value}
+function maxSize(s){return s.fd?3:5}
+function canPlace(s){return ui.stop>=0&&ui.cells.length>=2&&(!s.fd||ui.cells.length===3)}
+function start(){
+  hist=[newState()];redo=[];ui=newUI();note="";$("level").disabled=$("side").disabled=$("mode").value==="2p";over=false;busy=false;
+  render();maybeAI();
+}
+function X(i){return FX[i]+1}
+function Y(i){return 13-FY[i]}
+function stone(p,i,op){var G=GAME.sides[p-1];return'<circle cx="'+X(i)+'" cy="'+Y(i)+'" r=".46" fill="'+G.color+'" stroke="'+G.edge+'" stroke-width=".05"'+(op?' opacity="'+op+'"':'')+'/>'}
+function render(){
+  var s=cur(),sd=GAME.sides,h=[],P=s.turn,i,k,b=s.b;
+  over=s.w>=0;
+  h.push('<svg viewBox="0 0 14 14.3" role="img" aria-label="Dispatch board"><rect x=".3" y=".3" width="13.4" height="13.4" rx=".2" fill="var(--wood)"/>');
+  for(k=1;k<=13;k++)h.push('<path d="M'+k+' 1V13M1 '+k+'H13" stroke="#3a2c14" stroke-width=".04" fill="none"/>');
+  [[3,3],[3,9],[6,6],[9,3],[9,9]].forEach(function(q){h.push('<circle cx="'+(q[0]+1)+'" cy="'+(13-q[1])+'" r=".09" fill="#3a2c14"/>')});
+  for(k=0;k<13;k++){
+    h.push('<text x="'+(k+1)+'" y="14.05" text-anchor="middle" font-size=".34" fill="var(--mute)">'+String.fromCharCode(97+k)+'</text>');
+    h.push('<text x=".02" y="'+(13-k+.12)+'" font-size=".34" fill="var(--mute)">'+(k+1)+'</text>');
+  }
+  if(over){
+    var r1=reach(b,1),r2=reach(b,2);
+    for(i=0;i<N;i++)if(!b[i]){var a=!r2[i],c=!r1[i],x=X(i),y=Y(i);
+      if(a)h.push('<rect x="'+(x-(c?.26:.12))+'" y="'+(y-.12)+'" width=".24" height=".24" fill="#f6f2e7" stroke="#555" stroke-width=".03"/>');
+      if(c)h.push('<rect x="'+(x+(a?.02:-.12))+'" y="'+(y-.12)+'" width=".24" height=".24" fill="#2d2d2d" stroke="#ddd" stroke-width=".03"/>')}
+  }
+  for(i=0;i<N;i++)if(b[i])h.push(stone(b[i],i));
+  if(s.lm&&!s.lm.pass)s.lm.cells.forEach(function(c){h.push('<circle cx="'+X(c)+'" cy="'+Y(c)+'" r=".1" fill="'+RED+'"/>')});
+  if(ui.src>=0){
+    h.push('<circle cx="'+X(ui.src)+'" cy="'+Y(ui.src)+'" r=".53" fill="none" stroke="var(--hi)" stroke-width=".09"/>');
+    if(ui.stop<0)ui.stops.forEach(function(j){h.push('<circle cx="'+X(j)+'" cy="'+Y(j)+'" r=".14" fill="'+GREEN+'" fill-opacity=".9"/>')});
+    ui.cells.forEach(function(c){h.push(stone(P+1,c,.65)+'<circle cx="'+X(c)+'" cy="'+Y(c)+'" r=".5" fill="none" stroke="var(--hi)" stroke-width=".07"'+(c===ui.stop?'':' stroke-dasharray=".12 .08"')+'/>')});
+  }
+  for(i=0;i<N;i++)h.push('<rect data-i="'+i+'" x="'+(X(i)-.5)+'" y="'+(Y(i)-.5)+'" width="1" height="1" fill="transparent"/>');
+  h.push('</svg>');
+  $("board").innerHTML=h.join("");
+  var names=sd.map(function(x){return x.name}),sc=scores(b),cnt=[0,0],st;
+  for(i=0;i<N;i++)if(b[i])cnt[b[i]-1]++;
+  for(i=0;i<2;i++){$("p"+i).className="pl"+(!over&&P===i?" on":"");$("n"+i).textContent=names[i]+": "+sc[i]+" pts ("+cnt[i]+" stones)"}
+  var hu=humanTurn()&&!over&&!busy&&!sim;
+  if(over)st=s.w===2?"Game over: draw, "+sc[0]+" to "+sc[1]+".":"Game over: "+names[s.w]+" wins, "+sc[s.w]+" to "+sc[1-s.w]+".";
+  else if(ui.stop>=0)st=names[P]+": "+(s.fd?"grow a trimino (3 cells)":"grow your shape (2 to 5 cells)")+" with "+ui.cells.length+" so far. Click adjacent empty cells to add, a shape cell to remove, then press Place shape.";
+  else if(ui.src>=0)st=names[P]+": click a green dot to choose where the stone stops.";
+  else st=names[P]+" to move"+(s.pass?" (the opponent passed)":"")+(humanTurn()?"":" (computer thinking\u2026)")+(s.fd?" \u2013 first dispatch: trimino only.":"");
+  $("status").textContent=st;
+  $("last").textContent=(GAME.describe(s)+" "+note).trim();
+  $("place").disabled=!(hu&&canPlace(s));
+  $("pass").disabled=!hu;
+  $("undo").disabled=hist.length<2||busy||!!sim;
+  $("redo").disabled=!redo.length||busy||!!sim;
+}
+function play(ns){hist.push(ns);redo=[];ui=newUI();render();maybeAI()}
+function click(i){
+  if(over||busy||!humanTurn())return;
+  var s=cur(),b=s.b,p=s.turn+1;note="";
+  if(ui.stop>=0){
+    if(ui.cells.indexOf(i)>=0){
+      if(i===ui.stop){ui.stop=-1;ui.cells=[]}
+      else{var rest=ui.cells.filter(function(x){return x!==i});if(connected(rest))ui.cells=rest;else note="Removing that cell would split the shape."}
+      render();return}
+    if(!b[i]&&ui.cells.length<maxSize(s)&&ui.cells.some(function(c){return NB[c].indexOf(i)>=0})){ui.cells.push(i);render();return}
+    if(!b[i]&&ui.stops.indexOf(i)>=0){ui.stop=i;ui.cells=[i];render();return}
+  }else if(ui.src>=0&&ui.stops.indexOf(i)>=0){ui.stop=i;ui.cells=[i];render();return}
+  if(b[i]===p){
+    if(i===ui.src)ui=newUI();
+    else{var st=stopsOf(b,i);if(st.length)ui={src:i,stops:st,stop:-1,cells:[]};else note="That stone has no empty cell to send a stone to."}
+  }else{ui=newUI();note=b[i]?"Select one of your own stones.":"Select one of your stones first."}
+  render();
+}
+function maybeAI(){
+  if(over||$("mode").value!=="ai"||cur().turn===+$("side").value)return;
+  busy=true;render();
+  setTimeout(function(){var c=cur(),ns=aiMove(c);busy=false;hist.push(ns);render()},60);
+}
+document.title=GAME.title;$("gtitle").textContent=GAME.title;$("gsub").textContent=GAME.subtitle;
+function li(x){return"<li>"+(typeof x==="string"?x:x.t+"<ul>"+x.sub.map(li).join("")+"</ul>")+"</li>"}
+$("rules").innerHTML=GAME.rules.map(function(sec){return"<li><b>"+sec.h+"</b><ul>"+sec.items.map(li).join("")+"</ul></li>"}).join("");
+$("side").innerHTML=GAME.sides.map(function(x,i){return'<option value="'+i+'">You are '+x.name+'</option>'}).join("");
+$("board").onclick=function(e){var t=e.target.closest("[data-i]");if(t)click(+t.getAttribute("data-i"))};
+$("new").onclick=start;$("sim").onclick=runSim;
+$("mode").onchange=$("side").onchange=start;
+$("place").onclick=function(){var s=cur();if(over||busy||!humanTurn()||!canPlace(s))return;play(dispatch(s,ui.src,ui.cells.slice()))};
+$("pass").onclick=function(){if(over||busy||!humanTurn())return;note="";play(passS(cur()))};
+$("redo").onclick=function(){
+  if(busy||!redo.length)return;
+  hist.push(redo.pop());
+  if($("mode").value==="ai"&&redo.length&&cur().turn!==+$("side").value)hist.push(redo.pop());
+  ui=newUI();note="";render();
+};
+$("undo").onclick=function(){
+  if(busy||hist.length<2)return;
+  redo.push(hist.pop());
+  if($("mode").value==="ai"&&hist.length>1&&cur().turn!==+$("side").value)redo.push(hist.pop());
+  ui=newUI();over=false;render();
+};
+start();
+})();
+</script>
+</body>
+</html>
