@@ -19,7 +19,7 @@ a.card{display:flex;flex-direction:column;background:var(--panel);border:2px sol
 a.card:hover,a.card:focus-visible{border-color:var(--hi);transform:translateY(-2px);outline:none}
 .thumb{background:var(--cell);border-bottom:1px solid var(--line);line-height:0}
 .thumb{min-height:0}
-.thumb img{display:block;width:100%;height:240px;object-fit:cover}
+.thumb img{display:block;width:100%;height:240px;object-fit:contain}
 .body{padding:12px 14px 14px}
 .body h2{font:700 1.3rem/1.2 "Bricolage Grotesque",Georgia,serif;margin:0 0 4px}
 .body p{margin:0 0 8px;color:var(--mute);font-size:.95rem}
@@ -48,6 +48,12 @@ a.card:hover,a.card:focus-visible{border-color:var(--hi);transform:translateY(-2
 var SITE={title:"Abstract Games", subtitle:"Abstract strategy games designed by João Pedro Neto"};
 
 var GAMES=[
+  {title:"Abstract Chess",
+   file:"abstract_chess.html",
+   blurb:"Chess variant where pieces can transfer part of their power.",
+   img:"images/abstract_chess.png",
+   tags:["8x8","2 players","vs computer","stack"]},
+   
   {title:"Sheepdogs",
    file:"sheepdogs.html",
    blurb:"Be the best pack of dogs and push the flock off the board.",
