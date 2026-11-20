@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Khan</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
+<style>
+:root{--bg:#eef0e6;--ink:#1f2a1c;--mute:#5d6a56;--cell:#dfe3cf;--edge:#b9bfa3;--hi:#e0803a;--panel:#fff;--line:#c5cab4;--sq1:#ece8d6;--sq2:#a9b58a;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f;--sq1:#46513d;--sq2:#28301f}}
+:root[data-theme="dark"]{--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f;--sq1:#46513d;--sq2:#28301f}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+main{max-width:1080px;margin:0 auto;padding:16px 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.right>.bar:first-child{margin-top:0}
+@media (min-width:860px){.layout{grid-template-columns:minmax(0,600px) minmax(300px,1fr);gap:28px;align-items:start}}
+h1{font:700 2rem/1.1 "Bricolage Grotesque",Georgia,serif;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+select,button.ctl{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.ctl:disabled,select:disabled,input:disabled{opacity:.45;cursor:default}
+label.f{color:var(--mute);font-size:.9rem}
+input[type=number]{width:4.5em;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+button.ctl.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.pl{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:8px 12px;display:flex;justify-content:space-between;align-items:baseline}
+.pl.on{border-color:var(--hi)}
+.pl b{font:700 1.6rem "Bricolage Grotesque",Georgia,serif}
+.pl small{color:var(--mute)}
+#status{min-height:1.5em;font-weight:600;margin:6px 0}
+#board svg{display:block;width:100%;max-width:600px;margin:0 auto;touch-action:manipulation}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+details li{margin:4px 0}
+.legend{color:var(--mute);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+<h1 id="gtitle"></h1>
+<p class="sub" id="gsub"></p>
+<div class="layout">
+<div class="left">
+<div id="board"></div>
+<p class="legend">Click one of your pieces, then a destination. Green dot: step. Green ring: Khan jump. Blue dot: soldier moved with Khan support. Orange arrow: push the outlined phalanx (click the arrow). Red rings mark pieces that would be captured. Khans have a gold crown; the tinted top and bottom rows are the goal rows.</p>
+</div>
+<aside class="right">
+<div class="bar">
+  <select id="mode" aria-label="Mode"><option value="ai">Play the computer</option><option value="2p">Two players</option></select>
+  <select id="level" aria-label="Computer strength"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select>
+  <select id="side" aria-label="Your side"></select>
+  <button class="ctl primary" id="new">New game</button>
+  <button class="ctl" id="undo">Undo</button>
+  <button class="ctl" id="redo">Redo</button>
+</div>
+<div class="score">
+  <div class="pl" id="p0"><span id="n0"></span></div>
+  <div class="pl" id="p1"><span id="n1"></span></div>
+</div>
+<div id="status" aria-live="polite"></div>
+<div id="last" class="legend" style="min-height:2.6em;margin:0 0 8px"></div>
+<div class="bar">
+  <label class="f">Simulation games <input id="simN" type="number" min="10" max="1000" value="10"></label>
+  <label class="f">Random opening moves <input id="simR" type="number" min="0" max="20" value="4"></label>
+  <button class="ctl" id="sim">Simulation</button>
+</div>
+<div id="simout" class="legend" style="white-space:pre-line;margin:0 0 8px"></div>
+<details>
+<summary>Rules</summary>
+<ul id="rules"></ul>
+</details>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+/* =====================================================================
+   1. GAME DEFINITION  - Khan rules, pieces, move generation
+   2. ENGINE           - alpha-beta computer opponent, simulations
+   3. INTERFACE        - SVG board, click handling, controls
+   A move is {t:"move"|"jump"|"sup"|"push", i, j, cs:captured squares, ns:resulting state}
+   (a push also has cells:the phalanx squares and front:the square it pushes into).
+   A state is {o:owner per square (0 empty, 1 White, 2 Black), z:piece per square (1 soldier, 2 Khan),
+               turn, w:winner or -1, lm:last move info}. Square index = rank*10+file (rank 0 = rank 1).
+   ===================================================================== */
+var $=function(i){return document.getElementById(i)};
+
+/* ============================ 1. GAME DEFINITION ============================ */
+var GAME={
+  title:"Khan",
+  subtitle:"Soldiers race to the far row while Khans jump, push phalanxes, support soldiers and trap enemies between them.",
+  sides:[{name:"White",color:"#f6f2e7",edge:"#555"},{name:"Black",color:"#2d2d2d",edge:"#ddd"}],
+  rules:[
+  {h:"Pieces",items:[
+    "Soldier: moves to an adjacent (orthogonal or diagonal) empty cell.",
+    {t:"Khan: on its turn a Khan may do one of the following:",sub:[
+      "Move like a soldier.",
+      "Jump over an adjacent piece (of either colour), landing on the empty cell right behind it, in any of the 8 directions. Jumps can be chained and stopping is optional. Jumped pieces are not captured.",
+      "Capture by custodian: when a Khan finishes its action (a step, the end of its jumps, or a push) next to an enemy piece, and a friendly Khan stands on the opposite side of that piece along a straight orthogonal or diagonal line, the enemy piece (soldier or Khan) is captured. Several pieces can be captured at once.",
+      "Push a friendly phalanx: a straight line of at least two connected friendly soldiers starting right next to the Khan, in line with it, moves one cell away from the Khan (orthogonally or diagonally), and the Khan advances one cell in the same direction, into the cell the first soldier left. The cell just beyond the phalanx must be empty or hold an enemy piece, which is captured. It cannot be a friendly piece or off the board.",
+      "Support a friendly adjacent soldier: the soldier moves to another empty cell that is adjacent to that Khan. Supports can be repeated for the same soldier by another Khan that is adjacent to the soldier\u2019s new cell, within the same turn (a Khan supports at most once per turn, and doing so again is optional)."]}]},
+  {h:"Board and setup",items:[
+    "10\u00d710 board. Each side has 20 soldiers and 6 Khans. White\u2019s soldiers fill ranks 1 and 3, and its Khans stand on rank 2 (files a, c, e, f, h, j). Black is the mirror image on ranks 10, 8 and 9. White moves first."]},
+  {h:"Turn",items:[
+    "Choose one piece and perform one of the actions above. Click a Khan to see its steps, jumps and pushes, or click a soldier to see its steps and Khan-supported moves."]},
+  {h:"End of the game",items:[
+    "A player wins by placing a soldier on the last row (rank 10 for White, rank 1 for Black) or by capturing all enemy soldiers. (A player with no legal move loses.)"]}],
+  describe:function(s){var l=s.lm;if(!l)return"";var by=GAME.sides[1-s.turn].name,t;
+    if(l.t==="push")t=by+" pushed a phalanx of "+l.len+" soldiers with the Khan on "+cn(l.i);
+    else t=by+" "+(l.t==="jump"?"jumped a Khan":l.t==="sup"?"moved a supported soldier":"moved "+(l.n===2?"a Khan":"a soldier"))+" "+cn(l.i)+" to "+cn(l.j);
+    if(l.cs.length)t+=", capturing "+l.cs.length+" piece"+(l.cs.length>1?"s":"");
+    return t+"."}
+};
+var W=10,N=100,DIAG=[[1,1],[1,-1],[-1,1],[-1,-1]],ORTH=[[1,0],[-1,0],[0,1],[0,-1]],ALL=DIAG.concat(ORTH);
+var FX=[],FY=[],NB=[],PAIR=[];   // PAIR[i]: [adjacent cell, cell beyond it] for every direction (jumps, custodian)
+function inb(x,y){return x>=0&&y>=0&&x<W&&y<W}
+(function(){
+  for(var i=0;i<N;i++){FX[i]=i%W;FY[i]=(i/W)|0;NB[i]=[];PAIR[i]=[];
+    for(var k=0;k<8;k++){var x=FX[i]+ALL[k][0],y=FY[i]+ALL[k][1],x2=x+ALL[k][0],y2=y+ALL[k][1];
+      if(inb(x,y)){NB[i].push(y*W+x);if(inb(x2,y2))PAIR[i].push([y*W+x,y2*W+x2])}}}
+})();
+function cn(i){return String.fromCharCode(97+FX[i])+(FY[i]+1)}
+function newState(){
+  var o=new Uint8Array(N),z=new Uint8Array(N),K=[0,2,4,5,7,9],f;
+  for(f=0;f<W;f++){o[f]=1;z[f]=1;o[20+f]=1;z[20+f]=1;o[90+f]=2;z[90+f]=1;o[70+f]=2;z[70+f]=1}
+  K.forEach(function(f){o[10+f]=1;z[10+f]=2;o[80+f]=2;z[80+f]=2});
+  return{o:o,z:z,turn:0,w:-1,lm:null};
+}
+function reachedGoal(s,P){var r=P?0:9;for(var f=0;f<W;f++)if(s.o[r*W+f]===P+1&&s.z[r*W+f]===1)return true;return false}
+function fin(s,o,z,lm){      // build the next state, deciding a win by goal row or by capturing every soldier
+  var P=s.turn,e=2-P,w=-1,k,any=false,ns={o:o,z:z,turn:1-P,w:-1,lm:lm};
+  if(reachedGoal(ns,P))w=P;
+  else{for(k=0;k<N;k++)if(o[k]===3-(P+1)&&z[k]===1){any=true;break}if(!any)w=P}
+  ns.w=w;return ns;
+}
+function supDests(s,i){   // cells a soldier can reach through chained Khan support (each Khan at most once)
+  var p=s.turn+1,o=s.o,z=s.z,K=[],k,res=[],got={},memo={};
+  for(k=0;k<N;k++)if(o[k]===p&&z[k]===2)K.push(k);
+  function adj(a,b){var dx=FX[a]-FX[b],dy=FY[a]-FY[b];return dx>=-1&&dx<=1&&dy>=-1&&dy<=1}
+  function dfs(c,used){
+    for(var q=0;q<K.length;q++){
+      if((used>>q)&1||!adj(c,K[q]))continue;
+      var nu=used|(1<<q);
+      NB[K[q]].forEach(function(d){
+        if(d===c||(o[d]&&d!==i))return;
+        var key=d*256+nu;if(memo[key])return;memo[key]=1;
+        if(d!==i&&!got[d]){got[d]=1;res.push(d)}
+        dfs(d,nu);
+      });
+    }
+  }
+  dfs(i,0);return res;
+}
+// all legal moves of the piece on square i (for the side to move)
+function gen(s,i){
+  var P=s.turn,p=P+1,e=3-p,o=s.o,z=s.z,out=[],seen={};
+  if(o[i]!==p)return out;
+  function mv(j,t){
+    var o2=o.slice(),z2=z.slice(),n=z[i],cs=[];
+    o2[i]=0;z2[i]=0;o2[j]=p;z2[j]=n;
+    if(n===2)PAIR[j].forEach(function(q){if(o2[q[0]]===e&&o2[q[1]]===p&&z2[q[1]]===2)cs.push(q[0])});
+    cs.forEach(function(a){o2[a]=0;z2[a]=0});
+    out.push({t:t,i:i,j:j,cs:cs,ns:fin(s,o2,z2,{t:t,i:i,j:j,n:n,cs:cs})});
+  }
+  NB[i].forEach(function(j){if(!o[j]){seen[j]=1;mv(j,"move")}});
+  if(z[i]===1){
+    supDests(s,i).forEach(function(j){if(!seen[j])mv(j,"sup")});
+  }else{
+    var vis={},st=[i],c;vis[i]=1;
+    while(st.length){c=st.pop();
+      PAIR[c].forEach(function(q){var a=q[0],b=q[1];
+        if(o[a]&&a!==i&&(!o[b]||b===i)&&!vis[b]){vis[b]=1;st.push(b);mv(b,"jump")}});}
+    ALL.forEach(function(d){
+      var x=FX[i]+d[0],y=FY[i]+d[1],run=[];
+      while(inb(x,y)&&o[y*W+x]===p&&z[y*W+x]===1){run.push(y*W+x);x+=d[0];y+=d[1]}
+      if(run.length<2||!inb(x,y))return;
+      var n=y*W+x;if(o[n]===p)return;
+      var o2=o.slice(),z2=z.slice(),cs=o[n]?[n]:[];
+      o2[n]=p;z2[n]=1;o2[run[0]]=p;z2[run[0]]=2;o2[i]=0;z2[i]=0;
+      PAIR[run[0]].forEach(function(q){if(o2[q[0]]===e&&o2[q[1]]===p&&z2[q[1]]===2)cs.push(q[0])});
+      cs.forEach(function(a){if(a!==n){o2[a]=0;z2[a]=0}});
+      out.push({t:"push",i:i,j:run[0],cells:run,front:n,cs:cs,ns:fin(s,o2,z2,{t:"push",i:i,j:run[0],n:2,len:run.length,front:n,cs:cs})});
+    });
+  }
+  return out;
+}
+function legal(s){
+  var out=[];if(s.w>=0)return out;
+  for(var i=0;i<N;i++)if(s.o[i]===s.turn+1)Array.prototype.push.apply(out,gen(s,i));
+  return out;
+}
+
+/* ================================ 2. ENGINE ================================ */
+/* Engine: make/unmake alpha-beta (principal variation search) with iterative deepening,
+   transposition table, killer/history move ordering, late-move reduction, capture quiescence
+   search, repetition detection and a time limit per move. It works on its own compact board.
+   Engine move = from | to<<7 | push<<14 | tactical<<15 (for a push, "to" is the first soldier of the phalanx). */
+var VAL=[0,100,260],ADV=[0,3,6,10,15,22,32,48,90,0],INF=1000000,WIN=30000,MAXM=900,MAXP=40,ABORT={},simulating=false;
+var LEVELS=[null,{d:2,t:300,exact:true,noise:60},{d:4,t:800,noise:0},{d:12,t:2400,noise:0}];
+var ob=new Int8Array(N),zb=new Int8Array(N),SC=[0,0,0],ha=0,hb=0,nodes=0,deadline=0,plen=0,gbase=0,gn=0;
+var MVS=new Int32Array(MAXP*MAXM),SCS=new Int32Array(MAXP*MAXM),SVHA=new Int32Array(MAXP),SVHB=new Int32Array(MAXP);
+var LSQ=new Int16Array(MAXP*16),LOV=new Int8Array(MAXP*16),LZV=new Int8Array(MAXP*16),LC=new Int8Array(MAXP);
+var PATH=new Int32Array(4096),KILL=new Int32Array(MAXP*2),HISTT=new Int32Array(2*N*N);
+var TTN=1<<20,TTM=TTN-1,TKA=new Int32Array(TTN),TKB=new Int32Array(TTN),TV=new Int32Array(TTN),TD=new Int8Array(TTN),TF=new Int8Array(TTN),TMV=new Int32Array(TTN);
+var KS=new Int32Array(8),SEEN=new Int32Array(N),SSTAMP=0,MEMO=new Int32Array(N*256),MSTAMP=0,SUPD=new Int32Array(N),SUPN=0,STK=new Int32Array(N);
+function rnd32(){return(Math.random()*4294967296)|0}
+var ZA=new Int32Array(N*5),ZB=new Int32Array(N*5),SIDEA=rnd32(),SIDEB=rnd32();
+(function(){for(var i=0;i<N*5;i++){ZA[i]=rnd32();ZB[i]=rnd32()}})();
+function hashBoard(side){
+  var a=side===2?SIDEA:0,b=side===2?SIDEB:0;
+  for(var i=0;i<N;i++)if(ob[i]){var k=i*5+(ob[i]-1)*2+zb[i];a^=ZA[k];b^=ZB[k]}
+  ha=a;hb=b;
+}
+function hashState(s){
+  var a=s.turn===1?SIDEA:0;
+  for(var i=0;i<N;i++)if(s.o[i])a^=ZA[i*5+(s.o[i]-1)*2+s.z[i]];
+  return a;
+}
+function addM(f,t,kind,sc,tac){if(gn>=MAXM)return;var q=gbase+gn;MVS[q]=f|(t<<7)|(kind<<14)|(tac?1<<15:0);SCS[q]=sc;gn++}
+function capVal(side,j,from){      // value of enemy pieces a Khan arriving on j would capture by custodian
+  var v=0,P=PAIR[j],en=3-side,k,a,b;
+  for(k=0;k<P.length;k++){a=P[k][0];b=P[k][1];
+    if(ob[a]===en&&ob[b]===side&&zb[b]===2&&b!==from)v+=VAL[zb[a]]}
+  return v;
+}
+function isAdj(a,b){var dx=FX[a]-FX[b],dy=FY[a]-FY[b];return dx>=-1&&dx<=1&&dy>=-1&&dy<=1}
+function supDfs(c,used,i,kc){
+  for(var q=0;q<kc;q++){
+    if((used>>q)&1)continue;var K=KS[q];if(!isAdj(c,K))continue;
+    var nb=NB[K],nu=used|(1<<q);
+    for(var t=0;t<nb.length;t++){
+      var d=nb[t];if(d===c||(ob[d]&&d!==i))continue;
+      var key=d*256+nu;if(MEMO[key]===MSTAMP)continue;MEMO[key]=MSTAMP;
+      if(d!==i&&SEEN[d]!==SSTAMP){SEEN[d]=SSTAMP;SUPD[SUPN++]=d}
+      supDfs(d,nu,i,kc);
+    }
+  }
+}
+function genE(side,ply,caps){
+  gbase=ply*MAXM;gn=0;
+  var en=3-side,i,k,j,t,kc=0,goalRow=side===1?9:0,fwd=side===1?1:-1,hq,gl,cv,c,P,a,b,sp,dx,dy,x,y,m,n,nb,sc;
+  for(i=0;i<N;i++)if(ob[i]===side&&zb[i]===2&&kc<8)KS[kc++]=i;
+  for(i=0;i<N;i++){
+    if(ob[i]!==side)continue;
+    hq=(side-1)*N*N+i*N;nb=NB[i];
+    if(zb[i]===1){
+      SSTAMP++;MSTAMP++;SUPN=0;
+      for(t=0;t<nb.length;t++){j=nb[t];if(ob[j])continue;SEEN[j]=SSTAMP;
+        gl=FY[j]===goalRow;if(caps&&!gl)continue;
+        addM(i,j,0,gl?1000000:Math.min(HISTT[hq+j],15000)+(FY[j]-FY[i])*fwd*10,gl)}
+      if(kc>0){
+        supDfs(i,0,i,kc);
+        for(t=0;t<SUPN;t++){j=SUPD[t];gl=FY[j]===goalRow;if(caps&&!gl)continue;
+          addM(i,j,0,gl?1000000:Math.min(HISTT[hq+j],15000)+(FY[j]-FY[i])*fwd*10-3,gl)}
+      }
+    }else{
+      SSTAMP++;SEEN[i]=SSTAMP;
+      for(t=0;t<nb.length;t++){j=nb[t];if(ob[j])continue;SEEN[j]=SSTAMP;
+        cv=capVal(side,j,i);if(caps&&!cv)continue;
+        addM(i,j,0,cv?20000+cv*10:Math.min(HISTT[hq+j],15000),cv>0)}
+      sp=0;STK[sp++]=i;
+      while(sp){c=STK[--sp];P=PAIR[c];
+        for(k=0;k<P.length;k++){a=P[k][0];b=P[k][1];
+          if(ob[a]&&a!==i&&(!ob[b]||b===i)&&SEEN[b]!==SSTAMP){
+            SEEN[b]=SSTAMP;STK[sp++]=b;cv=capVal(side,b,i);
+            if(!caps||cv)addM(i,b,0,cv?20000+cv*10:Math.min(HISTT[hq+b],15000),cv>0);
+          }}}
+      for(k=0;k<8;k++){dx=ALL[k][0];dy=ALL[k][1];x=FX[i]+dx;y=FY[i]+dy;m=0;
+        while(inb(x,y)&&ob[y*W+x]===side&&zb[y*W+x]===1){m++;x+=dx;y+=dy}
+        if(m<2||!inb(x,y))continue;n=y*W+x;if(ob[n]===side)continue;
+        cv=(ob[n]?VAL[zb[n]]:0)+capVal(side,i+dx+dy*W,i);gl=y===goalRow;if(caps&&!cv&&!gl)continue;
+        addM(i,i+dx+dy*W,1,gl?1000000:cv?20000+cv*10:Math.min(HISTT[hq+i+dx+dy*W],15000)+m,cv>0||gl);
+      }
+    }
+  }
+  return gn;
+}
+function setSq(ply,sq,no,nz){
+  var oo=ob[sq],oz=zb[sq],q=ply*16+LC[ply]++,k;
+  LSQ[q]=sq;LOV[q]=oo;LZV[q]=oz;
+  if(oo){k=sq*5+(oo-1)*2+oz;ha^=ZA[k];hb^=ZB[k];if(oz===1)SC[oo]--}
+  ob[sq]=no;zb[sq]=nz;
+  if(no){k=sq*5+(no-1)*2+nz;ha^=ZA[k];hb^=ZB[k];if(nz===1)SC[no]++}
+}
+function make(m,ply,side){
+  var from=m&127,to=(m>>7)&127,kind=(m>>14)&1,t,c,dd,P,k,a,b;
+  LC[ply]=0;SVHA[ply]=ha;SVHB[ply]=hb;
+  if(kind){dd=to-from;c=to;while(ob[c]===side&&zb[c]===1)c+=dd;setSq(ply,c,side,1);setSq(ply,to,side,2);setSq(ply,from,0,0);t=2}
+  else{t=zb[from];setSq(ply,from,0,0);setSq(ply,to,side,t)}
+  {
+    if(t===2){P=PAIR[to];
+      for(k=0;k<P.length;k++){a=P[k][0];b=P[k][1];
+        if(ob[a]===3-side&&ob[b]===side&&zb[b]===2)setSq(ply,a,0,0)}}
+  }
+  ha^=SIDEA;hb^=SIDEB;
+}
+function unmake(m,ply){
+  var q,idx,sq;
+  for(q=LC[ply]-1;q>=0;q--){idx=ply*16+q;sq=LSQ[idx];
+    if(ob[sq]&&zb[sq]===1)SC[ob[sq]]--;
+    ob[sq]=LOV[idx];zb[sq]=LZV[idx];
+    if(ob[sq]&&zb[sq]===1)SC[ob[sq]]++}
+  ha=SVHA[ply];hb=SVHB[ply];
+}
+function won(side){
+  if(SC[3-side]===0)return true;
+  var b=(side===1?9:0)*W;
+  for(var f=0;f<W;f++)if(ob[b+f]===side&&zb[b+f]===1)return true;
+  return false;
+}
+// static evaluation from the point of view of the side to move (centipawns)
+function evalE(side){
+  var v=0,i,n,c,rr,a;
+  for(i=0;i<N;i++){
+    c=ob[i];if(!c)continue;
+    n=zb[i];rr=c===1?FY[i]:9-FY[i];
+    a=n===1?100+ADV[rr]:260+rr*2;
+    v+=c===1?a:-a;
+  }
+  return(side===1?v:-v)+8;
+}
+function qs(alpha,beta,ply,side,qd){
+  nodes++;
+  var stand=evalE(side),n,k,b,m,v,t,bs;
+  if(stand>=beta)return stand;
+  if(stand>alpha)alpha=stand;
+  if(qd>=4||ply>=MAXP-2)return alpha;
+  n=genE(side,ply,true);b=ply*MAXM;
+  for(k=0;k<n;k++){
+    bs=k;for(t=k+1;t<n;t++)if(SCS[b+t]>SCS[b+bs])bs=t;
+    if(bs!==k){t=MVS[b+k];MVS[b+k]=MVS[b+bs];MVS[b+bs]=t;t=SCS[b+k];SCS[b+k]=SCS[b+bs];SCS[b+bs]=t}
+    m=MVS[b+k];
+    make(m,ply,side);
+    if(won(side)){unmake(m,ply);return WIN-ply}
+    v=-qs(-beta,-alpha,ply+1,3-side,qd+1);unmake(m,ply);
+    if(v>=beta)return v;
+    if(v>alpha)alpha=v;
+  }
+  return alpha;
+}
+function search(d,alpha,beta,ply,side){
+  if((++nodes&1023)===0&&Date.now()>deadline)throw ABORT;
+  var h1=ha,h2=hb,k,idx,ttm=0,v,n,b,t,bs,m,to,from,tac,best=-INF,bm=0,a0=alpha,red;
+  PATH[plen+ply]=h1;
+  if(ply>0)for(k=plen+ply-2;k>=0;k-=2)if(PATH[k]===h1)return 0;
+  idx=h1&TTM;
+  if(TKA[idx]===h1&&TKB[idx]===h2){
+    ttm=TMV[idx];
+    if(TD[idx]>=d&&ply>0){
+      v=TV[idx];if(v>WIN-200)v-=ply;else if(v<-WIN+200)v+=ply;
+      t=TF[idx];
+      if(t===1)return v;
+      if(t===2&&v>=beta)return v;
+      if(t===3&&v<=alpha)return v;
+    }
+  }
+  if(d<=0||ply>=MAXP-3)return qs(alpha,beta,ply,side,0);
+  n=genE(side,ply,false);b=ply*MAXM;
+  if(!n)return -(WIN-ply);
+  for(k=0;k<n;k++){
+    m=MVS[b+k];
+    if(m===ttm)SCS[b+k]+=2000000;
+    else if(m===KILL[ply*2])SCS[b+k]+=15000;
+    else if(m===KILL[ply*2+1])SCS[b+k]+=14000;
+  }
+  for(k=0;k<n;k++){
+    bs=k;for(t=k+1;t<n;t++)if(SCS[b+t]>SCS[b+bs])bs=t;
+    if(bs!==k){t=MVS[b+k];MVS[b+k]=MVS[b+bs];MVS[b+bs]=t;t=SCS[b+k];SCS[b+k]=SCS[b+bs];SCS[b+bs]=t}
+    m=MVS[b+k];from=m&127;to=(m>>7)&127;tac=(m>>15)&1;
+    make(m,ply,side);
+    if(won(side)){unmake(m,ply);return WIN-ply}
+    if(k===0)v=-search(d-1,-beta,-alpha,ply+1,3-side);
+    else{
+      red=(d>=3&&k>=8&&!tac)?1:0;
+      v=-search(d-1-red,-alpha-1,-alpha,ply+1,3-side);
+      if(v>alpha&&(red||v<beta))v=-search(d-1,-beta,-alpha,ply+1,3-side);
+    }
+    unmake(m,ply);
+    if(v>best){best=v;bm=m;
+      if(v>alpha){alpha=v;
+        if(alpha>=beta){
+          if(!tac){if(KILL[ply*2]!==m){KILL[ply*2+1]=KILL[ply*2];KILL[ply*2]=m}HISTT[(side-1)*N*N+from*N+to]+=d*d}
+          break;
+        }}}
+  }
+  t=best<=a0?3:best>=beta?2:1;
+  v=best;if(v>WIN-200)v+=ply;else if(v<-WIN+200)v-=ply;
+  if(TD[idx]<=d||TKA[idx]!==h1){TKA[idx]=h1;TKB[idx]=h2;TV[idx]=v;TD[idx]=d;TF[idx]=t;TMV[idx]=bm}
+  return best;
+}
+function aiMove(s,hs){
+  var all=legal(s),lv=+$("level").value,L=LEVELS[lv],side=s.turn+1,i,j,k,v;
+  if(!all.length)return null;
+  SC[1]=SC[2]=0;
+  for(i=0;i<N;i++){ob[i]=s.o[i];zb[i]=s.z[i];if(ob[i]&&zb[i]===1)SC[ob[i]]++}
+  hashBoard(side);
+  var root=genE(side,0,false),roots=[],rootHash=ha;
+  for(k=0;k<root;k++)roots.push(MVS[k]);
+  for(i=roots.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));v=roots[i];roots[i]=roots[j];roots[j]=v}   // random tie-breaks
+  hs=hs||[];plen=Math.min(hs.length,100);
+  for(i=0;i<plen;i++)PATH[i]=hashState(hs[hs.length-plen+i]);
+  var tl=L.t*(simulating?.08:1),best=roots[0],bestScore=0;
+  deadline=Date.now()+tl;nodes=0;
+  for(i=0;i<KILL.length;i++)KILL[i]=0;
+  for(i=0;i<HISTT.length;i++)HISTT[i]>>=2;
+  try{
+    for(var d=1;d<=L.d;d++){
+      var alpha=-INF,res=[];
+      for(k=0;k<roots.length;k++){
+        var m=roots[k];
+        make(m,0,side);
+        if(won(side)){unmake(m,0);return pickMove(all,m)}   // immediate win
+        PATH[plen]=rootHash;
+        v=-search(d-1,-INF,L.exact?INF:-alpha,1,3-side);
+        unmake(m,0);
+        res.push({m:m,v:v});
+        if(!L.exact&&v>alpha)alpha=v;
+      }
+      if(L.exact)res.forEach(function(r){r.v+=(Math.random()-.5)*2*L.noise});
+      res.sort(function(a,b){return b.v-a.v});
+      roots=res.map(function(r){return r.m});best=res[0].m;bestScore=res[0].v;
+      if(bestScore>WIN-100)break;
+      if(Date.now()-(deadline-tl)>tl*.55)break;
+    }
+  }catch(e){if(e!==ABORT)throw e}
+  return pickMove(all,best);
+}
+function pickMove(all,m){
+  var i=m&127,j=(m>>7)&127,pu=(m>>14)&1;
+  for(var k=0;k<all.length;k++)if(all[k].i===i&&all[k].j===j&&(all[k].t==="push")===!!pu)return all[k];
+  return all[0];
+}
+var sim=null;
+function runSim(){   // computer vs computer, to look for first/second-player advantage
+  if(sim){sim.stop=true;return}
+  var CAP=300,me=sim={stop:false},TOTAL=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?4:+$("simR").value)),
+      done=0,w=[0,0],un=0,g=newState(),plies=0,lvName=$("level").options[$("level").selectedIndex].text,nm=GAME.sides.map(function(x){return x.name});
+  ["mode","side","level","new","undo","redo","simN","simR"].forEach(function(i){$(i).disabled=true});simulating=true;
+  $("sim").textContent="Stop simulation";
+  $("simout").textContent="Simulating at "+lvName+" level\u2026 0/"+TOTAL;
+  function fin2(stopped){
+    sim=null;simulating=false;$("sim").textContent="Simulation";
+    $("mode").disabled=$("new").disabled=$("simN").disabled=$("simR").disabled=false;
+    $("level").disabled=$("side").disabled=$("mode").value==="2p";
+    var mg=done?(196*Math.sqrt((w[0]/done)*(1-w[0]/done)/done)).toFixed(1):"0";
+    var pc=function(n){return done?(100*n/done).toFixed(1)+"%":"n/a"};
+    $("simout").textContent=(stopped?"Stopped after ":"")+done+" games at "+lvName+" level (computer vs computer), first "+RND+" moves random.\n"+
+      "First player ("+nm[0]+") won "+pc(w[0])+" ("+w[0]+" games, margin \u00b1"+mg+" points at 95% confidence). Second player ("+nm[1]+") won "+pc(w[1])+" ("+w[1]+" games)."+(un?" Unfinished (stopped at "+CAP+" plies): "+un+".":"");
+    render();
+  }
+  function stepSim(){
+    if(me.stop){fin2(true);return}
+    var t0=Date.now();
+    while(Date.now()-t0<40){
+      var ms=legal(g);
+      if(g.w>=0||!ms.length||plies>=CAP){
+        if(g.w>=0)w[g.w]++;else if(!ms.length)w[1-g.turn]++;else un++;
+        done++;g=newState();plies=0;
+        if(done>=TOTAL){fin2(false);return}
+        continue;
+      }
+      if(plies<RND)g=ms[Math.floor(Math.random()*ms.length)].ns;
+      else g=aiMove(g).ns;
+      plies++;
+    }
+    $("simout").textContent="Simulating at "+lvName+" level\u2026 "+done+"/"+TOTAL;
+    setTimeout(stepSim,0);
+  }
+  stepSim();
+}
+
+/* =============================== 3. INTERFACE =============================== */
+var hist,redo=[],sel,over,busy,note="";
+var GOLD="#d4a017",RED="#d33",GREEN="#2e9e4f",BLUE="#2b6cb0";
+function cur(){return hist[hist.length-1]}
+function humanTurn(){return $("mode").value==="2p"||cur().turn===+$("side").value}
+function flipped(){return $("mode").value==="ai"&&+$("side").value===1}
+function XY(i){var f=FX[i],r=FY[i],F=flipped();return[F?9-f:f,F?r:9-r]}
+function start(){
+  hist=[newState()];redo=[];sel=null;note="";$("level").disabled=$("side").disabled=$("mode").value==="2p";over=false;busy=false;
+  render();maybeAI();
+}
+function piece(p,n,x,y){
+  var G=GAME.sides[p-1],cx=x+.5,cy=y+.5;
+  if(n===1)return'<circle cx="'+cx+'" cy="'+cy+'" r=".34" fill="'+G.color+'" stroke="'+G.edge+'" stroke-width=".05"/>';
+  return'<circle cx="'+cx+'" cy="'+cy+'" r=".4" fill="'+G.color+'" stroke="'+GOLD+'" stroke-width=".09"/>'+
+    '<circle cx="'+cx+'" cy="'+cy+'" r=".31" fill="none" stroke="'+G.edge+'" stroke-width=".02" stroke-dasharray=".05 .05"/>'+
+    // Mongol hat: pointed dome, fur-trimmed brim, ear flaps and a small finial
+    '<g transform="translate('+cx+','+cy+')" stroke="#7a5a00" stroke-width=".02" stroke-linejoin="round">'+
+    '<path d="M-.24,.08 Q-.3,.2 -.2,.25 L-.15,.14 Z M.24,.08 Q.3,.2 .2,.25 L.15,.14 Z" fill="#b8860b"/>'+
+    '<path d="M-.19,.03 Q-.19,-.13 -.05,-.2 L0,-.28 L.05,-.2 Q.19,-.13 .19,.03 Z" fill="'+GOLD+'"/>'+
+    '<rect x="-.25" y="-.01" width=".5" height=".14" rx=".07" fill="#b8860b"/>'+
+    '<path d="M-.14,.04 H.14 M-.1,.09 H.1" fill="none" stroke="#7a5a00" stroke-width=".015" stroke-dasharray=".03 .03"/>'+
+    '<circle cx="0" cy="-.3" r=".035" fill="#c0392b"/></g>';
+}
+function render(){
+  var s=cur(),sd=GAME.sides,h=[],P=s.turn,i,k,xy;
+  over=s.w>=0;
+  h.push('<svg viewBox="-.35 -.05 10.4 10.4" role="img" aria-label="Khan board">');
+  for(i=0;i<N;i++){
+    xy=XY(i);var dark=(FX[i]+FY[i])%2===0;
+    var on=(sel&&sel.i===i),lm=s.lm&&(s.lm.i===i||s.lm.j===i||s.lm.front===i);
+    h.push('<rect data-i="'+i+'" x="'+xy[0]+'" y="'+xy[1]+'" width="1" height="1" fill="var(--'+(dark?'sq2':'sq1')+')"/>');
+    if(FY[i]===0||FY[i]===9)h.push('<rect x="'+xy[0]+'" y="'+xy[1]+'" width="1" height="1" fill="'+GOLD+'" fill-opacity=".14" pointer-events="none"/>');
+    if(lm)h.push('<rect x="'+xy[0]+'" y="'+xy[1]+'" width="1" height="1" fill="'+GOLD+'" fill-opacity=".3" pointer-events="none"/>');
+    if(on)h.push('<rect x="'+(xy[0]+.04)+'" y="'+(xy[1]+.04)+'" width=".92" height=".92" fill="none" stroke="var(--hi)" stroke-width=".08" pointer-events="none"/>');
+  }
+  var F=flipped();
+  for(k=0;k<10;k++){
+    var fx=F?9-k:k,rr=F?k:9-k;
+    h.push('<text x="'+(fx+.5)+'" y="10.28" text-anchor="middle" font-size=".24" fill="var(--mute)">'+String.fromCharCode(97+k)+'</text>');
+    h.push('<text x="-.18" y="'+(rr+.58)+'" text-anchor="middle" font-size=".24" fill="var(--mute)">'+(k+1)+'</text>');
+  }
+  for(i=0;i<N;i++)if(s.o[i]){xy=XY(i);h.push('<g data-i="'+i+'">'+piece(s.o[i],s.z[i],xy[0],xy[1])+'</g>')}
+  if(sel)sel.list.forEach(function(m){
+    var q=XY(m.j),cx=q[0]+.5,cy=q[1]+.5;
+    (m.cs||[]).forEach(function(c){var u=XY(c);h.push('<circle cx="'+(u[0]+.5)+'" cy="'+(u[1]+.5)+'" r=".46" fill="none" stroke="'+RED+'" stroke-width=".08" pointer-events="none"/>')});
+    if(m.t==="push"){
+      m.cells.forEach(function(c){var u=XY(c);h.push('<rect x="'+(u[0]+.05)+'" y="'+(u[1]+.05)+'" width=".9" height=".9" fill="none" stroke="var(--hi)" stroke-width=".06" stroke-dasharray=".12 .08" pointer-events="none"/>')});
+      var a=XY(m.i),b=XY(m.front),ang=Math.atan2(b[1]-a[1],b[0]-a[0])*180/Math.PI;
+      h.push('<g data-i="'+m.front+'" transform="translate('+(b[0]+.5)+','+(b[1]+.5)+') rotate('+ang+')"><circle r=".27" fill="var(--hi)" fill-opacity=".92" stroke="#fff" stroke-width=".03"/><path d="M-.15,-.05 H.02 V-.15 L.18,0 L.02,.15 V.05 H-.15 Z" fill="#fff"/></g>');
+    }else if(m.t==="jump")h.push('<circle data-i="'+m.j+'" cx="'+cx+'" cy="'+cy+'" r=".22" fill="none" stroke="'+GREEN+'" stroke-width=".08"/><circle data-i="'+m.j+'" cx="'+cx+'" cy="'+cy+'" r=".07" fill="'+GREEN+'"/>');
+    else if(m.t==="sup")h.push('<rect data-i="'+m.j+'" x="'+(q[0]+.06)+'" y="'+(q[1]+.06)+'" width=".88" height=".88" fill="none" stroke="'+BLUE+'" stroke-width=".05" stroke-dasharray=".14 .1"/><circle data-i="'+m.j+'" cx="'+cx+'" cy="'+cy+'" r=".16" fill="'+BLUE+'" fill-opacity=".9"/>');
+    else h.push('<circle data-i="'+m.j+'" cx="'+cx+'" cy="'+cy+'" r=".16" fill="'+GREEN+'" fill-opacity=".85"/>');
+  });
+  h.push('</svg>');
+  $("board").innerHTML=h.join("");
+  var names=sd.map(function(x){return x.name}),st,cnt=[[0,0],[0,0]];
+  for(i=0;i<N;i++)if(s.o[i])cnt[s.o[i]-1][s.z[i]-1]++;
+  for(i=0;i<2;i++){$("p"+i).className="pl"+(!over&&s.turn===i?" on":"");$("n"+i).textContent=names[i]+": "+cnt[i][0]+" soldiers, "+cnt[i][1]+" Khans"}
+  if(over)st="Game over: "+names[s.w]+" wins by "+(reachedGoal(s,s.w)?"reaching the last row.":cnt[1-s.w][0]===0?"capturing all enemy soldiers.":"leaving the opponent without a legal move.");
+  else if(sel)st=names[P]+": click a marker to play it (green dot step, ring jump, blue support, orange arrow push); click the piece again to deselect.";
+  else st=names[P]+" to move"+(humanTurn()?"":" (computer thinking\u2026)");
+  $("status").textContent=st;
+  $("last").textContent=(GAME.describe(s)+" "+note).trim();
+  $("undo").disabled=hist.length<2||busy;
+  $("redo").disabled=!redo.length||busy;
+}
+function finish(ns){   // a player with no legal move loses
+  if(ns.w<0&&!legal(ns).length)ns.w=1-ns.turn;
+  return ns;
+}
+function play(ns){hist.push(finish(ns));redo=[];sel=null;render();maybeAI()}
+function click(i){
+  if(over||busy||!humanTurn())return;
+  var s=cur(),P=s.turn,p=P+1;note="";
+  if(sel){
+    var m=sel.list.filter(function(x){return(x.t==="push"?x.front:x.j)===i})[0];
+    if(m){play(m.ns);return}
+    var same=i===sel.i;sel=null;
+    if(same){render();return}
+  }
+  if(s.o[i]===p){
+    var list=gen(s,i);
+    if(list.length)sel={i:i,list:list};else note="That piece has no legal move.";
+  }else note="Select one of your own pieces first.";
+  render();
+}
+function maybeAI(){
+  if(over||$("mode").value!=="ai"||cur().turn===+$("side").value)return;
+  busy=true;render();
+  setTimeout(function(){
+    var c=cur(),m=aiMove(c,hist.slice(0,-1));busy=false;
+    if(m)hist.push(finish(m.ns));else{c.w=1-c.turn}
+    render();
+  },60);
+}
+document.title=GAME.title;$("gtitle").textContent=GAME.title;$("gsub").textContent=GAME.subtitle;
+function li(x){return"<li>"+(typeof x==="string"?x:x.t+"<ul>"+x.sub.map(li).join("")+"</ul>")+"</li>"}
+$("rules").innerHTML=GAME.rules.map(function(sec){return"<li><b>"+sec.h+"</b><ul>"+sec.items.map(li).join("")+"</ul></li>"}).join("");
+$("side").innerHTML=GAME.sides.map(function(x,i){return'<option value="'+i+'">You are '+x.name+'</option>'}).join("");
+$("board").onclick=function(e){var t=e.target.closest("[data-i]");if(t)click(+t.getAttribute("data-i"))};
+$("new").onclick=start;$("sim").onclick=runSim;
+$("mode").onchange=$("side").onchange=start;
+$("redo").onclick=function(){
+  if(busy||!redo.length)return;
+  hist.push(redo.pop());
+  if($("mode").value==="ai"&&redo.length&&cur().turn!==+$("side").value)hist.push(redo.pop());
+  sel=null;note="";render();
+};
+$("undo").onclick=function(){
+  if(busy||hist.length<2)return;
+  redo.push(hist.pop());
+  if($("mode").value==="ai"&&hist.length>1&&cur().turn!==+$("side").value)redo.push(hist.pop());
+  sel=null;over=false;render();
+};
+start();
+})();
+</script>
+</body>
+</html>

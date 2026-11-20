@@ -93,6 +93,8 @@ var GAME={
   subtitle:"Chess on stacks of stones: the size of a stack decides how it moves. Capture the royal stone to win.",
   sides:[{name:"White",color:"#f6f2e7",edge:"#555"},{name:"Black",color:"#2d2d2d",edge:"#ddd"}],
   rules:[
+  {h:"Board and setup",items:[
+    "8\u00d78 board, set up as in Chess.  White moves first."]},
   {h:"Pieces",items:[
     "Regular pieces are stacks of one to six stones, of either colour. Each side also has one royal stone, which can never be part of a stack.",
     {t:"A stack moves and captures according to its size:",sub:[
@@ -102,8 +104,6 @@ var GAME={
       "size 4 or 5: like the Rook (no castling);",
       "size 6: like the Queen."]},
     "The royal stone moves and captures like the King (there is no check: it can be captured like any piece)."]},
-  {h:"Board and setup",items:[
-    "8\u00d78 board, set up as in Chess: Pawns are stacks of 1, Knights stacks of 2, Bishops stacks of 3, Rooks stacks of 4, the Queen a stack of 6. White\u2019s royal stone is on e1 and Black\u2019s on e8. White moves first."]},
   {h:"Turn: choose one",items:[
     "a) Move a friendly stack.",
     "b) Transfer one stone from a stack to an adjacent (orthogonal or diagonal) friendly stack. The receiving stack must have fewer than six stones; a stack of one stone may transfer it, which merges it into the neighbour. The royal stone can neither give nor receive stones.",
@@ -175,49 +175,231 @@ function legal(s){
 }
 
 /* ================================ 2. ENGINE ================================ */
-var VAL=[0,1,3,3.2,5,5.2,9],DEPTH=[0,1,2,4],BEAM=[0,0,12,6],NOISE=[0,1.5,.3,.1];
-function ev(s){   // value from White's point of view
-  if(s.w>=0)return s.w===0?1000:-1000;
-  var v=0,n,a,f,r;
-  for(var i=0;i<64;i++)if(s.o[i]){
-    n=s.z[i];f=i&7;r=i>>3;
-    a=VAL[n];
-    if(n>0)a+=(7-Math.abs(2*f-7)-Math.abs(2*r-7))*.02;
-    if(n===1)a+=(s.o[i]===1?r:7-r)*.08;
-    v+=s.o[i]===1?a:-a;
-  }
-  return v;
+/* Engine: make/unmake alpha-beta (principal variation search) with iterative deepening,
+   transposition table, killer/history move ordering, late-move reduction, capture quiescence
+   search, repetition detection and a time limit per move. It works on its own compact board. */
+var VALI=[0,100,300,320,500,520,900],INF=1000000,WIN=30000,MAXM=700,MAXP=48,ABORT={},simulating=false;
+var LEVELS=[null,{d:2,t:300,exact:true,noise:60},{d:6,t:700,noise:0},{d:16,t:2300,noise:0}];
+var ob=new Int8Array(64),zb=new Int8Array(64),ha=0,hb=0,nodes=0,deadline=0,plen=0,gbase=0,gn=0,gside=1;
+var MVS=new Int32Array(MAXP*MAXM),SCS=new Int32Array(MAXP*MAXM),SVO=new Int32Array(MAXP),SVHA=new Int32Array(MAXP),SVHB=new Int32Array(MAXP);
+var PATH=new Int32Array(4096),KILL=new Int32Array(MAXP*2),HISTT=new Int32Array(2*4096);
+var TTN=1<<20,TTM=TTN-1,TKA=new Int32Array(TTN),TKB=new Int32Array(TTN),TV=new Int32Array(TTN),TD=new Int8Array(TTN),TF=new Int8Array(TTN),TMV=new Int16Array(TTN);
+function rnd32(){return(Math.random()*4294967296)|0}
+var ZA=new Int32Array(64*14),ZB=new Int32Array(64*14),SIDEA=rnd32(),SIDEB=rnd32(),KNT=[],KGT=[],RD=[],RO=[];
+(function(){
+  var i,k,f,r,x,y,d,ray;
+  for(i=0;i<64*14;i++){ZA[i]=rnd32();ZB[i]=rnd32()}
+  function ok(x,y){return x>=0&&y>=0&&x<8&&y<8}
+  function rays(D,f,r){var out=[];D.forEach(function(v){var ray=[],x=f+v[0],y=r+v[1];while(ok(x,y)){ray.push(y*8+x);x+=v[0];y+=v[1]}if(ray.length)out.push(ray)});return out}
+  for(i=0;i<64;i++){f=i&7;r=i>>3;KNT[i]=[];KGT[i]=[];
+    KN.forEach(function(v){if(ok(f+v[0],r+v[1]))KNT[i].push((r+v[1])*8+f+v[0])});
+    ALL.forEach(function(v){if(ok(f+v[0],r+v[1]))KGT[i].push((r+v[1])*8+f+v[0])});
+    RD[i]=rays(DIAG,f,r);RO[i]=rays(ORTH,f,r);}
+})();
+function hashBoard(side){
+  var a=side===2?SIDEA:0,b=side===2?SIDEB:0;
+  for(var i=0;i<64;i++)if(ob[i]){var k=i*14+(ob[i]-1)*7+zb[i];a^=ZA[k];b^=ZB[k]}
+  ha=a;hb=b;
 }
-function nega(s,d,sign,al,be){
-  if(d===0||s.w>=0)return sign*ev(s);
-  var ms=legal(s),best=-1e9;
-  if(!ms.length)return -1000;
-  if(d===1){ms.forEach(function(m){var v=sign*ev(m.ns);if(v>best)best=v});return best}
-  ms.forEach(function(m){m.v=sign*ev(m.ns)});
-  ms.sort(function(a,b){return b.v-a.v});ms=ms.slice(0,BEAM[3]);
-  for(var i=0;i<ms.length;i++){var v=-nega(ms[i].ns,d-1,-sign,-be,-al);if(v>best)best=v;if(best>al)al=best;if(al>=be)break}
+function hashState(s){
+  var a=s.turn===1?SIDEA:0;
+  for(var i=0;i<64;i++)if(s.o[i])a^=ZA[i*14+(s.o[i]-1)*7+s.z[i]];
+  return a;
+}
+function addM(f,t,tr,sc){var q=gbase+gn;MVS[q]=f|(t<<6)|(tr<<12);SCS[q]=sc;gn++}
+function addC(f,t,av){var zv=zb[t];addM(f,t,0,zv===0?1000000:20000+VALI[zv]*10-av)}
+function slide(rays,i,side,av,caps){
+  var hq=(side-1)*4096+i*64;
+  for(var a=0;a<rays.length;a++){var ray=rays[a];
+    for(var q=0;q<ray.length;q++){var j=ray[q];
+      if(ob[j]===side)break;
+      if(ob[j]){addC(i,j,av);break}
+      if(!caps)addM(i,j,0,HISTT[hq+j]);
+    }}
+}
+function genE(side,ply,caps){
+  gbase=ply*MAXM;gn=0;
+  var en=3-side,i,k,nn,av,j,f,y,T,hq;
+  for(i=0;i<64;i++){
+    if(ob[i]!==side)continue;
+    nn=zb[i];av=VALI[nn];hq=(side-1)*4096+i*64;
+    if(nn===1){
+      f=i&7;y=(i>>3)+(side===2?-1:1);
+      if(y>=0&&y<8){
+        j=y*8+f;if(!ob[j]&&!caps)addM(i,j,0,HISTT[hq+j]);
+        if(f>0&&ob[y*8+f-1]===en)addC(i,y*8+f-1,av);
+        if(f<7&&ob[y*8+f+1]===en)addC(i,y*8+f+1,av);
+      }
+    }else if(nn===2||nn===0){
+      T=nn===2?KNT[i]:KGT[i];
+      for(k=0;k<T.length;k++){j=T[k];if(ob[j]===side)continue;if(ob[j])addC(i,j,av);else if(!caps)addM(i,j,0,HISTT[hq+j])}
+    }else{
+      if(nn===3||nn===6)slide(RD[i],i,side,av,caps);
+      if(nn>=4)slide(RO[i],i,side,av,caps);
+    }
+    if(!caps&&nn>=1){
+      T=KGT[i];
+      for(k=0;k<T.length;k++){j=T[k];
+        if(ob[j]===side&&zb[j]>=1&&zb[j]<=5)addM(i,j,1,HISTT[hq+j]+VALI[zb[j]+1]-VALI[zb[j]]+VALI[nn-1]-av)}
+    }
+  }
+  return gn;
+}
+function make(m,ply){
+  var from=m&63,to=(m>>6)&63,o=ob[from],zf=zb[from],ot=ob[to],zt=zb[to],ia=from*14+(o-1)*7,it=to*14+(o-1)*7;
+  SVO[ply]=o|(zf<<2)|(ot<<5)|(zt<<7);SVHA[ply]=ha;SVHB[ply]=hb;
+  ha^=ZA[ia+zf];hb^=ZB[ia+zf];
+  if((m>>12)&1){
+    ha^=ZA[it+zt]^ZA[it+zt+1];hb^=ZB[it+zt]^ZB[it+zt+1];
+    zb[to]=zt+1;zb[from]=zf-1;
+    if(zf===1)ob[from]=0;else{ha^=ZA[ia+zf-1];hb^=ZB[ia+zf-1]}
+  }else{
+    if(ot){var iv=to*14+(ot-1)*7+zt;ha^=ZA[iv];hb^=ZB[iv]}
+    ha^=ZA[it+zf];hb^=ZB[it+zf];
+    ob[to]=o;zb[to]=zf;ob[from]=0;zb[from]=0;
+  }
+  ha^=SIDEA;hb^=SIDEB;
+}
+function unmake(m,ply){
+  var from=m&63,to=(m>>6)&63,v=SVO[ply];
+  ob[from]=v&3;zb[from]=(v>>2)&7;ob[to]=(v>>5)&3;zb[to]=(v>>7)&7;ha=SVHA[ply];hb=SVHB[ply];
+}
+// static evaluation from the point of view of the side to move (centipawns)
+function evalE(side){
+  var v=0,i,n,f,r,rr,a,c;
+  for(i=0;i<64;i++){
+    c=ob[i];if(!c)continue;
+    n=zb[i];f=i&7;r=i>>3;rr=c===1?r:7-r;
+    if(n===0)a=-rr*10;
+    else{
+      a=VALI[n];
+      if(n===1)a+=rr*9-(rr===7?60:0);
+      else a+=(7-Math.abs(2*f-7)-Math.abs(2*r-7))*3;
+    }
+    v+=c===1?a:-a;
+  }
+  return(side===1?v:-v)+8;
+}
+function qs(alpha,beta,ply,side,qd){
+  nodes++;
+  var stand=evalE(side),n,k,b,m,to,v,t,bs;
+  if(stand>=beta)return stand;
+  if(stand>alpha)alpha=stand;
+  if(qd>=6||ply>=MAXP-2)return alpha;
+  n=genE(side,ply,true);b=ply*MAXM;
+  for(k=0;k<n;k++){
+    bs=k;for(t=k+1;t<n;t++)if(SCS[b+t]>SCS[b+bs])bs=t;
+    if(bs!==k){t=MVS[b+k];MVS[b+k]=MVS[b+bs];MVS[b+bs]=t;t=SCS[b+k];SCS[b+k]=SCS[b+bs];SCS[b+bs]=t}
+    m=MVS[b+k];to=(m>>6)&63;
+    if(zb[to]===0)return WIN-ply;
+    make(m,ply);v=-qs(-beta,-alpha,ply+1,3-side,qd+1);unmake(m,ply);
+    if(v>=beta)return v;
+    if(v>alpha)alpha=v;
+  }
+  return alpha;
+}
+function search(d,alpha,beta,ply,side){
+  if((++nodes&1023)===0&&Date.now()>deadline)throw ABORT;
+  var h1=ha,h2=hb,k,idx,ttm=0,v,n,b,t,bs,m,to,from,cap,tr,best=-INF,bm=0,a0=alpha,red;
+  PATH[plen+ply]=h1;
+  if(ply>0)for(k=plen+ply-2;k>=0;k-=2)if(PATH[k]===h1)return 0;
+  idx=h1&TTM;
+  if(TKA[idx]===h1&&TKB[idx]===h2){
+    ttm=TMV[idx];
+    if(TD[idx]>=d&&ply>0){
+      v=TV[idx];if(v>WIN-200)v-=ply;else if(v<-WIN+200)v+=ply;
+      t=TF[idx];
+      if(t===1)return v;
+      if(t===2&&v>=beta)return v;
+      if(t===3&&v<=alpha)return v;
+    }
+  }
+  if(d<=0||ply>=MAXP-3)return qs(alpha,beta,ply,side,0);
+  n=genE(side,ply,false);b=ply*MAXM;
+  if(!n)return -(WIN-ply);
+  for(k=0;k<n;k++){
+    m=MVS[b+k];
+    if(m===ttm)SCS[b+k]+=2000000;
+    else if(m===KILL[ply*2])SCS[b+k]+=15000;
+    else if(m===KILL[ply*2+1])SCS[b+k]+=14000;
+  }
+  for(k=0;k<n;k++){
+    bs=k;for(t=k+1;t<n;t++)if(SCS[b+t]>SCS[b+bs])bs=t;
+    if(bs!==k){t=MVS[b+k];MVS[b+k]=MVS[b+bs];MVS[b+bs]=t;t=SCS[b+k];SCS[b+k]=SCS[b+bs];SCS[b+bs]=t}
+    m=MVS[b+k];from=m&63;to=(m>>6)&63;tr=(m>>12)&1;
+    cap=!tr&&ob[to];
+    if(cap&&zb[to]===0)return WIN-ply;
+    make(m,ply);
+    if(k===0)v=-search(d-1,-beta,-alpha,ply+1,3-side);
+    else{
+      red=(d>=3&&k>=6&&!cap)?1:0;
+      v=-search(d-1-red,-alpha-1,-alpha,ply+1,3-side);
+      if(v>alpha&&(red||v<beta))v=-search(d-1,-beta,-alpha,ply+1,3-side);
+    }
+    unmake(m,ply);
+    if(v>best){best=v;bm=m;
+      if(v>alpha){alpha=v;
+        if(alpha>=beta){
+          if(!cap){if(KILL[ply*2]!==m){KILL[ply*2+1]=KILL[ply*2];KILL[ply*2]=m}HISTT[(side-1)*4096+from*64+to]+=d*d}
+          break;
+        }}}
+  }
+  t=best<=a0?3:best>=beta?2:1;
+  v=best;if(v>WIN-200)v+=ply;else if(v<-WIN+200)v-=ply;
+  if(TD[idx]<=d||TKA[idx]!==h1){TKA[idx]=h1;TKB[idx]=h2;TV[idx]=v;TD[idx]=d;TF[idx]=t;TMV[idx]=bm}
   return best;
 }
-function aiMove(s){
-  var ms=legal(s),lv=+$("level").value,sign=s.turn===0?1:-1,best=-1e9,pick=null;
-  if(!ms.length)return null;
-  if(lv>1){ms.forEach(function(m){m.v=sign*ev(m.ns)+Math.random()*.5});ms.sort(function(a,b){return b.v-a.v});ms=ms.slice(0,BEAM[2])}
-  for(var i=0;i<ms.length;i++){
-    var v=(lv===1?sign*ev(ms[i].ns):-nega(ms[i].ns,DEPTH[lv]-1,-sign,-1e9,1e9))+Math.random()*NOISE[lv];
-    if(v>best){best=v;pick=ms[i]}
-  }
-  return pick;
+function aiMove(s,hs){
+  var all=legal(s),lv=+$("level").value,L=LEVELS[lv],side=s.turn+1,i,j,k,v;
+  if(!all.length)return null;
+  for(i=0;i<64;i++){ob[i]=s.o[i];zb[i]=s.z[i]}
+  hashBoard(side);
+  var root=genE(side,0,false),roots=[],sc=[],rootHash=ha;
+  for(k=0;k<root;k++)roots.push(MVS[k]);
+  for(i=roots.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));v=roots[i];roots[i]=roots[j];roots[j]=v}   // random tie-breaks
+  hs=hs||[];plen=Math.min(hs.length,100);
+  for(i=0;i<plen;i++)PATH[i]=hashState(hs[hs.length-plen+i]);
+  var tl=L.t*(simulating?.08:1),best=roots[0],bestScore=0;
+  deadline=Date.now()+tl;nodes=0;
+  for(i=0;i<KILL.length;i++)KILL[i]=0;
+  for(i=0;i<HISTT.length;i++)HISTT[i]>>=2;
+  try{
+    for(var d=1;d<=L.d;d++){
+      var alpha=-INF,res=[];
+      for(k=0;k<roots.length;k++){
+        var m=roots[k],to=(m>>6)&63;
+        if(!((m>>12)&1)&&ob[to]&&zb[to]===0)return pickMove(all,m);   // royal can be captured now
+        make(m,0);
+        PATH[plen]=rootHash;
+        v=-search(d-1,L.exact?-INF:-INF,L.exact?INF:-alpha,1,3-side);
+        unmake(m,0);
+        res.push({m:m,v:v});
+        if(!L.exact&&v>alpha)alpha=v;
+      }
+      if(L.exact)res.forEach(function(r){r.v+=(Math.random()-.5)*2*L.noise});
+      res.sort(function(a,b){return b.v-a.v});
+      roots=res.map(function(r){return r.m});best=res[0].m;bestScore=res[0].v;
+      if(bestScore>WIN-100)break;
+      if(Date.now()-(deadline-tl)>tl*.55)break;
+    }
+  }catch(e){if(e!==ABORT)throw e}
+  return pickMove(all,best);
+}
+function pickMove(all,m){
+  var i=m&63,j=(m>>6)&63,tr=(m>>12)&1;
+  for(var k=0;k<all.length;k++)if(all[k].i===i&&all[k].j===j&&(all[k].t==="tr")===!!tr)return all[k];
+  return all[0];
 }
 var sim=null;
 function runSim(){   // computer vs computer, to look for first/second-player advantage
   if(sim){sim.stop=true;return}
   var CAP=300,me=sim={stop:false},TOTAL=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?4:+$("simR").value)),
       done=0,w=[0,0],un=0,g=newState(),plies=0,lvName=$("level").options[$("level").selectedIndex].text,nm=GAME.sides.map(function(x){return x.name});
-  ["mode","side","level","new","undo","redo","simN","simR"].forEach(function(i){$(i).disabled=true});
+  ["mode","side","level","new","undo","redo","simN","simR"].forEach(function(i){$(i).disabled=true});simulating=true;
   $("sim").textContent="Stop simulation";
   $("simout").textContent="Simulating at "+lvName+" level\u2026 0/"+TOTAL;
   function fin(stopped){
-    sim=null;$("sim").textContent="Simulation";
+    sim=null;simulating=false;$("sim").textContent="Simulation";
     $("mode").disabled=$("new").disabled=$("simN").disabled=$("simR").disabled=false;
     $("level").disabled=$("side").disabled=$("mode").value==="2p";
     var mg=done?(196*Math.sqrt((w[0]/done)*(1-w[0]/done)/done)).toFixed(1):"0";
@@ -346,7 +528,7 @@ function maybeAI(){
   if(over||$("mode").value!=="ai"||cur().turn===+$("side").value)return;
   busy=true;render();
   setTimeout(function(){
-    var c=cur(),m=aiMove(c);busy=false;
+    var c=cur(),m=aiMove(c,hist.slice(0,-1));busy=false;
     if(m)hist.push(finish(m.ns));else{c.w=1-c.turn}
     render();
   },60);
