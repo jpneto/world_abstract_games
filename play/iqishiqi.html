@@ -211,12 +211,17 @@ function X(i){return SQ*(Q[i]+RR[i]/2)}
 function Y(i){return 1.5*RR[i]}
 function pt(i,a,sz){var t=a*Math.PI/180;return(X(i)+sz*Math.cos(t)).toFixed(3)+","+(Y(i)+sz*Math.sin(t)).toFixed(3)}
 function hexPts(i,sz){var p=[];for(var k=0;k<6;k++)p.push(pt(i,30+60*k,sz));return p.join(" ")}
-function sideLine(i,j,col){return'<path d="M'+pt(i,-60*j-30,.88)+'L'+pt(i,-60*j+30,.88)+'" stroke="'+col+'" stroke-width=".14" stroke-linecap="round" fill="none"/>'}
+function sideLine(i,j,col,half){
+  var a1=(-60*j-30)*Math.PI/180,a2=(-60*j+30)*Math.PI/180,sz=.9,x1=X(i)+sz*Math.cos(a1),y1=Y(i)+sz*Math.sin(a1),x2=X(i)+sz*Math.cos(a2),y2=Y(i)+sz*Math.sin(a2);
+  if(half===1){x2=(x1+x2)/2;y2=(y1+y2)/2}else if(half===2){x1=(x1+x2)/2;y1=(y1+y2)/2}
+  return'<path d="M'+x1.toFixed(3)+','+y1.toFixed(3)+'L'+x2.toFixed(3)+','+y2.toFixed(3)+'" stroke="'+col+'" stroke-width=".15" stroke-linecap="round" fill="none" pointer-events="none"/>'}
+// only the outer sides (facing off the board) are painted; a corner is half red and half blue
 function edgeOutline(i){
-  var e=EDG[i],o=[],j,k;if(!e.length)return"";
-  if(e.length===1){for(j=0;j<6;j++)o.push(sideLine(i,j,GAME.sides[e[0]%2].color));return o.join("")}
-  k=(e[0]===0&&e[1]===5)?0:e[0];   // corner at direction k joins sides k-1 and k
-  for(j=0;j<6;j++)o.push(sideLine(i,j,GAME.sides[((j-k+6)%6<3?k:(k+5)%6)%2].color));
+  var e=EDG[i],o=[],j,k,C=function(n){return GAME.sides[((n%6)+6)%6%2].color};
+  if(!e.length)return"";
+  if(e.length===1){for(j=0;j<6;j++)if(NB[i][j]<0)o.push(sideLine(i,j,C(e[0])));return o.join("")}
+  k=(e[0]===0&&e[1]===5)?0:e[1];   // corner at direction k joins sides k-1 and k
+  o.push(sideLine(i,(k+1)%6,C(k)));o.push(sideLine(i,k,C(k),1));o.push(sideLine(i,k,C(k-1),2));o.push(sideLine(i,(k+5)%6,C(k-1)));
   return o.join("")}
 function render(){
   var s=cur(),i,g=['<svg viewBox="-13.4 -11.8 26.8 23.6" role="img" aria-label="Iqishiqi board">'];
