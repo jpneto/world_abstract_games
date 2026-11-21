@@ -51,6 +51,7 @@ details li{margin:4px 0}
   <select id="mode" aria-label="Mode"><option value="ai">Play the computer</option><option value="2p">Two players</option></select>
   <select id="level" aria-label="Computer strength"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select>
   <select id="side" aria-label="Your side"></select>
+  <select id="size" aria-label="Board size"><option value="13">13×13</option><option value="15">15×15</option><option value="19">19×19</option><option value="23">23×23</option></select>
   <button class="ctl primary" id="new">New game</button>
   <button class="ctl" id="undo">Undo</button>
   <button class="ctl" id="redo">Redo</button>
@@ -85,12 +86,12 @@ var $=function(i){return document.getElementById(i)};
 /* ============================ 1. GAME DEFINITION ============================ */
 var GAME={
   title:"Dispatch",
-  subtitle:"Send a stone sliding across the board and grow a shape where it lands. Surround, capture and claim territory on a 13\u00d713 Go board.",
+  subtitle:"Send a stone sliding across the board and grow a shape where it lands. Surround, capture and claim territory on a Go board of 13\u00d713 to 23\u00d723.",
   sides:[{name:"White",color:"#f6f2e7",edge:"#555"},{name:"Black",color:"#2d2d2d",edge:"#ddd"}],
   rules:[
   {h:"Board and setup",items:[
-    "13\u00d713 Go board; stones are played on the intersections.",
-    "Initially White has stones on c3 and k11, and Black has stones on c11 and k3. White moves first."]},
+    "Go board of 13\u00d713, 15\u00d715, 19\u00d719 or 23\u00d723 (your choice); stones are played on the intersections.",
+    "Initially White has two stones on c3 and on the opposite corner point three in from the edges (k11 on 13\u00d713), and Black has two stones on the other two corners the same way (c11 and k3 on 13\u00d713). On 15\u00d715 and larger boards the 8 hoshi (star) points except the centre are used instead: White on the four corner hoshi, Black on the four edge-midpoint hoshi. Black moves first."]},
   {h:"Turn",items:[
     "Each turn a player either passes or dispatches a stone: pick a friendly stone already on the board and send a stone from it in an orthogonal direction, as far as you like, provided it never meets a non-empty cell. The origin stone stays where it is.",
     "When the dispatched stone stops, it grows a pentomino, a tetromino, a trimino or a domino (any orientation) that includes the stop cell. All its cells must be empty."]},
@@ -104,10 +105,14 @@ var GAME={
     if(l.co)t+=", losing "+l.co+" of its own";
     return t+"."}
 };
-var W=13,N=169,DIRS=[[1,0],[-1,0],[0,1],[0,-1]],FX=[],FY=[],NB=[];
-(function(){for(var i=0;i<N;i++){FX[i]=i%W;FY[i]=(i/W)|0;NB[i]=[];DIRS.forEach(function(d){var x=FX[i]+d[0],y=FY[i]+d[1];if(x>=0&&y>=0&&x<W&&y<W)NB[i].push(y*W+x)})}})();
+var W=13,N=169,DIRS=[[1,0],[-1,0],[0,1],[0,-1]],FX,FY,NB;
+function setSize(n){W=n;N=n*n;FX=[];FY=[];NB=[];for(var i=0;i<N;i++){FX[i]=i%W;FY[i]=(i/W)|0;NB[i]=[];DIRS.forEach(function(d){var x=FX[i]+d[0],y=FY[i]+d[1];if(x>=0&&y>=0&&x<W&&y<W)NB[i].push(y*W+x)})}}
+setSize(13);
 function cn(i){return String.fromCharCode(97+FX[i])+(FY[i]+1)}
-function newState(){var b=new Uint8Array(N);b[2*W+2]=1;b[10*W+10]=1;b[10*W+2]=2;b[2*W+10]=2;return{b:b,turn:0,pass:0,fd:true,w:-1,lm:null}}
+function newState(){var b=new Uint8Array(N),c=W-3;
+  if(W===13){b[2*W+2]=1;b[c*W+c]=1;b[c*W+2]=2;b[2*W+c]=2}
+  else{var h=[3,(W-1)/2,W-4];h.forEach(function(y,a){h.forEach(function(x,k){if(a===1&&k===1)return;b[y*W+x]=(a+k)%2?2:1})})}   // hoshi points except the centre: corners White, edge midpoints Black
+  return{b:b,turn:1,pass:0,fd:true,w:-1,lm:null}}
 function hasEmpty(b,i){for(var k=0;k<NB[i].length;k++)if(!b[NB[i][k]])return true;return false}
 // cells where a stone sent from stone i can stop (and still grow at least a domino)
 function stopsOf(b,i){var out=[];DIRS.forEach(function(d){var x=FX[i]+d[0],y=FY[i]+d[1];
@@ -144,7 +149,7 @@ function sample(s,m){var T=m.list[rn(m.list.length)],c=grow(s.b,T,s.fd?3:[2,3,4,
   if(!c||(s.fd&&c.length!==3))return null;return{src:m.src[T],cells:c}}
 function vP(b,p){var s=scores(b);return s[p]-s[1-p]}
 function aiMove(s){
-  var p=s.turn,lv=+$("level").value,n=Math.max(8,LV[lv]*(simulating?.2:1)|0),cur=vP(s.b,p),m=allStops(s.b,p+1),c=[],k,t,ns;
+  var p=s.turn,lv=+$("level").value,n=Math.max(8,LV[lv]*Math.sqrt(169/N)*(simulating?.2:1)|0),cur=vP(s.b,p),m=allStops(s.b,p+1),c=[],k,t,ns;
   if(s.pass&&cur>0)return passS(s);
   for(k=0;k<n&&m.list.length;k++){t=sample(s,m);if(!t)continue;ns=dispatch(s,t.src,t.cells);c.push({ns:ns,v:vP(ns.b,p)+(lv===1?(Math.random()-.5)*8:0)})}
   c.sort(function(a,b){return b.v-a.v});
@@ -158,18 +163,18 @@ var sim=null;
 function runSim(){   // computer vs computer, to look for first/second-player advantage
   if(sim){sim.stop=true;return}
   var CAP=200,me=sim={stop:false},TOTAL=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?4:+$("simR").value)),
-      done=0,w=[0,0],dr=0,un=0,g=newState(),plies=0,lvName=$("level").options[$("level").selectedIndex].text,nm=GAME.sides.map(function(x){return x.name}),ids=["mode","side","level","new","undo","redo","simN","simR","pass","place"];
+      done=0,w=[0,0],dr=0,un=0,g=newState(),plies=0,lvName=$("level").options[$("level").selectedIndex].text,nm=GAME.sides.map(function(x){return x.name}),ids=["mode","size","side","level","new","undo","redo","simN","simR","pass","place"];
   ids.forEach(function(i){$(i).disabled=true});simulating=true;
   $("sim").textContent="Stop simulation";
   $("simout").textContent="Simulating at "+lvName+" level\u2026 0/"+TOTAL;
   function fin2(stopped){
     sim=null;simulating=false;$("sim").textContent="Simulation";
-    $("mode").disabled=$("new").disabled=$("simN").disabled=$("simR").disabled=false;
+    $("mode").disabled=$("size").disabled=$("new").disabled=$("simN").disabled=$("simR").disabled=false;
     $("level").disabled=$("side").disabled=$("mode").value==="2p";
-    var mg=done?(196*Math.sqrt((w[0]/done)*(1-w[0]/done)/done)).toFixed(1):"0";
+    var mg=done?(196*Math.sqrt((w[1]/done)*(1-w[1]/done)/done)).toFixed(1):"0";
     var pc=function(n){return done?(100*n/done).toFixed(1)+"%":"n/a"};
     $("simout").textContent=(stopped?"Stopped after ":"")+done+" games at "+lvName+" level (computer vs computer), first "+RND+" moves random.\n"+
-      "First player ("+nm[0]+") won "+pc(w[0])+" ("+w[0]+" games, margin \u00b1"+mg+" points at 95% confidence). Second player ("+nm[1]+") won "+pc(w[1])+" ("+w[1]+" games). Draws: "+dr+"."+(un?" Unfinished (stopped at "+CAP+" plies): "+un+".":"");
+      "First player ("+nm[1]+") won "+pc(w[1])+" ("+w[1]+" games, margin \u00b1"+mg+" points at 95% confidence). Second player ("+nm[0]+") won "+pc(w[0])+" ("+w[0]+" games). Draws: "+dr+"."+(un?" Unfinished (stopped at "+CAP+" plies): "+un+".":"");
     render();
   }
   function stepSim(){
@@ -200,21 +205,23 @@ function humanTurn(){return $("mode").value==="2p"||cur().turn===+$("side").valu
 function maxSize(s){return s.fd?3:5}
 function canPlace(s){return ui.stop>=0&&ui.cells.length>=2&&(!s.fd||ui.cells.length===3)}
 function start(){
-  hist=[newState()];redo=[];ui=newUI();note="";$("level").disabled=$("side").disabled=$("mode").value==="2p";over=false;busy=false;
+  setSize(+$("size").value);hist=[newState()];redo=[];ui=newUI();note="";$("level").disabled=$("side").disabled=$("mode").value==="2p";over=false;busy=false;
   render();maybeAI();
 }
 function X(i){return FX[i]+1}
-function Y(i){return 13-FY[i]}
+function Y(i){return W-FY[i]}
 function stone(p,i,op){var G=GAME.sides[p-1];return'<circle cx="'+X(i)+'" cy="'+Y(i)+'" r=".46" fill="'+G.color+'" stroke="'+G.edge+'" stroke-width=".05"'+(op?' opacity="'+op+'"':'')+'/>'}
 function render(){
   var s=cur(),sd=GAME.sides,h=[],P=s.turn,i,k,b=s.b;
   over=s.w>=0;
-  h.push('<svg viewBox="0 0 14 14.3" role="img" aria-label="Dispatch board"><rect x=".3" y=".3" width="13.4" height="13.4" rx=".2" fill="var(--wood)"/>');
-  for(k=1;k<=13;k++)h.push('<path d="M'+k+' 1V13M1 '+k+'H13" stroke="#3a2c14" stroke-width=".04" fill="none"/>');
-  [[3,3],[3,9],[6,6],[9,3],[9,9]].forEach(function(q){h.push('<circle cx="'+(q[0]+1)+'" cy="'+(13-q[1])+'" r=".09" fill="#3a2c14"/>')});
-  for(k=0;k<13;k++){
-    h.push('<text x="'+(k+1)+'" y="14.05" text-anchor="middle" font-size=".34" fill="var(--mute)">'+String.fromCharCode(97+k)+'</text>');
-    h.push('<text x=".02" y="'+(13-k+.12)+'" font-size=".34" fill="var(--mute)">'+(k+1)+'</text>');
+  h.push('<svg viewBox="0 0 '+(W+1)+' '+(W+1.3)+'" role="img" aria-label="Dispatch board"><rect x=".3" y=".3" width="'+(W+.4)+'" height="'+(W+.4)+'" rx=".2" fill="var(--wood)"/>');
+  for(k=1;k<=W;k++)h.push('<path d="M'+k+' 1V'+W+'M1 '+k+'H'+W+'" stroke="#3a2c14" stroke-width=".04" fill="none"/>');
+  var sp=W===13?[[3,3],[3,9],[6,6],[9,3],[9,9]]:[];
+  if(W>13){var m3=[3,(W-1)/2,W-4];m3.forEach(function(a){m3.forEach(function(c){sp.push([a,c])})})}
+  sp.forEach(function(q){h.push('<circle cx="'+(q[0]+1)+'" cy="'+(W-q[1])+'" r=".09" fill="#3a2c14"/>')});
+  for(k=0;k<W;k++){
+    h.push('<text x="'+(k+1)+'" y="'+(W+1.05)+'" text-anchor="middle" font-size=".34" fill="var(--mute)">'+String.fromCharCode(97+k)+'</text>');
+    h.push('<text x=".02" y="'+(W-k+.12)+'" font-size=".34" fill="var(--mute)">'+(k+1)+'</text>');
   }
   if(over){
     var r1=reach(b,1),r2=reach(b,2);
@@ -276,7 +283,7 @@ $("rules").innerHTML=GAME.rules.map(function(sec){return"<li><b>"+sec.h+"</b><ul
 $("side").innerHTML=GAME.sides.map(function(x,i){return'<option value="'+i+'">You are '+x.name+'</option>'}).join("");
 $("board").onclick=function(e){var t=e.target.closest("[data-i]");if(t)click(+t.getAttribute("data-i"))};
 $("new").onclick=start;$("sim").onclick=runSim;
-$("mode").onchange=$("side").onchange=start;
+$("mode").onchange=$("side").onchange=$("size").onchange=start;
 $("place").onclick=function(){var s=cur();if(over||busy||!humanTurn()||!canPlace(s))return;play(dispatch(s,ui.src,ui.cells.slice()))};
 $("pass").onclick=function(){if(over||busy||!humanTurn())return;note="";play(passS(cur()))};
 $("redo").onclick=function(){
