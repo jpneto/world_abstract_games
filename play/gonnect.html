@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gonnect</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
+<style>
+:root{--bg:#eef0e6;--ink:#1f2a1c;--mute:#5d6a56;--cell:#dfe3cf;--edge:#b9bfa3;--hi:#e0803a;--panel:#fff;--line:#c5cab4;--wood:#dcb875;--sq1:#ece8d6;--sq2:#a9b58a;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f;--wood:#9a7b45;--sq1:#46513d;--sq2:#28301f}}
+:root[data-theme="dark"]{--wood:#9a7b45;--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f;--sq1:#46513d;--sq2:#28301f}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+main{max-width:1080px;margin:0 auto;padding:16px 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.right>.bar:first-child{margin-top:0}
+@media (min-width:860px){.layout{grid-template-columns:minmax(0,600px) minmax(300px,1fr);gap:28px;align-items:start}}
+h1{font:700 2rem/1.1 "Bricolage Grotesque",Georgia,serif;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+select,button.ctl{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.ctl:disabled,select:disabled,input:disabled{opacity:.45;cursor:default}
+label.f{color:var(--mute);font-size:.9rem}
+input[type=number]{width:4.5em;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+button.ctl.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.pl{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:8px 12px;display:flex;justify-content:space-between;align-items:baseline}
+.pl.on{border-color:var(--hi)}
+.pl b{font:700 1.6rem "Bricolage Grotesque",Georgia,serif}
+.pl small{color:var(--mute)}
+#status{min-height:1.5em;font-weight:600;margin:6px 0}
+#board svg{display:block;width:100%;max-width:600px;margin:0 auto;touch-action:manipulation}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+details li{margin:4px 0}
+.legend{color:var(--mute);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+<h1 id="gtitle"></h1>
+<p class="sub" id="gsub"></p>
+<div class="layout">
+<div class="left">
+<div id="board"></div>
+<p class="legend">Click an empty intersection to place a stone. Small squares mark empty regions bordered only by one player&rsquo;s stones. Red dot: last move. At the end, the winning chain is ringed.</p>
+</div>
+<aside class="right">
+<div class="bar">
+  <select id="mode" aria-label="Mode"><option value="ai">Play the computer</option><option value="2p">Two players</option></select>
+  <select id="level" aria-label="Computer strength"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select>
+  <select id="side" aria-label="Your side"></select>
+  <select id="size" aria-label="Board size"><option value="13">13×13</option><option value="15">15×15</option><option value="17">17×17</option><option value="19">19×19</option><option value="23">23×23</option></select>
+  <button class="ctl primary" id="new">New game</button>
+  <button class="ctl" id="undo">Undo</button>
+  <button class="ctl" id="redo">Redo</button>
+</div>
+<div class="score"><div class="pl" id="p0"><span id="n0"></span></div><div class="pl" id="p1"><span id="n1"></span></div></div>
+<div id="status" aria-live="polite"></div>
+<div class="bar"><button class="ctl primary" id="swap">Swap</button></div>
+<div id="last" class="legend" style="min-height:2.6em;margin:0 0 8px"></div>
+<div class="bar">
+  <label class="f">Simulation games <input id="simN" type="number" min="10" max="1000" value="10"></label>
+  <label class="f">Random opening moves <input id="simR" type="number" min="0" max="20" value="4"></label>
+  <button class="ctl" id="sim">Simulation</button>
+</div>
+<div id="simout" class="legend" style="white-space:pre-line;margin:0 0 8px"></div>
+<details><summary>Rules</summary><ul id="rules"></ul></details>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+/* =====================================================================
+   1. GAME DEFINITION  - Gonnect rules, move generation, capture, superko, win test
+   2. ENGINE           - connection-distance computer opponent, simulations
+   3. INTERFACE        - SVG Go board, click handling, controls
+   A move is an intersection index, or the swap.
+   A state is {b: owner per intersection (0 empty, 1 White, 2 Black), turn (0 White, 1 Black),
+               n: moves made, sw: players have swapped colours, h: position key, seen: Set of position keys so far,
+               cap: stones captured by [White, Black], w: winner colour (0, 1) or -1, why: reason, lm: last move info}.
+   Intersection index = rank*W+file (rank 0 = rank 1).
+   ===================================================================== */
+var $=function(i){return document.getElementById(i)};
+
+/* ============================ 1. GAME DEFINITION ============================ */
+var GAME={
+  title:"Gonnect",
+  subtitle:"Go with a connection goal: link two opposite sides of the board with an orthogonal chain of your stones. No passing, and White may swap after Black’s first stone.",
+  sides:[{name:"White",color:"#f6f2e7",edge:"#555"},{name:"Black",color:"#2d2d2d",edge:"#ddd"}],
+  rules:[
+  {h:"Board and setup",items:[
+    "Go board of 13×13, 15×15, 17×17, 19×19 or 23×23 (your choice); stones are played on the intersections. The board starts empty and Black moves first."]},
+  {h:"Turn",items:[
+    "On each turn a player places one stone of their colour on an empty intersection. Passing is not allowed.",
+    "The rules of Go apply: a group of stones with no liberty (no orthogonally adjacent empty intersection) is captured and removed. Enemy groups are removed first, so a move that captures is never suicide.",
+    "Suicide is forbidden: you may not place a stone that leaves its own group without liberties.",
+    "Ko: a move may not recreate a board position that has already occurred in the game (positional superko, which includes the basic ko rule)."]},
+  {h:"Swap rule",items:[
+    "As their first move, White may swap instead of placing a stone: the two players exchange colours. The stone already on the board stays where it is and now belongs to the player who chose to swap, and the other player, now White, moves next."]},
+  {h:"Goal",items:[
+    "A player wins by making a chain of orthogonally connected stones of their colour that joins two opposite sides of the board (left to right or bottom to top).",
+    "A player also wins if their opponent has no legal move on their turn.",
+    "The small squares on the board are only a guide: they mark empty regions bordered only by one player’s stones. They are not scored."]}],
+  describe:function(s){var l=s.lm;if(!l)return"";var by=GAME.sides[l.p].name;
+    if(l.swap)return by+" swapped: the players exchanged colours. The player who placed the first stone now plays White.";
+    var t=by+" played "+cn(l.i);
+    if(l.ce)t+=", capturing "+l.ce+" stone"+(l.ce>1?"s":"");
+    return t+"."}
+};
+var W=13,N=169,DIRS=[[1,0],[-1,0],[0,1],[0,-1]],FX,FY,NB,Z1,Z2;
+function setSize(n){W=n;N=n*n;FX=[];FY=[];NB=[];Z1=[[],[],[]];Z2=[[],[],[]];
+  for(var i=0;i<N;i++){FX[i]=i%W;FY[i]=(i/W)|0;NB[i]=[];DIRS.forEach(function(d){var x=FX[i]+d[0],y=FY[i]+d[1];if(x>=0&&y>=0&&x<W&&y<W)NB[i].push(y*W+x)});
+    for(var c=1;c<3;c++){Z1[c][i]=(Math.random()*4294967296)>>>0;Z2[c][i]=(Math.random()*4294967296)>>>0}}}
+setSize(13);
+function cn(i){return String.fromCharCode(97+FX[i])+(FY[i]+1)}
+function key(a,b){return(a>>>0)*2097152+(b>>>11)}
+function newState(){var s={b:new Uint8Array(N),turn:1,n:0,sw:false,h1:0,h2:0,cap:[0,0],w:-1,why:"",lm:null};s.h=key(0,0);s.seen=new Set([s.h]);return s}
+// group of stone i: its cells and liberty count
+function grp(b,i,seen){var c=b[i],st=[i],g=[i],lib=0,ls={};seen[i]=1;
+  while(st.length){var q=st.pop();NB[q].forEach(function(n){if(!b[n]){if(!ls[n]){ls[n]=1;lib++}}else if(b[n]===c&&!seen[n]){seen[n]=1;st.push(n);g.push(n)}})}
+  return{g:g,lib:lib}}
+// place a stone for the player to move; returns the result or {err} when illegal
+function tryMove(s,i){
+  if(s.b[i])return{err:"That intersection is occupied."};
+  var p=s.turn+1,o=3-p,b=s.b.slice(),h1=s.h1^Z1[p][i],h2=s.h2^Z2[p][i],ce=0;b[i]=p;
+  NB[i].forEach(function(n){if(b[n]===o){var r=grp(b,n,new Uint8Array(N));if(!r.lib)r.g.forEach(function(k){b[k]=0;h1^=Z1[o][k];h2^=Z2[o][k];ce++})}});
+  if(!ce&&!grp(b,i,new Uint8Array(N)).lib)return{err:"Suicide is not allowed: that stone would have no liberty."};
+  var h=key(h1,h2);if(s.seen.has(h))return{err:"Ko: that move would repeat an earlier board position."};
+  return{b:b,h1:h1,h2:h2,h:h,ce:ce,i:i}}
+function hasLegal(s){for(var i=0;i<N;i++)if(!s.b[i]&&!tryMove(s,i).err)return true;return false}
+// chain of player p joining two opposite sides, or null
+function winChain(b,p){var seen=new Uint8Array(N);
+  for(var i=0;i<N;i++)if(b[i]===p&&!seen[i]){var g=grp(b,i,seen).g,l=0,r=0,t=0,u=0;
+    g.forEach(function(k){if(!FX[k])l=1;if(FX[k]===W-1)r=1;if(!FY[k])t=1;if(FY[k]===W-1)u=1});
+    if((l&&r)||(t&&u))return g}
+  return null}
+function apply(s,m){
+  var seen=new Set(s.seen);seen.add(m.h);var cap=s.cap.slice();cap[s.turn]+=m.ce;
+  var ns={b:m.b,turn:1-s.turn,n:s.n+1,sw:s.sw,h1:m.h1,h2:m.h2,h:m.h,seen:seen,cap:cap,w:-1,why:"",lm:{p:s.turn,i:m.i,ce:m.ce}};
+  if(winChain(ns.b,s.turn+1)){ns.w=s.turn;ns.why="chain"}
+  else if(!hasLegal(ns)){ns.w=s.turn;ns.why="nomove"}
+  return ns}
+function canSwap(s){return s.n===1&&s.turn===0&&!s.sw&&s.w<0}
+function doSwap(s){return{b:s.b,turn:0,n:s.n+1,sw:true,h1:s.h1,h2:s.h2,h:s.h,seen:s.seen,cap:s.cap,w:-1,why:"",lm:{p:0,swap:true}}}
+// empty regions bordered by stones of only one colour: owner per cell (0 none)
+function regions(b){var own=new Uint8Array(N),seen=new Uint8Array(N);
+  for(var i=0;i<N;i++)if(!b[i]&&!seen[i]){var st=[i],g=[i],bd=0;seen[i]=1;
+    while(st.length){var q=st.pop();NB[q].forEach(function(n){if(!b[n]){if(!seen[n]){seen[n]=1;st.push(n);g.push(n)}}else bd|=b[n]})}
+    if(bd===1||bd===2)g.forEach(function(k){own[k]=bd})}
+  return own}
+
+/* ================================ 2. ENGINE ================================ */
+/* Engine: the evaluation is the connection distance, i.e. how many more stones each player needs to join
+   two opposite sides (own stones cost 0, empty cells 1, enemy stones block), with bonuses for threats and
+   a penalty for groups in atari. Medium picks the best single move among moves near existing stones;
+   Hard also checks the best candidates against the opponent's best reply. */
+var simulating=false,DQ,DD;
+function rn(n){return Math.floor(Math.random()*n)}
+// fewest empty cells player p must fill to connect opposite sides (99 if impossible)
+function dist(b,p){
+  if(!DD||DD.length!==N){DD=new Int16Array(N);DQ=new Int32Array(N*4)}
+  var best=99;
+  for(var dir=0;dir<2;dir++){
+    DD.fill(999);var head=N*2,tail=N*2,i,k,c;
+    for(k=0;k<W;k++){i=dir?k:k*W;if(b[i]===3-p)continue;c=b[i]?0:1;if(c<DD[i]){DD[i]=c;if(c)DQ[tail++]=i;else DQ[--head]=i}}
+    while(head<tail){i=DQ[head++];var d=DD[i];
+      if(dir?FY[i]===W-1:FX[i]===W-1){if(d<best)best=d;continue}
+      if(d>=best)continue;
+      for(k=0;k<NB[i].length;k++){var n=NB[i][k];if(b[n]===3-p)continue;c=b[n]?0:1;
+        if(d+c<DD[n]){DD[n]=d+c;if(c)DQ[tail++]=n;else DQ[--head]=n}}}
+  }
+  return best}
+function ataris(b,p){var seen=new Uint8Array(N),n=0;for(var i=0;i<N;i++)if(b[i]===p&&!seen[i]){var r=grp(b,i,seen);if(r.lib===1)n+=r.g.length}return n}
+// value of board b for player p (colour index 0/1), with colour index `mv` to move next
+function evalB(b,p,mv){
+  var me=p+1,op=2-p,dm=dist(b,me),dO=dist(b,op);
+  if(dm===0)return 1e6;if(dO===0)return-1e6;
+  if(mv===p&&dm===1)return 1e5;
+  if(mv!==p&&dO===1)return-1e5;
+  return(dO-dm)*100-ataris(b,me)*(mv===p?4:12)+ataris(b,op)*(mv===p?12:4);
+}
+function cands(s){var b=s.b,near=new Uint8Array(N),any=false,out=[],i,x,y,dx,dy;
+  for(i=0;i<N;i++)if(b[i]){any=true;for(dy=-2;dy<=2;dy++)for(dx=-2;dx<=2;dx++){x=FX[i]+dx;y=FY[i]+dy;if(x>=0&&y>=0&&x<W&&y<W)near[y*W+x]=1}}
+  for(i=0;i<N;i++)if(!b[i]&&(near[i]||!any)){var m=tryMove(s,i);if(!m.err)out.push(m)}
+  if(!out.length)for(i=0;i<N;i++)if(!b[i]){m=tryMove(s,i);if(!m.err)out.push(m)}
+  return out}
+function edgeD(i){return Math.min(FX[i],FY[i],W-1-FX[i],W-1-FY[i])}
+function aiMove(s){
+  var p=s.turn,lv=+$("level").value,i,list;
+  if(canSwap(s)){   // swap a strong first stone (third line or further in)
+    var bs=-1;for(i=0;i<N;i++)if(s.b[i])bs=i;
+    if(lv===1?Math.random()<.5:edgeD(bs)>=2)return doSwap(s)}
+  if(s.n===0){      // first stone may be swapped, so play a modest one on the second line
+    list=[];for(i=0;i<N;i++)if(edgeD(i)===1&&FX[i]>2&&FX[i]<W-3)list.push(i);
+    if(lv===1)for(i=0;i<N;i++)list.push(i);
+    return apply(s,tryMove(s,list[rn(list.length)]))}
+  var c=cands(s).map(function(m){return{m:m,v:evalB(m.b,p,1-p)+Math.random()*(lv===1?150:8)}});
+  c.sort(function(a,b){return b.v-a.v});
+  if(lv===3&&!simulating&&c[0].v<1e5){
+    c=c.slice(0,8).map(function(x){
+      var ns={b:x.m.b,turn:1-p,h1:x.m.h1,h2:x.m.h2,seen:s.seen},r=cands(ns),w=1e7;
+      if(!r.length)return{m:x.m,v:1e6};
+      r.forEach(function(m2){var v=evalB(m2.b,p,p);if(v<w)w=v});
+      return{m:x.m,v:w+Math.random()*4}}).sort(function(a,b){return b.v-a.v})}
+  return apply(s,c[0].m);
+}
+var sim=null;
+function runSim(){   // computer vs computer, to look for first/second-player advantage
+  if(sim){sim.stop=true;return}
+  var CAP=0,me=sim={stop:false},TOTAL=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?4:+$("simR").value)),
+      done=0,w=[0,0],fp=[0,0],sws=0,un=0,g,plies=0,lvName=$("level").options[$("level").selectedIndex].text,nm=GAME.sides.map(function(x){return x.name}),ids=["mode","size","side","level","new","undo","redo","simN","simR","swap"];
+  CAP=N*2;g=newState();
+  ids.forEach(function(i){$(i).disabled=true});simulating=true;
+  $("sim").textContent="Stop simulation";
+  $("simout").textContent="Simulating at "+lvName+" level… 0/"+TOTAL;
+  function fin2(stopped){
+    sim=null;simulating=false;$("sim").textContent="Simulation";
+    $("mode").disabled=$("size").disabled=$("new").disabled=$("simN").disabled=$("simR").disabled=false;
+    $("level").disabled=$("side").disabled=$("mode").value==="2p";
+    var fin=done-un,mg=fin?(196*Math.sqrt((fp[0]/fin)*(1-fp[0]/fin)/fin)).toFixed(1):"0";
+    var pc=function(n){return fin?(100*n/fin).toFixed(1)+"%":"n/a"};
+    $("simout").textContent=(stopped?"Stopped after ":"")+done+" games on "+W+"×"+W+" at "+lvName+" level (computer vs computer), first "+RND+" moves random.\n"+
+      "The player who placed the first stone won "+pc(fp[0])+" ("+fp[0]+" games, margin ±"+mg+" points at 95% confidence); the other player won "+pc(fp[1])+" ("+fp[1]+" games). Swaps: "+sws+".\n"+
+      "By colour: "+nm[1]+" "+w[1]+", "+nm[0]+" "+w[0]+"."+(un?" Unfinished (stopped at "+CAP+" moves): "+un+".":"");
+    render();
+  }
+  function stepSim(){
+    if(me.stop){fin2(true);return}
+    var t0=Date.now();
+    while(Date.now()-t0<40){
+      if(g.w>=0||plies>=CAP){
+        if(g.w>=0){w[g.w]++;fp[(g.w===1)!==g.sw?0:1]++;if(g.sw)sws++}else un++;
+        done++;g=newState();plies=0;
+        if(done>=TOTAL){fin2(false);return}
+        continue;
+      }
+      if(plies<RND){var c=[],i;for(i=0;i<N;i++)if(!g.b[i]){var m=tryMove(g,i);if(!m.err)c.push(m)}g=apply(g,c[rn(c.length)])}
+      else g=aiMove(g);
+      plies++;
+    }
+    $("simout").textContent="Simulating at "+lvName+" level… "+done+"/"+TOTAL;
+    setTimeout(stepSim,0);
+  }
+  stepSim();
+}
+
+/* =============================== 3. INTERFACE =============================== */
+var hist,redo=[],over,busy,note="",RED="#d33";
+function cur(){return hist[hist.length-1]}
+// colour the human controls in AI mode: the chosen side, flipped after a swap
+function humanColor(s){return(+$("side").value)^(s.sw?1:0)}
+function humanTurn(){return $("mode").value==="2p"||cur().turn===humanColor(cur())}
+function start(){
+  setSize(+$("size").value);hist=[newState()];redo=[];note="";$("level").disabled=$("side").disabled=$("mode").value==="2p";over=false;busy=false;
+  render();maybeAI();
+}
+function X(i){return FX[i]+1}
+function Y(i){return W-FY[i]}
+function stone(p,i,op){var G=GAME.sides[p-1];return'<circle cx="'+X(i)+'" cy="'+Y(i)+'" r=".46" fill="'+G.color+'" stroke="'+G.edge+'" stroke-width=".05"'+(op?' opacity="'+op+'"':'')+'/>'}
+function render(){
+  var s=cur(),sd=GAME.sides,h=[],P=s.turn,i,k,b=s.b;
+  over=s.w>=0;
+  h.push('<svg viewBox="0 0 '+(W+1)+' '+(W+1.3)+'" role="img" aria-label="Gonnect board"><rect x=".3" y=".3" width="'+(W+.4)+'" height="'+(W+.4)+'" rx=".2" fill="var(--wood)"/>');
+  for(k=1;k<=W;k++)h.push('<path d="M'+k+' 1V'+W+'M1 '+k+'H'+W+'" stroke="#3a2c14" stroke-width=".04" fill="none"/>');
+  var sp=W===13?[[3,3],[3,9],[6,6],[9,3],[9,9]]:[];
+  if(W>13){var m3=[3,(W-1)/2,W-4];m3.forEach(function(a){m3.forEach(function(c){sp.push([a,c])})})}
+  sp.forEach(function(q){h.push('<circle cx="'+(q[0]+1)+'" cy="'+(W-q[1])+'" r=".09" fill="#3a2c14"/>')});
+  var fs=W>17?.3:.34;
+  for(k=0;k<W;k++){
+    h.push('<text x="'+(k+1)+'" y="'+(W+1.05)+'" text-anchor="middle" font-size="'+fs+'" fill="var(--mute)">'+String.fromCharCode(97+k)+'</text>');
+    h.push('<text x=".02" y="'+(W-k+.12)+'" font-size="'+fs+'" fill="var(--mute)">'+(k+1)+'</text>');
+  }
+  var own=regions(b);
+  for(i=0;i<N;i++)if(own[i]){var G=sd[own[i]-1];h.push('<rect x="'+(X(i)-.12)+'" y="'+(Y(i)-.12)+'" width=".24" height=".24" fill="'+G.color+'" stroke="'+G.edge+'" stroke-width=".03"/>')}
+  for(i=0;i<N;i++)if(b[i])h.push(stone(b[i],i));
+  if(s.lm&&!s.lm.swap)h.push('<circle cx="'+X(s.lm.i)+'" cy="'+Y(s.lm.i)+'" r=".12" fill="'+RED+'"/>');
+  if(over&&s.why==="chain")(winChain(b,s.w+1)||[]).forEach(function(c){h.push('<circle cx="'+X(c)+'" cy="'+Y(c)+'" r=".52" fill="none" stroke="var(--hi)" stroke-width=".08"/>')});
+  for(i=0;i<N;i++)h.push('<rect data-i="'+i+'" x="'+(X(i)-.5)+'" y="'+(Y(i)-.5)+'" width="1" height="1" fill="transparent"/>');
+  h.push('</svg>');
+  $("board").innerHTML=h.join("");
+  var names=sd.map(function(x){return x.name}),cnt=[0,0],st,ai=$("mode").value==="ai";
+  for(i=0;i<N;i++)if(b[i])cnt[b[i]-1]++;
+  for(i=0;i<2;i++){$("p"+i).className="pl"+(!over&&P===i?" on":"");
+    $("n"+i).textContent=names[i]+(ai?(humanColor(s)===i?" (you)":" (computer)"):"")+": "+cnt[i]+" stones, "+s.cap[i]+" captured"}
+  var hu=humanTurn()&&!over&&!busy&&!sim;
+  if(over)st="Game over: "+names[s.w]+(ai?(humanColor(s)===s.w?" (you)":" (computer)"):"")+" wins"+(s.why==="chain"?" by connecting two opposite sides.":" because "+names[1-s.w]+" has no legal move.");
+  else st=names[P]+" to move"+(humanTurn()?"":" (computer thinking…)")+(canSwap(s)?" – place a stone or swap.":".");
+  $("status").textContent=st;
+  $("last").textContent=(GAME.describe(s)+" "+note).trim();
+  $("swap").disabled=!(hu&&canSwap(s));
+  $("undo").disabled=hist.length<2||busy||!!sim;
+  $("redo").disabled=!redo.length||busy||!!sim;
+}
+function play(ns){hist.push(ns);redo=[];render();maybeAI()}
+function click(i){
+  if(over||busy||sim||!humanTurn())return;
+  var m=tryMove(cur(),i);
+  if(m.err){note=m.err;render();return}
+  note="";play(apply(cur(),m));
+}
+function maybeAI(){
+  if(over||$("mode").value!=="ai"||humanTurn())return;
+  busy=true;render();
+  setTimeout(function(){var c=cur(),ns=aiMove(c);busy=false;hist.push(ns);render();maybeAI()},60);
+}
+document.title=GAME.title;$("gtitle").textContent=GAME.title;$("gsub").textContent=GAME.subtitle;
+function li(x){return"<li>"+(typeof x==="string"?x:x.t+"<ul>"+x.sub.map(li).join("")+"</ul>")+"</li>"}
+$("rules").innerHTML=GAME.rules.map(function(sec){return"<li><b>"+sec.h+"</b><ul>"+sec.items.map(li).join("")+"</ul></li>"}).join("");
+$("side").innerHTML=GAME.sides.map(function(x,i){return'<option value="'+i+'">You are '+x.name+'</option>'}).join("");
+$("side").value="1";
+$("board").onclick=function(e){var t=e.target.closest("[data-i]");if(t)click(+t.getAttribute("data-i"))};
+$("new").onclick=start;$("sim").onclick=runSim;
+$("mode").onchange=$("side").onchange=$("size").onchange=start;
+$("swap").onclick=function(){var s=cur();if(over||busy||!humanTurn()||!canSwap(s))return;note="";play(doSwap(s))};
+$("redo").onclick=function(){
+  if(busy||!redo.length)return;
+  hist.push(redo.pop());
+  while($("mode").value==="ai"&&redo.length&&!humanTurn())hist.push(redo.pop());
+  note="";render();
+};
+$("undo").onclick=function(){
+  if(busy||hist.length<2)return;
+  redo.push(hist.pop());
+  while($("mode").value==="ai"&&hist.length>1&&!humanTurn())redo.push(hist.pop());
+  note="";over=false;render();maybeAI();
+};
+start();
+})();
+</script>
+</body>
+</html>

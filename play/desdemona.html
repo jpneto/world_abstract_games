@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Desdemona</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
+<style>
+:root{--bg:#f1efe9;--ink:#211f1b;--mute:#6a655b;--cell:#2f7d52;--grid:#174a2e;--hi:#f08a24;--panel:#fff;--line:#cfc8b8;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17171a;--ink:#ecebe6;--mute:#a19d93;--panel:#222226;--line:#3d3b38}}
+:root[data-theme="dark"]{--bg:#17171a;--ink:#ecebe6;--mute:#a19d93;--panel:#222226;--line:#3d3b38}
+[hidden]{display:none!important}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+main{max-width:1140px;margin:0 auto;padding:16px 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.right>.bar:first-child{margin-top:0}
+@media (min-width:880px){.layout{grid-template-columns:minmax(0,640px) minmax(290px,1fr);gap:28px;align-items:start}}
+h1{font:700 2rem/1.1 "Bricolage Grotesque",Georgia,serif;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+select,button.ctl{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.ctl:disabled,select:disabled,input:disabled{opacity:.45;cursor:default}
+label.f{color:var(--mute);font-size:.9rem}
+input[type=number]{width:4.5em;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+button.ctl.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.pl{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:8px 12px}
+.pl.on{border-color:var(--hi)}
+.pl small{display:block;color:var(--mute)}
+#status{min-height:3em;font-weight:600;margin:6px 0}
+#board svg{display:block;width:100%;max-width:640px;margin:0 auto;touch-action:manipulation}
+#board rect[data-i]{cursor:pointer}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+details li{margin:4px 0}
+.legend{color:var(--mute);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+<h1 id="gtitle"></h1>
+<p class="sub" id="gsub"></p>
+<div class="layout">
+<div class="left">
+<div id="board"></div>
+<p class="legend">Click an empty square marked with a dot to place a disk there. The last disk placed is ringed; small orange dots mark the disks it flipped.</p>
+</div>
+<aside class="right">
+<div class="bar">
+  <select id="mode" aria-label="Mode"><option value="ai">Play the computer</option><option value="2p">Two players</option></select>
+  <select id="level" aria-label="Computer strength"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select>
+  <select id="side" aria-label="Your colour"><option value="0">You play Black (moves first)</option><option value="1">You play White</option></select>
+</div>
+<div class="bar">
+  <button class="ctl primary" id="new">New game</button>
+  <button class="ctl" id="undo">Undo</button>
+  <button class="ctl" id="redo">Redo</button>
+  <button class="ctl" id="end">Pass</button>
+  <label class="f"><input type="checkbox" id="ctl" checked> Show legal moves</label>
+</div>
+<div class="score"><div class="pl" id="p0"><span id="n0"></span><small id="s0"></small></div><div class="pl" id="p1"><span id="n1"></span><small id="s1"></small></div></div>
+<div id="status" aria-live="polite"></div>
+<div id="last" class="legend" style="min-height:2.6em;margin:0 0 8px"></div>
+<div class="bar">
+  <label class="f">Simulation games <input id="simN" type="number" min="10" max="1000" value="10"></label>
+  <label class="f">Random opening turns <input id="simR" type="number" min="0" max="20" value="2"></label>
+  <button class="ctl" id="sim">Simulation</button>
+</div>
+<div id="simout" class="legend" style="white-space:pre-line;margin:0 0 8px"></div>
+<details><summary>Rules</summary><ul id="rules"></ul></details>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+/* 1. GAME DEFINITION (rules, move generation)  2. ENGINE (computer, simulation)  3. INTERFACE (SVG board, clicks)
+   Board: 8x8 squares, index c = row*8 + col; columns a-h left to right, rows 1-8 top to bottom.
+   State: {b: Uint8Array 64 (0 empty, 1 Black, 2 White, 3 Gray), turn: 0 Black / 1 White, ply: turns played,
+           cnt: [black, white, gray] disk counts, ms: legal moves of the side to move ([{t:"p"}] if it must pass),
+           end: game over, w: winner 0/1, 2 = draw, -1 = none, lm: last move}.
+   Moves: {t:"m", c, f:[...]}  place a disk on c, flipping the cells in f;  {t:"p"} pass (only when no placement exists).
+   Flipping: an opponent disk becomes gray, a gray disk becomes the mover's colour. */
+var $=function(i){return document.getElementById(i)};
+
+/* ============================ 1. GAME DEFINITION ============================ */
+var N=8,NC=64,DX=[1,1,0,-1,-1,-1,0,1],DY=[0,1,1,1,0,-1,-1,-1],RAY=[];
+var NAMES=["Black","White"],FILL=["#1d1d1f","#f6f5f0","#9a9a9a"],EDGE=["#000","#8a867c","#5e5e5e"];
+// starting position (Othello): row by row from the top (x Black, o White)
+var SETUP=["........","........","........","...ox...","...xo...","........","........","........"];
+(function(){var c,d,x,y,r;for(c=0;c<NC;c++){RAY[c]=[];for(d=0;d<8;d++){r=[];x=c%N+DX[d];y=(c>>3)+DY[d];
+  while(x>=0&&x<N&&y>=0&&y<N){r.push(y*N+x);x+=DX[d];y+=DY[d]}RAY[c].push(r)}}})();
+function cn(c){return"abcdefgh"[c%N]+(1+(c>>3))}
+function lst(a){return a.length<2?a.join(""):a.slice(0,-1).join(", ")+" and "+a[a.length-1]}
+var GAME={
+  title:"Desdemona",
+  subtitle:"Othello with a twist: a flipped enemy disk turns gray, and only a second flip makes it yours. Gray disks count for nobody.",
+  rules:function(){return[
+  {h:"Board and players",items:["Played on an 8×8 board by Black and White.",
+    "The game starts from the Othello setup: White on d4 and e5, Black on e4 and d5. Black moves first."]},
+  {h:"A turn",items:["Place one disk of your colour on an empty square. It must sandwich one or more enemy disks between itself and another of your disks, in a straight line (horizontal, vertical or diagonal), with no empty squares in between.",
+    "Every sandwiched disk, in every direction, is flipped: an opponent disk becomes gray; a gray disk becomes one of yours.",
+    "If you can't place a disk, you must pass."]},
+  {h:"End",items:["The game ends when neither side can move.",
+    "The player with more disks of their own colour wins. Gray disks are not counted. Equal counts are a draw.",
+    "Implementation notes: gray disks count as enemy disks for both players when sandwiching, so a line may be made of opponent disks, gray disks or a mix. Pass is only available when you have no legal placement; the computer passes automatically."]}]},
+  describe:function(s){var l=s.lm,who,p=[];if(!l)return"";
+    who=isAI()?pname(l.c)+" ("+NAMES[l.c]+")":NAMES[l.c];
+    if(l.t==="p")return who+" had no legal move and passed.";
+    if(l.gr.length)p.push(l.gr.length+" "+NAMES[1-l.c]+" disk"+(l.gr.length>1?"s":"")+" gray ("+lst(l.gr.map(cn))+")");
+    if(l.ow.length)p.push(l.ow.length+" gray disk"+(l.ow.length>1?"s":"")+" "+NAMES[l.c].toLowerCase()+" ("+lst(l.ow.map(cn))+")");
+    return who+" played "+cn(l.cell)+", turning "+p.join(" and ")+"."}
+};
+// cells flipped by placing a disk of colour p on c (empty array = illegal)
+function flips(b,c,p){var out=[],d,r,i,j,v;if(b[c])return out;
+  for(d=0;d<8;d++){r=RAY[c][d];for(i=0;i<r.length;i++){v=b[r[i]];if(!v||v===p)break}
+    if(i>0&&i<r.length&&b[r[i]]===p)for(j=0;j<i;j++)out.push(r[j])}
+  return out}
+function canPlace(b,c,p){var d,r,i,v;if(b[c])return false;
+  for(d=0;d<8;d++){r=RAY[c][d];for(i=0;i<r.length;i++){v=b[r[i]];if(!v||v===p)break}
+    if(i>0&&i<r.length&&b[r[i]]===p)return true}
+  return false}
+function genP(b,p){var ms=[],c,f;for(c=0;c<NC;c++)if(!b[c]){f=flips(b,c,p);if(f.length)ms.push({t:"m",c:c,f:f})}return ms}
+function mob(b,p){var n=0,c;for(c=0;c<NC;c++)if(canPlace(b,c,p))n++;return n}
+function gen(s){return s.ms}
+function winner(s){var a=s.cnt[0],c=s.cnt[1];return a>c?0:c>a?1:2}
+function mkState(b,turn,ply,lm){var cnt=[0,0,0],c,ms,s;
+  for(c=0;c<NC;c++)if(b[c])cnt[b[c]-1]++;
+  ms=genP(b,turn+1);s={b:b,turn:turn,ply:ply,cnt:cnt,ms:ms,end:false,w:-1,lm:lm};
+  if(!ms.length){if(mob(b,2-turn)){s.ms=[{t:"p"}]}else{s.end=true;s.w=winner(s)}}
+  return s}
+function newGame(){var b=new Uint8Array(NC),r,j,ch,c=0;
+  for(r=0;r<SETUP.length;r++)for(j=0;j<SETUP[r].length;j++,c++){ch=SETUP[r][j];if(ch==="x")b[c]=1;else if(ch==="o")b[c]=2}
+  return mkState(b,0,0,null)}
+function apply(s,m){var p=s.turn+1,b=s.b.slice(),i,c,gr=[],ow=[];
+  if(m.t==="m"){b[m.c]=p;
+    for(i=0;i<m.f.length;i++){c=m.f[i];if(b[c]===3){b[c]=p;ow.push(c)}else{b[c]=3;gr.push(c)}}
+    return mkState(b,1-s.turn,s.ply+1,{c:s.turn,t:"m",cell:m.c,gr:gr,ow:ow})}
+  return mkState(b,1-s.turn,s.ply+1,{c:s.turn,t:"p"})}
+
+/* ================================ 2. ENGINE ================================ */
+/* Evaluation for the player to move: positional square weights (corners high, squares next to empty corners low) for own
+   minus opponent disks, mobility (legal placements), and own minus opponent disk count, weighted more as the board fills.
+   Gray disks score nothing directly. Search: negamax with alpha-beta; finished games score +-1e6 plus the disk margin.
+   Easy looks 1 move ahead with noise, Medium 3 moves, Hard deepens iteratively within a time budget (exact near the end). */
+var W=[100,-20,10,5,5,10,-20,100, -20,-40,-2,-2,-2,-2,-40,-20, 10,-2,1,1,1,1,-2,10, 5,-2,1,0,0,1,-2,5,
+       5,-2,1,0,0,1,-2,5, 10,-2,1,1,1,1,-2,10, -20,-40,-2,-2,-2,-2,-40,-20, 100,-20,10,5,5,10,-20,100];
+var CORN=[0,7,56,63],NEAR=[[1,8,9],[6,15,14],[57,48,49],[62,55,54]];
+function rn(n){return Math.floor(Math.random()*n)}
+function ev(s){var t=s.turn+1,o=2-s.turn,b=s.b,v=0,c,k,j,e=64-s.cnt[0]-s.cnt[1]-s.cnt[2],mt,mo,wt;
+  for(c=0;c<NC;c++){if(b[c]===t)v+=W[c];else if(b[c]===o)v-=W[c]}
+  for(k=0;k<4;k++)if(b[CORN[k]])for(j=0;j<3;j++){c=NEAR[k][j];if(b[c]===t)v-=W[c];else if(b[c]===o)v+=W[c]}  // corner taken: no penalty
+  mt=s.ms[0]&&s.ms[0].t==="m"?s.ms.length:0;mo=mob(b,o);
+  v+=7*(mt-mo);
+  wt=e<14?(14-e)*2:.5;
+  v+=wt*(s.cnt[s.turn]-s.cnt[1-s.turn]);
+  return v}
+function term(s){var d=s.cnt[s.turn]-s.cnt[1-s.turn];return s.w===s.turn?1e6+d:s.w===2?0:-1e6+d}
+var NODES=0,DEAD=0,ABORT={};
+function order(ch,d){var o=ch.map(function(_,i){return i}),e;
+  if(d>1){e=ch.map(function(c){return c.end?term(c):ev(c)});o.sort(function(x,y){return e[x]-e[y]})}
+  return o}
+function nm(s,d,a,bt){var ms,ch,o,i,v,best=-1e9;
+  if(s.end)return term(s);
+  if(d<=0)return ev(s);
+  if((++NODES&63)===0&&DEAD&&Date.now()>DEAD)throw ABORT;
+  ms=gen(s);ch=ms.map(function(m){return apply(s,m)});o=order(ch,d);
+  for(i=0;i<o.length;i++){v=-nm(ch[o[i]],d-1,-bt,-a);if(v>best){best=v;if(v>a){a=v;if(a>=bt)break}}}
+  return best}
+function search(s,d,noise){var ms=gen(s),ch,o,i,v,best=-1e9,bi=0;
+  if(ms.length===1)return ms[0];
+  ch=ms.map(function(m){return apply(s,m)});o=order(ch,2);
+  for(i=0;i<o.length;i++){
+    v=-nm(ch[o[i]],d-1,-1e9,noise?1e9:-(best-.1))+Math.random()*noise;
+    if(v>best){best=v;bi=o[i]}}
+  return ms[bi]}
+function aiMove(s,lv){var ms=gen(s),best,d;
+  if(lv===undefined)lv=+$("level").value;
+  if(ms.length===1)return ms[0];
+  if(lv<1)return ms[rn(ms.length)];
+  if(lv===1)return search(s,1,40);
+  if(lv===2)return search(s,3,1);
+  best=search(s,3,0);DEAD=Date.now()+(sim?150:800);NODES=0;
+  try{for(d=4;d<=30;d++){best=search(s,d,0);if(Date.now()>DEAD||d>=64-s.ply)break}}catch(e){if(e!==ABORT)throw e}
+  DEAD=0;return best}
+var sim=null;
+function runSim(){
+  if(sim){sim.stop=true;return}
+  var CAP=300,me=sim={stop:false},TOTAL=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?2:+$("simR").value)),
+      done=0,wc=[0,0,0],un=0,g=null,plies=0,len=0,lvName=$("level").options[$("level").selectedIndex].text,
+      ids=["mode","side","level","new","undo","redo","end","simN","simR"];
+  ids.forEach(function(i){$(i).disabled=true});
+  $("sim").textContent="Stop simulation";
+  $("simout").textContent="Simulating at "+lvName+" level… 0/"+TOTAL;
+  function fin(stopped){
+    sim=null;$("sim").textContent="Simulation";
+    $("mode").disabled=$("new").disabled=$("simN").disabled=$("simR").disabled=false;
+    $("level").disabled=$("side").disabled=$("mode").value==="2p";
+    var pc=function(n){return done?(100*n/done).toFixed(1)+"%":"n/a"};
+    $("simout").textContent=(stopped?"Stopped after ":"")+done+" games ("+lvName+" level, computer vs computer), first "+RND+" turns random.\nBlack (first player) won "+pc(wc[0])+", White won "+pc(wc[1])+(wc[2]?", draws "+pc(wc[2]):"")+". Average length: "+(done?(len/done).toFixed(0):"n/a")+" turns."+(un?" Unfinished (over "+CAP+" turns): "+un+".":"");
+    render()}
+  function step(){
+    if(me.stop){fin(true);return}
+    var t0=Date.now();
+    while(Date.now()-t0<40){
+      if(!g){g=newGame();plies=0}
+      if(g.end||plies>=CAP){if(g.end)wc[g.w]++;else un++;len+=plies;done++;g=null;if(done>=TOTAL){fin(false);return}continue}
+      g=apply(g,aiMove(g,plies<RND?0:undefined));plies++}
+    $("simout").textContent="Simulating at "+lvName+" level… "+done+"/"+TOTAL;
+    setTimeout(step,0)}
+  step()}
+
+/* =============================== 3. INTERFACE =============================== */
+var hist,redo=[],over,busy,note="";
+function cur(){return hist[hist.length-1]}
+function hc(){return+$("side").value}
+function isAI(){return $("mode").value==="ai"}
+function isHuman(s){return!isAI()||s.turn===hc()}
+function pname(c){return isAI()?(c===hc()?"You":"Computer"):NAMES[c]}
+function pverb(c,a,b){return pname(c)==="You"?b:a}
+function start(){hist=[newGame()];redo=[];note="";$("level").disabled=$("side").disabled=!isAI();over=false;busy=false;
+  $("rules").innerHTML=GAME.rules().map(function(sec){return"<li><b>"+sec.h+"</b><ul>"+sec.items.map(li).join("")+"</ul></li>"}).join("");
+  render();maybeAI()}
+function X(c){return c%N+.5}
+function Y(c){return(c>>3)+.5}
+function f3(v){return Math.round(v*1000)/1000}
+function ring(c,r,clr,w){return'<circle cx="'+f3(X(c))+'" cy="'+f3(Y(c))+'" r="'+r+'" fill="none" stroke="'+clr+'" stroke-width="'+w+'" pointer-events="none"/>'}
+function disk(c,v){return'<circle cx="'+f3(X(c))+'" cy="'+f3(Y(c))+'" r=".4" fill="'+FILL[v-1]+'" stroke="'+EDGE[v-1]+'" stroke-width=".035" pointer-events="none"/>'}
+function dot(c,r,clr,op){return'<circle cx="'+f3(X(c))+'" cy="'+f3(Y(c))+'" r="'+r+'" fill="'+clr+'"'+(op?' fill-opacity="'+op+'"':'')+' pointer-events="none"/>'}
+function txt(x,y,t,sz,clr){return'<text x="'+f3(x)+'" y="'+f3(y)+'" font-size="'+sz+'" text-anchor="middle" dominant-baseline="central" fill="'+clr+'" pointer-events="none">'+t+'</text>'}
+function render(){
+  var s=cur(),b=s.b,g=[],c,i,l=s.lm,hu,stt,legal=s.ms.filter(function(m){return m.t==="m"}),mustPass=!s.end&&s.ms[0].t==="p",M=.6;
+  over=s.end;hu=isHuman(s)&&!over&&!busy&&!sim;
+  g.push('<svg viewBox="'+(-M)+' '+(-M)+' '+(N+2*M)+' '+(N+2*M)+'" role="img" aria-label="Desdemona board" font-family="system-ui,sans-serif">');
+  g.push('<rect x="-.06" y="-.06" width="'+(N+.12)+'" height="'+(N+.12)+'" rx=".08" fill="var(--grid)"/>');
+  for(c=0;c<NC;c++)g.push('<rect data-i="'+c+'" x="'+(c%N)+'" y="'+(c>>3)+'" width="1" height="1" fill="var(--cell)" stroke="var(--grid)" stroke-width=".035"/>');
+  [[2,2],[6,2],[2,6],[6,6]].forEach(function(p){g.push('<circle cx="'+p[0]+'" cy="'+p[1]+'" r=".06" fill="var(--grid)" pointer-events="none"/>')});
+  for(i=0;i<N;i++){g.push(txt(i+.5,-.3,"abcdefgh"[i],.3,"var(--mute)"),txt(i+.5,N+.3,"abcdefgh"[i],.3,"var(--mute)"),
+    txt(-.3,i+.5,i+1,.3,"var(--mute)"),txt(N+.3,i+.5,i+1,.3,"var(--mute)"))}
+  for(c=0;c<NC;c++)if(b[c])g.push(disk(c,b[c]));
+  if(l&&l.t==="m"){g.push(ring(l.cell,.46,"var(--hi)",.06));l.gr.concat(l.ow).forEach(function(c){g.push(dot(c,.08,"var(--hi)"))})}
+  if(hu&&$("ctl").checked)legal.forEach(function(m){g.push(dot(m.c,.13,FILL[s.turn],.55))});
+  $("board").innerHTML=g.join("")+'</svg>';
+  for(i=0;i<2;i++){$("p"+i).className="pl"+(!over&&s.turn===i?" on":"");
+    $("p"+i).style.borderLeft="8px solid "+FILL[i];
+    $("n"+i).textContent=pname(i)+" – "+NAMES[i]+": "+s.cnt[i]+" disk"+(s.cnt[i]===1?"":"s");
+    $("s"+i).textContent=(!over&&s.turn===i?(legal.length?legal.length+" legal move"+(legal.length>1?"s":""):"no legal move")+" · ":"")+"gray on board: "+s.cnt[2]}
+  if(over){stt="Neither side can move. Black "+s.cnt[0]+", White "+s.cnt[1]+" (gray "+s.cnt[2]+", not counted). "+(s.w===2?"It's a draw.":"Game over: "+pname(s.w)+(isAI()?" ("+NAMES[s.w]+")":"")+" "+pverb(s.w,"wins","win")+".")}
+  else{
+    stt=isHuman(s)?(isAI()?"Your turn ("+NAMES[s.turn]+").":NAMES[s.turn]+" to move."):"The computer is thinking…";
+    if(hu)stt+=mustPass?" You have no legal placement: press Pass.":" Click an empty square that sandwiches enemy or gray disks."}
+  if(note)stt+=" "+note;
+  $("status").textContent=stt;
+  $("last").textContent=GAME.describe(s);
+  $("undo").disabled=hist.length<2||busy||!!sim;
+  $("redo").disabled=!redo.length||busy||!!sim;
+  $("end").disabled=!hu||!mustPass}
+function play(m){var ns=apply(cur(),m);hist.push(ns);redo=[];note="";render();maybeAI()}
+function click(i){
+  var s=cur(),m;
+  if(over||busy||sim||!isHuman(s))return;
+  note="";
+  if(s.ms[0].t==="p"){note="No placement is possible: press Pass.";render();return}
+  m=s.ms.filter(function(x){return x.c===i})[0];
+  if(m){play(m);return}
+  note=s.b[i]?"That square is occupied.":"A disk on "+cn(i)+" would not sandwich any enemy or gray disks.";render()}
+function maybeAI(){
+  var s=cur();if(over||!isAI()||isHuman(s))return;
+  busy=true;render();
+  setTimeout(function(){var c=cur(),ns=apply(c,aiMove(c));busy=false;hist.push(ns);render();maybeAI()},60)}
+function li(x){return"<li>"+x+"</li>"}
+document.title=GAME.title;$("gtitle").textContent=GAME.title;$("gsub").textContent=GAME.subtitle;
+$("board").onclick=function(e){var t=e.target.closest("[data-i]");if(t)click(+t.getAttribute("data-i"))};
+$("new").onclick=start;$("sim").onclick=runSim;
+$("end").onclick=function(){if(!$("end").disabled)play({t:"p"})};
+$("ctl").onchange=render;
+$("mode").onchange=$("side").onchange=start;
+$("redo").onclick=function(){
+  if(busy||!redo.length)return;
+  hist.push(redo.pop());
+  while(isAI()&&redo.length&&!isHuman(cur()))hist.push(redo.pop());
+  note="";render();maybeAI()};
+$("undo").onclick=function(){
+  if(busy||hist.length<2)return;
+  var tmp=[];
+  tmp.push(hist.pop());
+  while(isAI()&&hist.length>1&&!isHuman(cur()))tmp.push(hist.pop());
+  if(!isHuman(cur())&&isAI()){while(tmp.length)hist.push(tmp.pop());return}
+  tmp.forEach(function(x){redo.push(x)});
+  over=false;note="";render()};
+start();
+})();
+</script>
+</body>
+</html>

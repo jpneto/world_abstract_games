@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Accumulation</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
+<style>
+:root{--bg:#f1efe9;--ink:#211f1b;--mute:#6a655b;--cell:#CCCC66;--grid:#8f8f3d;--hi:#f08a24;--panel:#fff;--line:#cfc8b8;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17171a;--ink:#ecebe6;--mute:#a19d93;--cell:#CCCC66;--grid:#8f8f3d;--panel:#222226;--line:#3d3b38}}
+:root[data-theme="dark"]{--bg:#17171a;--ink:#ecebe6;--mute:#a19d93;--cell:#CCCC66;--grid:#8f8f3d;--panel:#222226;--line:#3d3b38}
+[hidden]{display:none!important}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+main{max-width:1140px;margin:0 auto;padding:16px 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.right>.bar:first-child{margin-top:0}
+@media (min-width:880px){.layout{grid-template-columns:minmax(0,740px) minmax(290px,1fr);gap:28px;align-items:start}}
+h1{font:700 2rem/1.1 "Bricolage Grotesque",Georgia,serif;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+select,button.ctl{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.ctl:disabled,select:disabled,input:disabled{opacity:.45;cursor:default}
+label.f{color:var(--mute);font-size:.9rem}
+input[type=number]{width:4.5em;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+button.ctl.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.pl{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:8px 12px}
+.pl.on{border-color:var(--hi)}
+.pl small{display:block;color:var(--mute)}
+#status{min-height:3em;font-weight:600;margin:6px 0}
+#board svg{display:block;width:100%;max-width:740px;margin:0 auto;touch-action:manipulation}
+#board polygon[data-i],#board [data-dir]{cursor:pointer}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+details li{margin:4px 0}
+.legend{color:var(--mute);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+<h1 id="gtitle"></h1>
+<p class="sub" id="gsub"></p>
+<div class="layout">
+<div class="left">
+<div id="board"></div>
+<p class="legend">Click one of your stones to select its group, then an arrow to slide it. Numbers on stones give the size of their group. The last move is ringed; a dashed circle marks a removed stone.</p>
+</div>
+<aside class="right">
+<div class="bar">
+  <select id="size" aria-label="Board size" hidden><option value="5" selected>Size 5</option></select>
+  <select id="mode" aria-label="Mode"><option value="ai">Play the computer</option><option value="2p">Two players</option></select>
+  <select id="level" aria-label="Computer strength"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select>
+  <select id="side" aria-label="Your colour"><option value="0">You play Teal (moves first)</option><option value="1">You play Coral</option></select>
+</div>
+<div class="bar">
+  <button class="ctl primary" id="new">New game</button>
+  <button class="ctl" id="undo">Undo</button>
+  <button class="ctl" id="redo">Redo</button>
+  <button class="ctl" id="back">Remove selected stone</button>
+  <button class="ctl" id="end">Pass</button>
+  <label class="f"><input type="checkbox" id="ctl" checked> Show group sizes</label>
+</div>
+<div class="score"><div class="pl" id="p0"><span id="n0"></span><small id="s0"></small></div><div class="pl" id="p1"><span id="n1"></span><small id="s1"></small></div></div>
+<div id="status" aria-live="polite"></div>
+<div id="last" class="legend" style="min-height:2.6em;margin:0 0 8px"></div>
+<div class="bar">
+  <label class="f">Simulation games <input id="simN" type="number" min="10" max="1000" value="10"></label>
+  <label class="f">Random opening turns <input id="simR" type="number" min="0" max="20" value="2"></label>
+  <button class="ctl" id="sim">Simulation</button>
+</div>
+<div id="simout" class="legend" style="white-space:pre-line;margin:0 0 8px"></div>
+<details><summary>Rules</summary><ul id="rules"></ul></details>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+/* 1. GAME DEFINITION (rules, move generation)  2. ENGINE (computer, simulation)  3. INTERFACE (SVG board, clicks)
+   Board: hexhex of side NS, axial coordinates (Q,R) with max(|q|,|r|,|q+r|) <= NS-1; cells listed row by row (R), then by Q.
+   State: {b: Uint8Array NC (0 empty, 1 Teal, 2 Coral), turn: 0 Teal / 1 Coral, ply: turns played, passes: consecutive passes,
+           G: groups of b, mx/cnt/ss: per player largest group, stone count, sum of squared group sizes,
+           fa: per player, fa[p][k] = first ply at which p had a group of size >= k (-1 never),
+           end: game over, w: winner 0/1, 2 = draw, -1 = none, lm: last move}.
+   Moves: {t:"s", cells:[...], d}  slide the group made of cells one step in direction d;  {t:"r", c} remove the stone on c;  {t:"p"} pass. */
+var $=function(i){return document.getElementById(i)};
+
+/* ============================ 1. GAME DEFINITION ============================ */
+var NS=5,NC,Q,R,IDX,NB,STEP,
+    DQ=[1,1,0,-1,-1,0],DR=[0,-1,-1,0,1,1];           // the six directions: E, NE, NW, W, SW, SE
+var DIRN=["east","north-east","north-west","west","south-west","south-east"];
+var NAMES=["Teal","Coral"],FILL=["#17998f","#f4785c"],EDGE=["#0b5550","#a5432e"];
+// starting position, row by row from the top (x Teal, o Coral)
+var SETUP=["x.o.x","......","o.x.o.x","........","x.o...x.o","........","o.x.o.x","......","o.x.o"];
+var RM="own";                                          // players may remove only their own stones
+function setN(n){var m=n-1,q,r,c,d,key;NS=n;Q=[];R=[];IDX={};
+  for(r=-m;r<=m;r++)for(q=-m;q<=m;q++){if(Math.abs(q+r)>m)continue;IDX[q+","+r]=Q.length;Q.push(q);R.push(r)}
+  NC=Q.length;NB=[];STEP=[];
+  for(c=0;c<NC;c++){NB[c]=[];STEP[c]=[];
+    for(d=0;d<6;d++){key=(Q[c]+DQ[d])+","+(R[c]+DR[d]);STEP[c].push(key in IDX?IDX[key]:-1);if(key in IDX)NB[c].push(IDX[key])}}}
+function cn(c){var m=NS-1,r=R[c];return String.fromCharCode(97+r+m)+(Q[c]-Math.max(-m,-m-r)+1)}
+function lst(a){return a.length<2?a.join(""):a.slice(0,-1).join(", ")+" and "+a[a.length-1]}
+function remRule(){return RM==="any"?"any single stone (yours or your opponent's)":RM==="opp"?"a single opponent stone":"a single stone of your own"}
+var GAME={
+  title:"Accumulation",
+  subtitle:"Slide your groups together, or remove a stone. When both players pass, the largest connected group wins.",
+  rules:function(){return[
+  {h:"Board and players",items:["Played on a hexhex board of size 5 (61 cells).",
+    "The players are Teal and Coral. Each starts with nine stones, spread out so that no two stones touch (see the starting position).",
+    "A group is a chain of one or more connected stones of the same colour."]},
+  {h:"A turn",items:["On your turn, do one of the following:",
+    "Slide one of your groups, as a whole, one step in one of the six directions. Every stone of the group moves one cell the same way, and every destination cell must be empty (or vacated by the group itself). After the slide the group may join other stones of yours.",
+    "Remove "+remRule()+".",
+    "Pass."]},
+  {h:"End",items:["The game ends when both players pass in a row.",
+    "The winner is the player with the largest connected group. If the largest groups are the same size, the player who first had a group of that size wins.",
+    "Implementation notes: Teal moves first. You may only slide your own groups. The computer passes once the groups have not changed for 20 turns. Both players start with groups of size 1, so if the game ends with both largest groups at size 1 (or no stones at all), it is a draw."]}]},
+  describe:function(s){var l=s.lm,who,k,mine;if(!l)return"";
+    who=isAI()?pname(l.c)+" ("+NAMES[l.c]+")":NAMES[l.c];
+    if(l.t==="p")return who+" passed.";
+    if(l.t==="r"){mine=l.col===l.c+1;
+      return who+" removed "+(mine?(pname(l.c)==="You"?"one of your own stones":"one of their own stones"):"a "+NAMES[l.col-1]+" stone")+" at "+cn(l.cell)+"."}
+    k=s.G.sz[s.G.gid[l.to[0]]];
+    return who+" slid "+(l.from.length>1?"a group of "+l.from.length+" stones":"a stone")+" "+DIRN[l.d]+" (from "+lst(l.from.map(cn))+")"+(k>l.from.length?", forming a group of "+k:"")+"."}
+};
+function canRemove(p,v){return RM==="any"||(RM==="own")===(v===p)}
+// connected groups of b
+function groups(b){var gid=new Int32Array(NC).fill(-1),G={gid:gid,sz:[],col:[],cells:[],mx:[0,0],cnt:[0,0],ss:[0,0]},c,i,j,n,nb,q,p,k;
+  for(c=0;c<NC;c++){if(!b[c]||gid[c]>=0)continue;p=b[c];k=G.sz.length;q=[c];gid[c]=k;
+    for(i=0;i<q.length;i++){nb=NB[q[i]];for(j=0;j<nb.length;j++){n=nb[j];if(b[n]===p&&gid[n]<0){gid[n]=k;q.push(n)}}}
+    G.sz.push(q.length);G.col.push(p);G.cells.push(q);p--;G.cnt[p]+=q.length;G.ss[p]+=q.length*q.length;if(q.length>G.mx[p])G.mx[p]=q.length}
+  return G}
+// can group k slide one step in direction d?
+function slideOK(b,G,k,d){var cs=G.cells[k],i,n;
+  for(i=0;i<cs.length;i++){n=STEP[cs[i]][d];if(n<0||(b[n]&&G.gid[n]!==k))return false}
+  return true}
+function gen(s){var p=s.turn+1,b=s.b,G=s.G,ms=[{t:"p"}],k,d,c;
+  for(k=0;k<G.sz.length;k++)if(G.col[k]===p)for(d=0;d<6;d++)if(slideOK(b,G,k,d))ms.push({t:"s",cells:G.cells[k],d:d});
+  for(c=0;c<NC;c++)if(b[c]&&canRemove(p,b[c]))ms.push({t:"r",c:c});
+  return ms}
+function legalDirs(s,c){var G=s.G,k=G.gid[c],r=[],d;for(d=0;d<6;d++)if(slideOK(s.b,G,k,d))r.push(d);return r}
+function track(st,fa){var i,j;for(i=0;i<2;i++)for(j=0;j<=st.mx[i];j++)if(fa[i][j]<0)fa[i][j]=st.ply}
+// winner if the game ended now: larger group, else whoever reached that size first
+function winner(s){var a=s.mx[0],c=s.mx[1],x,y;if(a!==c)return a>c?0:1;x=s.fa[0][a];y=s.fa[1][a];return x<y?0:y<x?1:2}
+function sig(s){return s.mx.join()+"/"+s.cnt.join()+"/"+s.ss.join()}
+function mkState(b,turn,ply,passes,fa,lm,prev){var G=groups(b),s={b:b,turn:turn,ply:ply,passes:passes,G:G,mx:G.mx,cnt:G.cnt,ss:G.ss,fa:fa,end:false,w:-1,lm:lm,since:ply};
+  if(prev&&sig(prev)===sig(s))s.since=prev.since;   // since: last ply at which the group structure changed
+  track(s,fa);if(passes>=2){s.end=true;s.w=winner(s)}return s}
+function newGame(){var b=new Uint8Array(NC),r,j,ch,c=0,fa=[new Int32Array(NC+1).fill(-1),new Int32Array(NC+1).fill(-1)];
+  for(r=0;r<SETUP.length;r++)for(j=0;j<SETUP[r].length;j++,c++){ch=SETUP[r][j];if(ch==="x")b[c]=1;else if(ch==="o")b[c]=2}
+  return mkState(b,0,0,0,fa,null)}
+function apply(s,m){var p=s.turn+1,b=s.b.slice(),i,lm,to;
+  if(m.t==="s"){to=m.cells.map(function(c){return STEP[c][m.d]});
+    for(i=0;i<m.cells.length;i++)b[m.cells[i]]=0;for(i=0;i<to.length;i++)b[to[i]]=p;
+    lm={c:s.turn,t:"s",from:m.cells.slice(),to:to,d:m.d}}
+  else if(m.t==="r"){lm={c:s.turn,t:"r",cell:m.c,col:b[m.c]};b[m.c]=0}
+  else lm={c:s.turn,t:"p"};
+  return mkState(b,1-s.turn,s.ply+1,m.t==="p"?s.passes+1:0,[s.fa[0].slice(),s.fa[1].slice()],lm,s)}
+
+/* ================================ 2. ENGINE ================================ */
+/* Evaluation for the player to move: largest group (dominant), sum of squared group sizes (consolidation), stone count,
+   compactness (distance of stones to their centroid), and the first-reached tiebreak when largest groups are equal.
+   Search: negamax with alpha-beta; finished games score +-1e6. Easy looks 1 move ahead with noise, Medium 2 moves,
+   Hard deepens iteratively within a time budget. A pass is preferred over moves that gain nothing, and the computer
+   passes when no group has formed, split or lost a stone for STALE turns (otherwise it could shuffle forever). */
+function rn(n){return Math.floor(Math.random()*n)}
+function spread(b,p){var c,n=0,sx=0,sy=0,t=0;for(c=0;c<NC;c++)if(b[c]===p){n++;sx+=X(c);sy+=Y(c)}
+  if(n<2)return 0;sx/=n;sy/=n;for(c=0;c<NC;c++)if(b[c]===p)t+=Math.hypot(X(c)-sx,Y(c)-sy);return t}
+function ev(s){var t=s.turn,o=1-t,v,w;
+  v=12*(s.mx[t]-s.mx[o])+.25*(s.ss[t]-s.ss[o])+3*(s.cnt[t]-s.cnt[o])-.12*(spread(s.b,t+1)-spread(s.b,o+1));
+  if(s.mx[t]===s.mx[o]){w=winner(s);if(w===t)v+=4;else if(w===o)v-=4}
+  return v}
+function term(s){return s.w===s.turn?1e6-s.ply:s.w===2?0:-1e6+s.ply}
+var NODES=0,DEAD=0,ABORT={},STALE=20;
+function order(ch,d){var o=ch.map(function(_,i){return i}),e;
+  if(d>1){e=ch.map(function(c){return c.end?term(c):ev(c)});o.sort(function(x,y){return e[x]-e[y]})}
+  return o}
+function nm(s,d,a,bt){var ms,ch,o,i,v,best=-1e9;
+  if(s.end)return term(s);
+  if(d<=0)return ev(s);
+  if((++NODES&127)===0&&DEAD&&Date.now()>DEAD)throw ABORT;
+  ms=gen(s);ch=ms.map(function(m){return apply(s,m)});o=order(ch,d);
+  for(i=0;i<o.length;i++){v=-nm(ch[o[i]],d-1,-bt,-a);if(v>best){best=v;if(v>a){a=v;if(a>=bt)break}}}
+  return best}
+function search(s,d,noise){var ms=gen(s),ch=ms.map(function(m){return apply(s,m)}),o=order(ch,2),i,v,best=-1e9,bi=0;
+  for(i=0;i<o.length;i++){
+    v=-nm(ch[o[i]],d-1,-1e9,noise?1e9:-(best-.1))+(ms[o[i]].t==="p"?.05:0)+Math.random()*noise;
+    if(v>best){best=v;bi=o[i]}}
+  return ms[bi]}
+function aiMove(s,lv){var ms,nn,best,d;
+  if(lv===undefined)lv=+$("level").value;
+  if(lv<1){ms=gen(s);nn=ms.filter(function(m){return m.t!=="p"});return nn.length?nn[rn(nn.length)]:ms[0]}
+  if(s.ply-s.since>=STALE)return{t:"p"};
+  if(lv===1)return search(s,1,6);
+  if(lv===2)return search(s,2,.02);
+  best=search(s,2,0);DEAD=Date.now()+(sim?150:700);NODES=0;
+  try{for(d=3;d<=8;d++){best=search(s,d,0);if(Date.now()>DEAD)break}}catch(e){if(e!==ABORT)throw e}
+  DEAD=0;return best}
+var sim=null;
+function runSim(){
+  if(sim){sim.stop=true;return}
+  var CAP=300,me=sim={stop:false},TOTAL=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?2:+$("simR").value)),
+      done=0,wc=[0,0,0],un=0,g=null,plies=0,len=0,lvName=$("level").options[$("level").selectedIndex].text,
+      ids=["size","mode","side","level","new","undo","redo","back","end","simN","simR"];
+  ids.forEach(function(i){$(i).disabled=true});
+  $("sim").textContent="Stop simulation";
+  $("simout").textContent="Simulating at "+lvName+" level… 0/"+TOTAL;
+  function fin(stopped){
+    sim=null;$("sim").textContent="Simulation";
+    $("size").disabled=$("mode").disabled=$("new").disabled=$("simN").disabled=$("simR").disabled=false;
+    $("level").disabled=$("side").disabled=$("mode").value==="2p";
+    var pc=function(n){return done?(100*n/done).toFixed(1)+"%":"n/a"};
+    $("simout").textContent=(stopped?"Stopped after ":"")+done+" games ("+lvName+" level, computer vs computer), first "+RND+" turns random.\nTeal (first player) won "+pc(wc[0])+", Coral won "+pc(wc[1])+(wc[2]?", draws "+pc(wc[2]):"")+". Average length: "+(done?(len/done).toFixed(0):"n/a")+" turns."+(un?" Unfinished (over "+CAP+" turns): "+un+".":"");
+    render()}
+  function step(){
+    if(me.stop){fin(true);return}
+    var t0=Date.now();
+    while(Date.now()-t0<40){
+      if(!g){g=newGame();plies=0}
+      if(g.end||plies>=CAP){if(g.end)wc[g.w]++;else un++;len+=plies;done++;g=null;if(done>=TOTAL){fin(false);return}continue}
+      g=apply(g,aiMove(g,plies<RND?0:undefined));plies++}
+    $("simout").textContent="Simulating at "+lvName+" level… "+done+"/"+TOTAL;
+    setTimeout(step,0)}
+  step()}
+
+/* =============================== 3. INTERFACE =============================== */
+var S3=Math.sqrt(3),HH=S3/2,RS=1/S3,
+    V=[[0,-RS],[.5,-RS/2],[.5,RS/2],[0,RS],[-.5,RS/2],[-.5,-RS/2]];
+var hist,redo=[],over,busy,note="",pend;
+function fresh(){return{sel:-1}}
+function cur(){return hist[hist.length-1]}
+function hc(){return+$("side").value}
+function isAI(){return $("mode").value==="ai"}
+function isHuman(s){return!isAI()||s.turn===hc()}
+function pname(c){return isAI()?(c===hc()?"You":"Computer"):NAMES[c]}
+function pverb(c,a,b){return pname(c)==="You"?b:a}
+function start(){hist=[newGame()];redo=[];note="";pend=fresh();$("level").disabled=$("side").disabled=!isAI();over=false;busy=false;
+  $("rules").innerHTML=GAME.rules().map(function(sec){return"<li><b>"+sec.h+"</b><ul>"+sec.items.map(li).join("")+"</ul></li>"}).join("");
+  render();maybeAI()}
+function X(c){return Q[c]+R[c]/2}
+function Y(c){return R[c]*HH}
+function f3(v){return Math.round(v*1000)/1000}
+function hexPts(x,y){return V.map(function(v){return f3(x+v[0])+","+f3(y+v[1])}).join(" ")}
+function ring(c,r,clr,w,dash){return'<circle cx="'+f3(X(c))+'" cy="'+f3(Y(c))+'" r="'+r+'" fill="none" stroke="'+clr+'" stroke-width="'+w+'"'+(dash?' stroke-dasharray="'+dash+'"':'')+' pointer-events="none"/>'}
+function stone(c,v){return'<circle cx="'+f3(X(c))+'" cy="'+f3(Y(c))+'" r=".38" fill="'+FILL[v-1]+'" stroke="'+EDGE[v-1]+'" stroke-width=".045" pointer-events="none"/>'}
+function txt(x,y,t,sz,clr,w){return'<text x="'+f3(x)+'" y="'+f3(y)+'" font-size="'+sz+'" text-anchor="middle" dominant-baseline="central" fill="'+clr+'"'+(w?' font-weight="700"':'')+' pointer-events="none">'+t+'</text>'}
+function arrow(cs,d){var bc=cs[0],bv=-1e9,ux=DQ[d]+DR[d]/2,uy=DR[d]*HH,cx,cy;
+  cs.forEach(function(c){var v=X(c)*ux+Y(c)*uy;if(v>bv+1e-9){bv=v;bc=c}});
+  cx=X(bc)+.64*ux;cy=Y(bc)+.64*uy;
+  return'<g data-dir="'+d+'" transform="translate('+f3(cx)+','+f3(cy)+') rotate('+f3(Math.atan2(uy,ux)*180/Math.PI)+')"><title>Slide '+DIRN[d]+'</title>'+
+    '<circle r=".25" fill="var(--panel)" stroke="var(--hi)" stroke-width=".05"/><path d="M.15,0 L-.09,.13 L-.09,-.13Z" fill="var(--hi)"/></g>'}
+function hint(){return" Select one of your groups to slide it"+
+  (RM==="own"?", select a stone and press Remove selected stone":RM==="opp"?", click an opponent stone to remove it":", click an opponent stone to remove it (or select one of yours and press Remove selected stone)")+", or Pass."}
+function render(){
+  var s=cur(),b=s.b,G=s.G,g=[],c,i,l=s.lm,p=s.turn+1,hu,m=NS-1,k,sg=-1,dirs=[],stt,w,ng,
+      x0=-m-1.6,wd=2*m+3.2,y0=-m*HH-.9,h=2*m*HH+1.8;
+  over=s.end;hu=isHuman(s)&&!over&&!busy&&!sim;
+  if(!hu||pend.sel<0||b[pend.sel]!==p)pend.sel=-1;
+  if(pend.sel>=0){sg=G.gid[pend.sel];dirs=legalDirs(s,pend.sel)}
+  g.push('<svg viewBox="'+f3(x0)+' '+f3(y0)+' '+f3(wd)+' '+f3(h)+'" role="img" aria-label="Accumulation board" font-family="system-ui,sans-serif">');
+  for(c=0;c<NC;c++)g.push('<polygon data-i="'+c+'" points="'+hexPts(X(c),Y(c))+'" fill="var(--cell)" stroke="var(--grid)" stroke-width=".04"/>');
+  for(i=0;i<NC;i++){if(i&&R[i]===R[i-1])continue;k=i;while(k+1<NC&&R[k+1]===R[i])k++;
+    var L=String.fromCharCode(97+R[i]+m);
+    g.push(txt(X(i)-.95,Y(i),L,.34,"var(--mute)"),txt(X(k)+.95,Y(k),L,.34,"var(--mute)"))}
+  for(c=0;c<NC;c++)if(b[c])g.push(stone(c,b[c]));
+  if($("ctl").checked)for(c=0;c<NC;c++)if(b[c]&&G.sz[G.gid[c]]>1)g.push(txt(X(c),Y(c)+.01,G.sz[G.gid[c]],.36,"#fff",1));
+  if(l&&sg<0){if(l.t==="s")l.to.forEach(function(c){g.push(ring(c,.45,"var(--ink)",.06))});
+    else if(l.t==="r")g.push(ring(l.cell,.36,"var(--ink)",.05,".12 .09"))}
+  if(sg>=0){G.cells[sg].forEach(function(c){g.push(ring(c,.45,"var(--hi)",c===pend.sel?.11:.06))});
+    dirs.forEach(function(d){g.push(arrow(G.cells[sg],d))})}
+  $("board").innerHTML=g.join("")+'</svg>';
+  for(i=0;i<2;i++){$("p"+i).className="pl"+(!over&&s.turn===i?" on":"");
+    $("p"+i).style.borderLeft="8px solid "+FILL[i];
+    ng=G.col.filter(function(x){return x===i+1}).length;
+    $("n"+i).textContent=pname(i)+" – "+NAMES[i]+": largest group "+s.mx[i];
+    $("s"+i).textContent=s.cnt[i]+" stone"+(s.cnt[i]===1?"":"s")+" in "+ng+" group"+(ng===1?"":"s")+
+      (s.mx[i]?"; size "+s.mx[i]+" first reached "+(s.fa[i][s.mx[i]]?"on turn "+s.fa[i][s.mx[i]]:"at the start"):"")}
+  if(over){stt="Both passed. Largest groups: Teal "+s.mx[0]+", Coral "+s.mx[1]+". "+(s.w===2?"It's a draw.":"Game over: "+pname(s.w)+(isAI()?" ("+NAMES[s.w]+")":"")+" "+pverb(s.w,"wins","win")+(s.mx[0]===s.mx[1]?", having reached size "+s.mx[0]+" first.":"."))}
+  else{
+    stt=isHuman(s)?(isAI()?"Your turn ("+NAMES[s.turn]+").":NAMES[s.turn]+" to move."):"The computer is thinking…";
+    if(hu){
+      if(sg>=0)stt+=" Group of "+G.sz[sg]+" selected: "+(dirs.length?"click an arrow to slide it":"it can't slide")+(canRemove(p,p)?", or press Remove selected stone":"")+". Click the stone again to deselect.";
+      else stt+=hint();
+      if(s.passes===1){w=winner(s);stt+=" "+pname(1-s.turn)+" passed: passing now ends the game – "+(w===2?"a draw.":pname(w)+" "+pverb(w,"wins.","win."))}}}
+  if(note)stt+=" "+note;
+  $("status").textContent=stt;
+  $("last").textContent=GAME.describe(s);
+  $("undo").disabled=hist.length<2||busy||!!sim;
+  $("redo").disabled=!redo.length||busy||!!sim;
+  $("back").disabled=!hu||sg<0||!canRemove(p,p);
+  $("end").disabled=!hu}
+function play(m){var ns=apply(cur(),m);hist.push(ns);redo=[];note="";pend=fresh();render();maybeAI()}
+function slide(d){var G=cur().G;if(pend.sel<0)return;play({t:"s",cells:G.cells[G.gid[pend.sel]].slice(),d:d})}
+function click(i){
+  var s=cur(),p=s.turn+1,b=s.b,G=s.G,ds;
+  if(over||busy||sim||!isHuman(s))return;
+  note="";
+  if(!b[i]){
+    if(pend.sel<0){note="Click one of your stones to select its group.";render();return}
+    ds=legalDirs(s,pend.sel).filter(function(d){return G.cells[G.gid[pend.sel]].some(function(c){return STEP[c][d]===i})});
+    if(ds.length===1){slide(ds[0]);return}
+    note=ds.length?"More than one direction leads there: click an arrow.":"The selected group can't slide there.";render();return}
+  if(b[i]===p){pend.sel=pend.sel===i?-1:i;
+    if(pend.sel>=0&&!legalDirs(s,i).length)note="This group is blocked in every direction.";
+    render();return}
+  if(canRemove(p,b[i])){play({t:"r",c:i});return}
+  note="You can only remove your own stones.";render()}
+function maybeAI(){
+  var s=cur();if(over||!isAI()||isHuman(s))return;
+  busy=true;render();
+  setTimeout(function(){var c=cur(),ns=apply(c,aiMove(c));busy=false;hist.push(ns);render();maybeAI()},60)}
+function li(x){return"<li>"+x+"</li>"}
+document.title=GAME.title;$("gtitle").textContent=GAME.title;$("gsub").textContent=GAME.subtitle;
+$("board").onclick=function(e){var t=e.target.closest("[data-dir]");if(t){if(!over&&!busy&&!sim)slide(+t.getAttribute("data-dir"));return}
+  t=e.target.closest("[data-i]");if(t)click(+t.getAttribute("data-i"))};
+$("new").onclick=start;$("sim").onclick=runSim;
+$("back").onclick=function(){var s=cur();if(!$("back").disabled&&pend.sel>=0)play({t:"r",c:pend.sel})};
+$("end").onclick=function(){if(!$("end").disabled)play({t:"p"})};
+$("ctl").onchange=render;
+$("size").onchange=function(){setN(+$("size").value);start()};
+$("mode").onchange=$("side").onchange=start;
+$("redo").onclick=function(){
+  if(busy||!redo.length)return;
+  hist.push(redo.pop());
+  while(isAI()&&redo.length&&!isHuman(cur()))hist.push(redo.pop());
+  pend=fresh();note="";render();maybeAI()};
+$("undo").onclick=function(){
+  if(busy||hist.length<2)return;
+  var tmp=[];
+  tmp.push(hist.pop());
+  while(isAI()&&hist.length>1&&!isHuman(cur()))tmp.push(hist.pop());
+  if(!isHuman(cur())&&isAI()){while(tmp.length)hist.push(tmp.pop());return}
+  tmp.forEach(function(x){redo.push(x)});
+  over=false;pend=fresh();note="";render()};
+setN(5);start();
+})();
+</script>
+</body>
+</html>
