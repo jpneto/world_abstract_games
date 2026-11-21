@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Iqishiqi</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
+<style>
+:root{--bg:#eef0e6;--ink:#1f2a1c;--mute:#5d6a56;--cell:#dfe3cf;--edge:#b9bfa3;--hi:#e0803a;--panel:#fff;--line:#c5cab4;--wood:#dcb875;--cell:#e6e9d6;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f;--wood:#9a7b45}}
+:root[data-theme="dark"]{--wood:#9a7b45;--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f}
+[hidden]{display:none!important}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+main{max-width:1080px;margin:0 auto;padding:16px 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.right>.bar:first-child{margin-top:0}
+@media (min-width:860px){.layout{grid-template-columns:minmax(0,640px) minmax(300px,1fr);gap:28px;align-items:start}}
+h1{font:700 2rem/1.1 "Bricolage Grotesque",Georgia,serif;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+select,button.ctl{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.ctl:disabled,select:disabled,input:disabled{opacity:.45;cursor:default}
+label.f{color:var(--mute);font-size:.9rem}
+label.chk{display:flex;gap:6px;align-items:center;cursor:pointer;font-size:.95rem}
+input[type=number]{width:4.5em;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+button.ctl.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button.ctl.on{background:var(--hi);border-color:var(--hi);color:#fff}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.pl{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:8px 12px;display:flex;justify-content:space-between;align-items:baseline}
+.pl.on{border-color:var(--hi)}
+#status{min-height:3em;font-weight:600;margin:6px 0}
+#board svg{display:block;width:100%;max-width:640px;margin:0 auto;touch-action:manipulation}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+details li{margin:4px 0}
+.legend{color:var(--mute);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+<h1 id="gtitle"></h1>
+<p class="sub" id="gsub"></p>
+<div class="layout">
+<div class="left">
+<div id="board"></div>
+<p class="legend">Click an empty cell to drop a stone; small dots mark legal cells. If the same stone can push the ball in several directions, the possible landing cells are ringed and you click the one you want. The last stone has a dark dot and the ball&rsquo;s last path is dashed.</p>
+</div>
+<aside class="right">
+<div class="bar">
+  <select id="mode" aria-label="Mode"><option value="ai">Play the computer</option><option value="2p">Two players</option></select>
+  <select id="level" aria-label="Computer strength"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select>
+  <select id="side" aria-label="Your colour"><option value="0">You play Red (first)</option><option value="1">You play Blue</option></select>
+</div>
+<div class="bar">
+  <button class="ctl primary" id="new">New game</button>
+  <button class="ctl" id="undo">Undo</button>
+  <button class="ctl" id="redo">Redo</button>
+</div>
+<div class="score"><div class="pl" id="p0"><span id="n0"></span></div><div class="pl" id="p1"><span id="n1"></span></div></div>
+<div id="status" aria-live="polite"></div>
+<div id="last" class="legend" style="min-height:2.6em;margin:0 0 8px"></div>
+<div class="bar">
+  <label class="f">Simulation games <input id="simN" type="number" min="10" max="1000" value="10"></label>
+  <label class="f">Random opening moves <input id="simR" type="number" min="0" max="20" value="2"></label>
+  <button class="ctl" id="sim">Simulation</button>
+</div>
+<div id="simout" class="legend" style="white-space:pre-line;margin:0 0 8px"></div>
+<details><summary>Rules</summary><ul id="rules"></ul></details>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+/* =====================================================================
+   1. GAME DEFINITION  - Iqishiqi rules and move generation
+   2. ENGINE           - alpha-beta computer opponent, simulations
+   3. INTERFACE        - SVG hexhex8 board, click handling (choice of ball direction), controls
+   A state is {st: stones (Uint8Array over a 15x15 axial grid, 1 = stone), ball: cell of the ball, turn: 0 Red / 1 Blue,
+               w: winner (0, 1) or -1, stuck: true if the winner won because the opponent had no legal move, lm: last move}.
+   A move is {a: cell for the new stone, to: landing cell of the ball, n: size of the group}.
+   ===================================================================== */
+var $=function(i){return document.getElementById(i)};
+
+/* ============================ 1. GAME DEFINITION ============================ */
+var R=7,DQ=[1,1,0,-1,-1,0],DR=[0,-1,-1,0,1,1],VALID=new Uint8Array(225),CELLS=[],NB=[],EDG=[],Q=[],RR=[],MARK=new Int32Array(225),STC=0;
+function idOf(q,r){return(Math.max(Math.abs(q),Math.abs(r),Math.abs(q+r))<=R)?(q+R)*15+(r+R):-1}
+(function(){
+  var q,r,id,d,k;
+  for(q=-R;q<=R;q++)for(r=-R;r<=R;r++){id=idOf(q,r);if(id>=0){VALID[id]=1;CELLS.push(id);Q[id]=q;RR[id]=r}}
+  CELLS.forEach(function(id){NB[id]=[];for(d=0;d<6;d++)NB[id][d]=idOf(Q[id]+DQ[d],RR[id]+DR[d]);
+    var q=Q[id],r=RR[id],e=[];
+    // side k: 0 q=7, 1 r=-7, 2 q+r=-7, 3 q=-7, 4 r=7, 5 q+r=7 ; Red owns even sides, Blue odd sides
+    if(q===R)e.push(0);if(r===-R)e.push(1);if(q+r===-R)e.push(2);if(q===-R)e.push(3);if(r===R)e.push(4);if(q+r===R)e.push(5);
+    EDG[id]=e});
+})();
+var CENTER=idOf(0,0),DIST=[[],[]];
+CELLS.forEach(function(a){[0,1].forEach(function(p){var m=99;CELLS.forEach(function(b){if(EDG[b].some(function(k){return k%2===p})){
+  var dq=Q[a]-Q[b],dr=RR[a]-RR[b],h=Math.max(Math.abs(dq),Math.abs(dr),Math.abs(dq+dr));if(h<m)m=h}});DIST[p][a]=m})});
+function cn(i){return String.fromCharCode(97+Q[i]+R)+(RR[i]+R+1)}
+var GAME={
+  title:"Iqishiqi",
+  subtitle:"Push the neutral ball to your edges on a hexhex8 board, one growing group of stones at a time.",
+  sides:[{name:"Red",color:"#d33"},{name:"Blue",color:"#2a62d6"}],
+  rules:[
+  {h:"Board and goal",items:[
+    "Played on a hexagonal board with 8 cells per side (hexhex8). A neutral magenta stone, the ball, starts in the centre. Apart from the ball there is only one kind of stone (light yellow), shared by both players.",
+    "Red owns three non-adjacent edges and Blue owns the other three, as drawn by the coloured outlines. A corner cell belongs to both of its edges, so its outline is half red and half blue.",
+    "A player wins if the ball reaches one of their edges (even if the opponent made the move). If the ball reaches a corner, the player who just moved wins. A player who cannot make a legal move on their turn loses. Red moves first."]},
+  {h:"A turn",items:[
+    "Drop one stone on an empty cell. The new stone becomes part of a group (connected stones, any number) of N \u2265 1 stones.",
+    "The move is legal only if at least one stone of that group is in line of sight with the ball (along one of the six hex directions, with no stone in between) and, on the opposite side of the ball, there are at least N empty cells in the same line.",
+    "Then the ball moves exactly N cells away from that stone. If several stones or directions are valid, the player chooses which push to make.",
+    "Stones are never moved or removed."]}],
+  describe:function(s){var l=s.lm;if(!l)return"";
+    var t=pname(l.c)+" dropped a stone on "+cn(l.a)+" (group of "+l.n+"), and the ball moved "+l.n+" cell"+(l.n>1?"s":"")+" from "+cn(l.from)+" to "+cn(l.to)+".";
+    if(s.w>=0&&!s.stuck){var e=EDG[l.to];t+=e.length>1?" The ball reached a corner.":" The ball reached a "+GAME.sides[s.w].name+" edge."}
+    return t}
+};
+function newGame(){var st=new Uint8Array(225);return{st:st,ball:CENTER,turn:0,w:-1,stuck:false,lm:null,mv:null}}
+// all legal moves of state s (cached): one entry per (cell, push direction)
+function moves(s){
+  if(s.mv)return s.mv;
+  var st=s.st,ball=s.ball,out=[],i,c,d,j,x,y,n,stack,stamp,pd,ok;
+  for(i=0;i<CELLS.length;i++){c=CELLS[i];if(st[c]||c===ball)continue;
+    st[c]=1;stamp=++STC;stack=[c];MARK[c]=stamp;n=0;
+    while(stack.length){x=stack.pop();n++;for(d=0;d<6;d++){y=NB[x][d];if(y>=0&&st[y]&&MARK[y]!==stamp){MARK[y]=stamp;stack.push(y)}}}
+    for(d=0;d<6;d++){x=NB[ball][d];while(x>=0&&!st[x])x=NB[x][d];
+      if(x>=0&&MARK[x]===stamp){pd=(d+3)%6;y=ball;ok=true;
+        for(j=0;j<n;j++){y=NB[y][pd];if(y<0||st[y]){ok=false;break}}
+        if(ok)out.push({a:c,to:y,n:n})}}
+    st[c]=0}
+  return s.mv=out}
+function apply(s,m){
+  var st=s.st.slice();st[m.a]=1;
+  var ns={st:st,ball:m.to,turn:1-s.turn,w:-1,stuck:false,lm:{c:s.turn,a:m.a,from:s.ball,to:m.to,n:m.n},mv:null},e=EDG[m.to];
+  if(e.length)ns.w=e.length>1?s.turn:e[0]%2;
+  return ns}
+// a player without a legal move loses
+function settle(ns){if(ns.w<0&&!moves(ns).length){ns.w=1-ns.turn;ns.stuck=true}return ns}
+
+/* ================================ 2. ENGINE ================================ */
+/* Negamax with alpha-beta. Evaluation: (distance of the ball to the opponent's nearest edge) minus (distance to mine).
+   Moves are ordered by that evaluation after the move and only the best K are searched at inner nodes.
+   Easy: win if possible, otherwise a random move that does not hand the opponent the win at once.
+   Medium: depth 3. Hard: depth 5. */
+function rn(n){return Math.floor(Math.random()*n)}
+function ev(b,p){return DIST[1-p][b]-DIST[p][b]}
+function stat(m,p){var e=EDG[m.to];if(e.length)return(e.length>1||e[0]%2===p)?1e5:-1e5;return ev(m.to,p)+Math.random()*.3}
+function ranked(s){var p=s.turn;return moves(s).map(function(m){return{m:m,v:stat(m,p)}}).sort(function(a,b){return b.v-a.v})}
+function nm(s,d,al,be,K){
+  var mv=moves(s);if(!mv.length)return -1e5-d;
+  if(d===0)return ev(s.ball,s.turn);
+  var sc=ranked(s),best=-1e9,i,v;
+  if(sc[0].v>=1e5)return 1e5+d;
+  sc=sc.filter(function(x){return x.v>-1e5});if(!sc.length)return -1e5-d;
+  sc=sc.slice(0,K);
+  for(i=0;i<sc.length;i++){v=-nm(apply(s,sc[i].m),d-1,-be,-al,K);if(v>best)best=v;if(v>al)al=v;if(al>=be)break}
+  return best}
+function aiMove(s){
+  var lv=+$("level").value,sc=ranked(s),i,v,best=-1e9,pick=null;
+  if(sc[0].v>=1e5)return sc[0].m;
+  var safe=sc.filter(function(x){return x.v>-1e5});if(!safe.length)return sc[0].m;
+  if(lv===1)return safe[rn(safe.length)].m;
+  var D=lv===2?3:5,K=lv===2?8:6;
+  safe.slice(0,lv===2?12:10).forEach(function(x){
+    v=-nm(apply(s,x.m),D-1,-1e9,-best,K)+Math.random()*.01;if(v>best){best=v;pick=x.m}});
+  return pick}
+var sim=null;
+function runSim(){   // computer vs computer, to look for first/second-player advantage
+  if(sim){sim.stop=true;return}
+  var CAP=400,me=sim={stop:false},TOTAL=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?2:+$("simR").value)),
+      done=0,wins=[0,0],un=0,g=null,plies=0,len=0,lvName=$("level").options[$("level").selectedIndex].text,
+      ids=["mode","side","level","new","undo","redo","simN","simR"];
+  ids.forEach(function(i){$(i).disabled=true});
+  $("sim").textContent="Stop simulation";
+  $("simout").textContent="Simulating at "+lvName+" level\u2026 0/"+TOTAL;
+  function fin(stopped){
+    sim=null;$("sim").textContent="Simulation";
+    $("mode").disabled=$("new").disabled=$("simN").disabled=$("simR").disabled=false;
+    $("level").disabled=$("side").disabled=$("mode").value==="2p";
+    var pc=function(n){return done?(100*n/done).toFixed(1)+"%":"n/a"};
+    $("simout").textContent=(stopped?"Stopped after ":"")+done+" games at "+lvName+" level (computer vs computer), first "+RND+" moves random.\nRed won "+pc(wins[0])+", Blue won "+pc(wins[1])+". Average game length: "+(done?(len/done).toFixed(0):"n/a")+" turns."+(un?" Unfinished (stopped at "+CAP+" turns): "+un+".":"");
+    render()}
+  function step(){
+    if(me.stop){fin(true);return}
+    var t0=Date.now(),ms;
+    while(Date.now()-t0<40){
+      if(!g){g=newGame();plies=0}
+      if(g.w>=0||plies>=CAP){if(g.w>=0)wins[g.w]++;else un++;len+=plies;done++;g=null;if(done>=TOTAL){fin(false);return}continue}
+      if(plies<RND){ms=moves(g);g=settle(apply(g,ms[rn(ms.length)]))}else g=settle(apply(g,aiMove(g)));
+      plies++}
+    $("simout").textContent="Simulating at "+lvName+" level\u2026 "+done+"/"+TOTAL;
+    setTimeout(step,0)}
+  step()}
+
+/* =============================== 3. INTERFACE =============================== */
+var hist,redo=[],over,busy,note="",pend=-1,popts=[];
+function cur(){return hist[hist.length-1]}
+function hc(){return+$("side").value}
+function isAI(){return $("mode").value==="ai"}
+function isHuman(s){return!isAI()||s.turn===hc()}
+function pname(c){return isAI()?(c===hc()?"You":"Computer"):GAME.sides[c].name}
+function pverb(c,a,b){return pname(c)==="You"?b:a}
+function start(){
+  hist=[newGame()];redo=[];note="";pend=-1;$("level").disabled=$("side").disabled=!isAI();over=false;busy=false;
+  render();maybeAI()}
+var SQ=Math.sqrt(3);
+function X(i){return SQ*(Q[i]+RR[i]/2)}
+function Y(i){return 1.5*RR[i]}
+function pt(i,a,sz){var t=a*Math.PI/180;return(X(i)+sz*Math.cos(t)).toFixed(3)+","+(Y(i)+sz*Math.sin(t)).toFixed(3)}
+function hexPts(i,sz){var p=[];for(var k=0;k<6;k++)p.push(pt(i,30+60*k,sz));return p.join(" ")}
+function sideLine(i,j,col){return'<path d="M'+pt(i,-60*j-30,.88)+'L'+pt(i,-60*j+30,.88)+'" stroke="'+col+'" stroke-width=".14" stroke-linecap="round" fill="none"/>'}
+function edgeOutline(i){
+  var e=EDG[i],o=[],j,k;if(!e.length)return"";
+  if(e.length===1){for(j=0;j<6;j++)o.push(sideLine(i,j,GAME.sides[e[0]%2].color));return o.join("")}
+  k=(e[0]===0&&e[1]===5)?0:e[0];   // corner at direction k joins sides k-1 and k
+  for(j=0;j<6;j++)o.push(sideLine(i,j,GAME.sides[((j-k+6)%6<3?k:(k+5)%6)%2].color));
+  return o.join("")}
+function render(){
+  var s=cur(),i,g=['<svg viewBox="-13.4 -11.8 26.8 23.6" role="img" aria-label="Iqishiqi board">'];
+  over=s.w>=0;
+  var hu=isHuman(s)&&!over&&!busy&&!sim;
+  if(pend>=0&&!hu){pend=-1}
+  CELLS.forEach(function(c){g.push('<polygon data-i="'+c+'" points="'+hexPts(c,.97)+'" fill="var(--cell)" stroke="var(--edge)" stroke-width=".06"/>')});
+  CELLS.forEach(function(c){g.push(edgeOutline(c))});
+  var l=s.lm;
+  if(l)g.push('<path d="M'+X(l.from)+' '+Y(l.from)+'L'+X(l.to)+' '+Y(l.to)+'" stroke="#a0147a" stroke-width=".12" stroke-dasharray=".25 .25" fill="none" pointer-events="none"/>');
+  CELLS.forEach(function(c){if(s.st[c])g.push('<circle cx="'+X(c)+'" cy="'+Y(c)+'" r=".62" fill="#f7ec9a" stroke="#a8982f" stroke-width=".07" pointer-events="none"/>')});
+  if(l)g.push('<circle cx="'+X(l.a)+'" cy="'+Y(l.a)+'" r=".14" fill="#333" pointer-events="none"/>');
+  g.push('<circle cx="'+X(s.ball)+'" cy="'+Y(s.ball)+'" r=".6" fill="#d0209a" stroke="#6e0f55" stroke-width=".07" pointer-events="none"/><circle cx="'+(X(s.ball)-.2)+'" cy="'+(Y(s.ball)-.2)+'" r=".14" fill="#fff" opacity=".5" pointer-events="none"/>');
+  if(hu&&pend<0)moves(s).forEach(function(m,k,arr){if(!k||arr[k-1].a!==m.a)g.push('<circle cx="'+X(m.a)+'" cy="'+Y(m.a)+'" r=".11" fill="var(--mute)" opacity=".45" pointer-events="none"/>')});
+  if(pend>=0){
+    g.push('<circle cx="'+X(pend)+'" cy="'+Y(pend)+'" r=".62" fill="#f7ec9a" opacity=".55" stroke="var(--hi)" stroke-width=".1" pointer-events="none"/>');
+    popts.forEach(function(m){g.push('<circle cx="'+X(m.to)+'" cy="'+Y(m.to)+'" r=".6" fill="#d0209a" opacity=".35" stroke="var(--hi)" stroke-width=".1" pointer-events="none"/>')})}
+  $("board").innerHTML=g.join("")+'</svg>';
+  var st,c;
+  for(i=0;i<2;i++){c=i;$("p"+i).className="pl"+(!over&&s.turn===c?" on":"");$("p"+i).style.borderLeft="8px solid "+GAME.sides[c].color;
+    $("n"+i).textContent=isAI()?pname(c)+" \u2013 "+GAME.sides[c].name:GAME.sides[c].name}
+  if(over)st=(s.stuck?pname(1-s.w)+" ("+GAME.sides[1-s.w].name+") "+pverb(1-s.w,"has","have")+" no legal move. ":"")+"Game over: "+pname(s.w)+" ("+GAME.sides[s.w].name+") "+pverb(s.w,"wins","win")+".";
+  else{
+    st=isHuman(s)?(isAI()?"Your move":GAME.sides[s.turn].name+" to move"):"The computer is thinking\u2026";
+    st+=" ("+GAME.sides[s.turn].name+").";
+    if(pend>=0)st+=" Click the ringed cell where the ball should go (or the stone again to cancel)."}
+  if(note)st+=" "+note;
+  $("status").textContent=st;
+  $("last").textContent=GAME.describe(s);
+  $("undo").disabled=hist.length<2||busy||!!sim;
+  $("redo").disabled=!redo.length||busy||!!sim}
+function play(m){var ns=settle(apply(cur(),m));hist.push(ns);redo=[];pend=-1;note="";render();maybeAI()}
+function click(i){
+  var s=cur();
+  if(over||busy||sim||!isHuman(s))return;
+  if(pend>=0){
+    if(i===pend){pend=-1;note="";render();return}
+    var o=popts.filter(function(m){return m.to===i})[0];
+    if(o){play(o);return}}
+  if(s.st[i]||i===s.ball){note=i===s.ball?"That is the ball.":"That cell is occupied.";pend=-1;render();return}
+  var ms=moves(s).filter(function(m){return m.a===i});
+  if(!ms.length){note="Illegal: no stone of the resulting group can push the ball (needs line of sight to the ball and as many empty cells beyond it as the group has stones).";pend=-1;render();return}
+  if(ms.length===1){play(ms[0]);return}
+  pend=i;popts=ms;note="";render()}
+function maybeAI(){
+  var s=cur();if(over||!isAI()||isHuman(s))return;
+  busy=true;render();
+  setTimeout(function(){var c=cur(),ns=settle(apply(c,aiMove(c)));busy=false;hist.push(ns);render();maybeAI()},60)}
+document.title=GAME.title;$("gtitle").textContent=GAME.title;$("gsub").textContent=GAME.subtitle;
+function li(x){return"<li>"+(typeof x==="string"?x:x.t+"<ul>"+x.sub.map(li).join("")+"</ul>")+"</li>"}
+$("rules").innerHTML=GAME.rules.map(function(sec){return"<li><b>"+sec.h+"</b><ul>"+sec.items.map(li).join("")+"</ul></li>"}).join("");
+$("board").onclick=function(e){var t=e.target.closest("[data-i]");if(t)click(+t.getAttribute("data-i"))};
+$("new").onclick=start;$("sim").onclick=runSim;
+$("mode").onchange=$("side").onchange=start;
+$("redo").onclick=function(){
+  if(busy||!redo.length)return;
+  hist.push(redo.pop());
+  while(isAI()&&redo.length&&!isHuman(cur()))hist.push(redo.pop());
+  note="";pend=-1;render();maybeAI()};
+$("undo").onclick=function(){
+  if(busy||hist.length<2)return;
+  var tmp=[];
+  tmp.push(hist.pop());
+  while(isAI()&&hist.length>1&&!isHuman(cur()))tmp.push(hist.pop());
+  if(!isHuman(cur())&&isAI()){while(tmp.length)hist.push(tmp.pop());return}
+  tmp.forEach(function(x){redo.push(x)});
+  over=false;note="";pend=-1;render()};
+start();
+})();
+</script>
+</body>
+</html>

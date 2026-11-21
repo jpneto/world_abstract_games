@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Stiletto</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
+<style>
+:root{--bg:#eef0e6;--ink:#1f2a1c;--mute:#5d6a56;--cell:#dfe3cf;--edge:#b9bfa3;--hi:#e0803a;--panel:#fff;--line:#c5cab4;--wood:#dcb875;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f;--wood:#9a7b45}}
+:root[data-theme="dark"]{--wood:#9a7b45;--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f}
+[hidden]{display:none!important}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+main{max-width:1080px;margin:0 auto;padding:16px 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.right>.bar:first-child{margin-top:0}
+@media (min-width:860px){.layout{grid-template-columns:minmax(0,640px) minmax(300px,1fr);gap:28px;align-items:start}}
+h1{font:700 2rem/1.1 "Bricolage Grotesque",Georgia,serif;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+select,button.ctl{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.ctl:disabled,select:disabled,input:disabled{opacity:.45;cursor:default}
+label.f{color:var(--mute);font-size:.9rem}
+label.chk{display:flex;gap:6px;align-items:center;cursor:pointer;font-size:.95rem}
+input[type=number]{width:4.5em;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+button.ctl.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button.ctl.on{background:var(--hi);border-color:var(--hi);color:#fff}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.pl{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:8px 12px;display:flex;justify-content:space-between;align-items:baseline}
+.pl.on{border-color:var(--hi)}
+#status{min-height:3em;font-weight:600;margin:6px 0}
+#board svg{display:block;width:100%;max-width:640px;margin:0 auto;touch-action:manipulation}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+details li{margin:4px 0}
+.legend{color:var(--mute);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+<h1 id="gtitle"></h1>
+<p class="sub" id="gsub"></p>
+<div class="layout">
+<div class="left">
+<div id="board"></div>
+<p class="legend">Click an empty point to place a stone. To use the dagger, press &ldquo;Use dagger&rdquo; and then click two empty points. The last stone(s) are marked with a red dot.</p>
+</div>
+<aside class="right">
+<div class="bar">
+  <select id="mode" aria-label="Mode"><option value="ai">Play the computer</option><option value="2p">Two players</option></select>
+  <select id="level" aria-label="Computer strength"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select>
+  <select id="side" aria-label="Your colour"><option value="0">You play Black (first)</option><option value="1">You play White (dagger)</option></select>
+</div>
+<div class="bar">
+  <label class="chk"><input type="checkbox" id="o4" checked> Open-4 restriction on the dagger</label>
+</div>
+<div class="bar">
+  <button class="ctl primary" id="new">New game</button>
+  <button class="ctl" id="undo">Undo</button>
+  <button class="ctl" id="redo">Redo</button>
+</div>
+<div class="score"><div class="pl" id="p0"><span id="n0"></span></div><div class="pl" id="p1"><span id="n1"></span></div></div>
+<div id="status" aria-live="polite"></div>
+<div class="bar"><button class="ctl" id="dg">Use dagger</button></div>
+<div id="last" class="legend" style="min-height:2.6em;margin:0 0 8px"></div>
+<div class="bar">
+  <label class="f">Simulation games <input id="simN" type="number" min="10" max="1000" value="10"></label>
+  <label class="f">Random opening moves <input id="simR" type="number" min="0" max="20" value="4"></label>
+  <button class="ctl" id="sim">Simulation</button>
+</div>
+<div id="simout" class="legend" style="white-space:pre-line;margin:0 0 8px"></div>
+<details><summary>Rules</summary><ul id="rules"></ul></details>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+/* =====================================================================
+   1. GAME DEFINITION  - Stiletto rules and move generation
+   2. ENGINE           - heuristic computer opponent (single stones and dagger moves), simulations
+   3. INTERFACE        - SVG 19x19 board, click handling (incl. two-stone dagger moves), controls
+   A state is {b: board (361 points: 0 empty, 1 Black, 2 White), turn: colour to move (1 or 2),
+               dg: colour that owns the dagger, lu: per colour, true if that player used the dagger on their previous turn,
+               w: winner colour (3 = draw by full board, 0 = none), n: stones on board, lm: last move info}.
+   A move is one stone (a), or a dagger move: two stones (a and x). Only the dagger holder may play two stones.
+   ===================================================================== */
+var $=function(i){return document.getElementById(i)};
+
+/* ============================ 1. GAME DEFINITION ============================ */
+var W=19,N=361,DIRS=[[1,0],[0,1],[1,1],[1,-1]],FX=[],FY=[];
+for(var q=0;q<N;q++){FX[q]=q%W;FY[q]=(q/W)|0}
+function cn(i){return String.fromCharCode(97+FX[i])+(FY[i]+1)}
+var GAME={
+  title:"Stiletto",
+  subtitle:"Gomoku on 19\u00d719 with a dagger: a one-use right to place two stones in the same turn.",
+  sides:[null,{name:"Black",color:"#2d2d2d",edge:"#ddd"},{name:"White",color:"#f6f2e7",edge:"#555"}],
+  rules:[
+  {h:"Board and goal",items:[
+    "Played on the intersections of a 19\u00d719 board. Black starts, then the players alternate. Stones are never moved or captured.",
+    "As in Gomoku, the first player to make five (or more) of their stones in a row, horizontally, vertically or diagonally, wins. If the board fills up, the game is a draw."]},
+  {h:"The dagger",items:[
+    "White starts with the dagger. The player who owns the dagger may use it to place two stones in the same turn.",
+    "When the dagger is used, its ownership goes to the other player.",
+    "Restrictions on using the dagger:",
+    {t:"",sub:[
+      "It is illegal to use the dagger to make five in a row (for instance by extending a three with two stones). If one stone would win, just play that single stone.",
+      "It is illegal to use the dagger to make an open four: four stones of the same colour in sequence whose two ends are both empty points (a board edge is not an empty point). This restriction can be switched off with the checkbox.",
+      "It is illegal for the same player to use the dagger in two consecutive turns of theirs (it can only come back to them if the opponent used it in between), except to defend against an immediate loss (the opponent could win with one stone on their next move). The two players may use it on consecutive turns."]}]},
+  {h:"Notes",items:[
+    "The two restrictions are checked on the position after both stones are placed, on the lines through the two new stones.",
+    "Changing the open-4 option starts a new game."]}],
+  describe:function(s){var l=s.lm;if(!l)return"";var by=pname(l.c),col=GAME.sides[l.c].name.toLowerCase();
+    var t=by+(l.x>=0?" used the dagger and placed two "+col+" stones on "+cn(l.a)+" and "+cn(l.x):" placed a "+col+" stone on "+cn(l.a));
+    if(s.w===l.c)t+=", making five in a row";else if(s.w===3)t+=", filling the board";
+    return t+"."}
+};
+function newGame(){return{b:new Uint8Array(N),turn:1,dg:2,lu:[0,false,false],w:0,n:0,lm:null}}
+function luSet(s,c,v){var l=s.lu.slice();l[c]=v;return l}
+function stoneCount(b){var n=0;for(var i=0;i<N;i++)if(b[i])n++;return n}
+// number of consecutive stones of colour c from point i in direction (dx,dy), excluding i; sets REND=1 if the point after the run is an empty board point
+var REND=0;
+function ray(b,i,c,dx,dy){var s=0,x=FX[i]+dx,y=FY[i]+dy;
+  while(x>=0&&y>=0&&x<W&&y<W&&b[y*W+x]===c){s++;x+=dx;y+=dy}
+  REND=(x>=0&&y>=0&&x<W&&y<W&&b[y*W+x]===0)?1:0;return s}
+// cells of a line of 5+ stones of colour c through point i (b[i] must be c), or null
+function fiveLine(b,i,c){
+  for(var d=0;d<4;d++){var dx=DIRS[d][0],dy=DIRS[d][1],f=ray(b,i,c,dx,dy),k=ray(b,i,c,-dx,-dy);
+    if(1+f+k>=5){var cells=[i],s;for(s=1;s<=f;s++)cells.push((FY[i]+s*dy)*W+FX[i]+s*dx);for(s=1;s<=k;s++)cells.push((FY[i]-s*dy)*W+FX[i]-s*dx);return cells}}
+  return null}
+// is there a run of exactly four stones of colour c through i with both ends empty?
+function openFour(b,i,c){
+  for(var d=0;d<4;d++){var dx=DIRS[d][0],dy=DIRS[d][1],f=ray(b,i,c,dx,dy),e1=REND,k=ray(b,i,c,-dx,-dy),e2=REND;
+    if(1+f+k===4&&e1&&e2)return true}
+  return false}
+// can colour c win with a single stone somewhere?
+function canWin(b,c){for(var i=0;i<N;i++)if(!b[i]){b[i]=c;var f=fiveLine(b,i,c);b[i]=0;if(f)return true}return false}
+// does the opponent of the player to move threaten an immediate win?
+function oppThreat(s){return canWin(s.b,3-s.turn)}
+// the one rule function: a single stone (x<0) or a dagger move (a and x)
+function applyMove(s,a,x){
+  var c=s.turn,b=s.b;
+  if(s.w)return{err:"The game is over."};
+  if(a<0||b[a])return{err:"That point is occupied."};
+  var nb=b.slice(),ns;
+  if(x>=0){
+    if(x===a||b[x])return{err:"That point is occupied."};
+    if(s.dg!==c)return{err:"You do not hold the dagger."};
+    if(s.lu[c]&&!oppThreat(s))return{err:"You cannot use the dagger in two consecutive turns of yours, unless you must defend against an immediate loss."};
+    nb[a]=c;nb[x]=c;
+    if(fiveLine(nb,a,c)||fiveLine(nb,x,c))return{err:"Illegal: the dagger cannot be used to make five in a row."};
+    if($("o4").checked&&(openFour(nb,a,c)||openFour(nb,x,c)))return{err:"Illegal: the dagger cannot be used to make an open four."};
+    ns={b:nb,turn:3-c,dg:3-c,lu:luSet(s,c,true),w:0,n:s.n+2,lm:{c:c,a:a,x:x}};
+  }else{
+    nb[a]=c;
+    ns={b:nb,turn:3-c,dg:s.dg,lu:luSet(s,c,false),w:0,n:s.n+1,lm:{c:c,a:a,x:-1}};
+    var f=fiveLine(nb,a,c);if(f){ns.w=c;ns.lm.line=f}
+  }
+  if(!ns.w&&ns.n>=N)ns.w=3;
+  return{ns:ns}}
+function daggerAvail(s){return !s.w&&s.dg===s.turn&&(!s.lu[s.turn]||oppThreat(s))}
+
+/* ================================ 2. ENGINE ================================ */
+/* Heuristic engine. Every empty point near the stones is scored over all 5-point windows: attack (own windows without
+   enemy stones) plus defence (enemy windows without own stones), growing steeply with the number of stones.
+   Single move: win if possible, block an enemy five, otherwise the best score (Easy: one of the top 3; Medium: best;
+   Hard: best after a one-reply lookahead).
+   Dagger move: when the enemy threatens to win at two points, block both with the dagger. Otherwise (Medium/Hard)
+   the best pairs of stones (second stone scored after the first) are generated; the pair is played if it is strong enough
+   and clearly better than a single stone, never leaves the enemy a winning point, and is legal under the rules. */
+var simulating=false,T=[0,1,5,30,300,100000,100000],WINS=[],WOF=[],N2=[],GA=0;
+(function(){
+  var q,x,y,t;
+  for(q=0;q<N;q++){WOF[q]=[];N2[q]=[];
+    for(y=-2;y<=2;y++)for(x=-2;x<=2;x++){var X2=FX[q]+x,Y2=FY[q]+y;if((x||y)&&X2>=0&&Y2>=0&&X2<W&&Y2<W)N2[q].push(Y2*W+X2)}}
+  DIRS.forEach(function(d){for(y=0;y<W;y++)for(x=0;x<W;x++){var ex=x+4*d[0],ey=y+4*d[1];if(ex<0||ex>=W||ey<0||ey>=W)continue;
+    var w=[];for(t=0;t<5;t++)w.push((y+t*d[1])*W+x+t*d[0]);var id=WINS.length;WINS.push(w);w.forEach(function(c){WOF[c].push(id)})}});
+})();
+var NW=WINS.length;
+function rn(n){return Math.floor(Math.random()*n)}
+function putSt(st,i,col){st.b[i]=col;var cc=st.c[col-1],ws=WOF[i],k;for(k=0;k<ws.length;k++)cc[ws[k]]++;var nb=N2[i];for(k=0;k<nb.length;k++)st.nr[nb[k]]++;st.n++}
+function mkSt(b){var st={b:new Uint8Array(N),c:[new Uint8Array(NW),new Uint8Array(NW)],nr:new Uint8Array(N),n:0};for(var i=0;i<N;i++)if(b[i])putSt(st,i,b[i]);return st}
+function cloneSt(st){return{b:st.b.slice(),c:[st.c[0].slice(),st.c[1].slice()],nr:st.nr.slice(),n:st.n}}
+// score of point i for colour col; sets GA to the attack part (>=1e5 means col wins by playing there)
+function scSt(st,i,col){var mine=st.c[col-1],th=st.c[2-col],ws=WOF[i],a=0,d=0;
+  for(var k=0;k<ws.length;k++){var w=ws[k];if(!th[w])a+=T[mine[w]+1];if(!mine[w])d+=T[th[w]+1]}
+  GA=a;return a+.9*d+.05*(18-Math.abs(FX[i]-9)-Math.abs(FY[i]-9))}
+function topCands(st,col,K){var r=[],i;
+  for(i=0;i<N;i++)if(!st.b[i]&&st.nr[i]){var v=scSt(st,i,col);r.push({i:i,v:v,a:GA})}
+  r.sort(function(p,q){return q.v-p.v});return r.slice(0,K)}
+function winPoint(st,col){for(var i=0;i<N;i++)if(!st.b[i]&&st.nr[i]){scSt(st,i,col);if(GA>=1e5)return i}return -1}
+function threatPts(st,col){var r=[];for(var i=0;i<N;i++)if(!st.b[i]&&st.nr[i]){scSt(st,i,col);if(GA>=1e5)r.push(i)}return r}
+function bestPair(s,st,c,o,K1,K2){
+  var best=null,o4=$("o4").checked;
+  topCands(st,c,K1).forEach(function(x){
+    if(x.a>=1e5)return;
+    var st2=cloneSt(st);putSt(st2,x.i,c);
+    topCands(st2,c,K2).forEach(function(y){
+      if(y.a>=1e5)return;
+      var b2=s.b.slice();b2[x.i]=c;b2[y.i]=c;
+      if(fiveLine(b2,x.i,c)||fiveLine(b2,y.i,c))return;
+      if(o4&&(openFour(b2,x.i,c)||openFour(b2,y.i,c)))return;
+      var st3=cloneSt(st2);putSt(st3,y.i,c);
+      if(winPoint(st3,o)>=0)return;
+      var v=x.v+y.v;if(!best||v>best.v)best={a:x.i,x:y.i,v:v}})});
+  return best}
+function pickSingle(st,c,o,lv){
+  var cand=topCands(st,c,lv===3?8:lv===2?1:3),i;
+  if(!cand.length){for(i=0;i<N;i++)if(!st.b[i])return i}
+  if(lv===1)return cand[rn(cand.length)].i;
+  if(lv===2)return cand[0].i;
+  var best=null;
+  cand.forEach(function(x){var s2=cloneSt(st);putSt(s2,x.i,c);var oc=topCands(s2,o,1),v=x.v-.6*(oc.length?oc[0].v:0)+Math.random()*.01;if(!best||v>best.v)best={i:x.i,v:v}});
+  return best.i}
+function aiMove(s){
+  var lv=+$("level").value,c=s.turn,o=3-c,st=mkSt(s.b),r;
+  if(!st.n)return applyMove(s,180,-1).ns;
+  var wp=winPoint(st,c);if(wp>=0)return applyMove(s,wp,-1).ns;
+  var tp=threatPts(st,o);
+  if(tp.length>=2){
+    if(s.dg===c){r=applyMove(s,tp[0],tp[1]);if(r.ns)return r.ns}
+    return applyMove(s,tp[0],-1).ns}
+  if(tp.length===1)return applyMove(s,tp[0],-1).ns;
+  if(lv>=2&&s.dg===c&&!s.lu[c]){
+    var p=bestPair(s,st,c,o,lv===3?10:6,lv===3?8:5),top=topCands(st,c,1);
+    if(p&&p.v>=(lv===3?250:600)&&p.v>=1.3*(top.length?top[0].v:0)){r=applyMove(s,p.a,p.x);if(r.ns)return r.ns}}
+  return applyMove(s,pickSingle(st,c,o,lv),-1).ns}
+// random opening move: a single stone near the centre
+function randMove(s){var i;
+  if(!s.n)i=180;else{do{i=(9+rn(7)-3)*W+9+rn(7)-3}while(s.b[i])}
+  return applyMove(s,i,-1).ns}
+var sim=null;
+function runSim(){   // computer vs computer, to look for first/second-player advantage
+  if(sim){sim.stop=true;return}
+  var CAP=300,me=sim={stop:false},TOTAL=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?4:+$("simR").value)),
+      done=0,wins=[0,0,0],un=0,g=null,plies=0,dag=0,len=0,lvName=$("level").options[$("level").selectedIndex].text,
+      ids=["mode","side","level","new","undo","redo","simN","simR","dg","o4"];
+  ids.forEach(function(i){if($(i))$(i).disabled=true});simulating=true;
+  $("sim").textContent="Stop simulation";
+  $("simout").textContent="Simulating at "+lvName+" level\u2026 0/"+TOTAL;
+  function fin2(stopped){
+    sim=null;simulating=false;$("sim").textContent="Simulation";
+    $("mode").disabled=$("new").disabled=$("simN").disabled=$("simR").disabled=$("o4").disabled=false;
+    $("level").disabled=$("side").disabled=$("mode").value==="2p";
+    var pb=done?wins[1]/done:0,mg=done?(196*Math.sqrt(pb*(1-pb)/done)).toFixed(1):"0";
+    var pc=function(n){return done?(100*n/done).toFixed(1)+"%":"n/a"};
+    $("simout").textContent=(stopped?"Stopped after ":"")+done+" games at "+lvName+" level (computer vs computer), open-4 restriction "+($("o4").checked?"on":"off")+", first "+RND+" moves random.\n"+
+      "Black won "+pc(wins[1])+" (margin \u00b1"+mg+" points at 95% confidence), White won "+pc(wins[2])+", draws "+pc(wins[0])+". Average game length: "+(done?(len/done).toFixed(0):"n/a")+" turns, with "+(done?(dag/done).toFixed(1):"n/a")+" dagger uses per game."+(un?" Unfinished (stopped at "+CAP+" turns): "+un+".":"");
+    render();
+  }
+  function stepSim(){
+    if(me.stop){fin2(true);return}
+    var t0=Date.now();
+    while(Date.now()-t0<40){
+      if(!g){g=newGame();plies=0}
+      if(g.w||plies>=CAP){
+        if(g.w)wins[g.w===3?0:g.w]++;else un++;
+        len+=plies;done++;g=null;
+        if(done>=TOTAL){fin2(false);return}
+        continue;
+      }
+      g=plies<RND?randMove(g):aiMove(g);
+      plies++;
+      if(g.lm.x>=0)dag++;
+    }
+    $("simout").textContent="Simulating at "+lvName+" level\u2026 "+done+"/"+TOTAL;
+    setTimeout(stepSim,0);
+  }
+  stepSim();
+}
+
+/* =============================== 3. INTERFACE =============================== */
+var hist,redo=[],over,busy,note="",RED="#d33",dagMode=false,pend=-1;
+function cur(){return hist[hist.length-1]}
+function hc(){return +$("side").value===0?1:2}                       // the human's colour in computer mode
+function isAI(){return $("mode").value==="ai"}
+function isHuman(s){return !isAI()||s.turn===hc()}
+function pname(c){return isAI()?(c===hc()?"You":"Computer"):GAME.sides[c].name}
+function pverb(c,a,b){return pname(c)==="You"?b:a}
+function resetPending(){dagMode=false;pend=-1}
+function start(){
+  hist=[newGame()];redo=[];note="";resetPending();$("level").disabled=$("side").disabled=!isAI();over=false;busy=false;
+  render();maybeAI();
+}
+function X(i){return FX[i]+1}
+function Y(i){return W-FY[i]}
+function stone(c,i,op){var G=GAME.sides[c];return'<circle cx="'+X(i)+'" cy="'+Y(i)+'" r=".46" fill="'+G.color+'" stroke="'+G.edge+'" stroke-width=".05"'+(op?' opacity="'+op+'"':'')+'/>'}
+function render(){
+  var s=cur(),b=s.b,i,m,g=['<svg viewBox="0 0 20 20.4" role="img" aria-label="Stiletto board"><rect x=".3" y=".3" width="19.4" height="19.4" rx=".2" fill="var(--wood)"/>'];
+  over=!!s.w;
+  var hu=isHuman(s)&&!over&&!busy&&!sim;
+  if(dagMode&&!(hu&&daggerAvail(s)))resetPending();
+  for(m=1;m<=W;m++)g.push('<path d="M'+m+' 1V'+W+'M1 '+m+'H'+W+'" stroke="#3a2c14" stroke-width=".04" fill="none"/>');
+  [4,10,16].forEach(function(x){[4,10,16].forEach(function(y){g.push('<circle cx="'+x+'" cy="'+y+'" r=".1" fill="#3a2c14"/>')})});
+  for(m=0;m<W;m++){
+    g.push('<text x="'+(m+1)+'" y="'+(W+1.15)+'" text-anchor="middle" font-size=".4" fill="var(--mute)">'+String.fromCharCode(97+m)+'</text>');
+    g.push('<text x=".02" y="'+(W-m+.14)+'" font-size=".4" fill="var(--mute)">'+(m+1)+'</text>');
+  }
+  for(i=0;i<N;i++)if(b[i])g.push(stone(b[i],i));
+  var l=s.lm;
+  if(l){[l.a,l.x].forEach(function(p){if(p>=0)g.push('<circle cx="'+X(p)+'" cy="'+Y(p)+'" r=".11" fill="'+RED+'"/>')})}
+  if(l&&l.line)l.line.forEach(function(c){g.push('<circle cx="'+X(c)+'" cy="'+Y(c)+'" r=".53" fill="none" stroke="'+RED+'" stroke-width=".07"/>')});
+  if(pend>=0){g.push(stone(s.turn,pend,.55));g.push('<circle cx="'+X(pend)+'" cy="'+Y(pend)+'" r=".53" fill="none" stroke="var(--hi)" stroke-width=".07"/>')}
+  for(i=0;i<N;i++)g.push('<rect data-i="'+i+'" x="'+(X(i)-.5)+'" y="'+(Y(i)-.5)+'" width="1" height="1" fill="transparent"/>');
+  $("board").innerHTML=g.join("")+'</svg>';
+  var st,c;
+  for(i=0;i<2;i++){c=i+1;$("p"+i).className="pl"+(!over&&s.turn===c?" on":"");
+    $("n"+i).textContent=(isAI()?pname(c)+" \u2013 "+GAME.sides[c].name:GAME.sides[c].name)+(s.dg===c?"  \ud83d\udde1 dagger":"")}
+  var av=hu&&daggerAvail(s);
+  if(over)st=s.w===3?"Game over: draw, the board is full.":"Game over: "+pname(s.w)+" ("+GAME.sides[s.w].name+") "+pverb(s.w,"wins","win")+" with five in a row.";
+  else{
+    st=isHuman(s)?(isAI()?"Your move":GAME.sides[s.turn].name+" to move"):"The computer is thinking\u2026";
+    st+=" ("+GAME.sides[s.turn].name+").";
+    if(isHuman(s)){
+      if(dagMode)st+=pend<0?" Dagger: place the first stone.":" Dagger: place the second stone.";
+      else if(s.dg===s.turn)st+=av?" You may use the dagger.":" You hold the dagger, but it cannot be used this turn (you used it on your previous turn).";
+    }
+  }
+  if(note)st+=" "+note;
+  $("status").textContent=st;
+  $("last").textContent=GAME.describe(s);
+  $("dg").disabled=!av;$("dg").className="ctl"+(dagMode?" on":"");
+  $("dg").textContent=dagMode?"Dagger active \u2013 click to cancel":"Use dagger";
+  $("undo").disabled=hist.length<2||busy||!!sim;
+  $("redo").disabled=!redo.length||busy||!!sim;
+}
+function play(ns){hist.push(ns);redo=[];resetPending();render();maybeAI()}
+function click(i){
+  var s=cur();
+  if(over||busy||sim||!isHuman(s))return;
+  if(s.b[i]){note="That point is occupied.";render();return}
+  if(dagMode){
+    if(pend<0){pend=i;note="";render();return}
+    if(i===pend){pend=-1;note="";render();return}
+    var r=applyMove(s,pend,i);
+    if(r.err){note=r.err;pend=-1;render();return}
+    note="";play(r.ns);return}
+  var r2=applyMove(s,i,-1);
+  if(r2.err){note=r2.err;render();return}
+  note="";play(r2.ns);
+}
+function maybeAI(){
+  var s=cur();if(over||!isAI()||isHuman(s))return;
+  busy=true;render();
+  setTimeout(function(){var c=cur(),ns=aiMove(c);busy=false;hist.push(ns);render();maybeAI()},60);
+}
+document.title=GAME.title;$("gtitle").textContent=GAME.title;$("gsub").textContent=GAME.subtitle;
+function li(x){return"<li>"+(typeof x==="string"?x:x.t+"<ul>"+x.sub.map(li).join("")+"</ul>")+"</li>"}
+$("rules").innerHTML=GAME.rules.map(function(sec){return"<li><b>"+sec.h+"</b><ul>"+sec.items.map(li).join("")+"</ul></li>"}).join("");
+$("board").onclick=function(e){var t=e.target.closest("[data-i]");if(t)click(+t.getAttribute("data-i"))};
+$("new").onclick=start;$("sim").onclick=runSim;
+$("mode").onchange=$("side").onchange=$("o4").onchange=start;
+$("dg").onclick=function(){var s=cur();if(over||busy||sim||!isHuman(s))return;
+  if(dagMode){resetPending()}else if(daggerAvail(s)){dagMode=true;pend=-1}
+  note="";render()};
+$("redo").onclick=function(){
+  if(busy||!redo.length)return;
+  hist.push(redo.pop());
+  while(isAI()&&redo.length&&!isHuman(cur()))hist.push(redo.pop());
+  note="";resetPending();render();maybeAI();
+};
+$("undo").onclick=function(){
+  if(busy||hist.length<2)return;
+  var tmp=[];
+  tmp.push(hist.pop());
+  while(isAI()&&hist.length>1&&!isHuman(cur()))tmp.push(hist.pop());
+  if(!isHuman(cur())&&isAI()){while(tmp.length)hist.push(tmp.pop());return}
+  tmp.forEach(function(x){redo.push(x)});
+  over=false;note="";resetPending();render();
+};
+start();
+})();
+</script>
+</body>
+</html>
