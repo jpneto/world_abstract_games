@@ -40,7 +40,7 @@ a.card:hover,a.card:focus-visible{border-color:var(--hi);transform:translateY(-2
 <script>
 /* =====================================================================
    TO ADD A GAME:
-   1. Put its HTML file in the /games folder (e.g. games/mygame.html).
+   1. Put its HTML file in the same folder.
    2. Put a thumbnail PNG in the /images folder (about 840x600 works well).
    3. Add one entry to GAMES below. That's it.
    Fields: title, file, img (PNG thumbnail in /images), blurb, tags (short labels).
@@ -48,6 +48,12 @@ a.card:hover,a.card:focus-visible{border-color:var(--hi);transform:translateY(-2
 var SITE={title:"Abstract Games", subtitle:"Abstract strategy games designed by João Pedro Neto"};
 
 var GAMES=[
+  {title:"Chicken Gomoku",
+   file:"chicken_gomoku.html",
+   blurb:"Gomoku on 9×9 with an auction: bid with black stones until one player takes Black.",
+   img:"images/chicken_gomoku.png",
+   tags:["9x9","auction","in-a-row","2001"]},
+   
   {title:"Galice",
    file:"galice.html",
    blurb:"Swap a stone to the other board, drop another, out-score your opponent.",

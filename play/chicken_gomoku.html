@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Chicken Gomoku</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
+<style>
+:root{--bg:#eef0e6;--ink:#1f2a1c;--mute:#5d6a56;--cell:#dfe3cf;--edge:#b9bfa3;--hi:#e0803a;--panel:#fff;--line:#c5cab4;--wood:#dcb875;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f;--wood:#9a7b45}}
+:root[data-theme="dark"]{--wood:#9a7b45;--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f}
+[hidden]{display:none!important}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+main{max-width:1080px;margin:0 auto;padding:16px 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.right>.bar:first-child{margin-top:0}
+@media (min-width:860px){.layout{grid-template-columns:minmax(0,600px) minmax(300px,1fr);gap:28px;align-items:start}}
+h1{font:700 2rem/1.1 "Bricolage Grotesque",Georgia,serif;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+select,button.ctl{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.ctl:disabled,select:disabled,input:disabled{opacity:.45;cursor:default}
+label.f{color:var(--mute);font-size:.9rem}
+input[type=number]{width:4.5em;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+button.ctl.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.pl{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:8px 12px;display:flex;justify-content:space-between;align-items:baseline}
+.pl.on{border-color:var(--hi)}
+#status{min-height:1.5em;font-weight:600;margin:6px 0}
+#board svg{display:block;width:100%;max-width:600px;margin:0 auto;touch-action:manipulation}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+details li{margin:4px 0}
+.legend{color:var(--mute);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+<h1 id="gtitle"></h1>
+<p class="sub" id="gsub"></p>
+<div class="layout">
+<div class="left">
+<div id="board"></div>
+<p class="legend">Click an empty point to place a stone. During the auction every stone you place is black; press &ldquo;Take Black&rdquo; instead to become Black and pass, after which White moves. The last stone is marked with a red dot.</p>
+</div>
+<aside class="right">
+<div class="bar">
+  <select id="mode" aria-label="Mode"><option value="ai">Play the computer</option><option value="2p">Two players</option></select>
+  <select id="level" aria-label="Computer strength"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select>
+  <select id="side" aria-label="Auction order"><option value="0">You start the auction</option><option value="1">Computer starts the auction</option></select>
+  <button class="ctl primary" id="new">New game</button>
+  <button class="ctl" id="undo">Undo</button>
+  <button class="ctl" id="redo">Redo</button>
+</div>
+<div class="score"><div class="pl" id="p0"><span id="n0"></span></div><div class="pl" id="p1"><span id="n1"></span></div></div>
+<div id="status" aria-live="polite"></div>
+<div class="bar"><button class="ctl primary" id="cb">Take Black (pass)</button></div>
+<div id="last" class="legend" style="min-height:2.6em;margin:0 0 8px"></div>
+<div class="bar">
+  <label class="f">Simulation games <input id="simN" type="number" min="10" max="1000" value="10"></label>
+  <label class="f">Random opening moves <input id="simR" type="number" min="0" max="20" value="4"></label>
+  <button class="ctl" id="sim">Simulation</button>
+</div>
+<div id="simout" class="legend" style="white-space:pre-line;margin:0 0 8px"></div>
+<details><summary>Rules</summary><ul id="rules"></ul></details>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+/* =====================================================================
+   1. GAME DEFINITION  - Chicken Gomoku rules and move generation
+   2. ENGINE           - Monte-Carlo computer opponent (auction + play), simulations
+   3. INTERFACE        - SVG 9x9 board, click handling, controls
+   A state is {b: board (81 points: 0 empty, 1 White, 2 Black), turn: player to move (0 or 1),
+               ph: 0 auction, 1 play, bp: player who is Black (-1 until declared), w: winner player or -1,
+               lm: last move info}.
+   A move is a stone dropped on an empty point (black during the auction, the mover's colour afterwards),
+   or, during the auction only, "declare Black" (a pass that ends the auction).
+   ===================================================================== */
+var $=function(i){return document.getElementById(i)};
+
+/* ============================ 1. GAME DEFINITION ============================ */
+var W=9,N=81,DIRS=[[1,0],[0,1],[1,1],[1,-1]],FX=[],FY=[];
+for(var q=0;q<N;q++){FX[q]=q%W;FY[q]=(q/W)|0}
+function cn(i){return String.fromCharCode(97+FX[i])+(FY[i]+1)}
+var GAME={
+  title:"Chicken Gomoku",
+  subtitle:"Gomoku on 9\u00d79 with an auction: bid with black stones until one player takes Black.",
+  sides:[{name:"White",color:"#f6f2e7",edge:"#555"},{name:"Black",color:"#2d2d2d",edge:"#ddd"}],
+  rules:[
+  {h:"Board and goal",items:[
+    "Played on the intersections of a 9\u00d79 board. Stones are never moved or captured.",
+    "Black wins by making five (or more) of their stones in a row, horizontally, vertically or diagonally. White wins by preventing it: if the board is full and Black has no five, White wins."]},
+  {h:"Auction",items:[
+    "The game starts with an auction on the empty board. Players alternate, starting with the first player. On their turn a player either places a black stone on any empty point, or declares to be Black, which counts as a pass.",
+    "The player who declares becomes Black for the rest of the game; the other player becomes White. All the black stones placed during the auction stay on the board.",
+    "Clarifications: a stone that would make five in a row is not allowed during the auction, and if the board is full the player to move must declare."]},
+  {h:"Play",items:[
+    "After the declaration White places a white stone, then the players alternate placing one stone of their colour per turn, as in Gomoku."]}],
+  describe:function(s){var l=s.lm;if(!l)return"";var by=pname(l.p);
+    if(l.declare)return by+" declared Black and passed; White moves next.";
+    var t=by+" placed a "+(l.c===2?"black":"white")+" stone on "+cn(l.i);
+    if(s.w>=0)t+=l.line?", making five in a row":", filling the board";
+    return t+"."}
+};
+function newGame(){return{b:new Uint8Array(N),turn:0,ph:0,bp:-1,w:-1,lm:null}}
+function stoneCount(b){var n=0;for(var i=0;i<N;i++)if(b[i])n++;return n}
+// cells of a line of 5+ stones of colour c through point i, or null
+function fiveLine(b,i,c){
+  for(var d=0;d<4;d++){var dx=DIRS[d][0],dy=DIRS[d][1],cells=[i],s;
+    for(s=1;s<=-1+W;s++){var x=FX[i]+s*dx,y=FY[i]+s*dy;if(x<0||y<0||x>=W||y>=W||b[y*W+x]!==c)break;cells.push(y*W+x)}
+    for(s=1;s<=W-1;s++){var x2=FX[i]-s*dx,y2=FY[i]-s*dy;if(x2<0||y2<0||x2>=W||y2>=W||b[y2*W+x2]!==c)break;cells.push(y2*W+x2)}
+    if(cells.length>=5)return cells}
+  return null}
+// auction: drop a black stone
+function auctionPlace(s,i){
+  if(s.b[i])return{err:"That point is occupied."};
+  var b=s.b.slice();b[i]=2;
+  if(fiveLine(b,i,2))return{err:"That stone would make five in a row, which is not allowed during the auction."};
+  return{ns:{b:b,turn:1-s.turn,ph:0,bp:-1,w:-1,lm:{p:s.turn,i:i,c:2}}}}
+// auction: declare to be Black (a pass); the other player is White and moves next
+function declare(s){return{b:s.b,turn:1-s.turn,ph:1,bp:s.turn,w:-1,lm:{p:s.turn,declare:true}}}
+// play: the mover places a stone of their colour
+function playAt(s,i){
+  if(s.b[i])return{err:"That point is occupied."};
+  var c=s.turn===s.bp?2:1,b=s.b.slice();b[i]=c;
+  var ns={b:b,turn:1-s.turn,ph:1,bp:s.bp,w:-1,lm:{p:s.turn,i:i,c:c}},f=c===2?fiveLine(b,i,2):null;
+  if(f){ns.w=s.bp;ns.lm.line=f}else if(stoneCount(b)===N)ns.w=1-s.bp;
+  return{ns:ns}}
+function moveAt(s,i){return s.ph===0?auctionPlace(s,i):playAt(s,i)}
+
+/* ================================ 2. ENGINE ================================ */
+/* Evaluation by random playouts. Both sides in a playout play a pattern-based policy: every empty point near
+   the stones is scored over all 5-point windows (own attack + enemy defence) and chosen at random with a weight that
+   grows steeply with the score; wins and forced blocks are always taken. A playout returns 1 if Black wins.
+   Play: the best candidates (by pattern score) are compared by playout win rate.
+   Auction: declaring is worth p (Black's win rate with White to move). Placing a stone gives a position the opponent
+   will take as Black if p' > 0.5, so the computer looks for the stone that brings the position closest to
+   balanced, and declares as soon as no stone does better than declaring. */
+var LV=[0,1,2,3],simulating=false,T=[0,1,5,30,300,100000],WINS=[],WOF=[],N2=[];
+(function(){
+  var q,x,y,t,dx,dy;
+  for(q=0;q<N;q++){WOF[q]=[];N2[q]=[];
+    for(y=-2;y<=2;y++)for(x=-2;x<=2;x++){var X2=FX[q]+x,Y2=FY[q]+y;if((x||y)&&X2>=0&&Y2>=0&&X2<W&&Y2<W)N2[q].push(Y2*W+X2)}}
+  DIRS.forEach(function(d){for(y=0;y<W;y++)for(x=0;x<W;x++){var ex=x+4*d[0],ey=y+4*d[1];if(ex<0||ex>=W||ey<0||ey>=W)continue;
+    var w=[];for(t=0;t<5;t++)w.push((y+t*d[1])*W+x+t*d[0]);var id=WINS.length;WINS.push(w);w.forEach(function(c){WOF[c].push(id)})}});
+})();
+var NW=WINS.length;
+function rn(n){return Math.floor(Math.random()*n)}
+function putSt(st,i,col){st.b[i]=col;var cc=st.c[col-1],ws=WOF[i],k;for(k=0;k<ws.length;k++)cc[ws[k]]++;var nb=N2[i];for(k=0;k<nb.length;k++)st.nr[nb[k]]++;st.n++}
+function mkSt(b){var st={b:new Uint8Array(N),c:[new Uint8Array(NW),new Uint8Array(NW)],nr:new Uint8Array(N),n:0};for(var i=0;i<N;i++)if(b[i])putSt(st,i,b[i]);return st}
+function cloneSt(st){return{b:st.b.slice(),c:[st.c[0].slice(),st.c[1].slice()],nr:st.nr.slice(),n:st.n}}
+function winSt(st,i,col){var cc=st.c[col-1],ws=WOF[i];for(var k=0;k<ws.length;k++)if(cc[ws[k]]===5)return true;return false}
+function scSt(st,i,col){var mine=st.c[col-1],th=st.c[2-col],ws=WOF[i],a=0,d=0;
+  for(var k=0;k<ws.length;k++){var w=ws[k];if(!th[w])a+=T[mine[w]+1];if(!mine[w])d+=T[th[w]+1]}
+  /* Only Black can win by a line: Black scores only its own attack, White scores only how much it blocks Black. */
+  return (col===2?a:d)+.1+.05*(8-Math.abs(FX[i]-4)-Math.abs(FY[i]-4))}
+function rollout(st0,mover){
+  var st=cloneSt(st0),col=mover,sc=new Float64Array(N),i;
+  while(st.n<N){
+    var tot=0,best=-1,bs=-1,pick=-1;
+    for(i=0;i<N;i++){sc[i]=0;if(!st.b[i]&&(st.nr[i]||!st.n)){var v=scSt(st,i,col);sc[i]=v*Math.sqrt(v);tot+=sc[i];if(v>bs){bs=v;best=i}}}
+    if(!st.n)pick=40;
+    else if(best<0){for(i=0;i<N;i++)if(!st.b[i]){pick=i;break}}
+    else if(bs>=1e5)pick=best;
+    else{var r=Math.random()*tot;for(i=0;i<N;i++){if(sc[i]){r-=sc[i];if(r<=0){pick=i;break}}}if(pick<0)pick=best}
+    putSt(st,pick,col);
+    if(col===2&&winSt(st,pick,2))return 1;
+    col=3-col}
+  return 0}
+function bw(st,mover,n){var s=0;for(var k=0;k<n;k++)s+=rollout(st,mover);return s/n}
+function pv(p){return p>.5?1-p:.25+.5*p}   // value for the player who placed the stone, p = Black's win rate afterwards
+function aiAuction(s){
+  var lv=+$("level").value,f=simulating?.3:1,pr=[0,[2,0,8],[6,30,50],[10,70,120]][lv],
+      n1=Math.max(1,pr[0]*f|0),n2=pr[1]*f|0,nd=Math.max(4,pr[2]*f|0);
+  if(stoneCount(s.b)>=N)return declare(s);
+  var st=mkSt(s.b),pd=bw(st,1,nd),cs=[],i,st2;
+  for(i=0;i<N;i++)if(!s.b[i]){st2=cloneSt(st);putSt(st2,i,2);if(winSt(st2,i,2))continue;cs.push({i:i,st:st2,v:pv(bw(st2,1,n1))+Math.random()*.001})}
+  cs.sort(function(a,b){return b.v-a.v});
+  if(n2>0){cs=cs.slice(0,5);cs.forEach(function(c){c.v=pv(bw(c.st,1,n2))+Math.random()*.001});cs.sort(function(a,b){return b.v-a.v})}
+  if(!cs.length||pd>=cs[0].v)return declare(s);
+  return auctionPlace(s,cs[0].i).ns}
+function aiPlay(s){
+  var lv=+$("level").value,f=simulating?.3:1,c=s.turn===s.bp?2:1,st=mkSt(s.b),cand=[],i;
+  if(!st.n)return playAt(s,40).ns;
+  for(i=0;i<N;i++)if(!st.b[i]&&st.nr[i])cand.push({i:i,v:scSt(st,i,c)});
+  if(!cand.length){for(i=0;i<N;i++)if(!st.b[i])return playAt(s,i).ns}
+  cand.sort(function(a,b){return b.v-a.v});
+  if(cand[0].v>=1e5)return playAt(s,cand[0].i).ns;
+  if(lv===1){var top=cand.slice(0,3);return playAt(s,top[rn(top.length)].i).ns}
+  var K=lv===2?8:12,n=Math.max(4,(lv===2?24:70)*f|0),best=null;
+  cand.slice(0,K).forEach(function(x){var st2=cloneSt(st);putSt(st2,x.i,c);var r=bw(st2,3-c,n),v=(c===2?r:1-r)+Math.random()*.001;if(!best||v>best.v)best={i:x.i,v:v}});
+  return playAt(s,best.i).ns}
+function aiMove(s){return s.ph===0?aiAuction(s):aiPlay(s)}
+function randMove(s){var e=[];for(var i=0;i<N;i++)if(!s.b[i]){if(s.ph===0){var b=s.b.slice();b[i]=2;if(fiveLine(b,i,2))continue}e.push(i)}
+  return e.length?moveAt(s,e[rn(e.length)]).ns:declare(s)}
+var sim=null;
+function runSim(){   // computer vs computer, to look for first/second-player advantage
+  if(sim){sim.stop=true;return}
+  var CAP=200,me=sim={stop:false},TOTAL=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?4:+$("simR").value)),
+      done=0,byCol=[0,0],fw=0,un=0,g=null,plies=0,ast=-1,astTot=0,astN=0,lvName=$("level").options[$("level").selectedIndex].text,ids=["mode","side","level","new","undo","redo","simN","simR","cb"];
+  ids.forEach(function(i){if($(i))$(i).disabled=true});simulating=true;
+  $("sim").textContent="Stop simulation";
+  $("simout").textContent="Simulating at "+lvName+" level\u2026 0/"+TOTAL;
+  function fin2(stopped){
+    sim=null;simulating=false;$("sim").textContent="Simulation";
+    $("mode").disabled=$("new").disabled=$("simN").disabled=$("simR").disabled=false;
+    $("level").disabled=$("side").disabled=$("mode").value==="2p";
+    var mg=done?(196*Math.sqrt((fw/done)*(1-fw/done)/done)).toFixed(1):"0";
+    var pc=function(n){return done?(100*n/done).toFixed(1)+"%":"n/a"};
+    $("simout").textContent=(stopped?"Stopped after ":"")+done+" games at "+lvName+" level (computer vs computer), first "+RND+" moves random.\n"+
+      "Black won "+pc(byCol[1])+", White won "+pc(byCol[0])+". The player who started the auction won "+pc(fw)+" (margin \u00b1"+mg+" points at 95% confidence). Average black stones placed in the auction: "+(astN?(astTot/astN).toFixed(1):"n/a")+"."+(un?" Unfinished (stopped at "+CAP+" plies): "+un+".":"");
+    render();
+  }
+  function stepSim(){
+    if(me.stop){fin2(true);return}
+    var t0=Date.now();
+    while(Date.now()-t0<40){
+      if(!g){g=newGame();plies=0;ast=-1}
+      if(g.w>=0||plies>=CAP){
+        if(g.w>=0){byCol[g.w===g.bp?1:0]++;if(g.w===0)fw++}else un++;
+        done++;g=null;
+        if(done>=TOTAL){fin2(false);return}
+        continue;
+      }
+      g=plies<RND?randMove(g):aiMove(g);
+      plies++;
+      if(ast<0&&g.ph===1){ast=stoneCount(g.b);astTot+=ast;astN++}
+    }
+    $("simout").textContent="Simulating at "+lvName+" level\u2026 "+done+"/"+TOTAL;
+    setTimeout(stepSim,0);
+  }
+  stepSim();
+}
+
+/* =============================== 3. INTERFACE =============================== */
+var hist,redo=[],over,busy,note="",RED="#d33";
+function cur(){return hist[hist.length-1]}
+function humanIdx(){return +$("side").value}
+function isHuman(s){return $("mode").value==="2p"||s.turn===humanIdx()}
+function pname(p){return $("mode").value==="2p"?"Player "+(p+1):(p===humanIdx()?"You":"Computer")}
+function pverb(p,a,b){return pname(p)==="You"?b:a}
+function role(p,s){return s.bp<0?"undecided":(p===s.bp?"Black":"White")}
+function start(){
+  hist=[newGame()];redo=[];note="";$("level").disabled=$("side").disabled=$("mode").value==="2p";over=false;busy=false;
+  render();maybeAI();
+}
+function X(i){return FX[i]+1}
+function Y(i){return W-FY[i]}
+function stone(c,i){var G=GAME.sides[c-1];return'<circle cx="'+X(i)+'" cy="'+Y(i)+'" r=".46" fill="'+G.color+'" stroke="'+G.edge+'" stroke-width=".05"/>'}
+function render(){
+  var s=cur(),b=s.b,i,m,g=['<svg viewBox="0 0 10 10.3" role="img" aria-label="Chicken Gomoku board"><rect x=".3" y=".3" width="9.4" height="9.4" rx=".2" fill="var(--wood)"/>'];
+  over=s.w>=0;
+  var hu=isHuman(s)&&!over&&!busy&&!sim;
+  for(m=1;m<=W;m++)g.push('<path d="M'+m+' 1V'+W+'M1 '+m+'H'+W+'" stroke="#3a2c14" stroke-width=".04" fill="none"/>');
+  [[3,3],[7,3],[3,7],[7,7],[5,5]].forEach(function(p){g.push('<circle cx="'+p[0]+'" cy="'+p[1]+'" r=".09" fill="#3a2c14"/>')});
+  for(m=0;m<W;m++){
+    g.push('<text x="'+(m+1)+'" y="'+(W+1.05)+'" text-anchor="middle" font-size=".34" fill="var(--mute)">'+String.fromCharCode(97+m)+'</text>');
+    g.push('<text x=".02" y="'+(W-m+.12)+'" font-size=".34" fill="var(--mute)">'+(m+1)+'</text>');
+  }
+  for(i=0;i<N;i++)if(b[i])g.push(stone(b[i],i));
+  var l=s.lm;
+  if(l&&!l.declare)g.push('<circle cx="'+X(l.i)+'" cy="'+Y(l.i)+'" r=".1" fill="'+RED+'"/>');
+  if(l&&l.line)l.line.forEach(function(c){g.push('<circle cx="'+X(c)+'" cy="'+Y(c)+'" r=".53" fill="none" stroke="'+RED+'" stroke-width=".07"/>')});
+  for(i=0;i<N;i++)g.push('<rect data-i="'+i+'" x="'+(X(i)-.5)+'" y="'+(Y(i)-.5)+'" width="1" height="1" fill="transparent"/>');
+  $("board").innerHTML=g.join("")+'</svg>';
+  var st,cnt=stoneCount(b);
+  for(i=0;i<2;i++){$("p"+i).className="pl"+(!over&&s.turn===i?" on":"");$("n"+i).textContent=pname(i)+": "+role(i,s)}
+  if(over)st="Game over: "+pname(s.w)+" "+pverb(s.w,"wins","win")+" as "+role(s.w,s)+(s.w===s.bp?" with five in a row.":" by stopping Black.");
+  else if(s.ph===0)st=(hu?(isHuman(s)&&$("mode").value==="ai"?"Your turn":pname(s.turn)+", your turn"):"The computer is thinking\u2026")+" \u2013 auction ("+cnt+" black stone"+(cnt===1?"":"s")+"): place a black stone, or take Black and pass.";
+  else st=(isHuman(s)?($("mode").value==="ai"?"Your move":pname(s.turn)+" to move"):"The computer is thinking\u2026")+" ("+role(s.turn,s)+").";
+  if(note)st+=" "+note;
+  $("status").textContent=st;
+  $("last").textContent=GAME.describe(s);
+  $("cb").hidden=s.ph!==0||over;$("cb").disabled=!hu;
+  $("undo").disabled=hist.length<2||busy||!!sim;
+  $("redo").disabled=!redo.length||busy||!!sim;
+}
+function play(ns){hist.push(ns);redo=[];render();maybeAI()}
+function click(i){
+  if(over||busy||sim||!isHuman(cur()))return;
+  var r=moveAt(cur(),i);
+  if(r.err){note=r.err;render();return}
+  note="";play(r.ns);
+}
+function maybeAI(){
+  var s=cur();if(over||$("mode").value!=="ai"||isHuman(s))return;
+  busy=true;render();
+  setTimeout(function(){var c=cur(),ns=aiMove(c);busy=false;hist.push(ns);render();maybeAI()},60);
+}
+document.title=GAME.title;$("gtitle").textContent=GAME.title;$("gsub").textContent=GAME.subtitle;
+function li(x){return"<li>"+(typeof x==="string"?x:x.t+"<ul>"+x.sub.map(li).join("")+"</ul>")+"</li>"}
+$("rules").innerHTML=GAME.rules.map(function(sec){return"<li><b>"+sec.h+"</b><ul>"+sec.items.map(li).join("")+"</ul></li>"}).join("");
+$("board").onclick=function(e){var t=e.target.closest("[data-i]");if(t)click(+t.getAttribute("data-i"))};
+$("new").onclick=start;$("sim").onclick=runSim;
+$("mode").onchange=$("side").onchange=start;
+$("cb").onclick=function(){var s=cur();if(over||busy||s.ph!==0||!isHuman(s))return;note="";play(declare(s))};
+$("redo").onclick=function(){
+  if(busy||!redo.length)return;
+  hist.push(redo.pop());
+  while($("mode").value==="ai"&&redo.length&&!isHuman(cur()))hist.push(redo.pop());
+  note="";render();maybeAI();
+};
+$("undo").onclick=function(){
+  if(busy||hist.length<2)return;
+  var tmp=[];
+  tmp.push(hist.pop());
+  while($("mode").value==="ai"&&hist.length>1&&!isHuman(cur()))tmp.push(hist.pop());
+  if(!isHuman(cur())&&$("mode").value==="ai"){while(tmp.length)hist.push(tmp.pop());return}
+  tmp.forEach(function(x){redo.push(x)});
+  over=false;note="";render();
+};
+start();
+})();
+</script>
+</body>
+</html>
