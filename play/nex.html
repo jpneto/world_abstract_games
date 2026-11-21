@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nex</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
+<style>
+:root{--bg:#f1efe9;--ink:#211f1b;--mute:#6a655b;--cell:#e6e0d2;--grid:#b4ab97;--hi:#f08a24;--panel:#fff;--line:#cfc8b8;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17171a;--ink:#ecebe6;--mute:#a19d93;--cell:#35332e;--grid:#56524a;--panel:#222226;--line:#3d3b38}}
+:root[data-theme="dark"]{--bg:#17171a;--ink:#ecebe6;--mute:#a19d93;--cell:#35332e;--grid:#56524a;--panel:#222226;--line:#3d3b38}
+[hidden]{display:none!important}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+main{max-width:1140px;margin:0 auto;padding:16px 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.right>.bar:first-child{margin-top:0}
+@media (min-width:880px){.layout{grid-template-columns:minmax(0,740px) minmax(290px,1fr);gap:28px;align-items:start}}
+h1{font:700 2rem/1.1 "Bricolage Grotesque",Georgia,serif;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+select,button.ctl{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.ctl:disabled,select:disabled,input:disabled{opacity:.45;cursor:default}
+label.f{color:var(--mute);font-size:.9rem}
+input[type=number]{width:4.5em;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+button.ctl.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.pl{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:8px 12px}
+.pl.on{border-color:var(--hi)}
+#status{min-height:3em;font-weight:600;margin:6px 0}
+#board svg{display:block;width:100%;max-width:740px;margin:0 auto;touch-action:manipulation}
+#board polygon[data-i]{cursor:pointer}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+details li{margin:4px 0}
+.legend{color:var(--mute);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+<h1 id="gtitle"></h1>
+<p class="sub" id="gsub"></p>
+<div class="layout">
+<div class="left">
+<div id="board"></div>
+<p class="legend">Red connects the top and bottom edges, Blue the left and right edges. Each turn: drop one of your stones and one green neutral stone, or turn two green stones into yours and one of yours into green. The last turn is ringed in orange.</p>
+</div>
+<aside class="right">
+<div class="bar">
+  <select id="size" aria-label="Board size"><option value="11" selected>11×11</option><option value="13">13×13</option><option value="15">15×15</option><option value="19">19×19</option><option value="23">23×23</option></select>
+  <select id="mode" aria-label="Mode"><option value="ai">Play the computer</option><option value="2p">Two players</option></select>
+  <select id="level" aria-label="Computer strength"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select>
+  <select id="side" aria-label="Your colour"><option value="0">You play Red (moves first)</option><option value="1">You play Blue</option></select>
+</div>
+<div class="bar">
+  <button class="ctl primary" id="new">New game</button>
+  <button class="ctl" id="undo">Undo</button>
+  <button class="ctl" id="redo">Redo</button>
+  <button class="ctl" id="back">Cancel step</button>
+</div>
+<div class="score"><div class="pl" id="p0"><span id="n0"></span></div><div class="pl" id="p1"><span id="n1"></span></div></div>
+<div id="status" aria-live="polite"></div>
+<div id="last" class="legend" style="min-height:2.6em;margin:0 0 8px"></div>
+<div class="bar">
+  <label class="f">Simulation games <input id="simN" type="number" min="10" max="1000" value="10"></label>
+  <label class="f">Random opening turns <input id="simR" type="number" min="0" max="20" value="2"></label>
+  <button class="ctl" id="sim">Simulation</button>
+</div>
+<div id="simout" class="legend" style="white-space:pre-line;margin:0 0 8px"></div>
+<details><summary>Rules</summary><ul id="rules"></ul></details>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+/* 1. GAME DEFINITION (rules, move generation)  2. ENGINE (computer, simulation)  3. INTERFACE (SVG board, clicks)
+   Board: N x N rhombus of hexagons, cell c = row*N + col.
+   State: {b: Uint8Array N*N (0 empty, 1 Red, 2 Blue, 3 neutral green), turn: 0 Red / 1 Blue, w: winner or -1, stuck, lm: last move}.
+   Moves: {t:"d", f: cell for the friendly stone, n: cell for the neutral stone}
+          {t:"x", g:[two neutral cells that become friendly], f: friendly cell that becomes neutral}. */
+var $=function(i){return document.getElementById(i)};
+
+/* ============================ 1. GAME DEFINITION ============================ */
+var N=11,NB,DD,DA,DB,QB,QL=[0,0,0],OWN=0,INF=99999,
+    HR=[-1,-1,0,0,1,1],HC=[0,1,-1,1,-1,0],     // hex neighbours: NW, NE, W, E, SW, SE
+    WT=[null,[2,0,9,1],[2,9,0,1]];              // path cost per cell value for Red / Blue: empty 2, own 0, neutral 1
+var NAMES=["Red","Blue"],COLS=["#d6453d","#2f6bd0"],GREEN="#3a9a55";
+function setN(n){N=n;NB=[];
+  for(var c=0;c<n*n;c++){var r=c/n|0,k=c%n,a=[],d,rr,kk;
+    for(d=0;d<6;d++){rr=r+HR[d];kk=k+HC[d];if(rr>=0&&rr<n&&kk>=0&&kk<n)a.push(rr*n+kk)}
+    NB[c]=a}
+  DD=new Int32Array(n*n);DA=new Int32Array(n*n);DB=new Int32Array(n*n);
+  QB=[new Int32Array(n*n*6),new Int32Array(n*n*6),new Int32Array(n*n*6)]}
+function cn(c){return String.fromCharCode(97+c%N)+((c/N|0)+1)}
+var GAME={
+  title:"Nex",
+  subtitle:"Hex with a neutral twist. Drop a stone and a green one, or trade greens for your own. Red links top and bottom, Blue links left and right.",
+  rules:[
+  {h:"Board and players",items:["Played on a Hex board (a rhombus of hexagons) of size 11×11; 13, 15, 19 and 23 are also available.",
+    "The players are Red and Blue. Red owns the top and bottom edges, Blue the left and right edges (corner cells touch one edge of each). The game also uses neutral green stones."]},
+  {h:"A turn",items:[
+    "On each turn a player does one of the following:",
+    "Drop one friendly stone and one neutral stone on two empty cells.",
+    "Exchange: replace two neutral stones by friendly stones, and another friendly stone (one already on the board) by a neutral stone."]},
+  {h:"Winning",items:[
+    "The first player to form an unbroken chain of friendly stones linking their two edges wins.",
+    "Implementation notes: Red moves first and there is no swap rule. A player with no legal turn loses (this can only happen on a nearly full board)."]}],
+  describe:function(s){var l=s.lm;if(!l)return"";
+    var who=isAI()?pname(l.c)+" ("+NAMES[l.c]+")":NAMES[l.c];
+    if(l.t==="d")return who+" dropped a stone on "+cn(l.f)+" and a neutral stone on "+cn(l.n)+".";
+    return who+" turned the green stones on "+cn(l.g[0])+" and "+cn(l.g[1])+" "+NAMES[l.c]+", and "+cn(l.f)+" green."}
+};
+function newGame(){return{b:new Uint8Array(N*N),turn:0,w:-1,stuck:false,lm:null}}
+function edge(p,side,i){return p===1?(side?(N-1)*N+i:i):(side?i*N+N-1:i*N)}
+// cheapest path for p between its edges (Dial's algorithm, weights 0/1/2); d gets the distance from edge `side`
+function dmap(b,p,side,d){
+  var o=3-p,W=WT[p],cur=0,pend=0,i,j,c,n,nb,w,nd,k,e,q,best=INF;
+  d.fill(INF);QL[0]=QL[1]=QL[2]=0;
+  for(i=0;i<N;i++){c=edge(p,side,i);if(b[c]===o)continue;w=W[b[c]];if(w<d[c]){d[c]=w;k=w%3;QB[k][QL[k]++]=c;pend++}}
+  while(pend>0){k=cur%3;q=QB[k];
+    for(j=0;j<QL[k];j++){c=q[j];pend--;if(d[c]!==cur)continue;nb=NB[c];
+      for(i=0;i<nb.length;i++){n=nb[i];if(b[n]===o)continue;nd=cur+W[b[n]];
+        if(nd<d[n]){d[n]=nd;e=nd%3;QB[e][QL[e]++]=n;pend++}}}
+    QL[k]=0;cur++}
+  for(i=0;i<N;i++){c=edge(p,1-side,i);if(d[c]<best)best=d[c]}
+  return best}
+function dist(b,p){return dmap(b,p,0,DD)}      // 0 = p has a complete chain
+function counts(b,p){var e=0,g=0,f=0,c;for(c=0;c<N*N;c++){if(!b[c])e++;else if(b[c]===3)g++;else if(b[c]===p)f++}return{e:e,g:g,f:f}}
+function canDrop(k){return k.e>=2}
+function canEx(k){return k.g>=2&&k.f>=1}
+function applyB(b,m,p){b=b.slice();if(m.t==="d"){b[m.f]=p;b[m.n]=3}else{b[m.g[0]]=b[m.g[1]]=p;b[m.f]=3}return b}
+function legal(b,m,p){
+  if(m.t==="d")return m.f!==m.n&&!b[m.f]&&!b[m.n];
+  return m.g[0]!==m.g[1]&&b[m.g[0]]===3&&b[m.g[1]]===3&&b[m.f]===p}
+function apply(s,m){
+  var p=s.turn+1,b=applyB(s.b,m,p);
+  return{b:b,turn:1-s.turn,w:dist(b,p)===0?s.turn:-1,stuck:false,
+    lm:m.t==="d"?{t:"d",c:s.turn,f:m.f,n:m.n}:{t:"x",c:s.turn,g:m.g.slice(),f:m.f}}}
+function hasTurn(s){var k=counts(s.b,s.turn+1);return canDrop(k)||canEx(k)}
+// a player with no legal turn loses
+function settle(ns){if(ns.w<0&&!hasTurn(ns)){ns.w=1-ns.turn;ns.stuck=true}return ns}
+
+/* ================================ 2. ENGINE ================================ */
+/* Path cost: own stone 0, neutral 1 (two can be converted in one turn), empty 2, opponent stone blocks.
+   Evaluation = opponent's cheapest path - own cheapest path + a small bonus for own stones on near-cheapest paths.
+   "Hot" cells lie on a near-cheapest path of mine or a cheapest path of the opponent.
+   Candidates: drops = best friendly cells x hot cells for the neutral stone; exchanges = best neutral pairs x
+   friendly stones that are cheapest to give up. Easy picks among the top 3 one-turn candidates; Medium / Hard
+   let the opponent answer with its best reply (2-ply) and keep the turn that leaves it worst off. */
+function rn(n){return Math.floor(Math.random()*n)}
+function shuf(a){for(var i=a.length-1,j,t;i>0;i--){j=rn(i+1);t=a[i];a[i]=a[j];a[j]=t}return a}
+function analyse(b,p,slack,mk,tight){
+  var W=WT[p],best=dmap(b,p,0,DA),c,s;dmap(b,p,1,DB);OWN=0;
+  for(c=0;c<N*N;c++){if(DA[c]>=INF||DB[c]>=INF)continue;s=DA[c]+DB[c]-W[b[c]];
+    if(b[c]===p){if(s<=best+slack)OWN++}
+    else{if(mk&&s<=best+slack)mk[c]=1;if(tight&&b[c]===3&&s<=best)tight.push(c)}}
+  return best}
+function ev(b,p){var cap=4*N,m=analyse(b,p,2,null,null),o;if(m===0)return 1e6;o=dist(b,3-p);return Math.min(o,cap)-Math.min(m,cap)+.03*OWN}
+var WIDTH={1:[[3,10,4,3]],2:[[6,16,6,5],[3,8,4,3]],3:[[8,24,8,6],[4,12,5,4]]};
+function byV(x,y){return y.v-x.v}
+// candidate turns for p on b (b is restored before returning); w=[friendly cells, neutral cells, neutrals for exchange, stones to give up]
+function cands(b,p,w){
+  var o=3-p,E=[],G=[],F=[],hot=new Uint8Array(N*N),tight=[],out=[],c,i,j,k,v,fs,ns,gs,rs,x,y,r,myBest;
+  for(c=0;c<N*N;c++){if(!b[c])E.push(c);else if(b[c]===3)G.push(c);else if(b[c]===p)F.push(c)}
+  myBest=analyse(b,p,2,hot,tight);analyse(b,o,1,hot,null);
+  if(E.length>=2){
+    fs=[];
+    for(i=0;i<E.length;i++){c=E[i];if(!hot[c])continue;b[c]=p;
+      if(dist(b,p)===0){b[c]=0;return[{m:{t:"d",f:c,n:E[0]!==c?E[0]:E[1]},v:1e6,win:true}]}
+      fs.push({c:c,v:ev(b,p)+Math.random()*.1-.02*(Math.abs((c/N|0)-(N-1)/2)+Math.abs(c%N-(N-1)/2))});b[c]=0}
+    if(fs.length<w[0])shuf(E.filter(function(e){return!hot[e]})).slice(0,w[0]*2).forEach(function(e){b[e]=p;fs.push({c:e,v:ev(b,p)-.5});b[e]=0});
+    fs.sort(byV);fs=fs.slice(0,w[0]);
+    ns=shuf(E.filter(function(e){return hot[e]})).slice(0,w[1]).concat(shuf(E.filter(function(e){return!hot[e]})).slice(0,3));
+    for(i=0;i<fs.length;i++){x=fs[i].c;b[x]=p;
+      for(j=0;j<ns.length;j++){y=ns[j];if(y===x)continue;b[y]=3;out.push({m:{t:"d",f:x,n:y},v:ev(b,p)+Math.random()*.1-.02*(Math.abs((x/N|0)-(N-1)/2)+Math.abs(x%N-(N-1)/2))});b[y]=0}
+      b[x]=0}}
+  if(G.length>=2&&F.length>=1){
+    gs=[];for(i=0;i<G.length;i++){c=G[i];b[c]=p;gs.push({c:c,v:ev(b,p)+Math.random()*.1});b[c]=3}
+    gs.sort(byV);gs=gs.slice(0,w[2]);
+    if(myBest<=2)tight.forEach(function(t){if(!gs.some(function(g){return g.c===t}))gs.push({c:t})});
+    rs=[];for(i=0;i<F.length;i++){c=F[i];b[c]=3;rs.push({c:c,v:ev(b,p)+Math.random()*.1});b[c]=p}
+    rs.sort(byV);rs=rs.slice(0,w[3]);
+    for(i=0;i<gs.length;i++)for(j=i+1;j<gs.length;j++){x=gs[i].c;y=gs[j].c;b[x]=b[y]=p;
+      for(k=0;k<rs.length;k++){r=rs[k].c;b[r]=3;v=ev(b,p);b[r]=p;
+        if(v>=1e6){b[x]=b[y]=3;return[{m:{t:"x",g:[x,y],f:r},v:1e6,win:true}]}
+        out.push({m:{t:"x",g:[x,y],f:r},v:v+Math.random()*.1})}
+      b[x]=b[y]=3}}
+  out.sort(byV);return out}
+function randMove(s){
+  var p=s.turn+1,b=s.b,E=[],G=[],F=[],c;
+  for(c=0;c<N*N;c++){if(!b[c])E.push(c);else if(b[c]===3)G.push(c);else if(b[c]===p)F.push(c)}
+  var d=E.length>=2,x=G.length>=2&&F.length>=1;
+  if(!d&&!x)return null;
+  if(d&&(!x||Math.random()<.85)){shuf(E);return{t:"d",f:E[0],n:E[1]}}
+  shuf(G);return{t:"x",g:[G[0],G[1]],f:F[rn(F.length)]}}
+function aiMove(s,lv){
+  if(lv===undefined)lv=+$("level").value;
+  if(lv<1)return randMove(s);
+  var p=s.turn+1,b=s.b.slice(),W=WIDTH[lv],pool,i,best=-1e9,pick=null,b2,r,v,m;
+  pool=cands(b,p,W[0]);
+  if(!pool.length)return randMove(s);
+  if(pool[0].win)return pool[0].m;
+  if(lv===1)return pool[rn(Math.min(3,pool.length))].m;
+  pool=pool.slice(0,lv===2?6:10);
+  for(i=0;i<pool.length;i++){
+    m=pool[i];b2=applyB(b,m.m,p);
+    r=cands(b2,3-p,W[1]);
+    if(!r.length){var k=counts(b2,3-p);v=canDrop(k)||canEx(k)?m.v:1e5}
+    else v=r[0].win?-1e5:-r[0].v+.2*m.v+Math.random()*.05;
+    if(v>best){best=v;pick=m.m}}
+  return pick}
+var sim=null;
+function runSim(){
+  if(sim){sim.stop=true;return}
+  var CAP=3*N*N+10,me=sim={stop:false},TOTAL=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?2:+$("simR").value)),
+      done=0,wc=[0,0],un=0,g=null,plies=0,len=0,lvName=$("level").options[$("level").selectedIndex].text,
+      ids=["size","mode","side","level","new","undo","redo","back","simN","simR"];
+  ids.forEach(function(i){$(i).disabled=true});
+  $("sim").textContent="Stop simulation";
+  $("simout").textContent="Simulating at "+lvName+" level… 0/"+TOTAL;
+  function fin(stopped){
+    sim=null;$("sim").textContent="Simulation";
+    $("size").disabled=$("mode").disabled=$("new").disabled=$("simN").disabled=$("simR").disabled=false;
+    $("level").disabled=$("side").disabled=$("mode").value==="2p";
+    var pc=function(n){return done?(100*n/done).toFixed(1)+"%":"n/a"};
+    $("simout").textContent=(stopped?"Stopped after ":"")+done+" games ("+N+"×"+N+", "+lvName+" level, computer vs computer), first "+RND+" turns random.\nRed (first player) won "+pc(wc[0])+", Blue won "+pc(wc[1])+". Average length: "+(done?(len/done).toFixed(0):"n/a")+" turns."+(un?" Unfinished: "+un+".":"");
+    render()}
+  function step(){
+    if(me.stop){fin(true);return}
+    var t0=Date.now();
+    while(Date.now()-t0<40){
+      if(!g){g=newGame();plies=0}
+      if(g.w>=0||plies>=CAP){if(g.w>=0)wc[g.w]++;else un++;len+=plies;done++;g=null;if(done>=TOTAL){fin(false);return}continue}
+      g=settle(apply(g,aiMove(g,plies<RND?0:undefined)));plies++}
+    $("simout").textContent="Simulating at "+lvName+" level… "+done+"/"+TOTAL;
+    setTimeout(step,0)}
+  step()}
+
+/* =============================== 3. INTERFACE =============================== */
+var S3=Math.sqrt(3),HH=S3/2,RS=1/S3,
+    V=[[0,-RS],[.5,-RS/2],[.5,RS/2],[0,RS],[-.5,RS/2],[-.5,-RS/2]];   // hex corners; side k runs V[k]->V[k+1]: NE,E,SE,SW,W,NW
+var hist,redo=[],over,busy,note="",pend;
+function fresh(){return{m:"",f:-1,g:[],r:-1}}
+function cur(){return hist[hist.length-1]}
+function hc(){return+$("side").value}
+function isAI(){return $("mode").value==="ai"}
+function isHuman(s){return!isAI()||s.turn===hc()}
+function pname(c){return isAI()?(c===hc()?"You":"Computer"):NAMES[c]}
+function pverb(c,a,b){return pname(c)==="You"?b:a}
+function start(){hist=[newGame()];redo=[];note="";pend=fresh();$("level").disabled=$("side").disabled=!isAI();over=false;busy=false;render();maybeAI()}
+function px(r,k){return k+r/2}
+function py(r){return r*HH}
+function X(c){return px(c/N|0,c%N)}
+function Y(c){return py(c/N|0)}
+function f3(v){return Math.round(v*1000)/1000}
+function hexPts(x,y){return V.map(function(v){return f3(x+v[0])+","+f3(y+v[1])}).join(" ")}
+function ring(c,r,clr,w,op){return'<circle cx="'+f3(X(c))+'" cy="'+f3(Y(c))+'" r="'+r+'" fill="none" stroke="'+clr+'" stroke-width="'+w+'"'+(op?' opacity="'+op+'"':'')+' pointer-events="none"/>'}
+function dot(c,r,clr){return'<circle cx="'+f3(X(c))+'" cy="'+f3(Y(c))+'" r="'+r+'" fill="'+clr+'" pointer-events="none"/>'}
+function stone(c,v,op){var fill=v===3?GREEN:COLS[v-1],st=v===1?"#8f2620":v===2?"#1c4590":"#22663a";
+  return'<circle cx="'+f3(X(c))+'" cy="'+f3(Y(c))+'" r=".36" fill="'+fill+'" stroke="'+st+'" stroke-width=".04"'+(op?' opacity="'+op+'"':'')+' pointer-events="none"/>'}
+function line(x1,y1,x2,y2,clr){return'<line x1="'+f3(x1)+'" y1="'+f3(y1)+'" x2="'+f3(x2)+'" y2="'+f3(y2)+'" stroke="'+clr+'" stroke-width=".3" stroke-linecap="round"/>'}
+// outside sides of edge cells: Red (top/bottom rows), Blue (left/right columns); the obtuse corners' shared side is split in half
+function borders(){
+  var g=[],c,r,k,sd,s,x,y,a,b,mx,my,add=function(side,col){(sd[side]=sd[side]||[]).push(col)};
+  for(c=0;c<N*N;c++){r=c/N|0;k=c%N;if(r&&k&&r<N-1&&k<N-1)continue;sd={};
+    if(r===0){add(5,0);add(0,0)}
+    if(r===N-1){add(2,0);add(3,0)}
+    if(k===0){add(4,1);add(3,1)}
+    if(k===N-1){add(1,1);add(0,1)}
+    x=X(c);y=Y(c);
+    for(s in sd){s=+s;a=V[s];b=V[(s+1)%6];
+      if(sd[s].length===1)g.push(line(x+a[0],y+a[1],x+b[0],y+b[1],COLS[sd[s][0]]));
+      else{mx=(a[0]+b[0])/2;my=(a[1]+b[1])/2;g.push(line(x+a[0],y+a[1],x+mx,y+my,COLS[0]),line(x+mx,y+my,x+b[0],y+b[1],COLS[1]))}}}
+  return g.join("")}
+function render(){
+  var s=cur(),b=s.b,g=[],c,i,l=s.lm,p=s.turn+1,hu,
+      x0=-1.35,y0=-HH-.45,w=N+(N-1)/2+.5+1.35+.1,h=N*HH+.45-y0;
+  over=s.w>=0;hu=isHuman(s)&&!over&&!busy&&!sim;
+  g.push('<svg viewBox="'+f3(x0)+' '+f3(y0)+' '+f3(w)+' '+f3(h)+'" role="img" aria-label="Nex board" font-family="system-ui,sans-serif">');
+  g.push(borders());
+  for(c=0;c<N*N;c++)g.push('<polygon data-i="'+c+'" points="'+hexPts(X(c),Y(c))+'" fill="var(--cell)" stroke="var(--grid)" stroke-width=".04"/>');
+  for(i=0;i<N;i++){
+    var L=String.fromCharCode(97+i),nn=i+1;
+    g.push('<text x="'+f3(px(-1,i)+.05)+'" y="'+f3(py(-1)+.12)+'" font-size=".34" text-anchor="middle" fill="var(--mute)">'+L+'</text>');
+    g.push('<text x="'+f3(px(N,i)-.05)+'" y="'+f3(py(N)+.05)+'" font-size=".34" text-anchor="middle" fill="var(--mute)">'+L+'</text>');
+    g.push('<text x="'+f3(px(i,-1)+.05)+'" y="'+f3(py(i)+.12)+'" font-size=".34" text-anchor="middle" fill="var(--mute)">'+nn+'</text>');
+    g.push('<text x="'+f3(px(i,N)-.05)+'" y="'+f3(py(i)+.12)+'" font-size=".34" text-anchor="middle" fill="var(--mute)">'+nn+'</text>')}
+  for(c=0;c<N*N;c++)if(b[c])g.push(stone(c,b[c]));
+  if(l){(l.t==="d"?[l.f,l.n]:[l.g[0],l.g[1],l.f]).forEach(function(c){g.push(ring(c,.43,"var(--hi)",.07))})}
+  if(hu){
+    if(pend.m==="d")g.push(stone(pend.f,p,.55),ring(pend.f,.43,COLS[s.turn],.1));
+    if(pend.m==="x"){pend.g.forEach(function(c){g.push(ring(c,.43,COLS[s.turn],.11),dot(c,.13,COLS[s.turn]))});
+      if(pend.r>=0)g.push(ring(pend.r,.43,GREEN,.11),dot(pend.r,.13,GREEN))}}
+  $("board").innerHTML=g.join("")+'</svg>';
+  var st;
+  for(i=0;i<2;i++){$("p"+i).className="pl"+(!over&&s.turn===i?" on":"");
+    $("p"+i).style.borderLeft="8px solid "+COLS[i];
+    $("n"+i).textContent=pname(i)+" – "+NAMES[i]+(i?" (left–right)":" (top–bottom)")}
+  if(over)st=(s.stuck?pname(1-s.w)+" "+pverb(1-s.w,"has","have")+" no legal turn. ":"")+"Game over: "+pname(s.w)+" ("+NAMES[s.w]+") "+pverb(s.w,"wins","win")+".";
+  else{
+    st=isHuman(s)?(isAI()?"Your move ("+NAMES[s.turn]+").":NAMES[s.turn]+" to move."):"The computer is thinking…";
+    if(hu){var k=counts(b,p),cd=canDrop(k),cx=canEx(k);
+      if(pend.m==="d")st+=" Now click another empty cell for the green neutral stone.";
+      else if(pend.m==="x"){var need=[];if(pend.g.length<2)need.push((2-pend.g.length)+" more green stone"+(pend.g.length?"":"s")+" to turn "+NAMES[s.turn]);
+        if(pend.r<0)need.push("one of your stones to turn green");st+=" Exchange: select "+need.join(" and ")+"."}
+      else st+=(cd?" Click an empty cell for your stone (then one for the neutral)":"")+(cd&&cx?", or":"")+(cx?" click two green stones and one of yours to exchange":"")+"."}}
+  if(note)st+=" "+note;
+  $("status").textContent=st;
+  $("last").textContent=GAME.describe(s);
+  $("undo").disabled=hist.length<2||busy||!!sim;
+  $("redo").disabled=!redo.length||busy||!!sim;
+  $("back").disabled=!pend.m||busy||!!sim}
+function play(m){var ns=settle(apply(cur(),m));hist.push(ns);redo=[];note="";pend=fresh();render();maybeAI()}
+function click(i){
+  var s=cur(),b=s.b,p=s.turn+1,v=b[i],k=counts(b,p),j;
+  if(over||busy||sim||!isHuman(s))return;
+  note="";
+  if(!pend.m){
+    if(!v){if(canDrop(k))pend={m:"d",f:i,g:[],r:-1};else note="Fewer than two empty cells are left, so you cannot drop.";}
+    else if(v===3||v===p){
+      if(!canEx(k))note=k.g<2?"An exchange needs at least two green stones on the board.":"An exchange needs one of your stones on the board.";
+      else{pend={m:"x",f:-1,g:[],r:-1};if(v===3)pend.g.push(i);else pend.r=i}}
+    else note="That is an opponent stone.";
+    render();return}
+  if(pend.m==="d"){
+    if(i===pend.f){pend=fresh();render();return}
+    if(v){note="The neutral stone must go on an empty cell.";render();return}
+    play({t:"d",f:pend.f,n:i});return}
+  // exchange
+  if(v===3){j=pend.g.indexOf(i);if(j>=0)pend.g.splice(j,1);else if(pend.g.length<2)pend.g.push(i);else note="You have already chosen two green stones (click one to deselect it).";}
+  else if(v===p)pend.r=pend.r===i?-1:i;
+  else note=v?"That is an opponent stone.":"An exchange uses green stones and one of your stones; press Cancel step to drop instead.";
+  if(!pend.g.length&&pend.r<0){pend=fresh()}
+  if(pend.g.length===2&&pend.r>=0){play({t:"x",g:pend.g.slice(),f:pend.r});return}
+  render()}
+function maybeAI(){
+  var s=cur();if(over||!isAI()||isHuman(s))return;
+  busy=true;render();
+  setTimeout(function(){var c=cur(),ns=settle(apply(c,aiMove(c)));busy=false;hist.push(ns);render();maybeAI()},60)}
+document.title=GAME.title;$("gtitle").textContent=GAME.title;$("gsub").textContent=GAME.subtitle;
+function li(x){return"<li>"+x+"</li>"}
+$("rules").innerHTML=GAME.rules.map(function(sec){return"<li><b>"+sec.h+"</b><ul>"+sec.items.map(li).join("")+"</ul></li>"}).join("");
+$("board").onclick=function(e){var t=e.target.closest("[data-i]");if(t)click(+t.getAttribute("data-i"))};
+$("new").onclick=start;$("sim").onclick=runSim;
+$("back").onclick=function(){pend=fresh();note="";render()};
+$("size").onchange=function(){setN(+$("size").value);start()};
+$("mode").onchange=$("side").onchange=start;
+$("redo").onclick=function(){
+  if(busy||!redo.length)return;
+  hist.push(redo.pop());
+  while(isAI()&&redo.length&&!isHuman(cur()))hist.push(redo.pop());
+  pend=fresh();note="";render();maybeAI()};
+$("undo").onclick=function(){
+  if(busy||hist.length<2)return;
+  var tmp=[];
+  tmp.push(hist.pop());
+  while(isAI()&&hist.length>1&&!isHuman(cur()))tmp.push(hist.pop());
+  if(!isHuman(cur())&&isAI()){while(tmp.length)hist.push(tmp.pop());return}
+  tmp.forEach(function(x){redo.push(x)});
+  over=false;pend=fresh();note="";render()};
+setN(11);start();
+})();
+</script>
+</body>
+</html>

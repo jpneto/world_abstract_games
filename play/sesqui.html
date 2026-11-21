@@ -1,0 +1,354 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sesqui</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
+<style>
+:root{--bg:#eef0e6;--ink:#1f2a1c;--mute:#5d6a56;--cell:#dfe3cf;--edge:#b9bfa3;--hi:#e0803a;--panel:#fff;--line:#c5cab4;--wood:#d9b66f;--cell:#e6e9d6;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f;--wood:#9a7b45}}
+:root[data-theme="dark"]{--wood:#9a7b45;--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f}
+[hidden]{display:none!important}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+main{max-width:1080px;margin:0 auto;padding:16px 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.right>.bar:first-child{margin-top:0}
+@media (min-width:860px){.layout{grid-template-columns:minmax(0,640px) minmax(300px,1fr);gap:28px;align-items:start}}
+h1{font:700 2rem/1.1 "Bricolage Grotesque",Georgia,serif;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+select,button.ctl{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.ctl:disabled,select:disabled,input:disabled{opacity:.45;cursor:default}
+label.f{color:var(--mute);font-size:.9rem}
+label.chk{display:flex;gap:6px;align-items:center;cursor:pointer;font-size:.95rem}
+input[type=number]{width:4.5em;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+button.ctl.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button.ctl.on{background:var(--hi);border-color:var(--hi);color:#fff}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.pl{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:8px 12px;display:flex;justify-content:space-between;align-items:baseline}
+.pl.on{border-color:var(--hi)}
+#status{min-height:3em;font-weight:600;margin:6px 0}
+#board svg{display:block;width:100%;max-width:640px;margin:0 auto;touch-action:manipulation}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+details li{margin:4px 0}
+.legend{color:var(--mute);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+<h1 id="gtitle"></h1>
+<p class="sub" id="gsub"></p>
+<div class="layout">
+<div class="left">
+<div id="board"></div>
+<p class="legend">Black connects the top and bottom edges, White the left and right edges (corners belong to both). Each turn: drop a stone next to one of yours, then slide a different stone like a chess queen. Dots show legal targets; the last turn is marked in orange.</p>
+</div>
+<aside class="right">
+<div class="bar">
+  <select id="size" aria-label="Board size"><option value="9">9×9</option><option value="13">13×13</option><option value="15" selected>15×15</option><option value="19">19×19</option><option value="23">23×23</option></select>
+  <select id="mode" aria-label="Mode"><option value="ai">Play the computer</option><option value="2p">Two players</option></select>
+  <select id="level" aria-label="Computer strength"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select>
+  <select id="side" aria-label="Your role"><option value="0">You drop the opening stones</option><option value="1">You choose the colour</option></select>
+</div>
+<div class="bar">
+  <button class="ctl primary" id="new">New game</button>
+  <button class="ctl" id="undo">Undo</button>
+  <button class="ctl" id="redo">Redo</button>
+  <button class="ctl" id="back">Cancel step</button>
+</div>
+<div class="score"><div class="pl" id="p0"><span id="n0"></span></div><div class="pl" id="p1"><span id="n1"></span></div></div>
+<div id="status" aria-live="polite"></div>
+<div class="bar" id="choose" hidden><button class="ctl primary" id="c0"></button><button class="ctl primary" id="c1"></button></div>
+<div id="last" class="legend" style="min-height:2.6em;margin:0 0 8px"></div>
+<div class="bar">
+  <label class="f">Simulation games <input id="simN" type="number" min="10" max="1000" value="10"></label>
+  <label class="f">Random opening turns <input id="simR" type="number" min="0" max="20" value="2"></label>
+  <button class="ctl" id="sim">Simulation</button>
+</div>
+<div id="simout" class="legend" style="white-space:pre-line;margin:0 0 8px"></div>
+<details><summary>Rules</summary><ul id="rules"></ul></details>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+/* 1. GAME DEFINITION (rules, move generation)  2. ENGINE (computer, simulation)  3. INTERFACE (SVG board, clicks)
+   State: {b: Uint8Array N*N (0 empty,1 Black,2 White), phase: 0 dropper places 2 Black+1 White, 1 chooser picks colour, 2 play,
+   turn: player 0 (dropper) / 1 (chooser), bl: player who is Black (-1 before the choice), w: winner player or -1, stuck, lm: last move}.
+   Moves: {t:"o",bs:[a,b],w}  {t:"c",swap}  {t:"t",d:drop,f:from,to} (f=-1: the drop already won). */
+var $=function(i){return document.getElementById(i)};
+
+/* ============================ 1. GAME DEFINITION ============================ */
+var N=15,NB4,NB8,BUF,DD,DA,DB,OWN=0,INF=99,DR=[-1,-1,-1,0,0,1,1,1],DC=[-1,0,1,-1,1,-1,0,1];
+function setN(n){N=n;NB4=[];NB8=[];
+  for(var c=0;c<n*n;c++){var r=c/n|0,k=c%n,a=[],b=[],d,rr,kk;
+    for(d=0;d<8;d++){rr=r+DR[d];kk=k+DC[d];if(rr>=0&&rr<n&&kk>=0&&kk<n){b.push(rr*n+kk);if(!DR[d]||!DC[d])a.push(rr*n+kk)}}
+    NB4[c]=a;NB8[c]=b}
+  BUF=new Int32Array(16*n*n+16);DD=new Int16Array(n*n);DA=new Int16Array(n*n);DB=new Int16Array(n*n)}
+function cn(c){return String.fromCharCode(97+c%N)+(N-(c/N|0))}
+var GAME={
+  title:"Sesqui",
+  subtitle:"Drop a stone, then slide another like a queen. Black links north and south, White links east and west.",
+  rules:[
+  {h:"Board and players",items:["Played on the intersections of a square board (9\u00d79 up to 23\u00d723, default 15\u00d715). The players are Black and White."]},
+  {h:"Opening",items:[
+    "One player drops two Black stones and one White stone anywhere.",
+    "The other player then chooses: swap (and become Black), or continue as White. White moves first."]},
+  {h:"A turn",items:[
+    "First, drop a friendly stone on an empty intersection orthogonally adjacent to a friendly stone.",
+    "Second, move a different friendly stone (not the one just dropped) any distance along a line of empty intersections, like a chess queen, to an empty intersection."]},
+  {h:"Deadlock ban",items:["It is always illegal to create a 2\u00d72 block of two Black and two White stones in a checkerboard (x o / o x), even in the middle of a turn."]},
+  {h:"Winning",items:[
+    "Black wins by connecting the north and south edges, White by connecting the east and west edges. Corners belong to both edges. Connections may be orthogonal or diagonal.",
+    "Implementation notes: a connection made after the drop wins at once, and a player with no legal turn loses."]}],
+  describe:function(s){var l=s.lm;if(!l)return"";
+    if(l.t==="o")return pname(l.c)+" dropped two Black stones and one White stone.";
+    if(l.t==="c")return pname(l.c)+(l.swap?" swapped and "+pverb(l.c,"plays","play")+" Black.":" "+pverb(l.c,"continues","continue")+" as White.");
+    return pname(l.c)+" dropped a stone on "+cn(l.d)+(l.f>=0?" and slid a stone from "+cn(l.f)+" to "+cn(l.to)+".":", completing a connection.")}
+};
+function newGame(){return{b:new Uint8Array(N*N),phase:0,turn:0,bl:-1,w:-1,stuck:false,lm:null}}
+function col(s,p){return s.bl===p?1:2}
+function dead(b,c){var r=c/N|0,k=c%N,dr,dc,t,x,y;
+  for(dr=-1;dr<1;dr++)for(dc=-1;dc<1;dc++){
+    if(r+dr<0||r+dr+1>=N||k+dc<0||k+dc+1>=N)continue;
+    t=(r+dr)*N+k+dc;x=b[t];y=b[t+1];
+    if(x&&y&&x!==y&&b[t+N+1]===x&&b[t+N]===y)return true}
+  return false}
+function okAt(b,c,p){b[c]=p;var r=!dead(b,c);b[c]=0;return r}
+function dropsFor(b,p){var out=[],seen=new Uint8Array(N*N),c,i,n;
+  for(c=0;c<N*N;c++)if(b[c]===p)for(i=0;i<NB4[c].length;i++){n=NB4[c][i];if(!b[n]&&!seen[n]){seen[n]=1;if(okAt(b,n,p))out.push(n)}}
+  return out}
+function targetsOf(b,f,p,first){var out=[],d,r,k,x;
+  b[f]=0;
+  for(d=0;d<8;d++){r=(f/N|0)+DR[d];k=f%N+DC[d];
+    while(r>=0&&r<N&&k>=0&&k<N&&!b[x=r*N+k]){if(okAt(b,x,p)){out.push(x);if(first){b[f]=p;return out}}r+=DR[d];k+=DC[d]}}
+  b[f]=p;return out}
+function hasTarget(b,f,p){return targetsOf(b,f,p,true).length>0}
+function anyMove(b,d,p){for(var c=0;c<N*N;c++)if(b[c]===p&&c!==d&&hasTarget(b,c,p))return true;return false}
+// shortest path: fewest empty intersections player p still has to fill (0 = connected)
+function dmap(b,p,side,d){   // side 0: from north/west edge, 1: from south/east edge; returns best cost at the opposite edge
+  var o=3-p,h=8*N*N+8,t=h,c,i,n,nb,w,nd,best=INF;
+  d.fill(INF);
+  for(i=0;i<N;i++){c=p===1?(side?(N-1)*N+i:i):(side?i*N+N-1:i*N);if(b[c]===o)continue;w=b[c]===p?0:1;if(w<d[c]){d[c]=w;if(w)BUF[t++]=c;else BUF[--h]=c}}
+  while(h<t){c=BUF[h++];nb=NB8[c];
+    for(i=0;i<nb.length;i++){n=nb[i];if(b[n]===o)continue;w=b[n]===p?0:1;nd=d[c]+w;if(nd<d[n]){d[n]=nd;if(w)BUF[t++]=n;else BUF[--h]=n}}}
+  for(i=0;i<N;i++){c=p===1?(side?i:(N-1)*N+i):(side?i*N:i*N+N-1);if(d[c]<best)best=d[c]}
+  return best}
+function dist(b,p){return dmap(b,p,0,DD)}   // fewest empty intersections p still has to fill (0 = connected)
+function apply(s,m){
+  var b=s.b.slice(),p;
+  if(m.t==="o"){b[m.bs[0]]=b[m.bs[1]]=1;b[m.w]=2;return{b:b,phase:1,turn:1,bl:-1,w:-1,stuck:false,lm:{t:"o",c:0}}}
+  if(m.t==="c")return{b:b,phase:2,turn:m.swap?0:1,bl:m.swap?1:0,w:-1,stuck:false,lm:{t:"c",c:1,swap:m.swap}};
+  p=col(s,s.turn);b[m.d]=p;
+  var w=dist(b,p)===0?s.turn:-1;
+  if(w<0&&m.f>=0){b[m.f]=0;b[m.to]=p;if(dist(b,p)===0)w=s.turn}
+  return{b:b,phase:2,turn:1-s.turn,bl:s.bl,w:w,stuck:false,lm:{t:"t",c:s.turn,d:m.d,f:m.f,to:m.to}}}
+function hasTurn(s){var b=s.b.slice(),p=col(s,s.turn),ds=dropsFor(b,p),i,ok;
+  for(i=0;i<ds.length;i++){b[ds[i]]=p;ok=anyMove(b,ds[i],p)||dist(b,p)===0;b[ds[i]]=0;if(ok)return true}
+  return false}
+// a player with no legal turn loses
+function settle(ns){if(ns.phase===2&&ns.w<0&&!hasTurn(ns)){ns.w=1-ns.turn;ns.stuck=true}return ns}
+
+/* ================================ 2. ENGINE ================================ */
+/* Evaluation = (opponent's shortest path) - (own shortest path) + a small bonus for own stones lying on near-shortest paths.
+   A "hot" intersection lies on a near-shortest path of mine or a shortest path of the opponent (a good place to build or to block).
+   Candidate turns: the best drops, each combined with slides whose destination is hot (plus a few random ones).
+   Easy: picks among the top 3 one-turn candidates. Medium / Hard: take the best candidate turns, then let the opponent
+   answer with its best reply (2-ply) and keep the turn that leaves the opponent worst off. Hard looks at more of both. */
+function rn(n){return Math.floor(Math.random()*n)}
+function shuf(a){for(var i=a.length-1,j,t;i>0;i--){j=rn(i+1);t=a[i];a[i]=a[j];a[j]=t}return a}
+function analyse(b,p,slack,mk){
+  var best=dmap(b,p,0,DA),c;dmap(b,p,1,DB);OWN=0;
+  for(c=0;c<N*N;c++){if(DA[c]>=INF||DB[c]>=INF)continue;
+    if(b[c]===p){if(DA[c]+DB[c]<=best+slack)OWN++}
+    else if(!b[c]&&mk&&DA[c]+DB[c]-1<=best+slack)mk[c]=1}
+  return best}
+function ev(b,p){var m=analyse(b,p,1,null),o=dist(b,3-p);return Math.min(o,40)-Math.min(m,40)+.05*OWN}
+function openCells(){var lo=Math.floor(N*.2),cs=[],c;while(cs.length<3){c=(lo+rn(N-2*lo))*N+lo+rn(N-2*lo);if(cs.indexOf(c)<0)cs.push(c)}return cs}
+function aiOpen(lv){
+  var best=null,bv=1e9,i,cs,b,v;
+  for(i=0;i<(lv>=2?25:1);i++){cs=openCells();b=new Uint8Array(N*N);b[cs[0]]=b[cs[1]]=1;b[cs[2]]=2;
+    v=lv>=2?Math.abs(ev(b,2)+1)+Math.random()*.6:0;if(v<bv){bv=v;best=cs}}
+  return{t:"o",bs:[best[0],best[1]],w:best[2]}}
+function randTurn(s){
+  var b=s.b.slice(),p=col(s,s.turn),ds=shuf(dropsFor(b,p)),i,j,d,f,t,pairs;
+  for(i=0;i<ds.length;i++){d=ds[i];b[d]=p;if(dist(b,p)===0)return{t:"t",d:d,f:-1,to:-1};
+    pairs=[];for(f=0;f<N*N;f++)if(b[f]===p&&f!==d)pairs.push(f);
+    while(pairs.length){j=rn(pairs.length);f=pairs.splice(j,1)[0];t=targetsOf(b,f,p);if(t.length)return{t:"t",d:d,f:f,to:t[rn(t.length)]}}
+    b[d]=0}
+  return null}
+// best candidate turns for player p on board b (b is restored before returning)
+function cands(b,p,nd,cap,topN){
+  var ds=dropsFor(b,p),hot=new Uint8Array(N*N),sd=[],out=[],i,k,d,f,x,t,v,pairs,rest,tried=0,c;
+  if(!ds.length)return out;
+  analyse(b,p,1,hot);analyse(b,3-p,0,hot);
+  for(i=0;i<ds.length;i++)if(hot[ds[i]]){d=ds[i];b[d]=p;if(dist(b,p)===0){b[d]=0;return[{d:d,f:-1,to:-1,v:1e6,win:true}]}sd.push({d:d,v:ev(b,p)+Math.random()*.1});b[d]=0}
+  if(sd.length<nd*2)shuf(ds).slice(0,nd*2).forEach(function(d){if(hot[d])return;b[d]=p;if(dist(b,p)===0){b[d]=0;sd.push({d:d,v:1e6,win:true});return}sd.push({d:d,v:ev(b,p)-1});b[d]=0});
+  sd.sort(function(x,y){return y.v-x.v});
+  if(sd[0]&&sd[0].win)return[{d:sd[0].d,f:-1,to:-1,v:1e6,win:true}];
+  for(i=0;i<sd.length&&tried<nd;i++){
+    d=sd[i].d;b[d]=p;pairs=[];rest=[];
+    for(f=0;f<N*N;f++)if(b[f]===p&&f!==d){t=targetsOf(b,f,p);for(k=0;k<t.length;k++)(hot[t[k]]?pairs:rest).push([f,t[k]])}
+    if(pairs.length+rest.length===0){b[d]=0;continue}
+    tried++;
+    if(pairs.length>cap)pairs=shuf(pairs).slice(0,cap);
+    pairs=pairs.concat(shuf(rest).slice(0,pairs.length<10?12:4));
+    for(k=0;k<pairs.length;k++){f=pairs[k][0];x=pairs[k][1];b[f]=0;b[x]=p;
+      if(dist(b,p)===0){b[x]=0;b[f]=p;b[d]=0;return[{d:d,f:f,to:x,v:1e6,win:true}]}
+      out.push({d:d,f:f,to:x,v:ev(b,p)+Math.random()*.1});b[x]=0;b[f]=p}
+    b[d]=0}
+  out.sort(function(x,y){return y.v-x.v});
+  return out.slice(0,topN)}
+function aiTurn(s,lv){
+  var p=col(s,s.turn),b=s.b.slice(),pool,i,best=-1e9,pick=null,b2,r,v,m;
+  if(lv<1)return randTurn(s);
+  pool=cands(b,p,lv===1?3:lv===2?5:8,lv===1?60:lv===2?250:400,lv===1?3:lv===2?6:12);
+  if(!pool.length)return randTurn(s);
+  if(pool[0].win||lv===1)return lv===1&&!pool[0].win?pool[rn(pool.length)]:pool[0];
+  for(i=0;i<pool.length;i++){
+    m=pool[i];b2=b.slice();b2[m.d]=p;if(m.f>=0){b2[m.f]=0;b2[m.to]=p}
+    r=cands(b2,3-p,lv===2?3:4,lv===2?80:120,1);
+    v=!r.length?1e5:r[0].win?-1e5:-r[0].v+.2*m.v+Math.random()*.05;
+    if(v>best){best=v;pick=m}}
+  return pick}
+function aiMove(s,lv){
+  if(lv===undefined)lv=+$("level").value;
+  if(s.phase===0)return aiOpen(lv);
+  if(s.phase===1)return{t:"c",swap:lv<2?rn(2)===0:ev(s.b,2)+1+Math.random()*.4-.2<=0};
+  return aiTurn(s,lv)}
+var sim=null;
+function runSim(){
+  if(sim){sim.stop=true;return}
+  var CAP=300,me=sim={stop:false},TOTAL=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?2:+$("simR").value)),
+      done=0,wp=[0,0],wc=[0,0],un=0,g=null,plies=0,len=0,lvName=$("level").options[$("level").selectedIndex].text,
+      ids=["size","mode","side","level","new","undo","redo","back","simN","simR"];
+  ids.forEach(function(i){$(i).disabled=true});
+  $("sim").textContent="Stop simulation";
+  $("simout").textContent="Simulating at "+lvName+" level\u2026 0/"+TOTAL;
+  function fin(stopped){
+    sim=null;$("sim").textContent="Simulation";
+    $("size").disabled=$("mode").disabled=$("new").disabled=$("simN").disabled=$("simR").disabled=false;
+    $("level").disabled=$("side").disabled=$("mode").value==="2p";
+    var pc=function(n){return done?(100*n/done).toFixed(1)+"%":"n/a"};
+    $("simout").textContent=(stopped?"Stopped after ":"")+done+" games ("+N+"\u00d7"+N+", "+lvName+" level, computer vs computer), first "+RND+" turns random.\nDropper won "+pc(wp[0])+", chooser won "+pc(wp[1])+". Black won "+pc(wc[0])+", White won "+pc(wc[1])+". Average length: "+(done?(len/done).toFixed(0):"n/a")+" plies."+(un?" Unfinished (stopped at "+CAP+" plies): "+un+".":"");
+    render()}
+  function step(){
+    if(me.stop){fin(true);return}
+    var t0=Date.now();
+    while(Date.now()-t0<40){
+      if(!g){g=newGame();plies=0}
+      if(g.w>=0||plies>=CAP){if(g.w>=0){wp[g.w]++;wc[g.bl===g.w?0:1]++}else un++;len+=plies;done++;g=null;if(done>=TOTAL){fin(false);return}continue}
+      g=settle(apply(g,aiMove(g,plies<RND?0:undefined)));plies++}
+    $("simout").textContent="Simulating at "+lvName+" level\u2026 "+done+"/"+TOTAL;
+    setTimeout(step,0)}
+  step()}
+
+/* =============================== 3. INTERFACE =============================== */
+var hist,redo=[],over,busy,note="",pend;
+function fresh(){return{o:[],d:-1,f:-1,b:null}}
+function cur(){return hist[hist.length-1]}
+function hc(){return+$("side").value}
+function isAI(){return $("mode").value==="ai"}
+function isHuman(s){return!isAI()||s.turn===hc()}
+function pname(c){return isAI()?(c===hc()?"You":"Computer"):"Player "+(c+1)}
+function pverb(c,a,b){return pname(c)==="You"?b:a}
+function start(){hist=[newGame()];redo=[];note="";pend=fresh();$("level").disabled=$("side").disabled=!isAI();over=false;busy=false;render();maybeAI()}
+function ring(c,r,clr,w,op){return'<circle cx="'+(c%N+1)+'" cy="'+((c/N|0)+1)+'" r="'+r+'" fill="none" stroke="'+clr+'" stroke-width="'+w+'"'+(op?' opacity="'+op+'"':'')+' pointer-events="none"/>'}
+function stone(c,p,op){return'<circle cx="'+(c%N+1)+'" cy="'+((c/N|0)+1)+'" r=".44" fill="'+(p===1?"#141414":"#f7f6ef")+'" stroke="'+(p===1?"#000":"#555")+'" stroke-width=".05"'+(op?' opacity="'+op+'"':'')+' pointer-events="none"/>'}
+function render(){
+  var s=cur(),b=pend.b||s.b,g=[],c,i,l=s.lm,p=col(s,s.turn),hu,E=N+.5;
+  over=s.w>=0;hu=isHuman(s)&&!over&&!busy&&!sim;
+  g.push('<svg viewBox="0 0 '+(N+1)+' '+(N+1)+'" role="img" aria-label="Sesqui board"><rect x=".3" y=".3" width="'+(N+.4)+'" height="'+(N+.4)+'" rx=".3" fill="var(--wood)"/>');
+  for(i=1;i<=N;i++)g.push('<path d="M'+i+' 1V'+N+'M1 '+i+'H'+N+'" stroke="#5e4a25" stroke-width=".05" fill="none"/>');
+  g.push('<path d="M1 .5H'+N+'M1 '+E+'H'+N+'" stroke="#111" stroke-width=".2" fill="none"/><path d="M.5 1V'+N+'M'+E+' 1V'+N+'" stroke="#666" stroke-width=".22" fill="none"/><path d="M.5 1V'+N+'M'+E+' 1V'+N+'" stroke="#fff" stroke-width=".15" fill="none"/>');
+  if(l&&l.t==="t"&&l.f>=0)g.push('<path d="M'+(l.f%N+1)+' '+((l.f/N|0)+1)+'L'+(l.to%N+1)+' '+((l.to/N|0)+1)+'" stroke="#e0803a" stroke-width=".1" stroke-dasharray=".2 .2" fill="none" pointer-events="none"/>');
+  for(c=0;c<N*N;c++)if(b[c])g.push(stone(c,b[c]));
+  pend.o.forEach(function(c,k){g.push(stone(c,k<2?1:2,.75),ring(c,.5,"var(--hi)",.07))});
+  if(l&&l.t==="t"){g.push(ring(l.d,.52,"var(--hi)",.07));if(l.f>=0)g.push(ring(l.to,.52,"var(--hi)",.07))}
+  if(hu&&s.phase===2){
+    if(pend.d<0)dropsFor(s.b,p).forEach(function(c){g.push('<circle cx="'+(c%N+1)+'" cy="'+((c/N|0)+1)+'" r=".14" fill="var(--hi)" opacity=".8" pointer-events="none"/>')});
+    else{g.push(ring(pend.d,.52,"var(--hi)",.09));
+      for(c=0;c<N*N;c++)if(b[c]===p&&c!==pend.d&&hasTarget(b,c,p))g.push(ring(c,.5,"var(--hi)",.05,.6));
+      if(pend.f>=0){g.push(ring(pend.f,.55,"var(--hi)",.12));targetsOf(b,pend.f,p).forEach(function(c){g.push('<circle cx="'+(c%N+1)+'" cy="'+((c/N|0)+1)+'" r=".14" fill="var(--hi)" opacity=".8" pointer-events="none"/>')})}}}
+  for(c=0;c<N*N;c++)g.push('<rect data-i="'+c+'" x="'+(c%N+.5)+'" y="'+((c/N|0)+.5)+'" width="1" height="1" fill="transparent"/>');
+  $("board").innerHTML=g.join("")+'</svg>';
+  var st;
+  for(i=0;i<2;i++){$("p"+i).className="pl"+(!over&&s.turn===i?" on":"");
+    $("p"+i).style.borderLeft="8px solid "+(s.bl<0?"#999":s.bl===i?"#141414":"#f3f2ea");
+    $("n"+i).textContent=(isAI()?pname(i):"Player "+(i+1))+" \u2013 "+(s.bl<0?(i?"chooses the colour":"drops the stones"):s.bl===i?"Black (north\u2013south)":"White (east\u2013west)")}
+  var cl=s.bl<0?"":" ("+(s.bl===s.turn?"Black":"White")+")";
+  if(over)st=(s.stuck?pname(1-s.w)+" "+pverb(1-s.w,"has","have")+" no legal turn. ":"")+"Game over: "+pname(s.w)+" ("+(s.bl===s.w?"Black":"White")+") "+pverb(s.w,"wins","win")+".";
+  else{
+    st=isHuman(s)?(isAI()?"Your move":pname(s.turn)+" to move")+cl+".":"The computer is thinking\u2026";
+    if(hu){
+      if(s.phase===0)st+=" Click 3 intersections: Black stone ("+Math.min(pend.o.length+1,2)+"/2)"+(pend.o.length>=2?" \u2192 now the White stone.":" .");
+      else if(s.phase===1)st+=" Swap and become Black, or continue as White?";
+      else st+=pend.d<0?" Step 1: drop a stone on a dotted intersection.":" Step 2: click a ringed stone, then a dotted destination."}}
+  if(note)st+=" "+note;
+  $("status").textContent=st;
+  $("choose").hidden=!(hu&&s.phase===1);
+  $("c0").textContent="Continue as White";$("c1").textContent="Swap: become Black";
+  $("last").textContent=GAME.describe(s);
+  $("undo").disabled=hist.length<2||busy||!!sim;
+  $("redo").disabled=!redo.length||busy||!!sim;
+  $("back").disabled=!(pend.o.length||pend.d>=0)||busy||!!sim}
+function play(m){var ns=settle(apply(cur(),m));hist.push(ns);redo=[];note="";pend=fresh();render();maybeAI()}
+function click(i){
+  var s=cur(),b,p;
+  if(over||busy||sim||!isHuman(s))return;
+  if(s.phase===0){if(s.b[i]||pend.o.indexOf(i)>=0)return;pend.o.push(i);
+    if(pend.o.length===3)play({t:"o",bs:[pend.o[0],pend.o[1]],w:pend.o[2]});else render();return}
+  if(s.phase===1){note="Use the buttons to choose.";render();return}
+  p=col(s,s.turn);
+  if(pend.d<0){
+    if(s.b[i])note="That intersection is occupied.";
+    else if(dropsFor(s.b,p).indexOf(i)<0)note="Illegal drop: it must touch one of your stones orthogonally and must not form a 2\u00d72 deadlock.";
+    else{b=s.b.slice();b[i]=p;
+      if(dist(b,p)===0){play({t:"t",d:i,f:-1,to:-1});return}
+      if(!anyMove(b,i,p))note="That drop leaves you no legal second step.";
+      else{pend.d=i;pend.b=b;note=""}}
+    render();return}
+  b=pend.b;
+  if(b[i]===p&&i!==pend.d){if(hasTarget(b,i,p)){pend.f=i;note=""}else note="That stone cannot move.";render();return}
+  if(pend.f>=0&&!b[i]&&targetsOf(b,pend.f,p).indexOf(i)>=0){play({t:"t",d:pend.d,f:pend.f,to:i});return}
+  note=pend.f<0?"Pick one of your other stones to slide.":b[i]?"The destination must be empty.":"Illegal: slide in a straight line over empty intersections, avoiding a 2\u00d72 deadlock.";
+  render()}
+function maybeAI(){
+  var s=cur();if(over||!isAI()||isHuman(s))return;
+  busy=true;render();
+  setTimeout(function(){var c=cur(),ns=settle(apply(c,aiMove(c)));busy=false;hist.push(ns);render();maybeAI()},60)}
+document.title=GAME.title;$("gtitle").textContent=GAME.title;$("gsub").textContent=GAME.subtitle;
+function li(x){return"<li>"+x+"</li>"}
+$("rules").innerHTML=GAME.rules.map(function(sec){return"<li><b>"+sec.h+"</b><ul>"+sec.items.map(li).join("")+"</ul></li>"}).join("");
+$("board").onclick=function(e){var t=e.target.closest("[data-i]");if(t)click(+t.getAttribute("data-i"))};
+$("c0").onclick=function(){var s=cur();if(s.phase===1&&isHuman(s)&&!busy)play({t:"c",swap:false})};
+$("c1").onclick=function(){var s=cur();if(s.phase===1&&isHuman(s)&&!busy)play({t:"c",swap:true})};
+$("new").onclick=start;$("sim").onclick=runSim;
+$("back").onclick=function(){pend=fresh();note="";render()};
+$("size").onchange=function(){setN(+$("size").value);start()};
+$("mode").onchange=$("side").onchange=start;
+$("redo").onclick=function(){
+  if(busy||!redo.length)return;
+  hist.push(redo.pop());
+  while(isAI()&&redo.length&&!isHuman(cur()))hist.push(redo.pop());
+  pend=fresh();note="";render();maybeAI()};
+$("undo").onclick=function(){
+  if(busy||hist.length<2)return;
+  var tmp=[];
+  tmp.push(hist.pop());
+  while(isAI()&&hist.length>1&&!isHuman(cur()))tmp.push(hist.pop());
+  if(!isHuman(cur())&&isAI()){while(tmp.length)hist.push(tmp.pop());return}
+  tmp.forEach(function(x){redo.push(x)});
+  over=false;pend=fresh();note="";render()};
+setN(15);start();
+})();
+</script>
+</body>
+</html>
+
+</body></html>

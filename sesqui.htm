@@ -35,11 +35,11 @@ Go-like board. Players can use larger boards, for more strategic matches.</font>
 		<li><font size="3" face="Arial"><b>TURNS</b>
             - At each turn, each player must do the following sequence:</font><ul>
 			<li><font face="Arial">First, drop a friendly stone on an empty 
-			cell adjacent to a friendly stone;</font></li>
-			<li><font face="Arial">Second,&nbsp;move a friendly stone, like a 
+			cell orthogonally adjacent to a friendly stone;</font></li>
+			<li><font face="Arial">Second,&nbsp;move a different friendly stone, like a 
 			Chess Queen, to an empty cell.</font></li>
 			<li><font face="Arial">It is illegal to make one of these 2x2 
-			deadlock patterns:<br>
+			deadlock patterns, even in the middle of the turn:<br>
 			<br>
 			</font><font face="Courier New">&nbsp;&nbsp;&nbsp; x o&nbsp;&nbsp;&nbsp; 
 			o x<br>
@@ -50,9 +50,10 @@ Go-like board. Players can use larger boards, for more strategic matches.</font>
 		<li><font
         size="3" face="Arial"><strong>GOAL</strong> -</font><font face="Arial"> 
 		Black wins by connecting the north and south edges, White by connecting 
-		the east and west edges.</font><ul>
+		the east and west edges. </font><ul>
 		<li><font face="Arial">The connecting path may include orthogonal and 
 		diagonal connections</font></li>
+		<li><font face="Arial">Corners are shared by both edges. </font></li>
 		</ul></li>
 		</ul>
     </td>

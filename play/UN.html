@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>UN</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
+<style>
+:root{--bg:#eef0e6;--ink:#1f2a1c;--mute:#5d6a56;--cell:#dfe3cf;--edge:#b9bfa3;--hi:#e0803a;--panel:#fff;--line:#c5cab4;--wood:#dcb875;--cell:#e6e9d6;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f;--wood:#9a7b45}}
+:root[data-theme="dark"]{--wood:#9a7b45;--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f}
+[hidden]{display:none!important}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+main{max-width:1080px;margin:0 auto;padding:16px 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.right>.bar:first-child{margin-top:0}
+@media (min-width:860px){.layout{grid-template-columns:minmax(0,640px) minmax(300px,1fr);gap:28px;align-items:start}}
+h1{font:700 2rem/1.1 "Bricolage Grotesque",Georgia,serif;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+select,button.ctl{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.ctl:disabled,select:disabled,input:disabled{opacity:.45;cursor:default}
+label.f{color:var(--mute);font-size:.9rem}
+label.chk{display:flex;gap:6px;align-items:center;cursor:pointer;font-size:.95rem}
+input[type=number]{width:4.5em;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+button.ctl.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button.ctl.on{background:var(--hi);border-color:var(--hi);color:#fff}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.pl{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:8px 12px;display:flex;justify-content:space-between;align-items:baseline}
+.pl.on{border-color:var(--hi)}
+#status{min-height:3em;font-weight:600;margin:6px 0}
+#board svg{display:block;width:100%;max-width:640px;margin:0 auto;touch-action:manipulation}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+details li{margin:4px 0}
+.legend{color:var(--mute);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+<h1 id="gtitle"></h1>
+<p class="sub" id="gsub"></p>
+<div class="layout">
+<div class="left">
+<div id="board"></div>
+<p class="legend">Click a hex to place the bureaucrat, then slide it by clicking a dotted hex. Every hex it leaves turns into a file. The last slide is dashed.</p>
+</div>
+<aside class="right">
+<div class="bar">
+  <select id="mode" aria-label="Mode"><option value="ai">Play the computer</option><option value="2p">Two players</option></select>
+  <select id="level" aria-label="Computer strength"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select>
+  <select id="side" aria-label="Your colour"><option value="0">You play Red (place the bureaucrat)</option><option value="1">You play Blue (choose who starts)</option></select>
+</div>
+<div class="bar">
+  <button class="ctl primary" id="new">New game</button>
+  <button class="ctl" id="undo">Undo</button>
+  <button class="ctl" id="redo">Redo</button>
+</div>
+<div class="score"><div class="pl" id="p0"><span id="n0"></span></div><div class="pl" id="p1"><span id="n1"></span></div></div>
+<div id="status" aria-live="polite"></div>
+<div class="bar" id="choose" hidden><button class="ctl primary" id="c0"></button><button class="ctl primary" id="c1"></button></div>
+<div id="last" class="legend" style="min-height:2.6em;margin:0 0 8px"></div>
+<div class="bar">
+  <label class="f">Simulation games <input id="simN" type="number" min="10" max="1000" value="10"></label>
+  <label class="f">Random opening moves <input id="simR" type="number" min="0" max="20" value="2"></label>
+  <button class="ctl" id="sim">Simulation</button>
+</div>
+<div id="simout" class="legend" style="white-space:pre-line;margin:0 0 8px"></div>
+<details><summary>Rules</summary><ul id="rules"></ul></details>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+/* =====================================================================
+   1. GAME DEFINITION  - Un rules and move generation
+   2. ENGINE           - alpha-beta computer opponent, simulations
+   3. INTERFACE        - SVG hexhex5 board, click handling, controls
+   A state is {st: files (Uint8Array over a 9x9-in-15x15 axial grid, 1 = file), ball: cell of the bureaucrat,
+               phase: 0 Red places the bureaucrat, 1 Blue chooses who starts, 2 play,
+               turn: 0 Red / 1 Blue (player to act), w: winner (0, 1) or -1, stuck: winner won because the opponent could not move, lm: last move}.
+   A move is {t:"p",to} (place), {t:"c",first} (choose starter) or {t:"m",to,k,d} (slide k cells in direction d).
+   ===================================================================== */
+var $=function(i){return document.getElementById(i)};
+
+/* ============================ 1. GAME DEFINITION ============================ */
+var R=4,DQ=[1,1,0,-1,-1,0],DR=[0,-1,-1,0,1,1],CELLS=[],NB=[],Q=[],RR=[];
+function idOf(q,r){return(Math.max(Math.abs(q),Math.abs(r),Math.abs(q+r))<=R)?(q+R)*15+(r+R):-1}
+(function(){
+  var q,r,id,d;
+  for(q=-R;q<=R;q++)for(r=-R;r<=R;r++){id=idOf(q,r);if(id>=0){CELLS.push(id);Q[id]=q;RR[id]=r}}
+  CELLS.forEach(function(id){NB[id]=[];for(d=0;d<6;d++)NB[id][d]=idOf(Q[id]+DQ[d],RR[id]+DR[d])});
+})();
+function cn(i){return String.fromCharCode(97+Q[i]+R)+(RR[i]+R+1)}
+var GAME={
+  title:"Un",
+  subtitle:"Slide the bureaucrat across a hexhex5 board and leave a trail of files behind. Whoever cannot move loses.",
+  sides:[{name:"Red",color:"#d33"},{name:"Blue",color:"#2a62d6"}],
+  rules:[
+  {h:"Board and pieces",items:[
+    "Played on a hexagonal board with 5 cells per side (hexhex5). There is one gold-yellow neutral piece, the bureaucrat. Apart from it there is only one kind of stone, naval blue, called files, shared by both players.",
+    "Players are Red and Blue."]},
+  {h:"Start",items:[
+    "Red places the bureaucrat on any hex. Then Blue chooses who makes the first move (Red or Blue)."]},
+  {h:"A turn",items:[
+    "Slide the bureaucrat one or more empty hexes in a straight line (one of the six hex directions). It cannot jump over or land on a file.",
+    "Every hex the bureaucrat leaves during the slide gets a new file: a slide of N hexes adds N files (the hex it started on and the N\u22121 hexes it passed through). The bureaucrat itself stands on the last hex.",
+    "Files are never moved or removed."]},
+  {h:"End of the game",items:[
+    "The first player who cannot move loses."]}],
+  describe:function(s){var l=s.lm;if(!l)return"";
+    if(l.t==="p")return pname(l.c)+" placed the bureaucrat on "+cn(l.to)+".";
+    if(l.t==="c")return pname(l.c)+" chose that "+pname(l.first)+" "+pverb(l.first,"starts","start")+".";
+    return pname(l.c)+" slid the bureaucrat "+l.k+" hex"+(l.k>1?"es":"")+" from "+cn(l.from)+" to "+cn(l.to)+", leaving "+l.k+" file"+(l.k>1?"s":"")+"."}
+};
+function newGame(){return{st:new Uint8Array(225),ball:-1,phase:0,turn:0,w:-1,stuck:false,lm:null,mv:null}}
+function moves(s){
+  if(s.mv)return s.mv;
+  var out=[],d,x,k;
+  if(s.phase===0)CELLS.forEach(function(c){out.push({t:"p",to:c})});
+  else if(s.phase===1){out.push({t:"c",first:0});out.push({t:"c",first:1})}
+  else for(d=0;d<6;d++){x=NB[s.ball][d];k=0;while(x>=0&&!s.st[x]){k++;out.push({t:"m",to:x,k:k,d:d});x=NB[x][d]}}
+  return s.mv=out}
+function apply(s,m){
+  if(m.t==="p")return{st:s.st,ball:m.to,phase:1,turn:1,w:-1,stuck:false,lm:{t:"p",c:0,to:m.to},mv:null};
+  if(m.t==="c")return{st:s.st,ball:s.ball,phase:2,turn:m.first,w:-1,stuck:false,lm:{t:"c",c:1,first:m.first},mv:null};
+  var st=s.st.slice(),y=s.ball,i;
+  for(i=0;i<m.k;i++){st[y]=1;y=NB[y][m.d]}
+  return{st:st,ball:m.to,phase:2,turn:1-s.turn,w:-1,stuck:false,lm:{t:"m",c:s.turn,from:s.ball,to:m.to,k:m.k},mv:null}}
+// the first player without a legal move loses
+function settle(ns){if(ns.phase===2&&ns.w<0&&!moves(ns).length){ns.w=1-ns.turn;ns.stuck=true}return ns}
+
+/* ================================ 2. ENGINE ================================ */
+/* Negamax with alpha-beta. Evaluation: number of slides available to the player to move (mobility).
+   Moves are ordered by how few slides they leave the opponent; only the best K are searched at inner nodes.
+   Computer as Red picks the start hex whose best-for-Blue outcome is worst for Blue; as Blue it chooses who starts by search.
+   Easy: win if possible, otherwise random. Medium: depth 3. Hard: depth 5. */
+function rn(n){return Math.floor(Math.random()*n)}
+function cnt(st,b){var c=0,d,x;for(d=0;d<6;d++){x=NB[b][d];while(x>=0&&!st[x]){c++;x=NB[x][d]}}return c}
+function ev(s){return .3*cnt(s.st,s.ball)}
+function stat(s,m){var n=apply(s,m),c=cnt(n.st,n.ball);return c===0?1e5:-c+Math.random()*.5}
+function ranked(s){return moves(s).map(function(m){return{m:m,v:stat(s,m)}}).sort(function(a,b){return b.v-a.v})}
+function nm(s,d,al,be,K){
+  if(!moves(s).length)return -1e5-d;
+  if(d===0)return ev(s);
+  var sc=ranked(s),best=-1e9,i,v;
+  if(sc[0].v>=1e5)return 1e5+d;
+  sc=sc.slice(0,K);
+  for(i=0;i<sc.length;i++){v=-nm(apply(s,sc[i].m),d-1,-be,-al,K);if(v>best)best=v;if(v>al)al=v;if(al>=be)break}
+  return best}
+// sp: placed state (phase 1). Returns Blue's best choice and its value for Blue.
+function pickStart(sp,D){
+  var a=apply(sp,{t:"c",first:1}),b=apply(sp,{t:"c",first:0}),v1=nm(a,D,-1e9,1e9,8),v0=-nm(b,D,-1e9,1e9,8);
+  return{first:v1>=v0?1:0,v:Math.max(v1,v0)}}
+function aiMove(s){
+  var lv=+$("level").value,ms=moves(s),best=1e9,pick=null,v;
+  if(s.phase===0){
+    if(lv===1)return ms[rn(ms.length)];
+    ms.forEach(function(m){v=pickStart(apply(s,m),2).v+Math.random()*.3;if(v<best){best=v;pick=m}});
+    return pick}
+  if(s.phase===1)return{t:"c",first:lv===1?rn(2):pickStart(s,lv===2?3:5).first};
+  var sc=ranked(s);
+  if(sc[0].v>=1e5)return sc[0].m;
+  if(lv===1)return sc[rn(sc.length)].m;
+  var D=lv===2?3:5,K=lv===2?8:6;best=-1e9;
+  sc.slice(0,lv===2?12:10).forEach(function(x){
+    v=-nm(apply(s,x.m),D-1,-1e9,-best,K)+Math.random()*.01;if(v>best){best=v;pick=x.m}});
+  return pick}
+var sim=null;
+function runSim(){   // computer vs computer, to look for first/second-player advantage
+  if(sim){sim.stop=true;return}
+  var CAP=400,me=sim={stop:false},TOTAL=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?2:+$("simR").value)),
+      done=0,wins=[0,0],un=0,g=null,plies=0,len=0,lvName=$("level").options[$("level").selectedIndex].text,
+      ids=["mode","side","level","new","undo","redo","simN","simR"];
+  ids.forEach(function(i){$(i).disabled=true});
+  $("sim").textContent="Stop simulation";
+  $("simout").textContent="Simulating at "+lvName+" level\u2026 0/"+TOTAL;
+  function fin(stopped){
+    sim=null;$("sim").textContent="Simulation";
+    $("mode").disabled=$("new").disabled=$("simN").disabled=$("simR").disabled=false;
+    $("level").disabled=$("side").disabled=$("mode").value==="2p";
+    var pc=function(n){return done?(100*n/done).toFixed(1)+"%":"n/a"};
+    $("simout").textContent=(stopped?"Stopped after ":"")+done+" games at "+lvName+" level (computer vs computer), first "+RND+" moves random.\nRed (placer) won "+pc(wins[0])+", Blue (chooser) won "+pc(wins[1])+". Average game length: "+(done?(len/done).toFixed(0):"n/a")+" turns."+(un?" Unfinished (stopped at "+CAP+" turns): "+un+".":"");
+    render()}
+  function step(){
+    if(me.stop){fin(true);return}
+    var t0=Date.now(),ms;
+    while(Date.now()-t0<40){
+      if(!g){g=newGame();plies=0}
+      if(g.w>=0||plies>=CAP){if(g.w>=0)wins[g.w]++;else un++;len+=plies;done++;g=null;if(done>=TOTAL){fin(false);return}continue}
+      if(plies<RND){ms=moves(g);g=settle(apply(g,ms[rn(ms.length)]))}else g=settle(apply(g,aiMove(g)));
+      plies++}
+    $("simout").textContent="Simulating at "+lvName+" level\u2026 "+done+"/"+TOTAL;
+    setTimeout(step,0)}
+  step()}
+
+/* =============================== 3. INTERFACE =============================== */
+/* =============================== 3. INTERFACE =============================== */
+var hist,redo=[],over,busy,note="";
+function cur(){return hist[hist.length-1]}
+function hc(){return+$("side").value}
+function isAI(){return $("mode").value==="ai"}
+function isHuman(s){return!isAI()||s.turn===hc()}
+function pname(c){return isAI()?(c===hc()?"You":"Computer"):GAME.sides[c].name}
+function pverb(c,a,b){return pname(c)==="You"?b:a}
+function start(){
+  hist=[newGame()];redo=[];note="";$("level").disabled=$("side").disabled=!isAI();over=false;busy=false;
+  render();maybeAI()}
+var SQ=Math.sqrt(3);
+function X(i){return SQ*(Q[i]+RR[i]/2)}
+function Y(i){return 1.5*RR[i]}
+function pt(i,a,sz){var t=a*Math.PI/180;return(X(i)+sz*Math.cos(t)).toFixed(3)+","+(Y(i)+sz*Math.sin(t)).toFixed(3)}
+function hexPts(i,sz){var p=[];for(var k=0;k<6;k++)p.push(pt(i,30+60*k,sz));return p.join(" ")}
+function render(){
+  var s=cur(),i,g=['<svg viewBox="-8.6 -7.6 17.2 15.2" role="img" aria-label="Un board">'];
+  over=s.w>=0;
+  var hu=isHuman(s)&&!over&&!busy&&!sim;
+  CELLS.forEach(function(c){g.push('<polygon data-i="'+c+'" points="'+hexPts(c,.97)+'" fill="var(--cell)" stroke="var(--edge)" stroke-width=".06"/>')});
+  var l=s.lm;
+  if(l&&l.t==="m")g.push('<path d="M'+X(l.from)+' '+Y(l.from)+'L'+X(l.to)+' '+Y(l.to)+'" stroke="#c9961a" stroke-width=".14" stroke-dasharray=".25 .25" fill="none" pointer-events="none"/>');
+  CELLS.forEach(function(c){if(s.st[c])g.push('<circle cx="'+X(c)+'" cy="'+Y(c)+'" r=".62" fill="#1f3a78" stroke="#0f2250" stroke-width=".07" pointer-events="none"/>')});
+  if(hu&&s.phase>=1&&s.phase===2)moves(s).forEach(function(m){g.push('<circle cx="'+X(m.to)+'" cy="'+Y(m.to)+'" r=".13" fill="var(--mute)" opacity=".6" pointer-events="none"/>')});
+  if(s.ball>=0)g.push('<circle cx="'+X(s.ball)+'" cy="'+Y(s.ball)+'" r=".6" fill="#e8b923" stroke="#8a6a08" stroke-width=".08" pointer-events="none"/><circle cx="'+(X(s.ball)-.2)+'" cy="'+(Y(s.ball)-.2)+'" r=".14" fill="#fff" opacity=".5" pointer-events="none"/>');
+  $("board").innerHTML=g.join("")+'</svg>';
+  var st,c;
+  for(i=0;i<2;i++){c=i;$("p"+i).className="pl"+(!over&&s.turn===c?" on":"");$("p"+i).style.borderLeft="8px solid "+GAME.sides[c].color;
+    $("n"+i).textContent=isAI()?pname(c)+" \u2013 "+GAME.sides[c].name:GAME.sides[c].name}
+  if(over)st=(s.stuck?pname(1-s.w)+" ("+GAME.sides[1-s.w].name+") "+pverb(1-s.w,"has","have")+" no legal move. ":"")+"Game over: "+pname(s.w)+" ("+GAME.sides[s.w].name+") "+pverb(s.w,"wins","win")+".";
+  else{
+    st=isHuman(s)?(isAI()?"Your move":GAME.sides[s.turn].name+" to move"):"The computer is thinking\u2026";
+    st+=" ("+GAME.sides[s.turn].name+").";
+    if(s.phase===0)st+=" Click a hex to place the bureaucrat.";
+    else if(s.phase===1)st+=" Choose who makes the first move.";
+    else if(hu)st+=" Click a dotted hex to slide the bureaucrat there."}
+  if(note)st+=" "+note;
+  $("status").textContent=st;
+  $("choose").hidden=!(hu&&s.phase===1);
+  $("c0").textContent=(isAI()?pname(0):GAME.sides[0].name)+" starts";
+  $("c1").textContent=(isAI()?pname(1):GAME.sides[1].name)+" start"+(isAI()&&pname(1)==="You"?"":"s");
+  $("last").textContent=GAME.describe(s);
+  $("undo").disabled=hist.length<2||busy||!!sim;
+  $("redo").disabled=!redo.length||busy||!!sim}
+function play(m){var ns=settle(apply(cur(),m));hist.push(ns);redo=[];note="";render();maybeAI()}
+function click(i){
+  var s=cur();
+  if(over||busy||sim||!isHuman(s))return;
+  if(s.phase===0){play({t:"p",to:i});return}
+  if(s.phase===1){note="Use the buttons to choose who starts.";render();return}
+  if(i===s.ball){note="That is the bureaucrat.";render();return}
+  if(s.st[i]){note="That hex holds a file.";render();return}
+  var m=moves(s).filter(function(x){return x.to===i})[0];
+  if(!m){note="Illegal: the bureaucrat slides in a straight line over empty hexes only.";render();return}
+  play(m)}
+function maybeAI(){
+  var s=cur();if(over||!isAI()||isHuman(s))return;
+  busy=true;render();
+  setTimeout(function(){var c=cur(),ns=settle(apply(c,aiMove(c)));busy=false;hist.push(ns);render();maybeAI()},60)}
+document.title=GAME.title;$("gtitle").textContent=GAME.title;$("gsub").textContent=GAME.subtitle;
+function li(x){return"<li>"+(typeof x==="string"?x:x.t+"<ul>"+x.sub.map(li).join("")+"</ul>")+"</li>"}
+$("rules").innerHTML=GAME.rules.map(function(sec){return"<li><b>"+sec.h+"</b><ul>"+sec.items.map(li).join("")+"</ul></li>"}).join("");
+$("board").onclick=function(e){var t=e.target.closest("[data-i]");if(t)click(+t.getAttribute("data-i"))};
+$("c0").onclick=function(){var s=cur();if(s.phase===1&&isHuman(s)&&!busy)play({t:"c",first:0})};
+$("c1").onclick=function(){var s=cur();if(s.phase===1&&isHuman(s)&&!busy)play({t:"c",first:1})};
+$("new").onclick=start;$("sim").onclick=runSim;
+$("mode").onchange=$("side").onchange=start;
+$("redo").onclick=function(){
+  if(busy||!redo.length)return;
+  hist.push(redo.pop());
+  while(isAI()&&redo.length&&!isHuman(cur()))hist.push(redo.pop());
+  note="";render();maybeAI()};
+$("undo").onclick=function(){
+  if(busy||hist.length<2)return;
+  var tmp=[];
+  tmp.push(hist.pop());
+  while(isAI()&&hist.length>1&&!isHuman(cur()))tmp.push(hist.pop());
+  if(!isHuman(cur())&&isAI()){while(tmp.length)hist.push(tmp.pop());return}
+  tmp.forEach(function(x){redo.push(x)});
+  over=false;note="";render()};
+start();
+})();
+</script>
+</body>
+</html>
