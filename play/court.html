@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Court</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
+<style>
+:root{--bg:#eef0e6;--ink:#1f2a1c;--mute:#5d6a56;--cell:#dfe3cf;--edge:#b9bfa3;--hi:#e0803a;--panel:#fff;--line:#c5cab4;--wood:#dcb875;--sq1:#ece8d6;--sq2:#a9b58a;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f;--wood:#9a7b45;--sq1:#8f9a7c;--sq2:#5b6a48}}
+:root[data-theme="dark"]{--wood:#9a7b45;--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f;--sq1:#8f9a7c;--sq2:#5b6a48}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+main{max-width:1080px;margin:0 auto;padding:16px 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.right>.bar:first-child{margin-top:0}
+@media (min-width:860px){.layout{grid-template-columns:minmax(0,600px) minmax(300px,1fr);gap:28px;align-items:start}}
+h1{font:700 2rem/1.1 "Bricolage Grotesque",Georgia,serif;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+select,button.ctl{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.ctl:disabled,select:disabled,input:disabled{opacity:.45;cursor:default}
+label.f{color:var(--mute);font-size:.9rem}
+input[type=number]{width:4.5em;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+button.ctl.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.pl{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:8px 12px;font-size:.95rem}
+.pl.on{border-color:var(--hi)}
+.pl b{font-weight:700}
+.pl small{color:var(--mute);display:block}
+.gl{font-family:"Segoe UI Symbol","DejaVu Sans","Noto Sans Symbols 2","Apple Symbols",serif;font-size:1.15em;line-height:1}
+#status{min-height:1.5em;font-weight:600;margin:6px 0}
+#board svg{display:block;width:100%;max-width:600px;margin:0 auto;touch-action:manipulation;cursor:pointer}
+#promo .ctl{display:inline-flex;gap:6px;align-items:center}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+details li{margin:4px 0}
+.legend{color:var(--mute);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+<h1 id="gtitle"></h1>
+<p class="sub" id="gsub"></p>
+<div class="layout">
+<div class="left">
+<div id="board"></div>
+<p class="legend">Click one of your pieces to see where it can go (dots mark moves, rings mark captures), then click the destination. To promote, select one of your pawns and pick a reserve piece with the buttons beside the board. Tinted squares show the last move.</p>
+</div>
+<aside class="right">
+<div class="bar">
+  <select id="mode" aria-label="Mode"><option value="ai">Play the computer</option><option value="2p">Two players</option></select>
+  <select id="level" aria-label="Computer strength"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select>
+  <select id="side" aria-label="Your side"></select>
+  <button class="ctl primary" id="new">New game</button>
+  <button class="ctl" id="undo">Undo</button>
+  <button class="ctl" id="redo">Redo</button>
+</div>
+<div class="score"><div class="pl" id="p0"></div><div class="pl" id="p1"></div></div>
+<div id="status" aria-live="polite"></div>
+<div id="promoLbl" class="legend" style="margin:0"></div>
+<div class="bar" id="promo" style="margin-top:4px"></div>
+<div id="last" class="legend" style="min-height:2.6em;margin:0 0 8px"></div>
+<div class="bar">
+  <label class="f">Simulation games <input id="simN" type="number" min="10" max="1000" value="10"></label>
+  <label class="f">Random opening moves <input id="simR" type="number" min="0" max="20" value="4"></label>
+  <button class="ctl" id="sim">Simulation</button>
+</div>
+<div id="simout" class="legend" style="white-space:pre-line;margin:0 0 8px"></div>
+<details><summary>Rules</summary><ul id="rules"></ul></details>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+/* =====================================================================
+   1. GAME DEFINITION  - Court rules, move generation, promotion from reserve, win test
+   2. ENGINE           - alpha-beta search with material evaluation, simulations
+   3. INTERFACE        - SVG chess board, select-then-move click handling, promotion buttons
+   A move is {f: from square, to: target square} or a promotion {f: pawn square, to: same square, pr: kind}.
+   Piece kinds: 1 pawn, 2 knight, 3 bishop, 4 rook. Board cells hold +kind for White, -kind for Black, 0 empty.
+   A state is {b: Int8Array(64), turn (0 White, 1 Black), res: reserve counts per side indexed by kind,
+               n: moves made, w: winner (0, 1) or -1, why: reason, lm: last move info, prev: previous state}.
+   Square index = rank*8+file (rank 0 = rank 1, White's side).
+   ===================================================================== */
+var $=function(i){return document.getElementById(i)};
+
+/* ============================ 1. GAME DEFINITION ============================ */
+var GAME={
+  title:"Court",
+  subtitle:"A chess variant without kings: start with pawns only, bring knights, bishops and rooks onto the board by promoting pawns, and win by eliminating every enemy pawn.",
+  sides:[{name:"White",fill:"#fbf8ef",edge:"#1d1d1d"},{name:"Black",fill:"#262626",edge:"#efe9d8"}],
+  kinds:[null,{n:"pawn",g:"♟"},{n:"knight",g:"♞"},{n:"bishop",g:"♝"},{n:"rook",g:"♜"}],
+  rules:[
+  {h:"Board and setup",items:[
+    "An 8×8 chequered board. White has twelve pawns on b2–g2 and b3–g3; Black has twelve pawns on b6–g6 and b7–g7. The a- and h-files and the first and last ranks start empty.",
+    "Each player also has a reserve off the board: two knights, two bishops and two rooks.",
+    "White moves first."]},
+  {h:"Turn",items:[
+    "On each turn a player must do exactly one of the following:",
+    {t:"Move a piece, using its chess moving and capturing powers:",sub:[
+      "Pawn: one square straight forward onto an empty square; captures one square diagonally forward. There is no two-square first move and no en passant. A pawn on the far rank cannot move, but can still be promoted.",
+      "Knight, bishop and rook: as in chess.",
+      "A captured piece is removed from the game; it does not go back to any reserve."]},
+    {t:"Promote a friendly pawn: replace one of your pawns, wherever it stands, with a knight, bishop or rook from your reserve.",sub:[
+      "The reserve piece is used up; the pawn leaves the game."]},
+    "There are no kings, no check and no castling."]},
+  {h:"Goal",items:[
+    "A player who has no pawn on the board loses. This happens when all their pawns are captured, or when they promote their last pawn.",
+    "A player who cannot move or promote on their turn loses."]}],
+  describe:function(s){var l=s.lm;if(!l)return"";var by=GAME.sides[l.p].name,K=GAME.kinds;
+    if(l.pr)return by+" promoted the pawn on "+sq(l.f)+" to a "+K[l.pr].n+".";
+    var t=by+" moved the "+K[l.k].n+" "+sq(l.f)+"–"+sq(l.to);
+    if(l.cap)t+=", capturing a "+K[l.cap].n;
+    return t+"."}
+};
+var FX=[],FY=[],KNM=[],RAYS=[],DIR8=[[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]],KJ=[[1,2],[2,1],[2,-1],[1,-2],[-1,-2],[-2,-1],[-2,1],[-1,2]];
+(function(){for(var i=0;i<64;i++){FX[i]=i&7;FY[i]=i>>3;KNM[i]=[];RAYS[i]=[];
+  KJ.forEach(function(d){var x=FX[i]+d[0],y=FY[i]+d[1];if(x>=0&&y>=0&&x<8&&y<8)KNM[i].push(y*8+x)});
+  DIR8.forEach(function(d){var r=[],x=FX[i]+d[0],y=FY[i]+d[1];while(x>=0&&y>=0&&x<8&&y<8){r.push(y*8+x);x+=d[0];y+=d[1]}RAYS[i].push(r)})}})();
+function sq(i){return"abcdefgh"[FX[i]]+(FY[i]+1)}
+function newState(){var b=new Int8Array(64);
+  for(var f=1;f<7;f++){b[8+f]=b[16+f]=1;b[40+f]=b[48+f]=-1}
+  return{b:b,turn:0,res:[[0,0,2,2,2],[0,0,2,2,2]],n:0,w:-1,why:"",lm:null,prev:null}}
+// all actions for side t (0 White, 1 Black); capsOnly keeps captures only
+function gen(b,res,t,capsOnly){var sg=t?-1:1,out=[],i,p,k,j,r,q,d,lo,hi;
+  for(i=0;i<64;i++){p=b[i]*sg;if(p<=0)continue;
+    if(p===1){var y=FY[i]+sg;
+      if(y>=0&&y<8){var fw=i+8*sg;
+        if(!capsOnly&&!b[fw])out.push({f:i,to:fw});
+        if(FX[i]>0&&b[fw-1]*sg<0)out.push({f:i,to:fw-1});
+        if(FX[i]<7&&b[fw+1]*sg<0)out.push({f:i,to:fw+1})}
+      if(!capsOnly)for(k=2;k<5;k++)if(res[t][k])out.push({f:i,to:i,pr:k})}
+    else if(p===2){for(j=0;j<KNM[i].length;j++){q=KNM[i][j];if(b[q]*sg<0||(!b[q]&&!capsOnly))out.push({f:i,to:q})}}
+    else{lo=p===4?0:4;hi=lo+4;
+      for(d=lo;d<hi;d++){r=RAYS[i][d];for(j=0;j<r.length;j++){q=r[j];
+        if(!b[q]){if(!capsOnly)out.push({f:i,to:q});continue}
+        if(b[q]*sg<0)out.push({f:i,to:q});break}}}}
+  return out}
+// play m on b/res in place; returns the captured cell value (for undo)
+function doMove(b,res,t,m){if(m.pr){b[m.f]=t?-m.pr:m.pr;res[t][m.pr]--;return 0}
+  var c=b[m.to];b[m.to]=b[m.f];b[m.f]=0;return c}
+function undoMove(b,res,t,m,c){if(m.pr){b[m.f]=t?-1:1;res[t][m.pr]++;return}
+  b[m.f]=b[m.to];b[m.to]=c}
+function pawns(b,v){var n=0;for(var i=0;i<64;i++)if(b[i]===v)n++;return n}
+function legal(s){return s.w>=0?[]:gen(s.b,s.res,s.turn)}
+function apply(s,m){var b=s.b.slice(),res=[s.res[0].slice(),s.res[1].slice()],t=s.turn,k=Math.abs(s.b[m.f]),c=doMove(b,res,t,m),me=t?-1:1;
+  var ns={b:b,res:res,turn:1-t,n:s.n+1,w:-1,why:"",prev:s,lm:{p:t,f:m.f,to:m.to,pr:m.pr||0,k:k,cap:Math.abs(c)}};
+  if(!pawns(b,-me)){ns.w=t;ns.why="nopawns"}
+  else if(!pawns(b,me)){ns.w=1-t;ns.why="nopawns"}
+  else if(!gen(b,res,1-t).length){ns.w=t;ns.why="nomove"}
+  return ns}
+function posKey(b,res,t){return b.join("")+res[0].join("")+res[1].join("")+t}
+
+/* ================================ 2. ENGINE ================================ */
+/* Engine: negamax alpha-beta with a capture-only quiescence search. The evaluation counts material
+   (pieces on the board, reserve pieces at a discount), pawns defended by pawns, piece centralisation,
+   and a heavy penalty for running low on pawns, since losing them all loses the game.
+   Easy searches 1 move ahead with lots of randomness, Medium 2, Hard 4. Repeating a recent position
+   is slightly penalised so games keep moving. */
+var simulating=false,WIN=1e6,INF=1e9,VAL=[0,100,300,320,480],RV=[0,0,170,180,270],CEN=[];
+for(var _i=0;_i<64;_i++)CEN[_i]=7-Math.abs(FX[_i]-3.5)-Math.abs(FY[_i]-3.5);
+function rn(n){return Math.floor(Math.random()*n)}
+function evalW(b,res){var s=0,pw=0,pb=0,i,p;
+  for(i=0;i<64;i++){p=b[i];if(!p)continue;
+    if(p===1){pw++;s+=100;if((FX[i]>0&&b[i-9]===1)||(FX[i]<7&&b[i-7]===1))s+=10}
+    else if(p===-1){pb++;s-=100;if((FX[i]>0&&b[i+7]===-1)||(FX[i]<7&&b[i+9]===-1))s-=10}
+    else if(p>0)s+=VAL[p]+CEN[i]*(p===2?5:2);
+    else s-=VAL[-p]+CEN[i]*(p===-2?5:2)}
+  for(i=2;i<5;i++)s+=(res[0][i]-res[1][i])*RV[i];
+  if(pw<4)s-=(4-pw)*(4-pw)*90;if(pb<4)s+=(4-pb)*(4-pb)*90;
+  return s}
+function order(ms,b){ms.forEach(function(m){m.o=m.pr?m.pr*10:(b[m.to]?1000+VAL[Math.abs(b[m.to])]*(b[m.to]*b[m.to]===1?3:1)-Math.abs(b[m.f]):0)});
+  ms.sort(function(a,c){return c.o-a.o});return ms}
+function qs(b,res,t,alpha,beta,ply,qd){var sg=t?-1:1,stand=sg*evalW(b,res);
+  if(stand>=beta||qd>=6)return stand;if(stand>alpha)alpha=stand;
+  var ms=order(gen(b,res,t,true),b);
+  for(var j=0;j<ms.length;j++){var m=ms[j],c=doMove(b,res,t,m),sc;
+    sc=!pawns(b,-sg)?WIN-ply:-qs(b,res,1-t,-beta,-alpha,ply+1,qd+1);
+    undoMove(b,res,t,m,c);
+    if(sc>=beta)return sc;if(sc>alpha)alpha=sc}
+  return alpha}
+function ab(b,res,t,d,alpha,beta,ply){var sg=t?-1:1,ms=gen(b,res,t);
+  if(!ms.length)return-WIN+ply;
+  if(d<=0)return qs(b,res,t,alpha,beta,ply,0);
+  order(ms,b);var best=-INF;
+  for(var j=0;j<ms.length;j++){var m=ms[j],c=doMove(b,res,t,m),sc;
+    if(!pawns(b,-sg))sc=WIN-ply;else if(!pawns(b,sg))sc=-WIN+ply;
+    else sc=-ab(b,res,1-t,d-1,-beta,-alpha,ply+1);
+    undoMove(b,res,t,m,c);
+    if(sc>best)best=sc;if(sc>alpha)alpha=sc;if(alpha>=beta)break}
+  return best}
+function aiMove(s){
+  var lv=+$("level").value,t=s.turn,sg=t?-1:1,b=s.b.slice(),res=[s.res[0].slice(),s.res[1].slice()],
+      D=[0,1,2,4][lv],NZ=[0,90,12,4][lv],ms=order(gen(b,res,t),b),recent=new Set(),p=s,k;
+  for(k=0;k<8&&p;k++){recent.add(posKey(p.b,p.res,p.turn));p=p.prev}
+  var best=-INF,bm=ms[0],raw=-INF;
+  for(var j=0;j<ms.length;j++){var m=ms[j],c=doMove(b,res,t,m),sc;
+    if(!pawns(b,-sg))sc=WIN;else if(!pawns(b,sg))sc=-WIN;
+    else{sc=-ab(b,res,1-t,D-1,-INF,-(raw-NZ-40),1);if(recent.has(posKey(b,res,1-t)))sc-=40}
+    undoMove(b,res,t,m,c);
+    var v=sc+Math.random()*NZ;if(sc>raw)raw=sc;if(v>best){best=v;bm=m}}
+  return apply(s,bm);
+}
+var sim=null;
+function runSim(){   // computer vs computer, to look for first/second-player advantage
+  if(sim){sim.stop=true;return}
+  var CAP=300,me=sim={stop:false},TOTAL=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?4:+$("simR").value)),
+      done=0,w=[0,0],why={nopawns:0,nomove:0},un=0,g=newState(),plies=0,lvName=$("level").options[$("level").selectedIndex].text,nm=GAME.sides.map(function(x){return x.name}),ids=["mode","side","level","new","undo","redo","simN","simR"];
+  ids.forEach(function(i){$(i).disabled=true});simulating=true;sel=-1;render();
+  $("sim").textContent="Stop simulation";
+  $("simout").textContent="Simulating at "+lvName+" level… 0/"+TOTAL;
+  function fin2(stopped){
+    sim=null;simulating=false;$("sim").textContent="Simulation";
+    $("mode").disabled=$("new").disabled=$("simN").disabled=$("simR").disabled=false;
+    $("level").disabled=$("side").disabled=$("mode").value==="2p";
+    var fin=done-un,mg=fin?(196*Math.sqrt((w[0]/fin)*(1-w[0]/fin)/fin)).toFixed(1):"0";
+    var pc=function(n){return fin?(100*n/fin).toFixed(1)+"%":"n/a"};
+    $("simout").textContent=(stopped?"Stopped after ":"")+done+" games at "+lvName+" level (computer vs computer), first "+RND+" moves random.\n"+
+      nm[0]+" (moves first) won "+pc(w[0])+" ("+w[0]+" games, margin ±"+mg+" points at 95% confidence); "+nm[1]+" won "+pc(w[1])+" ("+w[1]+" games).\n"+
+      "Endings: "+why.nopawns+" by losing all pawns, "+why.nomove+" by having no move."+(un?" Unfinished (stopped at "+CAP+" moves): "+un+".":"");
+    render();
+  }
+  function stepSim(){
+    if(me.stop){fin2(true);return}
+    var t0=Date.now();
+    while(Date.now()-t0<40){
+      if(g.w>=0||plies>=CAP){
+        if(g.w>=0){w[g.w]++;why[g.why]++}else un++;
+        done++;g=newState();plies=0;
+        if(done>=TOTAL){fin2(false);return}
+        continue;
+      }
+      if(plies<RND){var c=legal(g);g=apply(g,c[rn(c.length)])}
+      else g=aiMove(g);
+      if(g.prev&&g.prev.prev)g.prev.prev.prev=null;   // keep only the recent history in simulations
+      plies++;
+    }
+    $("simout").textContent="Simulating at "+lvName+" level… "+done+"/"+TOTAL;
+    setTimeout(stepSim,0);
+  }
+  stepSim();
+}
+
+/* =============================== 3. INTERFACE =============================== */
+var hist,redo=[],over,busy,note="",sel=-1;
+function cur(){return hist[hist.length-1]}
+function humanColor(){return+$("side").value}
+function humanTurn(){return $("mode").value==="2p"||cur().turn===humanColor()}
+function flipped(){return $("mode").value==="ai"&&humanColor()===1}
+function start(){
+  hist=[newState()];redo=[];note="";sel=-1;$("level").disabled=$("side").disabled=$("mode").value==="2p";over=false;busy=false;
+  render();maybeAI();
+}
+function X(i){return .5+(flipped()?7-FX[i]:FX[i])}
+function Y(i){return flipped()?FY[i]:7-FY[i]}
+var GF='font-family="Segoe UI Symbol,DejaVu Sans,Noto Sans Symbols 2,Apple Symbols,serif"';
+function piece(v,i){var G=GAME.sides[v>0?0:1];
+  return'<text x="'+(X(i)+.5)+'" y="'+(Y(i)+.53)+'" text-anchor="middle" dominant-baseline="central" font-size=".8" '+GF+' fill="'+G.fill+'" stroke="'+G.edge+'" stroke-width=".04" paint-order="stroke" pointer-events="none">'+GAME.kinds[Math.abs(v)].g+'︎</text>'}
+function movesFrom(s,i){return legal(s).filter(function(m){return m.f===i&&!m.pr})}
+function selPawn(s){return sel>=0&&!over&&s.b[sel]===(s.turn?-1:1)}
+function render(){
+  var s=cur(),sd=GAME.sides,h=[],P=s.turn,i,k,b=s.b,f;
+  over=s.w>=0;
+  h.push('<svg viewBox="0 0 8.5 8.5" role="img" aria-label="Court board">');
+  for(i=0;i<64;i++)h.push('<rect x="'+X(i)+'" y="'+Y(i)+'" width="1" height="1" fill="var('+((FX[i]+FY[i])%2?'--sq1':'--sq2')+')"/>');
+  for(k=0;k<8;k++){
+    f=flipped()?7-k:k;
+    h.push('<text x="'+(k+1)+'" y="8.36" text-anchor="middle" font-size=".28" fill="var(--mute)">'+"abcdefgh"[f]+'</text>');
+    h.push('<text x=".25" y="'+(k+.6)+'" text-anchor="middle" font-size=".28" fill="var(--mute)">'+(flipped()?k+1:8-k)+'</text>');
+  }
+  if(s.lm)[s.lm.f,s.lm.to].forEach(function(q){h.push('<rect x="'+X(q)+'" y="'+Y(q)+'" width="1" height="1" fill="#f2c94c" opacity=".45"/>')});
+  if(sel>=0)h.push('<rect x="'+(X(sel)+.04)+'" y="'+(Y(sel)+.04)+'" width=".92" height=".92" fill="none" stroke="var(--hi)" stroke-width=".08"/>');
+  for(i=0;i<64;i++)if(b[i])h.push(piece(b[i],i));
+  if(sel>=0)movesFrom(s,sel).forEach(function(m){
+    h.push(b[m.to]?'<circle cx="'+(X(m.to)+.5)+'" cy="'+(Y(m.to)+.5)+'" r=".44" fill="none" stroke="var(--hi)" stroke-width=".07" pointer-events="none"/>'
+                  :'<circle cx="'+(X(m.to)+.5)+'" cy="'+(Y(m.to)+.5)+'" r=".14" fill="var(--hi)" opacity=".85" pointer-events="none"/>')});
+  for(i=0;i<64;i++)h.push('<rect data-i="'+i+'" x="'+X(i)+'" y="'+Y(i)+'" width="1" height="1" fill="transparent"/>');
+  h.push('</svg>');
+  $("board").innerHTML=h.join("");
+  var names=sd.map(function(x){return x.name}),st,ai=$("mode").value==="ai",K=GAME.kinds;
+  for(i=0;i<2;i++){var sg=i?-1:1,cnt=[0,0,0,0,0];for(k=0;k<64;k++)if(b[k]*sg>0)cnt[b[k]*sg]++;
+    $("p"+i).className="pl"+(!over&&P===i?" on":"");
+    $("p"+i).innerHTML="<b>"+names[i]+(ai?(humanColor()===i?" (you)":" (computer)"):"")+"</b>"+
+      "<small>On board: "+cnt[1]+" pawn"+(cnt[1]===1?"":"s")+[2,3,4].map(function(q){return cnt[q]?", "+cnt[q]+" "+K[q].n+(cnt[q]>1?"s":""):""}).join("")+"</small>"+
+      "<small>Reserve: "+[2,3,4].map(function(q){return'<span class="gl">'+K[q].g+'︎</span>'+s.res[i][q]}).join(" &nbsp;")+"</small>"}
+  var hu=humanTurn()&&!over&&!busy&&!sim;
+  if(over)st="Game over: "+names[s.w]+(ai?(humanColor()===s.w?" (you)":" (computer)"):"")+" wins because "+names[1-s.w]+(s.why==="nopawns"?" has no pawns left.":" cannot move or promote.");
+  else st=names[P]+" to move"+(humanTurn()?"":" (computer thinking…)")+".";
+  $("status").textContent=st;
+  $("last").textContent=(GAME.describe(s)+" "+note).trim();
+  var sp=hu&&selPawn(s);
+  $("promoLbl").textContent=over?"":sp?"Promote the pawn on "+sq(sel)+" to:":"Promote: select one of your pawns, then choose a reserve piece.";
+  $("promo").innerHTML=[2,3,4].map(function(q){return'<button class="ctl" data-k="'+q+'"'+(sp&&s.res[P][q]?"":" disabled")+'><span class="gl">'+K[q].g+'︎</span>'+K[q].n[0].toUpperCase()+K[q].n.slice(1)+' ×'+s.res[P][q]+'</button>'}).join("");
+  $("undo").disabled=hist.length<2||busy||!!sim;
+  $("redo").disabled=!redo.length||busy||!!sim;
+}
+function play(ns){sel=-1;hist.push(ns);redo=[];render();maybeAI()}
+function click(i){
+  if(over||busy||sim||!humanTurn())return;
+  var s=cur(),sg=s.turn?-1:1;
+  if(sel>=0){var m=movesFrom(s,sel).filter(function(x){return x.to===i})[0];
+    if(m){note="";play(apply(s,m));return}}
+  if(s.b[i]*sg>0&&sel!==i){sel=i;note=movesFrom(s,i).length?"":"That "+GAME.kinds[s.b[i]*sg].n+" has no move"+(s.b[i]*sg===1?", but it can be promoted.":".")}
+  else{sel=-1;note=s.b[i]&&s.b[i]*sg<0?"That is an opponent’s piece.":""}
+  render();
+}
+function promote(k){
+  var s=cur();if(over||busy||sim||!humanTurn()||!selPawn(s)||!s.res[s.turn][k])return;
+  note="";play(apply(s,{f:sel,to:sel,pr:k}));
+}
+function maybeAI(){
+  if(over||$("mode").value!=="ai"||humanTurn())return;
+  busy=true;render();
+  setTimeout(function(){var c=cur(),ns=aiMove(c);busy=false;hist.push(ns);render();maybeAI()},60);
+}
+document.title=GAME.title;$("gtitle").textContent=GAME.title;$("gsub").textContent=GAME.subtitle;
+function li(x){return"<li>"+(typeof x==="string"?x:x.t+"<ul>"+x.sub.map(li).join("")+"</ul>")+"</li>"}
+$("rules").innerHTML=GAME.rules.map(function(sec){return"<li><b>"+sec.h+"</b><ul>"+sec.items.map(li).join("")+"</ul></li>"}).join("");
+$("side").innerHTML=GAME.sides.map(function(x,i){return'<option value="'+i+'">You are '+x.name+'</option>'}).join("");
+$("side").value="0";
+$("board").onclick=function(e){var t=e.target.closest("[data-i]");if(t)click(+t.getAttribute("data-i"))};
+$("promo").onclick=function(e){var t=e.target.closest("[data-k]");if(t&&!t.disabled)promote(+t.getAttribute("data-k"))};
+$("new").onclick=start;$("sim").onclick=runSim;
+$("mode").onchange=$("side").onchange=start;
+$("redo").onclick=function(){
+  if(busy||!redo.length)return;
+  hist.push(redo.pop());
+  while($("mode").value==="ai"&&redo.length&&!humanTurn())hist.push(redo.pop());
+  note="";sel=-1;render();
+};
+$("undo").onclick=function(){
+  if(busy||hist.length<2)return;
+  redo.push(hist.pop());
+  while($("mode").value==="ai"&&hist.length>1&&!humanTurn())redo.push(hist.pop());
+  note="";sel=-1;over=false;render();maybeAI();
+};
+start();
+})();
+</script>
+</body>
+</html>
