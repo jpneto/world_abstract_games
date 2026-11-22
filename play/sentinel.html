@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sentinel</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
+<style>
+:root{--bg:#f1efe9;--ink:#211f1b;--mute:#6a655b;--hi:#e0491b;--panel:#fff;--line:#cfc8b8;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17171a;--ink:#ecebe6;--mute:#a19d93;--panel:#222226;--line:#3d3b38}}
+:root[data-theme="dark"]{--bg:#17171a;--ink:#ecebe6;--mute:#a19d93;--panel:#222226;--line:#3d3b38}
+[hidden]{display:none!important}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+main{max-width:1140px;margin:0 auto;padding:16px 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.right>.bar:first-child{margin-top:0}
+@media (min-width:880px){.layout{grid-template-columns:minmax(0,640px) minmax(290px,1fr);gap:28px;align-items:start}}
+h1{font:700 2rem/1.1 "Bricolage Grotesque",Georgia,serif;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+select,button.ctl{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.ctl:disabled,select:disabled,input:disabled{opacity:.45;cursor:default}
+label.f{color:var(--mute);font-size:.9rem}
+input[type=number]{width:4.5em;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+button.ctl.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.pl{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:8px 12px}
+.pl.on{border-color:var(--hi)}
+.pl small{display:block;color:var(--mute)}
+#status{min-height:3em;font-weight:600;margin:6px 0}
+#board svg{display:block;width:100%;max-width:640px;margin:0 auto;touch-action:manipulation}
+#board [data-i],#board [data-m]{cursor:pointer}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+details li{margin:4px 0}
+.legend{color:var(--mute);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+<h1 id="gtitle"></h1>
+<p class="sub" id="gsub"></p>
+<div class="layout">
+<div class="left">
+<div id="board"></div>
+<p class="legend">Tap one of your pieces to select it, then tap a highlighted square. A single stone shows its forward steps (dashed circles outside the board are moves off the board). A stack shows the squares it would sow along each direction; tap any of them to sow that way, the larger dot marks where the last stone lands. Tap the selected piece again to deselect it (Esc also clears). Numbers on stones are stack heights. With "Show lines of sight" on, lines join the center to every piece that sees it. Red dots mark the last move.</p>
+</div>
+<aside class="right">
+<div class="bar">
+  <select id="mode" aria-label="Mode"><option value="ai">Play the computer</option><option value="2p">Two players</option></select>
+  <select id="level" aria-label="Computer strength"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select>
+  <select id="side" aria-label="Your colour"><option value="1" selected>You play White (moves first)</option><option value="0">You play Blue</option></select>
+</div>
+<div class="bar">
+  <button class="ctl primary" id="new">New game</button>
+  <button class="ctl" id="undo">Undo</button>
+  <button class="ctl" id="redo">Redo</button>
+  <label class="f"><input type="checkbox" id="ctl" checked> Show moves</label>
+  <label class="f"><input type="checkbox" id="frc" checked> Show lines of sight</label>
+</div>
+<div class="score"><div class="pl" id="p0"><span id="n0"></span><small id="s0"></small></div><div class="pl" id="p1"><span id="n1"></span><small id="s1"></small></div></div>
+<div id="status" aria-live="polite"></div>
+<div id="last" class="legend" style="min-height:2.6em;margin:0 0 8px"></div>
+<div class="bar">
+  <label class="f">Simulation games <input id="simN" type="number" min="10" max="1000" value="10"></label>
+  <label class="f">Random opening turns <input id="simR" type="number" min="0" max="20" value="2"></label>
+  <button class="ctl" id="sim">Simulation</button>
+</div>
+<div id="simout" class="legend" style="white-space:pre-line;margin:0 0 8px"></div>
+<details><summary>Rules</summary><ul id="rules"></ul></details>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+/* 1. GAME DEFINITION (rules, move generation)  2. ENGINE (computer, simulation)  3. INTERFACE (SVG board, clicks)
+   Board: 9 x 9 squares, cell index c = y*9 + x with y counted from the top. Cells are named chess-style: column
+   letter a-i (left to right) + row number 1..9 (bottom to top). The center is e5 (CEN = 40).
+   Blue starts on the top row (c9-g9) and moves down; White starts on the bottom row (c1-g1) and moves up.
+   b: Int8Array of 81, 0 empty, +h a Blue piece of h stones, -h a White piece of h stones.
+   RAY[c][d]: the cells from c in direction d up to the board edge, stopping before the center.
+   MAXH[c]: the tallest stack that can still be sown from c (its longest ray minus one).
+   State: {b, turn: 0 Blue / 1 White, ply: turns played, los: [blue, white] pieces in sight of the center, lc: those cells,
+           st: stone counts, pc: piece counts, ms: legal moves of the side to move (cached), end, w: winner,
+           why: how the game ended, lm: last move {c: player, m: move, cap: [{c, n}] captured pieces}}.
+   Moves: a step {f: from, t: to (-1 = off the board), dx} or a sowing {f: from, d: direction 0-7, n: stones sown}. */
+var $=function(i){return document.getElementById(i)};
+
+/* ============================ 1. GAME DEFINITION ============================ */
+var N=9,NC=81,CEN=40,COLS="abcdefghi";
+var DIRS=[[0,-1],[1,-1],[1,0],[1,1],[0,1],[-1,1],[-1,0],[-1,-1]];
+var DN=["north","north-east","east","south-east","south","south-west","west","north-west"];
+var NAMES=["Blue","White"],FILL=["#2a63d6","#f7f5ef"],FWD=[1,-1];
+var RAY=[],MAXH=[];
+function setup(){var c,d,x,y,r;
+  for(c=0;c<NC;c++){RAY[c]=[];MAXH[c]=0;
+    for(d=0;d<8;d++){r=[];x=c%N+DIRS[d][0];y=(c-c%N)/N+DIRS[d][1];
+      while(x>=0&&y>=0&&x<N&&y<N&&y*N+x!==CEN){r.push(y*N+x);x+=DIRS[d][0];y+=DIRS[d][1]}
+      RAY[c][d]=r;if(r.length-1>MAXH[c])MAXH[c]=r.length-1}}}
+function Xc(c){return c%N}
+function Yc(c){return(c-c%N)/N}
+function cn(c){return COLS[Xc(c)]+(N-Yc(c))}
+var GAME={
+  title:"Sentinel",
+  subtitle:"Step forward, sow your stacks, and keep watch on the center: five pieces in sight of it win.",
+  rules:function(){return[
+  {h:"Board and players",items:["Played on the squares of a 9×9 board by Blue and White. Blue starts with five stones on c9–g9 (top row), White with five on c1–g1 (bottom row). The square e5 is the center.",
+    "A piece is a single stone or a stack (two or more stones of the same colour)."]},
+  {h:"Play",items:["On your turn you either move a single friendly stone one square forward (straight or diagonally) toward the opposite side of the board, or sow an entire friendly stack.",
+    "A stone may remove itself by moving off the board.",
+    "Sowing: first add one extra stone to the stack, then lay its stones one per square in a single orthogonal or diagonal direction, starting next to the stack and without turning. The stack's square is left empty.",
+    "A stone moving onto a friendly piece is stacked on top of it. A stone moving onto an enemy piece captures it by replacement, whatever its size.",
+    "It is illegal to move or sow onto or over the center, to sow off the board, or to make a stack that cannot be sowed because it is too tall."]},
+  {h:"Goal",items:["A piece has a line of sight to the center if it lies on one of the eight orthogonal or diagonal lines from the center with nothing between it and the center.",
+    "A player wins if, at the beginning of their turn, five or more of their pieces have a line of sight to the center.",
+    "A player loses if they have no stones left, or if at the end of their turn none of their pieces has a line of sight to the center."]},
+  {h:"Balancing rule",items:["The first player (White) cannot make a stack in their second move."]},
+  {h:"Implementation notes",items:["White moves first.",
+    "Only single stones step; a stack can only be sowed (no stone is split off a stack).",
+    "“Forward” means the three squares ahead: straight, or diagonally ahead. Any forward step that leaves the board, including diagonally off a side edge, removes the stone.",
+    "The center can never be entered: a step onto it is illegal, and so is a sowing whose path includes it.",
+    "A stack is too tall when, from its square, no direction has room for its next sowing (its height plus one squares, not crossing the center). A move that would leave any of your stacks in that state is illegal.",
+    "Only the nearest piece along each of the eight lines sees the center, so at most eight pieces can.",
+    "After each move: the mover loses if none of their pieces sees the center (this includes having no stones left); otherwise the opponent loses if they have no stones left; otherwise the player to move wins with five or more pieces in sight of the center. A player with no legal move loses (this should be very rare).",
+    "The balancing rule forbids White's second move from putting any stone onto a friendly piece, whether by stepping or sowing."]}]},
+  describe:function(s){var l=s.lm,who,m,txt,cap;if(!l)return"";
+    who=isAI()?pname(l.c)+" ("+NAMES[l.c]+")":NAMES[l.c];m=l.m;
+    cap=l.cap.length?", capturing "+l.cap.map(function(x){return"the "+NAMES[1-l.c]+" "+(x.n>1?x.n+"-stone stack":"stone")+" on "+cn(x.c)}).join(" and "):"";
+    if(m.d===undefined)txt=who+" moved "+cn(m.f)+(m.t<0?" off the board":" to "+cn(m.t)+(l.stk?" (stacking)":""))+cap+".";
+    else txt=who+" sowed the "+(m.n-1)+"-stone stack on "+cn(m.f)+" "+DN[m.d]+", laying "+m.n+" stones on "+RAY[m.f][m.d].slice(0,m.n).map(cn).join(", ")+cap+".";
+    return txt}
+};
+function gen(s){if(s.ms)return s.ms;
+  if(s.end)return s.ms=[];
+  return s.ms=moves(s.b,s.turn,s.ply===2,[])}
+// legal moves of player p on b (bal: the balancing rule applies); with ms null, only counts them
+function moves(b,p,bal,ms){var sg=p?-1:1,n=0,c,h,d,dx,r,k,x,y,nx,ny,t,ok;
+  for(c=0;c<NC;c++){h=b[c]*sg;if(h<=0)continue;
+    if(h===1){x=c%N;y=(c-x)/N;ny=y+FWD[p];
+      for(dx=-1;dx<=1;dx++){nx=x+dx;
+        if(nx<0||nx>=N||ny<0||ny>=N){n++;if(ms)ms.push({f:c,t:-1,dx:dx});continue}
+        t=ny*N+nx;if(t===CEN)continue;
+        if(b[t]*sg>0&&(bal||b[t]*sg+1>MAXH[t]))continue;
+        n++;if(ms)ms.push({f:c,t:t,dx:dx})}}
+    else for(d=0;d<8;d++){r=RAY[c][d];if(r.length<h+1)continue;ok=true;
+      for(k=0;k<=h;k++){t=r[k];if(b[t]*sg>0&&(bal||b[t]*sg+1>MAXH[t])){ok=false;break}}
+      if(ok){n++;if(ms)ms.push({f:c,d:d,n:h+1})}}}
+  return ms||n}
+function mkState(b,turn,ply,lm){var s={b:b,turn:turn,ply:ply,lm:lm,ms:null,end:false,w:-1,why:"",los:[0,0],lc:[],st:[0,0],pc:[0,0],sk:[0,0]},c,d,r,k,v,o;
+  for(c=0;c<NC;c++){v=b[c];if(v){o=v>0?0:1;s.st[o]+=v>0?v:-v;s.pc[o]++;if(v>1||v<-1)s.sk[o]++}}
+  for(d=0;d<8;d++){r=RAY[CEN][d];for(k=0;k<r.length;k++)if(b[r[k]]){s.los[b[r[k]]>0?0:1]++;s.lc.push(r[k]);break}}
+  if(lm){o=lm.c;
+    if(!s.los[o]){s.end=true;s.w=1-o;s.why=s.st[o]?"sight":"stones"}
+    else if(!s.st[1-o]){s.end=true;s.w=o;s.why="stones"}}
+  if(!s.end&&s.los[turn]>=5){s.end=true;s.w=turn;s.why="five"}
+  if(!s.end&&!gen(s).length){s.end=true;s.w=1-turn;s.why="stuck";s.ms=[]}
+  return s}
+function newGame(){var b=new Int8Array(NC),x;
+  for(x=2;x<=6;x++){b[x]=1;b[8*N+x]=-1}
+  return mkState(b,1,0,null)}
+function apply(s,m){var b=s.b.slice(),sg=s.turn?-1:1,cap=[],stk=false,k,r;
+  function land(t){var v=b[t]*sg;if(v>0){b[t]+=sg;stk=true}else{if(v<0)cap.push({c:t,n:-v});b[t]=sg}}
+  b[m.f]=0;
+  if(m.d===undefined){if(m.t>=0)land(m.t)}
+  else{r=RAY[m.f][m.d];for(k=0;k<m.n;k++)land(r[k])}
+  return mkState(b,1-s.turn,s.ply+1,{c:s.turn,m:m,cap:cap,stk:stk})}
+
+/* ================================ 2. ENGINE ================================ */
+/* Evaluation for the side to move p against q (all as differences p - q): 14 per piece in sight of the center plus
+   3 x the difference of the squares of those counts (so approaching five matters more), 1.2 per piece, 0.6 per stone,
+   1.5 per stack, 0.03 per legal move (mobility; sowing options make move counts large, so the weight is small), and a 40-point penalty when q already has five or more in sight (q wins at the start of its next turn
+   unless p breaks it now). A move that captures also earns 5 per piece taken plus 1.5 per stone in it, on top of the
+   material it gains. Finished games are scored exactly: +-(1e6 - ply), so quick wins and slow losses are preferred.
+   Search: negamax with alpha-beta; every node plays all its moves one ply ahead and searches a beam of the best.
+   Easy picks among the five best one-ply moves (always taking a win, never a move that loses at once), Medium
+   searches 2 plies, Hard 2, 3 and then 4 plies; Medium and Hard work within a time budget and keep the deepest
+   finished choice. */
+function rn(n){return Math.floor(Math.random()*n)}
+function ev(s){var p=s.turn,q=1-p,a=s.los[p],o=s.los[q],v;
+  v=14*(a-o)+3*(a*a-o*o)+1.2*(s.pc[p]-s.pc[q])+.6*(s.st[p]-s.st[q])+1.5*(s.sk[p]-s.sk[q])+
+    .03*(gen(s).length-moves(s.b,q,false,null));
+  if(o>=5)v-=40;
+  return v}
+// bonus for the capture made by a move: 5 per piece taken plus 1.5 per stone in it (on top of the material gained)
+function cb(l){var v=0,k;for(k=0;k<l.cap.length;k++)v+=5+1.5*l.cap[k].n;return v}
+function term(s){var v=1e6-s.ply;return s.w===s.turn?v:-v}
+var DEAD=0,ABORT={},BM={};
+function kids(s){var ms=gen(s),st=[],v=new Float64Array(ms.length),o=[],i,ns;
+  for(i=0;i<ms.length;i++){ns=apply(s,ms[i]);st.push(ns);
+    v[i]=(ns.end?(ns.w===s.turn?1e6-ns.ply:ns.ply-1e6):-ev(ns)+cb(ns.lm))+Math.random()*1e-3;o.push(i)}
+  o.sort(function(x,y){return v[y]-v[x]});return{ms:ms,st:st,v:v,o:o}}
+function nm(s,d,a,bt){var k,i,v,best=-1e9,lim;
+  if(s.end)return term(s);
+  if(DEAD&&Date.now()>DEAD)throw ABORT;
+  if(d<=0)return ev(s);
+  k=kids(s);
+  if(d===1)return k.v[k.o[0]];
+  lim=Math.min(k.o.length,BM[d]||8);
+  for(i=0;i<lim;i++){v=-nm(k.st[k.o[i]],d-1,-bt,-a);if(v>best){best=v;if(v>a){a=v;if(a>=bt)break}}}
+  return best}
+function search(s,d,k){var i,v,best=-1e9,bi=k.o[0],lim;
+  if(d<=1||k.v[bi]>9e5)return k.ms[bi];
+  lim=Math.min(k.o.length,BM[d]||8);
+  for(i=0;i<lim;i++){v=-nm(k.st[k.o[i]],d-1,-1e9,-best+1e-9)+Math.random()*.05;
+    if(v>best){best=v;bi=k.o[i]}}
+  return k.ms[bi]}
+function aiMove(s,lv){var ms=gen(s),k,best,n,b2;
+  if(lv===undefined)lv=+$("level").value;
+  if(lv<1)return ms[rn(ms.length)];
+  k=kids(s);best=k.ms[k.o[0]];
+  if(lv===1){if(k.v[k.o[0]]>9e5)return best;
+    for(n=0;n<5&&n<k.o.length&&k.v[k.o[n]]>-9e5;n++);
+    return n?k.ms[k.o[rn(n)]]:best}
+  if(lv===2){BM={2:12};DEAD=Date.now()+(sim?150:1200)}
+  else{BM={2:20,3:14,4:10};DEAD=Date.now()+(sim?300:3000)}
+  try{best=search(s,2,k);if(lv>2){best=search(s,3,k);b2=search(s,4,k);best=b2}}catch(e){if(e!==ABORT)throw e}
+  DEAD=0;return best}
+var sim=null;
+function runSim(){
+  if(sim){sim.stop=true;return}
+  var CAP=2000,me=sim={stop:false},TOTAL=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?2:+$("simR").value)),
+      done=0,wc=[0,0],un=0,g=null,plies=0,len=0,lvName=$("level").options[$("level").selectedIndex].text,
+      ids=["mode","side","level","new","undo","redo","simN","simR"];
+  ids.forEach(function(i){$(i).disabled=true});
+  SEL=-1;
+  $("sim").textContent="Stop simulation";
+  $("simout").textContent="Simulating at "+lvName+" level… 0/"+TOTAL;
+  function fin(stopped){
+    sim=null;$("sim").textContent="Simulation";
+    $("mode").disabled=$("new").disabled=$("simN").disabled=$("simR").disabled=false;
+    $("level").disabled=$("side").disabled=$("mode").value==="2p";
+    var pc=function(n){return done?(100*n/done).toFixed(1)+"%":"n/a"};
+    $("simout").textContent=(stopped?"Stopped after ":"")+done+" games ("+lvName+" level, computer vs computer), first "+RND+" turns random.\nWhite (first player) won "+pc(wc[1])+", Blue won "+pc(wc[0])+". Average length: "+(done?(len/done).toFixed(0):"n/a")+" turns."+(un?" Unfinished (over "+CAP+" turns): "+un+".":"");
+    render()}
+  function step(){
+    if(me.stop){fin(true);return}
+    var t0=Date.now();
+    while(Date.now()-t0<40){
+      if(!g){g=newGame();plies=0}
+      if(g.end||plies>=CAP){if(g.end)wc[g.w]++;else un++;len+=plies;done++;g=null;if(done>=TOTAL){fin(false);return}continue}
+      g=apply(g,aiMove(g,plies<RND?0:undefined));plies++}
+    $("simout").textContent="Simulating at "+lvName+" level… "+done+"/"+TOTAL;
+    setTimeout(step,0)}
+  step()}
+
+/* =============================== 3. INTERFACE =============================== */
+/* SEL: the selected friendly piece (-1 none). Its moves are shown as targets: a cell -> move map (steps, and every
+   square of each sowing path) plus off-board steps drawn outside the board (OFF, clicked by index). */
+var hist,redo=[],over,busy,note="",SEL=-1,OFF=[];
+var GRID="#6b4a22",OB=1.15;
+var DEFS='<defs><radialGradient id="gB" cx=".35" cy=".3" r=".75"><stop offset="0" stop-color="#8fbaff"/><stop offset=".4" stop-color="#2f6be0"/><stop offset="1" stop-color="#0d2f7a"/></radialGradient>'+
+  '<radialGradient id="gW" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#ffffff"/><stop offset=".55" stop-color="#eef0f4"/><stop offset="1" stop-color="#b9bec8"/></radialGradient>'+
+  '<linearGradient id="gWood" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#EDBE78"/><stop offset=".5" stop-color="#E6B26A"/><stop offset="1" stop-color="#DDA65C"/></linearGradient>'+
+  '<filter id="fGrain" x="0" y="0" width="1" height="1"><feTurbulence type="fractalNoise" baseFrequency=".9 .035" numOctaves="2" seed="7"/><feColorMatrix values="0 0 0 0 .45  0 0 0 0 .28  0 0 0 0 .1  0 0 0 .55 -.18"/><feComposite in2="SourceGraphic" operator="in"/></filter>'+
+  '<filter id="fSh" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx=".05" dy=".07" stdDeviation=".05" flood-color="#000" flood-opacity=".4"/></filter></defs>';
+var SFILL=["url(#gB)","url(#gW)"],SEDGE=["#0a2260","#9aa0aa"],SNUM=["#fff","#222"];
+function cur(){return hist[hist.length-1]}
+function hc(){return+$("side").value}
+function isAI(){return $("mode").value==="ai"}
+function isHuman(s){return!isAI()||s.turn===hc()}
+function pname(c){return isAI()?(c===hc()?"You":"Computer"):NAMES[c]}
+function pverb(c,a,b){return pname(c)==="You"?b:a}
+function start(){setup();hist=[newGame()];redo=[];note="";SEL=-1;$("level").disabled=$("side").disabled=!isAI();over=false;busy=false;
+  $("rules").innerHTML=GAME.rules().map(function(sec){return"<li><b>"+sec.h+"</b><ul>"+sec.items.map(li).join("")+"</ul></li>"}).join("");
+  render();maybeAI()}
+// the moves of the piece on c: {o: cell -> move, off: off-board steps}
+function tmap(s,c){var o={},off=[];
+  gen(s).forEach(function(m){if(m.f!==c)return;
+    if(m.d===undefined){if(m.t<0)off.push(m);else o[m.t]=m}
+    else RAY[m.f][m.d].slice(0,m.n).forEach(function(x){o[x]=m})});
+  return{o:o,off:off}}
+function f3(v){return Math.round(v*1000)/1000}
+function circ(x,y,r,fill,op,st,sw,dash){return'<circle cx="'+f3(x)+'" cy="'+f3(y)+'" r="'+r+'" fill="'+fill+'"'+(op?' fill-opacity="'+op+'"':'')+(st?' stroke="'+st+'" stroke-width="'+sw+'"':'')+(dash?' stroke-dasharray="'+dash+'"':'')+' pointer-events="none"/>'}
+function line(x1,y1,x2,y2,clr,w,op){return'<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="'+clr+'" stroke-width="'+w+'"'+(op?' stroke-opacity="'+op+'"':'')+' stroke-linecap="round" pointer-events="none"/>'}
+function txt(x,y,t,sz,clr,wt){return'<text x="'+f3(x)+'" y="'+f3(y)+'" font-size="'+sz+'" text-anchor="middle" dominant-baseline="central" fill="'+clr+'"'+(wt?' font-weight="'+wt+'"':'')+' pointer-events="none">'+t+'</text>'}
+function stone(x,y,o,h){var g=[],k,lay=Math.min(h,4)-1;
+  for(k=lay;k>=1;k--)g.push('<circle cx="'+x+'" cy="'+f3(y+.07*k)+'" r=".4" fill="'+SFILL[o]+'" stroke="'+SEDGE[o]+'" stroke-width=".025" pointer-events="none"/>');
+  g.push('<circle cx="'+x+'" cy="'+y+'" r=".4" fill="'+SFILL[o]+'" stroke="'+SEDGE[o]+'" stroke-width=".025" filter="url(#fSh)" pointer-events="none"/>');
+  if(h>1)g.push(txt(x,y,h,.42,SNUM[o],700));
+  return g.join("")}
+function render(){
+  var s=cur(),b=s.b,g=[],c,i,l=s.lm,hu,stt,HI="var(--hi)",E=N-.5,V=-.5-OB-.35,W=f3(N+2*(OB+.35)),tm,m,ox,oy,why,x,y;
+  over=s.end;hu=isHuman(s)&&!over&&!busy&&!sim;
+  if(!hu)SEL=-1;
+  g.push('<svg viewBox="'+V+' '+V+' '+W+' '+W+'" role="img" aria-label="Sentinel board" font-family="system-ui,sans-serif">');
+  g.push(DEFS,'<rect x="'+V+'" y="'+V+'" width="'+W+'" height="'+W+'" rx=".25" fill="url(#gWood)" pointer-events="none"/>','<rect x="'+V+'" y="'+V+'" width="'+W+'" height="'+W+'" rx=".25" fill="#fff" filter="url(#fGrain)" pointer-events="none"/>');
+  for(c=0;c<NC;c++)if((Xc(c)+Yc(c))%2)g.push('<rect x="'+(Xc(c)-.5)+'" y="'+(Yc(c)-.5)+'" width="1" height="1" fill="#7a4e1c" fill-opacity=".1" pointer-events="none"/>');
+  g.push('<rect x="3.5" y="3.5" width="1" height="1" fill="'+GRID+'" fill-opacity=".35" pointer-events="none"/>','<path d="M4 3.68L4.32 4 4 4.32 3.68 4Z" fill="'+GRID+'" pointer-events="none"/>');
+  for(i=0;i<=N;i++){g.push(line(-.5,i-.5,E,i-.5,GRID,.035),line(i-.5,-.5,i-.5,E,GRID,.035))}
+  for(i=0;i<N;i++){g.push(txt(i,-.78,COLS[i],.3,GRID),txt(i,E+.28,COLS[i],.3,GRID),txt(-.78,i,N-i,.3,GRID),txt(E+.28,i,N-i,.3,GRID))}
+  if($("frc").checked)s.lc.forEach(function(x){var o=b[x]>0?0:1;g.push(line(4,4,Xc(x),Yc(x),o?"#8a8f98":FILL[0],.07,.55))});
+  for(c=0;c<NC;c++)if(b[c])g.push(stone(Xc(c),Yc(c),b[c]>0?0:1,Math.abs(b[c])));
+  if($("frc").checked)s.lc.forEach(function(x){g.push(circ(Xc(x),Yc(x),.45,"none",0,"#f2c230",.06))});
+  if(l){m=l.m;g.push(circ(Xc(m.f),Yc(m.f),.12,"none",0,HI,.05));
+    (m.d===undefined?(m.t>=0?[m.t]:[]):RAY[m.f][m.d].slice(0,m.n)).forEach(function(x){g.push(circ(Xc(x),Yc(x),.1,HI))})}
+  OFF=[];
+  if(hu&&SEL>=0){tm=tmap(s,SEL);g.push(circ(Xc(SEL),Yc(SEL),.47,"none",0,HI,.07));
+    if($("ctl").checked){
+      for(c in tm.o){c=+c;m=tm.o[c];
+        g.push(circ(Xc(c),Yc(c),m.d!==undefined&&RAY[m.f][m.d][m.n-1]===c?.2:.13,HI,.85,b[c]?"#fff":0,.03))}
+      tm.off.forEach(function(m){x=Xc(m.f)+m.dx;y=Yc(m.f)+FWD[s.turn];
+        ox=x<0?-.5-OB+.5:x>=N?E+OB-.5:x;oy=y<0?-.5-OB+.5:y>=N?E+OB-.5:y;
+        OFF.push(m);g.push('<circle data-m="'+(OFF.length-1)+'" cx="'+f3(ox)+'" cy="'+f3(oy)+'" r=".3" fill="'+HI+'" fill-opacity=".18" stroke="'+HI+'" stroke-width=".05" stroke-dasharray=".1 .07"><title>Move off the board</title></circle>')})}}
+  for(c=0;c<NC;c++)g.push('<rect data-i="'+c+'" x="'+(Xc(c)-.5)+'" y="'+(Yc(c)-.5)+'" width="1" height="1" fill="#000" fill-opacity="0"><title>'+cn(c)+'</title></rect>');
+  if(OFF.length&&!$("ctl").checked)OFF.forEach(function(m,k){x=Xc(m.f)+m.dx;y=Yc(m.f)+FWD[s.turn];
+    ox=x<0?-.5-OB+.5:x>=N?E+OB-.5:x;oy=y<0?-.5-OB+.5:y>=N?E+OB-.5:y;
+    g.push('<circle data-m="'+k+'" cx="'+f3(ox)+'" cy="'+f3(oy)+'" r=".3" fill="#000" fill-opacity="0"><title>Move off the board</title></circle>')});
+  $("board").innerHTML=g.join("")+'</svg>';
+  for(i=0;i<2;i++){
+    $("p"+i).className="pl"+(!over&&s.turn===i?" on":"");
+    $("p"+i).style.borderLeft="8px solid "+FILL[i];
+    $("n"+i).textContent=(isAI()?pname(i)+" – ":"")+NAMES[i]+": "+s.los[i]+" in sight";
+    $("s"+i).textContent=s.pc[i]+" piece"+(s.pc[i]===1?"":"s")+" · "+s.st[i]+" stone"+(s.st[i]===1?"":"s")}
+  if(over){
+    why=s.why==="five"?NAMES[s.w]+" begins the turn with "+s.los[s.w]+" pieces in sight of the center.":
+        s.why==="sight"?NAMES[1-s.w]+" ended the turn with no piece in sight of the center.":
+        s.why==="stones"?NAMES[1-s.w]+" has no stones left.":NAMES[1-s.w]+" has no legal move.";
+    stt=why+" Game over: "+pname(s.w)+(isAI()?" ("+NAMES[s.w]+")":"")+" "+pverb(s.w,"wins","win")+"."}
+  else{
+    stt=isHuman(s)?(isAI()?"Your turn ("+NAMES[s.turn]+").":NAMES[s.turn]+" to move."):"The computer is thinking…";
+    if(s.los[1-s.turn]>=5)stt+=" "+NAMES[1-s.turn]+" has "+s.los[1-s.turn]+" pieces in sight of the center and wins next turn unless this move breaks it.";
+    if(!s.los[s.turn])stt+=" "+NAMES[s.turn]+" has no piece in sight of the center and must restore one this turn.";
+    if(s.ply===2)stt+=" Balancing rule: no stacking on this move.";
+    if(hu)stt+=SEL<0?" Tap one of your pieces.":" Tap a highlighted square to move "+cn(SEL)+"."}
+  if(note)stt+=" "+note;
+  $("status").textContent=stt;
+  $("last").textContent=GAME.describe(s);
+  $("undo").disabled=hist.length<2||busy||!!sim;
+  $("redo").disabled=!redo.length||busy||!!sim}
+function play(m){var ns=apply(cur(),m);hist.push(ns);redo=[];note="";SEL=-1;render();maybeAI()}
+function click(i){
+  var s=cur(),sg=s.turn?-1:1,tm;
+  if(over||busy||sim||!isHuman(s))return;
+  note="";
+  if(SEL>=0){
+    if(i===SEL){SEL=-1;render();return}
+    tm=tmap(s,SEL);if(tm.o[i]){play(tm.o[i]);return}}
+  if(s.b[i]*sg>0){
+    if(gen(s).some(function(m){return m.f===i}))SEL=i;
+    else{SEL=-1;note=cn(i)+" has no legal move"+(Math.abs(s.b[i])>1?" (no direction has room to sow it)":"")+"."}}
+  else if(i===CEN)note="The center can never be entered.";
+  else if(SEL>=0)note=cn(i)+" is not a destination of the piece on "+cn(SEL)+".";
+  else note=s.b[i]?"That is a "+NAMES[1-s.turn]+" piece; tap one of yours.":"Tap one of your pieces first.";
+  render()}
+function maybeAI(){
+  var s=cur();if(over||!isAI()||isHuman(s))return;
+  busy=true;render();
+  setTimeout(function(){var c=cur(),ns=apply(c,aiMove(c));busy=false;hist.push(ns);render();maybeAI()},60)}
+function li(x){return"<li>"+x+"</li>"}
+document.title=GAME.title;$("gtitle").textContent=GAME.title;$("gsub").textContent=GAME.subtitle;
+$("board").onclick=function(e){var t=e.target.closest("[data-m]"),s;
+  if(t){s=cur();if(over||busy||sim||!isHuman(s))return;play(OFF[+t.getAttribute("data-m")]);return}
+  t=e.target.closest("[data-i]");if(t)click(+t.getAttribute("data-i"))};
+$("new").onclick=start;$("sim").onclick=runSim;
+$("ctl").onchange=$("frc").onchange=render;
+$("mode").onchange=$("side").onchange=start;
+document.addEventListener("keydown",function(e){if(e.key==="Escape"&&SEL>=0){SEL=-1;note="";render()}});
+$("redo").onclick=function(){
+  if(busy||!redo.length)return;
+  hist.push(redo.pop());
+  while(isAI()&&redo.length&&!isHuman(cur()))hist.push(redo.pop());
+  note="";SEL=-1;render();maybeAI()};
+$("undo").onclick=function(){
+  if(busy||hist.length<2)return;
+  var tmp=[];
+  tmp.push(hist.pop());
+  while(isAI()&&hist.length>1&&!isHuman(cur()))tmp.push(hist.pop());
+  if(!isHuman(cur())&&isAI()){while(tmp.length)hist.push(tmp.pop());return}
+  tmp.forEach(function(x){redo.push(x)});
+  over=false;note="";SEL=-1;render()};
+start();
+})();
+</script>
+</body>
+</html>
