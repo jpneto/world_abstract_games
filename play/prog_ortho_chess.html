@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Progressive Orthodox Chess</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
+<style>
+:root{--bg:#eef0e6;--ink:#1f2a1c;--mute:#5d6a56;--edge:#b9bfa3;--hi:#7b3fc4;--panel:#fff;--line:#c5cab4;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--edge:#3b4733;--panel:#1f271c;--line:#37422f;--hi:#c49bff}}
+:root[data-theme="dark"]{--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--edge:#3b4733;--panel:#1f271c;--line:#37422f;--hi:#c49bff}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+main{max-width:1080px;margin:0 auto;padding:16px 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.right>.bar:first-child{margin-top:0}
+@media (min-width:860px){.layout{grid-template-columns:minmax(0,600px) minmax(300px,1fr);gap:28px;align-items:start}}
+h1{font:700 2rem/1.1 "Bricolage Grotesque",Georgia,serif;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+select,button.ctl{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.ctl:disabled,select:disabled,input:disabled{opacity:.45;cursor:default}
+label.f,span.f{color:var(--mute);font-size:.9rem}
+input[type=number]{width:4.5em;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+button.ctl.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.pl{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:8px 12px;font-size:.95rem}
+.pl.on{border-color:var(--hi)}
+.pl b{font-weight:700}
+.pl small{color:var(--mute);display:block}
+.dot{display:inline-block;width:.8em;height:.8em;border-radius:50%;vertical-align:-.05em;margin-right:5px;border:1px solid rgba(0,0,0,.35)}
+#status{min-height:1.5em;font-weight:600;margin:6px 0}
+#board svg{display:block;width:100%;max-width:600px;margin:0 auto;touch-action:manipulation;cursor:pointer;border-radius:6px}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+details li{margin:4px 0}
+.legend{color:var(--mute);font-size:.9rem;margin-top:8px}
+#log{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:6px 12px;max-height:200px;overflow:auto;font-size:.88rem;font-variant-numeric:tabular-nums}
+#log div{padding:2px 0;border-bottom:1px solid var(--line)}
+#log div:last-child{border-bottom:0}
+#log .k{color:var(--mute)}
+</style>
+</head>
+<body>
+<main>
+<h1 id="gtitle"></h1>
+<p class="sub" id="gsub"></p>
+<div class="layout">
+<div class="left">
+<div id="board"></div>
+<p class="legend">Each player plays a series of moves, one move longer each time, moving Gold and Blue pieces alternately. To make a move, click a piece of the colour to move, then a purple dot (an empty square) or ring (a capture). To castle, move the king two squares. Tinted squares show the last move.</p>
+</div>
+<aside class="right">
+<div class="bar">
+  <select id="mode" aria-label="Mode"><option value="ai">Play the computer</option><option value="2p">Two players</option></select>
+  <select id="level" aria-label="Computer strength"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select>
+  <select id="side" aria-label="Your side"></select>
+  <button class="ctl primary" id="new">New game</button>
+  <button class="ctl" id="undo">Undo</button>
+  <button class="ctl" id="redo">Redo</button>
+</div>
+<div class="score"><div class="pl" id="p0"></div><div class="pl" id="p1"></div></div>
+<div id="status" aria-live="polite"></div>
+<div id="promoLbl" class="legend" style="margin:0"></div>
+<div class="bar" id="promo" style="margin-top:4px"></div>
+<div id="last" class="legend" style="min-height:2.6em;margin:0 0 8px"></div>
+<div id="log" aria-label="Game score by series"></div>
+<div class="bar">
+  <label class="f">Simulation games <input id="simN" type="number" min="10" max="1000" value="10"></label>
+  <label class="f">Random opening moves <input id="simR" type="number" min="0" max="20" value="4"></label>
+  <button class="ctl" id="sim">Simulation</button>
+</div>
+<div id="simout" class="legend" style="white-space:pre-line;margin:0 0 8px"></div>
+<details><summary>Rules</summary><ul id="rules"></ul></details>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+/* =====================================================================
+   1. GAME DEFINITION  - Progressive Orthodox Chess: each player plays a series of moves for both colours, one longer each time
+   2. ENGINE           - per series: helpmate search for the opponent's colour, else a beam search over the series,
+                         with a check that the opponent cannot quickly mate back in the next series
+   3. INTERFACE        - SVG 8x8 board, one click-pair per move, promotion buttons, game score grouped by series
+   Board: Int8Array(64), index = rank*8 + file (a1 = 0, h8 = 63). +1..+6 Gold (white army) P N B R Q K, negative Blue.
+   A move is {f, t, pr: promotion piece or 0, c: 1 king-side / 2 queen-side castling, ep: en passant, dbl: two-square pawn step}.
+   A state is {b, turn (colour to move: 0 Gold, 1 Blue), cr: castling rights (1 Gold O-O, 2 Gold O-O-O, 4 Blue O-O, 8 Blue O-O-O),
+               ep: en passant square or -1, hm: plies since the last capture or pawn move, n: plies played, chk: colour to move in check,
+               w: winning player (0 Gold player, 1 Blue player), 2 for a draw, -1 while playing, why: how the game ended,
+               last: {p: colour moved, by: player who moved it, k: series, j: move in series, m, txt, cells}, prev, _ms: cached legal moves}.
+   Players: player 0 owns Gold and plays the odd series (1, 3, 5…); player 1 owns Blue and plays the even series (2, 4, 6…).
+   Ply n (0-based) belongs to series k where k(k-1)/2 <= n < k(k+1)/2; its colour is n mod 2, as in an ordinary game.
+   ===================================================================== */
+var $=function(i){return document.getElementById(i)};
+
+/* ============================ 1. GAME DEFINITION ============================ */
+var GAME={
+  title:"Progressive Orthodox Chess",
+  subtitle:"Each player makes a series of moves for both colours, one move longer each time, so that the whole game is still a legal orthodox chess game.",
+  sides:[{name:"Gold",fill:"#D6A64F",edge:"#4f3a12",det:"#4f3a12"},{name:"Blue",fill:"#263C48",edge:"#0b1418",det:"#b4c8d2"}],
+  board:{light:"#E5DFD2",dark:"#C9C0B0"},
+  rules:[
+  {h:"Board, pieces and players",items:[
+    "The standard 8×8 chess board, pieces and starting position. Gold has the white army and Blue the black army.",
+    "There are two players, the Gold player and the Blue player. Each tries to get the other player's colour checkmated. (This page's reading: each player owns the colour of the same name.)"]},
+  {h:"Series of moves",items:[
+    "The Gold player begins with one move, for Gold.",
+    "The Blue player then makes a series of two moves: one for Blue, then one for Gold.",
+    "The players continue alternately, each series one move longer than the one before: the Gold player makes 3 moves, the Blue player 4, the Gold player 5, and so on.",
+    "The colours always alternate, Gold, Blue, Gold, Blue…, whoever is moving. So in every series a player also moves the opponent's pieces, and the moves together form an ordinary legal chess game.",
+    "All moves of a series must be played, unless the game ends during it."]},
+  {h:"Orthodox rules",items:[
+    "Every move must be a legal orthodox chess move for the colour to move: a king in check must be got out of check, and no move may leave its own king in check. Castling, en passant and the two-square pawn step from the starting square work as usual.",
+    "A pawn reaching the last rank is promoted to a queen, rook, bishop or knight of its own colour, chosen by the player who moves it there, even if it is the opponent's pawn."]},
+  {h:"End of the game",items:[
+    "Checkmate ends the game at once, even in the middle of a series. The player whose colour is checkmated loses, even when that player made the mating move.",
+    "Stalemate is a draw, and so is a position where neither colour can ever be checkmated (on this page: king against king, king and one bishop or knight against king, or only bishops, all on squares of one colour).",
+    "The game is drawn after 50 moves by each colour with no capture and no pawn move. (On this page this draw is automatic.)",
+    "There is no draw by threefold repetition."]}],
+  describe:function(s){var L=s.last;return L?"Last move, "+playerName(L.by)+"'s series "+L.k+" ("+L.j+" of "+L.k+"): "+GAME.sides[L.p].name+" "+L.txt+".":""}
+};
+var P=1,N=2,B=3,R=4,Q=5,K=6,LET=" PNBRQK",PNAME=["","pawn","knight","bishop","rook","queen","king"],VAL=[0,100,300,320,500,900,0],BACK=[R,N,B,Q,K,B,N,R];
+function sq(i){return"abcdefgh"[i&7]+((i>>3)+1)}
+function side(v){return v>0?0:v<0?1:-1}   // owner of a square's piece, -1 when empty
+function pt(v){return v<0?-v:v}           // piece type
+function playerName(i){return GAME.sides[i].name+" player"}
+// series bookkeeping
+function seriesOf(n){var k=1;while(k*(k+1)/2<=n)k++;return k}
+function sStart(k){return k*(k-1)/2}
+function ctrl(n){return(seriesOf(n)-1)&1}                     // the player who makes ply n
+function left(n){var k=seriesOf(n);return sStart(k)+k-n}     // plies left in the current series, this one included
+var DIRS=[[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]],KNJ=[[1,2],[2,1],[2,-1],[1,-2],[-1,-2],[-2,-1],[-2,1],[-1,2]],RAY=[],NT=[],KT=[];
+(function(){for(var i=0;i<64;i++){var f=i&7,r=i>>3;
+  RAY[i]=DIRS.map(function(d){var a=[],x=f+d[0],y=r+d[1];while(x>=0&&x<8&&y>=0&&y<8){a.push(y*8+x);x+=d[0];y+=d[1]}return a});
+  NT[i]=[];KNJ.forEach(function(d){var x=f+d[0],y=r+d[1];if(x>=0&&x<8&&y>=0&&y<8)NT[i].push(y*8+x)});
+  KT[i]=RAY[i].filter(function(a){return a.length}).map(function(a){return a[0]})}})();
+// piece-square values (Gold's point of view), indexed PSV[v+6][square]
+var PSV=[];
+(function(){for(var v=-6;v<=6;v++){var row=new Int32Array(64);
+  for(var i=0;i<64;i++){if(!v)continue;var p=pt(v),f=i&7,r=i>>3,a=v>0?r:7-r,c=VAL[p],cen=14-Math.abs(2*f-7)-Math.abs(2*r-7);
+    if(p===P)c+=a>=1?(a-1)*(a-1)*3:-10;
+    else if(p===N||p===B)c+=cen*3;
+    else if(p===Q)c+=cen;
+    else if(p===R)c+=a===6?15:0;
+    else if(p===K)c+=a===0?10:-a*8;
+    row[i]=v>0?c:-c}
+  PSV[v+6]=row}})();
+function PV(v,i){return PSV[v+6][i]}
+function newState(){var b=new Int8Array(64);
+  for(var f=0;f<8;f++){b[f]=BACK[f];b[8+f]=P;b[48+f]=-P;b[56+f]=-BACK[f]}
+  return{b:b,turn:0,cr:15,ep:-1,hm:0,n:0,w:-1,why:"",last:null,prev:null}}
+function kingSq(b,t){var k=t?-K:K;for(var i=0;i<64;i++)if(b[i]===k)return i;return -1}
+// does colour t attack square k?
+function attacked(b,k,t){var sg=t?-1:1,i,d,ray,j,x,p,pr=(k>>3)-sg,L;
+  L=NT[k];for(i=0;i<L.length;i++)if(b[L[i]]===sg*N)return true;
+  L=KT[k];for(i=0;i<L.length;i++)if(b[L[i]]===sg*K)return true;
+  if(pr>=0&&pr<8)for(d=-1;d<=1;d+=2){x=(k&7)+d;if(x>=0&&x<8&&b[pr*8+x]===sg*P)return true}
+  for(d=0;d<8;d++){ray=RAY[k][d];for(j=0;j<ray.length;j++){x=b[ray[j]];
+    if(x){if((x>0)===(sg>0)){p=pt(x);if(p===Q||(d<4?p===R:p===B))return true}break}}}
+  return false}
+function addP(out,f,t,last){if((t>>3)===last)[Q,N,R,B].forEach(function(p){out.push({f:f,t:t,pr:p})});else out.push({f:f,t:t})}
+// moves of colour t that follow the movement rules (own-king safety is checked in legal)
+function genReg(b,t,cr,ep){var out=[],sg=t?-1:1,i,v,p,d,k,q,ray,L,x,c,last=t?0:7;
+  for(i=0;i<64;i++){v=b[i];if(!v||(v>0)!==(sg>0))continue;p=pt(v);
+    if(p===P){var r=i>>3;q=i+8*sg;if(q<0||q>63)continue;
+      if(!b[q]){addP(out,i,q,last);
+        if(t?r===6:r===1){var q2=q+8*sg;if(!b[q2])out.push({f:i,t:q2,dbl:1})}}   // two-square step from the starting rank
+      for(d=-1;d<=1;d+=2){x=(i&7)+d;if(x<0||x>7)continue;c=q+d;
+        if(b[c]&&(b[c]>0)!==(sg>0))addP(out,i,c,last);else if(c===ep&&!b[c])out.push({f:i,t:c,ep:1})}}
+    else if(p===N||p===K){L=p===N?NT[i]:KT[i];for(k=0;k<L.length;k++){q=L[k];if(!b[q]||(b[q]>0)!==(sg>0))out.push({f:i,t:q})}}
+    else for(d=p===B?4:0;d<(p===R?4:8);d++){ray=RAY[i][d];
+      for(k=0;k<ray.length;k++){q=ray[k];if(!b[q])out.push({f:i,t:q});else{if((b[q]>0)!==(sg>0))out.push({f:i,t:q});break}}}}
+  var o=t?1:0,rk=t?56:0;
+  if(cr&&b[rk+4]===sg*K&&cr&(t?12:3)&&!attacked(b,rk+4,o^1)){
+    if(cr&(t?4:1)&&b[rk+7]===sg*R&&!b[rk+5]&&!b[rk+6]&&!attacked(b,rk+5,o^1))out.push({f:rk+4,t:rk+6,c:1});
+    if(cr&(t?8:2)&&b[rk]===sg*R&&!b[rk+1]&&!b[rk+2]&&!b[rk+3]&&!attacked(b,rk+3,o^1))out.push({f:rk+4,t:rk+2,c:2})}
+  return out}
+// play a move in place; returns the captured piece
+function applyReg(b,t,m){var sg=t?-1:1,v=b[m.f],cap=b[m.t];
+  b[m.t]=m.pr?sg*m.pr:v;b[m.f]=0;
+  if(m.ep){var cq=m.t-8*sg;cap=b[cq];b[cq]=0}
+  if(m.c){var rk=t?56:0,rf=rk+(m.c===1?7:0),rt=rk+(m.c===1?5:3);b[rt]=b[rf];b[rf]=0}
+  return cap}
+// legal moves of colour t; each carries nb, the board after it
+function legal(b,t,cr,ep){var regs=genReg(b,t,cr,ep),out=[],ks=kingSq(b,t),i,m,nb;
+  for(i=0;i<regs.length;i++){m=regs[i];nb=b.slice();applyReg(nb,t,m);
+    if(!attacked(nb,m.f===ks?m.t:ks,1-t)){m.nb=nb;out.push(m)}}
+  return out}
+function hasLegal(b,t,ep){var regs=genReg(b,t,0,ep),ks=kingSq(b,t),i,m,nb;   // castling never matters here
+  for(i=0;i<regs.length;i++){m=regs[i];nb=b.slice();applyReg(nb,t,m);if(!attacked(nb,m.f===ks?m.t:ks,1-t))return true}
+  return false}
+function strip(m){return{f:m.f,t:m.t,pr:m.pr||0,c:m.c||0,ep:m.ep||0,dbl:m.dbl||0}}
+function legalMoves(s){if(!s._ms)s._ms=legal(s.b,s.turn,s.cr,s.ep).map(strip);return s._ms}
+function newCR(cr,m){var x=[m.f,m.t],i;
+  for(i=0;i<2;i++)switch(x[i]){case 4:cr&=~3;break;case 0:cr&=~2;break;case 7:cr&=~1;break;case 60:cr&=~12;break;case 56:cr&=~8;break;case 63:cr&=~4}
+  return cr}
+function newEP(m){return m.dbl?(m.f+m.t)>>1:-1}
+function inCheck(s){return attacked(s.b,kingSq(s.b,s.turn),1-s.turn)}
+// no checkmate is possible with any series of legal moves
+function dead(b){var mn=[],i,p;for(i=0;i<64;i++){if(!b[i])continue;p=pt(b[i]);if(p===K)continue;
+    if(p!==N&&p!==B)return false;mn.push({p:p,c:((i&7)+(i>>3))&1})}
+  return mn.length<=1||mn.every(function(x){return x.p===B&&x.c===mn[0].c})}
+function moveText(b,t,m,chk,mate){var p=pt(b[m.f]);
+  return(m.c?(m.c===1?"O-O":"O-O-O"):(p===P?"":LET[p])+sq(m.f)+(b[m.t]||m.ep?"x":"–")+sq(m.t)+(m.ep?" e.p.":"")+(m.pr?"="+LET[m.pr]:""))+(mate?"#":chk?"+":"")}
+// play one move from a state and detect the end of the game
+function play1(s,m){var t=s.turn,nb=s.b.slice(),mv=s.b[m.f],cap=applyReg(nb,t,m),nm=GAME.sides,k=seriesOf(s.n),
+  ns={b:nb,turn:1-t,cr:newCR(s.cr,m),ep:newEP(m),hm:(cap||pt(mv)===P)?0:s.hm+1,n:s.n+1,w:-1,why:"",prev:s,last:null};
+  var chk=inCheck(ns),none=!legalMoves(ns).length,cells=m.c?[m.f,m.t,(t?56:0)+(m.c===1?7:0),(t?56:0)+(m.c===1?5:3)]:[m.f,m.t];
+  if(m.ep)cells.push(m.t-8*(t?-1:1));
+  ns.chk=chk;ns.last={p:t,by:ctrl(s.n),k:k,j:s.n-sStart(k)+1,m:m,txt:moveText(s.b,t,m,chk,chk&&none),cells:cells};
+  if(none){if(chk){ns.w=t;ns.why=nm[1-t].name+" is checkmated"}else{ns.w=2;ns.why=nm[1-t].name+" is stalemated"}}
+  else if(dead(nb)){ns.w=2;ns.why="neither colour can be checkmated any more"}
+  else if(ns.hm>=100){ns.w=2;ns.why="50 moves by each colour without a capture or a pawn move"}
+  return ns}
+
+/* ================================ 2. ENGINE ================================ */
+/* The computer plans its whole series when it begins (or from where it is, after an undo):
+   1. Helpmate search: is there a sequence of at most d moves inside the series (both colours under its control) that checkmates
+      the opponent's colour? Iterative deepening, depth by level, time limited. The shortest one found is played.
+   2. Otherwise a beam search over the moves of the series keeps the best few lines after each move, scored from the computer's
+      colour by material, piece placement and the number of free flight squares around each king. Lines that checkmate its own
+      colour are only kept if nothing else is possible; stalemate scores as even.
+   3. The final lines are compared after a short helpmate search for the opponent: if the opponent could checkmate the computer's
+      colour within the first few moves of the next (one longer) series, the line is heavily penalised (less so the longer it takes).
+      Pieces of the computer's colour left attacked also cost a little, since the opponent will move both colours next.
+   Easy: narrow beam, mate search 2 moves, no look at the reply, much randomness. Medium: mate search up to 4 moves, reply checked
+   3 moves deep. Hard: mate search up to 6 moves, reply checked 4 moves deep, wider beam and a longer time budget. */
+var WIN=100000,ABORT={},nodes=0,deadline=0;
+var LV={1:{w:3,nz:80,md:2,dd:0,t:400},2:{w:8,nz:15,md:4,dd:3,t:2500},3:{w:14,nz:4,md:6,dd:4,t:6000}};
+function rn(n){return Math.floor(Math.random()*n)}
+function tick(){if((++nodes&255)===0&&Date.now()>deadline)throw ABORT}
+// a list of at most d moves, starting with colour t, after which colour tg is checkmated; null if none
+function mateIn(b,t,cr,ep,d,tg){
+  if(d===1&&t===tg)return null;   // the mating move must be made by the other colour
+  tick();
+  var ms=legal(b,t,cr,ep),i,m,nb,r,nep;
+  if(t!==tg)for(i=0;i<ms.length;i++){m=ms[i];nb=m.nb;
+    if(attacked(nb,kingSq(nb,tg),t)&&!hasLegal(nb,tg,newEP(m)))return[strip(m)]}
+  if(d>1)for(i=0;i<ms.length;i++){m=ms[i];nep=newEP(m);
+    r=mateIn(m.nb,1-t,newCR(cr,m),nep,d-1,tg);if(r)return[strip(m)].concat(r)}
+  return null}
+function findMate(b,t,cr,ep,maxD,tg){for(var d=1;d<=maxD;d++){var r=mateIn(b,t,cr,ep,d,tg);if(r)return r}return null}
+function flight(b,t){var k=kingSq(b,t),L=KT[k],n=0,i,q;for(i=0;i<L.length;i++){q=L[i];if(side(b[q])!==t&&!attacked(b,q,1-t))n++}return n}
+function evalFor(b,me){var e=0,i;for(i=0;i<64;i++)if(b[i])e+=PV(b[i],i);if(me)e=-e;
+  return e+12*(flight(b,me)-flight(b,1-me))}
+function hanging(b,me){var e=0,i,v;for(i=0;i<64;i++){v=b[i];if(v&&side(v)===me&&pt(v)!==K&&attacked(b,i,1-me))e+=VAL[pt(v)]/2}return e}
+function planSeries(s,lv,fast){
+  var me=ctrl(s.n),r=left(s.n),cfg=LV[lv],T0=Date.now(),budget=fast?cfg.t/6:cfg.t,mt=null,i;
+  // 1. checkmate the opponent's colour within this series
+  deadline=T0+budget*.45;nodes=0;
+  try{mt=findMate(s.b,s.turn,s.cr,s.ep,Math.min(r,cfg.md),1-me)}catch(ex){if(ex!==ABORT)throw ex}
+  if(mt)return mt;
+  // 2. beam search over the moves of the series
+  var beam=[{b:s.b,t:s.turn,cr:s.cr,ep:s.ep,ms:[],sc:0,end:0}];
+  for(i=0;i<r;i++){var nx=[],seen={};
+    beam.forEach(function(st){if(st.end){nx.push(st);return}
+      legal(st.b,st.t,st.cr,st.ep).forEach(function(m){var nb=m.nb,nt=1-st.t,key=nb.join("")+st.cr;
+        if(seen[key])return;seen[key]=1;
+        var c={b:nb,t:nt,cr:newCR(st.cr,m),ep:newEP(m),ms:st.ms.concat([strip(m)]),end:0};
+        if(!hasLegal(nb,nt,c.ep)){
+          if(attacked(nb,kingSq(nb,nt),st.t)){c.end=1;c.sc=nt===me?-WIN:WIN}else{c.end=2;c.sc=0}}
+        else c.sc=evalFor(nb,me)+Math.random()*cfg.nz;
+        nx.push(c)})});
+    nx.sort(function(x,y){return y.sc-x.sc});
+    beam=nx.slice(0,cfg.w)}
+  if(beam[0].end===1&&beam[0].sc>0)return beam[0].ms;
+  // 3. look at the opponent's reply series
+  var L=seriesOf(s.n)+1;
+  beam.forEach(function(c){c.fs=c.sc;if(c.end)return;c.fs-=hanging(c.b,me)});
+  beam.sort(function(x,y){return y.fs-x.fs});
+  deadline=T0+budget;
+  if(cfg.dd)for(i=0;i<beam.length;i++){var c=beam[i];if(c.end)continue;
+    try{var om=findMate(c.b,c.t,c.cr,c.ep,Math.min(L,cfg.dd),me);if(om)c.fs-=WIN/2-om.length*1000}
+    catch(ex){if(ex!==ABORT)throw ex;break}}
+  beam.sort(function(x,y){return y.fs-x.fs});
+  return beam[0].ms}
+function randMove(g){var ms=legalMoves(g);return play1(g,ms[rn(ms.length)])}
+
+var sim=null;
+function runSim(){   // computer vs computer, to look for an advantage for either player
+  if(sim){sim.stop=true;return}
+  var CAP=400,me=sim={stop:false},TOTAL=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?4:+$("simR").value)),
+      lv=+$("level").value,done=0,w=[0,0,0],un=0,g=newState(),plies=0,queue=[],lvName=$("level").options[$("level").selectedIndex].text,
+      nm=GAME.sides.map(function(x,i){return playerName(i)}),ids=["mode","side","level","new","undo","redo","simN","simR"],plen=[];
+  ids.forEach(function(i){$(i).disabled=true});sel=-1;pend=null;render();
+  $("sim").textContent="Stop simulation";
+  $("simout").textContent="Simulating at "+lvName+" level… 0/"+TOTAL;
+  function fin2(stopped){
+    sim=null;$("sim").textContent="Simulation";
+    $("mode").disabled=$("new").disabled=$("simN").disabled=$("simR").disabled=false;
+    $("level").disabled=$("side").disabled=$("mode").value==="2p";
+    var fin=done-un,dec=w[0]+w[1],sh=dec?w[0]/dec:0,mg=dec?(196*Math.sqrt(sh*(1-sh)/dec)).toFixed(1):"0",
+        avg=plen.length?(plen.reduce(function(a,b){return a+b},0)/plen.length).toFixed(1):"n/a";
+    var pc=function(n){return fin?(100*n/fin).toFixed(1)+"%":"n/a"};
+    $("simout").textContent=(stopped?"Stopped after ":"")+done+" games at "+lvName+" level (computer vs computer), first "+RND+" moves random.\n"+
+      nm[0]+" (series 1, 3, 5…) won "+pc(w[0])+" ("+w[0]+" games); "+nm[1]+" won "+pc(w[1])+" ("+w[1]+" games); draws "+pc(w[2])+" ("+w[2]+").\n"+
+      (dec?nm[0]+"'s share of decisive games is "+(100*sh).toFixed(1)+"%, ±"+mg+" points at 95% confidence.":"No decisive games.")+
+      "\nAverage length of finished games: "+avg+" moves."+
+      (un?"\nUnfinished (stopped at "+CAP+" moves): "+un+".":"");
+    render();
+  }
+  function stepSim(){
+    if(me.stop){fin2(true);return}
+    var t0=Date.now();
+    while(Date.now()-t0<40){
+      if(g.w>=0||plies>=CAP){
+        if(g.w>=0){w[g.w]++;plen.push(plies)}else un++;
+        done++;g=newState();plies=0;queue=[];
+        if(done>=TOTAL){fin2(false);return}
+        continue;
+      }
+      if(plies<RND){g=randMove(g);queue=[]}
+      else{if(!queue.length)queue=planSeries(g,lv,true);g=play1(g,queue.shift())}
+      for(var p=g,k=0;p&&k<4;k++)p=p.prev;if(p)p.prev=null;   // simulations keep no history
+      if(g.prev)delete g.prev._ms;
+      plies++;
+    }
+    $("simout").textContent="Simulating at "+lvName+" level… "+done+"/"+TOTAL;
+    setTimeout(stepSim,0);
+  }
+  stepSim();
+}
+
+/* =============================== 3. INTERFACE =============================== */
+/* Whoever controls the current move (ctrl of the ply number) clicks a piece of the colour to move, then a purple mark.
+   sel: the piece picked; pend: a promotion waiting for its piece; plan: the computer's remaining moves of its series. */
+var hist,redo=[],over,busy,note="",sel=-1,pend=null,flip=false,plan=null;
+function cur(){return hist[hist.length-1]}
+function hc(){return +$("side").value}       // the human's player
+function humanTurn(){return $("mode").value==="2p"||ctrl(cur().n)===hc()}
+function start(){
+  hist=[newState()];redo=[];note="";sel=-1;pend=null;plan=null;$("level").disabled=$("side").disabled=$("mode").value==="2p";over=false;busy=false;
+  render();maybeAI();
+}
+function XY(i){var f=i&7,r=i>>3;return flip?[7-f,r]:[f,7-r]}
+var PE=' pointer-events="none"';
+var BASE='<rect x="24" y="79" width="52" height="11" rx="4"/>',SHAPE={
+  1:'<path d="M36 80C38 63 44 55 44 46H56C56 55 62 63 64 80Z"/><rect x="37" y="41" width="26" height="7" rx="3.5"/><circle cx="50" cy="29" r="12"/><rect x="27" y="79" width="46" height="11" rx="4"/>',
+  2:'<path d="M36 80C36 67 45 60 47 51C41 54 35 56 29 58C23 59 19 54 21 49C26 40 33 32 38 24L36 12L45 19C53 16 61 19 67 27C75 38 74 58 70 80Z"/>'+BASE,
+  3:'<path d="M35 80C37 68 43 62 43 56H57C57 62 63 68 65 80Z"/><path d="M50 15C65 27 67 41 60 53H40C33 41 35 27 50 15Z"/><circle cx="50" cy="11" r="5"/><rect x="37" y="51" width="26" height="7" rx="3.5"/>'+BASE,
+  4:'<path d="M33 80L36 44H64L67 80Z"/><path d="M29 44V19H38V27H46V19H54V27H62V19H71V44Z"/><rect x="30" y="42" width="40" height="7" rx="2"/>'+BASE,
+  5:'<path d="M31 80C35 67 41 59 39 48H61C59 59 65 67 69 80Z"/><path d="M38 50L20 24L34 36L36 16L46 32L50 13L54 32L64 16L66 36L80 24L62 50Z"/>'+
+    '<circle cx="20" cy="24" r="4.5"/><circle cx="36" cy="16" r="4.5"/><circle cx="50" cy="12" r="4.5"/><circle cx="64" cy="16" r="4.5"/><circle cx="80" cy="24" r="4.5"/><rect x="36" y="46" width="28" height="7" rx="3.5"/>'+BASE,
+  6:'<path d="M31 80C35 67 41 59 39 50H61C59 59 65 67 69 80Z"/><path d="M37 52C25 42 26 28 38 28C44 28 48 33 50 38C52 33 56 28 62 28C74 28 75 42 63 52Z"/>'+
+    '<path d="M46 8H54V16H61V23H54V33H46V23H39V16H46Z"/><rect x="36" y="48" width="28" height="7" rx="3.5"/>'+BASE};
+var DET={2:'<circle cx="42" cy="31" r="3" stroke="none" fill="currentColor"/>',3:'<path d="M55 27L45 39" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>'};
+function piece(v,x,y){var G=GAME.sides[side(v)],p=pt(v);
+  return'<g transform="translate('+x+','+y+') scale(.01)" fill="'+G.fill+'" stroke="'+G.edge+'" stroke-width="3.2" stroke-linejoin="round" color="'+G.det+'"'+PE+'>'+SHAPE[p]+(DET[p]||"")+'</g>'}
+function who(i){return $("mode").value==="ai"?(hc()===i?" (you)":" (computer)"):""}
+function btn(a,txt,cls){return'<button class="ctl'+(cls?" "+cls:"")+'" data-a="'+a+'">'+txt+'</button>'}
+function ring(q){var xy=XY(q);return'<circle cx="'+(xy[0]+.5)+'" cy="'+(xy[1]+.5)+'" r=".45" fill="none" stroke="var(--hi)" stroke-width=".07"'+PE+'/>'}
+function dot(q){var xy=XY(q);return'<circle cx="'+(xy[0]+.5)+'" cy="'+(xy[1]+.5)+'" r=".15" fill="var(--hi)" opacity=".75"'+PE+'/>'}
+function tint(q,op){var xy=XY(q);return'<rect x="'+xy[0]+'" y="'+xy[1]+'" width="1" height="1" fill="var(--hi)" opacity="'+op+'"'+PE+'/>'}
+function seriesInfo(n){var k=seriesOf(n);return{k:k,j:n-sStart(k)+1,by:ctrl(n)}}
+function logHTML(){var lines=[],line=null,h,L,n;
+  for(h=1;h<hist.length;h++){L=hist[h].last;n=hist[h].n-1;
+    if(!line||line.k!==L.k){line={k:L.k,by:L.by,a:[]};lines.push(line)}
+    line.a.push(((n>>1)+1)+(L.p?"… ":". ")+L.txt)}
+  if(!lines.length)return'<div class="k">The game score appears here, one line per series.</div>';
+  return lines.map(function(l){return'<div><span class="k">'+l.k+' · '+playerName(l.by)+':</span> '+l.a.join(", ")+'</div>'}).join("")}
+function render(){
+  var s=cur(),sd=GAME.sides,h=[],T=s.turn,i,xy,ms=legalMoves(s),si=seriesInfo(s.n);
+  over=s.w>=0;
+  flip=$("mode").value==="ai"&&hc()===1;
+  var hu=humanTurn()&&!over&&!busy&&!sim,b=s.b;
+  if(!hu){sel=-1;pend=null}
+  if(sel>=0&&side(b[sel])!==T)sel=-1;
+  var lm=sel<0?[]:ms.filter(function(m){return m.f===sel});
+  h.push('<svg viewBox="-0.5 -0.05 8.6 8.55" role="img" aria-label="Progressive Orthodox Chess board">');
+  for(i=0;i<64;i++){xy=XY(i);h.push('<rect x="'+xy[0]+'" y="'+xy[1]+'" width="1" height="1" fill="'+(((i&7)+(i>>3))%2?GAME.board.light:GAME.board.dark)+'"/>')}
+  for(i=0;i<8;i++){
+    h.push('<text x="-0.25" y="'+(flip?i+.5:7.5-i)+'" text-anchor="middle" dominant-baseline="central" font-size=".32" fill="var(--mute)">'+(i+1)+'</text>');
+    h.push('<text x="'+(flip?7.5-i:i+.5)+'" y="8.25" text-anchor="middle" dominant-baseline="central" font-size=".32" fill="var(--mute)">'+"abcdefgh"[i]+'</text>')}
+  if(s.last)s.last.cells.forEach(function(q){h.push(tint(q,.25))});
+  if(s.chk){var kq=kingSq(b,T);xy=XY(kq);h.push('<circle cx="'+(xy[0]+.5)+'" cy="'+(xy[1]+.5)+'" r=".46" fill="#c0392b" opacity=".35"'+PE+'/>')}
+  if(sel>=0){xy=XY(sel);h.push('<rect x="'+(xy[0]+.04)+'" y="'+(xy[1]+.04)+'" width=".92" height=".92" fill="none" stroke="var(--hi)" stroke-width=".08"'+PE+'/>')}
+  for(i=0;i<64;i++)if(b[i]){xy=XY(i);h.push(piece(b[i],xy[0],xy[1]))}
+  var seen={};
+  lm.forEach(function(m){if(seen[m.t])return;seen[m.t]=1;h.push(b[m.t]||m.ep?ring(m.t):dot(m.t))});
+  for(i=0;i<64;i++){xy=XY(i);h.push('<rect data-i="'+i+'" x="'+xy[0]+'" y="'+xy[1]+'" width="1" height="1" fill="transparent"/>')}
+  h.push('</svg>');
+  $("board").innerHTML=h.join("");
+  var cn=sd.map(function(x){return x.name}),st;
+  for(i=0;i<2;i++){var mat=0,cnt=[0,0,0,0,0,0,0],k,v;
+    for(k=0;k<64;k++)if(side(s.b[k])===i){v=pt(s.b[k]);cnt[v]++;mat+=VAL[v]}
+    $("p"+i).className="pl"+(!over&&si.by===i?" on":"");
+    $("p"+i).innerHTML='<b><span class="dot" style="background:'+sd[i].fill+'"></span>'+playerName(i)+who(i)+"</b>"+
+      "<small>Plays series "+(i?"2, 4, 6…":"1, 3, 5…")+"</small>"+
+      "<small>"+cn[i]+" material <b>"+Math.round(mat/100)+"</b> · "+cnt[1]+"P "+cnt[2]+"N "+cnt[3]+"B "+cnt[4]+"R "+cnt[5]+"Q</small>"+
+      "<small>"+cn[i]+" castling: "+((s.cr>>(2*i))&3?[((s.cr>>(2*i))&1)?"O-O":"",((s.cr>>(2*i))&2)?"O-O-O":""].filter(Boolean).join(", "):"none")+"</small>"}
+  if(over)st="Game over: "+s.why+" — "+(s.w===2?"draw.":playerName(s.w)+who(s.w)+" wins.");
+  else st="Series "+si.k+", move "+si.j+" of "+si.k+": "+playerName(si.by)+who(si.by)+" moves "+cn[T]+(s.chk?", which is in check":"")+
+    (humanTurn()?"":busy&&plan&&plan.ms.length&&plan.at===s?" (computer playing its series…)":" (computer thinking…)")+"."+
+    (s.hm>=80?" "+Math.ceil((100-s.hm)/2)+" moves left before the 50-move draw.":"");
+  $("status").textContent=st;
+  $("last").textContent=(GAME.describe(s)+" "+note).trim();
+  var lg=$("log");lg.innerHTML=logHTML();lg.scrollTop=lg.scrollHeight;
+  var pl=$("promoLbl"),pr=$("promo"),yours=$("mode").value==="ai"?"Your series "+si.k+", move "+si.j+" of "+si.k:playerName(si.by)+", series "+si.k+", move "+si.j+" of "+si.k;
+  if(hu&&pend){pl.textContent="Promote the "+cn[T]+" pawn on "+sq(pend.t)+" to:";pr.innerHTML=btn("p5","Queen","primary")+btn("p4","Rook")+btn("p3","Bishop")+btn("p2","Knight")+btn("cancel","Cancel")}
+  else if(hu&&sel>=0){pl.textContent=cn[T]+" "+PNAME[pt(b[sel])]+" on "+sq(sel)+" selected: click a purple mark to move there"+(lm.length?"":" (it has no legal move)")+", or another "+cn[T]+" piece. Click it again to cancel.";
+    pr.innerHTML=btn("cancel","Cancel")}
+  else if(hu){pl.textContent=yours+": move a "+cn[T]+" piece"+(T===si.by?".":" (your opponent's colour).");pr.innerHTML=""}
+  else{pl.textContent="";pr.innerHTML=""}
+  $("undo").disabled=hist.length<2||busy||!!sim;
+  $("redo").disabled=!redo.length||busy||!!sim;
+}
+function play(ns){sel=-1;pend=null;delete cur()._ms;hist.push(ns);redo=[];render();maybeAI()}
+function click(i){
+  if(over||busy||sim||!humanTurn())return;
+  var s=cur(),T=s.turn,ms=legalMoves(s),c;note="";pend=null;
+  if(sel>=0){c=ms.filter(function(m){return m.f===sel&&m.t===i});
+    if(c.length){if(c.some(function(m){return m.pr})){pend={f:sel,t:i};render();return}play(play1(s,c[0]));return}
+    if(i===sel){sel=-1;render();return}}
+  if(side(s.b[i])===T){sel=i;if(!ms.some(function(m){return m.f===i}))note="That piece has no legal move.";render();return}
+  note=sel>=0?"The selected piece cannot move there; selection cleared.":s.b[i]?"It is "+GAME.sides[T].name+"'s move: click a "+GAME.sides[T].name+" piece.":"Click a "+GAME.sides[T].name+" piece first.";
+  sel=-1;render();
+}
+function action(a){
+  var s=cur();if(over||busy||sim||!humanTurn())return;note="";
+  if(a.charAt(0)==="p"&&pend){var p=+a.charAt(1),m=legalMoves(s).filter(function(x){return x.f===pend.f&&x.t===pend.t&&x.pr===p})[0];
+    if(m){play(play1(s,m));return}}
+  else if(a==="cancel"){if(pend)pend=null;else sel=-1}
+  render();
+}
+function maybeAI(){
+  if(over||$("mode").value!=="ai"||humanTurn())return;
+  var s=cur(),fresh=!(plan&&plan.at===s&&plan.ms.length);
+  busy=true;render();
+  setTimeout(function(){
+    if(fresh)plan={ms:planSeries(s,+$("level").value,false)};
+    var ns=play1(s,plan.ms.shift());plan.at=ns;busy=false;delete s._ms;hist.push(ns);redo=[];render();maybeAI()},fresh?60:550);
+}
+document.title=GAME.title;$("gtitle").textContent=GAME.title;$("gsub").textContent=GAME.subtitle;
+function li(x){return"<li>"+(typeof x==="string"?x:x.t+"<ul>"+x.sub.map(li).join("")+"</ul>")+"</li>"}
+$("rules").innerHTML=GAME.rules.map(function(sec){return"<li><b>"+sec.h+"</b><ul>"+sec.items.map(li).join("")+"</ul></li>"}).join("");
+$("side").innerHTML=GAME.sides.map(function(x,i){return'<option value="'+i+'">You are the '+playerName(i)+(i?" (series 2, 4, 6…)":" (series 1, 3, 5…)")+'</option>'}).join("");
+$("side").value="0";
+$("board").onclick=function(e){var t=e.target.closest("[data-i]");if(t)click(+t.getAttribute("data-i"))};
+$("promo").onclick=function(e){var t=e.target.closest("[data-a]");if(t&&!t.disabled)action(t.getAttribute("data-a"))};
+$("new").onclick=start;$("sim").onclick=runSim;
+$("mode").onchange=$("side").onchange=start;
+$("redo").onclick=function(){
+  if(busy||!redo.length)return;
+  hist.push(redo.pop());
+  while($("mode").value==="ai"&&redo.length&&!humanTurn())hist.push(redo.pop());
+  note="";sel=-1;pend=null;plan=null;render();maybeAI();
+};
+$("undo").onclick=function(){
+  if(busy||hist.length<2)return;
+  redo.push(hist.pop());
+  while($("mode").value==="ai"&&hist.length>1&&!humanTurn())redo.push(hist.pop());
+  note="";sel=-1;pend=null;plan=null;over=false;render();maybeAI();
+};
+start();
+})();
+</script>
+</body>
+</html>

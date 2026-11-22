@@ -107,7 +107,7 @@ var GAME={
       "these distances follow the inventors' worked example. After Qd5, the Gold rook on c5 is pushed to b5 (against the Blue queen on a5), the Blue rook on f5 is pulled to e5, and the Blue bishop on d2 is pulled to d4."]},
     "Kings are neither repelled nor attracted, do not repel or attract, and block the field: if the closest piece in a direction is a king, nothing in that direction moves.",
     "Magnetism never captures: pieces only slide over empty squares. The four directions act independently.",
-    "A pawn pushed or pulled onto its last rank is promoted to a queen. (The rules do not cover this. This page's reading matches the promotions in the inventors' sample games.)"]},
+    "A pawn pushed onto its last rank by magnetism is promoted at once, to a queen, rook, bishop or knight of its owner's choice. Only a pawn of the player who moved can get there, pushed by one of that player's own pieces, so the player who moved chooses."]},
   {h:"Special moves",items:[
     "Castling follows the FIDE rules without the conditions about check: the king and the rook have not moved, and the squares between them are empty. The magnetism comes from the rook's movement, acting from the rook's new square.",
     "A castling right is lost once that rook has left its corner, including when magnetism pushes or pulls it away. (This is this page's reading.)",
@@ -147,29 +147,33 @@ function gen(b,t,cr){var out=[],sg=t?-1:1,i,v,p,d,k,q,ray,L;
     if(cr&8&&b[60]===-K&&b[56]===-R&&!b[57]&&!b[58]&&!b[59])out.push({f:60,t:58,c:2})}
   return out}
 // the magnetic field of the piece on o: its closest neighbour in each direction along rank and file
-function magnet(b,o,sh){var c=sgn(b[o]),d,ray,k,j,q,dest,v,pr;
+function magnet(b,o,sh,mp){var c=sgn(b[o]),d,ray,k,j,q,dest,v,pr;
   for(d=0;d<4;d++){ray=RAY[o][d];for(k=0;k<ray.length&&!b[ray[k]];k++);
     if(k===ray.length)continue;q=ray[k];if(pt(b[q])===K)continue;   // kings are neutral and block the field
     if(sgn(b[q])===c){for(j=k;j+1<ray.length&&!b[ray[j+1]];j++);dest=ray[j]}   // repelled: as far as possible
     else dest=ray[0];                                                       // attracted: next to the moved piece
     if(dest===q)continue;
     v=b[q];pr=0;b[q]=0;
-    if(v===P&&(dest>>3)===7){v=Q;pr=1}else if(v===-P&&(dest>>3)===0){v=-Q;pr=1}
+    if(v===P&&(dest>>3)===7){v=mp;pr=1}else if(v===-P&&(dest>>3)===0){v=-mp;pr=1}   // promoted to the mover's choice
     b[dest]=v;sh.push([q,dest,pr])}}
 // play move m for side t on a copy of the board; returns {b, cr, cap: captured piece, sh: magnetic shifts}
 function make(b0,t,cr,m){var b=b0.slice(),sg=t?-1:1,v=b[m.f],cap=b[m.t],o=m.t,sh=[];
   b[m.t]=m.pr?sg*m.pr:v;b[m.f]=0;
   if(m.c){var rk=t?56:0,rf=rk+(m.c===1?7:0),rt=rk+(m.c===1?5:3);b[rt]=b[rf];b[rf]=0;o=rt}   // castling: the rook makes the field
-  if(pt(cap)!==K&&pt(b[o])!==K)magnet(b,o,sh);
+  if(pt(cap)!==K&&pt(b[o])!==K)magnet(b,o,sh,m.mp||Q);
   if(pt(v)===K)cr&=t?3:12;
   if(b[0]!==R)cr&=~2;if(b[7]!==R)cr&=~1;if(b[56]!==-R)cr&=~8;if(b[63]!==-R)cr&=~4;
   return{b:b,cr:cr,cap:cap,sh:sh}}
+// a move whose magnetism pushes a pawn onto its last rank comes in four versions, one per promotion piece (m.mp)
+function withMagPromos(b,t,cr,ms){var out=[];
+  ms.forEach(function(m){if(make(b,t,cr,m).sh.some(function(x){return x[2]}))[Q,N,R,B].forEach(function(p){out.push({f:m.f,t:m.t,pr:m.pr,c:m.c,mp:p})});else out.push(m)});
+  return out}
 function posKey(s){return s.b.join(",")+"/"+s.turn+"/"+s.cr}
 function reps(s){var k=posKey(s),n=0,p=s,i;for(i=0;p&&i<=s.hm;i++,p=p.prev)if(posKey(p)===k)n++;return n}
 function moveText(b,t,m,r){var p=pt(b[m.f]),x;
   x=m.c?(m.c===1?"O-O":"O-O-O"):(p===P?"":LET[p])+sq(m.f)+(r.cap?"x":"–")+sq(m.t)+(m.pr?"="+LET[m.pr]:"");
   if(r.sh.length)x+=" (magnetism: "+r.sh.map(function(s){var w=r.b[s[1]];
-    return GAME.sides[side(w)].name+" "+PNAME[s[2]?P:pt(w)]+" "+sq(s[0])+"→"+sq(s[1])+(s[2]?", promoted to queen":"")}).join("; ")+")";
+    return GAME.sides[side(w)].name+" "+PNAME[s[2]?P:pt(w)]+" "+sq(s[0])+"→"+sq(s[1])+(s[2]?", promoted to "+PNAME[pt(w)]:"")}).join("; ")+")";
   return x}
 // play one move from a state and detect the end of the game
 function play1(s,m){var t=s.turn,r=make(s.b,t,s.cr,m),mv=s.b[m.f],nm=GAME.sides,
@@ -183,7 +187,7 @@ function play1(s,m){var t=s.turn,r=make(s.b,t,s.cr,m),mv=s.b[m.f],nm=GAME.sides,
   return ns}
 
 /* ================================ 2. ENGINE ================================ */
-/* Negamax with alpha-beta, captures and promotions searched first. A side that can capture the enemy king scores a win at once,
+/* Negamax with alpha-beta, captures and promotions searched first; inside the search a magnetic promotion is to a queen, while at the root all four choices are compared. A side that can capture the enemy king scores a win at once,
    so the search sees one extra ply of king danger. Leaves are scored by material (pawn 1, knight 3, bishop 3.2, rook 5, queen 9),
    advanced pawns (magnetism turns them into missiles) and central minor pieces and queens.
    Easy searches 1 move with large randomness, Medium 3, Hard deepens up to 6 within a time budget.
@@ -219,7 +223,7 @@ function negamax(b,t,cr,depth,alpha,beta,ply){
     if(v>best){best=v;if(v>alpha){alpha=v;if(alpha>=beta)break}}}
   return best}
 function aiTurn(s){
-  var lv=+$("level").value,t=s.turn,ms=gen(s.b,t,s.cr),maxD=lv===1?1:lv===2?3:6,noise=lv===1?90:lv===2?12:2,
+  var lv=+$("level").value,t=s.turn,ms=withMagPromos(s.b,t,s.cr,gen(s.b,t,s.cr)),maxD=lv===1?1:lv===2?3:6,noise=lv===1?90:lv===2?12:2,
       budget=simulating?(lv===3?300:150):(lv===3?1500:800),hk={},p,k,d;
   for(p=s,k=0;p&&k<=s.hm+1;k++,p=p.prev){var key=posKey(p);hk[key]=(hk[key]||0)+1}
   orderMoves(ms,s.b);
@@ -306,7 +310,7 @@ function piece(v,x,y,op){var G=GAME.sides[side(v)],p=pt(v);
 function arrow(f,t,dash){var a=XY(f),b=XY(t),x1=a[0]+.5,y1=a[1]+.5,x2=b[0]+.5,y2=b[1]+.5,L=Math.hypot(x2-x1,y2-y1),k=(L-.28)/L;
   return'<line x1="'+x1+'" y1="'+y1+'" x2="'+(x1+(x2-x1)*k).toFixed(3)+'" y2="'+(y1+(y2-y1)*k).toFixed(3)+'" stroke="var(--hi)" stroke-width="'+(dash?.05:.075)+'"'+
     (dash?' stroke-dasharray=".12 .08" opacity=".8"':'')+' stroke-linecap="round" marker-end="url(#ah)"'+PE+'/>'}
-function legalFrom(s,i){return gen(s.b,s.turn,s.cr).filter(function(m){return m.f===i})}
+function legalFrom(s,i){return withMagPromos(s.b,s.turn,s.cr,gen(s.b,s.turn,s.cr).filter(function(m){return m.f===i}))}
 function who(i){return $("mode").value==="ai"?(hc()===i?" (you)":" (computer)"):""}
 function btn(a,txt,cls){return'<button class="ctl'+(cls?" "+cls:"")+'" data-a="'+a+'">'+txt+'</button>'}
 function render(){
@@ -331,7 +335,7 @@ function render(){
   lm.forEach(function(m){if(seen[m.t])return;seen[m.t]=1;xy=XY(m.t);
     h.push(b[m.t]?'<circle cx="'+(xy[0]+.5)+'" cy="'+(xy[1]+.5)+'" r=".45" fill="none" stroke="var(--hi)" stroke-width=".07"'+PE+'/>':
       '<circle cx="'+(xy[0]+.5)+'" cy="'+(xy[1]+.5)+'" r=".15" fill="var(--hi)" opacity=".75"'+PE+'/>')});
-  h.push('<g id="pv"'+PE+'>'+(pend?previewSVG(s,{f:pend.f,t:pend.t,pr:Q}):"")+'</g>');
+  h.push('<g id="pv"'+PE+'>'+(pend?previewSVG(s,pend.m):"")+'</g>');
   for(i=0;i<64;i++){xy=XY(i);h.push('<rect data-i="'+i+'" x="'+xy[0]+'" y="'+xy[1]+'" width="1" height="1" fill="transparent"/>')}
   h.push('</svg>');
   $("board").innerHTML=h.join("");
@@ -347,7 +351,7 @@ function render(){
   $("status").textContent=st;
   $("last").textContent=(GAME.describe(s)+" "+note).trim();
   var pl=$("promoLbl"),pr=$("promo");
-  if(hu&&pend){pl.textContent="Promote the pawn on "+sq(pend.t)+" to:";
+  if(hu&&pend){pl.textContent=pend.mag?"This move pushes your pawn onto the last rank ("+sq(make(b,T,s.cr,pend.m).sh.filter(function(x){return x[2]})[0][1])+"). Promote it to:":"Promote the pawn on "+sq(pend.t)+" to:";
     pr.innerHTML=btn("p5","Queen","primary")+btn("p4","Rook")+btn("p3","Bishop")+btn("p2","Knight")+btn("cancel","Cancel")}
   else if(hu&&sel>=0){pl.textContent=sd[T].name+" "+PNAME[pt(b[sel])]+" on "+sq(sel)+" selected: click a purple mark to move there"+(lm.length?"":" (it has no move)")+", or another of your pieces. Click it again to cancel.";
     pr.innerHTML=btn("cancel","Cancel")}
@@ -367,7 +371,7 @@ function click(i){
   if(over||busy||sim||!humanTurn())return;
   var s=cur(),T=s.turn,b=s.b;note="";pend=null;
   if(sel>=0){var ms=legalFrom(s,sel).filter(function(m){return m.t===i});
-    if(ms.length){if(ms[0].pr){pend={f:sel,t:i};render();return}play(play1(s,ms[0]));return}
+    if(ms.length){if(ms[0].pr||ms[0].mp){pend={f:sel,t:i,m:ms[0],mag:!!ms[0].mp};render();return}play(play1(s,ms[0]));return}
     if(i===sel){sel=-1;render();return}}
   if(side(b[i])===T){sel=i;if(!legalFrom(s,i).length)note="That piece has no legal move.";render();return}
   note=sel>=0?"The selected piece cannot move there; selection cleared.":b[i]?"That is an opponent's piece: click one of your own pieces first.":"Click one of your own pieces first.";
@@ -375,7 +379,7 @@ function click(i){
 }
 function action(a){
   var s=cur();if(over||busy||sim||!humanTurn())return;note="";
-  if(a.charAt(0)==="p"&&pend){var m=legalFrom(s,pend.f).filter(function(x){return x.t===pend.t&&x.pr===+a.charAt(1)})[0];if(m){play(play1(s,m));return}}
+  if(a.charAt(0)==="p"&&pend){var m=legalFrom(s,pend.f).filter(function(x){return x.t===pend.t&&(pend.mag?x.mp:x.pr)===+a.charAt(1)})[0];if(m){play(play1(s,m));return}}
   else if(a==="cancel"){sel=-1;pend=null}
   render();
 }

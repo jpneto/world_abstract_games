@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Balanced Swap Chess</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
+<style>
+:root{--bg:#eef0e6;--ink:#1f2a1c;--mute:#5d6a56;--edge:#b9bfa3;--hi:#7b3fc4;--panel:#fff;--line:#c5cab4;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--edge:#3b4733;--panel:#1f271c;--line:#37422f;--hi:#c49bff}}
+:root[data-theme="dark"]{--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--edge:#3b4733;--panel:#1f271c;--line:#37422f;--hi:#c49bff}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+main{max-width:1080px;margin:0 auto;padding:16px 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.right>.bar:first-child{margin-top:0}
+@media (min-width:860px){.layout{grid-template-columns:minmax(0,600px) minmax(300px,1fr);gap:28px;align-items:start}}
+h1{font:700 2rem/1.1 "Bricolage Grotesque",Georgia,serif;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+select,button.ctl{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.ctl:disabled,select:disabled,input:disabled{opacity:.45;cursor:default}
+label.f,span.f{color:var(--mute);font-size:.9rem}
+input[type=number]{width:4.5em;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+button.ctl.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.pl{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:8px 12px;font-size:.95rem}
+.pl.on{border-color:var(--hi)}
+.pl b{font-weight:700}
+.pl small{color:var(--mute);display:block}
+.dot{display:inline-block;width:.8em;height:.8em;border-radius:50%;vertical-align:-.05em;margin-right:5px;border:1px solid rgba(0,0,0,.35)}
+#status{min-height:1.5em;font-weight:600;margin:6px 0}
+#board svg{display:block;width:100%;max-width:600px;margin:0 auto;touch-action:manipulation;cursor:pointer;border-radius:6px}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+details li{margin:4px 0}
+.legend{color:var(--mute);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+<h1 id="gtitle"></h1>
+<p class="sub" id="gsub"></p>
+<div class="layout">
+<div class="left">
+<div id="board"></div>
+<p class="legend">Each turn has two steps. First the regular move: click one of your pieces, then a purple dot (an empty square) or ring (a capture). Then the swap: click one of your pieces marked with a corner dot, then one of the dashed-ringed pieces to trade places with it. To castle, move the king two squares. Tinted squares show the last regular move, and the dashed double arrow its swap.</p>
+</div>
+<aside class="right">
+<div class="bar">
+  <select id="mode" aria-label="Mode"><option value="ai">Play the computer</option><option value="2p">Two players</option></select>
+  <select id="level" aria-label="Computer strength"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select>
+  <select id="side" aria-label="Your side"></select>
+  <button class="ctl primary" id="new">New game</button>
+  <button class="ctl" id="undo">Undo</button>
+  <button class="ctl" id="redo">Redo</button>
+</div>
+<div class="score"><div class="pl" id="p0"></div><div class="pl" id="p1"></div></div>
+<div id="status" aria-live="polite"></div>
+<div id="promoLbl" class="legend" style="margin:0"></div>
+<div class="bar" id="promo" style="margin-top:4px"></div>
+<div id="last" class="legend" style="min-height:2.6em;margin:0 0 8px"></div>
+<div class="bar">
+  <label class="f">Simulation games <input id="simN" type="number" min="10" max="1000" value="10"></label>
+  <label class="f">Random opening moves <input id="simR" type="number" min="0" max="20" value="4"></label>
+  <button class="ctl" id="sim">Simulation</button>
+</div>
+<div id="simout" class="legend" style="white-space:pre-line;margin:0 0 8px"></div>
+<details><summary>Rules</summary><ul id="rules"></ul></details>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+/* =====================================================================
+   1. GAME DEFINITION  - Balanced Swap Chess rules: FIDE chess where each turn is a regular move followed by a swap
+   2. ENGINE           - alpha-beta search over whole turns (time limited) on material and piece placement
+   3. INTERFACE        - SVG 8x8 board, two-step clicks (regular move, then swap), promotion buttons
+   Board: Int8Array(64), index = rank*8 + file (a1 = 0, h8 = 63). +1..+6 Gold (white army) P N B R Q K, negative Blue.
+   A turn is {f, t: regular move from/to, pr: its promotion piece or 0, c: 1 king-side / 2 queen-side castling, ep: en passant,
+              dbl: two-square pawn step, sa, sb: the swapped squares (sa holds the mover's piece; -1 on Gold's first turn),
+              sp: the piece a pawn carried to its last rank by the swap becomes (0 if none)}.
+   A state is {b, turn (0 Gold, 1 Blue), cr: castling rights (1 Gold O-O, 2 Gold O-O-O, 4 Blue O-O, 8 Blue O-O-O), ep: en passant square or -1,
+               hm: plies since the last capture or pawn move, n: plies played, chk: side to move in check, w: winner (0, 1), 2 for a draw, -1 while playing,
+               why: how the game ended, last: {p, m, txt, cells}, prev: previous state, _ms: cached legal turns}.
+   ===================================================================== */
+var $=function(i){return document.getElementById(i)};
+
+/* ============================ 1. GAME DEFINITION ============================ */
+var GAME={
+  title:"Balanced Swap Chess",
+  subtitle:"Chess in which every turn is a regular move followed by a swap: one of your pieces trades places with a piece standing on a square it could move to or capture on.",
+  sides:[{name:"Gold",fill:"#D6A64F",edge:"#4f3a12",det:"#4f3a12"},{name:"Blue",fill:"#263C48",edge:"#0b1418",det:"#b4c8d2"}],
+  board:{light:"#E5DFD2",dark:"#C9C0B0"},
+  rules:[
+  {h:"Board and pieces",items:[
+    "The standard 8×8 chess board and starting position. Gold plays the white army and moves first; Blue plays the black army.",
+    "All FIDE rules apply, except as stated below."]},
+  {h:"A turn",items:[
+    "Each turn is a regular chess move followed by a swap move. Gold's very first turn is the regular move only.",
+    "The swap is made even when the regular move gives check.",
+    {t:"A swap move makes two pieces trade squares. The first is one of your pieces (the king included). The second stands on a square where your piece could move if that square were empty, or capture if it held an opponent's piece:",sub:[
+      "a rook, bishop or queen reaches the first piece along each of its lines; a knight or king reaches its usual squares (castling does not count);",
+      "a pawn reaches the square in front of it, the square two ahead when it could make a two-square step there, and the two squares diagonally in front of it;",
+      "the second piece may be yours or your opponent's, whatever square it is on. (This page's reading of the definition.)",
+      "Swapping two identical pieces, such as two of your own pawns, is allowed and leaves the position unchanged. (This page's reading.)"]}]},
+  {h:"Check and the end of the game",items:[
+    "If you are in check, your regular move must get you out of it; the swap cannot be used for that.",
+    "Neither the regular move nor the swap may leave your own king in check. (For the swap, this page applies the FIDE rule to the whole turn.)",
+    "A player who cannot make a regular move, or cannot make a swap after it, loses. Checkmate and stalemate are therefore both losses. The page only offers regular moves that can be followed by a swap; when there is none, the player loses.",
+    "The game is drawn after 50 moves by each side with no capture and no pawn move (a pawn moved by a swap counts), or when the same position occurs for the third time with the same player to move. On this page both draws are automatic. There is no draw for insufficient material: a lone king usually has nothing to swap with and loses."]},
+  {h:"Pawns",items:[
+    "A pawn on its player's first rank, where a swap can put it, can also move two squares forward, just as from its starting square.",
+    "A pawn that reaches the last rank with a regular move is promoted as in FIDE chess.",
+    "A pawn of either colour carried to its promotion rank by a swap is promoted at once, and the player who made the swap chooses the piece: queen, rook, bishop or knight, in the pawn owner's colour.",
+    "En passant is possible right after a two-square pawn step, as long as that pawn did not take part in the swap that followed it. (This page's reading.)"]},
+  {h:"Castling",items:[
+    "Castling follows the FIDE rules and is followed by a swap like any other regular move.",
+    "A king or rook that has taken part in a swap counts as having moved, so the castling right is lost. (This page's reading.)"]}],
+  describe:function(s){return s.last?GAME.sides[s.last.p].name+": "+s.last.txt+".":""}
+};
+var P=1,N=2,B=3,R=4,Q=5,K=6,LET=" PNBRQK",PNAME=["","pawn","knight","bishop","rook","queen","king"],VAL=[0,100,300,320,500,900,0],BACK=[R,N,B,Q,K,B,N,R];
+function sq(i){return"abcdefgh"[i&7]+((i>>3)+1)}
+function sgn(v){return v>0?1:v<0?-1:0}
+function side(v){return v>0?0:v<0?1:-1}   // owner of a square's piece, -1 when empty
+function pt(v){return v<0?-v:v}           // piece type
+var DIRS=[[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]],KNJ=[[1,2],[2,1],[2,-1],[1,-2],[-1,-2],[-2,-1],[-2,1],[-1,2]],RAY=[],NT=[],KT=[];
+(function(){for(var i=0;i<64;i++){var f=i&7,r=i>>3;
+  RAY[i]=DIRS.map(function(d){var a=[],x=f+d[0],y=r+d[1];while(x>=0&&x<8&&y>=0&&y<8){a.push(y*8+x);x+=d[0];y+=d[1]}return a});
+  NT[i]=[];KNJ.forEach(function(d){var x=f+d[0],y=r+d[1];if(x>=0&&x<8&&y>=0&&y<8)NT[i].push(y*8+x)});
+  KT[i]=RAY[i].filter(function(a){return a.length}).map(function(a){return a[0]})}})();
+// piece-square values (Gold's point of view), indexed PSV[v+6][square]
+var PSV=[];
+(function(){for(var v=-6;v<=6;v++){var row=new Int32Array(64);
+  for(var i=0;i<64;i++){if(!v)continue;var p=pt(v),f=i&7,r=i>>3,a=v>0?r:7-r,c=VAL[p],cen=14-Math.abs(2*f-7)-Math.abs(2*r-7);
+    if(p===P)c+=a>=1?(a-1)*(a-1)*3:-10;
+    else if(p===N||p===B)c+=cen*3;
+    else if(p===Q)c+=cen;
+    else if(p===R)c+=a===6?15:0;
+    else if(p===K)c+=a===0?10:-a*8;
+    row[i]=v>0?c:-c}
+  PSV[v+6]=row}})();
+function PV(v,i){return PSV[v+6][i]}
+function newState(){var b=new Int8Array(64);
+  for(var f=0;f<8;f++){b[f]=BACK[f];b[8+f]=P;b[48+f]=-P;b[56+f]=-BACK[f]}
+  return{b:b,turn:0,cr:15,ep:-1,hm:0,n:0,w:-1,why:"",last:null,prev:null}}
+function kingSq(b,t){var k=t?-K:K;for(var i=0;i<64;i++)if(b[i]===k)return i;return -1}
+// does side t attack square k?
+function attacked(b,k,t){var sg=t?-1:1,i,d,ray,j,x,p,pr=(k>>3)-sg,L;
+  L=NT[k];for(i=0;i<L.length;i++)if(b[L[i]]===sg*N)return true;
+  L=KT[k];for(i=0;i<L.length;i++)if(b[L[i]]===sg*K)return true;
+  if(pr>=0&&pr<8)for(d=-1;d<=1;d+=2){x=(k&7)+d;if(x>=0&&x<8&&b[pr*8+x]===sg*P)return true}
+  for(d=0;d<8;d++){ray=RAY[k][d];for(j=0;j<ray.length;j++){x=b[ray[j]];
+    if(x){if((x>0)===(sg>0)){p=pt(x);if(p===Q||(d<4?p===R:p===B))return true}break}}}
+  return false}
+function addP(out,f,t,last){if((t>>3)===last)[Q,N,R,B].forEach(function(p){out.push({f:f,t:t,pr:p})});else out.push({f:f,t:t})}
+// regular moves of side t that follow the movement rules (own-king safety is checked later)
+function genReg(b,t,cr,ep){var out=[],sg=t?-1:1,i,v,p,d,k,q,ray,L,x,c,last=t?0:7;
+  for(i=0;i<64;i++){v=b[i];if(!v||(v>0)!==(sg>0))continue;p=pt(v);
+    if(p===P){var r=i>>3;q=i+8*sg;if(q<0||q>63)continue;
+      if(!b[q]){addP(out,i,q,last);
+        if(t?r>=6:r<=1){var q2=q+8*sg;if(!b[q2])out.push({f:i,t:q2,dbl:1})}}   // two-square step from the first or second rank
+      for(d=-1;d<=1;d+=2){x=(i&7)+d;if(x<0||x>7)continue;c=q+d;
+        if(b[c]&&(b[c]>0)!==(sg>0))addP(out,i,c,last);else if(c===ep&&!b[c])out.push({f:i,t:c,ep:1})}}
+    else if(p===N||p===K){L=p===N?NT[i]:KT[i];for(k=0;k<L.length;k++){q=L[k];if(!b[q]||(b[q]>0)!==(sg>0))out.push({f:i,t:q})}}
+    else for(d=p===B?4:0;d<(p===R?4:8);d++){ray=RAY[i][d];
+      for(k=0;k<ray.length;k++){q=ray[k];if(!b[q])out.push({f:i,t:q});else{if((b[q]>0)!==(sg>0))out.push({f:i,t:q});break}}}}
+  var o=t?1:0,rk=t?56:0;
+  if(b[rk+4]===sg*K&&cr&(t?12:3)&&!attacked(b,rk+4,o^1)){
+    if(cr&(t?4:1)&&b[rk+7]===sg*R&&!b[rk+5]&&!b[rk+6]&&!attacked(b,rk+5,o^1))out.push({f:rk+4,t:rk+6,c:1});
+    if(cr&(t?8:2)&&b[rk]===sg*R&&!b[rk+1]&&!b[rk+2]&&!b[rk+3]&&!attacked(b,rk+3,o^1))out.push({f:rk+4,t:rk+2,c:2})}
+  return out}
+// play a regular move in place; returns the captured piece and sets DE to the change in piece-square value
+var DE=0;
+function applyReg(b,t,m){var sg=t?-1:1,v=b[m.f],cap=b[m.t],nv=m.pr?sg*m.pr:v,d=PV(nv,m.t)-PV(v,m.f)-PV(cap,m.t);
+  b[m.t]=nv;b[m.f]=0;
+  if(m.ep){var cq=m.t-8*sg;cap=b[cq];d-=PV(cap,cq);b[cq]=0}
+  if(m.c){var rk=t?56:0,rf=rk+(m.c===1?7:0),rt=rk+(m.c===1?5:3),rv=b[rf];d+=PV(rv,rt)-PV(rv,rf);b[rt]=rv;b[rf]=0}
+  DE=d;return cap}
+// the squares holding a piece that the piece on a could move to (if empty) or capture on (if an opponent's)
+function reach(b,a,out){var v=b[a],p=pt(v),sg=v>0?1:-1,k,d,ray,L,x;out.length=0;
+  if(p===P){var r=a>>3,fw=a+8*sg;if(fw<0||fw>63)return out;
+    if(b[fw])out.push(fw);else if(sg>0?r<=1:r>=6){if(b[fw+8*sg])out.push(fw+8*sg)}
+    for(d=-1;d<=1;d+=2){x=(a&7)+d;if(x>=0&&x<8&&b[fw+d])out.push(fw+d)}}
+  else if(p===N||p===K){L=p===N?NT[a]:KT[a];for(k=0;k<L.length;k++)if(b[L[k]])out.push(L[k])}
+  else for(d=p===B?4:0;d<(p===R?4:8);d++){ray=RAY[a][d];for(k=0;k<ray.length;k++)if(b[ray[k]]){out.push(ray[k]);break}}
+  return out}
+function promoAt(v,q){return(v===P&&(q>>3)===7)||(v===-P&&(q>>3)===0)}
+function orderRegs(ms,b){ms.forEach(function(m){var c=pt(b[m.t]);m.o=(c?VAL[c]*10-VAL[pt(b[m.f])]+1:0)+(m.pr?VAL[m.pr]*5:0)+(m.ep?990:0)});
+  ms.sort(function(x,y){return y.o-x.o})}
+/* Every legal turn of side t: cb(m, a, q, sp, nb, cap, de) for regular move m, then the swap of the pieces on a and q
+   (a = -1 when there is no swap), sp the piece a swapped pawn is promoted to (0 if none), nb the resulting board (reused:
+   copy it to keep it), cap the captured piece, de the change in piece-square value. cb returns true to stop.
+   all: every promotion choice and every swap of identical pieces; otherwise one representative each (for the search). */
+var TG=[];for(var _i=0;_i<64;_i++)TG.push([]);
+function forEachTurn(b,t,cr,ep,noSwap,all,cb){
+  var regs=genReg(b,t,cr,ep),sg=t?-1:1,i,j,a,q,nb,ks,va,vq,cap,d0,k2,pp,pw,pl,u,de,tg,noop;
+  if(!all)orderRegs(regs,b);
+  for(i=0;i<regs.length;i++){var m=regs[i];nb=b.slice();cap=applyReg(nb,t,m);d0=DE;ks=kingSq(nb,t);
+    if(attacked(nb,ks,1-t))continue;              // the regular move must leave the king safe (and so release a check)
+    if(noSwap){if(cb(m,-1,-1,0,nb,cap,d0))return true;continue}
+    noop=false;
+    for(a=0;a<64;a++){va=nb[a];if(!va||(va>0)!==(sg>0))continue;tg=reach(nb,a,TG[a]);
+      for(j=0;j<tg.length;j++){q=tg[j];vq=nb[q];
+        if(va===vq&&!all){if(noop)continue;noop=true}
+        nb[a]=vq;nb[q]=va;k2=a===ks?q:q===ks?a:ks;
+        de=d0+PV(vq,a)+PV(va,q)-PV(va,a)-PV(vq,q);
+        pp=promoAt(va,q)?q:promoAt(vq,a)?a:-1;
+        if(pp<0){if(!attacked(nb,k2,1-t)&&cb(m,a,q,0,nb,cap,de)){nb[a]=va;nb[q]=vq;return true}}
+        else{pw=nb[pp];pl=all?[Q,R,B,N]:[(pw>0)===(sg>0)?Q:N];
+          for(u=0;u<pl.length;u++){var nv=sgn(pw)*pl[u];nb[pp]=nv;
+            if(!attacked(nb,k2,1-t)&&cb(m,a,q,pl[u],nb,cap,de+PV(nv,pp)-PV(pw,pp))){nb[pp]=pw;nb[a]=va;nb[q]=vq;return true}}
+          nb[pp]=pw}
+        nb[a]=va;nb[q]=vq}}}
+  return false}
+function legalMoves(s){if(!s._ms){var out=[];
+    forEachTurn(s.b,s.turn,s.cr,s.ep,s.n===0,true,function(m,a,q,sp){out.push({f:m.f,t:m.t,pr:m.pr||0,c:m.c||0,ep:m.ep||0,dbl:m.dbl||0,sa:a,sb:q,sp:sp})});
+    s._ms=out}
+  return s._ms}
+function newCR(cr,m){var x=[m.f,m.t,m.sa,m.sb],i;
+  for(i=0;i<4;i++)switch(x[i]){case 4:cr&=~3;break;case 0:cr&=~2;break;case 7:cr&=~1;break;case 60:cr&=~12;break;case 56:cr&=~8;break;case 63:cr&=~4}
+  return cr}
+function newEP(m){return m.dbl&&m.sa!==m.t&&m.sb!==m.t?(m.f+m.t)>>1:-1}
+function makeTurn(b,t,m){var nb=b.slice(),cap=applyReg(nb,t,m),va,vq;
+  if(m.sa>=0){va=nb[m.sa];vq=nb[m.sb];nb[m.sa]=vq;nb[m.sb]=va;
+    if(m.sp){if(promoAt(va,m.sb))nb[m.sb]=sgn(va)*m.sp;else nb[m.sa]=sgn(vq)*m.sp}}
+  return{b:nb,cap:cap}}
+function posKey(s){return s.b.join(",")+"/"+s.turn+"/"+s.cr+"/"+s.ep}
+function reps(s){var k=posKey(s),n=0,p=s,i;for(i=0;p&&i<=s.hm;i++,p=p.prev)if(posKey(p)===k)n++;return n}
+function inCheck(s){return attacked(s.b,kingSq(s.b,s.turn),1-s.turn)}
+function pieceName(v,t){return(side(v)!==t?GAME.sides[side(v)].name+" ":"")+PNAME[pt(v)]}
+function moveText(b,t,m,nb,chk){var p=pt(b[m.f]),x,mid,va,vq;
+  x=m.c?(m.c===1?"O-O":"O-O-O"):(p===P?"":LET[p])+sq(m.f)+(b[m.t]||m.ep?"x":"–")+sq(m.t)+(m.ep?" e.p.":"")+(m.pr?"="+LET[m.pr]:"");
+  if(m.sa>=0){mid=b.slice();applyReg(mid,t,m);va=mid[m.sa];vq=mid[m.sb];
+    x+=", swap "+PNAME[pt(va)]+" "+sq(m.sa)+" ⇄ "+pieceName(vq,t)+" "+sq(m.sb);
+    if(va===vq)x+=" (identical pieces)";
+    if(m.sp)x+=", "+(promoAt(va,m.sb)?pieceName(va,t)+" promoted to "+PNAME[m.sp]+" on "+sq(m.sb):pieceName(vq,t)+" promoted to "+PNAME[m.sp]+" on "+sq(m.sa))}
+  return x+(chk?" — check":"")}
+function swapsPawn(b,t,m){if(m.sa<0)return false;var mid=b.slice();applyReg(mid,t,m);return mid[m.sa]!==mid[m.sb]&&(pt(mid[m.sa])===P||pt(mid[m.sb])===P)}
+// play one turn from a state and detect the end of the game
+function play1(s,m){var t=s.turn,r=makeTurn(s.b,t,m),mv=s.b[m.f],nm=GAME.sides,
+  ns={b:r.b,turn:1-t,cr:newCR(s.cr,m),ep:newEP(m),hm:(r.cap||pt(mv)===P||swapsPawn(s.b,t,m))?0:s.hm+1,n:s.n+1,w:-1,why:"",prev:s,last:null};
+  var chk=inCheck(ns),cells=m.c?[m.f,m.t,(t?56:0)+(m.c===1?7:0),(t?56:0)+(m.c===1?5:3)]:[m.f,m.t];
+  if(m.ep)cells.push(m.t-8*(t?-1:1));
+  ns.chk=chk;ns.last={p:t,m:m,txt:moveText(s.b,t,m,r.b,chk),cells:cells};
+  if(!legalMoves(ns).length){ns.w=t;
+    var anyReg=forEachTurn(ns.b,ns.turn,ns.cr,ns.ep,true,false,function(){return true});
+    ns.why=anyReg?nm[1-t].name+" cannot follow any regular move with a swap":nm[1-t].name+(chk?" is checkmated":" has no legal regular move")}
+  else if(ns.hm>=100){ns.w=2;ns.why="50 moves each without a capture or a pawn move"}
+  else if(reps(ns)>=3){ns.w=2;ns.why="the same position occurred three times"}
+  return ns}
+function evalFull(b){var e=0;for(var i=0;i<64;i++)if(b[i])e+=PV(b[i],i);return e}
+
+/* ================================ 2. ENGINE ================================ */
+/* Negamax with alpha-beta over whole turns (regular move + swap). Turns are ordered by their static score; inside the search
+   a swapped pawn promotes to a queen if it is the mover's and to a knight if it is the opponent's (all four choices are compared at the root),
+   and swaps of identical pieces are tried once. A side with no legal turn loses. Leaves are scored by material
+   (pawn 1, knight 3, bishop 3.2, rook 5, queen 9), advanced pawns, central knights, bishops and queens, and a sheltered king.
+   Easy looks 1 turn ahead with large randomness; Medium looks 2 turns ahead (the opponent's reply); Hard does that with a longer
+   time budget and tries 3 turns. When time runs out, the turns already searched at the deeper level are used.
+   At the root, a turn that repeats a position is avoided unless clearly behind, and a draw scores slightly below even. */
+var WIN=100000,INF=1e9,ABORT={},nodes=0,deadline=0;
+function rn(n){return Math.floor(Math.random()*n)}
+function negamax(b,t,cr,ep,e,depth,alpha,beta,ply){
+  if((++nodes&127)===0&&Date.now()>deadline)throw ABORT;
+  var sg=t?-1:1,best=-INF;
+  if(depth<=1){
+    forEachTurn(b,t,cr,ep,false,false,function(m,a,q,sp,nb,cap,de){var v=sg*(e+de);if(v>best){best=v;if(v>=beta)return true}});
+    return best===-INF?-WIN+ply:best}
+  var kids=[];
+  forEachTurn(b,t,cr,ep,false,false,function(m,a,q,sp,nb,cap,de){var mm={f:m.f,t:m.t,dbl:m.dbl,sa:a,sb:q};
+    kids.push({b:nb.slice(),e:e+de,o:sg*(e+de),cr:newCR(cr,mm),ep:newEP(mm)})});
+  if(!kids.length)return -WIN+ply;
+  kids.sort(function(x,y){return y.o-x.o});
+  for(var i=0;i<kids.length;i++){var c=kids[i],v=-negamax(c.b,1-t,c.cr,c.ep,c.e,depth-1,-beta,-alpha,ply+1);
+    if(v>best){best=v;if(v>alpha){alpha=v;if(alpha>=beta)break}}}
+  return best}
+function aiTurn(s,lv,fast){
+  var t=s.turn,sg=t?-1:1,ms=legalMoves(s),maxD=lv===1?1:lv===2?2:3,noise=lv===1?90:lv===2?10:2,
+      budget=fast?(lv===3?400:200):(lv===3?3000:1500),hk={},p,k,d,e0=evalFull(s.b);
+  for(p=s,k=0;p&&k<=s.hm+1;k++,p=p.prev){var key=posKey(p);hk[key]=(hk[key]||0)+1}
+  var kids=ms.map(function(m){var r=makeTurn(s.b,t,m),e=evalFull(r.b),c={m:m,b:r.b,e:e,cr:newCR(s.cr,m),ep:newEP(m),v:sg*e,nz:Math.random()*noise,fix:null,rep:0};
+    var hm=(r.cap||pt(s.b[m.f])===P||swapsPawn(s.b,t,m))?0:s.hm+1,rk=hk[r.b.join(",")+"/"+(1-t)+"/"+c.cr+"/"+c.ep]||0;
+    if(rk>=2||hm>=100)c.fix=-25;else c.rep=rk;   // draws count slightly below even
+    return c});
+  kids.forEach(function(c){if(c.fix!==null)c.v=c.fix});
+  kids.sort(function(x,y){return y.v-x.v});
+  deadline=Date.now()+budget;nodes=0;
+  for(d=2;d<=maxD;d++){var a=-INF,done=[];
+    try{for(var i=0;i<kids.length;i++){var c=kids[i],v=c.fix!==null?c.fix:-negamax(c.b,1-t,c.cr,c.ep,c.e,d-1,-INF,-(a-noise-1),1);
+        done.push([c,v]);if(v>a)a=v}}
+    catch(ex){if(ex!==ABORT)throw ex}
+    if(done.length===kids.length){kids.forEach(function(c){c.v=-INF});done.forEach(function(x){x[0].v=x[1]});kids.sort(function(x,y){return y.v-x.v});
+      if(kids[0].v>=WIN-100)break}
+    else{   // out of time: the turns searched at this depth (best-first) keep their deeper scores, the rest drop out
+      if(done.length){kids=done.map(function(x){x[0].v=x[1];return x[0]});kids.sort(function(x,y){return y.v-x.v})}
+      break}}
+  var best=null;
+  kids.forEach(function(c){c.sc=c.v+c.nz-(c.rep&&c.v>-150?40:0);if(!best||c.sc>best.sc)best=c});
+  return play1(s,best.m)}
+function randTurn(g){var ms=legalMoves(g);return play1(g,ms[rn(ms.length)])}
+
+var simulating=false,sim=null;
+function runSim(){   // computer vs computer, to look for an advantage for either colour
+  if(sim){sim.stop=true;return}
+  var CAP=300,me=sim={stop:false},TOTAL=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?4:+$("simR").value)),
+      lv=+$("level").value,done=0,w=[0,0,0],un=0,g=newState(),plies=0,lvName=$("level").options[$("level").selectedIndex].text,nm=GAME.sides.map(function(x){return x.name}),ids=["mode","side","level","new","undo","redo","simN","simR"];
+  ids.forEach(function(i){$(i).disabled=true});simulating=true;sel=-1;pend=null;reg=null;render();
+  $("sim").textContent="Stop simulation";
+  $("simout").textContent="Simulating at "+lvName+" level… 0/"+TOTAL;
+  function fin2(stopped){
+    sim=null;simulating=false;$("sim").textContent="Simulation";
+    $("mode").disabled=$("new").disabled=$("simN").disabled=$("simR").disabled=false;
+    $("level").disabled=$("side").disabled=$("mode").value==="2p";
+    var fin=done-un,dec=w[0]+w[1],sh=dec?w[0]/dec:0,mg=dec?(196*Math.sqrt(sh*(1-sh)/dec)).toFixed(1):"0";
+    var pc=function(n){return fin?(100*n/fin).toFixed(1)+"%":"n/a"};
+    $("simout").textContent=(stopped?"Stopped after ":"")+done+" games at "+lvName+" level (computer vs computer), first "+RND+" moves random.\n"+
+      nm[0]+" (moves first) won "+pc(w[0])+" ("+w[0]+" games); "+nm[1]+" won "+pc(w[1])+" ("+w[1]+" games); draws "+pc(w[2])+" ("+w[2]+").\n"+
+      (dec?nm[0]+"'s share of decisive games is "+(100*sh).toFixed(1)+"%, ±"+mg+" points at 95% confidence.":"No decisive games.")+
+      (un?"\nUnfinished (stopped at "+CAP+" moves): "+un+".":"");
+    render();
+  }
+  function stepSim(){
+    if(me.stop){fin2(true);return}
+    var t0=Date.now();
+    while(Date.now()-t0<40){
+      if(g.w>=0||plies>=CAP){
+        if(g.w>=0)w[g.w]++;else un++;
+        done++;g=newState();plies=0;
+        if(done>=TOTAL){fin2(false);return}
+        continue;
+      }
+      g=plies<RND?randTurn(g):aiTurn(g,lv,true);
+      for(var p=g,k=0;p&&k<110;k++)p=p.prev;if(p)p.prev=null;   // keep only the recent history in simulations
+      if(g.prev)delete g.prev._ms;
+      plies++;
+    }
+    $("simout").textContent="Simulating at "+lvName+" level… "+done+"/"+TOTAL;
+    setTimeout(stepSim,0);
+  }
+  stepSim();
+}
+
+/* =============================== 3. INTERFACE =============================== */
+/* A human turn has two phases. Phase 1: pick a piece, then a purple mark, for the regular move (with a promotion choice if needed).
+   Phase 2 (reg set, board shown after the regular move): pick one of your pieces with a dot, then a ringed piece to swap with.
+   sel: the piece picked; reg: the chosen regular move; mid: the board after it; pend: a promotion waiting for its piece. */
+var hist,redo=[],over,busy,note="",sel=-1,pend=null,reg=null,mid=null,flip=false;
+function cur(){return hist[hist.length-1]}
+function hc(){return +$("side").value}       // the human's colour
+function humanTurn(){return $("mode").value==="2p"||cur().turn===hc()}
+function start(){
+  hist=[newState()];redo=[];note="";sel=-1;pend=null;reg=null;$("level").disabled=$("side").disabled=$("mode").value==="2p";over=false;busy=false;
+  render();maybeAI();
+}
+function XY(i){var f=i&7,r=i>>3;return flip?[7-f,r]:[f,7-r]}
+var PE=' pointer-events="none"';
+var BASE='<rect x="24" y="79" width="52" height="11" rx="4"/>',SHAPE={
+  1:'<path d="M36 80C38 63 44 55 44 46H56C56 55 62 63 64 80Z"/><rect x="37" y="41" width="26" height="7" rx="3.5"/><circle cx="50" cy="29" r="12"/><rect x="27" y="79" width="46" height="11" rx="4"/>',
+  2:'<path d="M36 80C36 67 45 60 47 51C41 54 35 56 29 58C23 59 19 54 21 49C26 40 33 32 38 24L36 12L45 19C53 16 61 19 67 27C75 38 74 58 70 80Z"/>'+BASE,
+  3:'<path d="M35 80C37 68 43 62 43 56H57C57 62 63 68 65 80Z"/><path d="M50 15C65 27 67 41 60 53H40C33 41 35 27 50 15Z"/><circle cx="50" cy="11" r="5"/><rect x="37" y="51" width="26" height="7" rx="3.5"/>'+BASE,
+  4:'<path d="M33 80L36 44H64L67 80Z"/><path d="M29 44V19H38V27H46V19H54V27H62V19H71V44Z"/><rect x="30" y="42" width="40" height="7" rx="2"/>'+BASE,
+  5:'<path d="M31 80C35 67 41 59 39 48H61C59 59 65 67 69 80Z"/><path d="M38 50L20 24L34 36L36 16L46 32L50 13L54 32L64 16L66 36L80 24L62 50Z"/>'+
+    '<circle cx="20" cy="24" r="4.5"/><circle cx="36" cy="16" r="4.5"/><circle cx="50" cy="12" r="4.5"/><circle cx="64" cy="16" r="4.5"/><circle cx="80" cy="24" r="4.5"/><rect x="36" y="46" width="28" height="7" rx="3.5"/>'+BASE,
+  6:'<path d="M31 80C35 67 41 59 39 50H61C59 59 65 67 69 80Z"/><path d="M37 52C25 42 26 28 38 28C44 28 48 33 50 38C52 33 56 28 62 28C74 28 75 42 63 52Z"/>'+
+    '<path d="M46 8H54V16H61V23H54V33H46V23H39V16H46Z"/><rect x="36" y="48" width="28" height="7" rx="3.5"/>'+BASE};
+var DET={2:'<circle cx="42" cy="31" r="3" stroke="none" fill="currentColor"/>',3:'<path d="M55 27L45 39" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>'};
+function piece(v,x,y,op){var G=GAME.sides[side(v)],p=pt(v);
+  return'<g transform="translate('+x+','+y+') scale(.01)" fill="'+G.fill+'" stroke="'+G.edge+'" stroke-width="3.2" stroke-linejoin="round" color="'+G.det+'"'+(op?' opacity="'+op+'"':'')+PE+'>'+SHAPE[p]+(DET[p]||"")+'</g>'}
+function swapArrow(f,t){var a=XY(f),b=XY(t),x1=a[0]+.5,y1=a[1]+.5,x2=b[0]+.5,y2=b[1]+.5,L=Math.hypot(x2-x1,y2-y1),k=.3/L;
+  return'<line x1="'+(x1+(x2-x1)*k).toFixed(3)+'" y1="'+(y1+(y2-y1)*k).toFixed(3)+'" x2="'+(x2-(x2-x1)*k).toFixed(3)+'" y2="'+(y2-(y2-y1)*k).toFixed(3)+'" stroke="var(--hi)" stroke-width=".06" stroke-dasharray=".12 .08" stroke-linecap="round" marker-start="url(#ah)" marker-end="url(#ah)"'+PE+'/>'}
+function sameReg(x,r){return x.f===r.f&&x.t===r.t&&x.pr===r.pr}
+function swapsOf(s){return legalMoves(s).filter(function(m){return sameReg(m,reg)})}
+function who(i){return $("mode").value==="ai"?(hc()===i?" (you)":" (computer)"):""}
+function btn(a,txt,cls){return'<button class="ctl'+(cls?" "+cls:"")+'" data-a="'+a+'">'+txt+'</button>'}
+function ring(q,dash){var xy=XY(q);return'<circle cx="'+(xy[0]+.5)+'" cy="'+(xy[1]+.5)+'" r=".45" fill="none" stroke="var(--hi)" stroke-width=".07"'+(dash?' stroke-dasharray=".14 .09"':'')+PE+'/>'}
+function dot(q,r,op,dx){var xy=XY(q);return'<circle cx="'+(xy[0]+(dx?.84:.5))+'" cy="'+(xy[1]+(dx?.16:.5))+'" r="'+r+'" fill="var(--hi)" opacity="'+op+'"'+PE+'/>'}
+function tint(q,op){var xy=XY(q);return'<rect x="'+xy[0]+'" y="'+xy[1]+'" width="1" height="1" fill="var(--hi)" opacity="'+op+'"'+PE+'/>'}
+function render(){
+  var s=cur(),sd=GAME.sides,h=[],T=s.turn,i,xy,ms=legalMoves(s);
+  over=s.w>=0;
+  flip=$("mode").value==="ai"&&hc()===1;
+  var hu=humanTurn()&&!over&&!busy&&!sim;
+  if(!hu){sel=-1;pend=null;reg=null}
+  var b=reg?mid:s.b;
+  if(sel>=0&&side(b[sel])!==T)sel=-1;
+  var sw=reg?swapsOf(s):[],lm=sel<0?[]:reg?sw.filter(function(m){return m.sa===sel}):ms.filter(function(m){return m.f===sel});
+  h.push('<svg viewBox="-0.5 -0.05 8.6 8.55" role="img" aria-label="Balanced Swap Chess board">');
+  h.push('<defs><marker id="ah" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="3.2" markerHeight="3.2" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="var(--hi)"/></marker></defs>');
+  for(i=0;i<64;i++){xy=XY(i);h.push('<rect x="'+xy[0]+'" y="'+xy[1]+'" width="1" height="1" fill="'+(((i&7)+(i>>3))%2?GAME.board.light:GAME.board.dark)+'"/>')}
+  for(i=0;i<8;i++){
+    h.push('<text x="-0.25" y="'+(flip?i+.5:7.5-i)+'" text-anchor="middle" dominant-baseline="central" font-size=".32" fill="var(--mute)">'+(i+1)+'</text>');
+    h.push('<text x="'+(flip?7.5-i:i+.5)+'" y="8.25" text-anchor="middle" dominant-baseline="central" font-size=".32" fill="var(--mute)">'+"abcdefgh"[i]+'</text>')}
+  if(reg)[reg.f,reg.t].forEach(function(q){h.push(tint(q,.3))});
+  else if(s.last)s.last.cells.forEach(function(q){h.push(tint(q,.2))});
+  if(!reg&&s.chk&&!over){var kq=kingSq(b,T);xy=XY(kq);h.push('<circle cx="'+(xy[0]+.5)+'" cy="'+(xy[1]+.5)+'" r=".46" fill="#c0392b" opacity=".35"'+PE+'/>')}
+  if(over&&s.chk){var kl=kingSq(b,T);xy=XY(kl);h.push('<circle cx="'+(xy[0]+.5)+'" cy="'+(xy[1]+.5)+'" r=".46" fill="#c0392b" opacity=".35"'+PE+'/>')}
+  if(sel>=0){xy=XY(sel);h.push('<rect x="'+(xy[0]+.04)+'" y="'+(xy[1]+.04)+'" width=".92" height=".92" fill="none" stroke="var(--hi)" stroke-width=".08"'+PE+'/>')}
+  for(i=0;i<64;i++)if(b[i]){xy=XY(i);h.push(piece(b[i],xy[0],xy[1]))}
+  if(!reg&&s.last&&s.last.m.sa>=0)h.push(swapArrow(s.last.m.sa,s.last.m.sb));
+  var seen={};
+  if(reg&&sel<0&&hu)sw.forEach(function(m){if(seen[m.sa])return;seen[m.sa]=1;h.push(dot(m.sa,.1,.9,1))});
+  lm.forEach(function(m){var q=reg?m.sb:m.t;if(seen["t"+q])return;seen["t"+q]=1;
+    h.push(reg?ring(q,true):b[q]?ring(q,false):dot(q,.15,.75))});
+  if(reg&&sel>=0&&pend)h.push(swapArrow(pend.sa,pend.sb));
+  for(i=0;i<64;i++){xy=XY(i);h.push('<rect data-i="'+i+'" x="'+xy[0]+'" y="'+xy[1]+'" width="1" height="1" fill="transparent"/>')}
+  h.push('</svg>');
+  $("board").innerHTML=h.join("");
+  var names=sd.map(function(x){return x.name}),st;
+  for(i=0;i<2;i++){var mat=0,cnt=[0,0,0,0,0,0,0],k,v;
+    for(k=0;k<64;k++)if(side(s.b[k])===i){v=pt(s.b[k]);cnt[v]++;mat+=VAL[v]}
+    $("p"+i).className="pl"+(!over&&T===i?" on":"");
+    $("p"+i).innerHTML='<b><span class="dot" style="background:'+sd[i].fill+'"></span>'+names[i]+who(i)+"</b>"+
+      "<small>Material <b>"+Math.round(mat/100)+"</b> · "+cnt[1]+"P "+cnt[2]+"N "+cnt[3]+"B "+cnt[4]+"R "+cnt[5]+"Q</small>"+
+      "<small>Castling: "+((s.cr>>(2*i))&3?[((s.cr>>(2*i))&1)?"O-O":"",((s.cr>>(2*i))&2)?"O-O-O":""].filter(Boolean).join(", "):"none")+"</small>"}
+  if(over)st="Game over: "+s.why+" — "+(s.w===2?"draw.":names[s.w]+who(s.w)+" wins.");
+  else st=names[T]+" to move"+(s.chk?" and in check":"")+(humanTurn()?"":" (computer thinking…)")+"."+(s.hm>=80?" "+Math.ceil((100-s.hm)/2)+" moves left before the 50-move draw.":"");
+  $("status").textContent=st;
+  $("last").textContent=(GAME.describe(s)+" "+note).trim();
+  var pl=$("promoLbl"),pr=$("promo"),PB=btn("p5","Queen","primary")+btn("p4","Rook")+btn("p3","Bishop")+btn("p2","Knight");
+  if(hu&&pend&&!reg){pl.textContent="Promote the pawn on "+sq(pend.t)+" to:";pr.innerHTML=PB+btn("cancel","Cancel")}
+  else if(hu&&pend){var pq=promoAt(b[pend.sa],pend.sb)?pend.sb:pend.sa,pw=b[pend.sa===pq?pend.sb:pend.sa];
+    pl.textContent="This swap carries "+(side(pw)===T?"your":names[side(pw)]+"'s")+" pawn to "+sq(pq)+", its last rank. You choose what it becomes:";
+    pr.innerHTML=["p5","p4","p3","p2"].filter(function(a){return pend.opts.indexOf(+a.charAt(1))>=0}).map(function(a,j){return btn(a,PNAME[+a.charAt(1)].replace(/^./,function(c){return c.toUpperCase()}),j?"":"primary")}).join("")+btn("cancel","Cancel")}
+  else if(hu&&reg&&sel>=0){pl.textContent="Swap: your "+PNAME[pt(b[sel])]+" on "+sq(sel)+" is selected. Click a ringed piece to swap with it, or another dotted piece of yours.";
+    pr.innerHTML=btn("cancel","Cancel selection")+btn("back","Take back regular move")}
+  else if(hu&&reg){pl.textContent="Regular move made. Now the swap: click one of your pieces marked with a dot.";pr.innerHTML=btn("back","Take back regular move")}
+  else if(hu&&sel>=0){pl.textContent=sd[T].name+" "+PNAME[pt(b[sel])]+" on "+sq(sel)+" selected: click a purple mark to move there"+(lm.length?"":" (it has no move)")+", or another of your pieces. Click it again to cancel.";
+    pr.innerHTML=btn("cancel","Cancel")}
+  else if(hu){pl.textContent=s.n===0?"Gold's first turn is a regular move only: click one of your pieces.":"Click one of your pieces to make the regular move; the swap comes next.";pr.innerHTML=""}
+  else{pl.textContent="";pr.innerHTML=""}
+  $("undo").disabled=hist.length<2||busy||!!sim;
+  $("redo").disabled=!redo.length||busy||!!sim;
+}
+function play(ns){sel=-1;pend=null;reg=null;mid=null;delete cur()._ms;hist.push(ns);redo=[];render();maybeAI()}
+function chooseReg(s,m){
+  if(s.n===0){play(play1(s,m));return}
+  reg={f:m.f,t:m.t,pr:m.pr};mid=s.b.slice();applyReg(mid,s.turn,m);sel=-1;pend=null;
+  var sw=swapsOf(s),one=sw.every(function(x){return x.sa===sw[0].sa});
+  if(one)sel=sw[0].sa;   // only one piece can swap: select it straight away
+  render()}
+function click(i){
+  if(over||busy||sim||!humanTurn())return;
+  var s=cur(),T=s.turn,ms=legalMoves(s),c;note="";pend=null;
+  if(reg){var sw=swapsOf(s);
+    if(sel>=0){c=sw.filter(function(m){return m.sa===sel&&m.sb===i});
+      if(c.length>1){pend={sa:sel,sb:i,opts:c.map(function(m){return m.sp})};render();return}
+      if(c.length){play(play1(s,c[0]));return}
+      if(i===sel){sel=-1;render();return}}
+    if(sw.some(function(m){return m.sa===i})){sel=i;render();return}
+    note=side(mid[i])===T?"That piece has no swap.":"For the swap, click one of your own pieces marked with a dot first.";
+    sel=-1;render();return}
+  if(sel>=0){c=ms.filter(function(m){return m.f===sel&&m.t===i});
+    if(c.length){if(c.some(function(m){return m.pr})){pend={f:sel,t:i};render();return}chooseReg(s,c[0]);return}
+    if(i===sel){sel=-1;render();return}}
+  if(side(s.b[i])===T){sel=i;if(!ms.some(function(m){return m.f===i}))note="That piece has no regular move that can be followed by a swap.";render();return}
+  note=sel>=0?"The selected piece cannot move there; selection cleared.":s.b[i]?"That is an opponent's piece: click one of your own pieces first.":"Click one of your own pieces first.";
+  sel=-1;render();
+}
+function action(a){
+  var s=cur();if(over||busy||sim||!humanTurn())return;note="";
+  if(a.charAt(0)==="p"&&pend){var p=+a.charAt(1),m;
+    if(reg){m=swapsOf(s).filter(function(x){return x.sa===pend.sa&&x.sb===pend.sb&&x.sp===p})[0];if(m){play(play1(s,m));return}}
+    else{m=legalMoves(s).filter(function(x){return x.f===pend.f&&x.t===pend.t&&x.pr===p})[0];if(m){chooseReg(s,m);return}}}
+  else if(a==="cancel"){if(pend)pend=null;else sel=-1}
+  else if(a==="back"){reg=null;mid=null;sel=-1;pend=null}
+  render();
+}
+function maybeAI(){
+  if(over||$("mode").value!=="ai"||humanTurn())return;
+  busy=true;render();
+  setTimeout(function(){var ns=aiTurn(cur(),+$("level").value,false);busy=false;delete cur()._ms;hist.push(ns);render();maybeAI()},60);
+}
+document.title=GAME.title;$("gtitle").textContent=GAME.title;$("gsub").textContent=GAME.subtitle;
+function li(x){return"<li>"+(typeof x==="string"?x:x.t+"<ul>"+x.sub.map(li).join("")+"</ul>")+"</li>"}
+$("rules").innerHTML=GAME.rules.map(function(sec){return"<li><b>"+sec.h+"</b><ul>"+sec.items.map(li).join("")+"</ul></li>"}).join("");
+$("side").innerHTML=GAME.sides.map(function(x,i){return'<option value="'+i+'">You play '+x.name+(i?" (second)":" (moves first)")+'</option>'}).join("");
+$("side").value="0";
+$("board").onclick=function(e){var t=e.target.closest("[data-i]");if(t)click(+t.getAttribute("data-i"))};
+$("promo").onclick=function(e){var t=e.target.closest("[data-a]");if(t&&!t.disabled)action(t.getAttribute("data-a"))};
+$("new").onclick=start;$("sim").onclick=runSim;
+$("mode").onchange=$("side").onchange=start;
+$("redo").onclick=function(){
+  if(busy||!redo.length)return;
+  hist.push(redo.pop());
+  while($("mode").value==="ai"&&redo.length&&!humanTurn())hist.push(redo.pop());
+  note="";sel=-1;pend=null;reg=null;render();
+};
+$("undo").onclick=function(){
+  if(busy||hist.length<2)return;
+  redo.push(hist.pop());
+  while($("mode").value==="ai"&&hist.length>1&&!humanTurn())redo.push(hist.pop());
+  note="";sel=-1;pend=null;reg=null;over=false;render();maybeAI();
+};
+start();
+})();
+</script>
+</body>
+</html>
