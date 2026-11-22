@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Spora</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
+<style>
+:root{--bg:#f1efe9;--ink:#211f1b;--mute:#6a655b;--hi:#e0491b;--panel:#fff;--line:#cfc8b8;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17171a;--ink:#ecebe6;--mute:#a19d93;--panel:#222226;--line:#3d3b38}}
+:root[data-theme="dark"]{--bg:#17171a;--ink:#ecebe6;--mute:#a19d93;--panel:#222226;--line:#3d3b38}
+[hidden]{display:none!important}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+main{max-width:1180px;margin:0 auto;padding:16px 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.right>.bar:first-child{margin-top:0}
+@media (min-width:880px){.layout{grid-template-columns:minmax(0,680px) minmax(290px,1fr);gap:28px;align-items:start}}
+h1{font:700 2rem/1.1 "Bricolage Grotesque",Georgia,serif;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+select,button.ctl{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.ctl:disabled,select:disabled,input:disabled{opacity:.45;cursor:default}
+label.f{color:var(--mute);font-size:.9rem}
+input[type=number]{width:4.5em;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+button.ctl.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.pl{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:8px 12px}
+.pl.on{border-color:var(--hi)}
+.pl small{display:block;color:var(--mute)}
+#status{min-height:3em;font-weight:600;margin:6px 0}
+#board svg{display:block;width:100%;max-width:680px;margin:0 auto;touch-action:manipulation}
+#board [data-i]{cursor:pointer}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+details li{margin:4px 0}
+.legend{color:var(--mute);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+<h1 id="gtitle"></h1>
+<p class="sub" id="gsub"></p>
+<div class="layout">
+<div class="left">
+<div id="board"></div>
+<p class="legend">Each turn has two parts. First drop: tap an intersection (empty, or one of your stacks) to drop a piece from your reserve, and tap it again for each extra piece, up to four in a stack. The drop is played as soon as you do anything else. Then, optionally, sow a different stack: tap it to pick up all its pieces (tap it again before laying to pick up one fewer), then tap the highlighted intersections one by one to lay one piece on each; the sowing is played when every piece in hand is laid (a stack of four may come back round onto its own point). Press "Skip sowing" to end the turn without sowing; "Cancel" (the Undo button) or Esc cancels a pending drop or sowing, and Undo takes back moves. Numbers on stones are stack sizes (a plain stone is a single piece). Light grey rings mark the stones played in the last turn (the drop and every point of the sowing; a dashed ring is where the sowing started), and red crosses mark where pieces were captured.</p>
+</div>
+<aside class="right">
+<div class="bar">
+  <select id="mode" aria-label="Mode"><option value="ai">Play the computer</option><option value="2p">Two players</option></select>
+  <select id="level" aria-label="Computer strength"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select>
+  <select id="side" aria-label="Your colour"><option value="0" selected>You play Black (moves first)</option><option value="1">You play White</option></select>
+</div>
+<div class="bar">
+  <select id="size" aria-label="Board size"><option value="13" selected>13×13 · 99 pieces each</option><option value="15">15×15 · 132 pieces each</option><option value="19">19×19 · 211 pieces each</option><option value="25">25×25 · 365 pieces each</option></select>
+  <button class="ctl primary" id="new">New game</button>
+  <button class="ctl" id="undo">Undo</button>
+  <button class="ctl" id="redo">Redo</button>
+</div>
+<div class="bar">
+  <button class="ctl" id="skip">Skip sowing</button>
+  <label class="f"><input type="checkbox" id="ctl" checked> Show moves</label>
+  <label class="f"><input type="checkbox" id="ter"> Show territory</label>
+</div>
+<div class="score"><div class="pl" id="p0"><span id="n0"></span><small id="s0"></small></div><div class="pl" id="p1"><span id="n1"></span><small id="s1"></small></div></div>
+<div id="status" aria-live="polite"></div>
+<div id="last" class="legend" style="min-height:2.6em;margin:0 0 8px"></div>
+<div class="bar">
+  <label class="f">Simulation games <input id="simN" type="number" min="10" max="1000" value="10"></label>
+  <label class="f">Random opening turns <input id="simR" type="number" min="0" max="20" value="2"></label>
+  <button class="ctl" id="sim">Simulation</button>
+</div>
+<div id="simout" class="legend" style="white-space:pre-line;margin:0 0 8px"></div>
+<details><summary>Rules</summary><ul id="rules"></ul></details>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+/* 1. GAME DEFINITION (rules, move generation)  2. ENGINE (computer, simulation)  3. INTERFACE (SVG board, clicks)
+   Board: N x N intersections (N = 13, 15, 19 or 25), cell index c = y*N + x with y counted from the top. Points are named
+   Go-style: column letter A-Z without I (left to right) + row number 1..N (bottom to top).
+   b: Int8Array of N*N, 0 empty, +h a Black stack of h pieces, -h a White stack of h pieces (1 <= h <= 4).
+   A turn has two phases, each a separate move: phase 0 drops one piece from the reserve, phase 1 sows a different stack
+   or passes. Once a reserve is empty, the other player makes final drops only (fin), one move per piece.
+   State: {b, turn: 0 Black / 1 White, phase, res: reserves, lost: pieces captured from each side, mg: bit c set once
+           colour c has had two or more groups on the board, dp: point dropped on this turn, vac: points vacated by
+           captures this turn, endg: player who makes the final drops (-1 not yet), fin, passes: consecutive empty turns,
+           noDrop, lt: actions of the current/last turn, ms: legal moves (cached), end, w: winner, sc: final score, why}.
+   Moves: a drop {t: point}, a sowing {f: from, k: pieces sown, p: [points in order]}, or a pass {pass: 1};
+   every drop and sowing carries its result r = {b, mg, cap: [{c: point, n: pieces, o: owner}]}. */
+var $=function(i){return document.getElementById(i)};
+
+/* ============================ 1. GAME DEFINITION ============================ */
+var N=13,NC=169,RES0=99,COLS="ABCDEFGHJKLMNOPQRSTUVWXYZ",KOMI=3.5;
+var SIZES={13:99,15:132,19:211,25:365};
+var DX=[0,1,0,-1],DY=[-1,0,1,0];
+var NAMES=["Black","White"],FILL=["#151515","#f4f2ec"];
+var NB,GID,RID,GCOL,GAL,RF0,RF1,RT,STK,D0,D1,QU,TL,NG=0;
+function setup(n){var c,d,x,y;N=n;NC=n*n;RES0=SIZES[n];NB=new Int16Array(NC*4);
+  for(c=0;c<NC;c++)for(d=0;d<4;d++){x=c%N+DX[d];y=(c-c%N)/N+DY[d];NB[c*4+d]=x>=0&&y>=0&&x<N&&y<N?y*N+x:-1}
+  GID=new Int32Array(NC);RID=new Int32Array(NC);GCOL=new Int8Array(NC);GAL=new Uint8Array(NC);RF0=new Int32Array(NC);RF1=new Int32Array(NC);
+  RT=new Uint8Array(NC);STK=new Int32Array(NC);D0=new Int8Array(NC);D1=new Int8Array(NC);QU=new Int32Array(NC);TL=new Int32Array(NC)}
+function Xc(c){return c%N}
+function Yc(c){return(c-c%N)/N}
+function cn(c){return COLS[Xc(c)]+(N-Yc(c))}
+var GAME={
+  title:"Spora",
+  subtitle:"Drop, sow and enclose: keep your groups breathing toward each other, and claim the board with stacks and territory.",
+  rules:function(){return[
+  {h:"Board and players",items:["Played on the intersections of a 13×13 board (15×15, 19×19 and 25×25 are options) by Black and White. Black starts.",
+    "Each player starts with a reserve of stackable pieces: 99 on 13×13, 132 on 15×15, 211 on 19×19, 365 on 25×25."]},
+  {h:"Definitions",items:["A stack is one to four pieces of the same colour on the same intersection.",
+    "A group is a set of one or more stacks orthogonally connected.",
+    "A group is living if a path of orthogonally adjacent empty intersections leads from it to another friendly group; otherwise it is dead. A group is also living if there has never been more than one group of its colour on the board.",
+    "A territory is a part of the board surrounded by living groups of the same colour; it is empty if no enemy stack is inside.",
+    "Sowing: pick a stack, or part of it, and leave one piece on each orthogonally adjacent intersection along a path. The path may turn left or right after each piece. A sowing is only legal if every piece can be placed legally, and no stack may exceed four pieces.",
+    "Capturing happens by enclosure (dead groups are removed) and by sowing: while sowing, a piece may land on an enemy stack, capturing it, if the pieces still in hand are at least twice the enemy stack's size. Captures are immediate, and a sowing may not enter an intersection vacated by a capture in the same turn."]},
+  {h:"Play",items:["On your turn you first drop one to four pieces from your reserve as a stack on an intersection not occupied by the opponent (an empty point or one of your stacks, never making more than four), provided its group is still living afterwards.",
+    "Then you may sow a different friendly stack.",
+    "When one player empties their reserve, the other player drops all their remaining pieces in sequence (no sowing), dead groups being removed after each drop, and the game ends.",
+    "If a player has all of their pieces on the board eliminated during the match, the opponent wins at once.",
+    "Score: occupied intersections (stacks, not pieces) plus the intersections of your empty territories. White receives 3.5 points. The higher score wins."]},
+  {h:"Consequences",items:["Empty territories are safe from drops but not from sowing attacks.",
+    "A single piece can step to an adjacent empty point; a stack of four can sow round a 2×2 square back onto its own point; sowing can strengthen adjacent friendly stacks; sowing cannot pass over a friendly stack of four.",
+    "A single piece cannot capture; a stack of two can only capture an adjacent single piece; stacks of three or four cannot be captured by sowing. Groups made dead during a sowing are captured at once, and a sowing must be completed even after captures.",
+    "Captured pieces are out of the game."]},
+  {h:"Implementation notes",items:["A drop is legal if the dropped stack is still on the board after dead groups are removed.",
+    "After every drop and every piece laid in a sowing, dead enemy groups are removed first, then any of the mover's own groups that are dead (so a move can capture your own pieces).",
+    "The “never more than one group” exemption ends for a colour the first time it has two groups on the board at once. After that, a colour reduced to a single group has that group dead.",
+    "A sowing path never revisits an intersection, except that a sowing of four may end on the point it started from (going round a 2×2 square). It may run over the stack dropped this turn.",
+    "The pieces in hand when a piece lands count for capture: sowing 4, the first piece can take a stack of up to 2, the second and third a single piece.",
+    "The player who empties their reserve still finishes that turn (they may sow). If a player has no legal drop, they go straight to sowing; a turn with neither a drop nor a sowing is a pass, and two passes in a row end the game. Final drops stop early if no legal drop remains.",
+    "Elimination: a player who has lost pieces to captures and has no piece left on the board loses immediately (checked after every drop and sowing; if both sides are emptied at once, the mover wins).",
+    "Territory is an empty region whose bordering stacks are all of one colour (the board edge closes it)."]}]},
+  describe:function(s){var out=[];
+    (s.lt||[]).forEach(function(a){var who=isAI()?pname(a.c)+" ("+NAMES[a.c]+")":NAMES[a.c],t;
+      if(a.k==="drop")t=who+" dropped "+(a.n>1?a.n+" pieces":"a piece")+" on "+cn(a.t)+(a.h>a.n?" (now a stack of "+a.h+")":"");
+      else if(a.k==="sow")t=who+" sowed "+a.n+" piece"+(a.n>1?"s":"")+" from "+cn(a.f)+" onto "+a.p.map(cn).join(", ");
+      else if(a.k==="pass")t=who+" did not sow";
+      else if(a.k==="nodrop")t=who+" had no legal drop";
+      else t=who+" had no legal sowing";
+      out.push(t+capTxt(a.cap,a.c)+".")});
+    return out.join(" ")}
+};
+function capTxt(cap,p){if(!cap||!cap.length)return"";var e=cap.filter(function(x){return x.o!==p}),o=cap.filter(function(x){return x.o===p}),t="";
+  function f(l){var n=0;l.forEach(function(x){n+=x.n});return n+" piece"+(n>1?"s":"")+" ("+l.map(function(x){return cn(x.c)}).join(", ")+")"}
+  if(e.length)t+=", capturing "+NAMES[1-p]+" "+f(e);
+  if(o.length)t+=(e.length?" and":",")+" losing own "+f(o);
+  return t}
+// label groups and empty regions of b; GAL[g] = 1 if group g is living. Returns the updated multi-group flags.
+function analyze(b,mg){var ng=0,nr=0,gc0=0,gc1=0,c,t,d,sp,v,g,r,k,pos;
+  GID.fill(-1);RID.fill(-1);
+  for(c=0;c<NC;c++){v=b[c];
+    if(v!==0){if(GID[c]>=0)continue;pos=v>0;GCOL[ng]=pos?0:1;if(pos)gc0++;else gc1++;
+      GID[c]=ng;sp=0;STK[sp++]=c;
+      while(sp){k=STK[--sp];for(d=0;d<4;d++){t=NB[k*4+d];if(t>=0&&GID[t]<0&&b[t]!==0&&(b[t]>0)===pos){GID[t]=ng;STK[sp++]=t}}}
+      ng++}
+    else{if(RID[c]>=0)continue;RID[c]=nr;sp=0;STK[sp++]=c;
+      while(sp){k=STK[--sp];for(d=0;d<4;d++){t=NB[k*4+d];if(t>=0&&RID[t]<0&&b[t]===0){RID[t]=nr;STK[sp++]=t}}}
+      RF0[nr]=-1;RF1[nr]=-1;RT[nr]=0;nr++}}
+  if(gc0>1)mg|=1;if(gc1>1)mg|=2;
+  for(c=0;c<NC;c++)if(b[c]===0){r=RID[c];for(d=0;d<4;d++){t=NB[c*4+d];if(t<0||b[t]===0)continue;g=GID[t];
+    if(b[t]>0){if(RF0[r]<0)RF0[r]=g;else if(RF0[r]!==g)RT[r]|=1}else{if(RF1[r]<0)RF1[r]=g;else if(RF1[r]!==g)RT[r]|=2}}}
+  for(g=0;g<ng;g++)GAL[g]=(mg&(1<<GCOL[g]))?0:1;
+  for(c=0;c<NC;c++)if(b[c]===0){r=RID[c];if(!RT[r])continue;for(d=0;d<4;d++){t=NB[c*4+d];if(t<0||b[t]===0)continue;g=GID[t];if(RT[r]&(1<<GCOL[g]))GAL[g]=1}}
+  NG=ng;return mg}
+function kill(b,o,cap){for(var c=0;c<NC;c++)if(b[c]!==0){var g=GID[c];if(GCOL[g]===o&&!GAL[g]){cap.push({c:c,n:b[c]>0?b[c]:-b[c],o:o});b[c]=0}}}
+// remove dead groups after a placement by player p: the opponent's first, then p's own
+function resolve(b,p,mg,cap){var q=1-p,dq=false,dp=false,g;
+  mg=analyze(b,mg);
+  for(g=0;g<NG;g++)if(!GAL[g]){if(GCOL[g]===q)dq=true;else dp=true}
+  if(dq){kill(b,q,cap);if(dp){mg=analyze(b,mg);dp=false;for(g=0;g<NG;g++)if(!GAL[g]&&GCOL[g]===p){dp=true;break}}}
+  if(dp)kill(b,p,cap);
+  return mg}
+function genDrops(s){var p=s.turn,sg=p?-1:1,b=s.b,ms=[],c,v,nb,nb2,mg,cap,n,mx;
+  if(!s.res[p])return ms;
+  for(c=0;c<NC;c++){v=b[c]*sg;if(v<0||v>=4)continue;mx=Math.min(4-v,s.res[p]);
+    if(v>0){for(n=1;n<=mx;n++){nb=b.slice();nb[c]+=n*sg;ms.push({t:c,n:n,r:{b:nb,mg:s.mg,cap:[]}})}continue}
+    nb=b.slice();nb[c]=sg;cap=[];mg=resolve(nb,p,s.mg,cap);
+    if(nb[c]*sg>0)for(n=1;n<=mx;n++){if(n>1){nb2=nb.slice();nb2[c]=n*sg}else nb2=nb;ms.push({t:c,n:n,r:{b:nb2,mg:mg,cap:cap}})}}
+  return ms}
+function genSows(s){var p=s.turn,sg=p?-1:1,b=s.b,ms=[],c,h,k,b0,vac=new Uint8Array(NC),O,K;
+  s.vac.forEach(function(x){vac[x]=1});
+  function dfs(bb,mg,vc,cur,dir,hand,path,cap){var j,nd,t,v,nb,nmg,ncap,nvc,tmp,np;
+    for(j=0;j<(dir<0?4:3);j++){nd=dir<0?j:j===0?dir:j===1?(dir+1)%4:(dir+3)%4;
+      t=NB[cur*4+nd];if(t<0||vc[t]||path.indexOf(t)>=0)continue;
+      v=bb[t]*sg;if(v>=4)continue;
+      if(v<0&&hand<-2*v)continue;
+      nb=bb.slice();nmg=mg;ncap=cap;nvc=vc;
+      if(v>0)nb[t]+=sg;
+      else{if(v<0)ncap=cap.concat([{c:t,n:-v,o:1-p,sow:1}]);
+        nb[t]=sg;tmp=[];nmg=resolve(nb,p,mg,tmp);
+        if(tmp.length){ncap=ncap.concat(tmp);nvc=vc.slice();tmp.forEach(function(x){nvc[x.c]=1})}}
+      np=path.concat([t]);
+      if(hand===1)ms.push({f:O,k:K,p:np,r:{b:nb,mg:nmg,cap:ncap}});
+      else dfs(nb,nmg,nvc,t,nd,hand-1,np,ncap)}}
+  for(c=0;c<NC;c++){h=b[c]*sg;if(h<=0||c===s.dp)continue;
+    if(DEAD&&Date.now()>DEAD)throw ABORT;
+    for(k=1;k<=h;k++){b0=b.slice();b0[c]-=k*sg;O=c;K=k;dfs(b0,s.mg,vac,c,-1,k,[],[])}}
+  return ms}
+function finish(s,why,w){s.end=true;s.ms=[];s.why=why;s.sc=score(s.b);s.w=w!==undefined?w:s.sc.tot[0]>s.sc.tot[1]?0:1}
+// a player with no pieces left on the board after losing some to captures loses at once (the mover's opponent is checked first)
+function elim(s,p){var n=[0,0],c,o,i;for(c=0;c<NC;c++){if(s.b[c]>0)n[0]++;else if(s.b[c]<0)n[1]++}
+  for(i=0;i<2;i++){o=i?p:1-p;if(!n[o]&&s.lost[o]){finish(s,"elim",1-o);return true}}
+  return false}
+// normalise s (skip impossible drops, auto-pass impossible sowings, detect the end) and cache its legal moves
+function prep(s){var d,w;
+  if(s.ms)return s.ms;
+  for(;;){if(s.end)return s.ms=[];
+    if(s.phase===0){d=genDrops(s);if(d.length)return s.ms=d;
+      if(s.fin){finish(s,"final");continue}
+      s.phase=1;s.noDrop=true;s.dp=-1;s.vac=[];s.lt=[{c:s.turn,k:"nodrop"}];continue}
+    w=genSows(s);if(w.length){w.push({pass:1});return s.ms=w}
+    s.lt=s.lt.concat([{c:s.turn,k:"nosow"}]);
+    if(s.noDrop)s.passes++;
+    if(s.passes>=2){finish(s,"passes");continue}
+    if(s.endg>=0){s.turn=s.endg;s.fin=true}else s.turn=1-s.turn;
+    s.phase=0;s.noDrop=false;s.dp=-1;s.vac=[];
+    if(s.fin&&!s.res[s.turn])finish(s,"final")}}
+function gen(s){return prep(s)}
+function newGame(){return{b:new Int8Array(NC),turn:0,phase:0,res:[RES0,RES0],lost:[0,0],mg:0,dp:-1,vac:[],endg:-1,fin:false,passes:0,noDrop:false,lt:[],ms:null,end:false,w:-1,ply:0}}
+function apply(s,m){var p=s.turn,ns={b:s.b,turn:p,phase:0,res:s.res.slice(),lost:s.lost.slice(),mg:s.mg,dp:-1,vac:[],endg:s.endg,fin:s.fin,passes:s.passes,noDrop:false,lt:[],ms:null,end:false,w:-1,ply:s.ply+1},a,sg=p?-1:1;
+  if(m.r){ns.b=m.r.b;ns.mg=m.r.mg;ns.passes=0;m.r.cap.forEach(function(x){ns.lost[x.o]+=x.n})}
+  if(m.t!==undefined){ns.res[p]-=m.n;a={c:p,k:"drop",t:m.t,n:m.n,h:m.r.b[m.t]*sg,cap:m.r.cap};ns.lt=[a];
+    if(elim(ns,p))return ns;
+    if(s.fin){if(!ns.res[p])finish(ns,"final");return ns}
+    ns.phase=1;ns.dp=m.t;ns.vac=m.r.cap.map(function(x){return x.c});
+    if(!ns.res[p]&&ns.endg<0)ns.endg=1-p;
+    return ns}
+  a=m.pass?{c:p,k:"pass"}:{c:p,k:"sow",f:m.f,n:m.k,p:m.p,cap:m.r.cap};
+  ns.lt=s.lt.concat([a]);
+  if(m.r&&elim(ns,p))return ns;
+  if(m.pass&&s.noDrop)ns.passes=s.passes+1;
+  if(ns.passes>=2){finish(ns,"passes");return ns}
+  if(ns.endg>=0){ns.turn=ns.endg;ns.fin=true}else ns.turn=1-p;
+  if(ns.fin&&!ns.res[ns.turn])finish(ns,"final");
+  return ns}
+// stacks and territory of each side; own (optional) receives the owner of each territory point (1 Black, 2 White)
+function score(b,own){var st=[0,0],te=[0,0],seen=new Uint8Array(NC),c,sp,k,d,t,bits,n,list;
+  for(c=0;c<NC;c++){if(b[c]>0)st[0]++;else if(b[c]<0)st[1]++}
+  for(c=0;c<NC;c++){if(b[c]!==0||seen[c])continue;seen[c]=1;sp=0;STK[sp++]=c;bits=0;n=0;list=[];
+    while(sp){k=STK[--sp];n++;if(own)list.push(k);
+      for(d=0;d<4;d++){t=NB[k*4+d];if(t<0)continue;if(b[t]>0)bits|=1;else if(b[t]<0)bits|=2;else if(!seen[t]){seen[t]=1;STK[sp++]=t}}}
+    if(bits===1||bits===2){te[bits-1]+=n;if(own)list.forEach(function(x){own[x]=bits})}}
+  return{st:st,te:te,tot:[st[0]+te[0],st[1]+te[1]+KOMI]}}
+
+/* ================================ 2. ENGINE ================================ */
+/* Evaluation for player P (as differences P - opponent): stacks 1 each, plus territory (regions bordered by one colour
+   only, counted whole once a reserve is nearly empty, otherwise only regions of at most N*N/8 points, so a lone early
+   stone does not "own" the board), 0.5 per empty point nearer to one side (within three steps through empty points),
+   0.4 per piece on the board or in reserve (material: captured pieces never come back), 0.4 per single piece next to an
+   enemy stack of two or more (open to capture by sowing), and the 3.5 komi. Finished games: +-1e5 plus the score margin.
+   Search: minimax with alpha-beta over phases (a drop and a sowing are separate plies of the same player); every node
+   evaluates all its moves one ply ahead and searches a beam of the best. Easy picks among the best one-ply moves,
+   Medium searches 2 then 3 plies, Hard 2, 3, 4 then 5 plies, within a time budget, keeping the deepest finished choice. */
+function rn(n){return Math.floor(Math.random()*n)}
+function ev(s,P){var b=s.b,st=[0,0],pc=[0,0],vul=[0,0],te=[0,0],inf=[0,0],c,v,o,h,d,t,sp,k,bits,n,head,tail,D,cap,tot0,tot1,seen;
+  for(c=0;c<NC;c++){v=b[c];if(!v)continue;o=v>0?0:1;h=o?-v:v;st[o]++;pc[o]+=h;
+    if(h===1)for(d=0;d<4;d++){t=NB[c*4+d];if(t>=0&&(o?b[t]>=2:b[t]<=-2)){vul[o]++;break}}}
+  // distances from each colour through empty points (up to 3)
+  for(o=0;o<2;o++){D=o?D1:D0;D.fill(9);head=tail=0;
+    for(c=0;c<NC;c++)if(o?b[c]<0:b[c]>0){D[c]=0;QU[tail++]=c}
+    while(head<tail){k=QU[head++];if(D[k]>=3)continue;for(d=0;d<4;d++){t=NB[k*4+d];if(t>=0&&b[t]===0&&D[t]>D[k]+1){D[t]=D[k]+1;QU[tail++]=t}}}}
+  cap=(s.res[0]<10||s.res[1]<10||s.fin)?NC:NC/8;seen=TL;seen.fill(0);
+  for(c=0;c<NC;c++){if(b[c]!==0||seen[c])continue;seen[c]=1;sp=0;STK[sp++]=c;bits=0;n=0;
+    while(sp){k=STK[--sp];n++;for(d=0;d<4;d++){t=NB[k*4+d];if(t<0)continue;if(b[t]>0)bits|=1;else if(b[t]<0)bits|=2;else if(!seen[t]){seen[t]=1;STK[sp++]=t}}}
+    if((bits===1||bits===2)&&n<=cap){te[bits-1]+=n;seen[c]=2+bits}}
+  for(c=0;c<NC;c++)if(b[c]===0){if(D0[c]<D1[c])inf[0]++;else if(D1[c]<D0[c])inf[1]++}
+  tot0=st[0]+te[0]+.5*inf[0]+.4*(pc[0]+s.res[0])-.4*vul[0];
+  tot1=st[1]+te[1]+.5*inf[1]+.4*(pc[1]+s.res[1])-.4*vul[1]+KOMI;
+  return P?tot1-tot0:tot0-tot1}
+function val(s,P){var d;if(s.end){d=s.sc.tot[P]-s.sc.tot[1-P];return(s.w===P?1e5:-1e5)+d}return ev(s,P)}
+var DEAD=0,ABORT={},BM={};
+function kids(s,P){var ms=gen(s),o=[],i,ns,mx=s.turn===P;
+  for(i=0;i<ms.length;i++){ns=apply(s,ms[i]);o.push({m:ms[i],s:ns,v:val(ns,P)+Math.random()*1e-3})}
+  o.sort(mx?function(x,y){return y.v-x.v}:function(x,y){return x.v-y.v});return o}
+function mm(s,d,a,bt,P){var k,i,v,best,lim,mx;
+  if(DEAD&&Date.now()>DEAD)throw ABORT;
+  if(s.end||d<=0)return val(s,P);
+  k=kids(s,P);if(!k.length)return val(s,P);
+  if(d===1){s.ms=null;return k[0].v}
+  mx=s.turn===P;best=mx?-1e9:1e9;lim=Math.min(k.length,BM[d]||6);
+  for(i=0;i<lim;i++){v=mm(k[i].s,d-1,a,bt,P);
+    if(mx){if(v>best)best=v;if(best>a)a=best}else{if(v<best)best=v;if(best<bt)bt=best}
+    if(a>=bt)break}
+  s.ms=null;return best}
+// root search to depth d; the best child is moved to the front, so the next, deeper pass tries it first
+function search(d,k,P){var i,v,best=-1e9,bi=0,lim=Math.min(k.length,BM[d]||6);
+  if(k[0].v>9e4)return k[0].m;
+  for(i=0;i<lim;i++){v=mm(k[i].s,d-1,best,1e9,P)+Math.random()*.01;if(v>best){best=v;bi=i}}
+  k.unshift(k.splice(bi,1)[0]);return k[0].m}
+function aiMove(s,lv){var ms=gen(s),P=s.turn,k,best,n,dd,mx;
+  if(lv===undefined)lv=+$("level").value;
+  if(ms.length===1)return ms[0];
+  if(lv<1)return ms[rn(ms.length)];
+  k=kids(s,P);best=k[0].m;
+  if(lv===1){for(n=1;n<3&&n<k.length&&k[n].v>k[0].v-1.2;n++);return k[rn(n)].m}
+  if(lv===2){BM={2:10,3:8};mx=3;DEAD=Date.now()+(sim?120:1500)}
+  else{BM={2:12,3:10,4:8,5:6};mx=5;DEAD=Date.now()+(sim?300:5000)}
+  try{for(dd=2;dd<=mx;dd++)best=search(dd,k,P)}catch(e){if(e!==ABORT)throw e}
+  DEAD=0;return best}
+var sim=null;
+function runSim(){
+  if(sim){sim.stop=true;return}
+  var CAP=5000,me=sim={stop:false},TOTAL=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?2:+$("simR").value)),
+      done=0,wc=[0,0],un=0,g=null,plies=0,len=0,mar=0,lvName=$("level").options[$("level").selectedIndex].text,
+      ids=["mode","side","level","size","new","undo","redo","skip","simN","simR"];
+  ids.forEach(function(i){$(i).disabled=true});
+  resetSel();
+  $("sim").textContent="Stop simulation";
+  $("simout").textContent="Simulating at "+lvName+" level… 0/"+TOTAL;
+  function fin(stopped){
+    sim=null;$("sim").textContent="Simulation";
+    $("mode").disabled=$("new").disabled=$("size").disabled=$("simN").disabled=$("simR").disabled=false;
+    $("level").disabled=$("side").disabled=$("mode").value==="2p";
+    var pc=function(n){return done?(100*n/done).toFixed(1)+"%":"n/a"};
+    $("simout").textContent=(stopped?"Stopped after ":"")+done+" games ("+N+"×"+N+", "+lvName+" level, computer vs computer), first "+RND+" turns random.\nBlack (first player) won "+pc(wc[0])+", White won "+pc(wc[1])+". Average length: "+(done?(len/done).toFixed(0):"n/a")+" moves (drops and sowings); average margin "+(done?(mar/done).toFixed(1):"n/a")+" points."+(un?" Unfinished (over "+CAP+" moves): "+un+".":"");
+    render()}
+  function step(){
+    if(me.stop){fin(true);return}
+    var t0=Date.now();
+    while(Date.now()-t0<40){
+      if(!g){g=newGame();plies=0}
+      gen(g);
+      if(g.end||plies>=CAP){if(g.end){wc[g.w]++;mar+=Math.abs(g.sc.tot[0]-g.sc.tot[1])}else un++;len+=plies;done++;g=null;if(done>=TOTAL){fin(false);return}continue}
+      g=apply(g,aiMove(g,plies<4*RND?0:undefined));plies++}
+    $("simout").textContent="Simulating at "+lvName+" level… "+done+"/"+TOTAL+(g?" (game in progress: move "+plies+")":"");
+    setTimeout(step,0)}
+  step()}
+
+/* =============================== 3. INTERFACE =============================== */
+/* In the sowing phase, SEL is the selected friendly stack (-1 none), K the number of pieces picked up from it and
+   PATH the points already chosen for them; the sowing is played once PATH has K points. In the drop phase, PD = {t, n}
+   is a pending drop of n pieces on t: tapping t again adds a piece, and any other action (tapping another point, the
+   Skip sowing button) plays the drop first. */
+var hist,redo=[],over,busy,note="",SEL=-1,K=0,PATH=[],PD=null;
+var M=1.25,GRID="#6b4a22",HI="#e0491b",LR="#c4c4c4";
+var DEFS='<defs><radialGradient id="gB" cx=".35" cy=".3" r=".75"><stop offset="0" stop-color="#6a6a6a"/><stop offset=".35" stop-color="#2a2a2a"/><stop offset="1" stop-color="#0a0a0a"/></radialGradient>'+
+  '<radialGradient id="gW" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#ffffff"/><stop offset=".55" stop-color="#eef0f4"/><stop offset="1" stop-color="#b9bec8"/></radialGradient>'+
+  '<linearGradient id="gWood" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#EDBE78"/><stop offset=".5" stop-color="#E6B26A"/><stop offset="1" stop-color="#DDA65C"/></linearGradient>'+
+  '<filter id="fGrain" x="0" y="0" width="1" height="1"><feTurbulence type="fractalNoise" baseFrequency=".9 .035" numOctaves="2" seed="7"/><feColorMatrix values="0 0 0 0 .45  0 0 0 0 .28  0 0 0 0 .1  0 0 0 .55 -.18"/><feComposite in2="SourceGraphic" operator="in"/></filter>'+
+  '<filter id="fSh" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx=".05" dy=".07" stdDeviation=".05" flood-color="#000" flood-opacity=".4"/></filter></defs>';
+var SFILL=["url(#gB)","url(#gW)"],SEDGE=["#000","#9aa0aa"],SNUM=["#fff","#222"];
+function cur(){return hist[hist.length-1]}
+function hc(){return+$("side").value}
+function isAI(){return $("mode").value==="ai"}
+function isHuman(s){return!isAI()||s.turn===hc()}
+function pname(c){return isAI()?(c===hc()?"You":"Computer"):NAMES[c]}
+function pverb(c,a,b){return pname(c)==="You"?b:a}
+function resetSel(){SEL=-1;K=0;PATH=[]}
+function pdMove(s){return PD?gen(s).filter(function(x){return x.t===PD.t&&x.n===PD.n})[0]:null}
+function start(){setup(+$("size").value);hist=[newGame()];redo=[];note="";resetSel();PD=null;$("level").disabled=$("side").disabled=!isAI();over=false;busy=false;
+  $("rules").innerHTML=GAME.rules().map(function(sec){return"<li><b>"+sec.h+"</b><ul>"+sec.items.map(li).join("")+"</ul></li>"}).join("");
+  render();maybeAI()}
+// sowings of the stack on f with k pieces whose path starts with PATH
+function cands(s,f,k){return gen(s).filter(function(m){if(m.f!==f||m.k!==k)return false;for(var i=0;i<PATH.length;i++)if(m.p[i]!==PATH[i])return false;return true})}
+function kOpts(s,f){var o={};gen(s).forEach(function(m){if(m.f===f)o[m.k]=1});return Object.keys(o).map(Number).sort(function(a,b){return b-a})}
+function f3(v){return Math.round(v*1000)/1000}
+function circ(x,y,r,fill,op,st,sw,dash){return'<circle cx="'+f3(x)+'" cy="'+f3(y)+'" r="'+r+'" fill="'+fill+'"'+(op?' fill-opacity="'+op+'"':'')+(st?' stroke="'+st+'" stroke-width="'+sw+'"':'')+(dash?' stroke-dasharray="'+dash+'"':'')+' pointer-events="none"/>'}
+function line(x1,y1,x2,y2,clr,w){return'<line x1="'+f3(x1)+'" y1="'+f3(y1)+'" x2="'+f3(x2)+'" y2="'+f3(y2)+'" stroke="'+clr+'" stroke-width="'+w+'" stroke-linecap="round" pointer-events="none"/>'}
+function txt(x,y,t,sz,clr,wt){return'<text x="'+f3(x)+'" y="'+f3(y)+'" font-size="'+sz+'" text-anchor="middle" dominant-baseline="central" fill="'+clr+'"'+(wt?' font-weight="'+wt+'"':'')+' pointer-events="none">'+t+'</text>'}
+function stone(x,y,o,h){return'<circle cx="'+x+'" cy="'+y+'" r=".47" fill="'+SFILL[o]+'" stroke="'+SEDGE[o]+'" stroke-width=".02" filter="url(#fSh)" pointer-events="none"/>'+(h>1?txt(x,y+.01,h,.46,SNUM[o],700):"")}
+function render(){
+  var s=cur(),b,g=[],c,i,hu,stt,E=N-1,V=-M,W=f3(N-1+2*M),why,sc,own,sp,x,y,nx,cs,hp=s.turn===hc();
+  gen(s);b=s.b;over=s.end;hu=isHuman(s)&&!over&&!busy&&!sim;
+  if(!hu||s.phase!==1)resetSel();
+  if(!hu||s.phase!==0)PD=null;
+  g.push('<svg viewBox="'+V+' '+V+' '+W+' '+W+'" role="img" aria-label="Spora board" font-family="system-ui,sans-serif">');
+  g.push(DEFS,'<rect x="'+V+'" y="'+V+'" width="'+W+'" height="'+W+'" rx=".2" fill="url(#gWood)" pointer-events="none"/>','<rect x="'+V+'" y="'+V+'" width="'+W+'" height="'+W+'" rx=".2" fill="#fff" filter="url(#fGrain)" pointer-events="none"/>');
+  for(i=0;i<N;i++)g.push(line(0,i,E,i,GRID,.035),line(i,0,i,E,GRID,.035));
+  sp=[3,(N-1)/2,N-4];sp.forEach(function(a){sp.forEach(function(bb){g.push(circ(a,bb,.08,GRID))})});
+  for(i=0;i<N;i++)g.push(txt(i,-.9,COLS[i],.34,GRID),txt(i,E+.9,COLS[i],.34,GRID),txt(-.9,i,N-i,.34,GRID),txt(E+.9,i,N-i,.34,GRID));
+  sc=score(b,own=new Uint8Array(NC));
+  if($("ter").checked)for(c=0;c<NC;c++)if(own[c])g.push('<rect x="'+(Xc(c)-.14)+'" y="'+(Yc(c)-.14)+'" width=".28" height=".28" fill="'+FILL[own[c]-1]+'" stroke="'+(own[c]===1?"#000":"#8a8f98")+'" stroke-width=".02" pointer-events="none"/>');
+  for(c=0;c<NC;c++)if(b[c])g.push(stone(Xc(c),Yc(c),b[c]>0?0:1,Math.abs(b[c])));
+  (s.lt||[]).forEach(function(a){
+    (a.cap||[]).forEach(function(x){if(!b[x.c]){var X=Xc(x.c),Y=Yc(x.c);g.push(line(X-.15,Y-.15,X+.15,Y+.15,HI,.06),line(X-.15,Y+.15,X+.15,Y-.15,HI,.06))}});
+    if(a.k==="drop")g.push(circ(Xc(a.t),Yc(a.t),.32,"none",0,LR,.045));
+    if(a.k==="sow"){g.push(circ(Xc(a.f),Yc(a.f),.32,"none",0,LR,.045,".08 .06"));a.p.forEach(function(x){if(x!==a.f)g.push(circ(Xc(x),Yc(x),.32,"none",0,LR,.045))})}});
+  if(hu&&PD){x=Xc(PD.t);y=Yc(PD.t);g.push(stone(x,y,s.turn,Math.abs(b[PD.t])+PD.n),circ(x,y,.5,"none",0,HI,.06,".12 .08"))}
+  if(hu&&SEL>=0){g.push(circ(Xc(SEL),Yc(SEL),.53,"none",0,HI,.07));
+    PATH.forEach(function(x){g.push(circ(Xc(x),Yc(x),.44,"none",0,HI,.06,".12 .08"))});
+    if($("ctl").checked){nx={};cands(s,SEL,K).forEach(function(m){nx[m.p[PATH.length]]=1});
+      for(c in nx){c=+c;if(isNaN(c))continue;g.push(circ(Xc(c),Yc(c),.13,HI,.85,b[c]?"#fff":0,.03))}}}
+  for(c=0;c<NC;c++)g.push('<rect data-i="'+c+'" x="'+(Xc(c)-.5)+'" y="'+(Yc(c)-.5)+'" width="1" height="1" fill="#000" fill-opacity="0"><title>'+cn(c)+'</title></rect>');
+  $("board").innerHTML=g.join("")+'</svg>';
+  for(i=0;i<2;i++){
+    $("p"+i).className="pl"+(!over&&s.turn===i?" on":"");
+    $("p"+i).style.borderLeft="8px solid "+FILL[i];
+    $("n"+i).textContent=(isAI()?pname(i)+" – ":"")+NAMES[i]+": "+sc.tot[i]+" points";
+    $("s"+i).textContent=sc.st[i]+" stack"+(sc.st[i]===1?"":"s")+" + "+sc.te[i]+" territory"+(i?" + 3.5":"")+" · "+s.res[i]+" in reserve · "+s.lost[i]+" captured"}
+  if(over){
+    why=s.why==="passes"?"Neither player can move.":s.why==="elim"?NAMES[1-s.w]+" has no pieces left on the board.":"The reserves are played out.";
+    stt=why+(s.why==="elim"?"":" Final score "+sc.tot[0]+" to "+sc.tot[1]+".")+" Game over: "+pname(s.w)+(isAI()?" ("+NAMES[s.w]+")":"")+" "+pverb(s.w,"wins","win")+"."}
+  else{
+    cs=NAMES[s.turn];
+    if(!isHuman(s))stt="The computer ("+cs+") is thinking…";
+    else if(s.phase===0&&PD)stt="Dropping "+PD.n+" piece"+(PD.n>1?"s":"")+" on "+cn(PD.t)+": tap it again to add a piece"+(s.fin?", tap another point to confirm and drop there next, or press Confirm drop.":", then tap a stack to sow, or press Skip sowing to end the turn.")+" Undo or Esc cancels the drop.";
+    else if(s.phase===0)stt=(isAI()?"Your turn ("+cs+"): ":cs+": ")+(s.fin?"final drops, "+s.res[s.turn]+" left. ":"")+"tap a point to drop a piece, and tap it again for each extra piece (up to four in a stack; "+s.res[s.turn]+" in reserve).";
+    else if(SEL<0)stt=(isAI()?"You":cs)+" may now sow a stack other than "+(s.dp>=0?cn(s.dp):"the one dropped on")+": tap it, or press Skip sowing.";
+    else stt="Sowing "+K+" of the "+Math.abs(b[SEL])+" piece"+(Math.abs(b[SEL])>1?"s":"")+" on "+cn(SEL)+": "+(PATH.length?PATH.length+" laid, ":"")+"tap the next point"+(PATH.length?" (Undo or Esc cancels).":(kOpts(s,SEL).length>1?" (tap "+cn(SEL)+" to pick up fewer).":"."));
+    if(s.endg>=0&&!s.fin)stt+=" "+NAMES[1-s.endg]+"'s reserve is empty: after this turn "+NAMES[s.endg]+" drops its remaining pieces.";}
+  if(note)stt+=" "+note;
+  $("status").textContent=stt;
+  $("last").textContent=GAME.describe(s);
+  $("skip").disabled=!(hu&&(s.phase===1||PD));
+  $("skip").textContent=PD&&s.fin?"Confirm drop":"Skip sowing";
+  $("undo").textContent=PD||SEL>=0?"Cancel":"Undo";
+  $("undo").disabled=(hist.length<2&&!PD&&SEL<0)||busy||!!sim;
+  $("redo").disabled=!redo.length||busy||!!sim}
+function play(m){var ns=apply(cur(),m);hist.push(ns);redo=[];note="";resetSel();PD=null;render();maybeAI()}
+function click(i){
+  var s=cur(),sg=s.turn?-1:1,ms=gen(s),m,ko,cs,v=s.b[i]*sg;
+  if(over||busy||sim||!isHuman(s))return;
+  note="";
+  if(s.phase===0){
+    if(PD){
+      if(i===PD.t){if(ms.some(function(x){return x.t===i&&x.n===PD.n+1}))PD.n++;
+        else note=Math.abs(s.b[i])+PD.n>=4?"A stack holds at most four pieces.":"Your reserve has no more pieces.";
+        render();return}
+      m=pdMove(s);var tn=s.turn;PD=null;play(m);s=cur();if(!over&&isHuman(s)&&s.turn===tn)click(i);return}
+    if(ms.some(function(x){return x.t===i})){PD={t:i,n:1};render();return}
+    note=v<0?"That point holds a "+NAMES[1-s.turn]+" stack.":v>=4?"That stack already has four pieces.":"A piece dropped on "+cn(i)+" would belong to a dead group.";
+    render();return}
+  if(SEL>=0){
+    cs=cands(s,SEL,K).filter(function(x){return x.p[PATH.length]===i});
+    if(cs.length){PATH.push(i);if(PATH.length===K){play(cs[0]);return}render();return}
+    if(i===SEL&&!PATH.length){ko=kOpts(s,SEL);m=ko.indexOf(K);if(m+1<ko.length)K=ko[m+1];else resetSel();render();return}
+    if(PATH.length){note=cn(i)+" is not a legal next point for this sowing.";render();return}}
+  if(v>0){
+    if(i===s.dp){note="You just dropped on "+cn(i)+"; sow a different stack.";resetSel()}
+    else{ko=kOpts(s,i);if(ko.length){SEL=i;K=ko[0];PATH=[]}else{resetSel();note=cn(i)+" has no legal sowing."}}}
+  else if(SEL>=0)note=cn(i)+" is not a legal next point for this sowing.";
+  else note="Tap one of your stacks to sow it, or press Skip sowing.";
+  render()}
+function maybeAI(){
+  var s=cur();if(over||!isAI()||isHuman(s)||sim)return;
+  busy=true;render();
+  setTimeout(function(){var c=cur(),ns=apply(c,aiMove(c));busy=false;hist.push(ns);render();maybeAI()},60)}
+function li(x){return"<li>"+x+"</li>"}
+document.title=GAME.title;$("gtitle").textContent=GAME.title;$("gsub").textContent=GAME.subtitle;
+$("board").onclick=function(e){var t=e.target.closest("[data-i]");if(t)click(+t.getAttribute("data-i"))};
+$("new").onclick=start;$("sim").onclick=runSim;
+$("skip").onclick=function(){var s=cur(),m;if(over||busy||sim||!isHuman(s))return;
+  if(s.phase===0&&PD){m=pdMove(s);PD=null;play(m);s=cur();if(s.fin||over||!isHuman(s)||s.phase!==1)return}
+  if(s.phase===1)play({pass:1})};
+$("ctl").onchange=$("ter").onchange=render;
+$("mode").onchange=$("side").onchange=$("size").onchange=start;
+document.addEventListener("keydown",function(e){if(e.key==="Escape"&&(SEL>=0||PD)){resetSel();PD=null;note="";render()}});
+$("redo").onclick=function(){
+  if(busy||!redo.length)return;
+  hist.push(redo.pop());
+  while(isAI()&&redo.length&&!isHuman(cur()))hist.push(redo.pop());
+  note="";resetSel();PD=null;render();maybeAI()};
+$("undo").onclick=function(){
+  if(busy)return;
+  if(PD||SEL>=0){PD=null;resetSel();note="";render();return}
+  if(hist.length<2)return;
+  var tmp=[];
+  tmp.push(hist.pop());
+  while(isAI()&&hist.length>1&&!isHuman(cur()))tmp.push(hist.pop());
+  if(!isHuman(cur())&&isAI()){while(tmp.length)hist.push(tmp.pop());return}
+  tmp.forEach(function(x){redo.push(x)});
+  over=false;note="";resetSel();PD=null;render()};
+start();
+})();
+</script>
+</body>
+</html>
