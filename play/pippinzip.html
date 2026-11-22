@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pippinzip</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
+<style>
+:root{--bg:#eef0e6;--ink:#1f2a1c;--mute:#5d6a56;--cell:#dfe3cf;--edge:#b9bfa3;--hi:#e0803a;--panel:#fff;--line:#c5cab4;--wood:#dcb875;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f;--wood:#9a7b45}}
+:root[data-theme="dark"]{--wood:#9a7b45;--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f}
+[hidden]{display:none!important}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+main{max-width:1080px;margin:0 auto;padding:16px 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.right>.bar:first-child{margin-top:0}
+@media (min-width:860px){.layout{grid-template-columns:minmax(0,600px) minmax(300px,1fr);gap:28px;align-items:start}}
+h1{font:700 2rem/1.1 "Bricolage Grotesque",Georgia,serif;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+select,button.ctl{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.ctl:disabled,select:disabled,input:disabled{opacity:.45;cursor:default}
+label.f{color:var(--mute);font-size:.9rem}
+input[type=number]{width:4.5em;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+button.ctl.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.pl{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:8px 12px;display:flex;justify-content:space-between;align-items:baseline}
+.pl.on{border-color:var(--hi)}
+#status{min-height:1.5em;font-weight:600;margin:6px 0}
+#board svg{display:block;width:100%;max-width:600px;margin:0 auto;touch-action:manipulation}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+details li{margin:4px 0}
+.legend{color:var(--mute);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+<h1 id="gtitle"></h1>
+<p class="sub" id="gsub"></p>
+<div class="layout">
+<div class="left">
+<div id="board"></div>
+<p class="legend">Click an empty point to place a stone. In the auction each turn is 1&ndash;3 white stones (press &ldquo;End turn&rdquo; after 1 or 2), or press &ldquo;Take&rdquo; to become Zip. After that Pip places two black stones per turn (points marked red are off-limits for the second one) and Zip one white stone. Stones from the most recent turn carry a red dot.</p>
+</div>
+<aside class="right">
+<div class="bar">
+  <select id="mode" aria-label="Mode"><option value="ai">Play the computer</option><option value="2p">Two players</option></select>
+  <select id="level" aria-label="Computer strength"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select>
+  <select id="size" aria-label="Board size"><option value="9">9×9</option><option value="13" selected>13×13</option><option value="15">15×15</option><option value="19">19×19</option><option value="23">23×23</option></select>
+  <select id="side" aria-label="Auction order"><option value="0">You start the auction</option><option value="1">Computer starts the auction</option></select>
+  <button class="ctl primary" id="new">New game</button>
+  <button class="ctl" id="undo">Undo</button>
+  <button class="ctl" id="redo">Redo</button>
+</div>
+<div class="score"><div class="pl" id="p0"><span id="n0"></span></div><div class="pl" id="p1"><span id="n1"></span></div></div>
+<div id="status" aria-live="polite"></div>
+<div class="bar"><button class="ctl primary" id="cb">Take (become Zip)</button><button class="ctl primary" id="et">End turn</button><button class="ctl" id="rs">Resign</button></div>
+<div id="last" class="legend" style="min-height:2.6em;margin:0 0 8px"></div>
+<div class="bar">
+  <label class="f">Simulation games <input id="simN" type="number" min="10" max="1000" value="10"></label>
+  <label class="f">Random opening moves <input id="simR" type="number" min="0" max="20" value="4"></label>
+  <button class="ctl" id="sim">Simulation</button>
+</div>
+<div id="simout" class="legend" style="white-space:pre-line;margin:0 0 8px"></div>
+<details><summary>Rules</summary><ul id="rules"></ul></details>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+/* =====================================================================
+   1. GAME DEFINITION  - Pippinzip rules and move generation
+   2. ENGINE           - Monte-Carlo computer opponent (auction + play), simulations
+   3. INTERFACE        - SVG board (9 to 23 lines, stones on the intersections), click handling, controls
+   A state is {b: board (W*W points: 0 empty, 1 white, 2 black), turn: player to move (0 or 1),
+               ph: 0 auction, 1 play, zip: player who took and is Zip (-1 until "take"), w: winner or -1,
+               k: stones placed so far in the current turn, f: first black stone of Pip's current turn (-1 if none),
+               ts: cells placed so far in the current turn, lt: summary of the last finished turn, line: winning chain}.
+   A move is one stone on an empty point (white in the auction and for Zip, black for Pip). A turn may span several
+   moves: 1-3 white stones in the auction (the player ends the turn after 1 or 2), 2 black stones for Pip.
+   Auction-only moves: "take" (only at the start of a turn) and "end turn" (after 1 or 2 stones). Also: resign.
+   ===================================================================== */
+var $=function(i){return document.getElementById(i)};
+
+/* ============================ 1. GAME DEFINITION ============================ */
+var W,N,FX,FY,ON,AN,C0,EMP,FB,STK,VIS,stamp=0;
+// (re)build all size-dependent tables: coordinates, orthogonal (ON) and all-round (AN) neighbours, engine buffers
+function setSize(w){var q,dx,dy,x,y;W=w;N=w*w;FX=[];FY=[];ON=[];AN=[];C0=(W-1)/2;
+  for(q=0;q<N;q++){FX[q]=q%W;FY[q]=(q/W)|0}
+  for(q=0;q<N;q++){ON[q]=[];AN[q]=[];
+    for(dy=-1;dy<=1;dy++)for(dx=-1;dx<=1;dx++){x=FX[q]+dx;y=FY[q]+dy;
+      if((dx||dy)&&x>=0&&y>=0&&x<W&&y<W){AN[q].push(y*W+x);if(!dx||!dy)ON[q].push(y*W+x)}}}
+  EMP=new Int16Array(N);FB=new Uint8Array(N);STK=new Int16Array(N);VIS=new Int32Array(N);stamp=0}
+function cn(i){return String.fromCharCode(97+FX[i])+(FY[i]+1)}
+function list(c){var a=c.map(cn);return a.length<2?a.join(""):a.slice(0,-1).join(", ")+" and "+a[a.length-1]}
+function orthAdj(a,b){return Math.abs(FX[a]-FX[b])+Math.abs(FY[a]-FY[b])===1}
+var GAME={
+  title:"Pippinzip",
+  subtitle:"Bid with white stones until someone says “take”. Zip (white, one stone a turn) must touch all four sides; Pip (black, two stones a turn) needs just two opposite sides.",
+  sides:[{name:"White",color:"#f6f2e7",edge:"#555"},{name:"Black",color:"#2d2d2d",edge:"#ddd"}],
+  rules:[
+  {h:"Board and goal",items:[
+    "Played on the intersections (points) of a square board: 9×9 by default, or 13, 15, 19 or 23 lines. Stones are never moved or captured.",
+    "Zip (White) wins by connecting all four sides of the board with a single chain of white stones. White stones are connected orthogonally and/or diagonally.",
+    "Pip (Black) wins by connecting any two opposite sides with a chain of black stones that are orthogonally adjacent (diagonal contact does not connect black stones)."]},
+  {h:"Auction",items:[
+    "The game starts with an auction on the empty board, using white stones only. Players alternate turns; on a turn a player places 1, 2 or 3 white stones (their free choice), or says “take” instead of placing any stones.",
+    "The taker becomes Zip; the other player becomes Pip. All white stones from the auction stay on the board as Zip’s stones."]},
+  {h:"Play",items:[
+    "Immediately after “take”, Pip plays two black stones. Then Zip plays a single white stone, Pip two black stones, Zip one white stone, and so on until a player wins (or resigns).",
+    "Pip’s second black stone of a turn may not be orthogonally adjacent to the first black stone of that turn; diagonally adjacent is allowed. If every empty point is orthogonally adjacent to the first stone, the second stone is forfeited."]},
+  {h:"Clarifications (choices made by this page)",items:[
+    "A win counts the moment a winning chain appears, even after Pip’s first stone of a turn.",
+    "If the auction’s white stones already connect all four sides when someone says “take”, the taker (Zip) wins at once – so completing such a chain in the auction hands the win to the opponent.",
+    "If the board fills up during the auction, the turn ends and the next player must take.",
+    "A full board always has a winner, so there are no draws."]}],
+  describe:function(s){var t=[],l=s.lt;
+    if(l){var by=pname(l.p);
+      if(l.resign)t.push(by+" resigned.");
+      else if(l.take)t.push(by+" said “take” and became Zip"+(l.win?"; the white stones already connect all four sides, so Zip wins at once.":"; "+pname(1-l.p)+" is Pip and moves next."));
+      else{var col=l.ph===0||l.p===s.zip?"white":"black";
+        t.push(by+" placed "+(l.cells.length===1?"a "+col+" stone on ":col+" stones on ")+list(l.cells)+
+          (l.win?(col==="white"?", connecting all four sides":", connecting two opposite sides"):"")+
+          (l.forfeit?"; the second black stone was forfeited (every empty point is orthogonally next to the first)":"")+".")}}
+    if(s.ts.length)t.push("This turn so far: "+list(s.ts)+".");
+    return t.join(" ")}
+};
+function newGame(){return{b:new Uint8Array(N),turn:0,ph:0,zip:-1,w:-1,k:0,f:-1,ts:[],lt:null,line:null}}
+function cp(s){return{b:s.b.slice(),turn:s.turn,ph:s.ph,zip:s.zip,w:s.w,k:s.k,f:s.f,ts:s.ts.slice(),lt:s.lt,line:s.line}}
+function stoneCount(b){var n=0;for(var i=0;i<N;i++)if(b[i])n++;return n}
+function colourOf(s){return s.ph===0||s.turn===s.zip?1:2}
+// first connected group of colour c (neighbour lists nb) whose side mask passes ok(); sides: 1 left, 2 right, 4 bottom, 8 top
+function group(b,c,nb,ok){
+  var seen=new Uint8Array(N),stack=[],i,j,k,t,cells,m;
+  for(i=0;i<N;i++)if(b[i]===c&&!seen[i]){
+    cells=[];m=0;seen[i]=1;stack.push(i);
+    while(stack.length){j=stack.pop();cells.push(j);
+      if(FX[j]===0)m|=1;if(FX[j]===W-1)m|=2;if(FY[j]===0)m|=4;if(FY[j]===W-1)m|=8;
+      for(k=0;k<nb[j].length;k++){t=nb[j][k];if(b[t]===c&&!seen[t]){seen[t]=1;stack.push(t)}}}
+    if(ok(m))return cells}
+  return null}
+function zipChain(b){return group(b,1,AN,function(m){return m===15})}
+function pipChain(b){return group(b,2,ON,function(m){return(m&3)===3||(m&12)===12})}
+function legal(s,i){   // "" if a stone may go on cell i now, otherwise the reason
+  if(s.b[i])return"That point is occupied.";
+  if(s.ph===1&&s.turn!==s.zip&&s.k===1&&orthAdj(i,s.f))return"Pip’s second stone may not be orthogonally adjacent to the first one (diagonal is fine).";
+  return""}
+function endTurn(ns,forfeit){ns.lt={p:ns.turn,cells:ns.ts,ph:ns.ph,forfeit:!!forfeit};ns.turn=1-ns.turn;ns.k=0;ns.f=-1;ns.ts=[];return ns}
+function placeAt(s,i){
+  var e=legal(s,i);if(e)return{err:e};
+  var ns=cp(s),c=colourOf(s),j,free=false;ns.b[i]=c;ns.k++;ns.ts.push(i);
+  if(s.ph===0){if(ns.k===3||stoneCount(ns.b)===N)endTurn(ns);return{ns:ns}}
+  var ln=c===1?zipChain(ns.b):pipChain(ns.b);
+  if(ln){ns.w=s.turn;ns.line=ln;ns.lt={p:s.turn,cells:ns.ts,ph:1,win:true};ns.ts=[];return{ns:ns}}
+  if(c===1||ns.k===2)return{ns:endTurn(ns)};
+  ns.f=i;for(j=0;j<N;j++)if(!ns.b[j]&&!orthAdj(j,i)){free=true;break}
+  if(!free)endTurn(ns,true);
+  return{ns:ns}}
+function take(s){var ns=cp(s),ln=zipChain(ns.b);
+  ns.zip=s.turn;ns.ph=1;ns.turn=1-s.turn;ns.k=0;ns.f=-1;ns.ts=[];ns.lt={p:s.turn,take:true,cells:[]};
+  if(ln){ns.w=ns.zip;ns.line=ln;ns.lt.win=true}
+  return ns}
+function resign(s,p){var ns=cp(s);ns.w=1-p;ns.lt={p:p,resign:true,cells:[]};return ns}
+
+/* ================================ 2. ENGINE ================================ */
+/* Evaluation by random fill-in: the empty cells are filled with the stones each side would still place in turn
+   order (Pip two per turn, Zip one), at random places. On a full board exactly one side has won (White either
+   has a four-side chain or Black has an orthogonal crossing), and once a side has won the other cannot, so the
+   full board's winner is the playout result. Play: every legal cell is scored by "all moves as first"
+   statistics (win rate when the cell ends up mine minus win rate when it ends up the opponent's); Hard re-checks
+   the best few by direct playouts. Auction: taking is worth p (Zip's win rate with Pip to move). p is calibrated (see cal). A position the
+   opponent is handed is taken by them if p > 0.5, so the computer adds white stones that bring p closest to
+   balanced, and takes / ends its turn as soon as no stone does better. */
+var simulating=false;
+function rn(n){return Math.floor(Math.random()*n)}
+function bfs(b,sp,goal){var i,k,t,nn;
+  while(sp){i=STK[--sp];if(goal(i))return true;nn=ON[i];
+    for(k=0;k<nn.length;k++){t=nn[k];if(b[t]===2&&VIS[t]!==stamp){VIS[t]=stamp;STK[sp++]=t}}}
+  return false}
+function topRow(i){return FY[i]===W-1}
+function rightCol(i){return FX[i]===W-1}
+function blackCross(b){   // black orthogonal crossing between opposite sides
+  var sp=0,x;stamp++;
+  for(x=0;x<W;x++)if(b[x]===2){VIS[x]=stamp;STK[sp++]=x}
+  if(bfs(b,sp,topRow))return true;
+  stamp++;sp=0;
+  for(x=0;x<W;x++)if(b[x*W]===2){VIS[x*W]=stamp;STK[sp++]=x*W}
+  return bfs(b,sp,rightCol)}
+function blackShare(E,c,r){var nb=0,col=c,left=r;for(var j=0;j<E;j++){if(col===2)nb++;if(--left===0){col=3-col;left=col===2?2:1}}return nb}
+// mover of colour c with r stones left this turn; returns the mover's win rate over n random fills; st collects per-cell stats
+function mc(b,c,r,n,st){
+  var E=0,i,j,k,t,tmp,w=0,nb,pw,mw,o;
+  for(i=0;i<N;i++)if(!b[i])EMP[E++]=i;
+  if(!E){pw=blackCross(b)?1:0;return c===2?pw:1-pw}
+  nb=blackShare(E,c,r);FB.set(b);
+  for(t=0;t<n;t++){
+    for(j=0;j<nb;j++){k=j+rn(E-j);tmp=EMP[j];EMP[j]=EMP[k];EMP[k]=tmp}
+    for(j=0;j<E;j++)FB[EMP[j]]=j<nb?2:1;
+    pw=blackCross(FB)?1:0;mw=c===2?pw:1-pw;w+=mw;
+    if(st)for(j=0;j<E;j++){o=EMP[j]*4+(((j<nb)===(c===2))?0:2);st[o]++;st[o+1]+=mw}
+  }
+  return w/n}
+function centre(i){return .016*(1-(Math.abs(FX[i]-C0)+Math.abs(FY[i]-C0))/(2*C0))}
+// playout budgets shrink on bigger boards (each playout costs more there)
+function budget(){return(simulating?.3:1)*Math.sqrt(81/N)}
+function aiPlay(s){
+  var lv=+$("level").value,f=budget(),c=colourOf(s),r=c===2?2-s.k:1,cs=[],i,b2;
+  for(i=0;i<N;i++)if(!legal(s,i))cs.push(i);
+  for(i=0;i<cs.length;i++){b2=s.b.slice();b2[cs[i]]=c;if(c===1?zipChain(b2):blackCross(b2))return placeAt(s,cs[i]).ns}
+  var st=new Float64Array(4*N);mc(s.b,c,r,Math.max(60,[0,300,2000,5000][lv]*f|0),st);
+  var sc=cs.map(function(i){var o=i*4;return{i:i,v:st[o+1]/Math.max(1,st[o])-st[o+3]/Math.max(1,st[o+2])+centre(i)+Math.random()*.001}});
+  sc.sort(function(a,b){return b.v-a.v});
+  if(lv===1)return placeAt(s,sc[rn(Math.min(3,sc.length))].i).ns;
+  if(lv===3){var best=null,n=Math.max(40,600*f|0);
+    sc.slice(0,8).forEach(function(x){var b3=s.b.slice(),v;b3[x.i]=c;
+      v=(c===2&&r===2)?mc(b3,2,1,n):1-mc(b3,3-c,c===1?2:1,n);   // my win rate after this stone
+      v+=Math.random()*.001;if(!best||v>best.v)best={i:x.i,v:v}});
+    return placeAt(s,best.i).ns}
+  return placeAt(s,sc[0].i).ns}
+/* Random fill-in underrates Zip (Black's random stones connect more easily than against a defender); this maps the
+   fill estimate to Zip's measured win rate in computer-vs-computer play (about 50% when the fill estimate is 0.22). */
+function cal(p){p=Math.min(.999,Math.max(.001,p));return 1/(1+Math.exp(-1.5*(Math.log(p/(1-p))+1.27)))}
+function pv(p){return p>.5?1-p:.25+.5*p}   // value for the player who hands over a position where Zip's win rate is p
+function aiAuction(s){
+  var lv=+$("level").value,f=budget(),pr=[0,[120,60,6],[400,250,10],[1000,600,14]][lv],
+      nd=Math.max(30,pr[0]*f|0),nc=Math.max(20,pr[1]*f|0),K=pr[2],i,j;
+  if(stoneCount(s.b)===N)return s.k?endTurn(cp(s)):take(s);
+  if(s.k===0&&zipChain(s.b))return take(s);
+  var st=new Float64Array(4*N),p0=cal(1-mc(s.b,2,2,nd,st)),stay=s.k===0?p0:pv(p0),cs=[];
+  for(i=0;i<N;i++)if(!s.b[i]){var o=i*4;cs.push({i:i,v:st[o+1]/Math.max(1,st[o])-st[o+3]/Math.max(1,st[o+2])+centre(i)})}
+  cs.sort(function(a,b){return b.v-a.v});
+  // strongest few white stones plus weaker ones spread over the ranking, so the computer can fine-tune its bid
+  var pick=[],L=cs.length,h=Math.min(L,Math.ceil(K/2));
+  for(j=0;j<h;j++)pick.push(cs[j]);
+  for(j=1;j<=K-h&&L>h;j++){var x=cs[h+Math.floor((L-h-1)*j/(K-h))];if(pick.indexOf(x)<0)pick.push(x)}
+  var best=null;
+  pick.forEach(function(x){var b2=s.b.slice();b2[x.i]=1;var p=zipChain(b2)?1:cal(1-mc(b2,2,2,nc)),v=pv(p)+Math.random()*.002;if(!best||v>best.v)best={i:x.i,v:v}});
+  if(!best||stay>=best.v)return s.k===0?take(s):endTurn(cp(s));
+  return placeAt(s,best.i).ns}
+function aiMove(s){return s.ph===0?aiAuction(s):aiPlay(s)}
+function randMove(s){var e=[];for(var i=0;i<N;i++)if(!legal(s,i))e.push(i);
+  if(s.ph===0){if(!e.length)return s.k?endTurn(cp(s)):take(s);if(s.k&&Math.random()<.5)return endTurn(cp(s))}
+  return placeAt(s,e[rn(e.length)]).ns}
+var sim=null;
+function runSim(){   // computer vs computer, to look for first/second-player advantage
+  if(sim){sim.stop=true;return}
+  var CAP=2*N+60,me=sim={stop:false},TOTAL=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?4:+$("simR").value)),
+      done=0,byRole=[0,0],fw=0,un=0,g=null,plies=0,ast=-1,astTot=0,astN=0,lvName=$("level").options[$("level").selectedIndex].text,ids=["mode","size","side","level","new","undo","redo","simN","simR","cb","et","rs"];
+  ids.forEach(function(i){if($(i))$(i).disabled=true});simulating=true;
+  $("sim").textContent="Stop simulation";
+  $("simout").textContent="Simulating at "+lvName+" level… 0/"+TOTAL;
+  function fin2(stopped){
+    sim=null;simulating=false;$("sim").textContent="Simulation";
+    $("mode").disabled=$("size").disabled=$("new").disabled=$("simN").disabled=$("simR").disabled=false;
+    $("level").disabled=$("side").disabled=$("mode").value==="2p";
+    var mg=done?(196*Math.sqrt((fw/done)*(1-fw/done)/done)).toFixed(1):"0";
+    var pc=function(n){return done?(100*n/done).toFixed(1)+"%":"n/a"};
+    $("simout").textContent=(stopped?"Stopped after ":"")+done+" games at "+lvName+" level (computer vs computer), first "+RND+" moves random.\n"+
+      "Zip won "+pc(byRole[0])+", Pip won "+pc(byRole[1])+". The player who started the auction won "+pc(fw)+" (margin ±"+mg+" points at 95% confidence). Average white stones on the board at “take”: "+(astN?(astTot/astN).toFixed(1):"n/a")+"."+(un?" Unfinished (stopped at "+CAP+" moves): "+un+".":"");
+    render();
+  }
+  function stepSim(){
+    if(me.stop){fin2(true);return}
+    var t0=Date.now();
+    while(Date.now()-t0<40){
+      if(!g){g=newGame();plies=0;ast=-1}
+      if(g.w>=0||plies>=CAP){
+        if(g.w>=0){byRole[g.w===g.zip?0:1]++;if(g.w===0)fw++}else un++;
+        done++;g=null;
+        if(done>=TOTAL){fin2(false);return}
+        continue;
+      }
+      g=plies<RND?randMove(g):aiMove(g);
+      plies++;
+      if(ast<0&&g.ph===1){ast=stoneCount(g.b);astTot+=ast;astN++}
+    }
+    $("simout").textContent="Simulating at "+lvName+" level… "+done+"/"+TOTAL;
+    setTimeout(stepSim,0);
+  }
+  stepSim();
+}
+
+/* =============================== 3. INTERFACE =============================== */
+var hist,redo=[],over,busy,note="",RED="#d33";
+function cur(){return hist[hist.length-1]}
+function humanIdx(){return +$("side").value}
+function isHuman(s){return $("mode").value==="2p"||s.turn===humanIdx()}
+function pname(p){return $("mode").value==="2p"?"Player "+(p+1):(p===humanIdx()?"You":"Computer")}
+function pverb(p,a,b){return pname(p)==="You"?b:a}
+function role(p,s){return s.zip<0?"auction":(p===s.zip?"Zip (White)":"Pip (Black)")}
+function start(){
+  setSize(+$("size").value);hist=[newGame()];redo=[];note="";$("level").disabled=$("side").disabled=$("mode").value==="2p";over=false;busy=false;
+  render();maybeAI();
+}
+function X(i){return FX[i]+1}
+function Y(i){return W-FY[i]}
+function stone(c,i){var G=GAME.sides[c-1];return'<circle cx="'+X(i)+'" cy="'+Y(i)+'" r=".46" fill="'+G.color+'" stroke="'+G.edge+'" stroke-width=".05"/>'}
+function render(){
+  var s=cur(),b=s.b,i,m,g=['<svg viewBox="-.25 0 '+(W+1.25)+' '+(W+1.3)+'" role="img" aria-label="Pippinzip board"><rect x=".3" y=".3" width="'+(W+.4)+'" height="'+(W+.4)+'" rx=".2" fill="var(--wood)"/>'];
+  over=s.w>=0;
+  var hu=isHuman(s)&&!over&&!busy&&!sim,fs=W>13?.4:.34,d=W<13?2:3,sp=W<13?[[d,d],[W-1-d,d],[d,W-1-d],[W-1-d,W-1-d],[C0,C0]]:[];
+  if(W>=13)[d,C0,W-1-d].forEach(function(a){[d,C0,W-1-d].forEach(function(c){sp.push([a,c])})});
+  for(m=1;m<=W;m++)g.push('<path d="M'+m+' 1V'+W+'M1 '+m+'H'+W+'" stroke="#3a2c14" stroke-width="'+(m===1||m===W?.07:.04)+'" fill="none"/>');
+  sp.forEach(function(p){g.push('<circle cx="'+(p[0]+1)+'" cy="'+(W-p[1])+'" r=".1" fill="#3a2c14"/>')});
+  for(m=0;m<W;m++){
+    g.push('<text x="'+(m+1)+'" y="'+(W+1.05)+'" text-anchor="middle" font-size="'+fs+'" fill="var(--mute)">'+String.fromCharCode(97+m)+'</text>');
+    g.push('<text x=".24" y="'+(W-m+.12)+'" text-anchor="end" font-size="'+fs+'" fill="var(--mute)">'+(m+1)+'</text>');
+  }
+  if(hu&&s.ph===1&&s.turn!==s.zip&&s.k===1)ON[s.f].forEach(function(c){if(!b[c])g.push('<circle cx="'+X(c)+'" cy="'+Y(c)+'" r=".3" fill="'+RED+'" fill-opacity=".35"/>')});
+  for(i=0;i<N;i++)if(b[i])g.push(stone(b[i],i));
+  (s.ts.length?s.ts:(s.lt?s.lt.cells:[])).forEach(function(c){g.push('<circle cx="'+X(c)+'" cy="'+Y(c)+'" r=".1" fill="'+RED+'"/>')});
+  if(s.line)s.line.forEach(function(c){g.push('<circle cx="'+X(c)+'" cy="'+Y(c)+'" r=".53" fill="none" stroke="'+RED+'" stroke-width=".07"/>')});
+  for(i=0;i<N;i++)g.push('<rect data-i="'+i+'" x="'+(X(i)-.5)+'" y="'+(Y(i)-.5)+'" width="1" height="1" fill="transparent"/>');
+  $("board").innerHTML=g.join("")+'</svg>';
+  var st,cnt=stoneCount(b),who=!isHuman(s)?"The computer is thinking…":($("mode").value==="ai"?"Your turn":pname(s.turn)+"’s turn");
+  for(i=0;i<2;i++){$("p"+i).className="pl"+(!over&&s.turn===i?" on":"");$("n"+i).textContent=pname(i)+": "+role(i,s)}
+  if(over)st="Game over: "+pname(s.w)+" "+pverb(s.w,"wins","win")+" as "+(s.w===s.zip?"Zip":"Pip")+
+    (s.lt&&s.lt.resign?" – "+pname(1-s.w)+" resigned.":s.w===s.zip?" by connecting all four sides.":" by connecting two opposite sides.");
+  else if(s.ph===0)st=who+" – auction ("+cnt+" white stone"+(cnt===1?"":"s")+" on the board)"+(!isHuman(s)?".":s.k===0?": place a white stone (1–3 this turn), or take.":": "+s.k+" placed this turn – place another, or end the turn.");
+  else st=who+" ("+role(s.turn,s)+")"+(!isHuman(s)?".":s.turn===s.zip?": place one white stone.":s.k===0?": place your first black stone.":": place your second black stone, not orthogonally next to the first.");
+  if(note)st+=" "+note;
+  $("status").textContent=st;
+  $("last").textContent=GAME.describe(s);
+  $("cb").hidden=s.ph!==0||s.k!==0||over;$("cb").disabled=!hu;
+  $("et").hidden=s.ph!==0||s.k===0||over;$("et").disabled=!hu;
+  $("rs").hidden=s.ph!==1||over;$("rs").disabled=busy||!!sim||($("mode").value==="2p"&&!isHuman(s));
+  $("undo").disabled=hist.length<2||busy||!!sim;
+  $("redo").disabled=!redo.length||busy||!!sim;
+}
+function play(ns){hist.push(ns);redo=[];render();maybeAI()}
+function canAct(){return!(over||busy||sim||!isHuman(cur()))}
+function click(i){
+  if(!canAct())return;
+  var r=placeAt(cur(),i);
+  if(r.err){note=r.err;render();return}
+  note="";play(r.ns);
+}
+function maybeAI(){
+  var s=cur();if(over||$("mode").value!=="ai"||isHuman(s))return;
+  busy=true;render();
+  setTimeout(function(){var c=cur(),ns=aiMove(c);busy=false;hist.push(ns);render();maybeAI()},s.k?350:60);
+}
+document.title=GAME.title;$("gtitle").textContent=GAME.title;$("gsub").textContent=GAME.subtitle;
+function li(x){return"<li>"+(typeof x==="string"?x:x.t+"<ul>"+x.sub.map(li).join("")+"</ul>")+"</li>"}
+$("rules").innerHTML=GAME.rules.map(function(sec){return"<li><b>"+sec.h+"</b><ul>"+sec.items.map(li).join("")+"</ul></li>"}).join("");
+$("board").onclick=function(e){var t=e.target.closest("[data-i]");if(t)click(+t.getAttribute("data-i"))};
+$("new").onclick=start;$("sim").onclick=runSim;
+$("mode").onchange=$("side").onchange=$("size").onchange=start;
+$("cb").onclick=function(){var s=cur();if(!canAct()||s.ph!==0||s.k!==0)return;note="";play(take(s))};
+$("et").onclick=function(){var s=cur();if(!canAct()||s.ph!==0||s.k===0)return;note="";play(endTurn(cp(s)))};
+$("rs").onclick=function(){var s=cur();if(over||busy||sim||s.ph!==1)return;
+  var p=$("mode").value==="2p"?s.turn:humanIdx();note="";hist.push(resign(s,p));redo=[];render()};
+$("redo").onclick=function(){
+  if(busy||!redo.length)return;
+  hist.push(redo.pop());
+  while($("mode").value==="ai"&&redo.length&&!isHuman(cur()))hist.push(redo.pop());
+  note="";render();maybeAI();
+};
+$("undo").onclick=function(){
+  if(busy||hist.length<2)return;
+  var tmp=[];
+  tmp.push(hist.pop());
+  while($("mode").value==="ai"&&hist.length>1&&!isHuman(cur()))tmp.push(hist.pop());
+  if(!isHuman(cur())&&$("mode").value==="ai"){while(tmp.length)hist.push(tmp.pop());return}
+  tmp.forEach(function(x){redo.push(x)});
+  over=false;note="";render();
+};
+start();
+})();
+</script>
+</body>
+</html>

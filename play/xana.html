@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Xana</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
+<style>
+:root{--bg:#eef0e6;--ink:#1f2a1c;--mute:#5d6a56;--cell:#dfe3cf;--edge:#b9bfa3;--hi:#7b3fc4;--panel:#fff;--line:#c5cab4;--sq1:#E8E2D5;--sq2:#a9b58a;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f;--sq1:#E8E2D5;--sq2:#5b6a48;--hi:#c49bff}}
+:root[data-theme="dark"]{--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f;--sq1:#E8E2D5;--sq2:#5b6a48;--hi:#c49bff}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+main{max-width:1080px;margin:0 auto;padding:16px 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.right>.bar:first-child{margin-top:0}
+@media (min-width:860px){.layout{grid-template-columns:minmax(0,600px) minmax(300px,1fr);gap:28px;align-items:start}}
+h1{font:700 2rem/1.1 "Bricolage Grotesque",Georgia,serif;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+select,button.ctl{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.ctl:disabled,select:disabled,input:disabled{opacity:.45;cursor:default}
+label.f,span.f{color:var(--mute);font-size:.9rem}
+input[type=number]{width:4.5em;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+button.ctl.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.stp{display:inline-flex;align-items:center;gap:6px}
+.stp button.ctl{padding:4px 11px}
+.stp b{min-width:1.4em;text-align:center}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.pl{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:8px 12px;font-size:.95rem}
+.pl.on{border-color:var(--hi)}
+.pl b{font-weight:700}
+.pl small{color:var(--mute);display:block}
+.dot{display:inline-block;width:.8em;height:.8em;border-radius:50%;vertical-align:-.05em;margin-right:5px}
+#status{min-height:1.5em;font-weight:600;margin:6px 0}
+#board svg{display:block;width:100%;max-width:600px;margin:0 auto;touch-action:manipulation;cursor:pointer}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+details li{margin:4px 0}
+.legend{color:var(--mute);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+<h1 id="gtitle"></h1>
+<p class="sub" id="gsub"></p>
+<div class="layout">
+<div class="left">
+<div id="board"></div>
+<p class="legend">Grey dots mark the cells accessible to the player to move. Set how many stones to drop, then click a dotted cell to drop them. Or click one of your stacks: purple dots then show its circle; click one to move the chosen number of stones there, or use <b>Add on top</b> to drop stones from your reserve onto it. After a drop or move, red dots mark where walls can go: click up to two, or press <b>End turn</b>. Tinted cells show the last turn. A small Gold or Blue square marks an empty cell only that player can access; cells neither player can access are filled black.</p>
+</div>
+<aside class="right">
+<div class="bar">
+  <select id="mode" aria-label="Mode"><option value="ai">Play the computer</option><option value="2p">Two players</option></select>
+  <select id="level" aria-label="Computer strength"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select>
+  <select id="side" aria-label="Your side"></select>
+  <select id="view" aria-label="Stack view"><option value="num">View: numbers</option><option value="pile">View: piles of disks</option></select>
+  <button class="ctl primary" id="new">New game</button>
+  <button class="ctl" id="undo">Undo</button>
+  <button class="ctl" id="redo">Redo</button>
+</div>
+<div class="score"><div class="pl" id="p0"></div><div class="pl" id="p1"></div></div>
+<div id="status" aria-live="polite"></div>
+<div id="promoLbl" class="legend" style="margin:0"></div>
+<div class="bar" id="promo" style="margin-top:4px"></div>
+<div id="last" class="legend" style="min-height:2.6em;margin:0 0 8px"></div>
+<div class="bar">
+  <label class="f">Simulation games <input id="simN" type="number" min="10" max="1000" value="10"></label>
+  <label class="f">Random opening moves <input id="simR" type="number" min="0" max="20" value="4"></label>
+  <button class="ctl" id="sim">Simulation</button>
+</div>
+<div id="simout" class="legend" style="white-space:pre-line;margin:0 0 8px"></div>
+<details><summary>Rules</summary><ul id="rules"></ul></details>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+/* =====================================================================
+   1. GAME DEFINITION  - Xana rules: accessibility, circles, drops, moves, walls, captures, pie rule, scoring
+   2. ENGINE           - greedy turn builder (main action, then up to two walls) scored by territory, captures and threats
+   3. INTERFACE        - SVG hexhex board, drop/move/wall clicks, Pass / Swap / End turn buttons
+   Board cells hold: +h Gold stack, -h Blue stack, 0 empty, WALL (127) for a wall.
+   A turn is a sequence of steps: a main action {k:"pass"|"swap"|"drop"|"move", c: cell, f: from, n: stones},
+   then up to two {k:"wall", c} steps and an optional {k:"end"}. Every step makes a new state.
+   A state is {b: Int8Array(169), turn (0 Gold, 1 Blue), ph: 0 before the main action, 1-2 after it (walls placed = ph-1),
+               res: stones in reserve [Gold, Blue], cap: stones each colour has captured, passes: consecutive passes,
+               sw: pie swap made, n: turns completed, w: winner (0, 1) or -1, log/cells: this turn so far,
+               last: {p, log, cells} of the previous turn, prev: previous state}.
+   Cells are named by row letter (a = top row) and position in the row from the left.
+   ===================================================================== */
+var $=function(i){return document.getElementById(i)};
+
+/* ============================ 1. GAME DEFINITION ============================ */
+var GAME={
+  title:"Xana",
+  subtitle:"Drop and move stacks on a hexhex board, wall off space with neutral walls, smother enemy stacks, and finish with more accessible cells and captures.",
+  sides:[{name:"Gold",fill:"#e8b923",edge:"#8a6608",txt:"#3b2a00"},{name:"Blue",fill:"#2f6bd8",edge:"#173a7a",txt:"#fff"}],
+  wall:{fill:"#d2453b",edge:"#7a1d17"},
+  rules:[
+  {h:"Board and pieces",items:[
+    "A hexhex board with 8 cells on each side (169 cells), initially empty.",
+    "Each player has 16 stones in reserve: Gold uses the white set, Blue the black set. Walls (red) are neutral and in unlimited supply.",
+    "Gold moves first. (The rules do not say who starts; this page follows the usual white-first convention.)",
+    "A stack is one or more friendly stones piled on one cell; its height is its number of stones. Walls never belong to stacks."]},
+  {h:"Definitions",items:[
+    "A cell is accessible to a player if it is empty and a path of empty cells links it to one of that player's stones (so any empty cell next to a friendly stone is accessible).",
+    "The distance between two cells is the number of steps between them through empty cells.",
+    "The circle of a stack of height H is the set of accessible cells within distance H of it.",
+    "A stack has liberty if it touches at least one empty cell."]},
+  {h:"A turn",items:[
+    {t:"The player does one of:",sub:[
+      "pass;",
+      "drop a stack: place any number of stones from their reserve on an accessible cell, or on top of a friendly stack;",
+      "move a stack, or the top part of it (any number of its stones), to a cell of its circle."]},
+    "A player with no stones on the board may drop on any empty cell. (Otherwise nothing would be accessible on the first turns; this is this page's reading.)",
+    "After a drop or a move (not after a pass), the player may drop one or two walls, one at a time, each on a cell accessible to them at that moment.",
+    {t:"Captures:",sub:[
+      "After every single drop, move or wall, each stack without liberty is captured: first the opponent's, then the mover's own.",
+      "Captured stones leave the game. Each scores a point for the opponent of its owner, including stones a player loses through their own move (this page's reading)."]},
+    "Pie rule: on their first turn, the second player may swap colours instead of moving. They then play Gold (with its stones and its half point), and the first player continues as Blue, moving next."]},
+  {h:"End of the game",items:[
+    "When both players pass in a row, the game ends.",
+    "Score: one point per cell accessible to you (a cell can count for both players), plus one point per enemy stone captured. Gold gets an extra 0.5 points. The higher score wins, so there are no draws."]}],
+  describe:function(s){var nm=GAME.sides,t="";
+    if(s.last)t=nm[s.last.p].name+": "+s.last.log.join(", ")+".";
+    if(s.ph>0&&s.log.length)t+=(t?" ":"")+"Now "+nm[s.turn].name+": "+s.log.join(", ")+".";
+    return t}
+};
+var SIZE=8,RAD=SIZE-1,RESERVE=16,WALL=127,KOMI=.5;
+var Q=[],R=[],NB=[],IDX={},NAME=[],NN;
+(function(){var q,r,i,d,D=[[1,0],[-1,0],[0,1],[0,-1],[1,-1],[-1,1]];
+  for(r=-RAD;r<=RAD;r++){var q0=Math.max(-RAD,-RAD-r),q1=Math.min(RAD,RAD-r);
+    for(q=q0;q<=q1;q++){IDX[q+","+r]=Q.length;NAME.push("abcdefghijklmno"[r+RAD]+(q-q0+1));Q.push(q);R.push(r)}}
+  NN=Q.length;
+  for(i=0;i<NN;i++){NB[i]=[];for(d=0;d<6;d++){var k=IDX[(Q[i]+D[d][0])+","+(R[i]+D[d][1])];if(k!==undefined)NB[i].push(k)}}})();
+function sq(i){return NAME[i]}
+function ow(v){return v===0||v===WALL?-1:v>0?0:1}   // owner of a cell's content, -1 for empty or wall
+function ht(v){return v<0?-v:v}
+function hexDist(i){return Math.max(Math.abs(Q[i]),Math.abs(R[i]),Math.abs(Q[i]+R[i]))}
+var QU=new Int16Array(NN),TMP=new Uint8Array(NN);
+// marks in out the cells accessible to side t; returns how many there are
+function access(b,t,out){out.fill(0);var qh=0,qt=0,n=0,i,j,q;
+  for(i=0;i<NN;i++)if(ow(b[i])===t)for(j=0;j<NB[i].length;j++){q=NB[i][j];if(b[q]===0&&!out[q]){out[q]=1;QU[qt++]=q;n++}}
+  while(qh<qt){i=QU[qh++];for(j=0;j<NB[i].length;j++){q=NB[i][j];if(b[q]===0&&!out[q]){out[q]=1;QU[qt++]=q;n++}}}
+  return n}
+function accCount(b,t){return access(b,t,TMP)}
+function onBoard(b,t){for(var i=0;i<NN;i++)if(ow(b[i])===t)return true;return false}
+// empty cells where side t may drop (any empty cell while t has no stone on the board)
+function dropMask(b,t){var m=new Uint8Array(NN),i;
+  if(onBoard(b,t))access(b,t,m);else for(i=0;i<NN;i++)if(b[i]===0)m[i]=1;
+  return m}
+// the circle of the stack on f: empty cells within distance = its height, through empty cells
+function circle(b,f){var H=ht(b[f]),D=new Int8Array(NN).fill(-1),m=new Uint8Array(NN),qh=0,qt=0,i,j,q;
+  D[f]=0;QU[qt++]=f;
+  while(qh<qt){i=QU[qh++];if(D[i]>=H)continue;
+    for(j=0;j<NB[i].length;j++){q=NB[i][j];if(b[q]===0&&D[q]<0){D[q]=D[i]+1;m[q]=1;QU[qt++]=q}}}
+  return m}
+function libs(b,i){var n=0;for(var j=0;j<NB[i].length;j++)if(b[NB[i][j]]===0)n++;return n}
+function score(s,t){return accCount(s.b,t)+s.cap[t]+(t===0?KOMI:0)}
+function newState(){return{b:new Int8Array(NN),turn:0,ph:0,res:[RESERVE,RESERVE],cap:[0,0],passes:0,sw:false,n:0,w:-1,log:[],cells:[],last:null,prev:null}}
+function pieAvail(s){return s.w<0&&s.n===1&&s.turn===1&&s.ph===0&&!s.sw}
+// remove stacks without liberty: the opponent's of mover t first, then t's own
+function resolve(b,t,cap,log){[1-t,t].forEach(function(o){var dead=[],i;
+  for(i=0;i<NN;i++)if(ow(b[i])===o&&!libs(b,i))dead.push(i);
+  dead.forEach(function(i){var h=ht(b[i]);cap[1-o]+=h;b[i]=0;
+    if(log)log.push((o===t?"losing its own ":"capturing "+GAME.sides[o].name+"'s ")+(h===1?"stone":"stack of "+h)+" on "+sq(i))})})}
+function endTurn(ns,t,swap){
+  ns.last={p:t,log:ns.log,cells:ns.cells};ns.log=[];ns.cells=[];ns.ph=0;ns.n++;
+  if(!swap)ns.turn=1-t;
+  if(ns.passes>=2)ns.w=score(ns,0)>score(ns,1)?0:1;
+  return ns}
+// play one step for the side to move; quiet skips the move log (used by the engine's search)
+function step(s,a,quiet){var t=s.turn,sg=t?-1:1,b=s.b.slice(),L=quiet?null:s.log.slice(),
+  ns={b:b,turn:t,ph:s.ph,res:s.res.slice(),cap:s.cap.slice(),passes:s.passes,sw:s.sw,n:s.n,w:-1,
+      log:quiet?s.log:L,cells:quiet?s.cells:s.cells.slice(),last:s.last,prev:s};
+  switch(a.k){
+  case"pass":ns.passes++;if(L)L.push("passed");return endTurn(ns,t);
+  case"swap":ns.sw=true;ns.passes=0;if(L)L.push("the second player swapped colours (pie rule) and now plays Gold; the first player continues as Blue");return endTurn(ns,t,true);
+  case"end":return endTurn(ns,t);
+  case"drop":var was=b[a.c];b[a.c]+=sg*a.n;ns.res[t]-=a.n;ns.ph=1;ns.passes=0;
+    if(L){L.push(was?"added "+a.n+" to the stack on "+sq(a.c)+" (now "+ht(b[a.c])+")":"dropped "+(a.n===1?"a stone":"a stack of "+a.n)+" on "+sq(a.c));ns.cells.push(a.c)}break;
+  case"move":b[a.f]-=sg*a.n;b[a.c]=sg*a.n;ns.ph=1;ns.passes=0;
+    if(L){L.push("moved "+a.n+" from "+sq(a.f)+" to "+sq(a.c));ns.cells.push(a.f,a.c)}break;
+  case"wall":b[a.c]=WALL;ns.ph++;if(L){L.push("wall on "+sq(a.c));ns.cells.push(a.c)}break;
+  }
+  resolve(b,t,ns.cap,L);
+  return ns.ph>=3?endTurn(ns,t):ns}
+// main actions for the side to move. lim.d caps the drop size and limits move sizes to 1, half and all
+// (the full set is used only by the interface, which builds moves click by click)
+function mainActions(s,lim){var t=s.turn,b=s.b,out=[{k:"pass"}],i,j,H,cm,ks,k;
+  if(s.res[t]>0){var dm=dropMask(b,t),dk=[];for(k=1;k<=Math.min(s.res[t],lim?lim.d:RESERVE);k++)dk.push(k);
+    for(i=0;i<NN;i++)if(dm[i]||ow(b[i])===t)dk.forEach(function(k){out.push({k:"drop",c:i,n:k})})}
+  for(i=0;i<NN;i++)if(ow(b[i])===t){H=ht(b[i]);cm=circle(b,i);
+    if(lim){ks=[1];if(H>2)ks.push(Math.ceil(H/2));if(H>1)ks.push(H)}else{ks=[];for(k=1;k<=H;k++)ks.push(k)}
+    for(j=0;j<NN;j++)if(cm[j])ks.forEach(function(k){out.push({k:"move",f:i,c:j,n:k})})}
+  return out}
+function posKey(s){return s.b.join(",")+"/"+s.turn}
+
+/* ================================ 2. ENGINE ================================ */
+/* A turn is built greedily: every main action (drops of up to 3 stones, moves of 1, half or all of a stack)
+   is scored, then for the best few the engine adds walls one at a time while a wall improves the score.
+   The score is the current score difference, plus a small value for stones kept in reserve, plus threats:
+   a stack whose liberties can all be filled with the placements left this turn (3 per full turn: a stone and
+   two walls) is counted as nearly captured. Easy uses lots of randomness; Hard checks the opponent's best
+   reply to its 6 best turns. Gold's first stone avoids the centre, and as Blue the computer swaps colours
+   when Gold opened within 2 cells of the centre. After the opponent passes, it passes if it is ahead, or
+   if no move improves its score. */
+var simulating=false,WIN=1e6,INF=1e9;
+function rn(n){return Math.floor(Math.random()*n)}
+function threat(b,victim,r){var best=0,i,l,h;
+  for(i=0;i<NN;i++)if(ow(b[i])===victim){l=libs(b,i);if(l<=r){h=ht(b[i])*(1.1-.1*l);if(h>best)best=h}}
+  return best}
+function rawDiff(s,t){return score(s,t)-score(s,1-t)}
+// territory potential: empty cells closer (through empty cells) to t's stones than to the opponent's, minus the reverse
+var DA=new Int16Array(NN),DB=new Int16Array(NN);
+function distFrom(b,t,D){var qh=0,qt=0,i,j,q;D.fill(999);
+  for(i=0;i<NN;i++)if(ow(b[i])===t){D[i]=0;QU[qt++]=i}
+  while(qh<qt){i=QU[qh++];for(j=0;j<NB[i].length;j++){q=NB[i][j];if(b[q]===0&&D[q]===999){D[q]=D[i]+1;QU[qt++]=q}}}}
+function potential(b,t){distFrom(b,t,DA);distFrom(b,1-t,DB);var v=0;
+  for(var i=0;i<NN;i++)if(b[i]===0){if(DA[i]<DB[i])v++;else if(DB[i]<DA[i])v--}
+  return v}
+function evalFor(s,t){if(s.w>=0)return s.w===t?WIN:-WIN;
+  var o=1-t,b=s.b,d=rawDiff(s,t),m=s.turn,sgm=m===t?1:-1,r=s.ph===0?3:3-s.ph;
+  if(s.ph===0&&s.passes===1&&d*sgm>0)return sgm*WIN/2+d;   // the side to move can end the game while ahead
+  return d+.35*potential(b,t)+.15*(s.res[t]-s.res[o])+sgm*(.9*threat(b,1-m,r)-.5*threat(b,m,3))}
+function wallsGreedy(ns,t,nz){var cur=ns,steps=[],wm=new Uint8Array(NN);
+  while(cur.ph>0&&cur.turn===t&&cur.w<0){
+    var bs=step(cur,{k:"end"},true),bv=evalFor(bs,t)+nz(),ba={k:"end"},c,x,v;
+    access(cur.b,t,wm);
+    for(c=0;c<NN;c++)if(wm[c]){x=step(cur,{k:"wall",c:c},true);v=evalFor(x,t)+nz();if(v>bv){bv=v;bs=x;ba={k:"wall",c:c}}}
+    steps.push(ba);cur=bs;if(ba.k==="end")break}
+  return{steps:steps,fs:cur}}
+function aiTurn(s){
+  var lv=+$("level").value,t=s.turn,i,p,k;
+  if(pieAvail(s)){for(i=0;i<NN;i++)if(ow(s.b[i])===0&&hexDist(i)<=2)return step(s,{k:"swap"})}
+  var amp=lv===1?6:lv===2?.3:.05,nz=function(){return Math.random()*amp},recent=new Set();
+  for(p=s,k=0;k<14&&p;k++,p=p.prev)if(p.ph===0)recent.add(posKey(p));
+  var acts=mainActions(s,{d:lv===1?2:3});
+  if(s.n===0)acts=acts.filter(function(a){return a.k==="drop"&&a.n===1&&hexDist(a.c)>=3&&hexDist(a.c)<=5});
+  var sc=acts.map(function(a){var ns=step(s,a,true);return{a:a,ns:ns,v:evalFor(ns,t)+nz()+(a.k==="pass"?.1:0)}});
+  sc.sort(function(x,y){return y.v-x.v});
+  var K=lv===1?3:lv===2?6:10,top=sc.slice(0,K),cand=[];
+  sc.forEach(function(x){if(x.a.k==="pass"&&top.indexOf(x)<0)top.push(x)});
+  top.forEach(function(x){var r=x.ns.ph>0?wallsGreedy(x.ns,t,nz):{steps:[],fs:x.ns},v=evalFor(r.fs,t)+nz();
+    if(x.a.k==="pass")v+=.1;else if(recent.has(posKey(r.fs)))v-=3;
+    cand.push({steps:[x.a].concat(r.steps),fs:r.fs,v:v,pass:x.a.k==="pass"})});
+  cand.sort(function(x,y){return y.v-x.v});
+  if(lv===3){var hc=cand.slice(0,6);cand.forEach(function(c){if(c.pass&&hc.indexOf(c)<0)hc.push(c)});
+    hc.forEach(function(c){if(c.fs.w>=0)return;var o=1-t,bo=-INF;
+      mainActions(c.fs,{d:1}).forEach(function(a){var w=evalFor(step(c.fs,a,true),o);if(w>bo)bo=w});
+      c.v=-bo+nz()+(c.pass?.1:0)-(!c.pass&&recent.has(posKey(c.fs))?3:0)});
+    cand=hc.sort(function(x,y){return y.v-x.v})}
+  var best=cand[0];
+  // the opponent passed and we are behind: play on while the position still improves, then accept the end
+  if(s.passes===1&&!best.pass&&(s.n>=240||best.v<=evalFor(s,t)+1))best={steps:[{k:"pass"}]};
+  var x=s;best.steps.forEach(function(a){x=step(x,a)});
+  return x}
+function randTurn(g){var acts=mainActions(g,{d:3}).filter(function(a){return a.k!=="pass"}),ns=step(g,acts[rn(acts.length)]);
+  return ns.ph>0?step(ns,{k:"end"}):ns}
+var sim=null;
+function runSim(){   // computer vs computer, to look for an advantage for either colour
+  if(sim){sim.stop=true;return}
+  var CAP=300,me=sim={stop:false},TOTAL=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?4:+$("simR").value)),
+      done=0,w=[0,0],un=0,swaps=0,g=newState(),plies=0,lvName=$("level").options[$("level").selectedIndex].text,nm=GAME.sides.map(function(x){return x.name}),ids=["mode","side","level","new","undo","redo","simN","simR"];
+  ids.forEach(function(i){$(i).disabled=true});simulating=true;sel=-1;render();
+  $("sim").textContent="Stop simulation";
+  $("simout").textContent="Simulating at "+lvName+" level… 0/"+TOTAL;
+  function fin2(stopped){
+    sim=null;simulating=false;$("sim").textContent="Simulation";
+    $("mode").disabled=$("new").disabled=$("simN").disabled=$("simR").disabled=false;
+    $("level").disabled=$("side").disabled=$("mode").value==="2p";
+    var fin=done-un,dec=w[0]+w[1],mg=dec?(196*Math.sqrt((w[0]/dec)*(1-w[0]/dec)/dec)).toFixed(1):"0";
+    var pc=function(n){return fin?(100*n/fin).toFixed(1)+"%":"n/a"};
+    $("simout").textContent=(stopped?"Stopped after ":"")+done+" games at "+lvName+" level (computer vs computer), first "+RND+" turns random.\n"+
+      nm[0]+" (moves first, +0.5) won "+pc(w[0])+" ("+w[0]+" games); "+nm[1]+" won "+pc(w[1])+" ("+w[1]+" games).\n"+
+      "The second player used the pie swap in "+swaps+" finished game"+(swaps===1?"":"s")+".\n"+
+      nm[0]+"'s share has a margin of ±"+mg+" points at 95% confidence."+(un?"\nUnfinished (stopped at "+CAP+" turns): "+un+".":"");
+    render();
+  }
+  function stepSim(){
+    if(me.stop){fin2(true);return}
+    var t0=Date.now();
+    while(Date.now()-t0<40){
+      if(g.w>=0||plies>=CAP){
+        if(g.w>=0){w[g.w]++;if(g.sw)swaps++}else un++;
+        done++;g=newState();plies=0;
+        if(done>=TOTAL){fin2(false);return}
+        continue;
+      }
+      g=plies<RND?randTurn(g):aiTurn(g);
+      for(var p=g,k=0;p&&k<16;k++)p=p.prev;if(p)p.prev=null;   // keep only the recent history in simulations
+      plies++;
+    }
+    $("simout").textContent="Simulating at "+lvName+" level… "+done+"/"+TOTAL;
+    setTimeout(stepSim,0);
+  }
+  stepSim();
+}
+
+/* =============================== 3. INTERFACE =============================== */
+var hist,redo=[],over,busy,note="",sel=-1,dropN=1,moveN=1;   // sel: the friendly stack picked for a move
+var SQ3=Math.sqrt(3);
+function cur(){return hist[hist.length-1]}
+function hc(s){return(+$("side").value)^(s.sw?1:0)}       // the human's colour (the pie swap exchanges colours)
+function humanTurn(){var s=cur();return $("mode").value==="2p"||s.turn===hc(s)}
+function start(){
+  hist=[newState()];redo=[];note="";sel=-1;dropN=1;$("level").disabled=$("side").disabled=$("mode").value==="2p";over=false;busy=false;
+  render();maybeAI();
+}
+function X(i){return SQ3*(Q[i]+R[i]/2)}
+function Y(i){return 1.5*R[i]}
+function hexPts(cx,cy,r){var p=[];for(var k=0;k<6;k++){var a=Math.PI/180*(60*k-30);p.push((cx+r*Math.cos(a)).toFixed(3)+","+(cy+r*Math.sin(a)).toFixed(3))}return p.join(" ")}
+function pileView(){return $("view").value==="pile"}
+function fmt(x){return x%1?x.toFixed(1):""+x}
+var PE=' pointer-events="none"';
+// numbers view: one disc per cell labelled with its height (no label on a single stone)
+// piles view: the height drawn as that many disks; tall piles are compressed and also labelled
+function piece(v,i){var cx=X(i),cy=Y(i),o=[];
+  if(v===WALL){var W=GAME.wall;
+    return'<polygon points="'+hexPts(cx,cy+.08,.72)+'" fill="'+W.edge+'"'+PE+'/><polygon points="'+hexPts(cx,cy,.72)+'" fill="'+W.fill+'" stroke="'+W.edge+'" stroke-width=".06"'+PE+'/>'}
+  var G=GAME.sides[v>0?0:1],h=ht(v);
+  if(pileView()){var th=h>1?Math.min(.2,.9/(h-1)):0,base=cy+(h-1)*th/2+.03,j,y;
+    for(j=0;j<h;j++){y=base-j*th;
+      o.push('<ellipse cx="'+cx+'" cy="'+(y+.08)+'" rx=".6" ry=".21" fill="'+G.edge+'"'+PE+'/>');
+      o.push('<ellipse cx="'+cx+'" cy="'+y+'" rx=".6" ry=".21" fill="'+G.fill+'" stroke="'+G.edge+'" stroke-width=".05"'+PE+'/>')}
+    if(h>4)o.push('<text x="'+cx+'" y="'+(y+.01)+'" text-anchor="middle" dominant-baseline="central" font-size=".34" font-weight="700" fill="'+G.txt+'"'+PE+'>'+h+'</text>');
+    return o.join("")}
+  o.push('<circle cx="'+cx+'" cy="'+(cy+.08)+'" r=".62" fill="'+G.edge+'"'+PE+'/>');
+  o.push('<circle cx="'+cx+'" cy="'+cy+'" r=".62" fill="'+G.fill+'" stroke="'+G.edge+'" stroke-width=".06"'+PE+'/>');
+  if(h>=2)o.push('<text x="'+cx+'" y="'+(cy+.03)+'" text-anchor="middle" dominant-baseline="central" font-size=".7" font-weight="700" fill="'+G.txt+'"'+PE+'>'+h+'</text>');
+  return o.join("")}
+function stepper(label,key,val,min,max){
+  return'<span class="stp"><span class="f">'+label+'</span><button class="ctl" data-a="'+key+'-"'+(val<=min?" disabled":"")+' aria-label="Fewer">−</button><b>'+val+
+    '</b><button class="ctl" data-a="'+key+'+"'+(val>=max?" disabled":"")+' aria-label="More">+</button></span>'}
+function btn(a,txt,cls){return'<button class="ctl'+(cls?" "+cls:"")+'" data-a="'+a+'">'+txt+'</button>'}
+function who(s,i){return $("mode").value==="ai"?(hc(s)===i?" (you)":" (computer)"):" (player "+(1+(i^(s.sw?1:0)))+")"}
+function render(){
+  var s=cur(),sd=GAME.sides,h=[],P=s.turn,i,b=s.b;
+  over=s.w>=0;
+  var hu=humanTurn()&&!over&&!busy&&!sim;
+  if(!hu||s.ph>0||(sel>=0&&ow(b[sel])!==P))sel=-1;
+  var dm=null,cm=null,wm=null;
+  if(hu){if(s.ph===0){dm=dropMask(b,P);if(sel>=0)cm=circle(b,sel)}else{wm=new Uint8Array(NN);access(b,P,wm)}}
+  dropN=Math.max(1,Math.min(dropN,s.res[P]));
+  if(sel>=0)moveN=Math.max(1,Math.min(moveN,ht(b[sel])));
+  h.push('<svg viewBox="-14.3 -11.8 27.6 23.6" role="img" aria-label="Xana board">');
+  for(i=0;i<NN;i++)h.push('<polygon points="'+hexPts(X(i),Y(i),1)+'" fill="var(--sq1)" stroke="var(--sq2)" stroke-width=".07"/>');
+  for(i=0;i<NN;i++)if(i===0||R[i]!==R[i-1])h.push('<text x="'+(X(i)-1.4)+'" y="'+Y(i)+'" text-anchor="middle" dominant-baseline="central" font-size=".6" fill="var(--mute)">'+NAME[i].charAt(0)+'</text>');
+  (s.ph>0?s.cells:s.last?s.last.cells:[]).forEach(function(q){h.push('<polygon points="'+hexPts(X(q),Y(q),.95)+'" fill="var(--hi)" opacity=".2"'+PE+'/>')});
+  // territory: empty cells accessible to one player only get a square of that colour; to neither, filled black
+  if(s.n>=2){var ma=new Uint8Array(NN),mb=new Uint8Array(NN);access(b,0,ma);access(b,1,mb);
+    for(i=0;i<NN;i++)if(b[i]===0){
+      if(!ma[i]&&!mb[i])h.push('<polygon points="'+hexPts(X(i),Y(i),1)+'" fill="#111" stroke="var(--sq2)" stroke-width=".07"'+PE+'/>');
+      else if(!ma[i]!==!mb[i]){var G=sd[ma[i]?0:1];h.push('<rect x="'+(X(i)-.23)+'" y="'+(Y(i)-.23)+'" width=".46" height=".46" rx=".05" fill="'+G.fill+'" stroke="'+G.edge+'" stroke-width=".04"'+PE+'/>')}}}
+  if(sel>=0)h.push('<polygon points="'+hexPts(X(sel),Y(sel),.9)+'" fill="none" stroke="var(--hi)" stroke-width=".13"'+PE+'/>');
+  for(i=0;i<NN;i++)if(b[i])h.push(piece(b[i],i));
+  for(i=0;i<NN;i++){
+    if(cm){if(cm[i])h.push('<circle cx="'+X(i)+'" cy="'+Y(i)+'" r=".24" fill="var(--hi)"'+PE+'/>')}
+    else if(dm){if(dm[i])h.push('<circle cx="'+X(i)+'" cy="'+Y(i)+'" r=".14" fill="var(--mute)" opacity=".55"'+PE+'/>')}
+    else if(wm&&wm[i])h.push('<circle cx="'+X(i)+'" cy="'+Y(i)+'" r=".24" fill="'+GAME.wall.fill+'"'+PE+'/>')}
+  for(i=0;i<NN;i++)h.push('<polygon data-i="'+i+'" points="'+hexPts(X(i),Y(i),1)+'" fill="transparent"/>');
+  h.push('</svg>');
+  $("board").innerHTML=h.join("");
+  var names=sd.map(function(x){return x.name}),st;
+  for(i=0;i<2;i++){var ac=accCount(b,i),onb=0,stk=0,top=0,k,v;
+    for(k=0;k<NN;k++)if(ow(b[k])===i){v=ht(b[k]);onb+=v;stk++;if(v>top)top=v}
+    $("p"+i).className="pl"+(!over&&P===i?" on":"");
+    $("p"+i).innerHTML='<b><span class="dot" style="background:'+sd[i].fill+'"></span>'+names[i]+who(s,i)+"</b>"+
+      "<small>Score <b>"+fmt(ac+s.cap[i]+(i?0:KOMI))+"</b> = "+ac+" accessible + "+s.cap[i]+" captured"+(i?"":" + 0.5")+"</small>"+
+      "<small>Reserve "+s.res[i]+" · on board "+onb+" in "+stk+" stack"+(stk===1?"":"s")+(stk?", tallest "+top:"")+"</small>"}
+  if(over){var c0=score(s,0),c1=score(s,1);
+    st="Game over: both players passed. "+names[0]+" "+fmt(c0)+", "+names[1]+" "+fmt(c1)+" — "+names[s.w]+who(s,s.w)+" wins."}
+  else st=names[P]+(s.ph===0?" to move":" may drop "+(3-s.ph===2?"up to two walls":"one more wall"))+(humanTurn()?"":" (computer thinking…)")+
+    (s.ph===0&&s.passes===1?" — the opponent passed, so passing now ends the game":"")+".";
+  $("status").textContent=st;
+  $("last").textContent=(GAME.describe(s)+" "+note).trim();
+  var pl=$("promoLbl"),pr=$("promo");
+  if(hu&&s.ph===0&&sel<0){
+    pl.textContent=s.res[P]>0?"Click a dotted cell to drop "+(dropN===1?"a stone":"a stack of "+dropN)+", or click one of your stacks to move it or add to it.":
+      "Your reserve is empty: click one of your stacks to move it, or pass.";
+    pr.innerHTML=(s.res[P]>0?stepper("Stones to drop","d",dropN,1,s.res[P]):"")+btn("pass","Pass")+(pieAvail(s)?btn("swap","Swap colours (pie rule)"):"")}
+  else if(hu&&s.ph===0){var H=ht(b[sel]);
+    pl.textContent="Stack of "+H+" on "+sq(sel)+" selected. Click a purple dot (its circle: up to "+H+" step"+(H===1?"":"s")+" through empty cells) to move "+moveN+" stone"+(moveN===1?"":"s")+" there"+
+      (s.res[P]>0?", or add stones from your reserve on top":"")+". Click the stack again to cancel.";
+    pr.innerHTML=stepper("Stones to move","m",moveN,1,H)+(s.res[P]>0?stepper("To add","d",dropN,1,s.res[P])+btn("add","Add on top"):"")+btn("cancel","Cancel")}
+  else if(hu){pl.textContent="Optional: click a red dot to drop a wall ("+(3-s.ph)+" left this turn), or end the turn.";
+    pr.innerHTML=btn("end","End turn","primary")}
+  else{pl.textContent="";pr.innerHTML=""}
+  $("undo").disabled=hist.length<2||busy||!!sim;
+  $("redo").disabled=!redo.length||busy||!!sim;
+}
+function play(ns){sel=-1;dropN=1;hist.push(ns);redo=[];render();maybeAI()}
+function click(i){
+  if(over||busy||sim||!humanTurn())return;
+  var s=cur(),P=s.turn,b=s.b;note="";
+  if(s.ph>0){var wm=new Uint8Array(NN);access(b,P,wm);
+    if(wm[i]){play(step(s,{k:"wall",c:i}));return}
+    note=b[i]?"Walls go on empty cells.":"That cell is not accessible: walls go on empty cells linked by empty cells to one of your stones.";
+    render();return}
+  if(sel>=0){
+    if(i===sel){sel=-1;render();return}
+    if(circle(b,sel)[i]){play(step(s,{k:"move",f:sel,c:i,n:moveN}));return}
+    if(ow(b[i])!==P){sel=-1;note="That cell is not in the selected stack's circle; selection cleared.";render();return}
+  }
+  if(ow(b[i])===P){sel=i;moveN=ht(b[i]);
+    if(!circle(b,i).some(function(x){return x}))note="This stack has no empty cell within reach"+(s.res[P]>0?"; you can still add stones on top.":".");
+    render();return}
+  if(dropMask(b,P)[i]){if(s.res[P]<1)note="Your reserve is empty.";else{play(step(s,{k:"drop",c:i,n:dropN}));return}}
+  else note=b[i]===WALL?"Walls never move.":b[i]?"That is an opponent’s stack.":"That cell is not accessible: no path of empty cells links it to one of your stones.";
+  render();
+}
+function action(a){
+  var s=cur();if(over||busy||sim||!humanTurn())return;
+  var P=s.turn;note="";
+  if(a==="d-")dropN--;
+  else if(a==="d+")dropN++;
+  else if(a==="m-")moveN--;
+  else if(a==="m+")moveN++;
+  else if(a==="pass"&&s.ph===0){play(step(s,{k:"pass"}));return}
+  else if(a==="swap"&&pieAvail(s)){play(step(s,{k:"swap"}));return}
+  else if(a==="add"&&sel>=0&&s.res[P]>0){play(step(s,{k:"drop",c:sel,n:dropN}));return}
+  else if(a==="end"&&s.ph>0){play(step(s,{k:"end"}));return}
+  else if(a==="cancel")sel=-1;
+  render();
+}
+function maybeAI(){
+  if(over||$("mode").value!=="ai"||humanTurn())return;
+  busy=true;render();
+  setTimeout(function(){var ns=aiTurn(cur());busy=false;hist.push(ns);render();maybeAI()},60);
+}
+document.title=GAME.title;$("gtitle").textContent=GAME.title;$("gsub").textContent=GAME.subtitle;
+function li(x){return"<li>"+(typeof x==="string"?x:x.t+"<ul>"+x.sub.map(li).join("")+"</ul>")+"</li>"}
+$("rules").innerHTML=GAME.rules.map(function(sec){return"<li><b>"+sec.h+"</b><ul>"+sec.items.map(li).join("")+"</ul></li>"}).join("");
+$("side").innerHTML=GAME.sides.map(function(x,i){return'<option value="'+i+'">You play '+(i?"second":"first")+' ('+x.name+')</option>'}).join("");
+$("side").value="0";
+$("board").onclick=function(e){var t=e.target.closest("[data-i]");if(t)click(+t.getAttribute("data-i"))};
+$("promo").onclick=function(e){var t=e.target.closest("[data-a]");if(t&&!t.disabled)action(t.getAttribute("data-a"))};
+try{if(localStorage.getItem("xana-view")==="pile")$("view").value="pile"}catch(e){}
+$("view").onchange=function(){try{localStorage.setItem("xana-view",$("view").value)}catch(e){}render()};
+$("new").onclick=start;$("sim").onclick=runSim;
+$("mode").onchange=$("side").onchange=start;
+$("redo").onclick=function(){
+  if(busy||!redo.length)return;
+  hist.push(redo.pop());
+  while($("mode").value==="ai"&&redo.length&&!humanTurn())hist.push(redo.pop());
+  note="";sel=-1;render();
+};
+$("undo").onclick=function(){
+  if(busy||hist.length<2)return;
+  redo.push(hist.pop());
+  while($("mode").value==="ai"&&hist.length>1&&!humanTurn())redo.push(hist.pop());
+  note="";sel=-1;over=false;render();maybeAI();
+};
+start();
+})();
+</script>
+</body>
+</html>
