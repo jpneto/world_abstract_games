@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Magnetic Chess</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
+<style>
+:root{--bg:#eef0e6;--ink:#1f2a1c;--mute:#5d6a56;--edge:#b9bfa3;--hi:#7b3fc4;--panel:#fff;--line:#c5cab4;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--edge:#3b4733;--panel:#1f271c;--line:#37422f;--hi:#c49bff}}
+:root[data-theme="dark"]{--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--edge:#3b4733;--panel:#1f271c;--line:#37422f;--hi:#c49bff}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+main{max-width:1080px;margin:0 auto;padding:16px 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.right>.bar:first-child{margin-top:0}
+@media (min-width:860px){.layout{grid-template-columns:minmax(0,600px) minmax(300px,1fr);gap:28px;align-items:start}}
+h1{font:700 2rem/1.1 "Bricolage Grotesque",Georgia,serif;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+select,button.ctl{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.ctl:disabled,select:disabled,input:disabled{opacity:.45;cursor:default}
+label.f,span.f{color:var(--mute);font-size:.9rem}
+input[type=number]{width:4.5em;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+button.ctl.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.pl{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:8px 12px;font-size:.95rem}
+.pl.on{border-color:var(--hi)}
+.pl b{font-weight:700}
+.pl small{color:var(--mute);display:block}
+.dot{display:inline-block;width:.8em;height:.8em;border-radius:50%;vertical-align:-.05em;margin-right:5px;border:1px solid rgba(0,0,0,.35)}
+#status{min-height:1.5em;font-weight:600;margin:6px 0}
+#board svg{display:block;width:100%;max-width:600px;margin:0 auto;touch-action:manipulation;cursor:pointer;border-radius:6px}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+details li{margin:4px 0}
+.legend{color:var(--mute);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+<h1 id="gtitle"></h1>
+<p class="sub" id="gsub"></p>
+<div class="layout">
+<div class="left">
+<div id="board"></div>
+<p class="legend">Click one of your pieces: purple dots mark its moves and purple rings the pieces it can capture. With a mouse, hover a destination to preview the magnetism: arrows show which pieces would be pushed or pulled. To castle, move the king two squares. Tinted squares show the last move, and dashed arrows show the pieces its magnetism moved.</p>
+</div>
+<aside class="right">
+<div class="bar">
+  <select id="mode" aria-label="Mode"><option value="ai">Play the computer</option><option value="2p">Two players</option></select>
+  <select id="level" aria-label="Computer strength"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select>
+  <select id="side" aria-label="Your side"></select>
+  <button class="ctl primary" id="new">New game</button>
+  <button class="ctl" id="undo">Undo</button>
+  <button class="ctl" id="redo">Redo</button>
+</div>
+<div class="score"><div class="pl" id="p0"></div><div class="pl" id="p1"></div></div>
+<div id="status" aria-live="polite"></div>
+<div id="promoLbl" class="legend" style="margin:0"></div>
+<div class="bar" id="promo" style="margin-top:4px"></div>
+<div id="last" class="legend" style="min-height:2.6em;margin:0 0 8px"></div>
+<div class="bar">
+  <label class="f">Simulation games <input id="simN" type="number" min="10" max="1000" value="10"></label>
+  <label class="f">Random opening moves <input id="simR" type="number" min="0" max="20" value="4"></label>
+  <button class="ctl" id="sim">Simulation</button>
+</div>
+<div id="simout" class="legend" style="white-space:pre-line;margin:0 0 8px"></div>
+<details><summary>Rules</summary><ul id="rules"></ul></details>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+/* =====================================================================
+   1. GAME DEFINITION  - Magnetic Chess rules: FIDE moves without check, king capture wins, magnetism after every move
+   2. ENGINE           - alpha-beta search (iterative deepening, time limited) on material and piece placement
+   3. INTERFACE        - SVG 8x8 board, select-then-move clicks, promotion buttons, magnetism preview on hover
+   Board: Int8Array(64), index = rank*8 + file (a1 = 0, h8 = 63). +1..+6 Gold (white army) P N B R Q K, negative Blue.
+   A move is {f: from, t: to, pr: promotion piece or 0, c: 1 king-side / 2 queen-side castling}.
+   A state is {b, turn (0 Gold, 1 Blue), cr: castling rights (1 Gold O-O, 2 Gold O-O-O, 4 Blue O-O, 8 Blue O-O-O),
+               hm: plies since the last capture or pawn move, n: plies played, w: winner (0, 1), 2 for a draw, -1 while playing,
+               why: how the game ended, last: {p, m, txt, cells, sh: magnetic shifts [from, to, promoted]}, prev: previous state}.
+   ===================================================================== */
+var $=function(i){return document.getElementById(i)};
+
+/* ============================ 1. GAME DEFINITION ============================ */
+var GAME={
+  title:"Magnetic Chess",
+  subtitle:"Chess where every move pushes and pulls: the nearest pieces along the rank and file are repelled by friends and attracted by enemies. Capture the king to win.",
+  sides:[{name:"Gold",fill:"#D6A64F",edge:"#4f3a12",det:"#4f3a12"},{name:"Blue",fill:"#263C48",edge:"#0b1418",det:"#b4c8d2"}],
+  board:{light:"#E5DFD2",dark:"#C9C0B0"},
+  rules:[
+  {h:"Board and pieces",items:[
+    "The standard 8×8 chess board and starting position. Gold plays the white army and moves first; Blue plays the black army.",
+    "All FIDE rules apply, except as stated below."]},
+  {h:"Winning",items:[
+    "There is no check, checkmate or stalemate: a king may move to, or stay on, an attacked square. The player who captures the opponent's king wins.",
+    "A player with no legal move loses. (The rules do not cover this; it is this page's reading.)",
+    "The game is drawn after 50 moves by each side with no capture and no pawn move, or when the same position occurs for the third time with the same player to move. (On this page both draws are automatic.)"]},
+  {h:"Magnetism",items:[
+    "Every piece, pawns included, has a charge, except the two kings, which are neutral. Gold pieces have one charge and Blue pieces the other.",
+    {t:"When a piece other than a king is moved to a square, take its closest neighbour in each of the four directions along its rank and file (not the diagonals):",sub:[
+      "a piece of the same colour is repelled: it slides away along that line as far as it can, stopping at the board edge or next to the next piece;",
+      "a piece of the other colour is attracted: it slides toward the moved piece and stops on the square next to it;",
+      "these distances follow the inventors' worked example. After Qd5, the Gold rook on c5 is pushed to b5 (against the Blue queen on a5), the Blue rook on f5 is pulled to e5, and the Blue bishop on d2 is pulled to d4."]},
+    "Kings are neither repelled nor attracted, do not repel or attract, and block the field: if the closest piece in a direction is a king, nothing in that direction moves.",
+    "Magnetism never captures: pieces only slide over empty squares. The four directions act independently.",
+    "A pawn pushed or pulled onto its last rank is promoted to a queen. (The rules do not cover this. This page's reading matches the promotions in the inventors' sample games.)"]},
+  {h:"Special moves",items:[
+    "Castling follows the FIDE rules without the conditions about check: the king and the rook have not moved, and the squares between them are empty. The magnetism comes from the rook's movement, acting from the rook's new square.",
+    "A castling right is lost once that rook has left its corner, including when magnetism pushes or pulls it away. (This is this page's reading.)",
+    "A Gold pawn on the 1st or 2nd rank, or a Blue pawn on the 7th or 8th rank, may move two squares forward over an empty square, even if it has moved before.",
+    "There is no en passant.",
+    "A pawn that moves to its last rank is promoted to a queen, rook, bishop or knight, as in FIDE chess."]}],
+  describe:function(s){return s.last?GAME.sides[s.last.p].name+": "+s.last.txt+".":""}
+};
+var P=1,N=2,B=3,R=4,Q=5,K=6,LET=" PNBRQK",PNAME=["","pawn","knight","bishop","rook","queen","king"],VAL=[0,100,300,320,500,900,0],BACK=[R,N,B,Q,K,B,N,R];
+function sq(i){return"abcdefgh"[i&7]+((i>>3)+1)}
+function sgn(v){return v>0?1:v<0?-1:0}
+function side(v){return v>0?0:v<0?1:-1}   // owner of a square's piece, -1 when empty
+function pt(v){return v<0?-v:v}           // piece type
+// rays: directions 0-3 along rank and file, 4-7 diagonal; NT/KT: knight and king targets
+var DIRS=[[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]],KNJ=[[1,2],[2,1],[2,-1],[1,-2],[-1,-2],[-2,-1],[-2,1],[-1,2]],RAY=[],NT=[],KT=[];
+(function(){for(var i=0;i<64;i++){var f=i&7,r=i>>3;
+  RAY[i]=DIRS.map(function(d){var a=[],x=f+d[0],y=r+d[1];while(x>=0&&x<8&&y>=0&&y<8){a.push(y*8+x);x+=d[0];y+=d[1]}return a});
+  NT[i]=[];KNJ.forEach(function(d){var x=f+d[0],y=r+d[1];if(x>=0&&x<8&&y>=0&&y<8)NT[i].push(y*8+x)});
+  KT[i]=RAY[i].filter(function(a){return a.length}).map(function(a){return a[0]})}})();
+function newState(){var b=new Int8Array(64);
+  for(var f=0;f<8;f++){b[f]=BACK[f];b[8+f]=P;b[48+f]=-P;b[56+f]=-BACK[f]}
+  return{b:b,turn:0,cr:15,hm:0,n:0,w:-1,why:"",last:null,prev:null}}
+function addP(out,f,t,last){if((t>>3)===last)[Q,N,R,B].forEach(function(p){out.push({f:f,t:t,pr:p})});else out.push({f:f,t:t})}
+// all legal moves of side t (no check rule, so every pseudo-legal move is legal)
+function gen(b,t,cr){var out=[],sg=t?-1:1,i,v,p,d,k,q,ray,L;
+  for(i=0;i<64;i++){v=b[i];if(!v||sgn(v)!==sg)continue;p=pt(v);
+    if(p===P){var r=i>>3,fw=sg*8,last=t?0:7,x;q=i+fw;if(q<0||q>63)continue;
+      if(!b[q]){addP(out,i,q,last);
+        if(t?r>=6:r<=1){var q2=q+fw;if(q2>=0&&q2<64&&!b[q2])out.push({f:i,t:q2})}}
+      for(d=-1;d<=1;d+=2){x=(i&7)+d;if(x<0||x>7)continue;if(sgn(b[q+d])===-sg)addP(out,i,q+d,last)}}
+    else if(p===N||p===K){L=p===N?NT[i]:KT[i];for(k=0;k<L.length;k++){q=L[k];if(sgn(b[q])!==sg)out.push({f:i,t:q})}}
+    else for(d=p===B?4:0;d<(p===R?4:8);d++){ray=RAY[i][d];
+      for(k=0;k<ray.length;k++){q=ray[k];if(!b[q])out.push({f:i,t:q});else{if(sgn(b[q])===-sg)out.push({f:i,t:q});break}}}}
+  if(!t){if(cr&1&&b[4]===K&&b[7]===R&&!b[5]&&!b[6])out.push({f:4,t:6,c:1});
+    if(cr&2&&b[4]===K&&b[0]===R&&!b[1]&&!b[2]&&!b[3])out.push({f:4,t:2,c:2})}
+  else{if(cr&4&&b[60]===-K&&b[63]===-R&&!b[61]&&!b[62])out.push({f:60,t:62,c:1});
+    if(cr&8&&b[60]===-K&&b[56]===-R&&!b[57]&&!b[58]&&!b[59])out.push({f:60,t:58,c:2})}
+  return out}
+// the magnetic field of the piece on o: its closest neighbour in each direction along rank and file
+function magnet(b,o,sh){var c=sgn(b[o]),d,ray,k,j,q,dest,v,pr;
+  for(d=0;d<4;d++){ray=RAY[o][d];for(k=0;k<ray.length&&!b[ray[k]];k++);
+    if(k===ray.length)continue;q=ray[k];if(pt(b[q])===K)continue;   // kings are neutral and block the field
+    if(sgn(b[q])===c){for(j=k;j+1<ray.length&&!b[ray[j+1]];j++);dest=ray[j]}   // repelled: as far as possible
+    else dest=ray[0];                                                       // attracted: next to the moved piece
+    if(dest===q)continue;
+    v=b[q];pr=0;b[q]=0;
+    if(v===P&&(dest>>3)===7){v=Q;pr=1}else if(v===-P&&(dest>>3)===0){v=-Q;pr=1}
+    b[dest]=v;sh.push([q,dest,pr])}}
+// play move m for side t on a copy of the board; returns {b, cr, cap: captured piece, sh: magnetic shifts}
+function make(b0,t,cr,m){var b=b0.slice(),sg=t?-1:1,v=b[m.f],cap=b[m.t],o=m.t,sh=[];
+  b[m.t]=m.pr?sg*m.pr:v;b[m.f]=0;
+  if(m.c){var rk=t?56:0,rf=rk+(m.c===1?7:0),rt=rk+(m.c===1?5:3);b[rt]=b[rf];b[rf]=0;o=rt}   // castling: the rook makes the field
+  if(pt(cap)!==K&&pt(b[o])!==K)magnet(b,o,sh);
+  if(pt(v)===K)cr&=t?3:12;
+  if(b[0]!==R)cr&=~2;if(b[7]!==R)cr&=~1;if(b[56]!==-R)cr&=~8;if(b[63]!==-R)cr&=~4;
+  return{b:b,cr:cr,cap:cap,sh:sh}}
+function posKey(s){return s.b.join(",")+"/"+s.turn+"/"+s.cr}
+function reps(s){var k=posKey(s),n=0,p=s,i;for(i=0;p&&i<=s.hm;i++,p=p.prev)if(posKey(p)===k)n++;return n}
+function moveText(b,t,m,r){var p=pt(b[m.f]),x;
+  x=m.c?(m.c===1?"O-O":"O-O-O"):(p===P?"":LET[p])+sq(m.f)+(r.cap?"x":"–")+sq(m.t)+(m.pr?"="+LET[m.pr]:"");
+  if(r.sh.length)x+=" (magnetism: "+r.sh.map(function(s){var w=r.b[s[1]];
+    return GAME.sides[side(w)].name+" "+PNAME[s[2]?P:pt(w)]+" "+sq(s[0])+"→"+sq(s[1])+(s[2]?", promoted to queen":"")}).join("; ")+")";
+  return x}
+// play one move from a state and detect the end of the game
+function play1(s,m){var t=s.turn,r=make(s.b,t,s.cr,m),mv=s.b[m.f],nm=GAME.sides,
+  cells=m.c?[m.f,m.t,(t?56:0)+(m.c===1?7:0),(t?56:0)+(m.c===1?5:3)]:[m.f,m.t],
+  ns={b:r.b,turn:1-t,cr:r.cr,hm:(r.cap||pt(mv)===P)?0:s.hm+1,n:s.n+1,w:-1,why:"",prev:s,
+      last:{p:t,m:m,txt:moveText(s.b,t,m,r),cells:cells,sh:r.sh}};
+  if(pt(r.cap)===K){ns.w=t;ns.why=nm[t].name+" captured the "+nm[1-t].name+" king"}
+  else if(!gen(ns.b,ns.turn,ns.cr).length){ns.w=t;ns.why=nm[1-t].name+" has no legal move"}
+  else if(ns.hm>=100){ns.w=2;ns.why="50 moves each without a capture or a pawn move"}
+  else if(reps(ns)>=3){ns.w=2;ns.why="the same position occurred three times"}
+  return ns}
+
+/* ================================ 2. ENGINE ================================ */
+/* Negamax with alpha-beta, captures and promotions searched first. A side that can capture the enemy king scores a win at once,
+   so the search sees one extra ply of king danger. Leaves are scored by material (pawn 1, knight 3, bishop 3.2, rook 5, queen 9),
+   advanced pawns (magnetism turns them into missiles) and central minor pieces and queens.
+   Easy searches 1 move with large randomness, Medium 3, Hard deepens up to 6 within a time budget.
+   At the root, a move that repeats a position is avoided unless clearly behind, and a draw (third repetition, 50-move limit) scores slightly below even. */
+var simulating=false,WIN=100000,INF=1e9,ABORT={},nodes=0,deadline=0;
+function rn(n){return Math.floor(Math.random()*n)}
+function kingSq(b,t){var k=t?-K:K;for(var i=0;i<64;i++)if(b[i]===k)return i;return -1}
+// does side t attack square k?
+function attacked(b,k,t){var sg=t?-1:1,i,d,ray,j,x,p,pr=(k>>3)-sg;
+  for(i=0;i<NT[k].length;i++)if(b[NT[k][i]]===sg*N)return true;
+  for(i=0;i<KT[k].length;i++)if(b[KT[k][i]]===sg*K)return true;
+  if(pr>=0&&pr<8)for(d=-1;d<=1;d+=2){x=(k&7)+d;if(x>=0&&x<8&&b[pr*8+x]===sg*P)return true}
+  for(d=0;d<8;d++){ray=RAY[k][d];for(j=0;j<ray.length;j++){x=b[ray[j]];
+    if(x){if(sgn(x)===sg){p=pt(x);if(p===Q||(d<4?p===R:p===B))return true}break}}}
+  return false}
+function evalB(b,t){var v=0,i,x,p,f,r,c,a;
+  for(i=0;i<64;i++){x=b[i];if(!x)continue;p=pt(x);f=i&7;r=i>>3;c=VAL[p];
+    if(p===P){a=x>0?r:7-r;c+=a*a*2}
+    else if(p===N||p===B||p===Q)c+=(14-Math.abs(2*f-7)-Math.abs(2*r-7))*2;
+    v+=x>0?c:-c}
+  return t?-v:v}
+function orderMoves(ms,b){ms.forEach(function(m){var c=pt(b[m.t]);m.o=(c?(c===K?1e6:VAL[c]*10-VAL[pt(b[m.f])]+1):0)+(m.pr?VAL[m.pr]*5:0)});
+  ms.sort(function(x,y){return y.o-x.o})}
+function negamax(b,t,cr,depth,alpha,beta,ply){
+  if((++nodes&511)===0&&Date.now()>deadline)throw ABORT;
+  if(kingSq(b,t)<0)return -WIN+ply;
+  var ek=kingSq(b,1-t);if(ek<0||attacked(b,ek,t))return WIN-ply;
+  if(depth<=0)return evalB(b,t);
+  var ms=gen(b,t,cr);if(!ms.length)return -WIN+ply;
+  orderMoves(ms,b);
+  var best=-INF,i,r,v;
+  for(i=0;i<ms.length;i++){r=make(b,t,cr,ms[i]);v=-negamax(r.b,1-t,r.cr,depth-1,-beta,-alpha,ply+1);
+    if(v>best){best=v;if(v>alpha){alpha=v;if(alpha>=beta)break}}}
+  return best}
+function aiTurn(s){
+  var lv=+$("level").value,t=s.turn,ms=gen(s.b,t,s.cr),maxD=lv===1?1:lv===2?3:6,noise=lv===1?90:lv===2?12:2,
+      budget=simulating?(lv===3?300:150):(lv===3?1500:800),hk={},p,k,d;
+  for(p=s,k=0;p&&k<=s.hm+1;k++,p=p.prev){var key=posKey(p);hk[key]=(hk[key]||0)+1}
+  orderMoves(ms,s.b);
+  var kids=ms.map(function(m){var r=make(s.b,t,s.cr,m),c={m:m,r:r,v:0,nz:Math.random()*noise,fix:null,rep:0};
+    if(pt(r.cap)===K)c.fix=WIN;
+    else{var hm=(r.cap||pt(s.b[m.f])===P)?0:s.hm+1,rk=hk[r.b.join(",")+"/"+(1-t)+"/"+r.cr]||0;
+      if(rk>=2||hm>=100)c.fix=-25;else c.rep=rk}   // draws count slightly below even
+    return c});
+  deadline=Date.now()+budget;nodes=0;
+  for(d=1;d<=maxD;d++){var a=-INF,tmp=[];
+    try{kids.forEach(function(c){var v=c.fix!==null?c.fix:-negamax(c.r.b,1-t,c.r.cr,d-1,-INF,-(a-noise-1),1);tmp.push(v);if(v>a)a=v})}
+    catch(e){if(e!==ABORT)throw e;break}
+    kids.forEach(function(c,i){c.v=tmp[i]});
+    kids.sort(function(x,y){return y.v-x.v});
+    if(kids[0].v>=WIN-100)break}
+  var best=null;
+  kids.forEach(function(c){c.sc=c.v+c.nz-(c.rep&&c.v>-150?40:0);if(!best||c.sc>best.sc)best=c});
+  return play1(s,best.m)}
+function randTurn(g){var ms=gen(g.b,g.turn,g.cr);return play1(g,ms[rn(ms.length)])}
+var sim=null;
+function runSim(){   // computer vs computer, to look for an advantage for either colour
+  if(sim){sim.stop=true;return}
+  var CAP=300,me=sim={stop:false},TOTAL=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?4:+$("simR").value)),
+      done=0,w=[0,0,0],un=0,g=newState(),plies=0,lvName=$("level").options[$("level").selectedIndex].text,nm=GAME.sides.map(function(x){return x.name}),ids=["mode","side","level","new","undo","redo","simN","simR"];
+  ids.forEach(function(i){$(i).disabled=true});simulating=true;sel=-1;pend=null;render();
+  $("sim").textContent="Stop simulation";
+  $("simout").textContent="Simulating at "+lvName+" level… 0/"+TOTAL;
+  function fin2(stopped){
+    sim=null;simulating=false;$("sim").textContent="Simulation";
+    $("mode").disabled=$("new").disabled=$("simN").disabled=$("simR").disabled=false;
+    $("level").disabled=$("side").disabled=$("mode").value==="2p";
+    var fin=done-un,dec=w[0]+w[1],sh=dec?w[0]/dec:0,mg=dec?(196*Math.sqrt(sh*(1-sh)/dec)).toFixed(1):"0";
+    var pc=function(n){return fin?(100*n/fin).toFixed(1)+"%":"n/a"};
+    $("simout").textContent=(stopped?"Stopped after ":"")+done+" games at "+lvName+" level (computer vs computer), first "+RND+" moves random.\n"+
+      nm[0]+" (moves first) won "+pc(w[0])+" ("+w[0]+" games); "+nm[1]+" won "+pc(w[1])+" ("+w[1]+" games); draws "+pc(w[2])+" ("+w[2]+").\n"+
+      (dec?nm[0]+"'s share of decisive games is "+(100*sh).toFixed(1)+"%, ±"+mg+" points at 95% confidence.":"No decisive games.")+
+      (un?"\nUnfinished (stopped at "+CAP+" moves): "+un+".":"");
+    render();
+  }
+  function stepSim(){
+    if(me.stop){fin2(true);return}
+    var t0=Date.now();
+    while(Date.now()-t0<40){
+      if(g.w>=0||plies>=CAP){
+        if(g.w>=0)w[g.w]++;else un++;
+        done++;g=newState();plies=0;
+        if(done>=TOTAL){fin2(false);return}
+        continue;
+      }
+      g=plies<RND?randTurn(g):aiTurn(g);
+      for(var p=g,k=0;p&&k<110;k++)p=p.prev;if(p)p.prev=null;   // keep only the recent history in simulations
+      plies++;
+    }
+    $("simout").textContent="Simulating at "+lvName+" level… "+done+"/"+TOTAL;
+    setTimeout(stepSim,0);
+  }
+  stepSim();
+}
+
+/* =============================== 3. INTERFACE =============================== */
+var hist,redo=[],over,busy,note="",sel=-1,pend=null,hov=-1,flip=false;   // sel: the friendly piece picked; pend: a promotion waiting for its piece
+function cur(){return hist[hist.length-1]}
+function hc(){return +$("side").value}       // the human's colour
+function humanTurn(){return $("mode").value==="2p"||cur().turn===hc()}
+function start(){
+  hist=[newState()];redo=[];note="";sel=-1;pend=null;$("level").disabled=$("side").disabled=$("mode").value==="2p";over=false;busy=false;
+  render();maybeAI();
+}
+function XY(i){var f=i&7,r=i>>3;return flip?[7-f,r]:[f,7-r]}
+var PE=' pointer-events="none"';
+// piece silhouettes drawn in a 100-unit square
+var BASE='<rect x="24" y="79" width="52" height="11" rx="4"/>',SHAPE={
+  1:'<path d="M36 80C38 63 44 55 44 46H56C56 55 62 63 64 80Z"/><rect x="37" y="41" width="26" height="7" rx="3.5"/><circle cx="50" cy="29" r="12"/><rect x="27" y="79" width="46" height="11" rx="4"/>',
+  2:'<path d="M36 80C36 67 45 60 47 51C41 54 35 56 29 58C23 59 19 54 21 49C26 40 33 32 38 24L36 12L45 19C53 16 61 19 67 27C75 38 74 58 70 80Z"/>'+BASE,
+  3:'<path d="M35 80C37 68 43 62 43 56H57C57 62 63 68 65 80Z"/><path d="M50 15C65 27 67 41 60 53H40C33 41 35 27 50 15Z"/><circle cx="50" cy="11" r="5"/><rect x="37" y="51" width="26" height="7" rx="3.5"/>'+BASE,
+  4:'<path d="M33 80L36 44H64L67 80Z"/><path d="M29 44V19H38V27H46V19H54V27H62V19H71V44Z"/><rect x="30" y="42" width="40" height="7" rx="2"/>'+BASE,
+  5:'<path d="M31 80C35 67 41 59 39 48H61C59 59 65 67 69 80Z"/><path d="M38 50L20 24L34 36L36 16L46 32L50 13L54 32L64 16L66 36L80 24L62 50Z"/>'+
+    '<circle cx="20" cy="24" r="4.5"/><circle cx="36" cy="16" r="4.5"/><circle cx="50" cy="12" r="4.5"/><circle cx="64" cy="16" r="4.5"/><circle cx="80" cy="24" r="4.5"/><rect x="36" y="46" width="28" height="7" rx="3.5"/>'+BASE,
+  6:'<path d="M31 80C35 67 41 59 39 50H61C59 59 65 67 69 80Z"/><path d="M37 52C25 42 26 28 38 28C44 28 48 33 50 38C52 33 56 28 62 28C74 28 75 42 63 52Z"/>'+
+    '<path d="M46 8H54V16H61V23H54V33H46V23H39V16H46Z"/><rect x="36" y="48" width="28" height="7" rx="3.5"/>'+BASE};
+var DET={2:'<circle cx="42" cy="31" r="3" stroke="none" fill="currentColor"/>',3:'<path d="M55 27L45 39" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>'};
+function piece(v,x,y,op){var G=GAME.sides[side(v)],p=pt(v);
+  return'<g transform="translate('+x+','+y+') scale(.01)" fill="'+G.fill+'" stroke="'+G.edge+'" stroke-width="3.2" stroke-linejoin="round" color="'+G.det+'"'+(op?' opacity="'+op+'"':'')+PE+'>'+SHAPE[p]+(DET[p]||"")+'</g>'}
+function arrow(f,t,dash){var a=XY(f),b=XY(t),x1=a[0]+.5,y1=a[1]+.5,x2=b[0]+.5,y2=b[1]+.5,L=Math.hypot(x2-x1,y2-y1),k=(L-.28)/L;
+  return'<line x1="'+x1+'" y1="'+y1+'" x2="'+(x1+(x2-x1)*k).toFixed(3)+'" y2="'+(y1+(y2-y1)*k).toFixed(3)+'" stroke="var(--hi)" stroke-width="'+(dash?.05:.075)+'"'+
+    (dash?' stroke-dasharray=".12 .08" opacity=".8"':'')+' stroke-linecap="round" marker-end="url(#ah)"'+PE+'/>'}
+function legalFrom(s,i){return gen(s.b,s.turn,s.cr).filter(function(m){return m.f===i})}
+function who(i){return $("mode").value==="ai"?(hc()===i?" (you)":" (computer)"):""}
+function btn(a,txt,cls){return'<button class="ctl'+(cls?" "+cls:"")+'" data-a="'+a+'">'+txt+'</button>'}
+function render(){
+  var s=cur(),sd=GAME.sides,h=[],T=s.turn,b=s.b,i,xy;
+  over=s.w>=0;hov=-1;
+  flip=$("mode").value==="ai"&&hc()===1;
+  var hu=humanTurn()&&!over&&!busy&&!sim;
+  if(!hu){sel=-1;pend=null}
+  if(sel>=0&&side(b[sel])!==T)sel=-1;
+  var lm=sel>=0?legalFrom(s,sel):[];
+  h.push('<svg viewBox="-0.5 -0.05 8.6 8.55" role="img" aria-label="Magnetic Chess board">');
+  h.push('<defs><marker id="ah" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="3.2" markerHeight="3.2" orient="auto"><path d="M0 0L10 5L0 10Z" fill="var(--hi)"/></marker></defs>');
+  for(i=0;i<64;i++){xy=XY(i);h.push('<rect x="'+xy[0]+'" y="'+xy[1]+'" width="1" height="1" fill="'+(((i&7)+(i>>3))%2?GAME.board.light:GAME.board.dark)+'"/>')}
+  for(i=0;i<8;i++){
+    h.push('<text x="-0.25" y="'+(flip?i+.5:7.5-i)+'" text-anchor="middle" dominant-baseline="central" font-size=".32" fill="var(--mute)">'+(i+1)+'</text>');
+    h.push('<text x="'+(flip?7.5-i:i+.5)+'" y="8.25" text-anchor="middle" dominant-baseline="central" font-size=".32" fill="var(--mute)">'+"abcdefgh"[i]+'</text>')}
+  if(s.last)s.last.cells.concat(s.last.sh.map(function(x){return x[1]})).forEach(function(q){xy=XY(q);h.push('<rect x="'+xy[0]+'" y="'+xy[1]+'" width="1" height="1" fill="var(--hi)" opacity=".2"'+PE+'/>')});
+  if(sel>=0){xy=XY(sel);h.push('<rect x="'+(xy[0]+.04)+'" y="'+(xy[1]+.04)+'" width=".92" height=".92" fill="none" stroke="var(--hi)" stroke-width=".08"'+PE+'/>')}
+  for(i=0;i<64;i++)if(b[i]){xy=XY(i);h.push(piece(b[i],xy[0],xy[1]))}
+  if(s.last&&!pend)s.last.sh.forEach(function(x){h.push(arrow(x[0],x[1],true))});
+  var seen={};
+  lm.forEach(function(m){if(seen[m.t])return;seen[m.t]=1;xy=XY(m.t);
+    h.push(b[m.t]?'<circle cx="'+(xy[0]+.5)+'" cy="'+(xy[1]+.5)+'" r=".45" fill="none" stroke="var(--hi)" stroke-width=".07"'+PE+'/>':
+      '<circle cx="'+(xy[0]+.5)+'" cy="'+(xy[1]+.5)+'" r=".15" fill="var(--hi)" opacity=".75"'+PE+'/>')});
+  h.push('<g id="pv"'+PE+'>'+(pend?previewSVG(s,{f:pend.f,t:pend.t,pr:Q}):"")+'</g>');
+  for(i=0;i<64;i++){xy=XY(i);h.push('<rect data-i="'+i+'" x="'+xy[0]+'" y="'+xy[1]+'" width="1" height="1" fill="transparent"/>')}
+  h.push('</svg>');
+  $("board").innerHTML=h.join("");
+  var names=sd.map(function(x){return x.name}),st;
+  for(i=0;i<2;i++){var mat=0,cnt=[0,0,0,0,0,0,0],k,v;
+    for(k=0;k<64;k++)if(side(b[k])===i){v=pt(b[k]);cnt[v]++;mat+=VAL[v]}
+    $("p"+i).className="pl"+(!over&&T===i?" on":"");
+    $("p"+i).innerHTML='<b><span class="dot" style="background:'+sd[i].fill+'"></span>'+names[i]+who(i)+"</b>"+
+      "<small>Material <b>"+Math.round(mat/100)+"</b> · "+cnt[1]+"P "+cnt[2]+"N "+cnt[3]+"B "+cnt[4]+"R "+cnt[5]+"Q</small>"+
+      "<small>Castling: "+((s.cr>>(2*i))&3?[((s.cr>>(2*i))&1)?"O-O":"",((s.cr>>(2*i))&2)?"O-O-O":""].filter(Boolean).join(", "):"none")+"</small>"}
+  if(over)st="Game over: "+s.why+" — "+(s.w===2?"draw.":names[s.w]+who(s.w)+" wins.");
+  else st=names[T]+" to move"+(humanTurn()?"":" (computer thinking…)")+"."+(s.hm>=80?" "+Math.ceil((100-s.hm)/2)+" moves left before the 50-move draw.":"");
+  $("status").textContent=st;
+  $("last").textContent=(GAME.describe(s)+" "+note).trim();
+  var pl=$("promoLbl"),pr=$("promo");
+  if(hu&&pend){pl.textContent="Promote the pawn on "+sq(pend.t)+" to:";
+    pr.innerHTML=btn("p5","Queen","primary")+btn("p4","Rook")+btn("p3","Bishop")+btn("p2","Knight")+btn("cancel","Cancel")}
+  else if(hu&&sel>=0){pl.textContent=sd[T].name+" "+PNAME[pt(b[sel])]+" on "+sq(sel)+" selected: click a purple mark to move there"+(lm.length?"":" (it has no move)")+", or another of your pieces. Click it again to cancel.";
+    pr.innerHTML=btn("cancel","Cancel")}
+  else if(hu){pl.textContent="Click one of your pieces to see its moves.";pr.innerHTML=""}
+  else{pl.textContent="";pr.innerHTML=""}
+  $("undo").disabled=hist.length<2||busy||!!sim;
+  $("redo").disabled=!redo.length||busy||!!sim;
+}
+function previewSVG(s,m){var r=make(s.b,s.turn,s.cr,m);return r.sh.map(function(x){return arrow(x[0],x[1],false)}).join("")}
+function preview(i){
+  if(i===hov||pend)return;hov=i;var g=$("pv");if(!g)return;
+  if(sel<0||i<0){g.innerHTML="";return}
+  var ms=legalFrom(cur(),sel).filter(function(m){return m.t===i});
+  g.innerHTML=ms.length?previewSVG(cur(),ms[0]):""}
+function play(ns){sel=-1;pend=null;hist.push(ns);redo=[];render();maybeAI()}
+function click(i){
+  if(over||busy||sim||!humanTurn())return;
+  var s=cur(),T=s.turn,b=s.b;note="";pend=null;
+  if(sel>=0){var ms=legalFrom(s,sel).filter(function(m){return m.t===i});
+    if(ms.length){if(ms[0].pr){pend={f:sel,t:i};render();return}play(play1(s,ms[0]));return}
+    if(i===sel){sel=-1;render();return}}
+  if(side(b[i])===T){sel=i;if(!legalFrom(s,i).length)note="That piece has no legal move.";render();return}
+  note=sel>=0?"The selected piece cannot move there; selection cleared.":b[i]?"That is an opponent's piece: click one of your own pieces first.":"Click one of your own pieces first.";
+  sel=-1;render();
+}
+function action(a){
+  var s=cur();if(over||busy||sim||!humanTurn())return;note="";
+  if(a.charAt(0)==="p"&&pend){var m=legalFrom(s,pend.f).filter(function(x){return x.t===pend.t&&x.pr===+a.charAt(1)})[0];if(m){play(play1(s,m));return}}
+  else if(a==="cancel"){sel=-1;pend=null}
+  render();
+}
+function maybeAI(){
+  if(over||$("mode").value!=="ai"||humanTurn())return;
+  busy=true;render();
+  setTimeout(function(){var ns=aiTurn(cur());busy=false;hist.push(ns);render();maybeAI()},60);
+}
+document.title=GAME.title;$("gtitle").textContent=GAME.title;$("gsub").textContent=GAME.subtitle;
+function li(x){return"<li>"+(typeof x==="string"?x:x.t+"<ul>"+x.sub.map(li).join("")+"</ul>")+"</li>"}
+$("rules").innerHTML=GAME.rules.map(function(sec){return"<li><b>"+sec.h+"</b><ul>"+sec.items.map(li).join("")+"</ul></li>"}).join("");
+$("side").innerHTML=GAME.sides.map(function(x,i){return'<option value="'+i+'">You play '+x.name+(i?" (second)":" (moves first)")+'</option>'}).join("");
+$("side").value="0";
+$("board").onclick=function(e){var t=e.target.closest("[data-i]");if(t)click(+t.getAttribute("data-i"))};
+$("board").onmouseover=function(e){var t=e.target.closest("[data-i]");preview(t?+t.getAttribute("data-i"):-1)};
+$("board").onmouseleave=function(){preview(-1)};
+$("promo").onclick=function(e){var t=e.target.closest("[data-a]");if(t&&!t.disabled)action(t.getAttribute("data-a"))};
+$("new").onclick=start;$("sim").onclick=runSim;
+$("mode").onchange=$("side").onchange=start;
+$("redo").onclick=function(){
+  if(busy||!redo.length)return;
+  hist.push(redo.pop());
+  while($("mode").value==="ai"&&redo.length&&!humanTurn())hist.push(redo.pop());
+  note="";sel=-1;pend=null;render();
+};
+$("undo").onclick=function(){
+  if(busy||hist.length<2)return;
+  redo.push(hist.pop());
+  while($("mode").value==="ai"&&hist.length>1&&!humanTurn())redo.push(hist.pop());
+  note="";sel=-1;pend=null;over=false;render();maybeAI();
+};
+start();
+})();
+</script>
+</body>
+</html>
