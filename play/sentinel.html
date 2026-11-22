@@ -93,12 +93,14 @@ var N=9,NC=81,CEN=40,COLS="abcdefghi";
 var DIRS=[[0,-1],[1,-1],[1,0],[1,1],[0,1],[-1,1],[-1,0],[-1,-1]];
 var DN=["north","north-east","east","south-east","south","south-west","west","north-west"];
 var NAMES=["Blue","White"],FILL=["#2a63d6","#f7f5ef"],FWD=[1,-1];
-var RAY=[],MAXH=[];
+var RAY=[],MAXH=[],NB8=[],R2=[];
 function setup(){var c,d,x,y,r;
   for(c=0;c<NC;c++){RAY[c]=[];MAXH[c]=0;
     for(d=0;d<8;d++){r=[];x=c%N+DIRS[d][0];y=(c-c%N)/N+DIRS[d][1];
       while(x>=0&&y>=0&&x<N&&y<N&&y*N+x!==CEN){r.push(y*N+x);x+=DIRS[d][0];y+=DIRS[d][1]}
-      RAY[c][d]=r;if(r.length-1>MAXH[c])MAXH[c]=r.length-1}}}
+      RAY[c][d]=r;if(r.length-1>MAXH[c])MAXH[c]=r.length-1}
+    NB8[c]=[];R2[c]=[];
+    for(y=-2;y<=2;y++)for(x=-2;x<=2;x++){var X=c%N+x,Y=(c-c%N)/N+y;if((x||y)&&X>=0&&Y>=0&&X<N&&Y<N)(Math.abs(x)<2&&Math.abs(y)<2?NB8:R2)[c].push(Y*N+X)}}}
 function Xc(c){return c%N}
 function Yc(c){return(c-c%N)/N}
 function cn(c){return COLS[Xc(c)]+(N-Yc(c))}
@@ -168,23 +170,33 @@ function apply(s,m){var b=s.b.slice(),sg=s.turn?-1:1,cap=[],stk=false,k,r;
   return mkState(b,1-s.turn,s.ply+1,{c:s.turn,m:m,cap:cap,stk:stk})}
 
 /* ================================ 2. ENGINE ================================ */
-/* Evaluation for the side to move p against q (all as differences p - q): 14 per piece in sight of the center plus
-   3 x the difference of the squares of those counts (so approaching five matters more), 1.2 per piece, 0.6 per stone,
-   1.5 per stack, 0.03 per legal move (mobility; sowing options make move counts large, so the weight is small), and a 40-point penalty when q already has five or more in sight (q wins at the start of its next turn
-   unless p breaks it now). A move that captures also earns 5 per piece taken plus 1.5 per stone in it, on top of the
+/* Evaluation for the side to move p against q (all as differences p - q), tuned in engine-vs-engine matches: the army
+   comes first, with 4 per stone and 8 per stack, plus cohesion: 1.5 per link between a piece and a friendly neighbour
+   (8 directions, counted from both ends) and -3 per isolated piece (no friendly piece within two squares), so stones
+   stay close enough to be joined into stacks. Sight of the center is kept light: 2 per piece in sight plus 0.5 x the
+   difference of the squares of those counts; also 1.2 per piece, 0.03 per legal move (mobility; sowing options make move counts large, so the weight is small), and a 40-point penalty when q already has five or more in sight (q wins at the start of its next turn
+   unless p breaks it now). A move that captures also earns 6 per piece taken plus 2 per stone in it, on top of the
    material it gains. Finished games are scored exactly: +-(1e6 - ply), so quick wins and slow losses are preferred.
    Search: negamax with alpha-beta; every node plays all its moves one ply ahead and searches a beam of the best.
    Easy picks among the five best one-ply moves (always taking a win, never a move that loses at once), Medium
-   searches 2 plies, Hard 2, 3 and then 4 plies; Medium and Hard work within a time budget and keep the deepest
+   searches 2 and then 3 plies, Hard 2, 3, 4 and then 5 plies; Medium and Hard work within a time budget and keep the deepest
    finished choice. */
 function rn(n){return Math.floor(Math.random()*n)}
-function ev(s){var p=s.turn,q=1-p,a=s.los[p],o=s.los[q],v;
-  v=14*(a-o)+3*(a*a-o*o)+1.2*(s.pc[p]-s.pc[q])+.6*(s.st[p]-s.st[q])+1.5*(s.sk[p]-s.sk[q])+
-    .03*(gen(s).length-moves(s.b,q,false,null));
+var EW=[2,.5,1.2,4,8,.03,1.5,3];  // weights of ev(), in the order of its terms
+// cohesion of the army of each player: co[i] = friendly neighbour links (counted from both ends), iso[i] = pieces with no friendly piece within two squares
+function coh(b){var co=[0,0],iso=[0,0],c,v,o,sg,k,f,nb;
+  for(c=0;c<NC;c++){v=b[c];if(!v)continue;o=v>0?0:1;sg=o?-1:1;f=0;nb=NB8[c];
+    for(k=0;k<nb.length;k++)if(b[nb[k]]*sg>0)f++;
+    co[o]+=f;
+    if(!f){nb=R2[c];for(k=0;k<nb.length;k++)if(b[nb[k]]*sg>0){f=1;break}if(!f)iso[o]++}}
+  return{co:co,iso:iso}}
+function ev(s){var p=s.turn,q=1-p,a=s.los[p],o=s.los[q],W=EW,h=coh(s.b),v;
+  v=W[0]*(a-o)+W[1]*(a*a-o*o)+W[2]*(s.pc[p]-s.pc[q])+W[3]*(s.st[p]-s.st[q])+W[4]*(s.sk[p]-s.sk[q])+
+    W[5]*(gen(s).length-moves(s.b,q,false,null))+W[6]*(h.co[p]-h.co[q])-W[7]*(h.iso[p]-h.iso[q]);
   if(o>=5)v-=40;
   return v}
-// bonus for the capture made by a move: 5 per piece taken plus 1.5 per stone in it (on top of the material gained)
-function cb(l){var v=0,k;for(k=0;k<l.cap.length;k++)v+=5+1.5*l.cap[k].n;return v}
+// bonus for the capture made by a move: 6 per piece taken plus 2 per stone in it (on top of the material gained)
+function cb(l){var v=0,k;for(k=0;k<l.cap.length;k++)v+=6+2*l.cap[k].n;return v}
 function term(s){var v=1e6-s.ply;return s.w===s.turn?v:-v}
 var DEAD=0,ABORT={},BM={};
 function kids(s){var ms=gen(s),st=[],v=new Float64Array(ms.length),o=[],i,ns;
@@ -200,11 +212,13 @@ function nm(s,d,a,bt){var k,i,v,best=-1e9,lim;
   lim=Math.min(k.o.length,BM[d]||8);
   for(i=0;i<lim;i++){v=-nm(k.st[k.o[i]],d-1,-bt,-a);if(v>best){best=v;if(v>a){a=v;if(a>=bt)break}}}
   return best}
+// root search to depth d; the best move found is moved to the front of k.o, so the next, deeper pass tries it first
 function search(s,d,k){var i,v,best=-1e9,bi=k.o[0],lim;
   if(d<=1||k.v[bi]>9e5)return k.ms[bi];
   lim=Math.min(k.o.length,BM[d]||8);
   for(i=0;i<lim;i++){v=-nm(k.st[k.o[i]],d-1,-1e9,-best+1e-9)+Math.random()*.05;
     if(v>best){best=v;bi=k.o[i]}}
+  k.o.splice(k.o.indexOf(bi),1);k.o.unshift(bi);
   return k.ms[bi]}
 function aiMove(s,lv){var ms=gen(s),k,best,n,b2;
   if(lv===undefined)lv=+$("level").value;
@@ -213,9 +227,9 @@ function aiMove(s,lv){var ms=gen(s),k,best,n,b2;
   if(lv===1){if(k.v[k.o[0]]>9e5)return best;
     for(n=0;n<5&&n<k.o.length&&k.v[k.o[n]]>-9e5;n++);
     return n?k.ms[k.o[rn(n)]]:best}
-  if(lv===2){BM={2:12};DEAD=Date.now()+(sim?150:1200)}
-  else{BM={2:20,3:14,4:10};DEAD=Date.now()+(sim?300:3000)}
-  try{best=search(s,2,k);if(lv>2){best=search(s,3,k);b2=search(s,4,k);best=b2}}catch(e){if(e!==ABORT)throw e}
+  if(lv===2){BM={2:40,3:24};DEAD=Date.now()+(sim?250:2500)}
+  else{BM={2:40,3:30,4:22,5:16};DEAD=Date.now()+(sim?500:6000)}
+  try{best=search(s,2,k);best=search(s,3,k);if(lv>2){best=search(s,4,k);best=search(s,5,k)}}catch(e){if(e!==ABORT)throw e}
   DEAD=0;return best}
 var sim=null;
 function runSim(){
