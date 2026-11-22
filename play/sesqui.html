@@ -1,4 +1,3 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,7 +6,7 @@
 <title>Sesqui</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
 <style>
-:root{--bg:#eef0e6;--ink:#1f2a1c;--mute:#5d6a56;--cell:#dfe3cf;--edge:#b9bfa3;--hi:#e0803a;--panel:#fff;--line:#c5cab4;--wood:#d9b66f;--cell:#e6e9d6;
+:root{--bg:#eef0e6;--ink:#1f2a1c;--mute:#5d6a56;--cell:#dfe3cf;--edge:#b9bfa3;--hi:#e0491b;--panel:#fff;--line:#c5cab4;--wood:#d9b66f;--cell:#e6e9d6;
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f;--wood:#9a7b45}}
 :root[data-theme="dark"]{--wood:#9a7b45;--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f}
@@ -46,7 +45,7 @@ details li{margin:4px 0}
 <div class="layout">
 <div class="left">
 <div id="board"></div>
-<p class="legend">Black connects the top and bottom edges, White the left and right edges (corners belong to both). Each turn: drop a stone next to one of yours, then slide a different stone like a chess queen. Dots show legal targets; the last turn is marked in orange.</p>
+<p class="legend">Black connects the top and bottom edges, White the left and right edges (corners belong to both). Each turn: drop a stone next to one of yours, then slide a different stone like a chess queen. Dots show legal destinations once you have picked a stone to slide; a small red dot marks the stones of the last turn.</p>
 </div>
 <aside class="right">
 <div class="bar">
@@ -258,24 +257,32 @@ function isHuman(s){return!isAI()||s.turn===hc()}
 function pname(c){return isAI()?(c===hc()?"You":"Computer"):"Player "+(c+1)}
 function pverb(c,a,b){return pname(c)==="You"?b:a}
 function start(){hist=[newGame()];redo=[];note="";pend=fresh();$("level").disabled=$("side").disabled=!isAI();over=false;busy=false;render();maybeAI()}
-function ring(c,r,clr,w,op){return'<circle cx="'+(c%N+1)+'" cy="'+((c/N|0)+1)+'" r="'+r+'" fill="none" stroke="'+clr+'" stroke-width="'+w+'"'+(op?' opacity="'+op+'"':'')+' pointer-events="none"/>'}
-function stone(c,p,op){return'<circle cx="'+(c%N+1)+'" cy="'+((c/N|0)+1)+'" r=".44" fill="'+(p===1?"#141414":"#f7f6ef")+'" stroke="'+(p===1?"#000":"#555")+'" stroke-width=".05"'+(op?' opacity="'+op+'"':'')+' pointer-events="none"/>'}
+var DEFS='<defs><radialGradient id="gB" cx=".35" cy=".3" r=".75"><stop offset="0" stop-color="#6a6a6a"/><stop offset=".35" stop-color="#2a2a2a"/><stop offset="1" stop-color="#0a0a0a"/></radialGradient><radialGradient id="gW" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#ffffff"/><stop offset=".55" stop-color="#eef0f4"/><stop offset="1" stop-color="#b9bec8"/></radialGradient><linearGradient id="gWood" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#EDBE78"/><stop offset=".5" stop-color="#E6B26A"/><stop offset="1" stop-color="#DDA65C"/></linearGradient><filter id="fGrain" x="0" y="0" width="1" height="1"><feTurbulence type="fractalNoise" baseFrequency=".9 .035" numOctaves="2" seed="7"/><feColorMatrix values="0 0 0 0 .45  0 0 0 0 .28  0 0 0 0 .1  0 0 0 .55 -.18"/><feComposite in2="SourceGraphic" operator="in"/></filter><filter id="fSh" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx=".05" dy=".07" stdDeviation=".05" flood-color="#000" flood-opacity=".4"/></filter></defs>';
+function cx(c){return c%N+1}
+function cy(c){return(c/N|0)+1}
+function ring(c,r,clr,w,op){return'<circle cx="'+cx(c)+'" cy="'+cy(c)+'" r="'+r+'" fill="none" stroke="'+clr+'" stroke-width="'+w+'"'+(op?' opacity="'+op+'"':'')+' pointer-events="none"/>'}
+function dot(c,r,op){return'<circle cx="'+cx(c)+'" cy="'+cy(c)+'" r="'+r+'" fill="var(--hi)"'+(op?' opacity="'+op+'"':'')+' pointer-events="none"/>'}
+function stone(c,p,pre){
+  if(pre)return'<circle cx="'+cx(c)+'" cy="'+cy(c)+'" r=".44" fill="url(#'+(p===1?"gB":"gW")+')" fill-opacity=".7" stroke="var(--hi)" stroke-width=".06" stroke-dasharray=".12 .08" pointer-events="none"/>';
+  return'<circle cx="'+cx(c)+'" cy="'+cy(c)+'" r=".47" fill="url(#'+(p===1?"gB":"gW")+')" stroke="'+(p===1?"#000":"#9aa0aa")+'" stroke-width=".02" filter="url(#fSh)" pointer-events="none"/>'}
 function render(){
-  var s=cur(),b=pend.b||s.b,g=[],c,i,l=s.lm,p=col(s,s.turn),hu,E=N+.5;
+  var s=cur(),b=pend.b||s.b,g=[],c,i,l=s.lm,p=col(s,s.turn),hu,E=N+.5,W=N+1.5,off=N<13?2:3,pts=[off+1,(N+1)/2,N-off],lt="#6b4a22";
   over=s.w>=0;hu=isHuman(s)&&!over&&!busy&&!sim;
-  g.push('<svg viewBox="0 0 '+(N+1)+' '+(N+1)+'" role="img" aria-label="Sesqui board"><rect x=".3" y=".3" width="'+(N+.4)+'" height="'+(N+.4)+'" rx=".3" fill="var(--wood)"/>');
-  for(i=1;i<=N;i++)g.push('<path d="M'+i+' 1V'+N+'M1 '+i+'H'+N+'" stroke="#5e4a25" stroke-width=".05" fill="none"/>');
-  g.push('<path d="M1 .5H'+N+'M1 '+E+'H'+N+'" stroke="#111" stroke-width=".2" fill="none"/><path d="M.5 1V'+N+'M'+E+' 1V'+N+'" stroke="#666" stroke-width=".22" fill="none"/><path d="M.5 1V'+N+'M'+E+' 1V'+N+'" stroke="#fff" stroke-width=".15" fill="none"/>');
-  if(l&&l.t==="t"&&l.f>=0)g.push('<path d="M'+(l.f%N+1)+' '+((l.f/N|0)+1)+'L'+(l.to%N+1)+' '+((l.to/N|0)+1)+'" stroke="#e0803a" stroke-width=".1" stroke-dasharray=".2 .2" fill="none" pointer-events="none"/>');
+  g.push('<svg viewBox="-.25 -.25 '+W+' '+W+'" role="img" aria-label="Sesqui board">'+DEFS+'<rect x="-.25" y="-.25" width="'+W+'" height="'+W+'" rx=".2" fill="url(#gWood)" pointer-events="none"/><rect x="-.25" y="-.25" width="'+W+'" height="'+W+'" rx=".2" fill="#fff" filter="url(#fGrain)" pointer-events="none"/>');
+  for(i=1;i<=N;i++)g.push('<path d="M'+i+' 1V'+N+'M1 '+i+'H'+N+'" stroke="'+lt+'" stroke-width=".035" fill="none" pointer-events="none"/>');
+  (N<13?[pts[0],pts[1],pts[2]]:pts).forEach(function(x,xi){pts.forEach(function(y,yi){if(N<13&&((xi===1)!==(yi===1)))return;g.push('<circle cx="'+x+'" cy="'+y+'" r=".08" fill="'+lt+'" pointer-events="none"/>')})});
+  for(i=0;i<N;i++)g.push('<text x="'+(i+1)+'" y="'+(N+1.05)+'" font-size=".34" text-anchor="middle" fill="'+lt+'" pointer-events="none">'+String.fromCharCode(97+i)+'</text><text x="-.0" y="'+(i+1.12)+'" font-size=".34" text-anchor="middle" fill="'+lt+'" pointer-events="none">'+(N-i)+'</text>');
+  // goal edges: Black north/south, White west/east
+  g.push('<path d="M1 .55H'+N+'M1 '+(N+.45)+'H'+N+'" stroke="#111" stroke-width=".16" stroke-linecap="round" fill="none" pointer-events="none"/><path d="M.55 1V'+N+'M'+(N+.45)+' 1V'+N+'" stroke="#9aa0aa" stroke-width=".19" stroke-linecap="round" fill="none" pointer-events="none"/><path d="M.55 1V'+N+'M'+(N+.45)+' 1V'+N+'" stroke="#fff" stroke-width=".13" stroke-linecap="round" fill="none" pointer-events="none"/>');
+  if(l&&l.t==="t"&&l.f>=0)g.push('<path d="M'+cx(l.f)+' '+cy(l.f)+'L'+cx(l.to)+' '+cy(l.to)+'" stroke="var(--hi)" stroke-width=".07" stroke-dasharray=".16 .14" opacity=".55" fill="none" pointer-events="none"/>');
   for(c=0;c<N*N;c++)if(b[c])g.push(stone(c,b[c]));
-  pend.o.forEach(function(c,k){g.push(stone(c,k<2?1:2,.75),ring(c,.5,"var(--hi)",.07))});
-  if(l&&l.t==="t"){g.push(ring(l.d,.52,"var(--hi)",.07));if(l.f>=0)g.push(ring(l.to,.52,"var(--hi)",.07))}
-  if(hu&&s.phase===2){
-    if(pend.d<0)dropsFor(s.b,p).forEach(function(c){g.push('<circle cx="'+(c%N+1)+'" cy="'+((c/N|0)+1)+'" r=".14" fill="var(--hi)" opacity=".8" pointer-events="none"/>')});
-    else{g.push(ring(pend.d,.52,"var(--hi)",.09));
-      for(c=0;c<N*N;c++)if(b[c]===p&&c!==pend.d&&hasTarget(b,c,p))g.push(ring(c,.5,"var(--hi)",.05,.6));
-      if(pend.f>=0){g.push(ring(pend.f,.55,"var(--hi)",.12));targetsOf(b,pend.f,p).forEach(function(c){g.push('<circle cx="'+(c%N+1)+'" cy="'+((c/N|0)+1)+'" r=".14" fill="var(--hi)" opacity=".8" pointer-events="none"/>')})}}}
-  for(c=0;c<N*N;c++)g.push('<rect data-i="'+c+'" x="'+(c%N+.5)+'" y="'+((c/N|0)+.5)+'" width="1" height="1" fill="transparent"/>');
+  pend.o.forEach(function(c,k){g.push(stone(c,k<2?1:2,true))});
+  if(l&&l.t==="t"){g.push(dot(l.d,.12));if(l.f>=0)g.push(dot(l.to,.12))}
+  if(hu&&s.phase===2&&pend.d>=0){
+    g.push(ring(pend.d,.52,"var(--hi)",.06));
+    for(c=0;c<N*N;c++)if(b[c]===p&&c!==pend.d&&hasTarget(b,c,p))g.push(ring(c,.5,"var(--hi)",.04,.55));
+    if(pend.f>=0){g.push(ring(pend.f,.55,"var(--hi)",.1));targetsOf(b,pend.f,p).forEach(function(c){g.push(dot(c,.13,.85))})}}
+  for(c=0;c<N*N;c++)g.push('<rect data-i="'+c+'" x="'+(c%N+.5)+'" y="'+((c/N|0)+.5)+'" width="1" height="1" fill="#000" fill-opacity="0"/>');
   $("board").innerHTML=g.join("")+'</svg>';
   var st;
   for(i=0;i<2;i++){$("p"+i).className="pl"+(!over&&s.turn===i?" on":"");
@@ -288,7 +295,7 @@ function render(){
     if(hu){
       if(s.phase===0)st+=" Click 3 intersections: Black stone ("+Math.min(pend.o.length+1,2)+"/2)"+(pend.o.length>=2?" \u2192 now the White stone.":" .");
       else if(s.phase===1)st+=" Swap and become Black, or continue as White?";
-      else st+=pend.d<0?" Step 1: drop a stone on a dotted intersection.":" Step 2: click a ringed stone, then a dotted destination."}}
+      else st+=pend.d<0?" Step 1: drop a stone on an empty intersection next to one of yours.":" Step 2: click a ringed stone, then a dotted destination."}}
   if(note)st+=" "+note;
   $("status").textContent=st;
   $("choose").hidden=!(hu&&s.phase===1);
@@ -350,5 +357,3 @@ setN(15);start();
 </script>
 </body>
 </html>
-
-</body></html>

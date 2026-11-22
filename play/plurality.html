@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Plurality</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
+<style>
+:root{--bg:#f1efe9;--ink:#211f1b;--mute:#6a655b;--hi:#e0491b;--panel:#fff;--line:#cfc8b8;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17171a;--ink:#ecebe6;--mute:#a19d93;--panel:#222226;--line:#3d3b38}}
+:root[data-theme="dark"]{--bg:#17171a;--ink:#ecebe6;--mute:#a19d93;--panel:#222226;--line:#3d3b38}
+[hidden]{display:none!important}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+main{max-width:1140px;margin:0 auto;padding:16px 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.right>.bar:first-child{margin-top:0}
+@media (min-width:880px){.layout{grid-template-columns:minmax(0,640px) minmax(290px,1fr);gap:28px;align-items:start}}
+h1{font:700 2rem/1.1 "Bricolage Grotesque",Georgia,serif;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+select,button.ctl{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.ctl:disabled,select:disabled,input:disabled{opacity:.45;cursor:default}
+label.f{color:var(--mute);font-size:.9rem}
+input[type=number]{width:4.5em;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+button.ctl.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.pl{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:8px 12px}
+.pl.on{border-color:var(--hi)}
+.pl small{display:block;color:var(--mute)}
+#status{min-height:3em;font-weight:600;margin:6px 0}
+#board svg{display:block;width:100%;max-width:640px;margin:0 auto;touch-action:manipulation}
+#board rect[data-i]{cursor:pointer}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+details li{margin:4px 0}
+.legend{color:var(--mute);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+<h1 id="gtitle"></h1>
+<p class="sub" id="gsub"></p>
+<div class="layout">
+<div class="left">
+<div id="board"></div>
+<p class="legend">Tap empty intersections to pick your tromino. Your first taps are your own stones; tap a picked intersection again to make it the opponent's stone, and once more to remove it. Once two of yours are picked, the next tap becomes the opponent's stone. The move is played as soon as the three picked intersections form a legal tromino with exactly one opponent stone (Esc clears the pick). Orange dots show where the pick can be completed. With "Show territories" on, small squares mark the empty intersections of each player's scoring territories (during play, only areas where no legal tromino fits any more; at the end, all owned areas). Red dots mark the last move.</p>
+</div>
+<aside class="right">
+<div class="bar">
+  <select id="mode" aria-label="Mode"><option value="ai">Play the computer</option><option value="2p">Two players</option></select>
+  <select id="level" aria-label="Computer strength"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select>
+  <select id="side" aria-label="Your colour"><option value="0">You play Black (moves first)</option><option value="1">You play White</option></select>
+  <select id="size" aria-label="Board size"><option value="9">9×9</option><option value="13" selected>13×13</option><option value="15">15×15</option><option value="19">19×19</option><option value="23">23×23</option></select>
+</div>
+<div class="bar">
+  <button class="ctl primary" id="new">New game</button>
+  <button class="ctl" id="pass">Pass</button>
+  <button class="ctl" id="undo">Undo</button>
+  <button class="ctl" id="redo">Redo</button>
+  <label class="f"><input type="checkbox" id="ctl" checked> Show completions</label>
+  <label class="f"><input type="checkbox" id="frc"> Show territories</label>
+</div>
+<div class="score"><div class="pl" id="p0"><span id="n0"></span><small id="s0"></small></div><div class="pl" id="p1"><span id="n1"></span><small id="s1"></small></div></div>
+<div id="status" aria-live="polite"></div>
+<div id="last" class="legend" style="min-height:2.6em;margin:0 0 8px"></div>
+<div class="bar">
+  <label class="f">Simulation games <input id="simN" type="number" min="10" max="1000" value="10"></label>
+  <label class="f">Random opening turns <input id="simR" type="number" min="0" max="20" value="2"></label>
+  <button class="ctl" id="sim">Simulation</button>
+</div>
+<div id="simout" class="legend" style="white-space:pre-line;margin:0 0 8px"></div>
+<details><summary>Rules</summary><ul id="rules"></ul></details>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+/* 1. GAME DEFINITION (rules, move generation)  2. ENGINE (computer, simulation)  3. INTERFACE (SVG board, clicks)
+   Board: N x N intersections (N = 9, 13, 15, 19 or 23), cell index c = y*N + x with y counted from the top. Cells are
+   named Go-style: column letter A-Z without I (left to right) + row number 1..N (bottom to top).
+   NB[c]: orthogonal neighbours. SQ[c]: the 2x2 squares containing c. TRO: every tromino on the board (straight or bent).
+   State: {b: Uint8Array NC (0 empty, 1 Black, 2 White), turn: 0 Black / 1 White, ply: turns played, ps: consecutive passes,
+           map: owner of each empty cell's territory (1 Black, 2 White, 3 neutral, 4 open: a legal tromino still fits inside, not scored), tr: [black, white] territory points,
+           sc: [black, white] scores (White includes the half point), cnt: stone counts, ms: legal tromino drops of the
+           side to move (cached), end: both passed, w: winner 0/1, lm: last move {c: player, pass} or {c, m}}.
+   Moves: {c: [three cells], o: the cell that receives the opponent's stone} or PASS {pass: true}. */
+var $=function(i){return document.getElementById(i)};
+
+/* ============================ 1. GAME DEFINITION ============================ */
+var N=0,NC=0,NB=[],SQ=[],TRO=[],TBY=[],VIS,MK,QB,STAMP=0,MSTAMP=0;
+var COLS="ABCDEFGHJKLMNOPQRSTUVWXYZ",KOMI=.5,PASS={pass:true};
+var NAMES=["Black","White"],FILL=["#1d1c1a","#f7f5ef"],EDGE=["#000","#6a665e"];
+function setup(n){var x,y,c,q,k;
+  N=n;NC=n*n;NB=[];SQ=[];TRO=[];
+  for(c=0;c<NC;c++){x=c%n;y=(c-x)/n;NB[c]=[];SQ[c]=[];
+    if(y>0)NB[c].push(c-n);if(x<n-1)NB[c].push(c+1);if(y<n-1)NB[c].push(c+n);if(x>0)NB[c].push(c-1)}
+  for(y=0;y<n-1;y++)for(x=0;x<n-1;x++){c=y*n+x;q=[c,c+1,c+n,c+n+1];
+    for(k=0;k<4;k++)SQ[q[k]].push(q);
+    TRO.push([c,c+1,c+n],[c,c+1,c+n+1],[c,c+n,c+n+1],[c+1,c+n,c+n+1])}           // bent: a 2x2 square minus one corner
+  for(y=0;y<n;y++)for(x=0;x<n-2;x++){c=y*n+x;TRO.push([c,c+1,c+2])}             // straight, horizontal
+  for(y=0;y<n-2;y++)for(x=0;x<n;x++){c=y*n+x;TRO.push([c,c+n,c+2*n])}           // straight, vertical
+  for(c=0;c<NC;c++)TBY[c]=[];
+  TRO.forEach(function(t){TBY[Math.min(t[0],t[1],t[2])].push(t)});
+  VIS=new Int32Array(NC);MK=new Int32Array(NC);QB=new Int32Array(NC);STAMP=MSTAMP=0}
+function Xc(c){return c%N}
+function Yc(c){return(c-c%N)/N}
+function cn(c){return COLS[Xc(c)]+(N-Yc(c))}
+var GAME={
+  title:"Plurality",
+  subtitle:"Drop trominoes that always include one enemy stone, and hold the majority around the empty areas.",
+  rules:function(){return[
+  {h:"Board and players",items:["Played on the intersections of a square grid (13×13 by default; 9×9, 15×15, 19×19 and 23×23 are also available) by Black and White. The board starts empty.",
+    "Black moves first. White receives a half point, so the game cannot end in a tie."]},
+  {h:"Definitions",items:["A territory is an orthogonally connected area of empty intersections, enclosed by stones of either colour and possibly by the board edges.",
+    "A territory's score is its number of intersections.",
+    "A territory is owned by the player with more stones orthogonally adjacent to it; with no majority it is neutral.",
+    "During the game, a territory scores nothing while a legal tromino can still be dropped entirely inside it. When the game ends, every territory scores for its owner."]},
+  {h:"Play",items:["On your turn you either pass, or drop three stones on empty intersections forming an orthogonally connected tromino, straight (three in a row) or bent (a right angle). One of the three must be an opponent's stone.",
+    "It is illegal to create a 2×2 square of stones, whatever their colours.",
+    "When both players pass, the game ends. Each player adds up the scores of the territories they own (White adds the half point), and the higher total wins."]},
+  {h:"Implementation notes",items:["“One of those stones must be an opponent stone” is read as exactly one: each tromino holds two of your stones and one of your opponent's.",
+    "The game ends when the two passes are consecutive; a drop in between cancels an earlier pass. You may pass at any time, and must pass when no legal tromino exists.",
+    "An open territory (one where a legal tromino still fits) is left out of the running count shown during play; in the final count after both passes it scores for its owner like any other.",
+    "Each stone is counted once for a territory even if it touches it at several intersections. An area with no adjacent stones (such as the empty board) is neutral."]}]},
+  describe:function(s){var l=s.lm,who,m,own;if(!l)return"";
+    who=isAI()?pname(l.c)+" ("+NAMES[l.c]+")":NAMES[l.c];
+    if(l.pass)return who+" passed.";
+    m=l.m;own=m.c.filter(function(x){return x!==m.o}).map(cn);
+    return who+" dropped "+own.join(" and ")+", plus a "+NAMES[1-l.c]+" stone on "+cn(m.o)+"."}
+};
+// territories of board b: points per player, plus a smooth majority measure (sum of size*(black-white)/(black+white))
+function terr(b,map,fin){var s0=0,s1=0,sm=0,c,h,t,x,k,y,nb,m,o,own;
+  STAMP++;
+  for(c=0;c<NC;c++)if(!b[c]&&VIS[c]!==STAMP){
+    h=0;t=0;QB[t++]=c;VIS[c]=STAMP;m=0;o=0;MSTAMP++;
+    while(h<t){x=QB[h++];nb=NB[x];
+      for(k=0;k<nb.length;k++){y=nb[k];
+        if(!b[y]){if(VIS[y]!==STAMP){VIS[y]=STAMP;QB[t++]=y}}
+        else if(MK[y]!==MSTAMP){MK[y]=MSTAMP;if(b[y]===1)m++;else o++}}}
+    own=m>o?1:o>m?2:3;
+    if(m+o)sm+=t*(m-o)/(m+o);
+    if(!fin&&isOpen(b,t))own=4;
+    else if(own===1)s0+=t;else if(own===2)s1+=t;
+    if(map)for(k=0;k<t;k++)map[QB[k]]=own}
+  return{s:[s0,s1],sm:sm}}
+// does a legal tromino fit inside the region held in QB[0..n-1]? (an all-empty tromino lies within one region)
+function isOpen(b,n){var k,j,tl,t;
+  for(k=0;k<n;k++){tl=TBY[QB[k]];
+    for(j=0;j<tl.length;j++){t=tl[j];if(!b[t[0]]&&!b[t[1]]&&!b[t[2]]&&okTro(b,t))return true}}
+  return false}
+// can tromino t be dropped on b? (all empty, and no 2x2 square of stones afterwards)
+function okTro(b,t){var i,j,q,sq,ok=true;
+  if(b[t[0]]||b[t[1]]||b[t[2]])return false;
+  b[t[0]]=b[t[1]]=b[t[2]]=9;
+  for(i=0;i<3&&ok;i++){sq=SQ[t[i]];
+    for(j=0;j<sq.length;j++){q=sq[j];if(b[q[0]]&&b[q[1]]&&b[q[2]]&&b[q[3]]){ok=false;break}}}
+  b[t[0]]=b[t[1]]=b[t[2]]=0;return ok}
+function gen(s){if(s.ms)return s.ms;var ms=[],i,t,k;
+  if(!s.end)for(i=0;i<TRO.length;i++){t=TRO[i];if(okTro(s.b,t))for(k=0;k<3;k++)ms.push({c:t,o:t[k]})}
+  return s.ms=ms}
+function mkState(b,turn,ply,ps,lm){var map=new Uint8Array(NC),t=terr(b,map,ps>=2),cnt=[0,0],c,s;
+  for(c=0;c<NC;c++)if(b[c])cnt[b[c]-1]++;
+  s={b:b,turn:turn,ply:ply,ps:ps,map:map,tr:t.s,sc:[t.s[0],t.s[1]+KOMI],cnt:cnt,ms:null,end:ps>=2,w:-1,lm:lm};
+  if(s.end)s.w=s.sc[0]>s.sc[1]?0:1;
+  return s}
+function newGame(){return mkState(new Uint8Array(NC),0,0,0,null)}
+function apply(s,m){var b,i,x;
+  if(m.pass)return mkState(s.b,1-s.turn,s.ply+1,s.ps+1,{c:s.turn,pass:true});
+  b=s.b.slice();for(i=0;i<3;i++){x=m.c[i];b[x]=x===m.o?2-s.turn:s.turn+1}
+  return mkState(b,1-s.turn,s.ply+1,0,{c:s.turn,m:m})}
+
+/* ================================ 2. ENGINE ================================ */
+/* Evaluation for player p: 0.6 x (scoring territory points, i.e. closed areas only, minus the opponent's, half point included) + 0.4 x the smooth
+   majority measure, which credits each area by its size times the share of adjacent stones a side leads by, so
+   contested areas count before they are settled. A pass that ends the game is scored exactly: +-(1e6 - ply) for a
+   win or a loss (quick wins and slow losses are preferred).
+   Search: negamax with alpha-beta; every node scores all its drops (and the pass) one ply ahead with stones placed
+   in place on the board and searches a beam of the best. Easy picks among the five best one-ply moves (always taking
+   a win), Medium searches 2 plies, Hard 2 and then 3 plies; Medium and Hard work within a time budget and keep the
+   deepest finished choice. */
+function rn(n){return Math.floor(Math.random()*n)}
+function hv(b,p){var t=terr(b,null),h=.6*(t.s[0]-t.s[1]-KOMI)+.4*t.sm;return p?-h:h}
+function ev(s){return hv(s.b,s.turn)}
+function term(s){var v=1e6-s.ply;return s.w===s.turn?v:-v}
+function cval(s,m){var b=s.b,p=s.turn,t,v,i,x;
+  if(m.pass){
+    if(s.ps>=1){t=terr(b,null,true);v=1e6-s.ply-1;return(t.s[0]>t.s[1]+KOMI)===(p===0)?v:-v}
+    return hv(b,p)}
+  for(i=0;i<3;i++){x=m.c[i];b[x]=x===m.o?2-p:p+1}
+  v=hv(b,p);
+  for(i=0;i<3;i++)b[m.c[i]]=0;
+  return v}
+var DEAD=0,ABORT={},BM={};
+function kids(s){var ms=gen(s).concat([PASS]),v=new Float64Array(ms.length),o=[],i;
+  for(i=0;i<ms.length;i++){v[i]=cval(s,ms[i])+Math.random()*1e-3;o.push(i)}
+  o.sort(function(x,y){return v[y]-v[x]});return{ms:ms,v:v,o:o}}
+function nm(s,d,a,bt){var k,i,v,best=-1e9,lim;
+  if(s.end)return term(s);
+  if(DEAD&&Date.now()>DEAD)throw ABORT;
+  if(d<=0)return ev(s);
+  k=kids(s);
+  if(d===1)return k.v[k.o[0]];
+  lim=Math.min(k.o.length,BM[d]||8);
+  for(i=0;i<lim;i++){v=-nm(apply(s,k.ms[k.o[i]]),d-1,-bt,-a);if(v>best){best=v;if(v>a){a=v;if(a>=bt)break}}}
+  return best}
+function search(s,d,k){var i,v,best=-1e9,bi=k.o[0],lim;
+  if(d<=1||k.v[bi]>9e5)return k.ms[bi];
+  lim=Math.min(k.o.length,BM[d]||8);
+  for(i=0;i<lim;i++){v=-nm(apply(s,k.ms[k.o[i]]),d-1,-1e9,-best+1e-9)+Math.random()*.05;
+    if(v>best){best=v;bi=k.o[i]}}
+  return k.ms[bi]}
+function aiMove(s,lv){var ms=gen(s),k,best,n;
+  if(lv===undefined)lv=+$("level").value;
+  if(lv<1)return ms.length?ms[rn(ms.length)]:PASS;
+  k=kids(s);best=k.ms[k.o[0]];
+  if(lv===1){if(k.v[k.o[0]]>9e5)return best;
+    for(n=0;n<5&&n<k.o.length&&k.v[k.o[n]]>-9e5;n++);
+    return n?k.ms[k.o[rn(n)]]:best}
+  if(lv===2){BM={2:8};DEAD=Date.now()+(sim?150:1200)}
+  else{BM={2:16,3:10};DEAD=Date.now()+(sim?300:3000)}
+  try{best=search(s,2,k);if(lv>2)best=search(s,3,k)}catch(e){if(e!==ABORT)throw e}
+  DEAD=0;return best}
+var sim=null;
+function runSim(){
+  if(sim){sim.stop=true;return}
+  var CAP=2000,me=sim={stop:false},TOTAL=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?2:+$("simR").value)),
+      done=0,wc=[0,0,0],un=0,g=null,plies=0,len=0,lvName=$("level").options[$("level").selectedIndex].text,
+      ids=["mode","side","level","size","new","pass","undo","redo","simN","simR"];
+  ids.forEach(function(i){$(i).disabled=true});
+  SEL=[];
+  $("sim").textContent="Stop simulation";
+  $("simout").textContent="Simulating at "+lvName+" level on "+N+"×"+N+"… 0/"+TOTAL;
+  function fin(stopped){
+    sim=null;$("sim").textContent="Simulation";
+    $("mode").disabled=$("new").disabled=$("size").disabled=$("simN").disabled=$("simR").disabled=false;
+    $("level").disabled=$("side").disabled=$("mode").value==="2p";
+    var pc=function(n){return done?(100*n/done).toFixed(1)+"%":"n/a"};
+    $("simout").textContent=(stopped?"Stopped after ":"")+done+" games ("+lvName+" level, computer vs computer, "+N+"×"+N+"), first "+RND+" turns random.\nBlack (first player) won "+pc(wc[0])+", White won "+pc(wc[1])+(wc[2]?", draws "+pc(wc[2]):"")+". Average length: "+(done?(len/done).toFixed(0):"n/a")+" turns."+(un?" Unfinished (over "+CAP+" turns): "+un+".":"");
+    render()}
+  function step(){
+    if(me.stop){fin(true);return}
+    var t0=Date.now();
+    while(Date.now()-t0<40){
+      if(!g){g=newGame();plies=0}
+      if(g.end||plies>=CAP){if(g.end)wc[g.w]++;else un++;len+=plies;done++;g=null;if(done>=TOTAL){fin(false);return}continue}
+      g=apply(g,aiMove(g,plies<RND?0:undefined));plies++}
+    $("simout").textContent="Simulating at "+lvName+" level on "+N+"×"+N+"… "+done+"/"+TOTAL;
+    setTimeout(step,0)}
+  step()}
+
+/* =============================== 3. INTERFACE =============================== */
+/* SEL: the tromino being picked, a list of {c: cell, r: 0 own stone / 1 opponent's stone}. */
+var hist,redo=[],over,busy,note="",SEL=[];
+var GRID="#6b4a22";
+var DEFS='<defs><radialGradient id="gB" cx=".35" cy=".3" r=".75"><stop offset="0" stop-color="#6a6a6a"/><stop offset=".35" stop-color="#2a2a2a"/><stop offset="1" stop-color="#0a0a0a"/></radialGradient>'+
+  '<radialGradient id="gW" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#ffffff"/><stop offset=".55" stop-color="#eef0f4"/><stop offset="1" stop-color="#b9bec8"/></radialGradient>'+
+  '<linearGradient id="gWood" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#EDBE78"/><stop offset=".5" stop-color="#E6B26A"/><stop offset="1" stop-color="#DDA65C"/></linearGradient>'+
+  '<filter id="fGrain" x="0" y="0" width="1" height="1"><feTurbulence type="fractalNoise" baseFrequency=".9 .035" numOctaves="2" seed="7"/><feColorMatrix values="0 0 0 0 .45  0 0 0 0 .28  0 0 0 0 .1  0 0 0 .55 -.18"/><feComposite in2="SourceGraphic" operator="in"/></filter>'+
+  '<filter id="fSh" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx=".05" dy=".07" stdDeviation=".05" flood-color="#000" flood-opacity=".4"/></filter></defs>';
+var SFILL=["url(#gB)","url(#gW)"],SEDGE=["#000","#9aa0aa"];
+function cur(){return hist[hist.length-1]}
+function hc(){return+$("side").value}
+function isAI(){return $("mode").value==="ai"}
+function isHuman(s){return!isAI()||s.turn===hc()}
+function pname(c){return isAI()?(c===hc()?"You":"Computer"):NAMES[c]}
+function pverb(c,a,b){return pname(c)==="You"?b:a}
+function fmt(v){return v%1?v.toFixed(1):""+v}
+function start(){setup(+$("size").value);hist=[newGame()];redo=[];note="";SEL=[];$("level").disabled=$("side").disabled=!isAI();over=false;busy=false;
+  $("rules").innerHTML=GAME.rules().map(function(sec){return"<li><b>"+sec.h+"</b><ul>"+sec.items.map(li).join("")+"</ul></li>"}).join("");
+  render();maybeAI()}
+// legal drops that agree with the pick
+function compat(s,sel){return gen(s).filter(function(m){return sel.every(function(x){return m.c.indexOf(x.c)>=0&&(m.o===x.c)===(x.r===1)})})}
+function f3(v){return Math.round(v*1000)/1000}
+function circ(c,r,fill,op,st,sw,dash){return'<circle cx="'+Xc(c)+'" cy="'+Yc(c)+'" r="'+r+'" fill="'+fill+'"'+(op?' fill-opacity="'+op+'"':'')+(st?' stroke="'+st+'" stroke-width="'+sw+'"':'')+(dash?' stroke-dasharray="'+dash+'"':'')+' pointer-events="none"/>'}
+function line(x1,y1,x2,y2,clr,w){return'<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="'+clr+'" stroke-width="'+w+'" pointer-events="none"/>'}
+function txt(x,y,t,sz,clr){return'<text x="'+f3(x)+'" y="'+f3(y)+'" font-size="'+sz+'" text-anchor="middle" dominant-baseline="central" fill="'+clr+'" pointer-events="none">'+t+'</text>'}
+function render(){
+  var s=cur(),b=s.b,g=[],c,i,l=s.lm,hu,stt,HI="var(--hi)",M=1.25,W=f3(N-1+2*M),E=N-1,off,pts,cand,sq,col,ms=gen(s);
+  over=s.end;hu=isHuman(s)&&!over&&!busy&&!sim;
+  if(!hu)SEL=[];
+  g.push('<svg viewBox="'+(-M)+' '+(-M)+' '+W+' '+W+'" role="img" aria-label="Plurality board" font-family="system-ui,sans-serif">');
+  g.push(DEFS,'<rect x="'+(-M)+'" y="'+(-M)+'" width="'+W+'" height="'+W+'" rx=".2" fill="url(#gWood)" pointer-events="none"/>','<rect x="'+(-M)+'" y="'+(-M)+'" width="'+W+'" height="'+W+'" rx=".2" fill="#fff" filter="url(#fGrain)" pointer-events="none"/>');
+  for(i=0;i<N;i++){g.push(line(0,i,E,i,GRID,.035),line(i,0,i,E,GRID,.035))}
+  off=N<13?2:3;pts=[off,E/2,E-off];
+  pts.forEach(function(x){pts.forEach(function(y){g.push('<circle cx="'+x+'" cy="'+y+'" r=".08" fill="'+GRID+'" pointer-events="none"/>')})});
+  for(i=0;i<N;i++){g.push(txt(i,-.9,COLS[i],.34,GRID),txt(i,E+.9,COLS[i],.34,GRID),
+    txt(-.9,i,N-i,.34,GRID),txt(E+.9,i,N-i,.34,GRID))}
+  if($("frc").checked)for(c=0;c<NC;c++)if(!b[c]&&(s.map[c]===1||s.map[c]===2))
+    g.push('<rect x="'+(Xc(c)-.16)+'" y="'+(Yc(c)-.16)+'" width=".32" height=".32" fill="'+FILL[s.map[c]-1]+'" stroke="'+EDGE[s.map[c]-1]+'" stroke-width=".03" pointer-events="none"/>');
+  for(c=0;c<NC;c++)if(b[c])g.push('<circle cx="'+Xc(c)+'" cy="'+Yc(c)+'" r=".47" fill="'+SFILL[b[c]-1]+'" stroke="'+SEDGE[b[c]-1]+'" stroke-width=".02" filter="url(#fSh)" pointer-events="none"/>');
+  if(l&&!l.pass)l.m.c.forEach(function(x){g.push(circ(x,.12,HI))});
+  if(hu){SEL.forEach(function(x){col=x.r?1-s.turn:s.turn;g.push(circ(x.c,.44,SFILL[col],.7,HI,.06,".12 .08"))});
+    if(SEL.length&&$("ctl").checked){cand={};
+      compat(s,SEL).forEach(function(m){m.c.forEach(function(x){if(!SEL.some(function(z){return z.c===x}))cand[x]=1})});
+      for(sq in cand)g.push(circ(+sq,.13,HI,.85))}}
+  for(c=0;c<NC;c++)g.push('<rect data-i="'+c+'" x="'+(Xc(c)-.5)+'" y="'+(Yc(c)-.5)+'" width="1" height="1" fill="#000" fill-opacity="0"><title>'+cn(c)+'</title></rect>');
+  $("board").innerHTML=g.join("")+'</svg>';
+  for(i=0;i<2;i++){
+    $("p"+i).className="pl"+(!over&&s.turn===i?" on":"");
+    $("p"+i).style.borderLeft="8px solid "+FILL[i];
+    $("n"+i).textContent=pname(i)+" – "+NAMES[i]+": "+fmt(s.sc[i])+" point"+(s.sc[i]===1?"":"s");
+    $("s"+i).textContent="Territory "+s.tr[i]+(i?" + ½":"")+" · "+s.cnt[i]+" stone"+(s.cnt[i]===1?"":"s")}
+  if(over){stt="Both players passed. Final count: Black "+fmt(s.sc[0])+", White "+fmt(s.sc[1])+". Game over: "+pname(s.w)+(isAI()?" ("+NAMES[s.w]+")":"")+" "+pverb(s.w,"wins","win")+"."}
+  else{
+    stt=isHuman(s)?(isAI()?"Your turn ("+NAMES[s.turn]+").":NAMES[s.turn]+" to move."):"The computer is thinking…";
+    if(s.ps===1)stt+=" "+NAMES[1-s.turn]+" passed; another pass ends the game (Black "+fmt(s.sc[0])+", White "+fmt(s.sc[1])+").";
+    if(hu)stt+=ms.length?" Pick three empty intersections for a tromino, or pass.":" No legal tromino is left: you must pass."}
+  if(note)stt+=" "+note;
+  $("status").textContent=stt;
+  $("last").textContent=GAME.describe(s);
+  $("pass").disabled=!hu;
+  $("undo").disabled=hist.length<2||busy||!!sim;
+  $("redo").disabled=!redo.length||busy||!!sim}
+function play(m){var ns=apply(cur(),m);hist.push(ns);redo=[];note="";SEL=[];render();maybeAI()}
+function click(i){
+  var s=cur(),j,cm;
+  if(over||busy||sim||!isHuman(s))return;
+  note="";
+  if(s.b[i]){note=cn(i)+" is already occupied.";render();return}
+  for(j=0;j<SEL.length&&SEL[j].c!==i;j++);
+  if(j<SEL.length){if(SEL[j].r===0)SEL[j].r=1;else SEL.splice(j,1)}
+  else{
+    if(SEL.length>=3){note="You already picked three intersections; tap one of them to switch or remove it.";render();return}
+    if(compat(s,SEL.concat([{c:i,r:0}])).length)SEL.push({c:i,r:0});
+    else if(compat(s,SEL.concat([{c:i,r:1}])).length)SEL.push({c:i,r:1});
+    else{note=SEL.length?cn(i)+" does not complete a legal tromino with the intersections you picked.":
+      cn(i)+" cannot be part of any legal tromino: every tromino through it would complete a 2×2 square of stones.";
+      render();return}}
+  if(SEL.length===3){cm=compat(s,SEL);
+    if(cm.length){play(cm[0]);return}
+    note="That is not a legal drop: exactly one of the three must be the opponent's stone. Tap a picked intersection to switch its colour."}
+  else if(SEL.length&&!compat(s,SEL).length)note="No legal tromino fits this pick; tap a picked intersection to switch or remove it.";
+  render()}
+function maybeAI(){
+  var s=cur();if(over||!isAI()||isHuman(s))return;
+  busy=true;render();
+  setTimeout(function(){var c=cur(),ns=apply(c,aiMove(c));busy=false;hist.push(ns);render();maybeAI()},60)}
+function li(x){return"<li>"+x+"</li>"}
+document.title=GAME.title;$("gtitle").textContent=GAME.title;$("gsub").textContent=GAME.subtitle;
+$("board").onclick=function(e){var t=e.target.closest("[data-i]");if(t)click(+t.getAttribute("data-i"))};
+$("new").onclick=start;$("sim").onclick=runSim;
+$("pass").onclick=function(){var s=cur();if(over||busy||sim||!isHuman(s))return;play(PASS)};
+$("ctl").onchange=$("frc").onchange=render;
+$("mode").onchange=$("side").onchange=$("size").onchange=start;
+document.addEventListener("keydown",function(e){if(e.key==="Escape"&&SEL.length){SEL=[];note="";render()}});
+$("redo").onclick=function(){
+  if(busy||!redo.length)return;
+  hist.push(redo.pop());
+  while(isAI()&&redo.length&&!isHuman(cur()))hist.push(redo.pop());
+  note="";SEL=[];render();maybeAI()};
+$("undo").onclick=function(){
+  if(busy||hist.length<2)return;
+  var tmp=[];
+  tmp.push(hist.pop());
+  while(isAI()&&hist.length>1&&!isHuman(cur()))tmp.push(hist.pop());
+  if(!isHuman(cur())&&isAI()){while(tmp.length)hist.push(tmp.pop());return}
+  tmp.forEach(function(x){redo.push(x)});
+  over=false;note="";SEL=[];render()};
+start();
+})();
+</script>
+</body>
+</html>

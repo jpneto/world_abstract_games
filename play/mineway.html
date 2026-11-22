@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mineway</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
+<style>
+:root{--bg:#f1efe9;--ink:#211f1b;--mute:#6a655b;--hi:#e0491b;--panel:#fff;--line:#cfc8b8;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17171a;--ink:#ecebe6;--mute:#a19d93;--panel:#222226;--line:#3d3b38}}
+:root[data-theme="dark"]{--bg:#17171a;--ink:#ecebe6;--mute:#a19d93;--panel:#222226;--line:#3d3b38}
+[hidden]{display:none!important}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+main{max-width:1140px;margin:0 auto;padding:16px 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.right>.bar:first-child{margin-top:0}
+@media (min-width:880px){.layout{grid-template-columns:minmax(0,640px) minmax(290px,1fr);gap:28px;align-items:start}}
+h1{font:700 2rem/1.1 "Bricolage Grotesque",Georgia,serif;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+select,button.ctl{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.ctl:disabled,select:disabled,input:disabled{opacity:.45;cursor:default}
+label.f{color:var(--mute);font-size:.9rem}
+input[type=number]{width:4.5em;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+button.ctl.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.pl{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:8px 12px}
+.pl.on{border-color:var(--hi)}
+.pl small{display:block;color:var(--mute)}
+#status{min-height:3em;font-weight:600;margin:6px 0}
+#board svg{display:block;width:100%;max-width:640px;margin:0 auto;touch-action:manipulation}
+#board polygon[data-i]{cursor:pointer}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+details li{margin:4px 0}
+.legend{color:var(--mute);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+<h1 id="gtitle"></h1>
+<p class="sub" id="gsub"></p>
+<div class="layout">
+<div class="left">
+<div id="board"></div>
+<p class="legend">Click an empty cell to drop a new station there; dots mark the cells you can reach. The darker hex in the centre is the mine. With "Show networks" on, lines trace each player's travel routes from the mine through their stations to the border. Cells are named by row (a–k, top to bottom) and position from the left; hover a cell to see its name.</p>
+</div>
+<aside class="right">
+<div class="bar">
+  <select id="mode" aria-label="Mode"><option value="ai">Play the computer</option><option value="2p">Two players</option></select>
+  <select id="level" aria-label="Computer strength"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select>
+  <select id="side" aria-label="Your colour"><option value="0">You play Silver (moves first)</option><option value="1">You play Gold</option></select>
+</div>
+<div class="bar">
+  <button class="ctl primary" id="new">New game</button>
+  <button class="ctl" id="undo">Undo</button>
+  <button class="ctl" id="redo">Redo</button>
+  <label class="f"><input type="checkbox" id="ctl" checked> Show legal cells</label>
+  <label class="f"><input type="checkbox" id="frc" checked> Show networks</label>
+</div>
+<div class="score"><div class="pl" id="p0"><span id="n0"></span><small id="s0"></small></div><div class="pl" id="p1"><span id="n1"></span><small id="s1"></small></div></div>
+<div id="status" aria-live="polite"></div>
+<div id="last" class="legend" style="min-height:2.6em;margin:0 0 8px"></div>
+<div class="bar">
+  <label class="f">Simulation games <input id="simN" type="number" min="10" max="1000" value="10"></label>
+  <label class="f">Random opening turns <input id="simR" type="number" min="0" max="20" value="2"></label>
+  <button class="ctl" id="sim">Simulation</button>
+</div>
+<div id="simout" class="legend" style="white-space:pre-line;margin:0 0 8px"></div>
+<details><summary>Rules</summary><ul id="rules"></ul></details>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+/* 1. GAME DEFINITION (rules, move generation)  2. ENGINE (computer, simulation)  3. INTERFACE (SVG board, clicks)
+   Board: hexhex of side 6 (91 cells), axial coordinates (q,r) with |q|,|r|,|q+r| <= 5. Cell index c runs row by row
+   from the top, left to right; cells are named row letter a-k (top to bottom) + position from the left (1-based).
+   The centre cell (MINE) is the mine: it never holds a stone. PER[c] is true for the 30 perimeter cells.
+   State: {b: Uint8Array 91 (0 empty, 1 Silver, 2 Gold), turn: 0 Silver / 1 Gold, ply: turns played,
+           A: [Silver, Gold] analysis {ok: can travel mine -> border crossing, br: border crossings reachable,
+              st: stations reachable from the mine, pl: cells where a new station may be dropped, n: pl.length,
+              net: flat list of travel edges a,b,a,b,... found from the mine}, cnt: [silver, gold] stone counts,
+           ms: legal moves of the side to move, end: game over, w: winner 0/1 or -1, why: "cut" | "stuck", lm: last move}.
+   Moves: {t: cell where the new station is dropped}. */
+var $=function(i){return document.getElementById(i)};
+
+/* ============================ 1. GAME DEFINITION ============================ */
+var S=5,Q=[],R=[],ROW=[],POS=[],NC=0,RAY=[],NB=[],PER=[],MINE=-1;
+var DQ=[1,1,0,-1,-1,0],DR=[0,-1,-1,0,1,1];          // E, NE, NW, W, SW, SE
+var NAMES=["Silver","Gold"],FILL=["#d4d4d8","#FFD700"],EDGE=["#7a7a80","#a67c00"],NETC=["#5f6068","#9a6b00"];
+// starting position: row by row from the top (x Silver, o Gold, * the mine)
+var SETUP=["......",".......","........",".........","....xo....","....o*x....","....xo....",".........","........",".......","......"];
+(function(){var r,q,lo,hi,idx={},c,d,x,y,ray;
+  for(r=-S;r<=S;r++){lo=Math.max(-S,-S-r);hi=Math.min(S,S-r);
+    for(q=lo;q<=hi;q++){Q.push(q);R.push(r);ROW.push(r+S);POS.push(q-lo);if(!q&&!r)MINE=NC;idx[q+","+r]=NC++}}
+  for(c=0;c<NC;c++){RAY[c]=[];NB[c]=[];
+    for(d=0;d<6;d++){ray=[];x=Q[c]+DQ[d];y=R[c]+DR[d];
+      while((x+","+y) in idx){ray.push(idx[x+","+y]);x+=DQ[d];y+=DR[d]}
+      RAY[c].push(ray);if(ray.length)NB[c].push(ray[0])}
+    PER[c]=NB[c].length<6}})();
+function cn(c){return"abcdefghijk"[ROW[c]]+(POS[c]+1)}
+var GAME={
+  title:"Mineway",
+  subtitle:"Build a chain of stations that carries your ore from the mine to the border, and cut your opponent's way out.",
+  rules:function(){return[
+  {h:"Board and players",items:["Played on a hexagonal board of 91 cells (6 cells per side) by Silver and Gold.",
+    "The centre cell f6 is the mine. Each player starts with three stones around it: Silver on e5, f7 and g5; Gold on e6, f5 and g6. Silver moves first."]},
+  {h:"Definitions",items:["Each stone is a station. An empty perimeter cell is a border crossing.",
+    "A player can directly travel between two friendly stations if they lie in a straight line with at least one empty cell between them and nothing else (no stones). Adjacent stations are not directly connected.",
+    "A player can directly travel from the mine to a friendly station, or from a friendly station to a border crossing, if they are adjacent or lie in a straight line with only empty cells between them.",
+    "A player can travel from the mine to a border crossing if a series of direct travels links them."]},
+  {h:"Play",items:["On your turn you must drop a new station on an empty cell that one of your existing stations can travel to: in a straight line from it, with at least one empty cell between and nothing else.",
+    "After your move you win if your opponent can no longer travel from the mine to a border crossing, or has no legal place for a new station.",
+    "Implementation notes: the mine cannot hold a station and blocks travel through it (it is not an empty cell). Stations may be dropped on perimeter cells, which then stop being border crossings. A drop counts as legal whether or not the station it comes from is linked to the mine. Only the opponent is checked after a move: if you cut off your own route, the game goes on, and your opponent wins after their next move unless you have reconnected."]}]},
+  describe:function(s){var l=s.lm,who;if(!l)return"";
+    who=isAI()?pname(l.c)+" ("+NAMES[l.c]+")":NAMES[l.c];
+    return who+" dropped a station on "+cn(l.t)+"."}
+};
+// what player p (1 or 2) can do on board b
+var QU=new Int16Array(91);
+function analyse(b,p){var seen=new Uint8Array(NC),bs=new Uint8Array(NC),pm=new Uint8Array(NC),net=[],pl=[],
+    br=0,st=0,h=0,t=0,x,d,k,y,ray,ok;
+  QU[t++]=MINE;seen[MINE]=1;
+  while(h<t){x=QU[h++];
+    for(d=0;d<6;d++){ray=RAY[x][d];
+      for(k=0;k<ray.length;k++){y=ray[k];if(y===MINE)break;
+        if(!b[y]){if(x!==MINE&&PER[y]&&!bs[y]){bs[y]=1;br++;net.push(x,y)}continue}
+        if(b[y]===p&&!seen[y]&&(x===MINE||k>0)){seen[y]=1;st++;QU[t++]=y;net.push(x,y)}
+        break}}}
+  for(x=0;x<NC;x++)if(b[x]===p)for(d=0;d<6;d++){ray=RAY[x][d];
+    for(k=0;k<ray.length;k++){y=ray[k];if(y===MINE||b[y])break;if(k>0&&!pm[y]){pm[y]=1;pl.push(y)}}}
+  return{ok:br>0,br:br,st:st,pl:pl,n:pl.length,net:net}}
+function gen(s){return s.ms||(s.ms=s.A[s.turn].pl.map(function(c){return{t:c}}))}
+function mkState(b,turn,ply,lm){var cnt=[0,0],c,s,o;
+  for(c=0;c<NC;c++)if(b[c])cnt[b[c]-1]++;
+  s={b:b,turn:turn,ply:ply,A:[analyse(b,1),analyse(b,2)],cnt:cnt,ms:null,end:false,w:-1,why:"",lm:lm};
+  o=s.A[turn];   // the player who just moved wins if the side to move is cut off or cannot drop a station
+  if(ply>0&&(!o.ok||!o.n)){s.end=true;s.w=1-turn;s.why=o.ok?"stuck":"cut"}
+  return s}
+function newGame(){var b=new Uint8Array(NC),r,j,ch,c=0;
+  for(r=0;r<SETUP.length;r++)for(j=0;j<SETUP[r].length;j++,c++){ch=SETUP[r][j];if(ch==="x")b[c]=1;else if(ch==="o")b[c]=2}
+  return mkState(b,0,0,null)}
+function apply(s,m){var b=s.b.slice();b[m.t]=s.turn+1;
+  return mkState(b,1-s.turn,s.ply+1,{c:s.turn,t:m.t})}
+
+/* ================================ 2. ENGINE ================================ */
+/* Evaluation for the player to move: a weighted score of each side's position, own minus opponent's. A side scores
+   for being linked to the border at all, for the number of border crossings it reaches (capped, more routes are harder
+   to cut), for stations linked to the mine, and a little for spare places to drop stations. Finished games score
+   -1e6 + ply for the side to move (it has lost; later losses are less bad, so the winner prefers quick wins).
+   Search: negamax with alpha-beta over a beam of the best children by one-ply evaluation. Easy picks among the four
+   best one-ply moves (always taking a win), Medium searches 2 plies, Hard deepens to 3 and then 4 plies within a time
+   budget (keeping the deepest finished choice). */
+function rn(n){return Math.floor(Math.random()*n)}
+function sc(a){return(a.ok?30:0)+4*Math.min(a.br,8)+2*a.st+.1*Math.min(a.n,30)}
+function ev(s){return sc(s.A[s.turn])-sc(s.A[1-s.turn])}
+function term(s){return-1e6+s.ply}
+var DEAD=0,NODES=0,ABORT={},BM={};
+function kids(s){var ms=gen(s),ch=ms.map(function(m){return apply(s,m)}),
+  sc=ch.map(function(c){return c.end?1e7:-ev(c)}),o=ch.map(function(_,i){return i});
+  o.sort(function(x,y){return sc[y]-sc[x]});return{ms:ms,ch:ch,o:o}}
+function nm(s,d,a,bt){var k,i,v,c,best=-1e9,lim;
+  if(s.end)return term(s);
+  if(d<=0)return ev(s);
+  if((++NODES&7)===0&&DEAD&&Date.now()>DEAD)throw ABORT;
+  k=kids(s);
+  if(d===1){c=k.ch[k.o[0]];return c.end?-term(c):-ev(c)}
+  lim=Math.min(k.o.length,BM[d]||8);
+  for(i=0;i<lim;i++){v=-nm(k.ch[k.o[i]],d-1,-bt,-a);if(v>best){best=v;if(v>a){a=v;if(a>=bt)break}}}
+  return best}
+function search(s,d){var k=kids(s),i,v,best=-1e9,bi=k.o[0],lim;
+  if(k.ch[bi].end||d<=1)return k.ms[bi];
+  lim=Math.min(k.o.length,BM[d]||8);
+  for(i=0;i<lim;i++){v=-nm(k.ch[k.o[i]],d-1,-1e9,-best+1e-9)+Math.random()*.5;
+    if(v>best){best=v;bi=k.o[i]}}
+  return k.ms[bi]}
+function aiMove(s,lv){var ms=gen(s),best,k;
+  if(lv===undefined)lv=+$("level").value;
+  if(ms.length===1)return ms[0];
+  if(lv<1)return ms[rn(ms.length)];
+  if(lv===1){k=kids(s);if(k.ch[k.o[0]].end)return k.ms[k.o[0]];return k.ms[k.o[rn(Math.min(4,k.o.length))]]}
+  if(lv===2){BM={2:10};return search(s,2)}
+  BM={2:20,3:12,4:8};best=search(s,2);DEAD=Date.now()+(sim?250:1500);NODES=0;
+  try{best=search(s,3);best=search(s,4)}catch(e){if(e!==ABORT)throw e}
+  DEAD=0;return best}
+var sim=null;
+function runSim(){
+  if(sim){sim.stop=true;return}
+  var CAP=300,me=sim={stop:false},TOTAL=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?2:+$("simR").value)),
+      done=0,wc=[0,0,0],un=0,g=null,plies=0,len=0,lvName=$("level").options[$("level").selectedIndex].text,
+      ids=["mode","side","level","new","undo","redo","simN","simR"];
+  ids.forEach(function(i){$(i).disabled=true});
+  $("sim").textContent="Stop simulation";
+  $("simout").textContent="Simulating at "+lvName+" level… 0/"+TOTAL;
+  function fin(stopped){
+    sim=null;$("sim").textContent="Simulation";
+    $("mode").disabled=$("new").disabled=$("simN").disabled=$("simR").disabled=false;
+    $("level").disabled=$("side").disabled=$("mode").value==="2p";
+    var pc=function(n){return done?(100*n/done).toFixed(1)+"%":"n/a"};
+    $("simout").textContent=(stopped?"Stopped after ":"")+done+" games ("+lvName+" level, computer vs computer), first "+RND+" turns random.\nSilver (first player) won "+pc(wc[0])+", Gold won "+pc(wc[1])+(wc[2]?", draws "+pc(wc[2]):"")+". Average length: "+(done?(len/done).toFixed(0):"n/a")+" turns."+(un?" Unfinished (over "+CAP+" turns): "+un+".":"");
+    render()}
+  function step(){
+    if(me.stop){fin(true);return}
+    var t0=Date.now();
+    while(Date.now()-t0<40){
+      if(!g){g=newGame();plies=0}
+      if(g.end||plies>=CAP){if(g.end)wc[g.w]++;else un++;len+=plies;done++;g=null;if(done>=TOTAL){fin(false);return}continue}
+      g=apply(g,aiMove(g,plies<RND?0:undefined));plies++}
+    $("simout").textContent="Simulating at "+lvName+" level… "+done+"/"+TOTAL;
+    setTimeout(step,0)}
+  step()}
+
+/* =============================== 3. INTERFACE =============================== */
+var hist,redo=[],over,busy,note="";
+var SQ3=Math.sqrt(3),HEX="#FFCE9F",MINEC="#D9965A",HEXP=[];
+function cur(){return hist[hist.length-1]}
+function hc(){return+$("side").value}
+function isAI(){return $("mode").value==="ai"}
+function isHuman(s){return!isAI()||s.turn===hc()}
+function pname(c){return isAI()?(c===hc()?"You":"Computer"):NAMES[c]}
+function pverb(c,a,b){return pname(c)==="You"?b:a}
+function start(){hist=[newGame()];redo=[];note="";$("level").disabled=$("side").disabled=!isAI();over=false;busy=false;
+  $("rules").innerHTML=GAME.rules().map(function(sec){return"<li><b>"+sec.h+"</b><ul>"+sec.items.map(li).join("")+"</ul></li>"}).join("");
+  render();maybeAI()}
+function X(c){return SQ3*(Q[c]+R[c]/2)}
+function Y(c){return 1.5*R[c]}
+function f3(v){return Math.round(v*1000)/1000}
+(function(){var c,k,a,p;for(c=0;c<NC;c++){p=[];for(k=0;k<6;k++){a=Math.PI/180*(60*k-90);p.push(f3(X(c)+Math.cos(a))+","+f3(Y(c)+Math.sin(a)))}HEXP[c]=p.join(" ")}})();
+function ring(c,r,clr,w,dash){return'<circle cx="'+f3(X(c))+'" cy="'+f3(Y(c))+'" r="'+r+'" fill="none" stroke="'+clr+'" stroke-width="'+w+'"'+(dash?' stroke-dasharray="'+dash+'"':'')+' pointer-events="none"/>'}
+function stone(c,v){return'<circle cx="'+f3(X(c))+'" cy="'+f3(Y(c))+'" r=".72" fill="'+FILL[v-1]+'" stroke="'+EDGE[v-1]+'" stroke-width=".07" pointer-events="none"/>'}
+function dot(c,r,clr,op,st){return'<circle cx="'+f3(X(c))+'" cy="'+f3(Y(c))+'" r="'+r+'" fill="'+clr+'"'+(op?' fill-opacity="'+op+'"':'')+(st?' stroke="'+st+'" stroke-width=".05"':'')+' pointer-events="none"/>'}
+function line(a,b,clr,w,op){return'<line x1="'+f3(X(a))+'" y1="'+f3(Y(a))+'" x2="'+f3(X(b))+'" y2="'+f3(Y(b))+'" stroke="'+clr+'" stroke-width="'+w+'" stroke-linecap="round"'+(op?' stroke-opacity="'+op+'"':'')+' pointer-events="none"/>'}
+function txt(x,y,t,sz,clr,wt){return'<text x="'+f3(x)+'" y="'+f3(y)+'" font-size="'+sz+'" text-anchor="middle" dominant-baseline="central" fill="'+clr+'"'+(wt?' font-weight="'+wt+'"':'')+' pointer-events="none">'+t+'</text>'}
+function render(){
+  var s=cur(),b=s.b,g=[],c,i,p,r,l=s.lm,hu,stt,ms=gen(s),first,last,net,a,HI="var(--hi)";
+  over=s.end;hu=isHuman(s)&&!over&&!busy&&!sim;
+  g.push('<svg viewBox="-11.6 -9.1 23.2 18.2" role="img" aria-label="Mineway board" font-family="system-ui,sans-serif">');
+  for(c=0;c<NC;c++)g.push('<polygon data-i="'+c+'" points="'+HEXP[c]+'" fill="'+(c===MINE?MINEC:HEX)+'" stroke="#b9834f" stroke-width=".05" stroke-linejoin="round"><title>'+cn(c)+(c===MINE?" – the mine":"")+'</title></polygon>');
+  for(r=0;r<11;r++){first=-1;for(c=0;c<NC;c++)if(ROW[c]===r){if(first<0)first=c;last=c}
+    g.push(txt(X(first)-1.45,Y(first),"abcdefghijk"[r],.62,"var(--mute)"),txt(X(last)+1.45,Y(last),"abcdefghijk"[r],.62,"var(--mute)"))}
+  // travel networks: every direct travel found from the mine, in each player's colour; reached border crossings get a dot
+  if($("frc").checked)for(p=0;p<2;p++){net=s.A[p].net;
+    for(i=0;i<net.length;i+=2){g.push(line(net[i],net[i+1],NETC[p],.13,.75));if(!b[net[i+1]])g.push(dot(net[i+1],.16,NETC[p],.85))}}
+  for(c=0;c<NC;c++)if(b[c])g.push(stone(c,b[c]));
+  if(l)g.push(ring(l.t,.86,HI,.1));
+  if(hu&&$("ctl").checked)ms.forEach(function(m){g.push(dot(m.t,.26,FILL[s.turn],.9,EDGE[s.turn]))});
+  $("board").innerHTML=g.join("")+'</svg>';
+  for(i=0;i<2;i++){a=s.A[i];
+    $("p"+i).className="pl"+(!over&&s.turn===i?" on":"");
+    $("p"+i).style.borderLeft="8px solid "+FILL[i];
+    $("n"+i).textContent=pname(i)+" – "+NAMES[i]+": "+s.cnt[i]+" station"+(s.cnt[i]===1?"":"s");
+    $("s"+i).textContent=(a.ok?"Linked to "+a.br+" border crossing"+(a.br===1?"":"s"):"Cut off from the border")+" · "+a.n+" legal drop"+(a.n===1?"":"s")}
+  if(over){stt=NAMES[s.turn]+(s.why==="cut"?" can no longer travel from the mine to a border crossing.":" has no legal place for a new station.")+" Game over: "+pname(s.w)+(isAI()?" ("+NAMES[s.w]+")":"")+" "+pverb(s.w,"wins","win")+"."}
+  else{
+    stt=isHuman(s)?(isAI()?"Your turn ("+NAMES[s.turn]+").":NAMES[s.turn]+" to move."):"The computer is thinking…";
+    if(hu){stt+=" Click an empty cell to drop a new station.";
+      if(!s.A[s.turn].ok)stt+=" Warning: you are cut off from the border; reconnect now or lose after your opponent's next move."}}
+  if(note)stt+=" "+note;
+  $("status").textContent=stt;
+  $("last").textContent=GAME.describe(s);
+  $("undo").disabled=hist.length<2||busy||!!sim;
+  $("redo").disabled=!redo.length||busy||!!sim}
+function play(m){var ns=apply(cur(),m);hist.push(ns);redo=[];note="";render();maybeAI()}
+function click(i){
+  var s=cur(),a;
+  if(over||busy||sim||!isHuman(s))return;
+  note="";
+  a=gen(s).filter(function(m){return m.t===i})[0];
+  if(a){play(a);return}
+  if(i===MINE)note="The mine cannot hold a station.";
+  else if(s.b[i])note=cn(i)+" is already occupied.";
+  else note="None of your stations can reach "+cn(i)+": it needs a straight line from one of them with at least one empty cell between and no stones.";
+  render()}
+function maybeAI(){
+  var s=cur();if(over||!isAI()||isHuman(s))return;
+  busy=true;render();
+  setTimeout(function(){var c=cur(),ns=apply(c,aiMove(c));busy=false;hist.push(ns);render();maybeAI()},60)}
+function li(x){return"<li>"+x+"</li>"}
+document.title=GAME.title;$("gtitle").textContent=GAME.title;$("gsub").textContent=GAME.subtitle;
+$("board").onclick=function(e){var t=e.target.closest("[data-i]");if(t)click(+t.getAttribute("data-i"))};
+$("new").onclick=start;$("sim").onclick=runSim;
+$("ctl").onchange=$("frc").onchange=render;
+$("mode").onchange=$("side").onchange=start;
+$("redo").onclick=function(){
+  if(busy||!redo.length)return;
+  hist.push(redo.pop());
+  while(isAI()&&redo.length&&!isHuman(cur()))hist.push(redo.pop());
+  note="";render();maybeAI()};
+$("undo").onclick=function(){
+  if(busy||hist.length<2)return;
+  var tmp=[];
+  tmp.push(hist.pop());
+  while(isAI()&&hist.length>1&&!isHuman(cur()))tmp.push(hist.pop());
+  if(!isHuman(cur())&&isAI()){while(tmp.length)hist.push(tmp.pop());return}
+  tmp.forEach(function(x){redo.push(x)});
+  over=false;note="";render()};
+start();
+})();
+</script>
+</body>
+</html>

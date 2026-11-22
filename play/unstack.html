@@ -6,7 +6,7 @@
 <title>Unstack</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
 <style>
-:root{--bg:#eef0e6;--ink:#1f2a1c;--mute:#5d6a56;--cell:#dfe3cf;--edge:#b9bfa3;--hi:#e0803a;--panel:#fff;--line:#c5cab4;--sq1:#ece8d6;--sq2:#a9b58a;
+:root{--bg:#eef0e6;--ink:#1f2a1c;--mute:#5d6a56;--cell:#dfe3cf;--edge:#b9bfa3;--hi:#e0803a;--panel:#fff;--line:#c5cab4;--sq1:#ece8d6;--sq2:#a9b58a;--bd:#4f4b46;--bdl:#2f2c29;
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f;--sq1:#8f9a7c;--sq2:#5b6a48}}
 :root[data-theme="dark"]{--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f;--sq1:#8f9a7c;--sq2:#5b6a48}
@@ -314,7 +314,8 @@ function render(){
   over=s.w>=0;
   var hu=humanTurn()&&!over&&!busy&&!sim;
   h.push('<svg viewBox="0 0 7.5 7.5" role="img" aria-label="Unstack board">');
-  for(i=0;i<NN;i++)h.push('<rect x="'+X(i)+'" y="'+Y(i)+'" width="1" height="1" fill="var(--sq1)" stroke="var(--sq2)" stroke-width=".03"/>');
+  for(i=0;i<NN;i++)h.push('<rect x="'+X(i)+'" y="'+Y(i)+'" width="1" height="1" fill="var(--bd)" stroke="var(--bdl)" stroke-width=".03"/>');
+  h.push('<rect x=".5" y="0" width="7" height="7" fill="none" stroke="var(--bdl)" stroke-width=".08"/>');
   for(k=0;k<N;k++){
     f=flipped()?6-k:k;
     h.push('<text x="'+(k+1)+'" y="7.34" text-anchor="middle" font-size=".26" fill="var(--mute)">'+"abcdefg"[f]+'</text>');

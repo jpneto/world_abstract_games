@@ -1,3 +1,4 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -237,7 +238,7 @@ function runSim(){   // computer vs computer, to look for first/second-player ad
 }
 
 /* =============================== 3. INTERFACE =============================== */
-var hist,redo=[],over,busy,note="",RED="#d33";
+var hist,redo=[],over,busy,note="",RED="#e0491b";
 function cur(){return hist[hist.length-1]}
 function humanIdx(){return +$("side").value}
 function isHuman(s){return $("mode").value==="2p"||s.turn===humanIdx()}
@@ -248,23 +249,32 @@ function start(){
   hist=[newGame()];redo=[];note="";$("level").disabled=$("side").disabled=$("mode").value==="2p";over=false;busy=false;
   render();maybeAI();
 }
-function X(i){return FX[i]+1}
-function Y(i){return W-FY[i]}
-function stone(c,i){var G=GAME.sides[c-1];return'<circle cx="'+X(i)+'" cy="'+Y(i)+'" r=".46" fill="'+G.color+'" stroke="'+G.edge+'" stroke-width=".05"/>'}
+/* Go-stone style: intersections at integer coordinates 0..8, wood board with grain, glossy shaded stones. */
+function X(i){return FX[i]}
+function Y(i){return W-1-FY[i]}
+var GRID="#6b4a22",
+DEFS='<defs><radialGradient id="gB" cx=".35" cy=".3" r=".75"><stop offset="0" stop-color="#6a6a6a"/><stop offset=".35" stop-color="#2a2a2a"/><stop offset="1" stop-color="#0a0a0a"/></radialGradient>'+
+  '<radialGradient id="gW" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#ffffff"/><stop offset=".55" stop-color="#eef0f4"/><stop offset="1" stop-color="#b9bec8"/></radialGradient>'+
+  '<linearGradient id="gWood" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#EDBE78"/><stop offset=".5" stop-color="#E6B26A"/><stop offset="1" stop-color="#DDA65C"/></linearGradient>'+
+  '<filter id="fGrain" x="0" y="0" width="1" height="1"><feTurbulence type="fractalNoise" baseFrequency=".9 .035" numOctaves="2" seed="7"/><feColorMatrix values="0 0 0 0 .45  0 0 0 0 .28  0 0 0 0 .1  0 0 0 .55 -.18"/><feComposite in2="SourceGraphic" operator="in"/></filter>'+
+  '<filter id="fSh" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx=".05" dy=".07" stdDeviation=".05" flood-color="#000" flood-opacity=".4"/></filter></defs>',
+SFILL=["url(#gW)","url(#gB)"],SEDGE=["#9aa0aa","#000"];   // index = colour-1: 0 White, 1 Black
+function stone(c,i){return'<circle cx="'+X(i)+'" cy="'+Y(i)+'" r=".47" fill="'+SFILL[c-1]+'" stroke="'+SEDGE[c-1]+'" stroke-width=".02" filter="url(#fSh)" pointer-events="none"/>'}
+function txt(x,y,t){return'<text x="'+x+'" y="'+y+'" font-size=".34" text-anchor="middle" dominant-baseline="central" fill="'+GRID+'" pointer-events="none">'+t+'</text>'}
 function render(){
-  var s=cur(),b=s.b,i,m,g=['<svg viewBox="0 0 10 10.3" role="img" aria-label="Chicken Gomoku board"><rect x=".3" y=".3" width="9.4" height="9.4" rx=".2" fill="var(--wood)"/>'];
+  var s=cur(),b=s.b,i,m,E=W-1,M=1.25,VW=E+2*M,
+      g=['<svg viewBox="'+(-M)+' '+(-M)+' '+VW+' '+VW+'" role="img" aria-label="Chicken Gomoku board" font-family="system-ui,sans-serif">'+DEFS+
+         '<rect x="'+(-M)+'" y="'+(-M)+'" width="'+VW+'" height="'+VW+'" rx=".2" fill="url(#gWood)" pointer-events="none"/>'+
+         '<rect x="'+(-M)+'" y="'+(-M)+'" width="'+VW+'" height="'+VW+'" rx=".2" fill="#fff" filter="url(#fGrain)" pointer-events="none"/>'];
   over=s.w>=0;
   var hu=isHuman(s)&&!over&&!busy&&!sim;
-  for(m=1;m<=W;m++)g.push('<path d="M'+m+' 1V'+W+'M1 '+m+'H'+W+'" stroke="#3a2c14" stroke-width=".04" fill="none"/>');
-  [[3,3],[7,3],[3,7],[7,7],[5,5]].forEach(function(p){g.push('<circle cx="'+p[0]+'" cy="'+p[1]+'" r=".09" fill="#3a2c14"/>')});
-  for(m=0;m<W;m++){
-    g.push('<text x="'+(m+1)+'" y="'+(W+1.05)+'" text-anchor="middle" font-size=".34" fill="var(--mute)">'+String.fromCharCode(97+m)+'</text>');
-    g.push('<text x=".02" y="'+(W-m+.12)+'" font-size=".34" fill="var(--mute)">'+(m+1)+'</text>');
-  }
+  for(m=0;m<W;m++)g.push('<path d="M'+m+' 0V'+E+'M0 '+m+'H'+E+'" stroke="'+GRID+'" stroke-width=".035" fill="none" pointer-events="none"/>');
+  [2,4,6].forEach(function(x){[2,4,6].forEach(function(y){g.push('<circle cx="'+x+'" cy="'+y+'" r=".08" fill="'+GRID+'" pointer-events="none"/>')})});
+  for(m=0;m<W;m++){var ch=String.fromCharCode(97+m);g.push(txt(m,-.9,ch),txt(m,E+.9,ch),txt(-.9,E-m,m+1),txt(E+.9,E-m,m+1))}
   for(i=0;i<N;i++)if(b[i])g.push(stone(b[i],i));
   var l=s.lm;
-  if(l&&!l.declare)g.push('<circle cx="'+X(l.i)+'" cy="'+Y(l.i)+'" r=".1" fill="'+RED+'"/>');
-  if(l&&l.line)l.line.forEach(function(c){g.push('<circle cx="'+X(c)+'" cy="'+Y(c)+'" r=".53" fill="none" stroke="'+RED+'" stroke-width=".07"/>')});
+  if(l&&!l.declare)g.push('<circle cx="'+X(l.i)+'" cy="'+Y(l.i)+'" r=".12" fill="'+RED+'" pointer-events="none"/>');
+  if(l&&l.line)l.line.forEach(function(c){g.push('<circle cx="'+X(c)+'" cy="'+Y(c)+'" r=".53" fill="none" stroke="'+RED+'" stroke-width=".07" pointer-events="none"/>')});
   for(i=0;i<N;i++)g.push('<rect data-i="'+i+'" x="'+(X(i)-.5)+'" y="'+(Y(i)-.5)+'" width="1" height="1" fill="transparent"/>');
   $("board").innerHTML=g.join("")+'</svg>';
   var st,cnt=stoneCount(b);
@@ -318,3 +328,5 @@ start();
 </script>
 </body>
 </html>
+
+</body></html>

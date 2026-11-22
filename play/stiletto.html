@@ -1,3 +1,4 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -271,7 +272,7 @@ function runSim(){   // computer vs computer, to look for first/second-player ad
 }
 
 /* =============================== 3. INTERFACE =============================== */
-var hist,redo=[],over,busy,note="",RED="#d33",dagMode=false,pend=-1;
+var hist,redo=[],over,busy,note="",RED="#e0491b",dagMode=false,pend=-1;
 function cur(){return hist[hist.length-1]}
 function hc(){return +$("side").value===0?1:2}                       // the human's colour in computer mode
 function isAI(){return $("mode").value==="ai"}
@@ -285,23 +286,28 @@ function start(){
 }
 function X(i){return FX[i]+1}
 function Y(i){return W-FY[i]}
-function stone(c,i,op){var G=GAME.sides[c];return'<circle cx="'+X(i)+'" cy="'+Y(i)+'" r=".46" fill="'+G.color+'" stroke="'+G.edge+'" stroke-width=".05"'+(op?' opacity="'+op+'"':'')+'/>'}
+var DEFS='<defs><radialGradient id="gB" cx=".35" cy=".3" r=".75"><stop offset="0" stop-color="#6a6a6a"/><stop offset=".35" stop-color="#2a2a2a"/><stop offset="1" stop-color="#0a0a0a"/></radialGradient>'+
+  '<radialGradient id="gW" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#ffffff"/><stop offset=".55" stop-color="#eef0f4"/><stop offset="1" stop-color="#b9bec8"/></radialGradient>'+
+  '<linearGradient id="gWood" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#EDBE78"/><stop offset=".5" stop-color="#E6B26A"/><stop offset="1" stop-color="#DDA65C"/></linearGradient>'+
+  '<filter id="fGrain" x="0" y="0" width="1" height="1"><feTurbulence type="fractalNoise" baseFrequency=".9 .035" numOctaves="2" seed="7"/><feColorMatrix values="0 0 0 0 .45  0 0 0 0 .28  0 0 0 0 .1  0 0 0 .55 -.18"/><feComposite in2="SourceGraphic" operator="in"/></filter>'+
+  '<filter id="fSh" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx=".05" dy=".07" stdDeviation=".05" flood-color="#000" flood-opacity=".4"/></filter></defs>';
+function stone(c,i,pre){return'<circle cx="'+X(i)+'" cy="'+Y(i)+'" r="'+(pre?".44":".47")+'" fill="url(#'+(c===1?"gB":"gW")+')" stroke="'+(c===1?"#000":"#9aa0aa")+'" stroke-width=".02"'+(pre?' fill-opacity=".7"':' filter="url(#fSh)"')+' pointer-events="none"/>'}
 function render(){
-  var s=cur(),b=s.b,i,m,g=['<svg viewBox="0 0 20 20.4" role="img" aria-label="Stiletto board"><rect x=".3" y=".3" width="19.4" height="19.4" rx=".2" fill="var(--wood)"/>'];
+  var s=cur(),b=s.b,i,m,g=['<svg viewBox="-.25 -.25 20.5 20.5" role="img" aria-label="Stiletto board">'+DEFS+'<rect x="-.25" y="-.25" width="20.5" height="20.5" rx=".2" fill="url(#gWood)" pointer-events="none"/><rect x="-.25" y="-.25" width="20.5" height="20.5" rx=".2" fill="#fff" filter="url(#fGrain)" pointer-events="none"/>'];
   over=!!s.w;
   var hu=isHuman(s)&&!over&&!busy&&!sim;
   if(dagMode&&!(hu&&daggerAvail(s)))resetPending();
-  for(m=1;m<=W;m++)g.push('<path d="M'+m+' 1V'+W+'M1 '+m+'H'+W+'" stroke="#3a2c14" stroke-width=".04" fill="none"/>');
-  [4,10,16].forEach(function(x){[4,10,16].forEach(function(y){g.push('<circle cx="'+x+'" cy="'+y+'" r=".1" fill="#3a2c14"/>')})});
+  for(m=1;m<=W;m++)g.push('<path d="M'+m+' 1V'+W+'M1 '+m+'H'+W+'" stroke="#6b4a22" stroke-width=".035" fill="none" pointer-events="none"/>');
+  [4,10,16].forEach(function(x){[4,10,16].forEach(function(y){g.push('<circle cx="'+x+'" cy="'+y+'" r=".08" fill="#6b4a22" pointer-events="none"/>')})});
   for(m=0;m<W;m++){
-    g.push('<text x="'+(m+1)+'" y="'+(W+1.15)+'" text-anchor="middle" font-size=".4" fill="var(--mute)">'+String.fromCharCode(97+m)+'</text>');
-    g.push('<text x=".02" y="'+(W-m+.14)+'" font-size=".4" fill="var(--mute)">'+(m+1)+'</text>');
+    g.push('<text x="'+(m+1)+'" y="'+(W+1.02)+'" text-anchor="middle" font-size=".34" fill="#6b4a22" pointer-events="none">'+String.fromCharCode(97+m)+'</text>');
+    g.push('<text x=".1" y="'+(W-m+.12)+'" text-anchor="middle" font-size=".34" fill="#6b4a22" pointer-events="none">'+(m+1)+'</text>');
   }
   for(i=0;i<N;i++)if(b[i])g.push(stone(b[i],i));
   var l=s.lm;
-  if(l){[l.a,l.x].forEach(function(p){if(p>=0)g.push('<circle cx="'+X(p)+'" cy="'+Y(p)+'" r=".11" fill="'+RED+'"/>')})}
+  if(l){[l.a,l.x].forEach(function(p){if(p>=0)g.push('<circle cx="'+X(p)+'" cy="'+Y(p)+'" r=".12" fill="'+RED+'" pointer-events="none"/>')})}
   if(l&&l.line)l.line.forEach(function(c){g.push('<circle cx="'+X(c)+'" cy="'+Y(c)+'" r=".53" fill="none" stroke="'+RED+'" stroke-width=".07"/>')});
-  if(pend>=0){g.push(stone(s.turn,pend,.55));g.push('<circle cx="'+X(pend)+'" cy="'+Y(pend)+'" r=".53" fill="none" stroke="var(--hi)" stroke-width=".07"/>')}
+  if(pend>=0){g.push(stone(s.turn,pend,true));g.push('<circle cx="'+X(pend)+'" cy="'+Y(pend)+'" r=".44" fill="none" stroke="'+RED+'" stroke-width=".06" stroke-dasharray=".12 .08" pointer-events="none"/>')}
   for(i=0;i<N;i++)g.push('<rect data-i="'+i+'" x="'+(X(i)-.5)+'" y="'+(Y(i)-.5)+'" width="1" height="1" fill="transparent"/>');
   $("board").innerHTML=g.join("")+'</svg>';
   var st,c;
@@ -374,3 +380,5 @@ start();
 </script>
 </body>
 </html>
+
+</body></html>
