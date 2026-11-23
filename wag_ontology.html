@@ -1,117 +1,201 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>WAG's Ontology</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ludeme Ontology — The World of Abstract Games</title>
+<style>
+  .onto {
+    --ink: #222;
+    --muted: #777;
+    --line: #aaa;
+    --accent: #8a4b14;
+    --tag-bg: #f3ece4;
+    --panel: #fbfaf7;
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    font-family: Georgia, "Times New Roman", serif;
+    color: var(--ink);
+  }
+  .onto h1 { font-size: 1.8rem; margin-bottom: .3rem; }
+  .onto p.intro { color: #444; line-height: 1.5; margin-top: 0; }
 
-    <style>
-      body { 
-        font-family: monospace, 
-        sans-serif; 
-        margin: 20px; 
-      }
-      textarea {
-        width: 100%; 
-        margin-top: 8px; 
-        font-family: monospace;
-        font-size: 0.9em;
-        background: transparent;
-      }
-      select, button {
-        margin-top: 8px; 
-        font-family: monospace;
-      }
-      input {
-        width: 15%; 
-        margin-top: 8px; 
-        font-family: monospace;
-        background: transparent;
-      }
-      label {
-        font-size: 0.85em;
-        margin-bottom: 4px;
-        opacity: 0.75;
-      }
-      select {
-        background-color: transparent;
-        color: inherit;
-      }
-      input[type="checkbox"] {
-        width: 20px;
-      }
-      iframe {
-        width: 100%; 
-      }
-      #scaled-frame {
-          zoom: 0.85;
-      }      
-      pre {
-        background: #f4f4f4; padding: 12px; border: 1px solid #ccc;
-        font-family: "Courier New", monospace; white-space: pre;
-      }
-      .root   { font-weight: bold; }
-      .pred   { color: #1f4ed8; font-size: 0.9em; }
-      .succ   { color: #15803d; font-size: 0.9em; }
-      .branch { color: #666; }
-      .label  { color: #7c3aed; font-style: italic; font-size: 0.8em; opacity: 0.8; }
-      .toggle { cursor: pointer; user-select: none; margin-right: 2px; }
-      .shared { font-weight: bold; border-radius: 3px; padding: 0 2px; }
-    </style>
+  .onto .controls {
+    display: flex; flex-wrap: wrap; gap: .6rem; align-items: center;
+    margin: 1.2rem 0;
+  }
+  .onto label { font-weight: bold; }
+  .onto input[type=text] {
+    font: inherit; padding: .35rem .6rem; min-width: 16rem;
+    border: 1px solid var(--line); border-radius: 4px;
+  }
+  .onto input[type=number] {
+    font: inherit; padding: .35rem .4rem; width: 4.5rem;
+    border: 1px solid var(--line); border-radius: 4px;
+  }
+  .onto .controls.export { border-top: 1px solid #e3ddd3; padding-top: 1rem; }
+  .onto .game-links { font-size: .8rem; margin: -.8rem 0 1rem 4.2rem; min-height: 1em; }
+  .onto .game-links a { color: var(--accent); text-decoration: none; margin-right: .5em; }
+  .onto .game-links a:hover { text-decoration: underline; }
+  .onto .more { color: var(--muted); font-style: italic; margin-left: .6em; font-size: .85rem; }
+  .onto button.btn {
+    font: inherit; padding: .35rem .8rem; cursor: pointer;
+    border: 1px solid var(--line); border-radius: 4px; background: #fff;
+  }
+  .onto button.btn:hover { border-color: var(--accent); color: var(--accent); }
+  .onto .msg { color: var(--muted); font-style: italic; }
+
+  .onto section.tree-block {
+    background: var(--panel);
+    border: 1px solid #e3ddd3;
+    border-radius: 6px;
+    padding: .8rem 1rem 1rem;
+    margin-bottom: 1.2rem;
+  }
+  .onto section.tree-block h2 {
+    font-size: 1.05rem; margin: 0 0 .6rem; color: var(--accent);
+  }
+  .onto .tree {
+    font-family: "DejaVu Sans Mono", Menlo, Consolas, monospace;
+    font-size: .95rem;
+    line-height: 1.55;
+    overflow-x: auto;
+  }
+  .onto .row { white-space: pre; }
+  .onto .branch { color: var(--line); }
+  .onto a.game {
+    color: var(--ink); text-decoration: none; font-weight: bold; cursor: pointer;
+  }
+  .onto a.game:hover { color: var(--accent); text-decoration: underline; }
+  .onto a.game.current { color: var(--accent); }
+  .onto .ludemes { color: var(--muted); margin-left: .6em; }
+  .onto .lud {
+    background: var(--tag-bg); border-radius: 3px; padding: 0 .3em;
+    color: #5a4630;
+  }
+  .onto .lud { cursor: pointer; }
+  .onto .lud:hover { background: #e6d6c3; }
+  .onto .lud.hit { background: #f0d9a8; color: #3d2a12; }
+  .onto label.check { font-weight: normal; font-size: .9rem; color: #444; cursor: pointer; }
+  .onto label.check code { background: var(--tag-bg); padding: 0 .25em; border-radius: 3px; }
+  .onto p.help { color: var(--muted); font-size: .9rem; margin: -.6rem 0 1.2rem; line-height: 1.4; }
+  .onto p.help code { background: var(--tag-bg); padding: 0 .25em; border-radius: 3px; }
+  .onto .controls + .controls { margin-top: -.4rem; }
+  .onto details.glossary {
+    border: 1px solid #e3ddd3; border-radius: 6px; background: var(--panel);
+    padding: .5rem 1rem; margin-bottom: 1.2rem;
+  }
+  .onto details.glossary summary { cursor: pointer; font-weight: bold; color: var(--accent); }
+  .onto details.glossary dl {
+    display: grid; grid-template-columns: max-content 1fr; gap: .35rem 1rem;
+    margin: .8rem 0 .3rem; line-height: 1.4;
+  }
+  .onto details.glossary dt {
+    font-family: "DejaVu Sans Mono", Menlo, Consolas, monospace; font-size: .9rem;
+    background: var(--tag-bg); color: #5a4630; border-radius: 3px;
+    padding: 0 .35em; align-self: start; cursor: pointer;
+  }
+  .onto details.glossary dt:hover { background: #e6d6c3; }
+  .onto details.glossary dd { margin: 0; }
+  @media (max-width: 560px) {
+    .onto details.glossary dl { grid-template-columns: 1fr; }
+    .onto details.glossary dt { justify-self: start; }
+    .onto details.glossary dd { margin-bottom: .4rem; }
+  }
+  .onto .note { color: var(--muted); font-style: italic; margin-left: .6em; }
+  .onto .none { color: var(--muted); font-style: italic; }
+</style>
 </head>
-<body background = "back-wood3.jpg">
+<body>
 
-<h2>WAG's Ontology</h2>
+<div class="onto">
+  <h1>An Ontology of Abstract Games</h1>
+  <p class="intro">
+    Games are related through the mechanisms (<em>ludemes</em>) they share.
+    Each relation records that one game is a conceptual ancestor of another
+    with respect to some ludemes; sometimes this reflects history, but not necessarily.
+    Choose a game to see its ancestors and descendants.
+    Click any game name to move to it.
+  </p>
 
-<!----------------------->
+  <div class="controls">
+    <label for="game-input">Game:</label>
+    <input id="game-input" type="text" list="game-list" placeholder="Type or pick a game…" autocomplete="off">
+    <datalist id="game-list"></datalist>
+    <button class="btn" id="show-all" type="button">Show all</button>
+    <label for="depth-input">Depth:</label>
+    <input id="depth-input" type="number" min="1" step="1" placeholder="all" title="Maximum number of generations shown (empty = no limit)">
+    <span class="msg" id="msg"></span>
+  </div>
+  <div class="game-links" id="game-links"></div>
 
-<details>
-  <summary><label>About</label></summary>
-  <blockquote><font size="2">
-  <p>This page presents a graph including binary relations of abstract games. These relations intend to briefly describe what type of main transformation happened between the older and the newer game. They do not necessarily map historical connections, but try to describe ludemic changes (like changes in win condition, or a new board topology). I tried to keep the number of labels as small as possible. The point is not to describe all changes (that would amount to describe all rules of both games) but to give a quick summary of what are the main differences about each pair of games.</p>
-  <p>Also, the choice of pairs was subjective. The main criteria was the time of publication, where older games 'cause' new games. If A, B and C are similar games sorted by time, it is expected to appear A->B and B->C, even if sometimes A->C could make more sense. The goal is to help users find new games. A game in bold means it appears more than once in the query.</p>
-  <!-- <p>The labels were chosen given the following best practices: nouns over verbs, hyphenation to help filtering, orthogonal labels (one idea per label), exclude game-specific terms.</p>-->
-  List of game relations:<ul>
-    <li><b>expansion</b>: Increase of size, dimensionality, or total number of playable positions of the board.</li>
-    
-    <li><b>reduction</b>: Decrease of size, like shrinking the board or disabling areas previously playable.</li>
+  <div class="controls">
+    <label for="filter-input">Ludemes:</label>
+    <input id="filter-input" type="text" placeholder="e.g.  structure, win   or   !structure" autocomplete="off">
+    <button class="btn" id="clear-filter" type="button">Clear</button>
+    <label class="check"><input type="checkbox" id="lenient-neg">
+      <code>!</code> keeps relations that also have other ludemes</label>
+    <span class="msg" id="filter-msg"></span>
+  </div>
+  <p class="help">
+    Only relations passing the filter are followed. Plain terms keep relations with
+    <em>at least one</em> of them. <code>!term</code> drops every relation that involves
+    that term; with the box ticked, it drops only relations made up <em>solely</em> of negated terms.
+    Click a ludeme in a tree to add it.
+  </p>
 
-    <li><b>structure</b>: A modification altering board adjacency, topology, symmetry or connectivity without necessarily changing its size</li>
+  <details class="glossary">
+    <summary>Ludeme glossary</summary>
+    <dl id="glossary">
+      <dt>expansion</dt>
+      <dd>Increase of size, dimensionality, or total number of playable positions of the board.</dd>
+      <dt>reduction</dt>
+      <dd>Decrease of size, like shrinking the board or disabling areas previously playable.</dd>
+      <dt>structure</dt>
+      <dd>A modification altering board adjacency, topology, symmetry or connectivity without necessarily changing its size.</dd>
+      <dt>setup</dt>
+      <dd>Alters the initial configuration of the game, like piece placement, asymmetry between players, or initial conditions.</dd>
+      <dt>piece-add</dt>
+      <dd>Introduces new piece types or increases the number of pieces. The added pieces may have new behaviors.</dd>
+      <dt>piece-rem</dt>
+      <dd>Removes piece types or reduces the number of pieces.</dd>
+      <dt>piece-change</dt>
+      <dd>Changes of movement, constraints, or the functioning of existing pieces; this includes promotion, transformation, or persistent state changes (like Chess castling).</dd>
+      <dt>placement</dt>
+      <dd>Alters how pieces are placed on the board. This might include multiple placements, or new effects on other pieces after placement.</dd>
+      <dt>movement</dt>
+      <dd>Alters how pieces move on the board.</dd>
+      <dt>capture</dt>
+      <dd>Adds capturing, or changes how pieces are captured or removed from play.</dd>
+      <dt>action</dt>
+      <dd>Adds, removes, or changes other categories of player actions. Examples include introducing passing, swapping, flipping.</dd>
+      <dt>turn</dt>
+      <dd>Alters the sequence, frequency, or structure of turns, like changes to alternation, forced moves, or multiple actions per turn.</dd>
+      <dt>win</dt>
+      <dd>Alters the criteria by which a game is won or drawn.</dd>
+      <dt>balance</dt>
+      <dd>A modification intended to improve competitive balance without introducing new mechanics. This includes restrictions, compensations (komi), bidding, asymmetric starting.</dd>
+      <dt>aesthetics</dt>
+      <dd>A change in appearance, usually for commercial or educational purposes.</dd>
+    </dl>
+  </details>
 
-    <li><b>setup</b>: Alters the initial configuration of the game like piece placement, asymmetry between players, or initial conditions.</li>
+  <div id="output"></div>
 
-    <li><b>piece-add</b>: Introducing new piece types or increases the number of pieces. The added pieces may new behaviors.</li>
+  <div class="controls export">
+    <button class="btn" id="export-dot" type="button" title="Download the current view as a Graphviz DOT file">Export DOT</button>
+    <label class="check"><input type="checkbox" id="dot-ludemes"> include ludemes as edge labels</label>
+  </div>
+</div>
 
-    <li><b>piece-rem</b>: Removing piece types or number of pieces.</li>
-
-    <li><b>piece-change</b>: Changes of movement, constraints, or the functioning of existing pieces; this includes promotion, transformation, or persistent state changes (like Chess castling).</li>
-
-    <li><b>placement</b>: Alters how pieces are placed on the board. This might include multiple placements, or new effects in other pieces after placement</li>
-
-    <li><b>movement</b>: Alters how pieces move on the board</li>
-
-    <li><b>capture</b>: Add capturing, or change how pieces capture/removed from play.</li>
-
-    <li><b>action</b>: Adds, removes, or change other categories of player actions. Examples include introducing passing, swapping, flipping.</li>
-
-    <li><b>turn</b>: Alters the sequence, frequency, or structure of turns. Like changes to alternation, forced moves, or multiple actions per turn.</li>
-
-    <li><b>win</b>: Alters the criteria by which a game is won, or drawn.</li>
-
-    <li><b>balance</b>: A modification intended to improve competitive balance without introducing new mechanics. This includes restrictions, compensations (komi), bidding, asymmetric starting.</li>
-
-    <li><b>aesthetics</b>: A change in appearance, usually for commercial or educational purposes.</li>
-  </ul>
-  </font></blockquote>
-</details>
-
-
-<details>
-<summary><label>Current Ontology</label></summary>
-<label>
-&nbsp;&nbsp;Each entry A -> B states a relation from game A to game B<br>
-&nbsp;&nbsp;The optional labels, after `:`, describe the relation type
-</label>
-<textarea id="graphData" rows="8">
+<!--
+  RELATIONS
+  One per line, in the form:   X -> Y : ludeme1, ludeme2, ...
+  meaning "game X is an ancestor of game Y regarding these ludemes".
+  Blank lines and lines starting with # are ignored.
+-->
+<script type="text/plain" id="relations">
 Lightning -> Hex : structure
 Hex -> Y : structure
 Hex -> Twixt : structure, placement
@@ -122,7 +206,7 @@ Hex -> Troll : structure, action
 Othello -> Troll : win
 Reversi -> Othello : setup, aesthetics
 Twixt -> Straat : piece-change, win
-Twixt -> Bridg-It : piece-change, structure
+Bridg-It -> Twixt : piece-change, structure
 Bridg-It -> Connections : win
 Twixt -> Octagons : structure, placement
 Abalone -> Link : win, structure
@@ -139,7 +223,7 @@ Y -> Trilithon : structure
 Go -> Gonnect : win
 Hex -> Gonnect : structure, action
 Tower of Power -> Notwo's : win
-Trellis -> Quax : placement
+Quax -> Trellis : placement
 Y -> Split : structure
 Y -> Poly-Y : structure
 Poly-Y -> Star : win
@@ -182,7 +266,7 @@ Link -> Dozer Hex : balance
 Hex -> Marque : structure, capture
 Crossway -> Slash : placement
 Y -> Starboard Y : win
-ZeN -> Torus: win
+ZeN -> Torus (1964) : win
 Y -> Cross : structure
 Yavallah -> Cross : win
 Starboard Y -> Eccentric Y : win
@@ -194,7 +278,7 @@ Atoll -> Mobius : structure
 ConHex -> Tudor Bond : structure
 Twixt -> Bløctagøns : placement
 Quax -> Bløctagøns : aesthetics
-1 Stein + Co. -> Druid : win, placement
+1 Stein + Co -> Druid : win, placement
 Druid -> Caminos : win, placement
 Hex -> Canvas : structure, piece-add
 Amazons -> Canvas : structure, win
@@ -238,7 +322,7 @@ Crossway -> Distrify : placement
 Hex -> DuploHex : action, piece-add
 Y -> Glaisher : structure, action
 Trax -> Maíandros : win
-Star -> Odd-Y : win
+Star -> Odd Y : win
 Crossway -> Cation : placement
 Crossway -> Connecticut : placement, piece-add
 Crossway -> Flicker : capture
@@ -250,7 +334,7 @@ Rhode -> Akimbo : action
 Slither -> Squer : placement
 Columna -> Consta : placement
 Chain Lightning -> Cut and Thrust : action
-Columna -> Escabel : movement
+Columna -> Escabel : movement
 Mobility -> Heisenberg : action, win
 Gyre -> Omny : win
 Gyre -> Sunder : win
@@ -296,7 +380,7 @@ Crossway -> Crisscross : placement, capture
 Strands -> Estate : win
 Antipalos -> Finta : placement
 Crossway -> Halfcut : placement
-Y -> Hexagonal Y : structure, placement
+Y -> Hexagonal Y : structure, placement
 Crossway -> Reneo : action
 Resolve -> Reneo : capture
 Crossway -> Swaptimum : action
@@ -363,280 +447,2178 @@ Fruits Platter -> Nuts Sorting : action, win
 Lines of Action -> Sfilzotto : win
 NIM -> TacTix : structure
 TacTix -> Tactex : structure
-</textarea>
+# ===== A. Well-grounded relations =====
+Alquerque -> Checkers : structure, setup, piece-change
+Alquerque -> Fanorona : expansion, capture
+Alquerque -> Awithlaknannai : structure
+Alquerque -> Catch the Hare : setup, win
+Hnefatafl -> Fox and Geese : structure, setup, win
+Checkers -> Bashni : capture, piece-change
+Bashni -> Lasca : reduction, setup
+Conspirateurs -> Halma : structure, setup, win
+Halma -> Attacco : capture, win
+Checkers -> Chivalry : structure, piece-add, win
+Halma -> Chivalry : capture, movement
+Chivalry -> Camelot : reduction, piece-rem
+Checkers -> Cheskers : piece-add, win
+Chess -> Dawson's Chess : reduction, piece-rem, win
+Annexation -> Reversi : structure, setup
+Gomoku -> Qubic : expansion, win
+Gomoku -> Teeko : reduction, piece-rem, movement, win
+Gomoku -> Peg'ity : aesthetics
+Gomoku -> Quintro : aesthetics
+Gomoku -> Peg a Ro : aesthetics
+Gomoku -> Spoil Five : aesthetics
+NIM -> Wythoff's game : action
 
-<br>
-</details>
+# ===== B. Plausible (conceptual more than historical) =====
+Hnefatafl -> Queen's Guard, Agon : structure, setup, win
+Fox and Geese -> Ringo : structure, win
+Catch the Hare -> Fox and Geese : structure, setup
+Checkers -> Schachdame : capture, win
+Chess -> Schachdame : setup, piece-rem
+Checkers -> Stax : capture, piece-change
+Lasca -> Stax : expansion
+Checkers -> Diamond Checkers : structure
+Checkers -> Do-it-yourself draughts : setup, capture
+Checkers -> Blue & Gray : setup, win
+Chess -> Rösselsprung : piece-rem, win
+Halma -> Corona : piece-change
+Halma -> Romette : movement
+Reversi -> Royal Reversi : capture
+Reversi -> Der Kraftkönig : capture, placement
+Gomoku -> Tri Bang : win
+Gomoku -> Tic-Tac-Tics : win
+Gomoku -> Bolotudu : movement, capture
+Gomoku -> Politics : capture, piece-add
+NIM -> Pickit : structure, setup
+Dots'n'Boxes -> Pegpen : action, structure
 
-<!----------------------->
+# ===== C. Speculative (based mostly on the DB tags) =====
+Halma -> Torno : structure
+Halma -> Trio : structure
+Halma -> Caesar Game : structure
+Halma -> Permutations : setup
+Halma -> Cheno : structure
+Halma -> Peg Chow : structure
+Halma -> ARP : structure
+Halma -> Leapfrog : structure
+Chivalry -> Telka : structure
+Fox and Geese -> Le Jeux de la Guerre : piece-add, win
+Fox and Geese -> Atchin : structure, movement
+Fox and Geese -> Piratenjagd : structure, setup
+Hnefatafl -> Man in the Moon : setup, win
+Checkers -> Fort Chitral : capture, win
+Checkers -> Shan Tu : win
+Checkers -> Flagship : movement, win
+Checkers -> Super-Chex : piece-change
+Pontoons -> The New Game Of War : capture, piece-change
+The Game of Passo -> Open Goal : structure, win
+# ===================================================
+# 1950–1999 additions
+# ===================================================
 
-<label>Game:</label>
-<input type="text" id="gameInput" placeholder="eg. Twixt">
+# ----- A. Well-grounded -----
+# Chess-derived
+Chess -> Hexapawn : reduction, piece-rem, win
+Chess -> Apocalypse : reduction, piece-rem, turn
+Chess -> Smess : structure, piece-change
+Chess -> Gess : structure, piece-change
+Go -> Gess : aesthetics
+Fox and Geese -> Prairie, Bison, Buffalo Chess : setup, piece-change, win
+# Draughts / column draughts
+Checkers -> Hexdame : structure
+Checkers -> Hexagonal Checkers : structure
+Checkers -> Fianco : movement, win
+Checkers -> Alician Draughts : structure
+Lasca -> Emergo : setup, placement
+Bashni -> Stapeldammen I : expansion
+Halma -> Super-Halma : movement
+# n-in-a-row
+Gomoku -> Pente : capture, balance
+Gomoku -> Connect 4 : reduction, placement, win
+Gomoku -> Irensei : win, balance
+Gomoku -> Quarto : reduction, piece-change, action
+Gomoku -> Order and Chaos : reduction, action, win
+Gomoku -> Andantino : structure, placement, win
+Havannah -> Andantino : win, placement
+Gomoku -> Hexade : structure, win
+Gomoku -> Hex-Gomoku : structure
+Qubic -> 4D Tic-Tac-Toe : expansion
+Teeko -> Dao : reduction, movement
+Pente -> Boku : structure, capture
+# Flipping
+Othello -> Ataxx : movement, capture
+Ataxx -> Hexxagon : structure
+# Combinatorial
+NIM -> Chomp : structure, win
+Cram -> Stop-Gate, Domineering : placement
+# Blocking / territory
+Isola, Isolation -> Amazons : piece-add, movement, action
+Go -> Kropki : capture, win
+Go -> Tanbo : placement, capture
+# Tafl / asymmetric
+Hnefatafl -> Fidchell : structure, setup
+Hnefatafl -> Breakthru : setup, capture, movement
+Push -> Mini-Push : reduction
 
-<br><label>Depth:</label>
-<select id="depthSelect">
-  <option value="1">1</option>
-  <option value="2" selected>2</option>
-  <option value="3">3</option>
-  <option value="4">4</option>
-  <option value="5">5</option>
-  <option value="all">∞</option>
-</select>
+# ----- B. Plausible (conceptual rather than historical) -----
+Chess -> Chad : reduction, structure, win
+Chess -> Ploy, Imperium : structure, piece-change
+Chess -> Martian Chess : setup, capture, win
+Chess -> Knight Chase, Pferdeäppel : piece-rem, action, win
+Knight Chase, Pferdeäppel -> Isola, Isolation : movement, piece-change
+Knight Chase, Pferdeäppel -> Plop, Pferdeäppel : aesthetics
+Fox and Geese -> Three Musketeers : setup, capture, win
+Teeko -> Yonmoque : structure, placement, capture
+Gomoku -> Quixo : reduction, placement, movement
+Gomoku -> Quinio : aesthetics
+Gomoku -> Gomullo : capture
+Connect 4 -> Shift Tac Toe : action
+Boku -> Bollox : structure
+Reversi -> Turning Point : setup
+Othello -> Megiddo : structure
+Othello -> Blocs : placement, capture
+Epaminondas, Crossings -> Abalone : structure, capture
+Abalone -> Gipf : placement, capture, win
+Abalone -> Kuba, Traboulet, Akiba : structure, movement, win
+Focus, Domination -> Avalam Bitaka : movement, win
+Halma -> Phutball : piece-add, placement, win
+Halma -> Jumpin : reduction
+Halma -> Progressive Halma : capture, piece-change
+Halma -> Dodgem : reduction, movement
+Stapeldammen I -> Stapeldammen II : capture
+Kropki -> Dots : aesthetics
 
-<label>Filters:</label>
-<input type="text" id="filterInput" placeholder="eg. action !win">|<input type="checkbox" id="dotLabels" unchecked><label>export labels?</label>
+# ----- C. Speculative -----
+Checkers -> Dameta : setup, piece-change
+Checkers -> Croda : piece-change
+Checkers -> Sjekkers : movement
+Checkers -> Kinger : piece-change
+Checkers -> Dragon : piece-change
+Checkers -> Pasta : capture
+Halma -> Haalmaa : structure
+Halma -> Hopsy : structure
+Polytaire -> Take It Away : setup, win
+Toads & Frogs -> Ski Jumps : movement
+Fox and Geese -> Fangt die Mäuschen! : aesthetics
+Flagship -> Breakthru : structure
 
-<button onclick="exportDOT()">Export DOT</button> 
-<label><a href="https://edotor.net/" target="_blank" >viewer</a></label>
+# ===========================================================
+# Relations computed from the whole World of Abstract Games database
+# 559 new relations; pairs already in the ontology or in the earlier lists removed (48 dropped)
+# Every ancestor is strictly older than its descendant (undated games excluded).
+# "aesthetics" here means: no rule difference visible in the database tags.
+# ===========================================================
 
-<pre id="output"></pre>
+# ----- A. DOCUMENTED - the rules text of Y (WAG page / rules PDF) calls it a variant of, based on, inspired by... X, or Y's name contains X (53) -----
+Gomoku -> Sesqui : reduction, movement, win, balance
+Checkers -> Turkish Tafl : structure, win
+Checkers -> Coronet : structure, movement, win
+Checkers -> Eximo : structure, piece-change, placement, action, win
+Checkers -> Rematch : structure, setup, piece-change, movement, win
+Checkers -> Collateral Checkers : structure, piece-change, capture, win
+Reversi -> Verto : expansion, setup, placement, capture
+Halma -> Piratenjagd : structure, setup, movement, win
+Halma -> Halma Climbers : structure, win
+Halma -> Hex Hive : structure, movement
+Lightning -> Chain Lightning : expansion, setup, piece-rem, placement
+Trio (1894) -> Ternion : reduction, movement
+Camelot -> Camette : win
+Hex -> Bridg-It : structure, piece-add, balance
+Hex -> Trellis : structure
+Hex -> Trinidad (2002) : structure, setup, movement, balance
+Hex -> Squex : structure, capture, balance
+Hex -> Aquifer : movement, capture, balance
+Y -> Sesqui : structure, movement
+Epaminondas, Crossings -> Gambit (1965) : structure, capture, win
+Epaminondas, Crossings -> Kefren : structure, movement, capture, win
+Epaminondas, Crossings -> Column : structure, piece-add, movement, capture, win
+Epaminondas, Crossings -> Onager : structure, piece-change, movement, capture
+Lines of Action -> Flag Grid : expansion, piece-add, movement, capture, win
+Lines of Action -> Lines of Fixation : structure, piece-change, movement, capture, action, win
+Othello -> MacBeth : structure, capture
+Othello -> Iago : structure, piece-add, capture
+Othello -> Renegado : structure, capture, action
+Isola, Isolation -> Karaman : reduction, placement, movement, action
+Isola, Isolation -> Gravity Trap : structure, movement, capture, action
+Havannah -> Starweb : structure, win
+Star -> Starweb : structure, win, balance
+King's Court -> Harlequin : reduction, setup, movement, capture, win
+Amazons -> Partisans : movement, action
+Amazons -> Quagmire : structure, setup, movement, capture
+Ataxx -> Crusade, Quad Wrangle : placement, movement
+Ataxx -> Dominion : expansion, placement, movement, capture, action
+Hexxagon -> Tricouleur Hexxagon : expansion, placement, movement, capture, turn
+Quax -> ZeN : structure, balance
+Croda -> Dameo : movement
+Anchor -> Anchor 2D : structure, capture, win, balance
+Campaign -> Campaign Tour : reduction, placement, movement, capture, win
+Barrier -> Hekka : expansion, action
+Unlur -> Cross : structure, setup, balance
+Zoom -> Boom & Zoom : piece-change, capture, win
+Metamorphosis -> Morphos : expansion, placement, capture, balance
+Splits, Battle Sheep -> Icbrg : structure, setup, piece-change, action
+Onager -> Vault : structure, piece-change, movement, capture
+Loops -> Lin : structure
+Minimize -> Archipelago : expansion, placement
+Pathwayz -> Robble : reduction, action, win, balance
+Blooms -> Blither : expansion, setup, movement, capture
+Lifeline (2022) -> Asli : structure, capture, win
 
-<details>
-  <summary><label>Database</label></summary>
-  <iframe id="scaled-frame" src="https://jpneto.github.io/world_abstract_games/db.html" height="300px"></iframe>
-</details>
+# ----- B. SAME AUTHOR - shared designer and strong ludeme overlap (designer's own evolution) (225) -----
+Telka -> Camelot : structure
+Quintro -> Symmetrion : reduction, win
+Progressive Halma -> Chain Reaction : expansion, movement
+Breakthru -> Plop : reduction, action, win
+Astroblitz -> Lancer : aesthetics
+Strike, Fenix -> Sjekkers : structure, piece-change, movement, win
+Strike, Fenix -> Haalmaa : structure, piece-change, win
+Hexdame -> Emergo : structure, piece-change, placement, win
+Plop -> Plop, Pferdeäppel : capture, win
+Capriccio -> Kroma : aesthetics
+Sjekkers -> Fianco : structure, piece-change, win
+Hopsy -> Kingdom : expansion, movement, capture, win
+Octiles -> Abrobad : structure, win
+Octiles -> Make Muster : win
+Lancelot (1985) -> Cabale : structure, movement, win
+MacBeth -> Io : structure
+MacBeth -> Qascade : reduction, capture
+MacBeth -> Greylox : reduction
+Upper Hand, Pyramids -> Mosaic (2018) : expansion
+Emergo -> Grabber : reduction, setup, placement, movement, win
+Abalone -> Offboard : win
+Fianco -> Trings : structure, piece-change, win
+Planko -> si*X*O : reduction, win
+Quadrature -> Dimple Football : reduction, placement, win
+Quax -> Quad Motu : structure, movement, win
+Quax -> Sesqui : structure, movement
+Quax -> Odd Y : structure
+Slimetrail -> Medusa (2004) : structure
+Slimetrail -> Tromazons : structure, win
+Tanbo -> Redstone : reduction, piece-add
+Tanbo -> Bamboo : structure, capture, win
+Tanbo -> Die : structure, win
+Tack -> Eclipse : structure, capture, win
+Visavis -> ConHex : structure
+Motala Ström -> Karaman : expansion, setup, placement, win
+Motala Ström -> Vanakriget : expansion, setup, placement, win
+Motala Ström -> Vilbergen : expansion
+Yonmoque -> R&B-Dual : expansion, placement, win
+Trellis -> Anchor : structure, capture, win
+Breakthrough (2000) -> Zonesh : reduction
+Chameleons -> Gorgon : structure, action, win
+Chameleons -> Jumping Beans : win
+Chameleons -> Mix'n'Match : movement, win
+Chameleons -> Bagels : structure, win
+Chameleons -> Steeplechase : expansion, win
+Notwo's -> Hex-It, Exxit : structure, win
+Thataway -> Sidewinder : structure, action, win
+Toccato, Touch, Troïka -> 1 Stein + Co : structure, capture
+Toccato, Touch, Troïka -> Inversé : expansion, win
+Bunny War -> Bivouac : expansion, movement, win
+Chase II -> Barrier : reduction
+Chicken Gomoku -> Bipod : structure, setup, win
+Symbio -> Frenzy : movement, capture, win
+Unstack -> Sentinel : expansion, movement, win
+Abstract Puluc -> Abstract Chess : expansion, win
+Akron -> Margo : reduction, capture, win
+Trinidad (2002) -> Flecks : movement
+Weave -> Island or Bridge : reduction, win
+Antipod -> Yavalath : reduction, win
+Hodge Podge -> Tyr : movement, capture, win
+Hodge Podge -> Chikara : win
+Imnyss -> Cross : structure
+Imnyss -> Pentalath : structure, capture, win
+India -> Four Squared : structure, piece-change, movement, win
+Accasta Pari -> Attangle : expansion, placement, capture, win
+Bipod -> Pippinzip : structure
+Lisbon -> Mineway : reduction, win
+Lynx -> Marque : structure, balance
+Twins -> Agility : structure, win
+Byte -> Basic : movement, win
+Byte -> Jostle : expansion, piece-change, win
+Diamonds & Pivots -> Ringworm : expansion, capture, balance
+In Love Gomoku -> Pods : reduction, win
+Tablaaza -> Tudor Bond : structure, win
+Box Hex -> Anchor 2D : structure
+Box Hex -> Atoll : structure
+Box Hex -> Loophole : structure, win
+Box Hex -> Starboard Y : structure
+Box Hex -> Torus (2008) : structure
+Box Hex -> Eccentric Y : structure
+Box Hex -> Grand Hex : structure
+Box Hex -> Mobius : structure
+Box Hex -> Fractal : aesthetics
+Box Hex -> Conect : win
+Box Hex -> Minefield (2024) : structure
+Kwintie -> Klinker : expansion, win
+Papagra -> Byg : structure, action
+Crossway -> Begird : structure
+Crossway -> Gyre : structure, capture, win
+Dipole -> Monkey Queen : expansion, piece-change, action, win, balance
+Levee -> Black Narrows : reduction, win
+Mambo -> Che : win
+Mambo -> Palago : aesthetics
+Mambo -> Vasco : win
+Mambo -> Maíandros : structure, win
+Odd -> Magnapoco : structure, win
+Odd -> Bug : reduction, capture, win
+Taiji -> Hippos & Crocodiles : structure, win
+Taiji -> Pentactic : structure
+Taiji -> Pent-Up : structure
+Taiji -> Flink : reduction, win
+Taiji -> Tailits : aesthetics
+Taiji -> Stack-22 : structure
+Taiji -> Taigo : structure, win
+Trugo -> Limit : setup, placement
+Product -> Twin Flames : structure, capture, action
+Basic -> Colonnade : reduction, action, win
+Basic -> Silo : reduction, win
+Eccentric Y -> Gopher : expansion, win
+Eccentric Y -> Hexagonal Y : expansion
+Eccentric Y -> Group : win
+Abeo -> Scurry : expansion, movement, action, win
+Amoeba -> Scalas : structure, placement, movement, win
+Byg -> Strands : expansion, action
+Catchup -> Morro (2011) : structure, win
+Catchup -> Spry : win
+Colonnade -> Manhattan : expansion, piece-change, win
+Mad Bishops -> Zola : reduction, movement
+Omega -> Manalath : reduction, win
+Query -> Sytran : structure, win
+Rive -> Halfcut : structure, win
+Rive -> Churn : reduction
+Rive -> Take : win
+Coffee -> MapHex : structure, setup, win, balance
+Glorietta -> Shello : structure, movement, capture, win
+Pylyx -> Pit of Pillars : reduction, placement, movement, action, win
+RED -> Sheep Dogs and Wolves : aesthetics
+RED -> Blue : aesthetics
+RED -> Naja : structure, setup, win
+RED -> Blinq : structure, win
+RED -> Firenze : capture
+Tailath -> Nonpoint : reduction, win
+Tailath -> SQU : structure, win
+Yodd -> Konobi : structure, win, balance
+Yodd -> Sunder : reduction, win
+Yodd -> Yoin : reduction
+Ballista -> Desdemona (2020) : reduction, capture, action
+Ballista -> Diskobólos : reduction, piece-change, capture, win
+Brique -> Lear : reduction, win, balance
+Brique -> Morlox : reduction
+Brique -> Garw : reduction
+Konobi -> Cation : capture
+Konobi -> Morphos : expansion, capture
+Konobi -> Omny : structure
+Konobi -> Emulsion : expansion, placement, action, win
+Konobi -> Implo : reduction, capture, win
+Konobi -> Wythe : piece-add, piece-change, win
+Konobi -> Egotzi : structure, movement, win
+Konobi -> Oneover : reduction, win
+Konobi -> Cablink : reduction
+Konobi -> Finta : reduction
+Loose -> Yugo : expansion, capture
+Magnapoco -> Medo : structure, capture
+Rampart -> Enclave : expansion, action, win, balance
+Shello -> Bobina : structure, movement, capture, win
+Sligo -> Meigo : expansion, capture, balance
+Vimbre -> Squer : reduction
+Descent -> STAQS : expansion, piece-add, win
+Infinito -> Myriades : aesthetics
+Jaywalkers -> Glades : expansion, movement, win
+Kopano -> Whirlwind : expansion
+Kopano -> Crosswind : expansion
+Kopano -> Crosswire : reduction
+Topolo -> Huaca : structure
+Topolo -> Tendrils : structure
+Fuer -> Mitsudomoe : structure, win
+Jump Sturdy -> Goma : piece-change
+Thicket -> Chevrons : structure, action
+Trail Mix -> Trails : structure
+DuploHex -> Duploline : structure, win
+Fear Vier -> Flip Flop Free : structure, movement, win
+OGO -> Cercas : structure, win
+OGO -> Magbabo : structure
+OGO -> Mycelium : expansion, win
+Twigs -> Abstrakto : structure, piece-add, piece-rem, win
+Cation -> Escabel : piece-change, movement
+Cation -> Quabble : reduction
+Cation -> Compart : win
+Cation -> Perpend : aesthetics
+Cation -> Akimbo : expansion
+Cation -> Okimba : aesthetics
+Flicker -> Robble : reduction, capture, action, win
+Flicker -> Boloa : reduction, piece-change, movement
+Flicker -> Reneo : expansion, action
+Flicker -> Leeway : aesthetics
+Lear -> Pletore : expansion, win
+Lin -> Keil : structure, balance
+Bug -> Bitesize : expansion, win
+Escabel -> Swack : reduction, capture, win
+Fugo -> Lifeline (2022) : structure, movement, win
+Side Stitch -> Exo-Hex : structure, capture
+Yugo -> Bargo : structure, action
+Enclave -> Nebuchadnezzar : reduction, capture, win
+Abrobad -> Infuse : structure
+Fuse -> Mabula : setup, action
+Gekitai -> boop. : piece-change, win
+Nebuchadnezzar -> Faust : reduction, capture
+Radius -> GOTA : movement, win
+Saiju -> Orochi : expansion, piece-rem
+Tabik -> Petrify, Pilo : structure, movement, capture, action
+Bamboo -> Flipchain : capture, win
+Circuit -> Center : win
+Circuit -> Elea : reduction, win
+Crossbars -> Notubytu : reduction, balance
+Crossbars -> Renegado : structure, action, balance
+Dodo -> Yonkoma : structure, win
+Gopher -> Hadron : structure
+Manhattan -> Bounce : expansion, capture
+Meter -> Brood : reduction, capture
+Meter -> Verge : reduction, win, balance
+Zola -> Invector : expansion, movement
+Brickway -> Foliage : structure, win, balance
+Brood -> Solder : aesthetics
+Lifeline (2022) -> Mander : structure, setup, capture, win, balance
+Oneover -> Gyve : structure
+Signum -> Sever (2024) : reduction, win
+Tiptoe -> Sibling : structure, win, balance
+Nadraz -> Cropa : reduction, capture
+Nadraz -> Edrala : reduction, capture
+Bounders -> Exile : reduction, capture, win
+Droched -> Eneda : structure, capture, win, balance
+Necklace -> Extrusion : structure, capture, win
+Vaxandis -> Heave : structure, movement, capture, win
+Scrunch -> On Agar : expansion, movement, capture, win
+
+# ----- C. SAME GOAL - shared goal and very similar ludeme profile (and usually the same board family) (281) -----
+Gomoku -> Ten-Q : reduction, win
+Gomoku -> Gung Ho : reduction
+Gomoku -> Stop Dot : structure
+Gomoku -> Vex : structure
+Gomoku -> Rex : structure
+Gomoku -> Trio (1972) : structure
+Gomoku -> Crosso : reduction, win
+Gomoku -> King : reduction
+Gomoku -> Trianon : reduction
+Gomoku -> 4D Tic-Tac-Toe : structure
+Gomoku -> Bollox : structure, win
+Gomoku -> Connect6 : aesthetics
+Gomoku -> Tetrano : reduction
+Gomoku -> In Love Gomoku : reduction
+Gomoku -> Ultimate Tic-Tac-Toe : reduction
+Gomoku -> Notakto : structure, win
+Gomoku -> Tailath : structure
+Gomoku -> Intercardinal X : reduction
+Gomoku -> OGO : structure
+Gomoku -> Yavalax : aesthetics
+Gomoku -> Shima Enaga Dango : structure, win
+Alquerque -> Strat : expansion, capture
+Alquerque -> Moxie : reduction, placement, win
+Alquerque -> Castello : expansion
+Bagh Chal -> Catch the Hare : aesthetics
+Checkers -> Dablo Daares : structure, piece-change
+Checkers -> Ringkampf : structure
+Checkers -> The Sisti Challenge : structure
+Checkers -> Damex : structure
+Checkers -> Game of Solomon : structure, win
+Fox and Geese -> Kasteel : structure, win
+Hexagonia -> The Conquest of Morundir : reduction, movement, win
+Bashni -> Gomony : aesthetics
+Schachdame -> Smess : aesthetics
+Halma -> Bushi : reduction
+Halma -> Ponents : reduction
+Halma -> Manspel : reduction
+Halma -> Wer Schafft es am Schnellsten : structure
+Halma -> Babushka : reduction
+Halma -> Le Zug : expansion
+Halma -> Blockers : reduction, action
+Halma -> Uberläufer : structure
+Halma -> Disci : reduction, movement
+Chivalry -> Blue & Gray : reduction
+Chivalry -> Dymonds : structure, win
+Chivalry -> Scoundrels : reduction, win
+Chivalry -> Astroblitz : structure
+Chivalry -> Xerxes : expansion
+Chivalry -> Courier : reduction, setup, win
+Chivalry -> Shelters : reduction
+Chivalry -> Royal Carpet : reduction, placement
+Chivalry -> Hop : reduction, movement
+Chivalry -> Temple : reduction, win
+Man in the Moon -> Seegover : capture
+Shan Tu -> The Right Moves : structure, win
+Attacco -> The Game of Eagles : reduction, win
+Attacco -> Trojan Horse : reduction, win
+Attacco -> King's Court : reduction, win
+Caesar Game -> Peg Chow : expansion
+Caesar Game -> Trampoli : expansion
+The Game of Passo -> Chessyball : expansion, win
+Ringkampf -> Super-Chex : expansion
+Ringkampf -> Dragon : expansion, win
+Ringkampf -> The Good for Nothings : expansion, win
+Ringkampf -> Flying Saucers : expansion
+Ringkampf -> African Queen : reduction, win
+Open Goal -> Libero : reduction
+Hex -> Octagons : structure
+Hex -> Quax : structure
+Hex -> Link : movement
+Hex -> Trilithon : structure
+Hex -> Chameleon (2003) : action
+Hex -> Imnyss : aesthetics
+Hex -> Crossway : structure
+Hex -> Dozer Hex : capture
+Rösselsprung -> Claustro : structure
+Cheskers -> Apocalypse : reduction, movement, win
+Cram -> Universe : expansion
+Cram -> Sanctuaries : expansion
+Cram -> Quelhas : expansion
+Dymonds -> Kinger : structure, win
+Dymonds -> Hexdame : structure, win
+Dragon -> Strike, Fenix : reduction, piece-change, win
+Dragon -> Croda : reduction, win
+Kinger -> Ego : expansion
+Moxie -> Hopsy : expansion, placement, win
+The Game is Nirtz -> Mastergame : reduction
+Chase Back -> Swoop, Pounce : structure, win
+Chase Back -> Zener : reduction, piece-change, win
+Focus, Domination -> Agora : reduction
+Siege -> Prairie, Bison, Buffalo Chess : expansion, win
+Trangalla -> Fizzol : structure
+Discon -> Ogama : reduction, placement, win
+LogiQuad Game System -> Giseh! : expansion
+Take It Away -> Operator : expansion, setup, placement
+Dozo -> Dakapo : structure, win
+Joker -> Flotte Krabbe, Sniggle : reduction, placement
+Ploy, Imperium -> Les Croks : reduction, setup, win
+Quandary -> Evade : reduction, win
+Tempo -> Slings and Stones : expansion, win
+Dual -> Fascia : reduction, movement
+Evade -> Simultana : reduction, win
+Othello -> Catena : structure
+Canyon -> Hinck : expansion, movement
+Canyon -> Reverso : reduction, capture
+Canyon -> Lanko : structure
+Hinck -> Rovers' Game : reduction
+Hinck -> Tiao : expansion, placement
+Spectra -> Matrix : piece-change
+Intermedium -> Axom : reduction, capture, win
+Blokeo -> ZigZag : reduction, placement, win
+Blokeo -> Kage : structure
+Blokeo -> L'enclos : structure
+Blokeo -> Langste Adem : expansion, movement
+Blokeo -> Manic Minelayers : reduction
+Blokeo -> Obonto : reduction, placement, win
+Blokeo -> Cowboys : reduction, placement
+Blokeo -> Angel and Demon : reduction, placement
+Blokeo -> Teblo : expansion, win
+Orbit (1975) -> Peaceful Resistance : structure
+Prairie, Bison, Buffalo Chess -> Berolina's Revenge : reduction, win
+Courier -> Motala Ström : reduction
+Explosion -> Prisoner Game : expansion, piece-change
+Explosion -> Automaton : capture
+Oktro -> Quadraphages : structure, placement
+Snijpunt, Crossover -> Verso : expansion, placement, movement
+Up & add'em! -> Big*Bang : structure
+Ergo -> Traffic Lights : reduction, movement
+Stragone -> Wutaishan : piece-change, win
+Pente -> J'Emme : structure, balance
+Closing In -> Blockades : structure, win
+Matrix -> Plotto : structure
+Seti -> Hekla : expansion, capture
+Caesars -> Gomullo : expansion, movement
+Caesars -> Regoot : expansion, movement
+Caesars -> Crosscut : expansion, movement
+Damex -> Hexagonal Checkers : movement
+Inner Circle -> Pyramid 2D : structure, win
+Order and Chaos -> Unfair : expansion
+Capriccio -> Spark : expansion, setup, win
+Chad -> Hecatomb : reduction, movement
+Kasteel -> Gauntlet : expansion, win
+Mind Strike -> Un-Tria : structure, win
+Shakti -> Hibryd : reduction, win
+Sjekkers -> Herooj : structure, win
+Catch'it -> Kidam : expansion, movement
+Catch'it -> Intercept : expansion, piece-change
+Hopsy -> Trinidad (2003) : expansion
+Strata5 -> Stackers : placement
+Strata5 -> Stampede (2026) : expansion, placement
+Blockades -> Outfox : reduction, placement, win
+Goju -> Sage : structure, win
+King's Court -> Chameleons : reduction
+King's Court -> Kiki & Bun-Bun : aesthetics
+King's Court -> Kruzno : structure
+King's Court -> Harzdame : win
+King's Court -> Cage : expansion
+Abalone -> Oshi : structure
+Jump Jack -> Contrast : reduction, placement, win
+Tac-Tic-Turn -> Pentago : structure
+Kidam -> Scrum : reduction
+Planko -> Pentwall : reduction
+Complica -> Push (1995) : expansion, movement
+Flotte Krabbe, Sniggle -> Jump : reduction
+Quarto -> Mijnlieff : aesthetics
+Quarto -> 4Mation : expansion
+Queen Courtier's -> Tourney : reduction, win
+Spark -> Stlts : expansion, piece-change, win
+Spark -> Chameleon (2019) : reduction, win
+Batalo -> Macadam : structure, movement
+Batalo -> Baran : structure
+Ramparts (1993) -> Columna (2025) : reduction
+Kuba, Traboulet, Akiba -> Atrio : expansion, movement, win
+3 6 9 -> Linage : expansion
+Croda -> Commoners' Checkers : win
+Croda -> Lika : expansion
+Croda -> Crownsi : reduction, movement, win
+Mole Hill -> The Hoarder & the Gatekeeper : structure, movement
+Push (1995) -> Gekitai : reduction, win
+Triangular, Triadis -> Ksar : structure
+Trimok -> India : structure, placement, win
+Regio -> Jack Rabbits : expansion
+Regio -> Freezers : expansion
+Yonmoque -> Quad : expansion, movement, win
+Minarett -> The Last Captain : expansion, win
+T. for Two -> City Blocks : expansion
+T. for Two -> Taiji : expansion
+Cabale -> Control : movement
+Breakthrough (2000) -> Daggers : expansion, win
+Breakthrough (2000) -> Kick & Run : reduction, win
+Breakthrough (2000) -> Octego : expansion, win
+Breakthrough (2000) -> Vikings vs. Saxons : expansion, win
+Conflict -> Rose Garden : reduction, placement, movement
+Notwo's -> Tak : reduction, action, win
+Toccato, Touch, Troïka -> Columns : reduction
+Toccato, Touch, Troïka -> Skybridge : reduction
+Toccato, Touch, Troïka -> Foundations : expansion
+Toccato, Touch, Troïka -> Seven : structure
+Toccato, Touch, Troïka -> Convert : reduction
+Toccato, Touch, Troïka -> Uptown : reduction
+Toccato, Touch, Troïka -> Block Ness : expansion
+Toccato, Touch, Troïka -> Stackup : structure
+Apex -> RAYO : placement
+Chicken Gomoku -> Looper : structure, win
+Fire Drill (2001) -> BounceQuad : win
+Hekla -> Retsami : expansion
+Jade -> Cut and Thrust : structure
+Mix'n'Match -> Duffer : reduction
+Orthokon -> Obelisk : expansion, placement
+Push 4 -> Pentaroll : reduction
+The Conquest of Morundir -> Mad Bishops : structure, win
+Abstract Puluc -> Jump Sturdy : expansion, win
+Barrier -> Un : structure
+Diaballik -> Diabalex : structure
+Karaman -> Sapos : expansion, movement
+Vector Powers -> Tapas : expansion, placement
+Chameleon (2003) -> Asterisk : structure
+Phwar -> Empress : structure
+Slides of Action -> Blob : structure, placement
+Three Stooges -> La Chefa : reduction, setup, win
+Trop -> Stix : structure, movement
+Un -> Nowhere to Go : reduction
+Ecke -> Forge : reduction, placement
+Landlord -> Fendo : structure, placement
+Neumoku -> Rock, Paper, Four : reduction
+Outfox -> Diggrie : structure, win
+Send It -> Meridians : reduction, capture
+Corintho -> Jaleo : structure
+Pentago -> Rotaris : structure
+Pentago -> Rotex : structure
+Anti-Grid -> Vut : structure, win
+Inversé -> Zenith : structure
+Inversé -> Quadefy : structure
+Khan Tsin, Babylone -> Stac : reduction
+Kwintie -> Stack Three : structure
+Oshi -> Pushmajor : expansion, movement
+Barca -> Top Cap : reduction, win
+Barca -> Bocch : reduction
+Oust -> Gygoreg : structure
+Spartan Skaki -> Pyramid : reduction, capture, win
+Taiji -> Foundation : aesthetics
+Taiji -> Dualities : structure
+Taiji -> Iso : expansion
+Achef -> Oka : expansion, win
+Chakra View -> Sparta : expansion, capture, win
+Imbrix -> Cistude : aesthetics
+Product -> Omega : expansion
+Product -> Minimize : reduction
+Gauss -> Kaomi : structure
+Shintai -> Cinco Linko : structure
+Shintai -> Ringo (2018) : structure
+Bamogo -> Swaptimum : expansion
+Colonnade -> Passo : expansion, capture, win
+Deadcell -> Calliro : structure
+Rin -> Loose : reduction
+Sky Scrapers, Elephant Tactics -> Tres (2016) : structure
+Antipode -> Skirt : expansion, capture
+Glorietta -> Hoop : reduction, capture
+LOT -> Migoyugo : expansion
+Vimbre -> Crisscross : reduction
+Trideo -> Frutas : piece-change, placement, win
+Flink -> Oli : expansion
+Flink -> Orion Duel : structure, win
+27, Stakko -> Peak : expansion, movement
+Yugo -> Root Bound : structure
+Droplets -> Filament : structure
+Keil -> Lozengo : balance
+Keil -> Meshes : balance
+Jamit -> Tennessee Waltz : movement
+Qascade -> Nadraz : expansion
+Qascade -> Taugo : structure
+Residuel -> Facet : structure
+Slyde -> Rapid Transit : reduction, placement
+Anaash -> Portmanteau : expansion
+Meter -> Eater : reduction, capture
+Meter -> Swarm : reduction, piece-change
+Skirt -> Neural Connection : structure
+Zong-Heng -> Dropper : placement
+Clusterfuss -> Zeno : expansion, capture
+Dualities -> Hebi : expansion
+Bounders -> Colorfield : structure
+</script>
+
+<!--
+  LINKS
+  One game per line:   Game : [LABEL] url [LABEL] url ...
+  e.g.  Hex : [WAG] https://.../hex.htm [BGG] https://boardgamegeek.com/boardgame/...
+  The game name must be written as in the relations list (case is ignored).
+  Labels are free: WAG, BGG, Wiki, ... Blank lines and lines starting with # are ignored.
+-->
+<script type="text/plain" id="links">
+*Star : [WAG] https://jpneto.github.io/world_abstract_games/starstar.htm [BGG] https://boardgamegeek.com/boardgame/11997
+1 Stein + Co : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2003_1Stein_and_Co.pdf [BGG] https://boardgamegeek.com/boardgame/8965
+27, Stakko : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2017_27.pdf [BGG] https://boardgamegeek.com/boardgame/235697
+3 6 9 : [WAG] https://jpneto.github.io/world_abstract_games/369.htm [BGG] https://boardgamegeek.com/boardgame/32597
+4D Tic-Tac-Toe : [WAG] https://jpneto.github.io/world_abstract_games/4dttt.htm [BGG] https://boardgamegeek.com/boardgame/32596
+4Mation : [BGG] https://boardgamegeek.com/boardgame/329175
+Abak : [BGG] https://boardgamegeek.com/boardgame/294624 [Ludii] https://ludii.games/details.php?keyword=Abak
+Abalone : [WAG] https://jpneto.github.io/world_abstract_games/abalone.htm [BGG] https://boardgamegeek.com/boardgame/526
+Abeo : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2010_Abeo.pdf
+Abrobad : [Ludii] https://ludii.games/details.php?keyword=Abrobad
+Abstract Chess : [WAG] https://jpneto.github.io/world_abstract_games/abchess.htm [BGG] https://boardgamegeek.com/boardgame/441851
+Abstract Puluc : [WAG] https://jpneto.github.io/world_abstract_games/abpuluc.htm
+Abstrakto : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2020_Abstrakto.pdf [BGG] https://boardgamegeek.com/boardgame/324262
+Accasta Pari : [WAG] https://jpneto.github.io/world_abstract_games/accastapari.htm
+Accumulation : [WAG] https://jpneto.github.io/world_abstract_games/accumulation.htm
+Achef : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2008_Achef.pdf
+Adere : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2023_Adere.pdf [BGG] https://boardgamegeek.com/boardgame/397893 [1] https://adere.drew-edwards.com
+Advanced Slither : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2010_Slither.pdf [BGG] https://boardgamegeek.com/boardgame/75957
+African Queen : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/1991_African_Queen.pdf [BGG] https://boardgamegeek.com/boardgame/21774
+Agility : [BGG] https://boardgamegeek.com/boardgame/27628/agilidade
+Agora : [WAG] https://jpneto.github.io/world_abstract_games/agora.htm [BGG] https://boardgamegeek.com/boardgame/11680
+Akimbo : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2026_Akimbo.pdf [BGG] https://boardgamegeek.com/boardgame/466041
+Akron : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2002_Akron.pdf [BGG] https://boardgamegeek.com/boardgame/10889 [1] https://www.abstractgames.org/uploads/1/1/6/4/116462923/abstract_games_issue_14.pdf#page=13
+Alician Draughts : [BGG] https://boardgamegeek.com/boardgame/187750
+Alliances : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2020_Alliances.pdf [BGG] https://boardgamegeek.com/boardgame/302399
+Alquerque : [WAG] https://jpneto.github.io/world_abstract_games/alquerque.htm [BGG] https://boardgamegeek.com/boardgame/11464 [Ludii] https://ludii.games/details.php?keyword=Alquerque
+Alta : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2002_Alta.html [BGG] https://boardgamegeek.com/boardgame/40658
+Alveole : [BGG] https://boardgamegeek.com/boardgame/343687
+Amazons : [WAG] https://jpneto.github.io/world_abstract_games/amazons.htm [BGG] https://boardgamegeek.com/boardgame/2125
+Amoeba : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2010_Amoeba.pdf [BGG] https://boardgamegeek.com/boardgame/143387
+Anaash : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2021_Anaash.pdf
+Anchor 2D : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2008_Anchor2D.pdf
+Anchor : [WAG] https://jpneto.github.io/world_abstract_games/anchor.htm [BGG] https://boardgamegeek.com/boardgame/23235
+Andantino : [WAG] https://jpneto.github.io/world_abstract_games/andantino.htm [BGG] https://boardgamegeek.com/boardgame/11893
+Angel and Demon : [ZoG] https://www.zillions-of-games.com/cgi-bin/zilligames/submissions.cgi?do=show;id=1653
+Annexation : [WAG] https://jpneto.github.io/world_abstract_games/othello.htm#annexation [1] https://www.gamesboard.org.uk/cgi-pub/gardpub.cgi?table=examples&pk=15065&command=view
+Anti-Grid : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2006_Anti-Grid.pdf [BGG] https://boardgamegeek.com/boardgame/25389
+Antipod : [WAG] https://jpneto.github.io/world_abstract_games/antipod.htm [BGG] https://boardgamegeek.com/boardgame/19130
+Antipode : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2011_Antipode.pdf [BGG] https://boardgamegeek.com/boardgame/120949
+Apex : [WAG] https://jpneto.github.io/world_abstract_games/apex.htm [BGG] https://boardgamegeek.com/boardgame/21344
+Apocalypse : [WAG] https://jpneto.github.io/world_abstract_games/apocalypse.htm [BGG] https://boardgamegeek.com/boardgame/14123
+Aquifer : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2021_Aquifer.pdf [BGG] https://boardgamegeek.com/boardgame/332687
+Archipelago : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2016_Archipelago.pdf [BGG] https://boardgamegeek.com/boardgame/214669
+ARP : [WAG] https://jpneto.github.io/world_abstract_games/halma.htm#ARP [BGG] https://boardgamegeek.com/boardgame/108793
+Asli : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2023_Asli.pdf [BGG] https://boardgamegeek.com/boardgame/393166
+Asterisk : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2014_Asterisk.pdf [BGG] https://boardgamegeek.com/boardgame/160643
+Astroblitz : [Sagme] https://sagme.blogspot.com/2025/06/from-chivalry-to-lancer.html [BGG] https://boardgamegeek.com/boardgame/6815
+Ataxx : [WAG] https://jpneto.github.io/world_abstract_games/ataxx.htm [1] https://www.pressibus.org/ataxx/indexgb.html
+Atchin : [Sagme] https://sagme.blogspot.com/2025/10/atchin.html
+Atoll : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2008_Atoll.pdf [BGG] https://boardgamegeek.com/boardgame/34221
+Atrio : [Sagme] https://sagme.blogspot.com/2025/04/atrio.html [BGG] https://boardgamegeek.com/boardgame/24679
+Attacco : [Sagme] https://sagme.blogspot.com/2026/09/attacco.html [BGG] https://boardgamegeek.com/boardgame/254988
+Attangle : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2006_Attangle.pdf [BGG] https://boardgamegeek.com/boardgame/24525
+Automaton : [WAG] https://jpneto.github.io/world_abstract_games/automaton.htm
+Avalam Bitaka : [WAG] https://jpneto.github.io/world_abstract_games/avalam.htm [BGG] https://boardgamegeek.com/boardgame/9092
+Awithlaknannai : [WAG] https://jpneto.github.io/world_abstract_games/alquerque.htm#awithlak0nai [BGG] https://boardgamegeek.com/boardgame/13766
+Axom : [Sagme] https://sagme.blogspot.com/2025/03/axom.html [BGG] https://boardgamegeek.com/boardgame/25707
+Ayu : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2011_Ayu.pdf [BGG] https://boardgamegeek.com/boardgame/114484
+Babushka : [WAG] https://jpneto.github.io/world_abstract_games/babushka.htm [BGG] https://boardgamegeek.com/boardgame/1226 [Sagme] https://sagme.blogspot.com/2025/02/babuschka.html
+Bagels : [BGG] https://boardgamegeek.com/boardgame/320300
+Bagh Chal : [BGG] https://boardgamegeek.com/boardgame/315
+Ballista : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2012_Ballista.pdf [BGG] https://boardgamegeek.com/boardgame/131528
+Bamboo : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2021_Bamboo.pdf
+Bamogo : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2010_Bamogo.pdf [BGG] https://boardgamegeek.com/boardgame/85993
+Baran : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2007_Baran.pdf [BGG] https://boardgamegeek.com/boardgame/33790
+Barca : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2007_Barca.pdf [BGG] https://boardgamegeek.com/boardgame/69347
+Bargo : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2020_Bargo.pdf [BGG] https://boardgamegeek.com/boardgame/329430
+Barrier : [WAG] https://jpneto.github.io/world_abstract_games/barrier.htm [BGG] https://boardgamegeek.com/boardgame/32653
+Basalt : [BGG] https://boardgamegeek.com/boardgame/421505
+Bashni : [WAG] https://jpneto.github.io/world_abstract_games/bashnya.htm [BGG] https://boardgamegeek.com/boardgame/36550 [Ludii] https://ludii.games/details.php?keyword=Bashni [1] https://www.abstractgames.org/uploads/1/1/6/4/116462923/abstract_games_issue_1.pdf#page=8
+Basic : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2009_Basic.pdf
+Batalo : [WAG] https://jpneto.github.io/world_abstract_games/batalo.htm [BGG] https://boardgamegeek.com/boardgame/6575 [1] https://www.digitalharmonics.org/harmonygames.html
+Beeline : [Sagme] https://sagme.blogspot.com/2026/04/beeline.html [BGG] https://boardgamegeek.com/boardgame/128939
+Begird : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2008_Begird.pdf [BGG] https://boardgamegeek.com/boardgame/34304
+Belaris : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2014_Belaris.pdf
+Bent : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2021_Bent.pdf [BGG] https://boardgamegeek.com/thread/2695835
+Berolina's Revenge : [WAG] https://jpneto.github.io/world_abstract_games/berolina.htm
+Big*Bang : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2016_Bing_Bang.pdf [BGG] https://boardgamegeek.com/boardgame/209428
+Bipod : [WAG] https://jpneto.github.io/world_abstract_games/bipod.htm
+Bitesize : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2024_Eat_Your_Neighbor.pdf [BGG] https://boardgamegeek.com/thread/3499194
+Bivouac : [WAG] https://jpneto.github.io/world_abstract_games/bivouac.htm [BGG] https://boardgamegeek.com/boardgame/32985
+Black Narrows : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2026_Black_Narrows.pdf [BGG] https://boardgamegeek.com/boardgame/478401
+Blinq : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2020_Blinq.pdf [BGG] https://boardgamegeek.com/boardgame/271266
+Blither : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2021_Blither.pdf [BGG] https://boardgamegeek.com/boardgame/381147
+Blob : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2012_Blob.pdf [BGG] https://boardgamegeek.com/boardgame/129949
+Block Ness : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2021_Blockness.pdf [BGG] https://boardgamegeek.com/boardgame/328624
+Blockades : [WAG] https://jpneto.github.io/world_abstract_games/blockades.htm [1] http://jeuxstrategieter.free.fr/Blockades_presentation.php
+Blockers : [WAG] https://jpneto.github.io/world_abstract_games/halma.htm#blockers [BGG] https://boardgamegeek.com/boardgame/124271
+Blocs : [Sagme] https://sagme.blogspot.com/2025/11/games-with-othello-pieces-blocs-and.html
+Blokeo : [WAG] https://jpneto.github.io/world_abstract_games/slimetrail.htm#blokeo [BGG] https://boardgamegeek.com/boardgame/247044
+Blooms : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2018_Blooms.pdf [BGG] https://boardgamegeek.com/boardgame/249095 [1] https://www.abstractgames.org/uploads/1/1/6/4/116462923/abstract_games_issue_20.pdf#page=18
+Blue & Gray : [WAG] https://jpneto.github.io/world_abstract_games/blueandgray.htm [BGG] https://boardgamegeek.com/boardgame/19254
+Blue : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2014_Blue.pdf [BGG] https://boardgamegeek.com/boardgame/167402
+Bluestone : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2025_Bluestone.pdf [BGG] https://boardgamegeek.com/boardgame/444241
+Bløctagøns : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2010_Bloctagons.pdf [BGG] https://boardgamegeek.com/boardgame/77486
+Bobina : [BGG] https://boardgamegeek.com/boardgame/234318
+Bocch : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2026_Bocch.pdf
+Boku : [WAG] https://jpneto.github.io/world_abstract_games/boku.htm [BGG] https://boardgamegeek.com/boardgame/69
+Bollox : [WAG] https://jpneto.github.io/world_abstract_games/moku.htm#bolix [BGG] https://boardgamegeek.com/boardgame/69
+Boloa : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2022_Boloa.pdf [BGG] https://boardgamegeek.com/boardgame/400177
+Bolotudu : [BGG] https://boardgamegeek.com/boardgame/112711
+Boom & Zoom : [BGG] https://boardgamegeek.com/boardgame/243927 [1] https://www.abstractgames.org/uploads/1/1/6/4/116462923/abstract_games_issue_21.pdf#page=23
+boop. : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2022_Boop.pdf [BGG] https://boardgamegeek.com/boardgame/355433
+Bounce : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2023_Bounce.pdf [BGG] https://boardgamegeek.com/boardgame/435089
+BounceQuad : [ZoG] https://www.zillions-of-games.com/cgi-bin/zilligames/submissions.cgi?do=show;id=1180
+Bounders : [BGG] https://boardgamegeek.com/boardgame/418353
+Box Hex : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2006_Box_Hex.pdf [BGG] https://boardgamegeek.com/boardgame/23087
+Break Away : [BGG] https://boardgamegeek.com/boardgame/25209
+Breakthrough (2000) : [WAG] https://jpneto.github.io/world_abstract_games/breakthrough.htm [BGG] https://boardgamegeek.com/boardgame/3825
+Breakthru : [WAG] https://jpneto.github.io/world_abstract_games/breakthru.htm [BGG] https://boardgamegeek.com/boardgame/335
+Bricka : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2023_Bricka.pdf [BGG] https://boardgamegeek.com/boardgame/403689
+Brickway : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2022_Brickway.pdf [BGG] https://boardgamegeek.com/boardgame/456992
+Bridg-It : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/1960_Bridg-It.html [BGG] https://boardgamegeek.com/boardgame/11052
+Bridget : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2013_Bridget.pdf [BGG] https://boardgamegeek.com/boardgame/286904
+Brique : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2012_Brique.pdf [BGG] https://boardgamegeek.com/boardgame/127189
+Brood : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2022_Brood.pdf [BGG] https://boardgamegeek.com/boardgame/368284
+Bug : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2017_Bug.pdf [BGG] https://boardgamegeek.com/boardgame/240835
+Bunny War : [WAG] https://jpneto.github.io/world_abstract_games/bunnywar.htm [BGG] https://boardgamegeek.com/boardgame/64098
+Bushi : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/1970_Bushi.pdf [BGG] https://boardgamegeek.com/boardgame/14591
+Byg : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2010_Byg.pdf [BGG] https://boardgamegeek.com/boardgame/85454
+Byte : [WAG] https://jpneto.github.io/world_abstract_games/byte.htm [BGG] https://boardgamegeek.com/boardgame/19360
+Cabale : [Sagme] https://sagme.blogspot.com/2024/12/cabale.html [BGG] https://boardgamegeek.com/boardgame/687
+Cablink : [BGG] https://boardgamegeek.com/boardgame/389600
+Caesar Game : [WAG] https://jpneto.github.io/world_abstract_games/halma.htm#caesar
+Caesars : [Sagme] https://sagme.blogspot.com/2026/01/caesars.html
+Cage : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2010_Cage.pdf [BGG] https://boardgamegeek.com/boardgame/72202
+Cairo Corridor : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2013_Cairo_Corridor.pdf [BGG] https://boardgamegeek.com/boardgame/137173
+Calliro : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2014_Calliro.pdf [BGG] https://boardgamegeek.com/boardgame/163109
+Camelot : [WAG] https://jpneto.github.io/world_abstract_games/camelot.htm [BGG] https://boardgamegeek.com/boardgame/5251
+Camette : [WAG] https://jpneto.github.io/world_abstract_games/camette.htm [BGG] https://boardgamegeek.com/boardgame/117871
+Caminos : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2010_Caminos.pdf [BGG] https://boardgamegeek.com/boardgame/84913
+Campaign : [WAG] https://jpneto.github.io/world_abstract_games/campaign.htm [BGG] https://boardgamegeek.com/boardgame/70530
+Campaign Tour : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2009_Campaign_Tour.pdf [BGG] https://boardgamegeek.com/boardgame/59932
+Cannons & Bullets : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2021_Cannon_Bullets.pdf [1] https://mindsports.nl/index.php/the-pit/1101-falconet
+Canvas : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2010_Canvas.pdf [BGG] https://boardgamegeek.com/boardgame/81703
+Canyon : [Sagme] https://sagme.blogspot.com/2025/04/canyon.html [BGG] https://boardgamegeek.com/boardgame/25883
+Capriccio : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/1982_Capriccio.pdf [1] https://web.archive.org/web/20100914083932/http://home.flash.net/~markthom/html/capriccio.html
+Castello : [WAG] https://jpneto.github.io/world_abstract_games/checkers.htm#castello [BGG] https://boardgamegeek.com/boardgame/116215
+Cataclysm : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2023_Cataclysm.pdf [BGG] https://boardgamegeek.com/boardgame/394313
+Catch the Hare : [BGG] https://boardgamegeek.com/boardgame/30715
+Catch'it : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/1983_Catch_It.pdf [BGG] https://boardgamegeek.com/boardgame/134433
+Catchup : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2010_Catchup.pdf [BGG] https://boardgamegeek.com/boardgame/68199
+Catena : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2025_Catena.pdf [BGG] https://boardgamegeek.com/boardgame/463765
+Catena Vitae : [BGG] https://boardgamegeek.com/boardgame/348559
+Cation : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2016_Cation.pdf [BGG] https://boardgamegeek.com/boardgame/202476
+Center : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2022_Center.pdf [BGG] https://boardgamegeek.com/boardgame/360905
+Cercas : [BGG] https://boardgamegeek.com/boardgame/196255
+Chad : [WAG] https://jpneto.github.io/world_abstract_games/chad.htm [BGG] https://boardgamegeek.com/boardgame/193537
+Chain Lightning : [BGG] https://boardgamegeek.com/boardgame/72312
+Chain Reaction : [WAG] https://jpneto.github.io/world_abstract_games/chainreaction.htm [BGG] https://boardgamegeek.com/boardgame/3619
+Chakra View : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2008_Chakra_View.pdf [BGG] https://boardgamegeek.com/boardgame/42161
+Chameleon (2003) : [WAG] https://jpneto.github.io/world_abstract_games/hex.htm#chameleon [BGG] https://boardgamegeek.com/boardgame/36945
+Chameleon (2019) : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2019_Chameleon.pdf [BGG] https://boardgamegeek.com/boardgame/273396
+Chameleons : [WAG] https://jpneto.github.io/world_abstract_games/chameleons.htm [BGG] https://boardgamegeek.com/boardgame/64785
+Chase Back : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/1962_Chase_Back.gif [BGG] https://boardgamegeek.com/boardgame/2445
+Chase II : [WAG] https://jpneto.github.io/world_abstract_games/chase2.htm
+Che : [BGG] https://boardgamegeek.com/boardgame/36429 [1] https://cambolbro.com/games/che
+Checkers : [WAG] https://jpneto.github.io/world_abstract_games/checkers.htm [BGG] https://boardgamegeek.com/boardgame/2083
+Cheno : [BGG] https://boardgamegeek.com/boardgame/371219
+Cheskers : [WAG] https://jpneto.github.io/world_abstract_games/checkers.htm#cheskers [BGG] https://boardgamegeek.com/boardgame/25120
+Chessyball : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2011_Chessyball.pdf [BGG] https://boardgamegeek.com/boardgame/95767
+Chevrons : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2020_Chevrons.pdf [BGG] https://boardgamegeek.com/boardgame/319169
+Chicken Gomoku : [WAG] https://jpneto.github.io/world_abstract_games/moku.htm#chicken_gomoku
+Chikara : [WAG] https://jpneto.github.io/world_abstract_games/hasami.htm#chikara [ZoG] https://www.zillions-of-games.com/cgi-bin/zilligames/submissions.cgi?do=show;id=1942
+Chivalry : [Sagme] https://sagme.blogspot.com/2025/06/from-chivalry-to-lancer.html [BGG] https://boardgamegeek.com/boardgame/117864
+Chomp : [Sagme] https://sagme.blogspot.com/2025/10/pencil-and-paper-games-blocking.html [BGG] https://boardgamegeek.com/boardgame/37354
+Church in Town : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2016_Church_in_Town.pdf [BGG] https://boardgamegeek.com/boardgame/246818
+Churn : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2024_Churn.pdf [BGG] https://boardgamegeek.com/boardgame/437052
+Cinco Linko : [BGG] https://boardgamegeek.com/boardgame/208808
+Circuit : [BGG] https://boardgamegeek.com/boardgame/342951
+Cistude : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2024_Cistude.pdf [BGG] https://boardgamegeek.com/boardgame/448687
+City Blocks : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2006_CityBlocks.pdf [BGG] https://boardgamegeek.com/boardgame/26210
+Claustro : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2023_Claustro.pdf [BGG] https://boardgamegeek.com/boardgame/391334
+Closing In : [Sagme] https://sagme.blogspot.com/2026/10/closing-in.html [BGG] https://boardgamegeek.com/boardgame/216852
+Clump : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2023_Clump.pdf [BGG] https://boardgamegeek.com/boardgame/399724
+Clusterfuss : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2023_Clusterfuss.pdf [BGG] https://boardgamegeek.com/boardgame/413919
+Coalesce : [BGG] https://boardgamegeek.com/boardgame/387738
+Cobweb : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2023_Cobweb.pdf [BGG] https://boardgamegeek.com/boardgame/398149
+Coffee : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2011_Coffee.pdf [BGG] https://boardgamegeek.com/boardgame/94746
+Collateral Checkers : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2024_Collateral_Checkers.pdf [BGG] https://boardgamegeek.com/boardgame/432845
+Colonnade : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2010_Colonnade.pdf
+Colorfield : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2026_Colorfield.pdf [BGG] https://boardgamegeek.com/boardgame/478150
+Column : [WAG] https://jpneto.github.io/world_abstract_games/column.htm
+Columna (2025) : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2025_Columna.pdf
+Columna : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2013_Columna.pdf [BGG] https://boardgamegeek.com/boardgame/150113
+Columns : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2004_Columns.pdf [BGG] https://boardgamegeek.com/boardgame/7870
+Commoners' Checkers : [ZoG] https://www.zillions-of-games.com/cgi-bin/zilligames/submissions.cgi?do=show;id=1339
+Compart : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2023_Compart.pdf [BGG] https://boardgamegeek.com/boardgame/385587
+Complica : [WAG] https://jpneto.github.io/world_abstract_games/complica.htm [BGG] https://boardgamegeek.com/boardgame/7476
+Conect : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2024_Conect.pdf
+Conflict : [Sagme] https://sagme.blogspot.com/2025/08/conflict.html [ZoG] https://www.zillions-of-games.com/cgi-bin/zilligames/submissions.cgi?do=show;id=224
+ConHex : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2002_ConHex.pdf [BGG] https://boardgamegeek.com/boardgame/10989
+Connect 4 : [WAG] https://jpneto.github.io/world_abstract_games/connect4.htm [BGG] https://boardgamegeek.com/boardgame/2719
+Connect6 : [WAG] https://jpneto.github.io/world_abstract_games/connect6.htm [BGG] https://boardgamegeek.com/boardgame/22847
+Connecticut : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2016_Connecticut.pdf [BGG] https://boardgamegeek.com/boardgame/297319
+Connections : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/1991_Connections.pdf [BGG] https://boardgamegeek.com/boardgame/3370
+Conspirateurs : [WAG] https://jpneto.github.io/world_abstract_games/conspirators.htm [Sagme] https://sagme.blogspot.com/2026/08/les-conspirateurs.html [BGG] https://boardgamegeek.com/boardgame/60707
+Consta : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2017_Consta.pdf [BGG] https://boardgamegeek.com/boardgame/224260
+Contrast : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2021_Contrast.pdf [BGG] https://boardgamegeek.com/boardgame/353828
+Control : [BGG] https://boardgamegeek.com/boardgame/418399
+Convert : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2014_Convert.pdf [BGG] https://boardgamegeek.com/boardgame/140236
+Corintho : [WAG] https://jpneto.github.io/world_abstract_games/corintho.htm [BGG] https://boardgamegeek.com/boardgame/20630
+Corona : [Sagme] https://sagme.blogspot.com/2020/12/1915-corona.html
+Coronet : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2012_Coronet.pdf [ZoG] https://www.zillions-of-games.com/cgi-bin/zilligames/submissions.cgi?do=show;id=2095
+Courier : [WAG] https://jpneto.github.io/world_abstract_games/courier.htm [BGG] https://boardgamegeek.com/boardgame/2056
+Cowboys : [WAG] https://jpneto.github.io/world_abstract_games/amazons.htm#cowboys [ZoG] https://www.zillions-of-games.com/cgi-bin/zilligames/submissions.cgi?do=show;id=237
+Cram : [WAG] https://jpneto.github.io/world_abstract_games/cram.htm
+Creeper : [WAG] https://jpneto.github.io/world_abstract_games/creeper.htm [BGG] https://boardgamegeek.com/boardgame/2271
+Crisscross : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2023_Crisscross.pdf [BGG] https://boardgamegeek.com/boardgame/399725
+Croda : [WAG] https://jpneto.github.io/world_abstract_games/croda.htm [BGG] https://boardgamegeek.com/boardgame/19843
+Cropa : [BGG] https://boardgamegeek.com/boardgame/436044
+Cross : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2009_Cross.pdf [BGG] https://boardgamegeek.com/boardgame/59668
+Crossbars : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2021_Crossbars.pdf [BGG] https://boardgamegeek.com/boardgame/365771
+Crosscut : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2023_Crosscut.pdf [BGG] https://boardgamegeek.com/boardgame/393644
+Crosso : [WAG] https://jpneto.github.io/world_abstract_games/moku.htm#crosso [BGG] https://boardgamegeek.com/boardgame/311310 [Sagme] https://sagme.blogspot.com/2026/03/crosso-and-chains.html
+Crossway : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2007_Crossway.pdf [BGG] https://boardgamegeek.com/boardgame/30517
+Crosswind : [BGG] https://boardgamegeek.com/boardgame/424939
+Crosswire : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2026_Crosswire.pdf [BGG] https://boardgamegeek.com/boardgame/477048
+Crownsi : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2026_Crownsi.pdf [BGG] https://boardgamegeek.com/thread/3651841
+Crusade, Quad Wrangle : [WAG] https://jpneto.github.io/world_abstract_games/quadwrangle.htm [BGG] https://boardgamegeek.com/boardgame/70926
+Cut and Thrust : [WAG] https://jpneto.github.io/world_abstract_games/hex.htm#cut_thrust
+Dablo Daares : [WAG] https://jpneto.github.io/world_abstract_games/checkers.htm#dablo
+Daggers : [WAG] https://jpneto.github.io/world_abstract_games/daggers.htm [BGG] https://boardgamegeek.com/boardgame/186029
+Dakapo : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2013_Dakapo.pdf [BGG] https://boardgamegeek.com/boardgame/147993
+Dameo : [WAG] https://jpneto.github.io/world_abstract_games/dameo.htm [BGG] https://boardgamegeek.com/boardgame/24698
+Dameta : [WAG] https://jpneto.github.io/world_abstract_games/dameta.htm
+Damex : [Sagme] https://sagme.blogspot.com/2025/05/hexagonal-checkers.html
+Dao : [WAG] https://jpneto.github.io/world_abstract_games/dao.htm [BGG] https://boardgamegeek.com/boardgame/948/dao
+Dawson's Chess : [WAG] https://jpneto.github.io/world_abstract_games/dawsonchess.htm
+Deadcell : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2010_Deadcell.html
+Der Kraftkönig : [WAG] https://jpneto.github.io/world_abstract_games/othello.htm#kraftkonig [BGG] https://boardgamegeek.com/boardgame/319194
+Descent : [BGG] https://boardgamegeek.com/boardgame/150586
+Desdemona (2020) : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2020_Desdemona.pdf [BGG] https://boardgamegeek.com/boardgame/313894
+Diabalex : [WAG] https://jpneto.github.io/world_abstract_games/diaballik.htm#diabalex
+Diaballik : [WAG] https://jpneto.github.io/world_abstract_games/diaballik.htm [BGG] https://boardgamegeek.com/boardgame/20253
+Diamond : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2012_Diamond.pdf [BGG] https://boardgamegeek.com/boardgame/133664
+Diamond Checkers : [WAG] https://jpneto.github.io/world_abstract_games/checkers.htm#diamond [BGG] https://boardgamegeek.com/boardgame/157771
+Diamond Maze : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2012_Diamond_Maze.pdf [BGG] https://boardgamegeek.com/thread/807498/new-game-diamond-maze
+Diamonds & Pivots : [WAG] https://jpneto.github.io/world_abstract_games/diamonds.htm
+Die : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2025_Die.pdf [BGG] https://boardgamegeek.com/boardgame/448480
+Diggrie : [BGG] https://boardgamegeek.com/boardgame/349551
+Dimple Football : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2026_Dimpled_Football.pdf [BGG] https://boardgamegeek.com/boardgame/472720
+Dipole : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2007_Dipole.pdf [BGG] https://boardgamegeek.com/boardgame/29491
+Disci : [WAG] https://jpneto.github.io/world_abstract_games/halma.htm#disci [BGG] https://boardgamegeek.com/boardgame/325130
+Discon : [Sagme] https://sagme.blogspot.com/2026/06/discon.html [BGG] https://boardgamegeek.com/boardgame/107442
+Diskobólos : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2020_Diskob%C3%B3los.pdf [BGG] https://boardgamegeek.com/thread/2493078/diskobolos
+Distrify : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2015_Distrify.pdf [BGG] https://boardgamegeek.com/boardgame/182752
+Divoc : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2020_Divoc.pdf [BGG] https://boardgamegeek.com/boardgame/319259
+Do-it-yourself draughts : [Sagme] https://sagme.blogspot.com/2025/04/diy-draughts.html
+Dodgem : [WAG] https://jpneto.github.io/world_abstract_games/dodgem.htm [BGG] https://boardgamegeek.com/boardgame/34873
+Dodo : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2021_Dodo.pdf [BGG] https://boardgamegeek.com/boardgame/344017
+Dominion : [WAG] https://jpneto.github.io/world_abstract_games/dominion.htm [BGG] https://boardgamegeek.com/boardgame/64777
+Dots : [Sagme] https://sagme.blogspot.com/2025/09/pencil-and-paper-games-dots-and-bugs.html
+Dozer Hex : [WAG] https://jpneto.github.io/world_abstract_games/hex.htm#dozer
+Dozo : [WAG] https://jpneto.github.io/world_abstract_games/dozo.htm [BGG] https://boardgamegeek.com/boardgame/8539
+Dragon : [WAG] https://jpneto.github.io/world_abstract_games/dragon.htm
+Droched : [BGG] https://boardgamegeek.com/boardgame/418086
+Droplets : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2019_Droplets.pdf [BGG] https://boardgamegeek.com/boardgame/289978
+Dropper : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2023_Dropper.pdf [BGG] https://boardgamegeek.com/boardgame/384171
+Dual : [Sagme] https://sagme.blogspot.com/2026/07/dual.html [BGG] https://boardgamegeek.com/boardgame/20141
+Dualities : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2023_Dualities.pdf [BGG] https://boardgamegeek.com/boardgame/404184
+Duffer : [WAG] https://jpneto.github.io/world_abstract_games/duffer.htm
+DuploHex : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2015_Duplo_Hex.pdf [BGG] https://boardgamegeek.com/boardgame/174474
+Duploline : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2017_Duploline.pdf [BGG] https://boardgamegeek.com/boardgame/224164
+Dymonds : [BGG] https://boardgamegeek.com/boardgame/29723
+Eater : [BGG] https://boardgamegeek.com/boardgame/421004
+Eccentric Y : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2009_Eccentric_Y.pdf
+Ecke : [WAG] https://jpneto.github.io/world_abstract_games/ecke.htm
+Eclipse : [WAG] https://jpneto.github.io/world_abstract_games/eclipse.htm
+Edrala : [BGG] https://boardgamegeek.com/boardgame/433673
+Ego : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/1983_Ego.pdf [BGG] https://boardgamegeek.com/boardgame/38815
+Egotzi : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2021_Egotzi.pdf [BGG] https://boardgamegeek.com/boardgame/339444
+Elea : [BGG] https://boardgamegeek.com/boardgame/379036 [Ludii] https://ludii.games/details.php?keyword=Elea
+Emergo : [WAG] https://jpneto.github.io/world_abstract_games/emergo.htm
+Empress : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2013_Empress.pdf [BGG] https://boardgamegeek.com/thread/982827/new-abstract-game-empress
+Emulsion : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2020_Emulsion.pdf [BGG] https://boardgamegeek.com/boardgame/311851
+Enclave : [BGG] https://boardgamegeek.com/boardgame/264583
+Eneda : [BGG] https://boardgamegeek.com/boardgame/436262
+Epaminondas, Crossings : [WAG] https://jpneto.github.io/world_abstract_games/epaminondas.htm [BGG] https://boardgamegeek.com/boardgame/7338
+Equinox : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2008_Equinox.pdf [BGG] https://boardgamegeek.com/boardgame/92861
+Ergo : [WAG] https://jpneto.github.io/world_abstract_games/ergo.htm [BGG] https://boardgamegeek.com/boardgame/2198
+Escabel : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2017_Escabel.pdf [BGG] https://boardgamegeek.com/boardgame/228304
+Estate : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2023_Estate.pdf [BGG] https://boardgamegeek.com/boardgame/383705
+Evade : [WAG] https://jpneto.github.io/world_abstract_games/evade.htm [BGG] https://boardgamegeek.com/boardgame/1735
+Exile : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2026_Exile.pdf [BGG] https://boardgamegeek.com/boardgame/466838
+Eximo : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2013_Eximo.pdf [BGG] https://boardgamegeek.com/boardgame/137916
+Exo-Hex : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2019_Exo-Hex.pdf [BGG] https://boardgamegeek.com/boardgame/291638
+Explosion : [1] https://github.com/jpneto/Images/blob/main/sagme/2030_12_Explosion_G&P_55.gif [BGG] https://boardgamegeek.com/boardgame/311943
+Extrusion : [BGG] https://boardgamegeek.com/boardgame/463767
+Facet : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2026_Facet.pdf [BGG] https://boardgamegeek.com/thread/3767532
+Fangt die Mäuschen! : [Sagme] https://sagme.blogspot.com/2026/07/fangt-die-mauschen.html [BGG] https://boardgamegeek.com/boardgame/40253
+Fanorona : [WAG] https://jpneto.github.io/world_abstract_games/fanorona.htm [BGG] https://boardgamegeek.com/boardgame/4386
+Fascia : [WAG] https://jpneto.github.io/world_abstract_games/fascia.htm
+Faust : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2021_Faust.pdf [BGG] https://boardgamegeek.com/thread/2603546
+Fear Vier : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2015_Fear_Vier.pdf [BGG] https://boardgamegeek.com/boardgame/430139
+Feed the Ducks : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2011_Feed_Ducks.pdf [BGG] https://boardgamegeek.com/boardgame/112532
+Fendo : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2014_Fendo.pdf [BGG] https://boardgamegeek.com/boardgame/159333
+Fianco : [WAG] https://jpneto.github.io/world_abstract_games/fianco.htm [BGG] https://boardgamegeek.com/boardgame/184520
+Fidchell : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/1990_Fidchell.html [BGG] https://boardgamegeek.com/boardgame/24291
+Filament : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2026_Filament.pdf [BGG] https://boardgamegeek.com/thread/3775896
+Finta : [BGG] https://boardgamegeek.com/boardgame/389599
+Fire Drill (2001) : [WAG] https://jpneto.github.io/world_abstract_games/firedrill.htm [BGG] https://boardgamegeek.com/boardgame/21350
+Firenze : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2020_Firenze.pdf [BGG] https://boardgamegeek.com/boardgame/319378
+Fizzol : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2024_Fizzol.pdf
+Flag Grid : [WAG] https://jpneto.github.io/world_abstract_games/flaggrid.htm
+Flagship : [BGG] https://boardgamegeek.com/boardgame/145843
+Flecks : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2012_Flecks.pdf [1] https://www.krammer.nl/hex/flecks
+Flicker : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2016_Flicker.pdf [BGG] https://boardgamegeek.com/boardgame/221663
+Flink : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2016_Flink.pdf [BGG] https://boardgamegeek.com/boardgame/205439
+Flip Flop Free : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2026_FlipFlopFree.pdf
+Flipchain : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2025_Flipchain.pdf
+Flipway : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2020_Flipway.pdf [BGG] https://boardgamegeek.com/boardgame/314559
+Flotte Krabbe, Sniggle : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/1991_Flotte_Krabbe.pdf [BGG] https://boardgamegeek.com/boardgame/6604
+Flying Saucers : [BGG] https://boardgamegeek.com/boardgame/33443
+Focus, Domination : [WAG] https://jpneto.github.io/world_abstract_games/focus.htm [BGG] https://boardgamegeek.com/boardgame/789/focus
+Foliage : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2026_Foliage.pdf [BGG] https://boardgamegeek.com/thread/3786470 [WAG] https://jpneto.github.io/world_abstract_games/zrfs/Foliage.lud
+Forge : [WAG] https://jpneto.github.io/world_abstract_games/forge.htm
+Fort Chitral : [Sagme] https://sagme.blogspot.com/2015/08/fort-chistral.html
+Fortification : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2024_Fortification.gif [BGG] https://boardgamegeek.com/thread/3302236
+Foundation : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2012_Foundation.pdf [BGG] https://boardgamegeek.com/boardgame/125895
+Foundations : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2011_Foundations.pdf [BGG] https://boardgamegeek.com/boardgame/108991
+Four Squared : [WAG] https://jpneto.github.io/world_abstract_games/4squared.htm
+Fox and Geese : [WAG] https://jpneto.github.io/world_abstract_games/fox-geese.htm [BGG] https://boardgamegeek.com/boardgame/10213
+Fractal : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2010_Fractal.pdf
+Freezers : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2025_Freezers.pdf [BGG] https://boardgamegeek.com/boardgame/447759
+Frenzy : [WAG] https://jpneto.github.io/world_abstract_games/frenzy.htm [BGG] https://boardgamegeek.com/boardgame/30235
+Fruits Platter : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2024_Fruits_Platter.pdf [BGG] https://boardgamegeek.com/boardgame/420484
+Frutas : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2025_Frutas.pdf [BGG] https://boardgamegeek.com/thread/3634290
+Fuer : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2014_Fuer.pdf [BGG] https://boardgamegeek.com/boardgame/430435
+Fugo : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2017_Fugo.pdf [BGG] https://boardgamegeek.com/boardgame/241620
+Fuse : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2019_Fuse.pdf [BGG] https://boardgamegeek.com/boardgame/286350
+Gaia : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2002_Gaia.pdf
+Gambit (1965) : [WAG] https://jpneto.github.io/world_abstract_games/gambit.htm [BGG] https://boardgamegeek.com/boardgame/6216
+Game of Solomon : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/1985_Solomon.pdf [BGG] https://boardgamegeek.com/boardgame/12702
+Garw : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2025_Garw.pdf [BGG] https://boardgamegeek.com/boardgame/468731
+Gauntlet : [WAG] https://jpneto.github.io/world_abstract_games/gauntlet.htm [BGG] https://boardgamegeek.com/boardgame/66415
+Gauss : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2009_Gauss.pdf [BGG] https://boardgamegeek.com/boardgame/51250
+Gekitai : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2020_Gekitai.pdf [BGG] https://boardgamegeek.com/boardgame/295449
+Gem : [WAG] https://jpneto.github.io/world_abstract_games/gem.htm
+Gess : [WAG] https://jpneto.github.io/world_abstract_games/gess.htm [BGG] https://boardgamegeek.com/boardgame/12862
+Gipf : [WAG] https://jpneto.github.io/world_abstract_games/gipf.htm [BGG] https://boardgamegeek.com/boardgame/527
+Giseh! : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2001_Giseh.pdf [BGG] https://boardgamegeek.com/boardgame/20566
+Glades : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2020_Glades.pdf [BGG] https://boardgamegeek.com/boardgame/327995
+Glaisher : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2015_Glaisher.pdf [BGG] https://boardgamegeek.com/boardgame/175363
+Global Connection : [WAG] https://jpneto.github.io/world_abstract_games/global_connection.htm [BGG] https://boardgamegeek.com/boardgame/231266
+Glorietta : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2011_Glorietta.pdf [BGG] https://boardgamegeek.com/boardgame/132169
+Goju : [WAG] https://jpneto.github.io/world_abstract_games/goju.htm [BGG] https://boardgamegeek.com/boardgame/10011
+Goma : [1] https://mindsports.nl/index.php/the-pit/1270-goma
+Gomoku : [WAG] https://jpneto.github.io/world_abstract_games/moku.htm#gomoku [BGG] https://boardgamegeek.com/boardgame/11929
+Gomony : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/1980_Gomony.pdf [BGG] https://boardgamegeek.com/boardgame/135803
+Gomullo : [WAG] https://jpneto.github.io/world_abstract_games/moku.htm#gomullo
+Gonnect : [WAG] https://jpneto.github.io/world_abstract_games/gonnect.htm [BGG] https://boardgamegeek.com/boardgame/12146
+Gopher : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2021_Gopher.pdf [BGG] https://boardgamegeek.com/boardgame/334824
+Gorgon : [WAG] https://jpneto.github.io/world_abstract_games/gorgon.htm [BGG] https://boardgamegeek.com/boardgame/63620
+GOTA : [BGG] https://boardgamegeek.com/boardgame/425833
+Grabber : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2011_Grabber.pdf [1] https://www.mindsports.nl/index.php/the-pit/578-grabber
+Grand Hex : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2009_Grand_Hex.pdf
+Gravity Trap : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2008_Gravity_Trap.pdf [BGG] https://boardgamegeek.com/boardgame/45723
+Greylox : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2024_Greylox.pdf [1] https://mindsports.nl/index.php/the-pit/1261-greylox
+Group : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2025_Group.pdf [BGG] https://boardgamegeek.com/boardgame/472729
+Groups : [WAG] https://jpneto.github.io/world_abstract_games/groups.htm [BGG] https://boardgamegeek.com/boardgame/30332
+Gung Ho : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/1961_GungHo.pdf [BGG] https://boardgamegeek.com/boardgame/16541
+Gygoreg : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2020_Gygoreg.pdf [BGG] https://boardgamegeek.com/thread/2497603/unification-game
+Gyre : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2015_Gyre.pdf [BGG] https://boardgamegeek.com/boardgame/367864 [Ludii] https://ludii.games/details.php?keyword=Gyre
+Gyve : [BGG] https://boardgamegeek.com/boardgame/379461
+Haalmaa : [Sagme] https://sagme.blogspot.com/2015/09/haalmaa.html
+Hadron : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2022_Hadron.pdf [BGG] https://boardgamegeek.com/boardgame/368118
+Halfcut : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2023_Halfcut.pdf [BGG] https://boardgamegeek.com/boardgame/399723
+Halma : [WAG] https://jpneto.github.io/world_abstract_games/halma.htm [BGG] https://boardgamegeek.com/boardgame/38950
+Halma Climbers : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2021_Halma_Climbers.pdf [BGG] https://boardgamegeek.com/thread/2750218/halma-climbers-another-no-place-no-capture-territo
+Harlequin : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2024_Harlequin.pdf [1] https://sites.google.com/site/theowlsnest02/home/harlequin
+Harzdame : [BGG] https://boardgamegeek.com/boardgame/45764
+Havannah : [WAG] https://jpneto.github.io/world_abstract_games/havannah.htm [BGG] https://boardgamegeek.com/boardgame/2759
+Heave : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2026_Heave.pdf [BGG] https://boardgamegeek.com/thread/3638650/
+Hebi : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2026_Hebi.pdf [1] https://tableroloco-1a0t.netlify.app/#hebi
+Hecatomb : [WAG] https://jpneto.github.io/world_abstract_games/hecatomb.htm
+Heisenberg : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2017_Heisenberg.pdf [BGG] https://boardgamegeek.com/boardgame/240847
+Hekka : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2025_Hekka.pdf [BGG] https://boardgamegeek.com/boardgame/442979
+Hekla : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2001_Hekla.pdf [BGG] https://boardgamegeek.com/boardgame/3210
+Herooj : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2020_Herooj.pdf [BGG] https://boardgamegeek.com/boardgame/127304
+Hex : [WAG] https://jpneto.github.io/world_abstract_games/hex.htm [BGG] https://boardgamegeek.com/boardgame/4112
+Hex Hive : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2024_Hex_Hive.pdf [BGG] https://boardgamegeek.com/boardgame/434247
+Hex-Gomoku : [WAG] https://jpneto.github.io/world_abstract_games/hexgomoku.htm
+Hex-It, Exxit : [WAG] https://jpneto.github.io/world_abstract_games/hexit.htm [BGG] https://boardgamegeek.com/boardgame/22947
+Hexade : [WAG] https://jpneto.github.io/world_abstract_games/hexade.htm [BGG] https://boardgamegeek.com/boardgame/21025
+Hexagonal Checkers : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/1985_Warchex.pdf
+Hexagonal Y : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2023_Hexagonal_Y.pdf [BGG] https://boardgamegeek.com/boardgame/432211
+Hexagonia : [Sagme] https://sagme.blogspot.com/2025/11/hexagonia.html [BGG] https://boardgamegeek.com/boardgame/153683
+Hexapawn : [WAG] https://jpneto.github.io/world_abstract_games/hexapawn.htm [BGG] https://boardgamegeek.com/boardgame/33379
+HexCore 6 : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2022_HexCore6.pdf [BGG] https://boardgamegeek.com/boardgame/393867
+Hexdame : [WAG] https://jpneto.github.io/world_abstract_games/hexdame.htm [BGG] https://boardgamegeek.com/boardgame/24697
+Hexma : [WAG] https://jpneto.github.io/world_abstract_games/halma.htm#hexma
+Hexxagon : [BGG] https://boardgamegeek.com/boardgame/19914
+Hibryd : [WAG] https://jpneto.github.io/world_abstract_games/hybrid.htm
+Hinck : [Sagme] https://sagme.blogspot.com/2026/02/hinck.html [BGG] https://boardgamegeek.com/boardgame/28005
+Hippos & Crocodiles : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2009_Hippos_Crocodiles.pdf [BGG] https://boardgamegeek.com/boardgame/51197
+Hnefatafl : [WAG] https://jpneto.github.io/world_abstract_games/hnefatafl.htm [BGG] https://boardgamegeek.com/boardgame/2932
+Hodge Podge : [WAG] https://jpneto.github.io/world_abstract_games/hodgepodge.htm
+Hoop : [BGG] https://boardgamegeek.com/boardgame/342939
+Hop : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2013_Hop.pdf [BGG] https://boardgamegeek.com/boardgame/147004
+Hopsy : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/1983_Hopsy.pdf
+Huaca : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2014_Huaca.pdf [BGG] https://boardgamegeek.com/boardgame/160474
+Iago : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2022_Iago.pdf [BGG] https://boardgamegeek.com/boardgame/354704
+Icbrg : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2025_Icbrg.pdf [BGG] https://boardgamegeek.com/boardgame/446904
+Identicon : [WAG] https://jpneto.github.io/world_abstract_games/hex.htm#identicon [BGG] https://boardgamegeek.com/thread/1695662/hex-variant-identicon
+Imbrix : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2008_Imbrix.pdf [BGG] https://boardgamegeek.com/boardgame/92859
+Imnyss : [WAG] https://jpneto.github.io/world_abstract_games/hex.htm#imnyss [BGG] https://boardgamegeek.com/boardgame/36945
+Implo : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2020_Implo.pdf [BGG] https://boardgamegeek.com/boardgame/327644
+In Love Gomoku : [WAG] https://jpneto.github.io/world_abstract_games/moku.htm#in_love
+India : [WAG] https://jpneto.github.io/world_abstract_games/india.htm [BGG] https://boardgamegeek.com/boardgame/42653
+Inertia : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2013_Inertia.pdf [BGG] https://boardgamegeek.com/boardgame/151333
+Infinito : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2013_Infinito.pdf [BGG] https://boardgamegeek.com/boardgame/160609
+Infuse : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2020_Infuse.pdf [BGG] https://boardgamegeek.com/thread/2518705 [Ludii] https://ludii.games/details.php?keyword=Infuse
+Inner Circle : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/1981_Inner_Circle.pdf [BGG] https://boardgamegeek.com/boardgame/2962
+inpHexion : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2014_inpHexion.pdf [BGG] https://boardgamegeek.com/boardgame/166186
+Intercardinal X : [BGG] https://boardgamegeek.com/boardgame/175217
+Intercept : [WAG] https://jpneto.github.io/world_abstract_games/intercept.htm [BGG] https://boardgamegeek.com/boardgame/80756
+Intermedium : [WAG] https://jpneto.github.io/world_abstract_games/intermedium.htm [BGG] https://boardgamegeek.com/boardgame/8215
+Invector : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2026_Invector.pdf
+Inversé : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2006_Invers%C3%A9.pdf [BGG] https://boardgamegeek.com/boardgame/28306
+Io : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2014_Io.pdf [BGG] https://boardgamegeek.com/boardgame/172471
+Irensei : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/1987_Irensei.pdf [BGG] https://boardgamegeek.com/boardgame/48871
+Island or Bridge : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2024_Island_Bridge.pdf
+Iso : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2025_Iso.pdf
+Isola, Isolation : [WAG] https://jpneto.github.io/world_abstract_games/isola.htm [BGG] https://boardgamegeek.com/boardgame/1875
+J'Emme : [WAG] https://jpneto.github.io/world_abstract_games/pente.htm#jemme [BGG] https://boardgamegeek.com/boardgame/416419
+Jack Rabbits : [WAG] https://jpneto.github.io/world_abstract_games/jackrabbits.htm
+Jade : [WAG] https://jpneto.github.io/world_abstract_games/jade.htm [BGG] https://boardgamegeek.com/boardgame/40522
+Jaleo : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2019_Jaleo.pdf [BGG] https://boardgamegeek.com/boardgame/271265
+Jamit : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2020_Jamit.pdf [BGG] https://boardgamegeek.com/boardgame/310358
+Jaywalkers : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2013_Jaywalkers.pdf [BGG] https://boardgamegeek.com/boardgame/151360
+Joker : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/1970_Joker.pdf [BGG] https://boardgamegeek.com/boardgame/17791
+Jostle : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2010_Jostle.pdf [BGG] https://boardgamegeek.com/boardgame/68808
+Jump : [BGG] https://boardgamegeek.com/boardgame/430421
+Jump Jack : [WAG] https://jpneto.github.io/world_abstract_games/jumpjack.htm [BGG] https://boardgamegeek.com/boardgame/63633
+Jump Sturdy : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2014_Jump_Sturdy.pdf [1] https://mindsports.nl/index.php/the-pit/576-jump-sturdy
+Jumpin : [WAG] https://jpneto.github.io/world_abstract_games/jumpin.htm [BGG] https://boardgamegeek.com/boardgame/336
+Jumping Beans : [WAG] https://jpneto.github.io/world_abstract_games/jumpingbeans.htm [BGG] https://boardgamegeek.com/boardgame/64783
+Kage : [Sagme] https://sagme.blogspot.com/2026/02/kage.html [BGG] https://boardgamegeek.com/boardgame/6426
+Kanga : [WAG] https://jpneto.github.io/world_abstract_games/kanga.htm
+Kaomi : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2021_Kaomi.pdf [BGG] https://boardgamegeek.com/boardgame/339443
+Karaman : [WAG] https://jpneto.github.io/world_abstract_games/karaman.htm
+Kasteel : [Sagme] https://sagme.blogspot.com/2015/09/kasteel.html
+Kefren : [WAG] https://jpneto.github.io/world_abstract_games/kefren.htm
+Keil : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2019_Keil.pdf [BGG] https://boardgamegeek.com/boardgame/295889 [1] https://www.abstractgames.org/uploads/1/1/6/4/116462923/abstract_games_issue_18.pdf#page=19
+Khan Tsin, Babylone : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2006_Khan_Tsin.pdf [BGG] https://boardgamegeek.com/boardgame/25448
+Kick & Run : [WAG] https://jpneto.github.io/world_abstract_games/kickrun.htm
+Kidam : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/1990_Kidam.pdf
+Kiki & Bun-Bun : [WAG] https://jpneto.github.io/world_abstract_games/kiki.htm [BGG] https://boardgamegeek.com/boardgame/13449
+King : [WAG] https://jpneto.github.io/world_abstract_games/moku.htm#king [BGG] https://boardgamegeek.com/boardgame/22452
+King's Court : [WAG] https://jpneto.github.io/world_abstract_games/kingscourt.htm [BGG] https://boardgamegeek.com/boardgame/5157
+Kingdom : [WAG] https://jpneto.github.io/world_abstract_games/kingdom.htm [BGG] https://boardgamegeek.com/boardgame/222234
+Kinger : [WAG] https://jpneto.github.io/world_abstract_games/kinger.htm
+Klinker : [Sagme] https://sagme.blogspot.com/2019/05/klinker.html [BGG] https://boardgamegeek.com/boardgame/314016
+Knight Chase, Pferdeäppel : [WAG] https://jpneto.github.io/world_abstract_games/slimetrail.htm#knight_chase [BGG] https://boardgamegeek.com/boardgame/26341
+KnightVision : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2021_KnightVision.pdf [1] https://mindsports.nl/index.php/the-pit/1102-knightvision
+Konobi : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2012_Konobi.pdf [BGG] https://boardgamegeek.com/boardgame/123213
+Kopano : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2013_Kopano.pdf [BGG] https://boardgamegeek.com/boardgame/144342
+Kroma : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2003_Kroma.pdf [ZoG] https://www.zillions-of-games.com/cgi-bin/zilligames/submissions.cgi?do=show;id=533
+Kropki : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/1950_Kropki.pdf [BGG] https://boardgamegeek.com/boardgame/26067
+Kruzno : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2006_Kruzno.jpg [BGG] https://boardgamegeek.com/boardgame/26873
+Ksar : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2018_Ksar.pdf [BGG] https://boardgamegeek.com/boardgame/279864
+Kuba, Traboulet, Akiba : [WAG] https://jpneto.github.io/world_abstract_games/kuba.htm [BGG] https://boardgamegeek.com/boardgame/1337
+Kwintie : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2006_Kwintie.pdf [BGG] https://boardgamegeek.com/boardgame/86275
+L'enclos : [Sagme] https://sagme.blogspot.com/2026/09/lenclos.html [BGG] https://boardgamegeek.com/boardgame/24498
+La Chefa : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2008_Chefa.pdf
+Lancelot (1985) : [Sagme] https://sagme.blogspot.com/2026/07/lancelot.html [BGG] https://boardgamegeek.com/boardgame/5380
+Lancer : [Sagme] https://sagme.blogspot.com/2025/06/from-chivalry-to-lancer.html [BGG] https://boardgamegeek.com/boardgame/2691
+Landlord : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2005_Landlord.pdf [BGG] https://boardgamegeek.com/boardgame/27758
+Langste Adem : [Sagme] https://sagme.blogspot.com/2013/06/wit-begint-en-wint.html
+Lanko : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2006_Lanko.pdf [BGG] https://boardgamegeek.com/boardgame/27804
+Lasca : [WAG] https://jpneto.github.io/world_abstract_games/lasca.htm [BGG] https://boardgamegeek.com/boardgame/6862 [1] https://www.abstractgames.org/uploads/1/1/6/4/116462923/abstract_games_issue_11.pdf#page=23
+Lava : [BGG] https://boardgamegeek.com/boardgame/346257
+Le Jeux de la Guerre : [Sagme] https://sagme.blogspot.com/2013/12/an-old-abstract-game.html
+Le Zug : [WAG] https://jpneto.github.io/world_abstract_games/halma.htm#lezug [BGG] https://boardgamegeek.com/boardgame/187929
+Leapfrog : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/1939_Leapfrog.pdf
+Lear : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2016_Lear.pdf [BGG] https://boardgamegeek.com/boardgame/209777
+Leeway : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2026_Leeway.pdf [BGG] https://boardgamegeek.com/boardgame/471008
+Les Croks : [Sagme] https://sagme.blogspot.com/2026/03/les-crocs.html
+Levee : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2007_Levee.pdf [1] https://groups.google.com/g/rec.games.abstract/c/YgJFkCXeHeU/m/IoH6b_KPnwcJ
+Libero : [WAG] https://jpneto.github.io/world_abstract_games/libero.htm [BGG] https://boardgamegeek.com/boardgame/1548
+Lifeline (2022) : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2022_Lifeline.pdf [BGG] https://boardgamegeek.com/boardgame/358196
+Lightning : [BGG] https://boardgamegeek.com/boardgame/35528 [1] https://www.abstractgames.org/uploads/1/1/6/4/116462923/abstract_games_issue_5.pdf#page=10
+Lika : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2008_Lika_fda48.pdf
+Limit : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2009_Limit.pdf [BGG] https://boardgamegeek.com/boardgame/39515
+Lin : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2016_Lin.pdf [BGG] https://boardgamegeek.com/boardgame/201506
+Linage : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2016_Linage.pdf [BGG] https://boardgamegeek.com/boardgame/219420
+Lines of Action : [WAG] https://jpneto.github.io/world_abstract_games/loa.htm [BGG] https://boardgamegeek.com/boardgame/3406
+Lines of Fixation : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2022_LoF.pdf [BGG] https://boardgamegeek.com/boardgame/332394
+Link : [WAG] https://jpneto.github.io/world_abstract_games/hex.htm#vex
+Linkx : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2025_Linkx.pdf [BGG] https://boardgamegeek.com/boardgame/431290
+Lisbon : [WAG] https://jpneto.github.io/world_abstract_games/lisbon.htm [BGG] https://boardgamegeek.com/boardgame/444272
+LogiQuad Game System : [Sagme] https://sagme.blogspot.com/2025/06/the-logiquad-game-system.html [BGG] https://boardgamegeek.com/boardgame/2208
+Looper : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2018_Looper.pdf [BGG] https://boardgamegeek.com/boardgame/248983
+Loophole : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2008_Loophole_2D.pdf
+Loops : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2013_Loops.pdf [BGG] https://boardgamegeek.com/boardgame/144390
+Loose : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2012_Loose.pdf [BGG] https://boardgamegeek.com/boardgame/120473
+LOT : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2012_LOT.pdf [BGG] https://boardgamegeek.com/boardgame/127989
+Lox : [BGG] https://boardgamegeek.com/boardgame/432212
+Lozengo : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2019_Keil.pdf#page%3D5 [BGG] https://boardgamegeek.com/thread/3244561
+Lynx : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2004_Lynx.html [BGG] https://boardgamegeek.com/boardgame/47206
+Mabula : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2021_Mabula.pdf [BGG] https://boardgamegeek.com/boardgame/346743
+Macadam : [WAG] https://jpneto.github.io/world_abstract_games/macadam.htm [BGG] https://boardgamegeek.com/boardgame/17848
+MacBeth : [WAG] https://jpneto.github.io/world_abstract_games/macbeth.htm [BGG] https://boardgamegeek.com/boardgame/65227
+Mad Bishops : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2010_Mad_Bishops.pdf [BGG] https://boardgamegeek.com/boardgame/69322 [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2010_Mad_Rooks.pdf
+Magbabo : [BGG] https://boardgamegeek.com/boardgame/213323
+Magnapoco : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2012_Magnapoco.pdf [BGG] https://boardgamegeek.com/boardgame/131970
+Make Muster : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2019_Make_Muster.pdf [BGG] https://boardgamegeek.com/boardgame/310122 [Ludii] https://ludii.games/details.php?keyword=Make%20Muster
+Mambo : [BGG] https://boardgamegeek.com/boardgame/33010 [1] https://cambolbro.com/games/mambo
+Man in the Moon : [WAG] https://jpneto.github.io/world_abstract_games/maninthemoon.htm [BGG] https://boardgamegeek.com/boardgame/11481
+Manalath : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2018_Manalath.pdf [BGG] https://boardgamegeek.com/boardgame/127993
+Mander : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2026_Mander.pdf [BGG] https://boardgamegeek.com/thread/3662629
+Manhattan : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2021_Manhattan.pdf [BGG] https://boardgamegeek.com/boardgame/332493
+Manic Minelayers : [WAG] https://jpneto.github.io/world_abstract_games/minelayers.htm [BGG] https://boardgamegeek.com/boardgame/1492
+Manspel : [BGG] https://boardgamegeek.com/boardgame/134111
+MapHex : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2020_Maphex.pdf [BGG] https://boardgamegeek.com/boardgame/322205
+Margo : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2006_Margo.pdf [BGG] https://boardgamegeek.com/boardgame/24923
+Marque : [BGG] https://boardgamegeek.com/boardgame/41827 [1] https://cambolbro.com/games/marque
+Martian Chess : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/1995_Martian_Chess.pdf [BGG] https://boardgamegeek.com/boardgame/19803
+Mastergame : [Sagme] https://sagme.blogspot.com/2026/04/mastergame.html [BGG] https://boardgamegeek.com/boardgame/11171
+Matrix : [WAG] https://jpneto.github.io/world_abstract_games/matrix.htm [BGG] https://boardgamegeek.com/boardgame/8114
+Maíandros : [BGG] https://boardgamegeek.com/boardgame/187641
+Medo : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2022_Medo.pdf [BGG] https://boardgamegeek.com/boardgame/353305
+Medusa (2004) : [WAG] https://jpneto.github.io/world_abstract_games/slimetrail.htm#medusa
+Megiddo : [Sagme] https://sagme.blogspot.com/2025/12/megiddo.html [BGG] https://boardgamegeek.com/boardgame/792
+Meigo : [BGG] https://boardgamegeek.com/boardgame/392567
+Meridians : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2021_Meridians.pdf [BGG] https://boardgamegeek.com/boardgame/333775 [1] https://www.abstractgames.org/uploads/1/1/6/4/116462923/abstract_games_issue_23.pdf#page=30
+Meshes : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2019_Keil.pdf#page%3D7 [BGG] https://boardgamegeek.com/thread/3634543
+Metamorphosis : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2009_Metamorphosis.html [BGG] https://boardgamegeek.com/boardgame/40934
+Meter : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2021_Meter.pdf [BGG] https://boardgamegeek.com/thread/2694429
+Migoyugo : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2025_Migoyugo.pdf [1] https://www.migoyugo.com
+Mijnlieff : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2010_Mijnlieff.pdf [BGG] https://boardgamegeek.com/boardgame/72667
+Minarett : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/1998_Minarett.pdf [BGG] https://boardgamegeek.com/boardgame/38300
+Mind Strike : [1] https://videogamegeek.com/videogame/120573 [1] https://www.gamesdatabase.org/Media/SYSTEM/Mattel_Intellivision/Manual/formated/Mind_Strike_-_1982_-_Mattel_Electronics.pdf
+Minefield (2024) : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2024_Minefield.pdf
+Minefield : [WAG] https://jpneto.github.io/world_abstract_games/minefield.htm
+Mineway : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2025_Mineway.pdf [BGG] https://boardgamegeek.com/boardgame/453105
+Mini-Push : [WAG] https://jpneto.github.io/world_abstract_games/minipush.htm
+Minimize : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2014_Minimize.pdf [BGG] https://boardgamegeek.com/boardgame/169096
+Mirador : [BGG] https://boardgamegeek.com/boardgame/65822 [1] https://www.abstractgames.org/mirador.html
+Mitsudomoe : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2020_Mitsudomoe.pdf [BGG] https://boardgamegeek.com/boardgame/310228
+Mix'n'Match : [WAG] https://jpneto.github.io/world_abstract_games/mixnmatch.htm [BGG] https://boardgamegeek.com/boardgame/64781
+Mobility : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2012_Mobility.pdf [BGG] https://boardgamegeek.com/boardgame/129947
+Mobius : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2009_Mobius.pdf [BGG] https://boardgamegeek.com/boardgame/40859
+Mole Hill : [WAG] https://jpneto.github.io/world_abstract_games/molehill.htm [BGG] https://boardgamegeek.com/boardgame/178
+Monkey Queen : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2011_Monkey_Queen.pdf [BGG] https://boardgamegeek.com/boardgame/95757
+Monoch : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2019_Monoch.pdf [BGG] https://boardgamegeek.com/boardgame/303608
+Morlox : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2021_Morlox.pdf [BGG] https://boardgamegeek.com/boardgame/344525
+Morphid : [BGG] https://boardgamegeek.com/boardgame/445014
+Morphos : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2016_Morphos.pdf [BGG] https://boardgamegeek.com/boardgame/208437
+Morro (2011) : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2011_Morro.pdf [BGG] https://boardgamegeek.com/boardgame/127628
+Mosaic (2018) : [Sagme] https://sagme.blogspot.com/2025/06/the-logiquad-game-system.html [BGG] https://boardgamegeek.com/boardgame/252063
+Motala Ström : [WAG] https://jpneto.github.io/world_abstract_games/motalastrom.htm [BGG] https://boardgamegeek.com/boardgame/18643
+Moxie : [WAG] https://jpneto.github.io/world_abstract_games/moxie.htm [BGG] https://boardgamegeek.com/boardgame/24546
+Mycelium : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2017_Mycelium.pdf [BGG] https://boardgamegeek.com/boardgame/242370
+Myramid : [BGG] https://boardgamegeek.com/boardgame/424916
+Myriades : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2014_Myriades.pdf [BGG] https://boardgamegeek.com/boardgame/160612
+Nadraz : [BGG] https://boardgamegeek.com/boardgame/388687
+Naja : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2018_Naja.pdf [BGG] https://boardgamegeek.com/boardgame/260492
+Nebuchadnezzar : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2020_Nebuchadnezzar.pdf [BGG] https://boardgamegeek.com/boardgame/328731
+Necklace : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2024_Necklace.pdf [BGG] https://boardgamegeek.com/boardgame/419473
+Neumoku : [WAG] https://jpneto.github.io/world_abstract_games/moku.htm#neumoku
+Neural Connection : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2024_Neural_Connection.pdf [BGG] https://boardgamegeek.com/boardgame/436432
+Nex : [WAG] https://jpneto.github.io/world_abstract_games/nex.htm [BGG] https://boardgamegeek.com/boardgame/187651
+Node : [BGG] https://boardgamegeek.com/boardgame/383269
+Nonaga : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2017_Nonaga.pdf [BGG] https://boardgamegeek.com/boardgame/46614
+Nonpoint : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2012_Nonpoint.pdf [BGG] https://boardgamegeek.com/boardgame/137653
+Notakto : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2010_Notakto.pdf [BGG] https://boardgamegeek.com/boardgame/204185
+Notubytu : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2022_Notubytu.pdf [1] https://mindsports.nl/index.php/the-pit/1195-notubytu
+Notwo's : [WAG] https://jpneto.github.io/world_abstract_games/notwos.htm
+Nowhere to Go : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2012_Nowhere_to_Go.pdf [BGG] https://boardgamegeek.com/boardgame/126471
+Nuts Sorting : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2024_Nuts_Sorting.pdf [BGG] https://boardgamegeek.com/boardgame/420483
+Obelisk : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2013_Obelisk.pdf [BGG] https://boardgamegeek.com/boardgame/147500
+Obonto : [WAG] https://jpneto.github.io/world_abstract_games/obonto.htm [BGG] https://boardgamegeek.com/boardgame/11489/obonto
+Octagons : [BGG] https://boardgamegeek.com/boardgame/69697
+Octego : [BGG] https://boardgamegeek.com/thread/278641/octego-rules-of-the-game
+Octiles : [Sagme] https://sagme.blogspot.com/2024/12/octiles.html [BGG] https://boardgamegeek.com/boardgame/5281
+Odd : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2007_Odd.pdf [BGG] https://boardgamegeek.com/boardgame/28527
+Odd Y : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2015_Odd_Y.pdf [BGG] https://boardgamegeek.com/boardgame/223551
+Offboard : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2011_Offboard.pdf [BGG] https://boardgamegeek.com/boardgame/89951
+Ogama : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2025_Ogama.pdf [1] https://www.facebook.com/groups/AbstractNationX/permalink/1841590366467589
+OGO : [BGG] https://boardgamegeek.com/boardgame/180905
+Oka : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2021_Oka.pdf [BGG] https://boardgamegeek.com/thread/2727713
+Okimba : [BGG] https://boardgamegeek.com/boardgame/468749
+Oktro : [Sagme] https://sagme.blogspot.com/2026/08/oktro.html [BGG] https://boardgamegeek.com/boardgame/180124
+Oli : [BGG] https://boardgamegeek.com/boardgame/371037
+Omega : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2010_Omega.pdf [BGG] https://boardgamegeek.com/boardgame/81588
+Omny : [Ludii] https://ludii.games/details.php?keyword=Omny
+On Agar : [BGG] https://boardgamegeek.com/thread/3729251 [WAG] https://jpneto.github.io/world_abstract_games/zrfs/On_Agar.lud
+Onager : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2012_Onager.pdf [BGG] https://boardgamegeek.com/boardgame/131047
+Oneover : [BGG] https://boardgamegeek.com/boardgame/371369
+Onyx : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/1995_Onyx.pdf [BGG] https://boardgamegeek.com/boardgame/11375 [1] https://www.abstractgames.org/uploads/1/1/6/4/116462923/abstract_games_issue_11.pdf#page=28 [2] https://www.abstractgames.org/uploads/1/1/6/4/116462923/abstract_games_issue_17.pdf#page=29
+Open Goal : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/1939_Open_Goal.pdf
+Operator : [WAG] https://jpneto.github.io/world_abstract_games/operator.htm
+Orbit (1975) : [Sagme] https://sagme.blogspot.com/2026/03/orbit.html [BGG] https://boardgamegeek.com/boardgame/73846
+Order and Chaos : [Sagme] https://sagme.blogspot.com/2025/09/pencil-and-paper-games-improving-tic.html [BGG] https://boardgamegeek.com/boardgame/147859
+Orion Duel : [BGG] https://boardgamegeek.com/boardgame/380134
+Orochi : [BGG] https://boardgamegeek.com/boardgame/383270
+Orthokon : [WAG] https://jpneto.github.io/world_abstract_games/orthokon.htm [BGG] https://boardgamegeek.com/boardgame/65408
+Oshi : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2006_Oshi.pdf [BGG] https://boardgamegeek.com/boardgame/23935
+Othello : [WAG] https://jpneto.github.io/world_abstract_games/othello.htm [BGG] https://boardgamegeek.com/boardgame/2389
+Oust : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2007_Oust.pdf [BGG] https://boardgamegeek.com/boardgame/30936
+Outfox : [WAG] https://jpneto.github.io/world_abstract_games/outfox.htm [BGG] https://boardgamegeek.com/boardgame/14189
+Overgrowth : [BGG] https://boardgamegeek.com/boardgame/420705
+Palago : [BGG] https://boardgamegeek.com/boardgame/38462 [1] https://cambolbro.com/games/palago
+Papagra : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2006_Papagra.pdf [BGG] https://boardgamegeek.com/boardgame/26565
+Partisans : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2020_Partisans.pdf [BGG] https://boardgamegeek.com/boardgame/324179
+Passo : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2023_Passo.pdf [BGG] https://boardgamegeek.com/boardgame/401177
+Pasta : [Sagme] https://sagme.blogspot.com/2025/12/pasta.html
+Pathagon : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2011_Pathagon.pdf [BGG] https://boardgamegeek.com/boardgame/113513
+Pathwayz : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2014_Pathwayz.pdf [BGG] https://boardgamegeek.com/boardgame/164593
+Peaceful Resistance : [WAG] https://jpneto.github.io/world_abstract_games/peaceful.htm [BGG] https://boardgamegeek.com/boardgame/107
+Peak : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2021_Peak.pdf [BGG] https://boardgamegeek.com/boardgame/347865
+Peg a Ro : [Sagme] https://sagme.blogspot.com/2026/06/gomoku-clones.html
+Peg Chow : [Sagme] https://sagme.blogspot.com/2013/06/peg-show-telka.html [BGG] https://boardgamegeek.com/boardgame/135156
+Peg'ity : [Sagme] https://sagme.blogspot.com/2026/06/gomoku-clones.html [BGG] https://boardgamegeek.com/boardgame/6247
+Pegpen : [Sagme] https://sagme.blogspot.com/2026/09/triade-and-game-of-pegpen.html [BGG] https://boardgamegeek.com/boardgame/107788
+Pent-Up : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2014_Pent_Up.pdf [BGG] https://boardgamegeek.com/boardgame/152115
+Pentactic : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2010_Pentactic.pdf [BGG] https://boardgamegeek.com/boardgame/75818
+Pentago : [WAG] https://jpneto.github.io/world_abstract_games/moku.htm#pentago [BGG] https://boardgamegeek.com/boardgame/19841
+Pentalath : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2009_Pentalah.pdf [BGG] https://boardgamegeek.com/boardgame/51401
+Pentaroll : [BGG] https://boardgamegeek.com/boardgame/369153
+Pente : [WAG] https://jpneto.github.io/world_abstract_games/pente.htm [BGG] https://boardgamegeek.com/boardgame/1295
+Pentwall : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2022_Pentwall.pdf [BGG] https://boardgamegeek.com/boardgame/369543
+Perifero : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2008_Avverso.pdf [BGG] https://boardgamegeek.com/boardgame/61600
+Permutations : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/1930_Permutations.pdf [BGG] https://boardgamegeek.com/boardgame/24879
+Perpend : [BGG] https://boardgamegeek.com/boardgame/420466
+Petrify, Pilo : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2021_Petrify_Pilo.pdf [BGG] https://boardgamegeek.com/boardgame/361647
+Phutball : [WAG] https://jpneto.github.io/world_abstract_games/phutball.htm [BGG] https://boardgamegeek.com/boardgame/25433
+Phwar : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2003_Phwar.pdf [BGG] https://boardgamegeek.com/boardgame/17588
+Pickit : [BGG] https://boardgamegeek.com/boardgame/58629
+Pilastri : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2025_Pilastri.pdf [BGG] https://boardgamegeek.com/boardgame/445080
+Pinch : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2019_Pinch.pdf [BGG] https://boardgamegeek.com/boardgame/285214
+Pippinzip : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2020_Pippinzip.pdf [BGG] https://boardgamegeek.com/boardgame/298409
+Piratenjagd : [WAG] https://jpneto.github.io/world_abstract_games/fox-geese.htm#Piratenjagd [BGG] https://boardgamegeek.com/boardgame/160032
+Pit of Pillars : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2023_Pit_of_Pillars.pdf [1] https://mindsports.nl/index.php/the-pit/1210-pit-of-pillars-2
+Planko : [WAG] https://jpneto.github.io/world_abstract_games/planko.htm
+Pletore : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2021_Pletore.pdf [BGG] https://boardgamegeek.com/boardgame/358881
+Plop : [BGG] https://boardgamegeek.com/boardgame/6856
+Plop, Pferdeäppel : [Sagme] https://sagme.blogspot.com/2025/05/press-ups.html [BGG] https://boardgamegeek.com/boardgame/6856
+Plotto : [WAG] https://jpneto.github.io/world_abstract_games/plotto.htm [BGG] https://boardgamegeek.com/boardgame/26709
+Ploy, Imperium : [Sagme] https://sagme.blogspot.com/2025/11/the-commercial-offsprings-of-chess-ploy.html [BGG] https://boardgamegeek.com/boardgame/1591
+Pods : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2010_Pods.html [BGG] https://boardgamegeek.com/boardgame/67275
+Politics : [WAG] https://jpneto.github.io/world_abstract_games/alquerque.htm#politics [BGG] https://boardgamegeek.com/boardgame/153635
+Pollux : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2010_Pollux.pdf [BGG] https://boardgamegeek.com/boardgame/82267
+Poly-Y : [BGG] https://boardgamegeek.com/boardgame/179816
+Polytaire : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/1966_Polytaire.pdf [BGG] https://boardgamegeek.com/boardgame/73530
+Ponents : [BGG] https://boardgamegeek.com/boardgame/24106
+Pontoons : [Sagme] https://sagme.blogspot.com/2013/06/pontoons.html [BGG] https://boardgamegeek.com/boardgame/159235
+Portmanteau : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2026_Portmanteau.pdf [BGG] https://boardgamegeek.com/thread/3755822
+Prairie, Bison, Buffalo Chess : [WAG] https://jpneto.github.io/world_abstract_games/prairie.htm [BGG] https://boardgamegeek.com/boardgame/32
+Prisoner Game : [WAG] https://jpneto.github.io/world_abstract_games/othello.htm#prisoner
+Product : [WAG] https://jpneto.github.io/world_abstract_games/product.htm [BGG] https://boardgamegeek.com/boardgame/136995
+Progressive Halma : [WAG] https://jpneto.github.io/world_abstract_games/halma.htm#prog_halma
+Push (1995) : [WAG] https://jpneto.github.io/world_abstract_games/push.htm [BGG] https://boardgamegeek.com/boardgame/68787
+Push 4 : [WAG] https://jpneto.github.io/world_abstract_games/push4.htm
+Pushmajor : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2026_Pushmajor.pdf [BGG] https://boardgamegeek.com/boardgame/461848
+Pylyx : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2011_Pylyx.pdf [1] https://mindsports.nl/index.php/the-pit/626-pylyx
+Pyramid 2D : [WAG] https://jpneto.github.io/world_abstract_games/pyramid2D.htm
+Pyramid : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2020_Pyramid.pdf [BGG] https://boardgamegeek.com/boardgame/341006
+Qascade : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2020_Qascade.pdf [1] https://mindsports.nl/index.php/the-pit/1077-qascade
+Quabble : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2022_Quabble.pdf [BGG] https://boardgamegeek.com/boardgame/367850
+Quad : [WAG] https://jpneto.github.io/world_abstract_games/quad.htm [BGG] https://boardgamegeek.com/boardgame/66513
+Quad Motu : [WAG] https://jpneto.github.io/world_abstract_games/moku.htm#quad_motu
+Quadefy : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2011_Quadefy.pdf [BGG] https://boardgamegeek.com/boardgame/113517
+Quadraphages : [WAG] https://jpneto.github.io/world_abstract_games/quadraphages.htm
+Quadrature : [WAG] https://jpneto.github.io/world_abstract_games/quadrature.htm [BGG] https://boardgamegeek.com/boardgame/6491
+Quadrex : [WAG] https://jpneto.github.io/world_abstract_games/quadrex.htm [BGG] https://boardgamegeek.com/boardgame/296714
+Quagmire : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2023_Quagmire.pdf [BGG] https://boardgamegeek.com/boardgame/407206
+Quandary : [Sagme] https://sagme.blogspot.com/2026/05/quandary.html [BGG] https://boardgamegeek.com/boardgame/12319
+Quarto : [WAG] https://jpneto.github.io/world_abstract_games/moku.htm#quarto [BGG] https://boardgamegeek.com/boardgame/681
+Quax : [WAG] https://jpneto.github.io/world_abstract_games/quax.htm [BGG] https://boardgamegeek.com/boardgame/36804
+Quaxtep : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2012_Quaxtep.pdf [BGG] https://boardgamegeek.com/boardgame/334990
+Qubic : [WAG] https://jpneto.github.io/world_abstract_games/moku.htm#qubic [BGG] https://boardgamegeek.com/boardgame/13714
+Queen Courtier's : [WAG] https://jpneto.github.io/world_abstract_games/queencourtier.htm [1] https://www.jdawiseman.com/papers/games/queens-courtiers.html
+Queen's Guard, Agon : [WAG] https://jpneto.github.io/world_abstract_games/queensguard.htm [BGG] https://boardgamegeek.com/boardgame/5168
+Quelhas : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2025_Quelhas.pdf
+Query : [BGG] https://boardgamegeek.com/boardgame/432215
+Quinio : [Sagme] https://sagme.blogspot.com/2026/06/gomoku-clones.html [BGG] https://boardgamegeek.com/boardgame/36288
+Quinten : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2012_Quinten.pdf [BGG] https://boardgamegeek.com/boardgame/124095
+Quintro : [Sagme] https://sagme.blogspot.com/2026/06/gomoku-clones.html
+Quintun : [WAG] https://jpneto.github.io/world_abstract_games/quintun.htm [Sagme] https://sagme.blogspot.com/2025/08/quintus.html
+Quixo : [WAG] https://jpneto.github.io/world_abstract_games/quixo.htm [BGG] https://boardgamegeek.com/boardgame/3190
+R&B-Dual : [BGG] https://boardgamegeek.com/boardgame/430355
+Radius : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2020_Radius.pdf [BGG] https://boardgamegeek.com/boardgame/325818
+Raft & Scupper : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2014_Syrtis.pdf [BGG] https://boardgamegeek.com/boardgame/285273
+Rampart : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2012_Rampart.pdf [BGG] https://boardgamegeek.com/boardgame/133923
+Ramparts (1993) : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/1993_Rampart.pdf [BGG] https://boardgamegeek.com/boardgame/3679
+Rapid Transit : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2022_Rapid_Transit.pdf [BGG] https://boardgamegeek.com/thread/2800520
+RAYO : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2026_Rayo.pdf [1] https://tableroloco-1a0t.netlify.app/#rayo
+Raze! : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2026_Raze!.pdf [BGG] https://boardgamegeek.com/thread/3651076
+RED : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2011_RED.pdf [BGG] https://boardgamegeek.com/boardgame/112118
+Redstone : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2012_Redstone.pdf [BGG] https://boardgamegeek.com/boardgame/120533
+Regio : [WAG] https://jpneto.github.io/world_abstract_games/regio.htm
+Regoot : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2009_Regoot.html
+Rematch : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2013_Rematch.pdf [BGG] https://boardgamegeek.com/boardgame/149911
+Renegado : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2022_Renegado.pdf [1] https://mindsports.nl/index.php/the-pit/1197-renegado
+Reneo : [BGG] https://boardgamegeek.com/boardgame/398457
+Residuel : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2020_Residuel.pdf [BGG] https://boardgamegeek.com/boardgame/329382
+Resolve : [BGG] https://boardgamegeek.com/boardgame/314106
+Retsami : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2006_Retsami.pdf [BGG] https://boardgamegeek.com/boardgame/31975
+Reversi : [WAG] https://jpneto.github.io/world_abstract_games/othello.htm [BGG] https://boardgamegeek.com/boardgame/2389
+Reverso : [WAG] https://jpneto.github.io/world_abstract_games/reverso.htm
+Rex : [WAG] https://jpneto.github.io/world_abstract_games/moku.htm#king [BGG] https://boardgamegeek.com/boardgame/6243
+Rex+ : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2024_Rex+.pdf
+Rhode : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2016_Rhode.html [BGG] https://boardgamegeek.com/boardgame/202479
+Rin : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2010_Rin.pdf [BGG] https://boardgamegeek.com/boardgame/96267
+Ringkampf : [WAG] https://jpneto.github.io/world_abstract_games/checkers.htm#ringkampf [BGG] https://boardgamegeek.com/boardgame/431340
+Ringo (2018) : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2018_Ringo.pdf [BGG] https://boardgamegeek.com/boardgame/261490
+Ringo : [WAG] https://jpneto.github.io/world_abstract_games/ringo.htm [BGG] https://boardgamegeek.com/boardgame/38358
+Ringworm : [WAG] https://jpneto.github.io/world_abstract_games/ringworm.htm
+Rive : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2010_Rive.pdf [BGG] https://boardgamegeek.com/boardgame/359061
+Robble : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2020_Robble.pdf [BGG] https://boardgamegeek.com/boardgame/330253
+Rock, Paper, Four : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2026_Rock_Paper_Four.pdf [BGG] https://boardgamegeek.com/boardgame/471670
+Romette : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/1891_Romette.pdf [1] https://mats-winther.github.io/bg/romette.htm
+Root Bound : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2024_Root_Bound.pdf [BGG] https://boardgamegeek.com/boardgame/416201
+Rose Garden : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2014_Rose_Garden.pdf [BGG] https://boardgamegeek.com/boardgame/173228
+Rotaris : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2010_Rotaris.pdf [BGG] https://boardgamegeek.com/boardgame/85402
+Rotex : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2014_Rotex.pdf [1] https://videogamegeek.com/videogame/156758/rotex
+Rovers' Game : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2025_Rovers_Game.pdf
+Royal Carpet : [WAG] https://jpneto.github.io/world_abstract_games/royalcarpet.htm [BGG] https://boardgamegeek.com/boardgame/21428
+Royal Reversi : [Sagme] https://sagme.blogspot.com/2025/12/royal-reversi.html
+Rösselsprung : [Sagme] https://sagme.blogspot.com/2026/05/rosselsprung.html [BGG] https://boardgamegeek.com/boardgame/252586
+Sage : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2010_Sage.pdf [BGG] https://boardgamegeek.com/boardgame/85110
+Saiju : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2020_Saiju.pdf [BGG] https://boardgamegeek.com/boardgame/319376
+Sanctuaries : [BGG] https://boardgamegeek.com/boardgame/26410
+Sapos : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2012_Sapos.pdf [BGG] https://boardgamegeek.com/boardgame/132411
+Scalas : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2012_Scalas.pdf
+Schachdame : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/1883_Chess_Draughts.pdf [BGG] https://boardgamegeek.com/boardgame/71564
+Scoundrels : [WAG] https://jpneto.github.io/world_abstract_games/checkers.htm#scoundrels
+Scrum : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2011_Scrum.pdf [BGG] https://boardgamegeek.com/boardgame/127273
+Scrunch : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2025_Scrunch.pdf [BGG] https://boardgamegeek.com/boardgame/456368 [WAG] https://jpneto.github.io/world_abstract_games/zrfs/Scrunch.lud
+Scurry : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2020_Scurry.pdf [1] https://sites.google.com/site/theowlsnest02/home/scurry-v2
+Scware : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2012_Scware.pdf
+Seegover : [WAG] https://jpneto.github.io/world_abstract_games/seegover.htm [BGG] https://boardgamegeek.com/boardgame/66332
+Selfo : [ZoG] https://www.zillions-of-games.com/cgi-bin/zilligames/submissions.cgi?do=show;id=1772
+Send It : [WAG] https://jpneto.github.io/world_abstract_games/sendit.htm [BGG] https://boardgamegeek.com/boardgame/441768
+Sentinel : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2026_Sentinel.pdf [BGG] https://boardgamegeek.com/boardgame/463291
+Serpent : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2025_Serpent.pdf [BGG] https://boardgamegeek.com/boardgame/446586
+Sesqui : [WAG] https://jpneto.github.io/world_abstract_games/sesqui.htm
+Seti : [WAG] https://jpneto.github.io/world_abstract_games/seti.htm [BGG] https://boardgamegeek.com/boardgame/17785
+Seven : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2013_Seven.pdf [BGG] https://boardgamegeek.com/boardgame/151357
+Sever (2024) : [BGG] https://boardgamegeek.com/boardgame/433295
+Sfilzotto : [WAG] https://jpneto.github.io/world_abstract_games/loa.htm#sfilzotto
+Shakti : [WAG] https://jpneto.github.io/world_abstract_games/shakti.htm [BGG] https://boardgamegeek.com/boardgame/42595
+Shan Tu : [Sagme] https://sagme.blogspot.com/2013/03/shan-tu.html [BGG] https://boardgamegeek.com/boardgame/53760 [ZoG] https://www.zillions-of-games.com/cgi-bin/zilligames/submissions.cgi?do=show;id=3320
+Sheep Dogs and Wolves : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2012_Sheep_Dogs_Wolves.pdf [BGG] https://boardgamegeek.com/boardgame/116402
+Shello : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2012_Shello.pdf [BGG] https://boardgamegeek.com/boardgame/132558
+Shelters : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/1982_Shelters.pdf [BGG] https://boardgamegeek.com/boardgame/18015
+Shift Tac Toe : [WAG] https://jpneto.github.io/world_abstract_games/moku.htm#shiftTTT [BGG] https://boardgamegeek.com/boardgame/23318
+Shifty : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2012_Shifty.pdf [BGG] https://boardgamegeek.com/boardgame/124313
+Shima Enaga Dango : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2026_Shima_Enaga.pdf
+Shintai : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2009_Shintai.html [BGG] https://boardgamegeek.com/boardgame/41146
+Shoulder to Shoulder : [Sagme] https://sagme.blogspot.com/2025/03/shoulder-to-shoulder.html [BGG] https://boardgamegeek.com/boardgame/8014
+si*X*O : [Sagme] https://sagme.blogspot.com/2019/05/s-i-x-o.html
+Sibling : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2024_Sibling.pdf [BGG] https://boardgamegeek.com/boardgame/420480
+Side Stitch : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2017_Side_Stitch.pdf [BGG] https://boardgamegeek.com/boardgame/223388
+Sidewinder : [ZoG] https://www.zillions-of-games.com/cgi-bin/zilligames/submissions.cgi?do=show;id=315
+Siege : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/1966_Siege.pdf [BGG] https://boardgamegeek.com/boardgame/2873
+Signum : [BGG] https://boardgamegeek.com/boardgame/362656 [Ludii] https://ludii.games/details.php?keyword=Signum
+Silo : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2021_Silo.pdf
+Simultana : [WAG] https://jpneto.github.io/world_abstract_games/simultana.htm [BGG] https://boardgamegeek.com/boardgame/66335
+Sisimizi : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/1996_Sisimizi.pdf [BGG] https://boardgamegeek.com/boardgame/540
+Sjekkers : [Sagme] https://sagme.blogspot.com/2015/08/sjekkers.html
+Ski Jumps : [WAG] https://jpneto.github.io/world_abstract_games/skijump.htm
+Skirt : [BGG] https://boardgamegeek.com/boardgame/383247
+Sky Scrapers, Elephant Tactics : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2010_Elephant_Tactics.pdf [BGG] https://boardgamegeek.com/boardgame/173149
+Skybridge : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2006_Skybridge.pdf [BGG] https://boardgamegeek.com/boardgame/23329
+Slash : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2008_Slash.pdf
+Slides of Action : [WAG] https://jpneto.github.io/world_abstract_games/slides.htm [BGG] https://boardgamegeek.com/boardgame/63600
+Sligo : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2012_Sligo.pdf [BGG] https://boardgamegeek.com/boardgame/144783
+Slimetrail : [WAG] https://jpneto.github.io/world_abstract_games/slimetrail.htm [BGG] https://boardgamegeek.com/boardgame/31467
+Slings and Stones : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2001_Slings&Stones.pdf [BGG] https://boardgamegeek.com/boardgame/21334
+Slither : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2010_Slither.pdf [BGG] https://boardgamegeek.com/boardgame/75957
+Slyde : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2020_Slyde.pdf [BGG] https://boardgamegeek.com/boardgame/308111
+Slyp : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2023_Slyp.pdf [BGG] https://boardgamegeek.com/thread/3120530
+Smess : [Sagme] https://sagme.blogspot.com/2025/11/the-commercial-offsprings-of-chess-smess.html [BGG] https://boardgamegeek.com/boardgame/1289
+Snex : [BGG] https://boardgamegeek.com/boardgame/455165
+Snijpunt, Crossover : [WAG] https://jpneto.github.io/world_abstract_games/snijpunt.htm [BGG] https://boardgamegeek.com/boardgame/311802
+Solder : [BGG] https://boardgamegeek.com/thread/3009889/new-unification-game-solder
+Spark : [WAG] https://jpneto.github.io/world_abstract_games/spark.htm [BGG] https://boardgamegeek.com/boardgame/3929
+Sparta : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2011_Sparta.pdf [BGG] https://boardgamegeek.com/boardgame/109105
+Spartan Skaki : [ZoG] https://www.zillions-of-games.com/cgi-bin/zilligames/submissions.cgi?do=show;id=1521
+Spectra : [BGG] https://boardgamegeek.com/boardgame/107358
+Split : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/1966_Split.pdf [BGG] https://boardgamegeek.com/boardgame/24545
+Splits, Battle Sheep : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2010_Splits.pdf [BGG] https://boardgamegeek.com/boardgame/54137
+Spoil Five : [Sagme] https://sagme.blogspot.com/2026/06/gomoku-clones.html
+Spry : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2012_Spry.pdf [BGG] https://boardgamegeek.com/boardgame/131972
+SQU : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2019_SQU.pdf [BGG] https://boardgamegeek.com/boardgame/293101
+SquAlma : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2022_SquAlma.pdf [BGG] https://boardgamegeek.com/boardgame/393865
+Squer : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2016_Squer.pdf [BGG] https://boardgamegeek.com/boardgame/200548
+Squex : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2019_Squex.pdf [BGG] https://boardgamegeek.com/boardgame/279483
+Squish : [BGG] https://boardgamegeek.com/boardgame/383245
+Stac : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2015_Stac.pdf [BGG] https://boardgamegeek.com/boardgame/155943
+Stack Three : [BGG] https://boardgamegeek.com/boardgame/151815
+Stack-22 : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2018_Stack_22.pdf [BGG] https://boardgamegeek.com/boardgame/247312
+Stackers : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2009_Stackers.pdf
+Stackup : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2026_Stackup.pdf [BGG] https://boardgamegeek.com/boardgame/458962
+Stampede (2026) : [WAG] https://jpneto.github.io/world_abstract_games/breakthrough.htm#stampede [BGG] https://boardgamegeek.com/thread/3756707
+Stapeldammen I : [BGG] https://boardgamegeek.com/boardgame/124716 [1] https://mindsports.nl/index.php/arena/stapeldammen
+Stapeldammen II : [BGG] https://boardgamegeek.com/boardgame/124716 [BGG] https://boardgamegeek.com/thread/1566423/stapeldammen-variant-ii-the-review
+STAQS : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2024_STAQS.pdf [BGG] https://boardgamegeek.com/boardgame/425529
+Star : [WAG] https://jpneto.github.io/world_abstract_games/star.htm [BGG] https://boardgamegeek.com/boardgame/194969
+Starboard Y : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2008_Starboard_Y.pdf
+Starweb : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2017_Starweb.pdf [BGG] https://boardgamegeek.com/boardgame/232943
+Stax : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/1919_Stax.pdf [Sagme] https://sagme.blogspot.com/2026/05/stax.html
+Steeplechase : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2024_Steeplechase.pdf [BGG] https://boardgamegeek.com/thread/3256511
+SteinPlatz : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2011_SteinPlatz.pdf [BGG] https://boardgamegeek.com/boardgame/95816
+Stix : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2007_Stix.pdf [BGG] https://boardgamegeek.com/boardgame/35446
+Stlts : [WAG] https://jpneto.github.io/world_abstract_games/stlts.htm [BGG] https://boardgamegeek.com/boardgame/16237
+Stop Dot : [Sagme] https://sagme.blogspot.com/2025/09/pencil-and-paper-games-improving-tic.html [BGG] https://boardgamegeek.com/boardgame/9455
+Stop-Gate, Domineering : [WAG] https://jpneto.github.io/world_abstract_games/cram.htm [BGG] https://boardgamegeek.com/boardgame/7450
+Straat : [Sagme] https://sagme.blogspot.com/2015/08/straat.html
+Stragone : [Sagme] https://sagme.blogspot.com/2025/03/stragone.html [BGG] https://boardgamegeek.com/boardgame/116763
+Strands : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2022_Strands.pdf [BGG] https://boardgamegeek.com/boardgame/364343
+Strat : [1] https://www.abstractgames.org/uploads/1/1/6/4/116462923/abstract_games_issue_4.pdf#page=26
+Strata5 : [Sagme] https://sagme.blogspot.com/2026/10/strata5.html
+Strike, Fenix : [WAG] https://jpneto.github.io/world_abstract_games/strike.htm [BGG] https://boardgamegeek.com/boardgame/244080 [1] https://www.abstractgames.org/uploads/1/1/6/4/116462923/abstract_games_issue_20.pdf#page=22
+Sunder : [BGG] https://boardgamegeek.com/boardgame/342544
+Super-Chex : [BGG] https://boardgamegeek.com/boardgame/155526
+Super-Halma : [1] https://www.abstractgames.org/uploads/1/1/6/4/116462923/abstract_games_issue_15.pdf#page=11 [2] https://blackandwhite.develz.org/games/SuperHalma.pdf
+Swack : [BGG] https://boardgamegeek.com/boardgame/314462
+Swaparound : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2010_Swaparound.pdf [BGG] https://boardgamegeek.com/boardgame/132178
+Swaptimum : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2023_Swaptimum.pdf [BGG] https://boardgamegeek.com/boardgame/399726
+Swarm : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2026_Swarm.pdf [BGG] https://boardgamegeek.com/thread/3684281
+Swoop, Pounce : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/1969_Swoop.pdf [BGG] https://boardgamegeek.com/boardgame/19710
+SyGo : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2010_Sygo.pdf [BGG] https://boardgamegeek.com/boardgame/106350
+Symbio : [WAG] https://jpneto.github.io/world_abstract_games/symbio.htm [BGG] https://boardgamegeek.com/boardgame/21556
+Symmetrion : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/1975_Symmetrion.pdf [BGG] https://boardgamegeek.com/boardgame/96998
+Sytran : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2023_Sytran.pdf [1] https://mindsports.nl/index.php/the-pit/1256-sytran
+T. for Two : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/1998_T_for_Two.pdf [BGG] https://boardgamegeek.com/boardgame/3982
+Tabik : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2020_Tabik.pdf [BGG] https://boardgamegeek.com/boardgame/328591
+Tablaaza : [WAG] https://jpneto.github.io/world_abstract_games/moedrn_rules/2005_Tablaaza.pdf [BGG] https://boardgamegeek.com/boardgame/205685
+Tac-Tic-Turn : [Sagme] https://sagme.blogspot.com/2025/02/tac-tic-turn.html [BGG] https://boardgamegeek.com/boardgame/5081
+Tack : [WAG] https://jpneto.github.io/world_abstract_games/hex.htm#vex
+Taigo : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2019_Taigo.pdf [BGG] https://boardgamegeek.com/boardgame/271133
+Taiji : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2007_Taiji.pdf [BGG] https://boardgamegeek.com/boardgame/31926
+Tailath : [WAG] https://jpneto.github.io/world_abstract_games/moku.htm#tailath [BGG] https://boardgamegeek.com/boardgame/92227
+Tailits : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2016_Tailits.pdf [BGG] https://boardgamegeek.com/boardgame/207996
+Tak : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2017_Tak.pdf [BGG] https://boardgamegeek.com/boardgame/197405
+Take : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2024_Take.pdf [BGG] https://boardgamegeek.com/boardgame/432220
+Take It Away : [WAG] https://jpneto.github.io/world_abstract_games/takeitaway.htm [Sagme] https://sagme.blogspot.com/2025/09/take-it-away.html [BGG] https://boardgamegeek.com/boardgame/38345
+Talpa : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2011_Talpa.html [BGG] https://boardgamegeek.com/boardgame/80657
+Tanbo : [WAG] https://jpneto.github.io/world_abstract_games/tanbo.htm [BGG] https://boardgamegeek.com/boardgame/6492
+Tapas : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2024_Tapas.pdf [BGG] https://boardgamegeek.com/boardgame/417487
+Taugo : [BGG] https://boardgamegeek.com/boardgame/389336
+Teblo : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2015_Teblo.pdf [BGG] https://boardgamegeek.com/boardgame/187982
+Teeko : [WAG] https://jpneto.github.io/world_abstract_games/teeko.htm [BGG] https://boardgamegeek.com/boardgame/9138/teeko
+Telka : [Sagme] https://sagme.blogspot.com/2013/06/peg-show-telka.html [BGG] https://boardgamegeek.com/boardgame/135156
+Temple : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2026_Temple.pdf [BGG] https://boardgamegeek.com/boardgame/424137
+Tempo : [WAG] https://jpneto.github.io/world_abstract_games/tempo.htm [BGG] https://boardgamegeek.com/boardgame/14670
+Ten-Q : [WAG] https://jpneto.github.io/world_abstract_games/moku.htm#ten-q [BGG] https://boardgamegeek.com/boardgame/30105
+Tendrils : [BGG] https://boardgamegeek.com/boardgame/218753
+Tennessee Waltz : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2022_Tennessee_Waltz.pdf [BGG] https://boardgamegeek.com/boardgame/367556 [WAG] https://jpneto.github.io/world_abstract_games/zrfs/Tennessee_Waltz.lud
+Ternion : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2026_Ternion.pdf [1] https://mats-winther.github.io/bg/ternion.htm
+Tetrano : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2003_Tetrano.pdf [BGG] https://boardgamegeek.com/boardgame/34909
+Thataway : [ZoG] https://www.zillions-of-games.com/cgi-bin/zilligames/submissions.cgi?do=show;id=880
+The Conquest of Morundir : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2001_Eroberung_Morundir.pdf [BGG] https://boardgamegeek.com/boardgame/17214
+The Game is Nirtz : [Sagme] https://sagme.blogspot.com/2026/01/the-game-is-nirtz.html [BGG] https://boardgamegeek.com/boardgame/16825
+The Game of Eagles : [WAG] https://jpneto.github.io/world_abstract_games/checkers.htm#game_eagles [BGG] https://boardgamegeek.com/boardgame/43427
+The Game of Passo : [Sagme] https://sagme.blogspot.com/2025/12/the-game-of-passo.html
+The Good for Nothings : [WAG] https://jpneto.github.io/world_abstract_games/goodnothings.htm
+The Hoarder & the Gatekeeper : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2014_Hoarder_Gatekeeper.pdf [BGG] https://boardgamegeek.com/boardgame/158953
+The Last Captain : [WAG] https://jpneto.github.io/world_abstract_games/captain.htm
+The New Game Of War : [BGG] https://boardgamegeek.com/boardgame/333676
+The Right Moves : [WAG] https://jpneto.github.io/world_abstract_games/therightmoves.htm [BGG] https://boardgamegeek.com/boardgame/12610
+The Sisti Challenge : [WAG] https://jpneto.github.io/world_abstract_games/checkers.htm#sisti [BGG] https://boardgamegeek.com/boardgame/39648
+Thicket : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2014_Thicket.pdf [BGG] https://boardgamegeek.com/boardgame/170679
+Thorns : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/1974_Thorns.pdf [BGG] https://boardgamegeek.com/boardgame/11919
+Three Musketeers : [WAG] https://jpneto.github.io/world_abstract_games/3musketeers.htm [BGG] https://boardgamegeek.com/boardgame/21861
+Three Stooges : [WAG] https://jpneto.github.io/world_abstract_games/stooges.htm [BGG] https://boardgamegeek.com/boardgame/67293
+Thruway : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2010_Thruway.pdf [BGG] https://boardgamegeek.com/boardgame/84946
+Tiao : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2026_Tiao.pdf
+Tic-Tac-Tics : [Sagme] https://sagme.blogspot.com/2025/10/tic-tac-toe-redux.html [BGG] https://boardgamegeek.com/boardgame/339973
+Tiptoe : [BGG] https://boardgamegeek.com/boardgame/383273
+Toads & Frogs : [WAG] https://jpneto.github.io/world_abstract_games/toads_frogs.htm [BGG] https://boardgamegeek.com/boardgame/66341
+Toccato, Touch, Troïka : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2000_Toccato.pdf [BGG] https://boardgamegeek.com/boardgame/24418
+Top Cap : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2024_Top_Cap.jpg [BGG] https://boardgamegeek.com/boardgame/381021
+Topolo : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2013_Topolo.pdf [BGG] https://boardgamegeek.com/boardgame/142614
+Torno : [Sagme] https://sagme.blogspot.com/2026/03/torno.html [WAG] https://jpneto.github.io/world_abstract_games/halma.htm#Torno
+Torus (1964) : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/1964_Torus.gif
+Torus (2008) : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2008_Torus.pdf
+Tourney : [WAG] https://jpneto.github.io/world_abstract_games/tourney.htm [BGG] https://boardgamegeek.com/boardgame/64348
+Tower of Power : [WAG] https://jpneto.github.io/world_abstract_games/tours.htm [BGG] https://boardgamegeek.com/boardgame/27161
+Traffic Lights : [WAG] https://jpneto.github.io/world_abstract_games/semaphor.htm [BGG] https://boardgamegeek.com/boardgame/1893
+Trail Mix : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2014_Trail_Mix.pdf [BGG] https://boardgamegeek.com/thread/1285770
+Trails : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2020_Trails.pdf [1] https://sites.google.com/site/theowlsnest02/home/trails
+Trampoli : [BGG] https://boardgamegeek.com/boardgame/63033
+Trangalla : [Sagme] https://sagme.blogspot.com/2015/08/trangalla.html
+Trellis : [WAG] https://jpneto.github.io/world_abstract_games/trellis.htm [BGG] https://boardgamegeek.com/boardgame/23233
+Tres (2016) : [BGG] https://boardgamegeek.com/boardgame/316530
+Tri Bang : [WAG] https://jpneto.github.io/world_abstract_games/moku.htm#tri_bang [BGG] https://boardgamegeek.com/boardgame/155710
+Triangular, Triadis : [BGG] https://boardgamegeek.com/boardgame/22248
+Trianon : [WAG] https://jpneto.github.io/world_abstract_games/trianon.htm
+Tricouleur Hexxagon : [WAG] https://jpneto.github.io/world_abstract_games/tri_hexxagon.htm
+Trideo : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2015_Trideo.pdf [BGG] https://boardgamegeek.com/boardgame/184487
+Triforce : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2024_TriForce.pdf [BGG] https://boardgamegeek.com/thread/3257713/article/44124722#44124722
+Trig : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2010_Trig.pdf [BGG] https://boardgamegeek.com/boardgame/135805
+Trilithon : [BGG] https://boardgamegeek.com/boardgame/63776
+Trimok : [WAG] https://jpneto.github.io/world_abstract_games/trimok.htm [BGG] https://boardgamegeek.com/boardgame/42553
+Trings : [Sagme] https://sagme.blogspot.com/2019/05/trings.html [BGG] https://boardgamegeek.com/boardgame/438183
+Trinidad (2002) : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2002_Trinidad.pdf
+Trinidad (2003) : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2003_Trinidad.zip [BGG] https://boardgamegeek.com/boardgame/6780
+Trio (1894) : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/1894_Trio.pdf [BGG] https://boardgamegeek.com/boardgame/447162
+Trio (1972) : [WAG] https://jpneto.github.io/world_abstract_games/moku.htm#king [BGG] https://boardgamegeek.com/boardgame/8148
+Trojan Horse : [WAG] https://jpneto.github.io/world_abstract_games/checkers.htm#trojan [BGG] https://boardgamegeek.com/boardgame/143852
+Troll : [WAG] https://jpneto.github.io/world_abstract_games/troll.htm [BGG] https://boardgamegeek.com/boardgame/67048 [Sagme] https://sagme.blogspot.com/2025/11/games-with-othello-pieces-blocs-and.html
+Tromazons : [WAG] https://jpneto.github.io/world_abstract_games/amazons.htm#tromazons
+Trop : [WAG] https://jpneto.github.io/world_abstract_games/Trop.htm
+Trugo : [BGG] https://boardgamegeek.com/boardgame/36542 [1] https://cambolbro.com/games/trugo
+Tudor Bond : [BGG] https://boardgamegeek.com/boardgame/41625
+Tumbleweed : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2020_Tumbleweed.jpg [BGG] https://boardgamegeek.com/boardgame/318702 [1] https://www.abstractgames.org/uploads/1/1/6/4/116462923/abstract_games_issue_21.pdf#page=13
+Turkish Tafl : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2011_Turkish_Tafl.pdf [BGG] https://boardgamegeek.com/boardgame/102118
+Turning Point : [Sagme] https://sagme.blogspot.com/2025/07/turning-point.html [BGG] https://boardgamegeek.com/boardgame/10314
+Twigs : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2015_Twigs.pdf [BGG] https://boardgamegeek.com/boardgame/170203
+Twin Flames : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2026_Twin_Flames.pdf [BGG] https://boardgamegeek.com/boardgame/470021
+Twins : [WAG] https://jpneto.github.io/world_abstract_games/twins.htm
+Twirls of Action : [WAG] https://jpneto.github.io/world_abstract_games/toa.htm [BGG] https://boardgamegeek.com/boardgame/412442
+Twixt : [BGG] https://boardgamegeek.com/boardgame/949 [1] https://www.abstractgames.org/uploads/1/1/6/4/116462923/abstract_games_issue_2.pdf#page=11
+Tyr : [ZoG] https://www.zillions-of-games.com/cgi-bin/zilligames/submissions.cgi?do=show;id=1701 [BGG] https://boardgamegeek.com/boardgame/109778
+Uberläufer : [WAG] https://jpneto.github.io/world_abstract_games/halma.htm#uberlaufer [BGG] https://boardgamegeek.com/boardgame/25720
+Ultimate Tic-Tac-Toe : [Sagme] https://sagme.blogspot.com/2025/09/pencil-and-paper-games-improving-tic.html [BGG] https://boardgamegeek.com/boardgame/42336
+Un : [WAG] https://jpneto.github.io/world_abstract_games/un.htm [BGG] https://boardgamegeek.com/boardgame/67294
+Un-Tria : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2026_Un-Tria.pdf
+Unfair : [BGG] https://boardgamegeek.com/boardgame/175220
+Unify : [BGG] https://boardgamegeek.com/boardgame/432288
+Unity : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2013_Unity.pdf [BGG] https://boardgamegeek.com/boardgame/124265
+Universe : [WAG] https://jpneto.github.io/world_abstract_games/universe.htm [BGG] https://boardgamegeek.com/boardgame/6547 [1] https://www.abstractgames.org/uploads/1/1/6/4/116462923/abstract_games_issue_17.pdf#page=42
+Unlur : [WAG] https://jpneto.github.io/world_abstract_games/unlur.htm [BGG] https://boardgamegeek.com/boardgame/3826
+Unstack : [WAG] https://jpneto.github.io/world_abstract_games/unstack.htm [BGG] https://boardgamegeek.com/boardgame/27013
+Up & add'em! : [Sagme] https://sagme.blogspot.com/2026/09/up-addem.html [BGG] https://boardgamegeek.com/boardgame/39002
+Upper Hand, Pyramids : [Sagme] https://sagme.blogspot.com/2025/06/the-logiquad-game-system.html [BGG] https://boardgamegeek.com/boardgame/4545
+Uptown : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2019_Uptown.pdf [BGG] https://boardgamegeek.com/boardgame/282947
+Urbino : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2017_Urbino.pdf [BGG] https://boardgamegeek.com/boardgame/237009
+Vanakriget : [WAG] https://jpneto.github.io/world_abstract_games/vanakriget.htm [BGG] https://boardgamegeek.com/boardgame/66344
+Vasco : [BGG] https://boardgamegeek.com/boardgame/39852 [1] https://cambolbro.com/games/vasco
+Vault : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2015_Vault.pdf [BGG] https://boardgamegeek.com/boardgame/186404
+Vaxandis : [BGG] https://boardgamegeek.com/boardgame/414307
+Vector Powers : [WAG] https://jpneto.github.io/world_abstract_games/vpowers.htm
+Verge : [BGG] https://boardgamegeek.com/boardgame/396931
+Verso : [WAG] https://jpneto.github.io/world_abstract_games/verso.htm [BGG] https://boardgamegeek.com/boardgame/64096
+Verto : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2010_Verto.pdf [BGG] https://boardgamegeek.com/boardgame/89333
+Vex : [WAG] https://jpneto.github.io/world_abstract_games/moku.htm#vex [BGG] https://boardgamegeek.com/boardgame/60237
+ViceVersi : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2021_ViceVersi.pdf [BGG] https://boardgamegeek.com/boardgame/332866
+Vikings vs. Saxons : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2013_Vikings_vs_Saxons.pdf [BGG] https://boardgamegeek.com/boardgame/148419
+Vilbergen : [WAG] https://jpneto.github.io/world_abstract_games/vilbergen.htm [BGG] https://boardgamegeek.com/boardgame/66350
+Vimbre : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2012_Vimbre.pdf [BGG] https://boardgamegeek.com/boardgame/130222
+Visavis : [BGG] https://boardgamegeek.com/boardgame/110385
+Volo : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2010_Volo.pdf [BGG] https://boardgamegeek.com/boardgame/83283
+Vut : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2007_VUT.pdf
+Weave : [WAG] https://jpneto.github.io/world_abstract_games/weave.htm [BGG] https://boardgamegeek.com/boardgame/88228
+Wer Schafft es am Schnellsten : [WAG] https://jpneto.github.io/world_abstract_games/halma.htm#Wer_schafft [BGG] https://boardgamegeek.com/boardgame/360906
+Whirlwind : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2014_Whirlwind.pdf [BGG] https://boardgamegeek.com/boardgame/159022
+Windborne : [BGG] https://boardgamegeek.com/boardgame/395919
+Wutaishan : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2020_Wutaishan.pdf [BGG] https://boardgamegeek.com/boardgame/281592
+Wythe : [BGG] https://boardgamegeek.com/boardgame/328593
+Wythoff's game : [BGG] https://boardgamegeek.com/boardgame/81482
+Xerxes : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/1973_Xerxes.pdf [BGG] https://boardgamegeek.com/boardgame/6706
+Y : [WAG] https://jpneto.github.io/world_abstract_games/y.htm [BGG] https://boardgamegeek.com/boardgame/5242
+Yavalath : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2007_Yavalath.pdf [BGG] https://boardgamegeek.com/boardgame/33767
+Yavalax : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2017_Yavalax.pdf [BGG] https://boardgamegeek.com/boardgame/226842
+Yodd : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2011_Yodd.pdf [BGG] https://boardgamegeek.com/boardgame/105173
+Yoin : [BGG] https://boardgamegeek.com/boardgame/358594
+Yonkoma : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2026_Yonkoma.pdf [BGG] https://boardgamegeek.com/boardgame/482183
+Yonmoque : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/1997_Yonmoque.pdf [BGG] https://boardgamegeek.com/boardgame/86170 [1] https://www.logygames.com/english/yonmoque.html
+Yugo : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2017_Yugo.html [BGG] https://boardgamegeek.com/boardgame/228623
+ZeN : [WAG] https://jpneto.github.io/world_abstract_games/zen_b.htm [BGG] https://boardgamegeek.com/boardgame/113147
+Zen L'initié : [WAG] https://jpneto.github.io/world_abstract_games/zen.htm
+Zener : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2018_Zener.pdf [BGG] https://boardgamegeek.com/boardgame/248430
+Zenith : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2009_Zenith.jpg [BGG] https://boardgamegeek.com/boardgame/61522
+Zeno : [BGG] https://boardgamegeek.com/boardgame/417638
+ZigZag : [WAG] https://jpneto.github.io/world_abstract_games/slimetrail.htm#zigzag
+Zola : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2021_Zola.pdf [BGG] https://boardgamegeek.com/boardgame/331666
+Zonesh : [WAG] https://jpneto.github.io/world_abstract_games/zonesh.htm [BGG] https://boardgamegeek.com/boardgame/63767
+Zong-Heng : [BGG] https://boardgamegeek.com/boardgame/383277
+Zoom : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/2003_Zoom.pdf [BGG] https://boardgamegeek.com/boardgame/27654
+Zèrtz : [WAG] https://jpneto.github.io/world_abstract_games/modern_rules/1999_Zertz.pdf [BGG] https://boardgamegeek.com/boardgame/528/zertz
+</script>
 
 <script>
-    const collapsed = new Set();
+(function () {
+  "use strict";
 
-    function parseGraph(text) {
-      const outgoing = {}, incoming = {}, labels = {};
-      for (const line of text.split("\n")) {
-        if (!line.includes("->")) continue;
+  /* ---------- Parsing ---------- */
 
-        const [leftRaw, right] = line.split("->").map(s => s.trim());
-        const [toRaw, labelText] = right.split(":").map(s => s.trim());
+  function parseRelations(text) {
+    var children = new Map();  // game -> [{game, ludemes}]  (its direct descendants)
+    var parents  = new Map();  // game -> [{game, ludemes}]  (its direct ancestors)
+    var games    = new Map();  // lower-case name -> canonical name
+    var errors   = [];
 
-        const left = leftRaw.toLowerCase();
-        const to   = toRaw.toLowerCase();
-
-        outgoing[left] ??= [];
-        incoming[to] ??= [];
-        outgoing[left].push(to);
-        incoming[to].push(left);
-
-        if (labelText) {
-          labels[`${left}->${to}`] =
-            labelText.split(",").map(l => l.trim().toLowerCase());
-        }
+    function addGame(name) {
+      var key = name.toLowerCase();
+      if (!games.has(key)) {
+        games.set(key, name);
+        children.set(name, []);
+        parents.set(name, []);
       }
-      return { outgoing, incoming, labels };
+      return games.get(key);
     }
 
-    function parseFilter(text) {
-      const tokens = text.toLowerCase().split(/\s+/).filter(Boolean);
-      return {
-        include: tokens.filter(t => !t.startsWith("!")),
-        exclude: tokens.filter(t => t.startsWith("!")).map(t => t.slice(1))
-      };
+    text.split(/\r?\n/).forEach(function (raw, i) {
+      // Drop invisible control / zero-width characters that sneak in when copy-pasting
+      var line = raw.replace(/[\u0000-\u0008\u000B-\u001F\u007F​-‍⁠﻿]/g, "").trim();
+      if (!line || line.charAt(0) === "#") return;
+      var m = line.match(/^(.+?)\s*->\s*(.+?)\s*(?::\s*(.*))?$/);
+      if (!m) { errors.push("Line " + (i + 1) + ": " + line); return; }
+      var from = addGame(m[1].trim());
+      var to   = addGame(m[2].trim());
+      var ludemes = (m[3] || "").split(",")
+        .map(function (s) { return s.trim(); })
+        .filter(Boolean);
+      children.get(from).push({ game: to,   ludemes: ludemes });
+      parents.get(to).push(   { game: from, ludemes: ludemes });
+    });
+
+    var byName = function (a, b) {
+      return a.game.localeCompare(b.game, undefined, { sensitivity: "base" });
+    };
+    children.forEach(function (list) { list.sort(byName); });
+    parents.forEach(function (list) { list.sort(byName); });
+
+    return { children: children, parents: parents, games: games, errors: errors };
+  }
+
+  /* ---------- Tree building (text lines) ---------- */
+
+  // Returns an array of rows: {prefix, game, ludemes, note}
+  // `edges` is either the children map (descendants) or parents map (ancestors).
+  // `ok` is an optional predicate on edges; edges failing it are not followed.
+  // `maxDepth` (optional) limits how many generations below the root are shown;
+  // a row whose branch is cut gets `hidden` = number of direct children not shown.
+  function buildTree(root, edges, ok, maxDepth) {
+    var rows = [{ prefix: "", game: root, ludemes: null, note: "", hidden: 0 }];
+    var path = new Set([root]);
+    var pass = function (e) { return !ok || ok(e); };
+
+    function walk(game, indent, depth, row) {
+      var list = (edges.get(game) || []).filter(pass);
+      if (maxDepth && depth >= maxDepth) {
+        row.hidden = list.length;
+        return;
+      }
+      list.forEach(function (edge, idx) {
+        var last = idx === list.length - 1;
+        var row = {
+          prefix: indent + (last ? "└── " : "├── "),
+          parent: game,
+          game: edge.game,
+          ludemes: edge.ludemes,
+          note: "",
+          hidden: 0
+        };
+        rows.push(row);
+        if (path.has(edge.game)) {
+          row.note = "(cycle)";
+          return;
+        }
+        path.add(edge.game);
+        walk(edge.game, indent + (last ? "    " : "│   "), depth + 1, row);
+        path.delete(edge.game);
+      });
     }
 
-    function edgeAllowed(graph, from, to, filter) {
-      if (!filter.include.length && !filter.exclude.length) return true;
+    walk(root, "", 0, rows[0]);
+    return rows;
+  }
 
-      const labels = graph.labels[`${from}->${to}`];
-      if (!labels) return false;
+  /* ---------- Ludeme filter ---------- */
 
-      for (const bad of filter.exclude)
-        if (labels.some(l => l.includes(bad))) 
-          return false;
+  // "structure, win !action" -> { include: ["structure","win"], exclude: ["action"] }
+  function parseFilter(text) {
+    var include = [], exclude = [];
+    text.split(/[\s,]+/).forEach(function (t) {
+      t = t.trim().toLowerCase();
+      if (!t || t === "!") return;
+      if (t.charAt(0) === "!") exclude.push(t.slice(1)); else include.push(t);
+    });
+    return { include: include, exclude: exclude };
+  }
 
-      for (const good of filter.include)
-        if (!labels.some(l => l.includes(good))) 
-          return false;
-
+  // An edge passes if it has at least one included ludeme (when any are given)
+  // and passes the negation rule:
+  //   strict  (lenient = false): it has none of the excluded ludemes;
+  //   lenient (lenient = true):  it has at least one ludeme that is not excluded.
+  function makePredicate(f, lenient) {
+    if (!f.include.length && !f.exclude.length) return null;
+    var excluded = function (l) { return f.exclude.indexOf(l) >= 0; };
+    return function (edge) {
+      var lud = edge.ludemes.map(function (l) { return l.toLowerCase(); });
+      if (f.include.length && !f.include.some(function (t) { return lud.indexOf(t) >= 0; })) return false;
+      if (f.exclude.length) {
+        if (lenient) { if (lud.length && lud.every(excluded)) return false; }
+        else if (lud.some(excluded)) return false;
+      }
       return true;
-    }
+    };
+  }
 
-    function collectCounts(node, graph, depth, maxDepth, dir, counts, visited, filter) {
-      if (depth > maxDepth || visited.has(node)) 
-        return;
-      visited.add(node);
+  /* ---------- Game links ---------- */
 
-      const next = dir === "pred"
-        ? graph.incoming[node] || []
-        : graph.outgoing[node] || [];
+  // "Hex : [WAG] url [BGG] url"  ->  Map("hex" -> [{label, url}, ...])
+  function parseLinks(text, games) {
+    var links = new Map();
+    text.split(/\r?\n/).forEach(function (raw, i) {
+      var line = raw.replace(/[\u0000-\u0008\u000B-\u001F\u007F\u200B-\u200D\u2060\uFEFF]/g, "").trim();
+      if (!line || line.charAt(0) === "#") return;
+      var m = line.match(/^(.+?)\s*:\s*(\[[\s\S]*)$/);
+      if (!m) { console.warn("Links line " + (i + 1) + " not understood: " + line); return; }
+      var key = m[1].trim().toLowerCase();
+      if (games && !games.has(key)) console.warn("Links for a game not in the relations: " + m[1].trim());
+      var list = links.get(key) || [];
+      var re = /\[([^\]]+)\]\s*(\S+)/g, t;
+      while ((t = re.exec(m[2]))) list.push({ label: t[1].trim(), url: t[2] });
+      links.set(key, list);
+    });
+    return links;
+  }
 
-      for (const n of next) {
-        const from = dir === "pred" ? n : node;
-        const to   = dir === "pred" ? node : n;
-        if (!edgeAllowed(graph, from, to, filter)) 
-          continue;
+  /* ---------- Rendering ---------- */
 
-        counts[n] = (counts[n] || 0) + 1;
-        collectCounts(n, graph, depth + 1, maxDepth, dir, counts, new Set(visited), filter);
-      }
-    }
+  var data = parseRelations(document.getElementById("relations").textContent);
+  var input  = document.getElementById("game-input");
+  var output = document.getElementById("output");
+  var msg    = document.getElementById("msg");
+  var filterInput = document.getElementById("filter-input");
+  var filterMsg   = document.getElementById("filter-msg");
+  var current = null;
+  var linksEl = document.getElementById("game-links");
+  var linksSrc = document.getElementById("links");
+  var gameLinks = parseLinks(linksSrc ? linksSrc.textContent : "", data.games);
 
-    function render(node, graph, depth, maxDepth, prefix, dir, counts, filter) {
-      if (depth > maxDepth) return "";
+  function showLinks(game) {
+    linksEl.innerHTML = "";
+    if (!game) return;
+    (gameLinks.get(game.toLowerCase()) || []).forEach(function (l) {
+      var a = el("a", null, "[" + l.label + "]");
+      a.href = l.url;
+      a.target = "_blank";
+      a.rel = "noopener";
+      a.title = l.url;
+      linksEl.appendChild(a);
+    });
+  }
+  var filter = { include: [], exclude: [] };
+  var pred = null;
 
-      const children = (dir === "pred"
-        ? graph.incoming[node]
-        : graph.outgoing[node]) || [];
+  // Glossary definitions (from the <dl> in the page), used for tooltips
+  var glossary = new Map();
+  var glossaryEl = document.getElementById("glossary");
+  if (glossaryEl) {
+    Array.prototype.forEach.call(glossaryEl.querySelectorAll("dt"), function (dt) {
+      var name = dt.textContent.trim();
+      var dd = dt.nextElementSibling;
+      if (dd && dd.tagName === "DD") glossary.set(name.toLowerCase(), dd.textContent.trim());
+      dt.title = "Click to filter by “" + name + "”";
+      dt.addEventListener("click", function () { addFilterTerm(name); });
+    });
+  }
 
-      const visible = children.filter(c => {
-        const from = dir === "pred" ? c : node;
-        const to   = dir === "pred" ? node : c;
-        return edgeAllowed(graph, from, to, filter);
+  // All known ludemes (lower case), used to warn about typos in the filter
+  var knownLudemes = new Set(glossary.keys());
+  data.children.forEach(function (list) {
+    list.forEach(function (e) { e.ludemes.forEach(function (l) { knownLudemes.add(l.toLowerCase()); }); });
+  });
+
+  // Fill datalist
+  var datalist = document.getElementById("game-list");
+  Array.from(data.games.values())
+    .sort(function (a, b) { return a.localeCompare(b, undefined, { sensitivity: "base" }); })
+    .forEach(function (name) {
+      var opt = document.createElement("option");
+      opt.value = name;
+      datalist.appendChild(opt);
+    });
+
+  if (data.errors.length) {
+    console.warn("Unparsed relation lines:\n" + data.errors.join("\n"));
+  }
+
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  }
+
+  function renderRows(rows, container) {
+    rows.forEach(function (r) {
+      var row = el("div", "row");
+      if (r.prefix) row.appendChild(el("span", "branch", r.prefix));
+
+      var a = el("a", "game" + (r.game === current ? " current" : ""), r.game);
+      a.href = "#" + encodeURIComponent(r.game);
+      a.addEventListener("click", function (ev) {
+        ev.preventDefault();
+        select(r.game);
       });
+      row.appendChild(a);
 
-      let out = "";
+      if (r.ludemes && r.ludemes.length) {
+        var lud = el("span", "ludemes");
+        lud.appendChild(document.createTextNode("["));
+        r.ludemes.forEach(function (l, i) {
+          if (i) lud.appendChild(document.createTextNode(", "));
+          var hit = filter.include.indexOf(l.toLowerCase()) >= 0;
+          var tag = el("span", "lud" + (hit ? " hit" : ""), l);
+          var def = glossary.get(l.toLowerCase());
+          tag.title = (def ? l + ": " + def + "\n\n" : "") + "Click to filter by “" + l + "”";
+          tag.addEventListener("click", function () { addFilterTerm(l); });
+          lud.appendChild(tag);
+        });
+        lud.appendChild(document.createTextNode("]"));
+        row.appendChild(lud);
+      }
+      if (r.note) row.appendChild(el("span", "note", r.note));
+      if (r.hidden) row.appendChild(el("span", "more", "… " + r.hidden + " more"));
+      container.appendChild(row);
+    });
+  }
 
-      visible.forEach((child, i) => {
-        const edgeKey = dir === "pred"
-          ? `${child}->${node}`
-          : `${node}->${child}`;
-
-        const id = dir + ":" + edgeKey;
-        const isLast = i === visible.length - 1;
-        const branch = isLast ? "└─ " : "├─ ";
-        const nextPrefix = prefix + (isLast ? "   " : "│  ");
-        const isCollapsed = collapsed.has(id);
-
-        const marker = `<span class="toggle" onclick="toggle('${id}')">${isCollapsed ? "▶" : "▼"}</span> `;
-
-        const labelArr = graph.labels[edgeKey];
-        const label = labelArr
-          ? ` <span class="label">[${labelArr.join(", ")}]</span>`
-          : "";
-
-        const sharedClass = counts[child] > 1 ? "shared" : "";
-
-        out += `<span class="branch">${prefix}${branch}</span>${marker}` +
-               `<span class="${dir} ${sharedClass}">${child}</span>${label}\n`;
-
-        if (!isCollapsed) {
-          out += render(child, graph, depth + 1, maxDepth, nextPrefix, dir, counts, filter);
-        }
-      });
-
-      return out;
+  function block(title, rows, emptyText) {
+    var sec = el("section", "tree-block");
+    sec.appendChild(el("h2", null, title));
+    var tree = el("div", "tree");
+    if (rows.length <= 1) {
+      tree.appendChild(el("div", "none", emptyText));
+    } else {
+      renderRows(rows, tree);
     }
+    sec.appendChild(tree);
+    return sec;
+  }
 
-    function toggle(id) {
-      collapsed.has(id) ? collapsed.delete(id) : collapsed.add(id);
-      update();
+  function select(name) {
+    var canonical = data.games.get(String(name).trim().toLowerCase());
+    if (!canonical) {
+      msg.textContent = name.trim() ? "No game called “" + name.trim() + "” in the list." : "";
+      return;
     }
+    current = canonical;
+    showLinks(canonical);
+    input.value = canonical;
+    msg.textContent = "";
+    output.innerHTML = "";
 
-    function update() {
-      const game = gameInput.value.trim().toLowerCase();
-      if (!game) { output.innerHTML = ""; return; }
+    var anc = buildTree(canonical, data.parents, pred, getDepth());
+    var des = buildTree(canonical, data.children, pred, getDepth());
+    var suffix = pred ? " matching the filter." : ".";
 
-      const graph = parseGraph(graphData.value);
-      if (!graph.outgoing[game] && !graph.incoming[game]) {
-        output.innerHTML = "<label>(no such game in data)</label>";
-        return;
-      }
+    output.appendChild(block(
+      "Ancestors of " + canonical,
+      anc, canonical + " has no recorded ancestors" + suffix));
+    output.appendChild(block(
+      "Descendants of " + canonical,
+      des, canonical + " has no recorded descendants" + suffix));
 
-      const depth =
-        depthSelect.value === "all"
-          ? Infinity
-          : parseInt(depthSelect.value);
+    view = { name: canonical, focus: canonical, edges: new Map(), nodes: new Set([canonical]) };
+    collect(anc, true);
+    collect(des, false);
 
-      const filter = parseFilter(filterInput.value);
+    setHash("#" + encodeURIComponent(canonical));
+  }
 
-      const predCounts = {}, succCounts = {};
-      collectCounts(game, graph, 1, depth, "pred", predCounts, new Set(), filter);
-      collectCounts(game, graph, 1, depth, "succ", succCounts, new Set(), filter);
+  // Updating the URL is a convenience only; some contexts (file://, sandboxed
+  // iframes) forbid it, so failures are ignored.
+  function setHash(hash) {
+    try {
+      if (location.hash === hash) return;
+      history.replaceState(null, "", hash || (location.pathname + location.search));
+    } catch (e) { /* not allowed here — ignore */ }
+  }
 
-      let html = `<span class="root">${game}</span>\n<span class="branch">│</span>\n`;
-      html += `<span class="branch">├─ </span><span class="pred">Predecessors</span>\n`;
-      html += render(game, graph, 1, depth, "│  ", "pred", predCounts, filter)
-           || `<span class="branch">│  └─ </span><span class="pred">(none)</span>\n`;
-      html += `<span class="branch">└─ </span><span class="succ">Successors</span>\n`;
-      html += render(game, graph, 1, depth, "   ", "succ", succCounts, filter)
-           || `<span class="branch">   └─ </span><span class="succ">(none)</span>\n`;
+  function showAll() {
+    current = null;
+    showLinks(null);
+    input.value = "";
+    msg.textContent = "";
+    output.innerHTML = "";
+    var passes = function (e) { return !pred || pred(e); };
+    // A root has no (passing) incoming relation. With a filter on, games left
+    // with no passing relation at all are omitted.
+    var roots = Array.from(data.games.values())
+      .filter(function (g) {
+        if (data.parents.get(g).some(passes)) return false;
+        return !pred || data.children.get(g).some(passes);
+      })
+      .sort(function (a, b) { return a.localeCompare(b, undefined, { sensitivity: "base" }); });
 
-      output.innerHTML = html;
+    var sec = el("section", "tree-block");
+    sec.appendChild(el("h2", null, pred ? "All lineages matching the filter" : "All recorded lineages"));
+    var tree = el("div", "tree");
+    if (!roots.length) tree.appendChild(el("div", "none", "No relations match the filter."));
+    view = { name: "all", focus: null, edges: new Map(), nodes: new Set() };
+    roots.forEach(function (r) {
+      var rows = buildTree(r, data.children, pred, getDepth());
+      renderRows(rows, tree);
+      collect(rows, false);
+    });
+    sec.appendChild(tree);
+    output.appendChild(sec);
+    setHash("");
+  }
+
+  input.addEventListener("input", function () {
+    if (data.games.has(input.value.trim().toLowerCase())) select(input.value);
+  });
+  input.addEventListener("keydown", function (ev) {
+    if (ev.key === "Enter") select(input.value);
+  });
+  document.getElementById("show-all").addEventListener("click", showAll);
+
+  function refresh() {
+    if (current) select(current); else showAll();
+  }
+
+  function applyFilter() {
+    filter = parseFilter(filterInput.value);
+    pred = makePredicate(filter, lenientBox.checked);
+    var unknown = filter.include.concat(filter.exclude)
+      .filter(function (t) { return !knownLudemes.has(t); });
+    filterMsg.textContent = unknown.length
+      ? "Unknown ludeme" + (unknown.length > 1 ? "s" : "") + ": " + unknown.join(", ")
+      : "";
+    refresh();
+  }
+
+  function addFilterTerm(term) {
+    var t = term.toLowerCase();
+    if (filter.include.indexOf(t) >= 0) return;
+    var v = filterInput.value.trim();
+    filterInput.value = v ? v + ", " + term : term;
+    applyFilter();
+  }
+
+  var lenientBox = document.getElementById("lenient-neg");
+  filterInput.addEventListener("input", applyFilter);
+  lenientBox.addEventListener("change", applyFilter);
+
+  /* ---------- DOT export ---------- */
+
+  var view = null;  // what is currently displayed: {name, focus, nodes, edges}
+
+  // Record the edges of a rendered tree. In ancestor trees the row's game is
+  // the ancestor of its parent row; in descendant trees it is the descendant.
+  function collect(rows, ancestors) {
+    rows.forEach(function (r) {
+      view.nodes.add(r.game);
+      if (!r.parent) return;
+      var from = ancestors ? r.game : r.parent;
+      var to   = ancestors ? r.parent : r.game;
+      view.edges.set(from + "\u0000" + to, { from: from, to: to, ludemes: r.ludemes || [] });
+    });
+  }
+
+  function dotId(s) {
+    return '"' + String(s).replace(/\\/g, "\\\\").replace(/"/g, '\\"') + '"';
+  }
+
+  function toDot(v, withLudemes) {
+    var out = [];
+    out.push("// The World of Abstract Games — ludeme ontology");
+    out.push("// View: " + (v.focus ? "ancestors and descendants of " + v.focus : "all lineages"));
+    if (filterInput.value.trim()) {
+      out.push("// Ludeme filter: " + filterInput.value.trim() +
+               (lenientBox.checked ? "  (lenient negation)" : ""));
     }
+    if (getDepth()) out.push("// Depth limit: " + getDepth());
+    out.push("digraph " + dotId("Ludemes: " + (v.focus || "all")) + " {");
+    out.push("  rankdir=TB;");
+    out.push('  node [shape=box, style=rounded, fontname="Helvetica"];');
+    out.push('  edge [fontname="Helvetica", fontsize=10, color="#888888", fontcolor="#5a4630"];');
+    if (v.focus) {
+      out.push("  " + dotId(v.focus) + ' [style="rounded,filled", fillcolor="#f0d9a8", penwidth=2];');
+    }
+    // Nodes without edges (e.g. a game with no relations passing the filter)
+    var linked = new Set();
+    v.edges.forEach(function (e) { linked.add(e.from); linked.add(e.to); });
+    v.nodes.forEach(function (n) {
+      if (!linked.has(n) && n !== v.focus) out.push("  " + dotId(n) + ";");
+    });
+    v.edges.forEach(function (e) {
+      var attr = withLudemes && e.ludemes.length ? " [label=" + dotId(e.ludemes.join(", ")) + "]" : "";
+      out.push("  " + dotId(e.from) + " -> " + dotId(e.to) + attr + ";");
+    });
+    out.push("}");
+    return out.join("\n") + "\n";
+  }
 
-    function exportDOT() {
-      const root = gameInput.value.trim().toLowerCase();
-      if (!root) return;
-
-      const graph = parseGraph(graphData.value);
-      if (!graph.outgoing[root] && !graph.incoming[root]) return;
-
-      const depth =
-        depthSelect.value === "all"
-          ? Infinity
-          : parseInt(depthSelect.value);
-
-      const filter = parseFilter(filterInput.value);
-      const includeLabels = document.getElementById("dotLabels").checked;
-
-      const nodes = new Set([root]);
-      const edges = [];
-
-      function traverse(node, d, dir, visited) {
-        if (d > depth || visited.has(node)) return;
-        visited.add(node);
-
-        const next = dir === "pred"
-          ? graph.incoming[node] || []
-          : graph.outgoing[node] || [];
-
-        for (const child of next) {
-          const from = dir === "pred" ? child : node;
-          const to   = dir === "pred" ? node : child;
-          const edgeKey = `${from}->${to}`;
-          const collapseKey = `${dir}:${edgeKey}`;
-
-          if (!edgeAllowed(graph, from, to, filter)) continue;
-
-          nodes.add(from);
-          nodes.add(to);
-
-          edges.push({
-            from,
-            to,
-            labels: graph.labels[edgeKey]
-          });
-
-          if (!collapsed.has(collapseKey)) {
-            traverse(child, d + 1, dir, new Set(visited));
-          }
-        }
-      }
-
-      traverse(root, 1, "pred", new Set());
-      traverse(root, 1, "succ", new Set());
-
-      // Build DOT
-      let dot = "digraph GameTaxonomy {\n";
-      dot += "  node [fontname=\"monospace\"];\n";
-      dot += "  edge [fontname=\"monospace\"];\n\n";
-
-      for (const n of nodes) {
-        dot += `  "${n}";\n`;
-      }
-
-      dot += "\n";
-
-      for (const e of edges) {
-        if (includeLabels && e.labels && e.labels.length) {
-          dot += `  "${e.from}" -> "${e.to}" [label="${e.labels.join(", ")}"];\n`;
-        } else {
-          dot += `  "${e.from}" -> "${e.to}";\n`;
-        }
-      }
-
-      dot += "}\n";
-
-      const blob = new Blob([dot], { type: "text/plain" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
+  function exportDot() {
+    if (!view) return;
+    var text = toDot(view, document.getElementById("dot-ludemes").checked);
+    var fname = "ludemes-" + view.name.replace(/[^\w\-]+/g, "_") + ".dot";
+    try {
+      var blob = new Blob([text], { type: "text/vnd.graphviz;charset=utf-8" });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement("a");
       a.href = url;
-      a.download = "taxonomy_visible.dot";
+      a.download = fname;
+      document.body.appendChild(a);
       a.click();
-      URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+    } catch (e) {
+      // Downloads blocked (e.g. sandboxed frame): show the text so it can be copied
+      var w = window.open("", "_blank");
+      if (w) { w.document.title = fname; w.document.body.innerText = text; }
+      else alert("Could not download the DOT file:\n" + e);
     }
+  }
 
-    gameInput.addEventListener("input", update);
-    graphData.addEventListener("input", update);
-    depthSelect.addEventListener("change", update);
-    filterInput.addEventListener("input", update);
+  document.getElementById("export-dot").addEventListener("click", exportDot);
+
+  // Depth limit: empty or invalid = unlimited
+  var depthInput = document.getElementById("depth-input");
+  function getDepth() {
+    var n = parseInt(depthInput.value, 10);
+    return n > 0 ? n : 0;
+  }
+  depthInput.addEventListener("input", refresh);
+  document.getElementById("clear-filter").addEventListener("click", function () {
+    filterInput.value = "";
+    applyFilter();
+  });
+
+  // Start from URL hash (e.g. page.html#Hex) if present, else show everything
+  var start = "";
+  try { start = decodeURIComponent(location.hash.slice(1)); } catch (e) { /* ignore */ }
+  if (start && data.games.has(start.toLowerCase())) select(start); else showAll();
+
+  // Exposed for testing
+  window.__ontology = { parseRelations: parseRelations, buildTree: buildTree, toDot: toDot,
+                        getView: function () { return view; },
+                        parseFilter: parseFilter, parseLinks: parseLinks, makePredicate: makePredicate, data: data };
+})();
 </script>
 
 </body>
