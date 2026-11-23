@@ -95,29 +95,30 @@ var GAME={
   board:{light:"#E5DFD2",dark:"#C9C0B0"},
   rules:[
   {h:"Board and pieces",items:[
-    "The standard 8×8 chess board and starting position. Gold plays the white army and moves first; Blue plays the black army.",
+    "The standard 8×8 chess board and starting position.",
     "All FIDE rules apply, except as stated below."]},
   {h:"A turn",items:[
     "Each turn is a regular chess move followed by a swap move. Gold's very first turn is the regular move only.",
     "The swap is made even when the regular move gives check.",
-    {t:"A swap move makes two pieces trade squares. The first is one of your pieces (the king included). The second stands on a square where your piece could move if that square were empty, or capture if it held an opponent's piece:",sub:[
+    {t:"A <b>swap move</b> makes two pieces trade squares. The first is one of your pieces (the king included). The second stands on a square where your piece could move if that square were empty, or capture if it held an opponent's piece:",sub:[
       "a rook, bishop or queen reaches the first piece along each of its lines; a knight or king reaches its usual squares (castling does not count);",
       "a pawn reaches the square in front of it, the square two ahead when it could make a two-square step there, and the two squares diagonally in front of it;",
-      "the second piece may be yours or your opponent's, whatever square it is on. (This page's reading of the definition.)",
-      "Swapping two identical pieces, such as two of your own pawns, is allowed and leaves the position unchanged. (This page's reading.)"]}]},
+      "the second piece may be yours or your opponent's, whatever square it is on.",
+      "Swapping two identical pieces, such as two of your own pawns, is allowed and leaves the position unchanged."]}]},
   {h:"Check and the end of the game",items:[
     "If you are in check, your regular move must get you out of it; the swap cannot be used for that.",
     "Neither the regular move nor the swap may leave your own king in check. (For the swap, this page applies the FIDE rule to the whole turn.)",
-    "A player who cannot make a regular move, or cannot make a swap after it, loses. Checkmate and stalemate are therefore both losses. The page only offers regular moves that can be followed by a swap; when there is none, the player loses.",
-    "The game is drawn after 50 moves by each side with no capture and no pawn move (a pawn moved by a swap counts), or when the same position occurs for the third time with the same player to move. On this page both draws are automatic. There is no draw for insufficient material: a lone king usually has nothing to swap with and loses."]},
+    "A player who cannot make a regular move, or cannot make a swap after it, loses. Checkmate and stalemate are therefore both losses.",
+    "The game is drawn after 50 moves by each side with no capture and no pawn move (a pawn moved by a swap counts), or when the same position occurs for the third time with the same player to move.", 
+    "A lone king usually has nothing to swap with and loses."]},
   {h:"Pawns",items:[
     "A pawn on its player's first rank, where a swap can put it, can also move two squares forward, just as from its starting square.",
     "A pawn that reaches the last rank with a regular move is promoted as in FIDE chess.",
     "A pawn of either colour carried to its promotion rank by a swap is promoted at once, and the player who made the swap chooses the piece: queen, rook, bishop or knight, in the pawn owner's colour.",
-    "En passant is possible right after a two-square pawn step, as long as that pawn did not take part in the swap that followed it. (This page's reading.)"]},
+    "En passant is possible right after a two-square pawn step, as long as that pawn did not take part in the swap that followed it."]},
   {h:"Castling",items:[
     "Castling follows the FIDE rules and is followed by a swap like any other regular move.",
-    "A king or rook that has taken part in a swap counts as having moved, so the castling right is lost. (This page's reading.)"]}],
+    "A king or rook that has taken part in a swap counts as having moved, so the castling right is lost."]}],
   describe:function(s){return s.last?GAME.sides[s.last.p].name+": "+s.last.txt+".":""}
 };
 var P=1,N=2,B=3,R=4,Q=5,K=6,LET=" PNBRQK",PNAME=["","pawn","knight","bishop","rook","queen","king"],VAL=[0,100,300,320,500,900,0],BACK=[R,N,B,Q,K,B,N,R];

@@ -101,22 +101,21 @@ var GAME={
   sides:[{name:"Gold",fill:"#D6A64F",edge:"#4f3a12",det:"#4f3a12"},{name:"Blue",fill:"#263C48",edge:"#0b1418",det:"#b4c8d2"}],
   board:{light:"#E5DFD2",dark:"#C9C0B0"},
   rules:[
-  {h:"Board, pieces and players",items:[
-    "The standard 8×8 chess board, pieces and starting position. Gold has the white army and Blue the black army.",
-    "There are two players, the Gold player and the Blue player. Each tries to get the other player's colour checkmated. (This page's reading: each player owns the colour of the same name.)"]},
+  {h:"Board and pieces",items:[
+    "Use the standard 8×8 chess board, pieces and starting position."]},
   {h:"Series of moves",items:[
     "The Gold player begins with one move, for Gold.",
     "The Blue player then makes a series of two moves: one for Blue, then one for Gold.",
     "The players continue alternately, each series one move longer than the one before: the Gold player makes 3 moves, the Blue player 4, the Gold player 5, and so on.",
     "The colours always alternate, Gold, Blue, Gold, Blue…, whoever is moving. So in every series a player also moves the opponent's pieces, and the moves together form an ordinary legal chess game.",
     "All moves of a series must be played, unless the game ends during it."]},
-  {h:"Orthodox rules",items:[
-    "Every move must be a legal orthodox chess move for the colour to move: a king in check must be got out of check, and no move may leave its own king in check. Castling, en passant and the two-square pawn step from the starting square work as usual.",
+  {h:"Moves",items:[
+    "Every move must be a legal chess move for the colour to move: a king in check must be got out of check, and no move may leave its own king in check. Castling, en passant and the two-square pawn step from the starting square work as usual.",
     "A pawn reaching the last rank is promoted to a queen, rook, bishop or knight of its own colour, chosen by the player who moves it there, even if it is the opponent's pawn."]},
   {h:"End of the game",items:[
     "Checkmate ends the game at once, even in the middle of a series. The player whose colour is checkmated loses, even when that player made the mating move.",
     "Stalemate is a draw, and so is a position where neither colour can ever be checkmated (on this page: king against king, king and one bishop or knight against king, or only bishops, all on squares of one colour).",
-    "The game is drawn after 50 moves by each colour with no capture and no pawn move. (On this page this draw is automatic.)",
+    "The game is drawn after 50 moves by each colour with no capture and no pawn move.",
     "There is no draw by threefold repetition."]}],
   describe:function(s){var L=s.last;return L?"Last move, "+playerName(L.by)+"'s series "+L.k+" ("+L.j+" of "+L.k+"): "+GAME.sides[L.p].name+" "+L.txt+".":""}
 };

@@ -92,7 +92,7 @@ var GAME={
   sides:[{name:"White",color:"#f6f2e7",edge:"#555"},{name:"Black",color:"#2d2d2d",edge:"#ddd"}],
   rules:[
   {h:"Board and setup",items:[
-    "Go board of 13×13, 15×15, 17×17, 19×19 or 23×23 (your choice); stones are played on the intersections. The board starts empty and Black moves first."]},
+    "The board starts empty and Black moves first. Stones are played on the intersections"]},
   {h:"Turn",items:[
     "On each turn a player places one stone of their colour on an empty intersection. Passing is not allowed.",
     "The rules of Go apply: a group of stones with no liberty (no orthogonally adjacent empty intersection) is captured and removed. Enemy groups are removed first, so a move that captures is never suicide.",
@@ -103,7 +103,7 @@ var GAME={
   {h:"Goal",items:[
     "A player wins by making a chain of orthogonally connected stones of their colour that joins two opposite sides of the board (left to right or bottom to top).",
     "A player also wins if their opponent has no legal move on their turn.",
-    "The small squares on the board are only a guide: they mark empty regions bordered only by one player’s stones. They are not scored."]}],
+    "note: The small squares on the board are only a guide: they mark empty regions bordered only by one player’s stones. They are not scored and can be played on if it does not result in suicide."]}],
   describe:function(s){var l=s.lm;if(!l)return"";var by=GAME.sides[l.p].name;
     if(l.swap)return by+" swapped: the players exchanged colours. The player who placed the first stone now plays White.";
     var t=by+" played "+cn(l.i);

@@ -1,3 +1,4 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,6 +25,9 @@ button.ctl:disabled,select:disabled,input:disabled{opacity:.45;cursor:default}
 label.f{color:var(--mute);font-size:.9rem}
 input[type=number]{width:4.5em;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
 button.ctl.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button.ctl.icon{display:inline-flex;align-items:center;justify-content:center;padding:6px 10px}
+button.ctl.icon svg{width:18px;height:18px;fill:currentColor;display:block}
+.navlab{min-width:7.5em;text-align:center;color:var(--mute);font-variant-numeric:tabular-nums}
 .score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
 .pl{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:8px 12px;display:flex;justify-content:space-between;align-items:baseline}
 .pl.on{border-color:var(--hi)}
@@ -44,7 +48,7 @@ details li{margin:4px 0}
 <div class="layout">
 <div class="left">
 <div id="board"></div>
-<p class="legend">Click an empty hex of your base edge to place a piece, or click one of your supported pieces to see where it can go: a filled dot means the piece is still supported there and may keep moving, a red ring means it stops there unsupported and will be lost. “Remove 2 + 1” sacrifices two of your supported pieces to take one enemy piece. Dashed pieces are unsupported and are lost if still unsupported at the end of their owner’s turn. Tinted edges: solid tint = base, dashed outline = terminal.</p>
+<p class="legend">Click an empty hex of your base edge to place a piece, or click one of your supported pieces to see where it can go: a filled dot means the piece is still supported there and may keep moving, a red ring means it stops there unsupported and will be lost. “Remove 2 + 1” sacrifices two of your supported pieces to take one enemy piece. Dashed pieces are unsupported and are lost if still unsupported at the end of their owner’s turn. Tinted edges: solid tint = base, dashed outline = terminal. The gold ring marks the piece that moved last and the small gold dot the hex it started from.</p>
 </div>
 <aside class="right">
 <div class="bar">
@@ -55,6 +59,13 @@ details li{margin:4px 0}
   <button class="ctl" id="undo">Undo</button>
   <button class="ctl" id="redo">Redo</button>
   <button class="ctl" id="rem">Remove 2 + 1</button>
+</div>
+<div class="bar" id="nav" role="group" aria-label="Game history">
+  <button class="ctl icon" id="nFirst" aria-label="Go to the beginning" title="Go to the beginning"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="2.5" height="14"/><path d="M19 5v14L8 12z"/></svg></button>
+  <button class="ctl icon" id="nPrev" aria-label="One move back" title="One move back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 5v14L6 12z"/></svg></button>
+  <span class="navlab" id="nlab" aria-live="polite">Move 0 of 0</span>
+  <button class="ctl icon" id="nNext" aria-label="One move forward" title="One move forward"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5v14l11-7z"/></svg></button>
+  <button class="ctl icon" id="nLast" aria-label="Go to the last move" title="Go to the last move"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5v14l11-7z"/><rect x="17.5" y="5" width="2.5" height="14"/></svg></button>
 </div>
 <div class="score">
   <div class="pl" id="p0"><span><span id="n0"></span> <small id="d0"></small></span><b id="s0">0</b></div>
@@ -92,23 +103,22 @@ var GAME={
   subtitle:"Hex 15\u00d715. Hand a chain of supported pieces from your base towards the far edge before your opponent does.",
   sides:[{name:"Red",color:"#c0392b"},{name:"Blue",color:"#2b6cb0"}],
   rules:[
-  {h:"Board",items:[
+  {h:"Board and setup",items:[
     "A Hex board of size 15 (15\u00d715 hexes). Each player starts with 5 pieces on the 5 central hexes of his base; everything else is empty.",
-    "Each player owns two opposite edges: Red the top and bottom edges, Blue the left and right edges. One owned edge is the player\u2019s base (Red: top, Blue: left), the other is the terminal (Red: bottom, Blue: right). Corner hexes belong to both of their edges. Red moves first."]},
+    "Each player owns two opposite edges: Red the top and bottom edges, Blue the left and right edges. One owned edge is the player's base (Red: top, Blue: left), the other is the terminal (Red: bottom, Blue: right). Corner hexes belong to both of their edges. Red moves first."]},
   {h:"Supported pieces",items:[
-    {t:"A piece is supported if:",sub:[
+    {t:"A piece is <b>supported</b> if:",sub:[
       "it is in its base; or",
       "it is connected, through a chain of friendly pieces, to its base or to another supported piece (so a piece next to a supported friendly piece is supported); or",
       "it is adjacent to an empty hex that is itself adjacent to a supported friendly piece, provided that the empty hex is not adjacent to an enemy piece."]},
-    "Support is recomputed on the current position, so it changes as pieces move or are removed.",
-    "At the end of a player\u2019s turn, every unsupported piece of that player is removed from the board. A piece left unsupported by the opponent\u2019s turn therefore has exactly one turn to be made supported again."]},
-  {h:"Turn: choose one",items:[
-    "a) Place one new piece on an empty hex of your base.",
+    "At the end of a player's turn, every unsupported friendly piece is removed from the board. So, a piece left unsupported by the opponent's turn therefore has exactly one turn to be made supported again."]},
+  {h:"Turn: choose one of the following actions:",items:[
+    "a) Place a new friendly piece on an empty hex of your base.",
     "b) Move one supported piece to an adjacent empty hex. While the piece is supported after a step, it may keep moving (step after step, within the same turn); every step after the first must go to an empty hex that is not adjacent to any enemy piece. Pieces that are unsupported cannot move or be used for removal.",
     "c) Remove two of your own supported pieces that are not at the base, together with any one enemy piece."]},
   {h:"End of the game",items:[
-    "The first player to have a supported piece, of either colour, in his terminal wins. This is checked after every turn, the player who just moved first.",
-    "A supported piece of yours on the opponent\u2019s terminal hands him the win, so a corner shared between your base and his terminal is a trap."]}],
+    "The player that, at the end of their turn, have a supported piece of either colour in his terminal wins.",
+    "note: A supported piece of yours on the opponent's terminal hands him the win, so a corner shared between your base and his terminal is a trap."]}],
   stats:function(s,i){var p=i+1,n=0,u=0,best=0;
     for(var k=0;k<NC;k++)if(s.o[k]===p){n++;if(s.sup[i][k]){u++;if(ADV[i][k]>best)best=ADV[i][k]}}
     return{big:best,text:"\u00b7 "+n+" pieces, "+u+" supported"}},
@@ -125,7 +135,7 @@ CELLS.forEach(function(c,i){
 });
 function cn(i){return String.fromCharCode(97+CELLS[i][0])+(CELLS[i][1]+1)}
 // supported pieces of player p (1 or 2)
-function support(o,p){
+function support(o,p,bad){   // bad (optional): a hex to treat as next to an enemy piece
   var sup=new Uint8Array(NC),Q=[],B=BASE[p-1],i,k,h,j,e,m,x,y,nbe,clean;
   for(i=0;i<NC;i++)if(o[i]===p&&B[i]){sup[i]=1;Q.push(i)}
   for(h=0;h<Q.length;h++){                                   // relay through clean empty hexes
@@ -134,7 +144,7 @@ function support(o,p){
       e=NB[y][k];
       if(o[e]===p){if(!sup[e]){sup[e]=1;Q.push(e)}continue}   // chain: a friendly neighbour of a supported piece is supported
       if(o[e])continue;
-      nbe=NB[e];clean=true;
+      nbe=NB[e];clean=(e!==bad);
       for(m=0;m<nbe.length;m++)if(o[nbe[m]]===3-p){clean=false;break}
       if(!clean)continue;
       for(m=0;m<nbe.length;m++){x=nbe[m];if(o[x]===p&&!sup[x]){sup[x]=1;Q.push(x)}}
@@ -155,6 +165,7 @@ function newState(){   // each player starts with 5 pieces on the 5 central hexe
   return mk(o,0,1,"");
 }
 function nameOf(s){return GAME.sides[s.turn].name}
+function tag(ns,mv){ns.mv=mv;return ns}   // remembers which piece moved (for the gold highlight)
 // end of turn: the mover's unsupported pieces are removed (the position is then re-evaluated)
 function purge(st,P,txt){
   var o=null,n=0;
@@ -165,7 +176,7 @@ function purge(st,P,txt){
 // a) placement at the base
 function placeMove(s,i){
   var o=s.o.slice();o[i]=s.turn+1;
-  return{t:"new",i:i,ns:purge(mk(o,1-s.turn,s.turn,""),s.turn,nameOf(s)+" placed a piece on "+cn(i)+".")};
+  return{t:"new",i:i,ns:tag(purge(mk(o,1-s.turn,s.turn,""),s.turn,nameOf(s)+" placed a piece on "+cn(i)+"."),{to:i})};
 }
 function nearEnemy(o,j,p){for(var m=0;m<NB[j].length;m++)if(o[NB[j][m]]===3-p)return true;return false}
 // b) every cell the supported piece on hex i can reach this turn (breadth-first; a piece may keep moving while supported).
@@ -180,7 +191,7 @@ function reach(s,i){
       j=NB[nd.c][k];if(nd.st.o[j]||seen[j]||(nd.c!==i&&nearEnemy(nd.st.o,j,p)))continue;seen[j]=1;
       o=nd.st.o.slice();o[nd.c]=0;o[j]=p;
       ns=mk(o,1-P,P,"");
-      res.push({t:"move",i:i,j:j,live:ns.sup[P][j],ns:purge(ns,P,nameOf(s)+" moved "+cn(i)+" to "+cn(j)+".")});q.push({c:j,st:ns});
+      res.push({t:"move",i:i,j:j,live:ns.sup[P][j],ns:tag(purge(ns,P,nameOf(s)+" moved "+cn(i)+" to "+cn(j)+"."),{from:i,to:j})});q.push({c:j,st:ns});
     }
   }
   return res;
@@ -195,48 +206,124 @@ function canRemove(s){          // own supported pieces that are not at the base
   for(var i=0;i<NC;i++)if(s.o[i]===P+1&&s.sup[P][i]&&!BASE[P][i])out.push(i);
   return out;
 }
-// move generator (used by the engine). All placements and all moves are generated;
-// removals are pruned to the 4 cheapest own pieces and the 5 most dangerous enemy pieces.
+// number of pieces of player p that stop being supported when the pieces in "gone" are taken off the board
+function lossIf(o,p,gone){
+  var o2=o.slice(),i,n=0,sp;
+  for(i=0;i<gone.length;i++)o2[gone[i]]=0;
+  sp=support(o2,p);
+  for(i=0;i<NC;i++)if(o2[i]===p&&!sp[i])n++;
+  return n;
+}
+// move generator (used by the engine). All placements and all moves are generated.
+// Removals are pruned: the own pieces whose loss hurts least (4 of them) and the enemy pieces whose
+// removal breaks the most enemy support, or that stand furthest ahead (6 of them).
 function legal(s){
   var out=[],P=s.turn,p=P+1,i,k;if(s.w>=0)return out;
   for(k=0;k<BASEL[P].length;k++){i=BASEL[P][k];if(!s.o[i])out.push(placeMove(s,i))}
   for(i=0;i<NC;i++)if(s.o[i]===p&&s.sup[P][i])reach(s,i).forEach(function(m){out.push(m)});
   var own=canRemove(s);
   if(own.length>=2){
-    own.sort(function(a,b){return ADV[P][a]-ADV[P][b]});own=own.slice(0,4);
-    var en=[];for(i=0;i<NC;i++)if(s.o[i]===2-P)en.push(i);
-    en.sort(function(a,b){return(s.sup[1-P][b]?ADV[1-P][b]+20:ADV[1-P][b])-(s.sup[1-P][a]?ADV[1-P][a]+20:ADV[1-P][a])});en=en.slice(0,5);
-    for(var x=0;x<own.length;x++)for(var y=x+1;y<own.length;y++)en.forEach(function(e){out.push(capMove(s,own[x],own[y],e))});
+    own.forEach(function(c,n){own[n]={i:c,l:lossIf(s.o,p,[c]),a:ADV[P][c]}});
+    own.sort(function(a,b){return a.l-b.l||a.a-b.a});own=own.slice(0,4).map(function(x){return x.i});
+    var en=[];
+    for(i=0;i<NC;i++)if(s.o[i]===2-P&&s.sup[1-P][i])en.push({i:i,l:lossIf(s.o,2-P,[i]),a:ADV[1-P][i]});
+    en.sort(function(a,b){return b.l-a.l||b.a-a.a});
+    var front=en.slice().sort(function(a,b){return b.a-a.a}).slice(0,2),pick={};
+    en=en.slice(0,4).concat(front).filter(function(x){return pick[x.i]?false:(pick[x.i]=1)}).map(function(x){return x.i});
+    var mine=0;for(i=0;i<NC;i++)if(s.o[i]===p)mine++;
+    if(mine>=AIW.MAT)   // only sacrifice when enough material remains, and never when it breaks one's own structure
+      for(var x=0;x<own.length;x++)for(var y=x+1;y<own.length;y++)if(!lossIf(s.o,p,[own[x],own[y]]))en.forEach(function(e){out.push(capMove(s,own[x],own[y],e))});
   }
   return out;
 }
 
 /* ================================ 2. ENGINE ================================ */
-function fval(s,P){
+var AIW={F:1,DENS:.4,SUP:0,LOOSE:.5,T:60,T0:2,R:1,W:2,G:3,M:3,MAT:8};   // evaluation weights
+function fvalOld(s,P){
   var p=P+1,sp=s.sup[P],o=s.o,best=0,sum=0,a;
   for(var i=0;i<NC;i++)if(o[i]===p){a=ADV[P][i];if(sp[i]){sum+=a+2;if(a>best)best=a}else sum+=a*.2}
   return 6*best+best*best/3+sum;
 }
-function ev(s){   // value from Red's point of view
+function evOld(s){   // first version: only own advance minus opponent advance
   if(s.w>=0)return s.w===0?1000:-1000;
-  return fval(s,0)-fval(s,1);
+  return fvalOld(s,0)-fvalOld(s,1);
 }
-var BEAM=[0,0,8,4],NOISE=[0,1.0,.3,.1];
+// Cheapest way for player P to connect his supported pieces to his terminal (0-1-2-4 shortest path):
+// own supported piece 0, own unsupported piece 1, empty hex 1 (2 if next to an enemy piece), enemy piece 4 (removable).
+function dist(s,P){
+  var p=P+1,q=3-p,o=s.o,sp=s.sup[P],D=new Int16Array(NC).fill(999),B=[[]],T=TERM[P],i,t,h,c,k,j,w,nd,x,m,Bt;
+  for(i=0;i<NC;i++)if(o[i]===p&&sp[i]){D[i]=0;B[0].push(i)}
+  for(t=0;t<B.length;t++){
+    Bt=B[t];if(!Bt)continue;
+    for(h=0;h<Bt.length;h++){
+      c=Bt[h];if(D[c]!==t)continue;
+      if(T[c])return t;
+      for(k=0;k<NB[c].length;k++){
+        j=NB[c][k];x=o[j];
+        if(x===p)w=sp[j]?0:1;else if(x===q)w=4;
+        else{w=1;for(m=0;m<NB[j].length;m++)if(o[NB[j][m]]===q){w=2;break}}
+        nd=t+w;if(nd<D[j]){D[j]=nd;(B[nd]||(B[nd]=[])).push(j)}
+      }
+    }
+  }
+  return 99;
+}
+// structure of player P: furthest supported piece, how many supported pieces stand close behind it (a wide, redundant front), loose pieces
+function shape(s,P){
+  var p=P+1,sp=s.sup[P],o=s.o,f=0,n=0,u=0,a,i,dn=0;
+  for(i=0;i<NC;i++)if(o[i]===p){if(sp[i]){n++;a=ADV[P][i];if(a>f)f=a}else u++}
+  for(i=0;i<NC;i++)if(o[i]===p&&sp[i]&&ADV[P][i]>=f-3)dn++;
+  return AIW.F*f+AIW.DENS*Math.min(dn,6)+AIW.SUP*n+AIW.LOOSE*u;
+}
+function gd(d){return AIW.T/(d+AIW.T0)}   // threat value of being d steps from the terminal: sharp near the goal
+// weak point of player P: the most pieces he would lose if one of his supported pieces were taken away
+// (a chain with a single link, or a long chain of gaps, is fragile; a solid or doubled line is robust)
+function weak(s,P){
+  var p=P+1,o=s.o,sp=s.sup[P],worst=0,i,l;
+  for(i=0;i<NC;i++)if(o[i]===p&&sp[i]&&!BASE[P][i]){l=lossIf(o,p,[i]);if(l>worst)worst=l}
+  return worst;
+}
+// weak link of player P: the most pieces he would lose if one empty hex that carries his support
+// (an empty hex between two of his pieces) were taken by an enemy piece next to it
+function gap(s,P){
+  var p=P+1,o=s.o,sp=s.sup[P],worst=0,e,k,n,l,i,sp2,o2;
+  for(e=0;e<NC;e++){
+    if(o[e])continue;
+    n=0;for(k=0;k<NB[e].length;k++)if(o[NB[e][k]]===p)n++;
+    if(n<2||nearEnemy(o,e,p))continue;
+    sp2=support(o,p,e);l=0;
+    for(i=0;i<NC;i++)if(o[i]===p&&sp[i]&&!sp2[i])l++;
+    if(l>worst)worst=l;
+  }
+  return worst;
+}
+function mat(s,P){var p=P+1,n=0;for(var i=0;i<NC;i++)if(s.o[i]===p)n+=s.sup[P][i]?1:.5;return n}
+function evNew(s){   // value from Red's point of view
+  if(s.w>=0)return s.w===0?1000:-1000;
+  var dr=dist(s,0),db=dist(s,1);
+  return fvalOld(s,0)-fvalOld(s,1)+gd(dr)-gd(db)+AIW.R*(shape(s,0)-shape(s,1))+AIW.W*(weak(s,1)-weak(s,0))
+    +AIW.G*(gap(s,1)-gap(s,0))+AIW.M*(mat(s,0)-mat(s,1));
+}
+var EVF=evNew;
+function ev(s){return EVF(s)}
+var BEAM=[0,0,8,5],NOISE=[0,1.0,.3,.1];
 function nega(s,d,sign,al,be){
-  if(d===0||s.w>=0)return sign*ev(s);
+  if(s.w>=0)return sign*(s.w===0?1:-1)*(1000+d);
+  if(d===0)return sign*ev(s);
   var ms=legal(s),best=-1e9;
   if(!ms.length)return -1000;
-  if(d===1){ms.forEach(function(m){var v=sign*ev(m.ns);if(v>best)best=v});return best}
+  if(d===1){ms.forEach(function(m){var v=m.ns.w>=0?sign*(m.ns.w===0?1:-1)*1001:sign*ev(m.ns);if(v>best)best=v});return best}
   ms.forEach(function(m){m.v=sign*ev(m.ns)});
   ms.sort(function(a,b){return b.v-a.v});ms=ms.slice(0,BEAM[3]);
   for(var i=0;i<ms.length;i++){var v=-nega(ms[i].ns,d-1,-sign,-be,-al);if(v>best)best=v;if(best>al)al=best;if(al>=be)break}
   return best;
 }
 function aiMove(s){
-  var ms=legal(s),lv=+$("level").value,sign=s.turn===0?1:-1,best=-1e9,pick=null;
+  var ms=legal(s),lv=+$("level").value,sign=s.turn===0?1:-1,best=-1e9,pick=null,i;
   if(!ms.length)return null;
+  for(i=0;i<ms.length;i++)if(ms[i].ns.w===s.turn)return ms[i];    // a move that wins right now
   if(lv>1){ms.forEach(function(m){m.v=sign*ev(m.ns)+Math.random()*.5});ms.sort(function(a,b){return b.v-a.v});ms=ms.slice(0,BEAM[2]+2)}
-  for(var i=0;i<ms.length;i++){
+  for(i=0;i<ms.length;i++){
     var v=(lv===1?sign*ev(ms[i].ns):-nega(ms[i].ns,lv-1,-sign,-1e9,1e9))+Math.random()*NOISE[lv];
     if(v>best){best=v;pick=ms[i]}
   }
@@ -247,7 +334,7 @@ function runSim(){   // computer vs computer, to look for first/second-player ad
   if(sim){sim.stop=true;return}
   var CAP=300,me=sim={stop:false},TOTAL=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?4:+$("simR").value)),
       done=0,w=[0,0],un=0,g=newState(),plies=0,lvName=$("level").options[$("level").selectedIndex].text,nm=GAME.sides.map(function(x){return x.name});
-  ["mode","side","level","new","undo","redo","rem","simN","simR"].forEach(function(i){$(i).disabled=true});
+  ["mode","side","level","new","undo","redo","rem","simN","simR","nFirst","nPrev","nNext","nLast"].forEach(function(i){$(i).disabled=true});
   $("sim").textContent="Stop simulation";
   $("simout").textContent="Simulating at "+lvName+" level\u2026 0/"+TOTAL;
   function fin(stopped){
@@ -282,22 +369,44 @@ function runSim(){   // computer vs computer, to look for first/second-player ad
 }
 
 /* =============================== 3. INTERFACE =============================== */
-var hist,redo=[],sel,remMode=false,remPicks=[],over,busy,note="";
+var hist,redo=[],view=null,sel,remMode=false,remPicks=[],over,busy,note="";   // view: null = live position, otherwise the index being reviewed
 var S3=Math.sqrt(3),PX=[],PY=[],x0=1e9,x1=-1e9,y0=1e9,y1=-1e9,GREEN="#2e9e4f",RED="#d33",GOLD="#e0a800";
 CELLS.forEach(function(c,i){PX[i]=S3*(c[0]+c[1]/2);PY[i]=1.5*c[1];x0=Math.min(x0,PX[i]-S3/2);x1=Math.max(x1,PX[i]+S3/2);y0=Math.min(y0,PY[i]-1);y1=Math.max(y1,PY[i]+1)});
 function pts(i){var a=[];for(var k=0;k<6;k++){var t=Math.PI/180*(30+60*k);a.push((PX[i]+Math.cos(t)*.97).toFixed(3)+","+(PY[i]+Math.sin(t)*.97).toFixed(3))}return a.join(" ")}
 var HEXP=CELLS.map(function(c,i){return pts(i)});
 function cur(){return hist[hist.length-1]}
+function line(){return hist.concat(redo.slice().reverse())}   // every position, including those that can still be redone
+function browsing(){return view!==null}
+function shown(){return view===null?cur():line()[view]}
+function goto(k){
+  if(busy||sim)return;
+  var n=hist.length-1+redo.length;k=Math.max(0,Math.min(n,k));
+  view=k===hist.length-1?null:k;sel=null;remMode=false;remPicks=[];note="";render();
+}
+// Undo/Redo while reviewing: leave review and play on from the reviewed position (in computer mode, from the nearest position where it is the human's turn)
+function unlock(dir){
+  var L=line(),k=view,j;
+  if($("mode").value==="ai"){
+    j=k;while(j>=0&&j<L.length&&L[j].w<0&&L[j].turn!==+$("side").value)j+=dir;
+    if(j>=0&&j<L.length)k=j;
+  }
+  hist=L.slice(0,k+1);redo=L.slice(k+1).reverse();view=null;sel=null;remMode=false;remPicks=[];note="";over=false;render();maybeAI();
+}
 function humanTurn(){return $("mode").value==="2p"||cur().turn===+$("side").value}
 function start(){
-  hist=[newState()];redo=[];sel=null;remMode=false;remPicks=[];note="";$("level").disabled=$("side").disabled=$("mode").value==="2p";over=false;busy=false;
+  hist=[newState()];redo=[];view=null;sel=null;remMode=false;remPicks=[];note="";$("level").disabled=$("side").disabled=$("mode").value==="2p";over=false;busy=false;
   render();maybeAI();
 }
 function dotColor(ns,P){return ns.w===P?GOLD:ns.w===1-P?RED:GREEN}
 function render(){
-  var s=cur(),sd=GAME.sides,h=[],P=s.turn,i,k;
+  var br=browsing(),s=shown(),sd=GAME.sides,h=[],P=s.turn,i,k,nT=hist.length-1+redo.length,kk=br?view:hist.length-1,lock=busy||!!sim;
   over=s.w>=0;
-  h.push('<svg viewBox="'+[x0-.1,y0-.1,x1-x0+.2,y1-y0+.2].map(function(v){return v.toFixed(2)}).join(" ")+'" role="img" aria-label="Relay board">');
+  h.push('<svg viewBox="'+[x0-1.1,y0-1.2,x1-x0+2.2,y1-y0+2.4].map(function(v){return v.toFixed(2)}).join(" ")+'" role="img" aria-label="Relay board">');
+  (function(){   // coordinates: letters = columns (top and bottom), numbers = rows (left and right)
+    function lab(x,y,t){h.push('<text x="'+x.toFixed(2)+'" y="'+y.toFixed(2)+'" font-size=".62" text-anchor="middle" dominant-baseline="central" fill="var(--mute)" pointer-events="none">'+t+'</text>')}
+    for(var c=0;c<N;c++){var L=String.fromCharCode(97+c);lab(PX[c],-1.65,L);lab(PX[(N-1)*N+c],PY[(N-1)*N]+1.65,L)}
+    for(var rr=0;rr<N;rr++){lab(PX[rr*N]-S3/2-.55,PY[rr*N],rr+1);lab(PX[rr*N+N-1]+S3/2+.55,PY[rr*N],rr+1)}
+  })();
   for(i=0;i<NC;i++){
     h.push('<polygon data-i="'+i+'" points="'+HEXP[i]+'" fill="var(--cell)" stroke="var(--edge)" stroke-width=".04"/>');
     for(var Q=0;Q<2;Q++){
@@ -305,12 +414,13 @@ function render(){
       if(TERM[Q][i])h.push('<polygon data-i="'+i+'" points="'+HEXP[i]+'" fill="'+sd[Q].color+'" fill-opacity=".14" stroke="'+sd[Q].color+'" stroke-width=".1" stroke-dasharray=".22 .14" pointer-events="none"/>');
     }
   }
-  var canAct=!over&&humanTurn()&&!busy;
+  if(s.mv&&s.mv.from!=null)h.push('<circle cx="'+PX[s.mv.from]+'" cy="'+PY[s.mv.from]+'" r=".24" fill="'+GOLD+'" pointer-events="none"/>');   // where the last moved piece started
+  var canAct=!br&&!over&&humanTurn()&&!busy;
   if(canAct&&!sel&&!remMode)BASEL[P].forEach(function(i){
     if(!s.o[i])h.push('<circle data-i="'+i+'" cx="'+PX[i]+'" cy="'+PY[i]+'" r=".2" fill="'+dotColor(placeMove(s,i).ns,P)+'" fill-opacity=".85"/>')});
   for(i=0;i<NC;i++)if(s.o[i]){
-    var p=s.o[i],sp=s.sup[p-1][i],on=(sel&&sel.i===i)||remPicks.indexOf(i)>=0,tgt=remMode&&remPicks.length===2&&p===2-P;
-    h.push('<circle data-i="'+i+'" cx="'+PX[i]+'" cy="'+PY[i]+'" r=".62" fill="'+sd[p-1].color+'" stroke="'+(on||tgt?'var(--hi)':'#fff')+'" stroke-width="'+(on?.15:tgt?.12:.07)+'"'+(!sp&&!on?' stroke-dasharray=".16 .12"':'')+(!sp?' fill-opacity=".7"':'')+'/>');
+    var p=s.o[i],sp=s.sup[p-1][i],on=(sel&&sel.i===i)||remPicks.indexOf(i)>=0,tgt=remMode&&remPicks.length===2&&p===2-P,lm=!!(s.mv&&s.mv.to===i);
+    h.push('<circle data-i="'+i+'" cx="'+PX[i]+'" cy="'+PY[i]+'" r=".62" fill="'+sd[p-1].color+'" stroke="'+(on||tgt?'var(--hi)':lm?GOLD:'#fff')+'" stroke-width="'+(on?.15:tgt?.12:lm?.12:.07)+'"'+(!sp&&!on?' stroke-dasharray=".16 .12"':'')+(!sp?' fill-opacity=".7"':'')+'/>');
   }
   if(sel)for(k=0;k<sel.list.length;k++){
     var m=sel.list[k],f=m.j,ok=m.live,col=ok?dotColor(m.ns,P):RED;
@@ -321,20 +431,24 @@ function render(){
   var names=sd.map(function(x){return x.name}),st;
   for(i=0;i<2;i++){var t=GAME.stats(s,i);$("s"+i).textContent=t.big;$("d"+i).textContent=t.text;
     $("p"+i).className="pl"+(!over&&s.turn===i?" on":"")}
-  if(over)st="Game over: "+names[s.w]+" wins with a supported piece in "+names[s.w]+"\u2019s terminal.";
+  if(br)st="Reviewing history (move "+kk+" of "+nT+"): the board is locked. Press Undo or Redo to play on from here.";
+  else if(over)st="Game over: "+names[s.w]+" wins with a supported piece in "+names[s.w]+"\u2019s terminal.";
   else if(remMode)st=names[P]+": "+(remPicks.length<2?"choose two of your supported pieces that are not at the base ("+remPicks.length+"/2)":"now click the enemy piece to remove")+".";
   else if(sel)st=names[P]+": click a dot to move there, or the piece again to deselect.";
   else st=names[P]+" to move"+(humanTurn()?"":" (computer thinking\u2026)");
   $("status").textContent=st;
   $("last").textContent=(GAME.describe(s)+" "+note).trim();
-  $("undo").disabled=hist.length<2||busy;
-  $("redo").disabled=!redo.length||busy;
-  $("rem").disabled=over||busy||!humanTurn()||(!remMode&&(canRemove(s).length<2||s.o.indexOf(2-P)<0));
+  $("undo").disabled=lock||!(br||hist.length>=2);
+  $("redo").disabled=lock||!(br||redo.length);
+  $("nFirst").disabled=$("nPrev").disabled=lock||kk<=0;
+  $("nNext").disabled=$("nLast").disabled=lock||kk>=nT;
+  $("nlab").textContent="Move "+kk+" of "+nT;
+  $("rem").disabled=br||over||busy||!humanTurn()||(!remMode&&(canRemove(s).length<2||s.o.indexOf(2-P)<0));
   $("rem").textContent=remMode?"Cancel removal":"Remove 2 + 1";
 }
 function play(ns){hist.push(ns);redo=[];sel=null;remMode=false;remPicks=[];render();maybeAI()}
 function click(i){
-  if(over||busy||!humanTurn())return;
+  if(over||busy||browsing()||!humanTurn())return;
   var s=cur(),P=s.turn,p=P+1;note="";
   if(remMode){
     if(s.o[i]===p){
@@ -370,7 +484,7 @@ function maybeAI(){
   busy=true;render();
   setTimeout(function(){
     var c=cur(),m=aiMove(c);busy=false;
-    if(m)hist.push(m.ns);else{c.w=1-c.turn;c.ev=GAME.sides[c.turn].name+" has no legal move."}
+    if(m){hist.push(m.ns);redo=[]}else{c.w=1-c.turn;c.ev=GAME.sides[c.turn].name+" has no legal move."}
     render();
   },60);
 }
@@ -383,23 +497,33 @@ $("board").onclick=function(e){var t=e.target.closest("[data-i]");if(t)click(+t.
 $("new").onclick=start;$("sim").onclick=runSim;
 $("mode").onchange=$("side").onchange=start;
 $("rem").onclick=function(){
-  if(over||busy||!humanTurn())return;
+  if(over||busy||browsing()||!humanTurn())return;
   remMode=!remMode;remPicks=[];sel=null;note="";render();
 };
 $("redo").onclick=function(){
-  if(busy||!redo.length)return;
+  if(busy||sim)return;
+  if(browsing()){unlock(1);return}
+  if(!redo.length)return;
   hist.push(redo.pop());
   if($("mode").value==="ai"&&redo.length&&cur().turn!==+$("side").value)hist.push(redo.pop());
   sel=null;remMode=false;remPicks=[];note="";render();
 };
 $("undo").onclick=function(){
-  if(busy||hist.length<2)return;
+  if(busy||sim)return;
+  if(browsing()){unlock(-1);return}
+  if(hist.length<2)return;
   redo.push(hist.pop());
   if($("mode").value==="ai"&&hist.length>1&&cur().turn!==+$("side").value)redo.push(hist.pop());
   sel=null;remMode=false;remPicks=[];over=false;render();
 };
+$("nFirst").onclick=function(){goto(0)};
+$("nPrev").onclick=function(){goto((browsing()?view:hist.length-1)-1)};
+$("nNext").onclick=function(){goto((browsing()?view:hist.length-1)+1)};
+$("nLast").onclick=function(){goto(hist.length-1+redo.length)};
 start();
 })();
 </script>
 </body>
 </html>
+
+</body></html>

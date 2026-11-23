@@ -93,27 +93,26 @@ var GAME={
   board:{light:"#E5DFD2",dark:"#C9C0B0"},
   rules:[
   {h:"Board and pieces",items:[
-    "The standard 8×8 chess board and starting position. Gold plays the white army and moves first; Blue plays the black army.",
+    "The standard 8×8 chess board and starting position.",
     "All FIDE rules apply, except as stated below."]},
-  {h:"Winning",items:[
-    "There is no check, checkmate or stalemate: a king may move to, or stay on, an attacked square. The player who captures the opponent's king wins.",
-    "A player with no legal move loses. (The rules do not cover this; it is this page's reading.)",
-    "The game is drawn after 50 moves by each side with no capture and no pawn move, or when the same position occurs for the third time with the same player to move. (On this page both draws are automatic.)"]},
   {h:"Magnetism",items:[
-    "Every piece, pawns included, has a charge, except the two kings, which are neutral. Gold pieces have one charge and Blue pieces the other.",
+    "Every piece, except the two Kings, has a charge.",
     {t:"When a piece other than a king is moved to a square, take its closest neighbour in each of the four directions along its rank and file (not the diagonals):",sub:[
       "a piece of the same colour is repelled: it slides away along that line as far as it can, stopping at the board edge or next to the next piece;",
-      "a piece of the other colour is attracted: it slides toward the moved piece and stops on the square next to it;",
-      "these distances follow the inventors' worked example. After Qd5, the Gold rook on c5 is pushed to b5 (against the Blue queen on a5), the Blue rook on f5 is pulled to e5, and the Blue bishop on d2 is pulled to d4."]},
+      "a piece of the other colour is attracted: it slides toward the moved piece and stops on the square next to it;"]},
     "Kings are neither repelled nor attracted, do not repel or attract, and block the field: if the closest piece in a direction is a king, nothing in that direction moves.",
     "Magnetism never captures: pieces only slide over empty squares. The four directions act independently.",
-    "A pawn pushed onto its last rank by magnetism is promoted at once, to a queen, rook, bishop or knight of its owner's choice. Only a pawn of the player who moved can get there, pushed by one of that player's own pieces, so the player who moved chooses."]},
+    "A pawn pushed onto its last rank by magnetism is promoted at once, to a queen, rook, bishop or knight of its owner's choice."]},
   {h:"Special moves",items:[
     "Castling follows the FIDE rules without the conditions about check: the king and the rook have not moved, and the squares between them are empty. The magnetism comes from the rook's movement, acting from the rook's new square.",
-    "A castling right is lost once that rook has left its corner, including when magnetism pushes or pulls it away. (This is this page's reading.)",
-    "A Gold pawn on the 1st or 2nd rank, or a Blue pawn on the 7th or 8th rank, may move two squares forward over an empty square, even if it has moved before.",
+    "A castling right is lost once that rook has left its corner, including when magnetism pushes or pulls it away.",
+    "A pawn on its first or second rank may move two squares forward over an empty square, even if it has moved before.",
     "There is no en passant.",
-    "A pawn that moves to its last rank is promoted to a queen, rook, bishop or knight, as in FIDE chess."]}],
+    "A pawn that moves to its last rank is promoted to a queen, rook, bishop or knight, as in FIDE chess."]},
+  {h:"Winning",items:[
+    "There is no check or checkmate: a king may move to, or stay on, an attacked square. The player who captures the opponent's king wins.",
+    "A player with no legal move loses.",
+    "The game is drawn after 50 moves by each side with no capture and no pawn move, or when the same position occurs for the third time with the same player to move."]}],
   describe:function(s){return s.last?GAME.sides[s.last.p].name+": "+s.last.txt+".":""}
 };
 var P=1,N=2,B=3,R=4,Q=5,K=6,LET=" PNBRQK",PNAME=["","pawn","knight","bishop","rook","queen","king"],VAL=[0,100,300,320,500,900,0],BACK=[R,N,B,Q,K,B,N,R];
