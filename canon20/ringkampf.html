@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ringkampf</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
+<style>
+:root{--bg:#eef0e6;--ink:#1f2a1c;--mute:#5d6a56;--cell:#dfe3cf;--edge:#b9bfa3;--hi:#2b6cf0;--panel:#fff;--line:#c5cab4;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f}}
+:root[data-theme="dark"]{--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+main{max-width:1120px;margin:0 auto;padding:16px 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.right>.bar:first-child{margin-top:0}
+@media (min-width:860px){.layout{grid-template-columns:minmax(0,620px) minmax(300px,1fr);gap:28px;align-items:start}}
+h1{font:700 2rem/1.1 "Bricolage Grotesque",Georgia,serif;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+select,button.ctl{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.ctl:disabled,select:disabled,input:disabled{opacity:.45;cursor:default}
+label.f{color:var(--mute);font-size:.9rem}
+input[type=number]{width:4.5em;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+button.ctl.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button.ctl.icon{display:inline-flex;align-items:center;justify-content:center;padding:6px 10px}
+button.ctl.icon svg{width:18px;height:18px;fill:currentColor;display:block}
+.navlab{min-width:7.5em;text-align:center;color:var(--mute);font-variant-numeric:tabular-nums}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.pl{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:8px 12px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.pl.on{border-color:var(--hi)}
+.pl b{font:700 1.6rem "Bricolage Grotesque",Georgia,serif}
+.pl small{color:var(--mute)}
+#status{min-height:1.5em;font-weight:600;margin:6px 0}
+#board svg{display:block;width:100%;max-width:620px;margin:0 auto;touch-action:manipulation}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+details li{margin:4px 0}
+.legend{color:var(--mute);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+<h1 id="gtitle"></h1>
+<p class="sub" id="gsub"></p>
+<div class="layout">
+<div class="left">
+<div id="board"></div>
+<p class="legend">Click one of your pieces to select it; dots show where it can go. A hollow ring on a dot means the piece can keep jumping from there: click the next square to continue, or click the piece (or “Stop here”) to end the move. A purple diamond is an exchange square for a double tower on the opponent’s back row (once per game). Every piece wears a grey metal ring; double towers also wear a red ring. The number on a piece is how many rings it carries (shown from two up). Gold marks the last move (its start and end squares); red crosses mark the pieces it captured.</p>
+</div>
+<aside class="right">
+<div class="bar">
+  <select id="mode" aria-label="Mode"><option value="ai">Play the computer</option><option value="2p">Two players</option></select>
+  <select id="level" aria-label="Computer strength"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select>
+  <select id="side" aria-label="Your side"></select>
+  <button class="ctl primary" id="new">New game</button>
+  <button class="ctl" id="undo">Undo</button>
+  <button class="ctl" id="redo">Redo</button>
+</div>
+<div class="bar">
+  <button class="ctl" id="stop">Stop here</button>
+  <label class="f"><input type="checkbox" id="mand"> Mandatory capture</label>
+</div>
+<div class="bar" id="nav" role="group" aria-label="Game history">
+  <button class="ctl icon" id="nFirst" aria-label="Go to the beginning" title="Go to the beginning"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="2.5" height="14"/><path d="M19 5v14L8 12z"/></svg></button>
+  <button class="ctl icon" id="nPrev" aria-label="One move back" title="One move back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 5v14L6 12z"/></svg></button>
+  <span class="navlab" id="nlab" aria-live="polite">Move 0 of 0</span>
+  <button class="ctl icon" id="nNext" aria-label="One move forward" title="One move forward"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5v14l11-7z"/></svg></button>
+  <button class="ctl icon" id="nLast" aria-label="Go to the last move" title="Go to the last move"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5v14l11-7z"/><rect x="17.5" y="5" width="2.5" height="14"/></svg></button>
+</div>
+<div class="score">
+  <div class="pl" id="p0"><span><span id="n0"></span> <small id="d0"></small></span><b id="s0">0</b></div>
+  <div class="pl" id="p1"><span><span id="n1"></span> <small id="d1"></small></span><b id="s1">0</b></div>
+</div>
+<div id="status" aria-live="polite"></div>
+<div id="last" class="legend" style="min-height:2.6em;margin:0 0 8px"></div>
+<div class="bar">
+  <label class="f">Simulation games <input id="simN" type="number" min="10" max="1000" value="10"></label>
+  <label class="f">Random opening moves <input id="simR" type="number" min="0" max="20" value="4"></label>
+  <button class="ctl" id="sim">Simulation</button>
+</div>
+<div id="simout" class="legend" style="white-space:pre-line;margin:0 0 8px"></div>
+<details>
+<summary>Rules</summary>
+<ul id="rules"></ul>
+</details>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+/* =====================================================================
+   1. GAME DEFINITION  - Ringkampf rules, board, move generation, captures, end of game
+   2. ENGINE           - computer opponent (greedy / alpha-beta search), simulations
+   3. INTERFACE        - SVG board, click handling, controls
+   A cell holds 0 (empty), 1 White piece, 2 Black piece, 3 White double tower, 4 Black double tower; n[cell] is the number of rings it carries.
+   Cells are r*8+c, r=0 is rank 1.
+   A move is {f:start cell, p:[cells visited, from f to the end], j:[piece jumped on each hop], c:[enemy pieces captured], x:1 for an exchange}.
+   A state is {b:board, n:rings per cell, turn, rings:[rings held by White, by Black], xu:[exchange used], quiet:moves without capture or single-piece move,
+     w:winner (-1 none, 2 draw), why, ev:text of the last move, mv:last move}.
+   ===================================================================== */
+var $=function(i){return document.getElementById(i)};
+
+/* ============================ 1. GAME DEFINITION ============================ */
+var QUIET=80;
+var GAME={
+  title:"Ringkampf",
+  subtitle:"Otto Maier Verlag, 1928. A checkers-like fight on all 64 squares: leap over your own pieces, capture the enemy’s, and gather their rings onto yours.",
+  sides:[{name:"White"},{name:"Black"}],
+  rules:[
+  {h:"Board and material",items:[
+    "8×8 board; every square is used. Each player has 16 pieces filling his first two rows (White on ranks 1–2, Black on ranks 7–8). White moves first.",
+    "Each piece starts with one metal ring. Rings stay on the pieces: the number on a piece shows how many it carries (shown from two rings up)."]},
+  {h:"Moving",items:[
+    "A piece moves one square diagonally forward onto an empty square.",
+    "Instead it may jump diagonally over an adjacent piece onto the empty square just behind it. Over its own pieces it may jump in any diagonal direction, backward too; over enemy pieces only forward, capturing them.",
+    "Jumps may be chained. Own pieces may be jumped first and enemy pieces captured afterwards, but once a piece has been captured in the chain, no own piece may be jumped any more. No piece may be jumped twice in one move; the chain may stop after any jump.",
+    "Capturing is optional, unless the “Mandatory capture” option is ticked: then a player who can capture must make a move that captures at least one piece. If several capturing sequences exist, he chooses which one to play (and may stop after any capture)."]},
+  {h:"Capture",items:[
+    "Every enemy piece captured is removed at the end of the move, and all the rings it carried (metal and red) pass onto the capturing piece.",
+    "A piece that captures a double tower takes over its red ring and becomes a double tower itself."]},
+  {h:"Double towers",items:[
+    "A piece that ends its move on the opponent’s back row becomes a double tower and gets a red ring.",
+    "A double tower moves in all four diagonal directions and slides any number of empty squares.",
+    "It captures diagonally forwards and backwards, over an enemy piece at any distance along the diagonal (only empty squares between), landing on any empty square beyond it.",
+    "It also captures straight forwards and backwards along its file: the enemy piece must stand on the adjacent square, and the tower lands on the square just behind it (jumping over an empty square of the other colour is forbidden). Such captures may be chained with diagonal ones.",
+    "Over its own pieces it jumps only diagonally, landing on the square immediately behind the piece jumped."]},
+  {h:"Exchange",items:[
+    "Single pieces and diagonal moves never leave their square colour, so in the endgame the pieces may be unable to meet. Once per game, each player may then announce an exchange: a double tower standing on the opponent’s back row steps to an orthogonally adjacent empty square, which is of the other colour.",
+    "The exchange may not be used to escape a forced capture: it is allowed only if the player has at least one ordinary move after which the opponent cannot capture any of his pieces."]},
+  {h:"End of the game",items:[
+    "The game ends when a player has only one piece left and that piece cannot capture on its next move, or when a player has no piece left.",
+    "It also ends when the player to move has no legal move, or (to avoid endless games, an addition to the original rules) after "+QUIET/2+" moves by each side with no capture and no move of a single piece.",
+    "The player whose pieces carry more rings wins; equal rings is a draw."]},
+  {h:"Interpretation",items:[
+    "Some points are not settled by the surviving rules. Here: single pieces capture only diagonally forward; towers are ‘flying’ on diagonals; straight captures go along the file, forwards or backwards (not sideways); a red ring is taken over at the end of the move; a piece that captures a tower keeps every ring it took."]}],
+  stats:function(s,i){var n=0,d=0;for(var k=0;k<64;k++)if(s.b[k]&&own(s.b[k])===i){n++;if(s.b[k]>2)d++}
+    return{big:s.rings[i],text:"rings · "+plural(n,"piece")+(d?" ("+d+" tower"+(d>1?"s":"")+")":"")+(s.xu[i]?" · exchange used":"")}},
+  describe:function(s){return s.ev||""}
+};
+var DIRS=[[1,1],[1,-1],[-1,1],[-1,-1]],ORTH=[[1,0],[-1,0],[0,1],[0,-1]],FILES="abcdefgh";
+function own(v){return v?(v-1)&1:-1}
+function isD(v){return v>2}
+function cn(i){return FILES[i&7]+((i>>3)+1)}
+function nameP(P){return GAME.sides[P].name}
+function plural(n,w){return n+" "+w+(n===1?"":"s")}
+function on(r,c){return r>=0&&r<8&&c>=0&&c<8}
+// every ordinary move of the piece on x, appended to out (each prefix of a jump chain is a move of its own)
+function pieceMoves(b,x,out,capOnly){
+  var v=b[x],P=own(v),D=isD(v),r0=x>>3,c0=x&7,fw=P===0?1:-1,start=out.length;
+  function empty(r,c){var i=r*8+c;return b[i]===0||i===x}
+  if(!capOnly)(D?DIRS:[[fw,1],[fw,-1]]).forEach(function(d){var r=r0+d[0],c=c0+d[1];
+    while(on(r,c)&&b[r*8+c]===0){out.push({f:x,p:[x,r*8+c],j:[],c:[]});if(!D)break;r+=d[0];c+=d[1]}});
+  function hop(m,L,path,jumped,caps,enemy){
+    var np=path.concat([L]),nj=jumped.concat([m]),nc=enemy?caps.concat([m]):caps;
+    if(!capOnly||nc.length)out.push({f:x,p:np,j:nj,c:nc});
+    dfs(L,np,nj,nc);
+  }
+  function dfs(cur,path,jumped,caps){
+    if(out.length-start>3000)return;
+    var r1=cur>>3,c1=cur&7,q,d,r,c,m,enemy,lr,lc;
+    for(q=0;q<4;q++){d=DIRS[q];r=r1+d[0];c=c1+d[1];
+      if(D)while(on(r,c)&&empty(r,c)){r+=d[0];c+=d[1]}
+      if(!on(r,c)||empty(r,c))continue;
+      m=r*8+c;if(jumped.indexOf(m)>=0)continue;
+      enemy=own(b[m])!==P;
+      if(enemy&&!D&&d[0]!==fw)continue;          // single pieces capture forward only
+      if(!enemy&&caps.length)continue;            // own pieces may not be jumped after a capture
+      lr=r+d[0];lc=c+d[1];
+      while(on(lr,lc)&&empty(lr,lc)){
+        hop(m,lr*8+lc,path,jumped,caps,enemy);
+        if(!D||!enemy)break;
+        lr+=d[0];lc+=d[1];
+      }
+    }
+    if(D)for(q=-1;q<=1;q+=2){r=r1+q;c=c1;m=r*8+c;lr=r+q;   // towers: straight capture forward or backward along the file, adjacent enemy only
+      if(on(lr,c)&&!empty(r,c)&&own(b[m])!==P&&jumped.indexOf(m)<0&&empty(lr,c))hop(m,lr*8+c,path,jumped,caps,true)}
+  }
+  dfs(x,[x],[],[]);
+  return out;
+}
+function hasCapture(b,P){for(var i=0;i<64;i++)if(b[i]&&own(b[i])===P&&pieceMoves(b,i,[],true).length)return true;return false}
+// exchange moves for the piece on x (if any)
+function exchMoves(s,x,out){
+  var v=s.b[x],P=own(v);
+  if(s.xu[P]||!isD(v)||(x>>3)!==(P===0?7:0))return out;
+  var C=[],r0=x>>3,c0=x&7;
+  ORTH.forEach(function(d){var r=r0+d[0],c=c0+d[1];if(on(r,c)&&!s.b[r*8+c])C.push(r*8+c)});
+  if(!C.length)return out;
+  if(s._xs===undefined){   // is there an ordinary move after which the opponent cannot capture?
+    s._xs=false;var M=[],i;
+    for(i=0;i<64&&!s._xs;i++)if(s.b[i]&&own(s.b[i])===P){M.length=0;pieceMoves(s.b,i,M);
+      for(var k=0;k<M.length;k++){if(!hasCapture(apply(s,M[k],true,true).b,1-P)){s._xs=true;break}}}
+  }
+  if(s._xs)C.forEach(function(t){out.push({f:x,p:[x,t],j:[],c:[],x:1})});
+  return out;
+}
+var MAND=false;   // option: capturing is mandatory
+function mustCap(s){if(!MAND)return false;if(s._mc===undefined)s._mc=hasCapture(s.b,s.turn);return s._mc}
+function movesOf(s,x,out){
+  if(mustCap(s)){var M=pieceMoves(s.b,x,[]);for(var k=0;k<M.length;k++)if(M[k].c.length)out.push(M[k]);return out}
+  pieceMoves(s.b,x,out);exchMoves(s,x,out);return out}
+function gen(s){var out=[];if(s.w>=0)return out;for(var i=0;i<64;i++)if(s.b[i]&&own(s.b[i])===s.turn)movesOf(s,i,out);return out}
+// quick test: does player P have any ordinary move?
+function anyMove(b,P){
+  for(var x=0;x<64;x++){var v=b[x];if(!v||own(v)!==P)continue;
+    var r0=x>>3,c0=x&7,fw=P===0?1:-1,D=isD(v);
+    for(var q=0;q<4;q++){var d=DIRS[q],r=r0+d[0],c=c0+d[1];if(!on(r,c))continue;
+      var t=b[r*8+c];
+      if(!t){if(D||d[0]===fw)return true;continue}
+      var r2=r+d[0],c2=c+d[1];if(!on(r2,c2)||b[r2*8+c2])continue;
+      if(D||own(t)===P||d[0]===fw)return true}
+    if(D)for(q=-1;q<=1;q+=2){r=r0+q;if(on(r,c0)&&b[r*8+c0]&&own(b[r*8+c0])!==P&&on(r+q,c0)&&!b[(r+q)*8+c0])return true}
+  }
+  return false;
+}
+function canCapture(b,x){return pieceMoves(b,x,[],true).length>0}
+function moveText(m){
+  if(m.x)return cn(m.f)+"–"+cn(m.p[1])+" (exchange!)";
+  if(!m.j.length)return cn(m.f)+"–"+cn(m.p[1]);
+  var t=cn(m.f);for(var k=0;k<m.j.length;k++)t+=(m.c.indexOf(m.j[k])>=0?"×":"–")+cn(m.p[k+1]);
+  return t;
+}
+function checkEnd(s){
+  var cnt=[0,0],last=[-1,-1],i,P;
+  for(i=0;i<64;i++)if(s.b[i]){P=own(s.b[i]);cnt[P]++;last[P]=i}
+  var why="";
+  for(P=0;P<2&&!why;P++){
+    if(!cnt[P])why=nameP(P)+" has no piece left.";
+    else if(cnt[P]===1&&!canCapture(s.b,last[P]))why=nameP(P)+" has one piece left and it cannot capture.";
+  }
+  if(!why&&!anyMove(s.b,s.turn))why=nameP(s.turn)+" has no legal move.";
+  if(!why&&s.quiet>=QUIET)why=QUIET/2+" moves each without a capture or a single-piece move.";
+  if(why){s.why=why;s.w=s.rings[0]>s.rings[1]?0:s.rings[1]>s.rings[0]?1:2}
+}
+// play move m in state s; returns the new state (turn passed). bare: board only, no end-of-game test
+function apply(s,m,quick,bare){
+  var b=s.b.slice(),n=s.n.slice(),P=s.turn,v=b[m.f],to=m.p[m.p.length-1],rings=s.rings.slice(),nd=0,got=0;
+  m.c.forEach(function(z){if(isD(b[z]))nd++;got+=n[z];b[z]=0;n[z]=0});
+  var nn=n[m.f]+got;b[m.f]=0;n[m.f]=0;
+  var promo=!isD(v)&&(to>>3)===(P===0?7:0),take=!isD(v)&&nd>0,red=promo&&!take?1:0;
+  b[to]=isD(v)||promo||take?P+3:P+1;n[to]=nn+red;
+  rings[P]+=got+red;rings[1-P]-=got;
+  var xu=s.xu;if(m.x){xu=xu.slice();xu[P]=true}
+  var ns={b:b,n:n,turn:1-P,rings:rings,xu:xu,quiet:m.c.length||!isD(v)?0:s.quiet+1,w:-1,why:"",mv:m,ev:""};
+  if(bare)return ns;
+  checkEnd(ns);
+  if(!quick){
+    var t=nameP(P)+": "+moveText(m)+".";
+    if(m.c.length)t+=" Captured "+plural(m.c.length,"piece")+(nd?" ("+nd+" tower"+(nd>1?"s":"")+")":"")+" carrying "+plural(got,"ring")+"; the piece now carries "+(nn+red)+".";
+    if(take)t+=" Took over the red ring and became a double tower.";
+    else if(promo)t+=" Reached the last row and became a double tower (red ring).";
+    if(ns.w>=0)t+=" "+ns.why;
+    ns.ev=t;
+  }
+  return ns;
+}
+function newState(){
+  var b=new Int8Array(64),n=new Int16Array(64);
+  for(var i=0;i<16;i++){b[i]=1;b[63-i]=2;n[i]=n[63-i]=1}
+  return{b:b,n:n,turn:0,rings:[16,16],xu:[false,false],quiet:0,w:-1,why:"",mv:null,ev:""};
+}
+
+/* ================================ 2. ENGINE ================================ */
+var VAL={RING:100,MAN:24,DBL:60,ADV:2,CEN:1};
+function evalS(s){   // from White's point of view
+  if(s.w>=0)return s.w===2?0:(s.w===0?1:-1)*(1e5+100*Math.abs(s.rings[0]-s.rings[1]));
+  var v=(s.rings[0]-s.rings[1])*VAL.RING,b=s.b;
+  for(var i=0;i<64;i++){var x=b[i];if(!x)continue;
+    var P=own(x),r=i>>3,c=i&7,u;
+    if(isD(x))u=VAL.DBL+VAL.CEN*(3.5-Math.abs(3.5-c))*.5;
+    else u=VAL.MAN+VAL.ADV*(P===0?r:7-r)+VAL.CEN*(c>0&&c<7?1:0);
+    v+=P===0?u:-u;
+  }
+  return v;
+}
+// moves for the computer: duplicates (same start, end and captures) removed, best captures first
+function genAI(s,capOnly){
+  var out=[],seen={};
+  if(s.w>=0)return out;
+  for(var i=0;i<64;i++)if(s.b[i]&&own(s.b[i])===s.turn){if(capOnly||mustCap(s))pieceMoves(s.b,i,out,true);else movesOf(s,i,out)}
+  out=out.filter(function(m){var k=m.f+"-"+m.p[m.p.length-1]+":"+m.c.slice().sort().join(",")+(m.x?"x":"");if(seen[k])return false;seen[k]=1;return true});
+  out.forEach(function(m){var g=0;m.c.forEach(function(z){g+=s.n[z]+(isD(s.b[z])?1:0)});m.o=g});
+  out.sort(function(a,b){return b.o-a.o});
+  return out;
+}
+var nodes=0,deadline=0,timeout=false;
+function sideEval(s){return(s.turn===0?1:-1)*evalS(s)}
+function qs(s,a,bt,d){
+  if(s.w>=0)return sideEval(s);
+  var sp=sideEval(s),best=sp;if(d<=0)return sp;
+  if(sp>=bt)return sp;if(sp>a)a=sp;
+  var M=genAI(s,true);
+  for(var k=0;k<M.length&&k<12;k++){var v=-qs(apply(s,M[k],true),-bt,-a,d-1);if(v>best)best=v;if(v>a)a=v;if(a>=bt)break}
+  return best;
+}
+function search(s,d,a,bt){
+  if((++nodes&511)===0&&Date.now()>deadline)timeout=true;
+  if(timeout)return 0;
+  if(s.w>=0)return sideEval(s);
+  if(d<=0)return qs(s,a,bt,4);
+  var M=genAI(s,false),best=-1e9;
+  for(var k=0;k<M.length;k++){var v=-search(apply(s,M[k],true),d-1,-bt,-a);
+    if(timeout)return 0;
+    if(v>best)best=v;if(v>a)a=v;if(a>=bt)break}
+  return best;
+}
+// Easy: one move ahead with a lot of noise. Medium: two moves ahead plus capture sequences. Hard: deepening alpha-beta search within a time budget.
+function aiMove(s,lv,budget){
+  var M=genAI(s,false);if(!M.length)return null;
+  if(M.length===1)return M[0];
+  var C=M.map(function(m){return{m:m,ns:apply(s,m,true)}}),i;
+  for(i=0;i<C.length;i++)if(C[i].ns.w===s.turn)return C[i].m;
+  if(lv===1){
+    C.forEach(function(c){c.v=-sideEval(c.ns)+Math.random()*70});
+    C.sort(function(a,b){return b.v-a.v});return C[0].m;
+  }
+  var maxD=lv===2?2:12,NZ=lv===2?6:1,best=null;timeout=false;nodes=0;deadline=Date.now()+(lv===2?1e9:budget||1500);
+  for(var d=1;d<=maxD;d++){
+    var a=-1e9,cur=null;
+    for(i=0;i<C.length;i++){var v=-search(C[i].ns,d-1,-1e9,-(a-NZ));if(timeout)break;   // window widened by the noise, so bounds never pass for exact values
+      v+=Math.random()*NZ;C[i].v=v;if(v>a){a=v;cur=C[i]}}
+    if(timeout)break;
+    best=cur;C.sort(function(x,y){return y.v-x.v});
+    if(a>5e4)break;
+  }
+  return(best||C[0]).m;
+}
+function aiStep(s,lv,budget){var m=aiMove(s,lv,budget);return m?apply(s,m):s}
+var sim=null;
+function runSim(){   // computer vs computer, to look for first/second-player advantage
+  if(sim){sim.stop=true;return}
+  var CAP=400,me=sim={stop:false},TOTAL=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?4:+$("simR").value)),
+      done=0,w=[0,0,0],un=0,g=newState(),plies=0,lv=+$("level").value,lvName=$("level").options[$("level").selectedIndex].text,nm=GAME.sides.map(function(x){return x.name});
+  ["mode","side","level","new","undo","redo","stop","mand","simN","simR","nFirst","nPrev","nNext","nLast"].forEach(function(i){$(i).disabled=true});
+  $("sim").textContent="Stop simulation";
+  $("simout").textContent="Simulating at "+lvName+" level… 0/"+TOTAL;
+  function fin(stopped){
+    sim=null;$("sim").textContent="Simulation";
+    $("mode").disabled=$("new").disabled=$("simN").disabled=$("simR").disabled=$("mand").disabled=false;
+    $("level").disabled=$("side").disabled=$("mode").value==="2p";
+    var dec=w[0]+w[1],mg=dec?(196*Math.sqrt((w[0]/dec)*(1-w[0]/dec)/dec)).toFixed(1):"0";
+    var pc=function(n){return done?(100*n/done).toFixed(1)+"%":"n/a"};
+    $("simout").textContent=(stopped?"Stopped after ":"")+done+" games at "+lvName+" level (computer vs computer), first "+RND+" moves random.\n"+
+      "First player ("+nm[0]+") won "+pc(w[0])+" ("+w[0]+" games). Second player ("+nm[1]+") won "+pc(w[1])+" ("+w[1]+" games)."+
+      (dec?" Among decided games the first player won "+(100*w[0]/dec).toFixed(1)+"% (margin ±"+mg+" points at 95% confidence).":"")+
+      (w[2]?" Draws: "+w[2]+".":"")+(un?" Unfinished (stopped at "+CAP+" moves): "+un+".":"");
+    render();
+  }
+  function stepSim(){
+    if(me.stop){fin(true);return}
+    var t0=Date.now();
+    while(Date.now()-t0<40){
+      if(g.w>=0||plies>=CAP){
+        if(g.w>=0)w[g.w]++;else un++;
+        done++;g=newState();plies=0;
+        if(done>=TOTAL){fin(false);return}
+        continue;
+      }
+      if(plies<RND){var ms=gen(g);g=apply(g,ms[Math.floor(Math.random()*ms.length)],true)}
+      else{var m=aiMove(g,lv,150);g=apply(g,m,true)}
+      plies++;
+    }
+    $("simout").textContent="Simulating at "+lvName+" level… "+done+"/"+TOTAL;
+    setTimeout(stepSim,0);
+  }
+  stepSim();
+}
+
+/* =============================== 3. INTERFACE =============================== */
+var hist,redo=[],view=null,sel,over,busy,note="";   // view: null = live position, otherwise the index being reviewed
+var GOLD="#e0a800",RED="#d4202a",METAL="#7d858f";
+function cur(){return hist[hist.length-1]}
+function line(){return hist.concat(redo.slice().reverse())}   // every position, including those that can still be redone
+function browsing(){return view!==null}
+function shown(){return view===null?cur():line()[view]}
+function aiSide(){return $("mode").value==="ai"?1-+$("side").value:-1}
+function flipped(){return $("mode").value==="ai"&&+$("side").value===1}
+function clearSel(){sel=null;note=""}
+function goto(k){
+  if(busy||sim)return;
+  var n=hist.length-1+redo.length;k=Math.max(0,Math.min(n,k));
+  view=k===hist.length-1?null:k;clearSel();render();
+}
+// Undo/Redo while reviewing: leave review and play on from the reviewed position (in computer mode, from the nearest position where it is the human's turn)
+function unlock(dir){
+  var L=line(),k=view,j;
+  if($("mode").value==="ai"){
+    j=k;while(j>=0&&j<L.length&&L[j].w<0&&L[j].turn!==+$("side").value)j+=dir;
+    if(j>=0&&j<L.length)k=j;
+  }
+  hist=L.slice(0,k+1);redo=L.slice(k+1).reverse();view=null;clearSel();over=false;render();maybeAI();
+}
+function humanTurn(){return $("mode").value==="2p"||cur().turn===+$("side").value}
+function start(){
+  hist=[newState()];redo=[];view=null;clearSel();$("level").disabled=$("side").disabled=$("mode").value==="2p";over=false;busy=false;
+  render();maybeAI();
+}
+// moves of the selected piece that follow the path clicked so far
+function cands(){var n=sel.path.length;return sel.list.filter(function(m){if(m.p.length<n)return false;for(var k=0;k<n;k++)if(m.p[k]!==sel.path[k])return false;return true})}
+function hops(){var n=sel.path.length,o={};cands().forEach(function(m){if(m.p.length>n){var t=m.p[n];o[t]=o[t]||{end:false,more:false,x:false};if(m.x)o[t].x=true;else if(m.p.length===n+1)o[t].end=true;else o[t].more=true}});return o}
+function complete(){var n=sel.path.length;if(n<2)return null;return cands().filter(function(m){return m.p.length===n})[0]||null}
+function XY(i){var r=i>>3,c=i&7;return flipped()?[7-c,r]:[c,7-r]}
+function render(){
+  var br=browsing(),s=shown(),h=[],P=s.turn,i,k,nT=hist.length-1+redo.length,kk=br?view:hist.length-1,lock=busy||!!sim;
+  over=s.w>=0;
+  var canAct=!br&&!over&&humanTurn()&&!busy&&!sim,b=s.b,fade={},mover=-1;
+  if(sel){b=b.slice();var v=b[sel.f];b[sel.f]=0;mover=sel.path[sel.path.length-1];b[mover]=v;
+    var mm=cands()[0];if(mm)for(k=0;k<sel.path.length-1;k++)if(mm.c.indexOf(mm.j[k])>=0)fade[mm.j[k]]=1}
+  h.push('<svg viewBox="-1.05 -1.05 10.1 10.1" role="img" aria-label="Ringkampf board">');
+  h.push('<defs><linearGradient id="gW"><stop offset="0" stop-color="#bfa77c"/><stop offset=".38" stop-color="#fffaf0"/><stop offset="1" stop-color="#cdb68c"/></linearGradient>'+
+    '<linearGradient id="gB"><stop offset="0" stop-color="#050608"/><stop offset=".38" stop-color="#596070"/><stop offset="1" stop-color="#0b0c10"/></linearGradient></defs>');
+  // frame
+  h.push('<rect x="-1.05" y="-1.05" width="10.1" height="10.1" rx=".2" fill="#f4f0e2"/>');
+  h.push('<rect x="-.78" y="-.78" width="9.56" height="9.56" fill="none" stroke="#1d2a55" stroke-width=".16"/>');
+  h.push('<rect x="-.55" y="-.55" width="9.1" height="9.1" fill="none" stroke="#1d2a55" stroke-width=".05"/>');
+  h.push('<rect x="-.12" y="-.12" width="8.24" height="8.24" fill="#1d2a55"/>');
+  function lab(x,y,t){h.push('<text x="'+x+'" y="'+y+'" font-size=".34" text-anchor="middle" dominant-baseline="central" fill="#1d2a55" font-family="system-ui,sans-serif" pointer-events="none">'+t+'</text>')}
+  for(k=0;k<8;k++){var fx=flipped()?7-k:k,ry=flipped()?k:7-k;lab(fx+.5,-.34,FILES[k]);lab(fx+.5,8.34,FILES[k]);lab(-.34,ry+.5,k+1);lab(8.34,ry+.5,k+1)}
+  var lm=s.mv,targets=sel&&canAct?hops():{};
+  for(i=0;i<64;i++){var p=XY(i),dark=((i>>3)+(i&7))%2===0;
+    h.push('<rect data-i="'+i+'" x="'+p[0]+'" y="'+p[1]+'" width="1" height="1" fill="'+(dark?"#d98a2e":"#f2ecb9")+'"/>')}
+  if(lm&&!sel){var a=XY(lm.f);h.push('<rect x="'+(a[0]+.06)+'" y="'+(a[1]+.06)+'" width=".88" height=".88" fill="none" stroke="'+GOLD+'" stroke-width=".07" pointer-events="none"/>');
+    if(lm.p.length>2)for(k=1;k<lm.p.length-1;k++){a=XY(lm.p[k]);h.push('<circle cx="'+(a[0]+.5)+'" cy="'+(a[1]+.5)+'" r=".08" fill="'+GOLD+'" pointer-events="none"/>')}}
+  if(lm&&!sel){var a3=XY(lm.p[lm.p.length-1]);h.push('<rect x="'+(a3[0]+.05)+'" y="'+(a3[1]+.05)+'" width=".9" height=".9" fill="none" stroke="'+GOLD+'" stroke-width=".09" pointer-events="none"/>')}
+  if(sel){var a4=XY(mover);h.push('<rect x="'+(a4[0]+.05)+'" y="'+(a4[1]+.05)+'" width=".9" height=".9" fill="#2b6cf0" fill-opacity=".18" stroke="#2b6cf0" stroke-width=".09" pointer-events="none"/>')}
+  for(i=0;i<64;i++)if(b[i]){
+    var q=XY(i),x=q[0]+.5,y=q[1]+.5,pl=own(b[i]),dbl=isD(b[i]),g='url(#g'+(pl?"B":"W")+')',ed=pl?"#000":"#8a7550",nr=sel&&i===mover?s.n[sel.f]:s.n[i];
+    function F(n){return(+n).toFixed(3)}
+    h.push('<g data-i="'+i+'"'+(fade[i]?' opacity=".35"':'')+'>');
+    h.push('<ellipse cx="'+x+'" cy="'+F(y+.36)+'" rx=".31" ry=".06" fill="#000" opacity=".22"/>');
+    // base disc
+    h.push('<path d="M'+F(x-.27)+' '+F(y+.24)+'L'+F(x-.27)+' '+F(y+.31)+'A.27 .08 0 0 0 '+F(x+.27)+' '+F(y+.31)+'L'+F(x+.27)+' '+F(y+.24)+'Z" fill="'+g+'" stroke="'+ed+'" stroke-width=".015"/>');
+    h.push('<ellipse cx="'+x+'" cy="'+F(y+.24)+'" rx=".27" ry=".08" fill="'+g+'" stroke="'+ed+'" stroke-width=".015"/>');
+    // rings: back halves first (hidden behind the shaft), front halves after it
+    function arc(cy,rx,ry,col,w,front,op){return'<path d="M'+F(x-rx)+' '+F(cy)+'A'+rx+' '+ry+' 0 0 '+(front?0:1)+' '+F(x+rx)+' '+F(cy)+'" fill="none" stroke="'+col+'" stroke-width="'+w+'" stroke-linecap="round"'+(op?' opacity="'+op+'"':'')+'/>'}
+    h.push(arc(y+.04,.125,.038,"#4f565e",.036,false));
+    if(dbl)h.push(arc(y+.15,.145,.045,"#8e1219",.055,false));
+    // shaft, collar and knob
+    h.push('<path d="M'+F(x-.1)+' '+F(y+.25)+'L'+F(x-.072)+' '+F(y-.12)+'L'+F(x+.072)+' '+F(y-.12)+'L'+F(x+.1)+' '+F(y+.25)+'Z" fill="'+g+'" stroke="'+ed+'" stroke-width=".015"/>');
+    h.push('<ellipse cx="'+x+'" cy="'+F(y-.13)+'" rx=".14" ry=".045" fill="'+g+'" stroke="'+ed+'" stroke-width=".015"/>');
+    h.push('<circle cx="'+x+'" cy="'+F(y-.26)+'" r=".12" fill="'+g+'" stroke="'+ed+'" stroke-width=".015"/>');
+    h.push(arc(y+.04,.125,.038,METAL,.04,true)+arc(y+.033,.12,.033,"#e6eaee",.01,true,.75));
+    if(dbl)h.push(arc(y+.15,.145,.045,RED,.06,true)+arc(y+.142,.14,.04,"#ff8a8a",.012,true,.7));
+    if(nr>=2)h.push('<circle cx="'+F(x+.28)+'" cy="'+F(y-.29)+'" r=".153" fill="#1d2a55" stroke="#fff" stroke-width=".022"/><text x="'+F(x+.28)+'" y="'+F(y-.285)+'" font-size="'+(nr>9?.162:.207)+'" font-weight="700" text-anchor="middle" dominant-baseline="central" fill="#fff" font-family="system-ui,sans-serif">'+nr+'</text>');
+    h.push('</g>');
+  }
+  if(lm&&!sel)lm.c.forEach(function(z){if(b[z])return;var a=XY(z),x=a[0]+.5,y=a[1]+.5;
+    h.push('<path d="M'+(x-.13)+' '+(y-.13)+'L'+(x+.13)+' '+(y+.13)+'M'+(x+.13)+' '+(y-.13)+'L'+(x-.13)+' '+(y+.13)+'" stroke="'+RED+'" stroke-width=".07" stroke-linecap="round" pointer-events="none"/>')});
+  for(var key in targets){var t=targets[key],a2=XY(+key);
+    if(t.x)h.push('<path data-i="'+key+'" d="M'+(a2[0]+.5)+' '+(a2[1]+.25)+'l.25 .25l-.25 .25l-.25 -.25z" fill="#8e44ad" fill-opacity=".85"/>');
+    if(t.end)h.push('<circle data-i="'+key+'" cx="'+(a2[0]+.5)+'" cy="'+(a2[1]+.5)+'" r=".14" fill="#2b6cf0" fill-opacity=".85"/>');
+    if(t.more)h.push('<circle data-i="'+key+'" cx="'+(a2[0]+.5)+'" cy="'+(a2[1]+.5)+'" r=".27" fill="none" stroke="#2b6cf0" stroke-width=".07"/>');
+    h.push('<rect data-i="'+key+'" x="'+a2[0]+'" y="'+a2[1]+'" width="1" height="1" fill="transparent"/>')}
+  h.push('</svg>');
+  $("board").innerHTML=h.join("");
+  var names=GAME.sides.map(function(x){return x.name}),st;
+  for(i=0;i<2;i++){var tt=GAME.stats(s,i);$("s"+i).textContent=tt.big;$("d"+i).textContent=tt.text;
+    $("p"+i).className="pl"+(!over&&s.turn===i?" on":"")}
+  if(br)st="Reviewing history (move "+kk+" of "+nT+"): the board is locked. Press Undo or Redo to play on from here.";
+  else if(over)st=(s.w===2?"Game over: draw":"Game over: "+names[s.w]+" wins")+" ("+s.rings[0]+"–"+s.rings[1]+" rings).";
+  else if(!humanTurn())st=names[P]+" to move – computer thinking…";
+  else if(sel&&sel.path.length>1)st=names[P]+": keep jumping (ringed squares) or click the piece / “Stop here” to end the move.";
+  else if(sel)st=names[P]+": click a marked square, or click the piece again to deselect.";
+  else st=names[P]+" to move"+(mustCap(s)?": a capture is mandatory.":".");
+  $("status").textContent=st;
+  $("last").textContent=(GAME.describe(s)+" "+note).trim();
+  $("undo").disabled=lock||!(br||hist.length>=2);
+  $("redo").disabled=lock||!(br||redo.length);
+  $("nFirst").disabled=$("nPrev").disabled=lock||kk<=0;
+  $("nNext").disabled=$("nLast").disabled=lock||kk>=nT;
+  $("nlab").textContent="Move "+kk+" of "+nT;
+  $("stop").disabled=!canAct||!sel||!complete();
+}
+function play(m){hist.push(apply(cur(),m));redo=[];clearSel();render();maybeAI()}
+function click(i){
+  if(over||busy||browsing()||!humanTurn()||sim)return;
+  var s=cur(),P=s.turn,v=s.b[i];note="";
+  if(sel){
+    var H=hops(),pos=sel.path[sel.path.length-1];
+    if(H[i]){sel.path.push(i);var H2=hops();if(!Object.keys(H2).length){play(complete());return}render();return}
+    if(i===pos&&sel.path.length>1){play(complete());return}
+    if(i===sel.f&&sel.path.length===1){sel=null;render();return}
+    if(sel.path.length>1){sel.path=[sel.f];note="Jump chain cancelled; the piece is back on "+cn(sel.f)+".";render();return}
+    sel=null;
+  }
+  if(v&&own(v)===P){
+    var L=movesOf(s,i,[]);
+    if(!L.length)note=mustCap(s)?"Capturing is mandatory, and this piece cannot capture.":"That piece has no legal move.";
+    else sel={f:i,path:[i],list:L};
+  }else if(v)note="That is an enemy piece: capture it by jumping over it.";
+  else note="Select one of your pieces first.";
+  render();
+}
+function maybeAI(){
+  if(sim||cur().w>=0||$("mode").value!=="ai"||cur().turn===+$("side").value)return;
+  busy=true;render();
+  setTimeout(function(){
+    var c=cur();hist.push(aiStep(c,+$("level").value,1500));redo=[];busy=false;
+    render();maybeAI();
+  },180);
+}
+document.title=GAME.title;$("gtitle").textContent=GAME.title;$("gsub").textContent=GAME.subtitle;
+function li(x){return"<li>"+(typeof x==="string"?x:x.t+"<ul>"+x.sub.map(li).join("")+"</ul>")+"</li>"}
+$("rules").innerHTML=GAME.rules.map(function(sec){return"<li><b>"+sec.h+"</b><ul>"+sec.items.map(li).join("")+"</ul></li>"}).join("");
+$("side").innerHTML=GAME.sides.map(function(x,i){return'<option value="'+i+'">You are '+x.name+'</option>'}).join("");
+for(var ni=0;ni<2;ni++)$("n"+ni).textContent=GAME.sides[ni].name;
+$("board").onclick=function(e){var t=e.target.closest("[data-i]");if(t)click(+t.getAttribute("data-i"))};
+$("new").onclick=start;$("sim").onclick=runSim;
+$("mode").onchange=$("side").onchange=start;
+$("mand").onchange=function(){MAND=$("mand").checked;clearSel();render()};
+$("stop").onclick=function(){if(sel&&complete()&&!busy&&!sim)play(complete())};
+$("redo").onclick=function(){
+  if(busy||sim)return;
+  if(browsing()){unlock(1);return}
+  if(!redo.length)return;
+  hist.push(redo.pop());
+  while($("mode").value==="ai"&&redo.length&&cur().w<0&&cur().turn!==+$("side").value)hist.push(redo.pop());
+  clearSel();render();
+};
+$("undo").onclick=function(){
+  if(busy||sim)return;
+  if(browsing()){unlock(-1);return}
+  if(hist.length<2)return;
+  redo.push(hist.pop());
+  while($("mode").value==="ai"&&hist.length>1&&cur().turn!==+$("side").value)redo.push(hist.pop());
+  clearSel();over=false;render();
+};
+$("nFirst").onclick=function(){goto(0)};
+$("nPrev").onclick=function(){goto((browsing()?view:hist.length-1)-1)};
+$("nNext").onclick=function(){goto((browsing()?view:hist.length-1)+1)};
+$("nLast").onclick=function(){goto(hist.length-1+redo.length)};
+if(typeof window!=="undefined")window.__RK={setMand:function(v){MAND=v},newState:newState,gen:gen,apply:apply,aiMove:aiMove,pieceMoves:pieceMoves};
+start();
+})();
+</script>
+</body>
+</html>

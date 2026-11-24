@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Palanquée</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
+<style>
+:root{--bg:#eef0e6;--ink:#1f2a1c;--mute:#5d6a56;--cell:#dfe3cf;--edge:#b9bfa3;--hi:#e0803a;--panel:#fff;--line:#c5cab4;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f}}
+:root[data-theme="dark"]{--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+main{max-width:1120px;margin:0 auto;padding:16px 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.right>.bar:first-child{margin-top:0}
+@media (min-width:860px){.layout{grid-template-columns:minmax(0,620px) minmax(300px,1fr);gap:28px;align-items:start}}
+h1{font:700 2rem/1.1 "Bricolage Grotesque",Georgia,serif;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+select,button.ctl{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.ctl:disabled,select:disabled,input:disabled{opacity:.45;cursor:default}
+label.f{color:var(--mute);font-size:.9rem}
+input[type=number]{width:4.5em;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+button.ctl.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button.ctl.icon{display:inline-flex;align-items:center;justify-content:center;padding:6px 10px}
+button.ctl.icon svg{width:18px;height:18px;fill:currentColor;display:block}
+.navlab{min-width:7.5em;text-align:center;color:var(--mute);font-variant-numeric:tabular-nums}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.pl{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:8px 12px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.pl.on{border-color:var(--hi)}
+.pl b{font:700 1.6rem "Bricolage Grotesque",Georgia,serif}
+.pl small{color:var(--mute)}
+#status{min-height:1.5em;font-weight:600;margin:6px 0}
+#board svg{display:block;width:100%;max-width:620px;margin:0 auto;touch-action:manipulation}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+details li{margin:4px 0}
+.legend{color:var(--mute);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+<h1 id="gtitle"></h1>
+<p class="sub" id="gsub"></p>
+<div class="layout">
+<div class="left">
+<div id="board"></div>
+<p class="legend">Click an empty cell to grow a sprout next to one of your plants or parasites; switch to “Place: seed” to grow or sow a seed. Small dots show where the current kind of piece may go. Click one of your pieces to select it: orange dots are the cells a sprout can move to, purple rings the landing cells of a parasite (only for the centre of a button), and “Prune / harvest” removes the selected sprout or seed. Seeds have a white ring, parasites a dashed outline. Blue edges wrap round (top touches bottom); red edges are walls. Gold rings mark every piece placed or moved during the turn being played (before its first action, during the previous turn), and small gold dots the cells they came from or the pieces removed.</p>
+</div>
+<aside class="right">
+<div class="bar">
+  <select id="mode" aria-label="Mode"><option value="ai">Play the computer</option><option value="2p">Two players</option></select>
+  <select id="level" aria-label="Computer strength"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select>
+  <select id="side" aria-label="Your side"></select>
+  <button class="ctl primary" id="new">New game</button>
+  <button class="ctl" id="undo">Undo</button>
+  <button class="ctl" id="redo">Redo</button>
+</div>
+<div class="bar">
+  <button class="ctl" id="ptype" aria-pressed="false">Place: sprout</button>
+  <button class="ctl" id="rem">Prune / harvest</button>
+</div>
+<div class="bar" id="nav" role="group" aria-label="Game history">
+  <button class="ctl icon" id="nFirst" aria-label="Go to the beginning" title="Go to the beginning"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="2.5" height="14"/><path d="M19 5v14L8 12z"/></svg></button>
+  <button class="ctl icon" id="nPrev" aria-label="One move back" title="One move back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 5v14L6 12z"/></svg></button>
+  <span class="navlab" id="nlab" aria-live="polite">Move 0 of 0</span>
+  <button class="ctl icon" id="nNext" aria-label="One move forward" title="One move forward"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5v14l11-7z"/></svg></button>
+  <button class="ctl icon" id="nLast" aria-label="Go to the last move" title="Go to the last move"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5v14l11-7z"/><rect x="17.5" y="5" width="2.5" height="14"/></svg></button>
+</div>
+<div class="score">
+  <div class="pl" id="p0"><span><span id="n0"></span> <small id="d0"></small></span><b id="s0">0</b></div>
+  <div class="pl" id="p1"><span><span id="n1"></span> <small id="d1"></small></span><b id="s1">0</b></div>
+</div>
+<div id="status" aria-live="polite"></div>
+<div id="last" class="legend" style="min-height:2.6em;margin:0 0 8px"></div>
+<div class="bar">
+  <label class="f">Simulation games <input id="simN" type="number" min="10" max="1000" value="10"></label>
+  <label class="f">Random opening moves <input id="simR" type="number" min="0" max="20" value="4"></label>
+  <button class="ctl" id="sim">Simulation</button>
+</div>
+<div id="simout" class="legend" style="white-space:pre-line;margin:0 0 8px"></div>
+<details>
+<summary>Rules</summary>
+<ul id="rules"></ul>
+</details>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+/* =====================================================================
+   1. GAME DEFINITION  - Palanquée rules, hex geometry, plants, actions, captures
+   2. ENGINE           - computer opponent (greedy / lookahead), simulations
+   3. INTERFACE        - SVG board, click handling, controls
+   A turn is made of several actions; every action is one step in the history.
+   An action is {t:"grow"|"seed"|"move"|"prune"|"harvest"|"launch", i:source cell, j:target cell}.
+   A state is {o:cells (0 empty, 1 Terracotta sprout, 2 Green sprout, 3 Terracotta seed, 4 Green seed), par:parasite flags,
+     res:[seeds in reserve], turn, tn:[turns started], toks:action tokens of this turn, acts:token masks of the
+     actions already made, broken:leaf bonuses lost, seedPl, launches, ko, w:winner (-1 none, 2 draw), ev, mv, hl/hf: cells placed or vacated this turn, phl/phf: same for the previous turn}.
+   ===================================================================== */
+var $=function(i){return document.getElementById(i)};
+
+/* ============================ 1. GAME DEFINITION ============================ */
+var GAME={
+  title:"Palanquée",
+  subtitle:"Ludovic Robillard, 1988. Grow plants from your seeds, capture by pincer, against the wall or by saturating a column, and launch parasites.",
+  sides:[{name:"Terracotta",color:"#c4633a"},{name:"Green",color:"#2f9e44"}],
+  rules:[
+  {h:"Board and material",items:[
+    "304 hexagonal cells in 19 columns (S to A) of 16 cells. The board is empty at the start; Terracotta plays first.",
+    "The blue top and bottom edges are transparent: the board is a cylinder, so the top cell of a column touches the bottom cell of that column and of its neighbours. The red side edges are walls.",
+    "Each player has 50 sprouts and 3 seeds (drawn with a white ring)."]},
+  {h:"Plants",items:[
+    "A plant is a group of touching pieces of one colour containing at least one seed (possibly only that seed).",
+    "A sprout or group of sprouts that touches no seed of its colour is isolated and is removed once the action is complete (unless it is a parasite, see below). Removed sprouts go back to their owner."]},
+  {h:"A turn",items:[
+    "Each plant gets as many actions as it has seeds when the turn begins. The action of one plant cannot be used on another. If a plant separates, its remaining actions may go to any of the parts, but a part can never use more actions than the seeds it carried; if plants merge, their actions may be used anywhere on the new plant.",
+    "All actions must be made (the turn ends by itself when none is left). One action may be replaced by sowing: placing a seed from the reserve on any empty cell.",
+    "A player with no piece on the board but seeds in reserve must sow one seed.",
+    {t:"Actions on a plant:",sub:[
+      "Growth: place a sprout or a seed on an empty cell touching the plant.",
+      "Movement: take one of its sprouts and re-place it on an empty cell touching the plant.",
+      "Harvest: take one of its seeds back to the reserve; only on a plant with at least two seeds, and not if that would isolate sprouts.",
+      "Simple pruning: take one of its sprouts back to the supply."]},
+    "Consequences: fusion (two plants touch and become one), massive pruning (isolated sprouts are removed), separation (a plant splits in two or three), grafting (sprouts pass from one plant to another).",
+    "During each player’s first three turns, no piece may be placed less than 3 cells from an enemy piece."]},
+  {h:"Captures",items:[
+    "Pincer: a piece, or a line of enemy pieces, closed at both ends by two of your pieces is captured when you place or move a piece to close it.",
+    "Against the wall: a line of enemy pieces touching a red edge is captured by your piece placed at its other end.",
+    "Saturation: a column with no two vertically adjacent empty cells (counting across the top and bottom edge) is saturated, and all pieces in it are removed, including those of the player who saturated it.",
+    "Sprouts left isolated by a capture are also removed. Captured sprouts return to their owner; captured seeds are eliminated for good.",
+    "Precedence: you may not place or move a piece where it (or a line of your pieces through it) would be in a captured position, unless the same action makes a capture that removes the danger.",
+    "Repetition: if a piece captured a single piece, the opponent may not immediately place on that cell to capture it back."]},
+  {h:"Parasitism",items:[
+    "A button is a sprout surrounded on all six sides by sprouts of its own plant. Its plant (or parasite) gains a new action: move the central sprout along a path of up to 6 cells (at most 5 steps, over any pieces) to an empty cell that touches no piece of its colour and touches an enemy plant. It becomes a parasite.",
+    "A plant or parasite may launch only one parasite per turn.",
+    "A parasite (a sprout group touching no seed of its colour) lives as long as it touches an enemy plant or parasite. Each turn its owner must give it one action: growth by a sprout, movement (a one-sprout parasite moves one cell and must stay in contact with the enemy; larger ones move like plants) or pruning. Parasites can never harvest or sow.",
+    "Parasites capture and are captured like other pieces. A parasite that splits into two parts touching the enemy becomes two parasites. Parasites joined to a plant become part of it, and plant sprouts can be grafted onto a parasite."]},
+  {h:"Accelerated growth",items:[
+    "A leaf is a triangle of 10 sprouts (a button plus the three corner cells around it, in either orientation) with no seed. A plant or parasite bearing a leaf gets one extra action per leaf from its next turn on, at most two extra. Leaves may not share sprouts.",
+    "The extra action is only kept if the leaf stays untouched for the whole turn, and it cannot be used to harvest or to place a seed. At most one seed is placed per turn."]},
+  {h:"End of the game",items:[
+    "A player with no piece on the board and no seed in reserve is out; the other player wins.",
+    "If neither player has any seed left (on the board or in reserve), for example when a player without seeds kills the last enemy seed with parasites, the game is a draw."]}],
+  stats:function(s,i){var sb=0,sp=0,pa=0;
+    for(var k=0;k<NC;k++)if(s.o[k]&&own(s.o[k])===i){if(s.o[k]>2)sb++;else{sp++;if(s.par[k])pa++}}
+    return{big:sb+s.res[i],text:"seeds · "+sb+" on board, "+s.res[i]+" in reserve, "+sp+" sprout"+(sp===1?"":"s")+(pa?" ("+pa+" parasite)":"")}},
+  describe:function(s){return s.ev||""}
+};
+var COLS=19,ROWS=16,NC=COLS*ROWS,LET="SRQPONMLKJIHGFEDCBA",NBD=new Int16Array(NC*6),NB=[],DIST=new Uint8Array(NC*NC),COLOF=[],ROWOF=[];
+function idx(c,r){return c*ROWS+((r%ROWS)+ROWS)%ROWS}
+// columns of flat-topped hexes; odd columns (R, P, ... B) sit half a cell higher. Directions: 0 N, 1 NE, 2 SE, 3 S, 4 SW, 5 NW.
+(function(){
+  var c,r,i,up,k,q,h,d,x;
+  for(c=0;c<COLS;c++)for(r=0;r<ROWS;r++){
+    i=idx(c,r);COLOF[i]=c;ROWOF[i]=r;up=c&1;
+    NBD[i*6]=idx(c,r-1);NBD[i*6+3]=idx(c,r+1);                    // top and bottom wrap round
+    NBD[i*6+1]=c<COLS-1?idx(c+1,up?r-1:r):-1;NBD[i*6+2]=c<COLS-1?idx(c+1,up?r:r+1):-1;
+    NBD[i*6+4]=c>0?idx(c-1,up?r:r+1):-1;NBD[i*6+5]=c>0?idx(c-1,up?r-1:r):-1;
+  }
+  for(i=0;i<NC;i++){NB[i]=[];for(k=0;k<6;k++)if(NBD[i*6+k]>=0)NB[i].push(NBD[i*6+k])}
+  for(i=0;i<NC;i++){                                            // distances on the cylinder
+    for(k=0;k<NC;k++)DIST[i*NC+k]=255;
+    DIST[i*NC+i]=0;q=[i];
+    for(h=0;h<q.length;h++){x=q[h];d=DIST[i*NC+x];
+      for(k=0;k<NB[x].length;k++){var y=NB[x][k];if(DIST[i*NC+y]===255){DIST[i*NC+y]=d+1;q.push(y)}}}
+  }
+})();
+function cn(i){return LET[COLOF[i]]+(ROWOF[i]+1)}
+function own(v){return v?(v-1)&1:-1}
+function nameP(P){return GAME.sides[P].name}
+function plural(n,w){return n+" "+w+(n===1?"":"s")}
+// connected groups of same-colour pieces
+function grp(o,par){
+  var gid=new Int16Array(NC).fill(-1),L=[],i,q,h,c,k,n,g,P;
+  for(i=0;i<NC;i++)if(o[i]&&gid[i]<0){
+    P=own(o[i]);g={P:P,cells:[],seeds:[],plant:false,par:false,id:L.length};q=[i];gid[i]=g.id;
+    for(h=0;h<q.length;h++){c=q[h];g.cells.push(c);if(o[c]>2){g.seeds.push(c);g.plant=true}if(par[c])g.par=true;
+      for(k=0;k<NB[c].length;k++){n=NB[c][k];if(gid[n]<0&&o[n]&&own(o[n])===P){gid[n]=g.id;q.push(n)}}}
+    L.push(g);
+  }
+  return{gid:gid,list:L};
+}
+function groups(s){return s._g||(s._g=grp(s.o,s.par))}
+// a sprout with six sprouts of its colour around it
+function isButton(o,c,P){var sp=P+1;if(o[c]!==sp)return false;for(var d=0;d<6;d++){var n=NBD[c*6+d];if(n<0||o[n]!==sp)return false}return true}
+// leaves (10-sprout triangles) inside a group of cells; disjoint, at most two
+function leaves(o,cells,P){
+  var sp=P+1,out=[],used={},a,b,d,e,k,L,ok;
+  for(var x=0;x<cells.length&&out.length<2;x++){
+    var c=cells[x];if(!isButton(o,c,P))continue;
+    for(e=0;e<2&&out.length<2;e++){
+      L=[c];for(d=0;d<6;d++)L.push(NBD[c*6+d]);ok=true;
+      for(k=0;k<3;k++){d=e+2*k;a=NBD[c*6+d];b=NBD[a*6+(d+1)%6];if(b<0||o[b]!==sp){ok=false;break}L.push(b)}
+      if(ok&&L.every(function(z){return!used[z]})){L.forEach(function(z){used[z]=1});out.push(L)}
+    }
+  }
+  return out;
+}
+// action tokens for player P at the start of his turn: one per seed, one per parasite, one per leaf (max 2 per plant/parasite)
+function makeTokens(o,par,P,res){
+  var G=grp(o,par),T=[];
+  G.list.forEach(function(g){
+    if(g.P!==P)return;
+    if(g.plant){g.seeds.forEach(function(sd){T.push({k:"s",c:[sd]})});
+      leaves(o,g.cells,P).forEach(function(L){T.push({k:"b",c:g.seeds.slice(),L:L})})}
+    else if(g.par){T.push({k:"p",c:g.cells.slice()});
+      leaves(o,g.cells,P).forEach(function(L){T.push({k:"b",pp:1,c:g.cells.slice(),L:L})})}
+  });
+  if(!T.length&&res[P]>0)T.push({k:"f",c:[]});     // nothing on the board: must sow
+  return T.slice(0,30);
+}
+function hasAny(a,b){for(var i=0;i<a.length;i++)if(b.indexOf(a[i])>=0)return true;return false}
+// tokens that may pay for an action of the given kind on group g
+function unitMask(s,g,kind){
+  var m=0,T=s.toks,t,k;
+  for(t=0;t<T.length;t++){k=T[t].k;
+    if(k==="s"){if(g.plant&&g.seeds.indexOf(T[t].c[0])>=0)m|=1<<t}
+    else if(kind==="harvest")continue;
+    else if(k==="b"){if(hasAny(T[t].c,T[t].pp?g.cells:g.seeds))m|=1<<t}
+    else if(k==="p"){if(!g.plant&&hasAny(T[t].c,g.cells))m|=1<<t}}
+  return m;
+}
+function seedMask(s){var m=0;s.toks.forEach(function(t,i){if(t.k==="s"||t.k==="f")m|=1<<i});return m}
+// can every action made so far be paid by a different token? (bipartite matching)
+function feasible(acts,valid){
+  var mt=new Int8Array(32).fill(-1),seen;
+  function aug(a){var m=acts[a]&valid;for(var t=0;t<31;t++)if((m>>>t)&1&&!seen[t]){seen[t]=1;if(mt[t]<0||aug(mt[t])){mt[t]=a;return true}}return false}
+  for(var a=0;a<acts.length;a++){seen=new Uint8Array(32);if(!aug(a))return false}
+  return true;
+}
+// remove isolated sprouts; parasites survive while they touch an enemy piece. Returns sprouts lost per player.
+function cleanup(o,par){
+  var lost=[0,0],ch=true,G,i;
+  while(ch){
+    ch=false;G=grp(o,par);
+    G.list.forEach(function(g){
+      if(g.plant){g.cells.forEach(function(c){par[c]=0});return}
+      if(g.par){g.cells.forEach(function(c){par[c]=1});return}
+      g.cells.forEach(function(c){o[c]=0;par[c]=0;lost[g.P]++});ch=true;
+    });
+    if(ch)continue;
+    G.list.forEach(function(g){
+      if(g.plant)return;
+      for(var x=0;x<g.cells.length;x++){var c=g.cells[x];for(var k=0;k<NB[c].length;k++){var n=NB[c][k];if(o[n]&&own(o[n])!==g.P)return}}
+      g.cells.forEach(function(c){o[c]=0;par[c]=0;lost[g.P]++});ch=true;
+    });
+  }
+  return lost;
+}
+// walk from x in direction d over pieces of P: 2 = ends on enemy, 1 = ends on a wall, 0 = empty or loop
+function endOf(o,x,d,P){var c=NBD[x*6+d];while(c>=0&&c!==x&&own(o[c])===P)c=NBD[c*6+d];if(c<0)return 1;if(c===x||!o[c])return 0;return 2}
+function capRuns(o,x,P){   // enemy cells captured by a piece of P on x
+  var out=[],mark={},edge=false;
+  for(var d=0;d<6;d++){var run=[],c=NBD[x*6+d];
+    while(c>=0&&c!==x&&o[c]&&own(o[c])!==P){run.push(c);c=NBD[c*6+d]}
+    if(run.length&&(c<0||c===x||own(o[c])===P)){if(c<0)edge=true;run.forEach(function(r){if(!mark[r]){mark[r]=1;out.push(r)}})}}
+  out.edge=edge;return out;
+}
+function E(m){return{err:m}}
+function win(s){
+  var a=[0,0],sd=[0,0],i;
+  for(i=0;i<NC;i++)if(s.o[i]){a[own(s.o[i])]++;if(s.o[i]>2)sd[own(s.o[i])]++}
+  var al=[a[0]||s.res[0],a[1]||s.res[1]],hs=[sd[0]+s.res[0],sd[1]+s.res[1]];
+  s.w=!al[0]&&!al[1]?2:!al[0]?1:!al[1]?0:(!hs[0]&&!hs[1])?2:-1;
+}
+function lossText(l){   // l[P] = [sprouts, seeds]
+  var out=[];
+  for(var P=0;P<2;P++){var t=[];if(l[P][1])t.push(plural(l[P][1],"seed"));if(l[P][0])t.push(plural(l[P][0],"sprout"));
+    if(t.length)out.push(nameP(P)+" lost "+t.join(" and "))}
+  return out.length?" "+out.join("; ")+".":"";
+}
+// try action a in state s: {ns} (turn not yet advanced) or {err}
+function apply(s,a){
+  if(s.w>=0)return E("The game is over.");
+  var P=s.turn,Q=1-P,sp=P+1,G=groups(s),gid=G.gid,o=s.o,mask=0,x=-1,from=-1,i=a.i,j=a.j,g=null,k,n,d,isSeed=false,touch=false;
+  if(s.acts.length>=s.toks.length)return E("You have no action left this turn.");
+  if(a.t==="grow"||a.t==="seed"){
+    if(o[j])return E("That cell is occupied.");
+    if(a.t==="seed"){
+      if(!s.res[P])return E("You have no seed left in reserve.");
+      if(s.seedPl)return E("Only one seed can be placed per turn.");
+      mask=seedMask(s);if(!mask)return E("A seed can only be placed with the action of a plant (not of a parasite or a leaf).");
+      isSeed=true;
+    }else{
+      var cnt=0;for(k=0;k<NC;k++)if(o[k]===sp)cnt++;
+      if(cnt>=50)return E("All 50 of your sprouts are on the board.");
+      var seenG={};
+      for(k=0;k<NB[j].length;k++){n=NB[j][k];if(own(o[n])===P){touch=true;if(!seenG[gid[n]]){seenG[gid[n]]=1;mask|=unitMask(s,G.list[gid[n]],"grow")}}}
+      if(!touch)return E(s.toks.length&&s.toks[0].k==="f"?"You have nothing on the board: sow a seed first (switch to “Place: seed”).":"A sprout must be placed next to one of your plants or parasites.");
+    }
+    x=j;
+  }else if(a.t==="move"){
+    if(o[i]!==sp)return E("Only sprouts can move.");
+    if(o[j])return E("That cell is occupied.");
+    g=G.list[gid[i]];
+    if(g.cells.length===1){
+      if(DIST[i*NC+j]!==1)return E("A one-sprout parasite moves one cell at a time.");
+      for(k=0;k<NB[j].length;k++){n=NB[j][k];if(n!==i&&o[n]&&own(o[n])===Q)touch=true}
+      if(!touch)return E("A one-sprout parasite must stay in contact with the enemy.");
+    }else{
+      for(k=0;k<NB[j].length;k++){n=NB[j][k];if(n!==i&&gid[n]===g.id)touch=true}
+      if(!touch)return E("A sprout must be re-placed on an empty cell touching its own plant.");
+    }
+    mask=unitMask(s,g,"move");from=i;x=j;
+  }else if(a.t==="prune"){
+    if(o[i]!==sp)return E("Only sprouts can be pruned (seeds are harvested).");
+    g=G.list[gid[i]];mask=unitMask(s,g,"prune");from=i;
+  }else if(a.t==="harvest"){
+    if(o[i]!==P+3)return E("Only your own seeds can be harvested.");
+    g=G.list[gid[i]];
+    if(g.seeds.length<2)return E("Harvesting needs a plant with at least two seeds.");
+    mask=unitMask(s,g,"harvest");from=i;
+  }else if(a.t==="launch"){
+    if(!isButton(o,i,P))return E("Only the central sprout of a button can be launched.");
+    if(o[j])return E("That cell is occupied.");
+    if(DIST[i*NC+j]>5)return E("A parasite travels along a path of at most 6 cells (5 steps).");
+    for(k=0;k<NB[j].length;k++){n=NB[j][k];if(n!==i&&own(o[n])===P)return E("A parasite must not touch any piece of its own colour.");if(o[n]&&own(o[n])===Q)touch=true}
+    if(!touch)return E("A parasite must land in contact with an enemy plant.");
+    g=G.list[gid[i]];mask=unitMask(s,g,"launch");
+    for(k=0;k<s.launches.length;k++)if(s.launches[k]&mask)return E("This plant or parasite has already launched a parasite this turn.");
+    from=i;x=j;
+  }else return E("Unknown action.");
+  if(!mask||!feasible(s.acts.concat([mask]),~s.broken))return E(g&&!g.plant?"That parasite has no action left this turn.":"That plant has no action left this turn.");
+  if(x>=0&&s.tn[P]<=3)for(k=0;k<NC;k++)if(o[k]&&own(o[k])===Q&&DIST[x*NC+k]<3)return E("During your first three turns, pieces must stay at least 3 cells away from enemy pieces.");
+  var no=o.slice(),np=s.par.slice(),res=s.res.slice(),lost=[[0,0],[0,0]],txt=nameP(P)+" ";
+  if(a.t==="grow"){no[j]=sp;txt+="grew a sprout on "+cn(j)+"."}
+  else if(a.t==="seed"){no[j]=P+3;res[P]--;
+    var nearPlant=NB[j].some(function(z){return o[z]===P+3||(o[z]===sp&&G.list[gid[z]].plant)});
+    txt+=(nearPlant?"grew a seed on ":"sowed a seed on ")+cn(j)+"."}
+  else if(a.t==="move"){no[i]=0;no[j]=sp;np[j]=np[i];np[i]=0;txt+="moved a sprout from "+cn(i)+" to "+cn(j)+"."}
+  else if(a.t==="prune"){no[i]=0;np[i]=0;txt+="pruned the sprout on "+cn(i)+"."}
+  else if(a.t==="harvest"){
+    no[i]=0;res[P]++;
+    var seen=new Uint8Array(NC),q=g.seeds.filter(function(z){return z!==i}),h,c;
+    q.forEach(function(z){seen[z]=1});
+    for(h=0;h<q.length;h++){c=q[h];for(k=0;k<NB[c].length;k++){n=NB[c][k];if(!seen[n]&&no[n]&&own(no[n])===P){seen[n]=1;q.push(n)}}}
+    for(k=0;k<g.cells.length;k++)if(g.cells[k]!==i&&!seen[g.cells[k]])return E("Harvesting that seed would isolate sprouts.");
+    txt+="harvested the seed on "+cn(i)+"."}
+  else{no[i]=0;np[i]=0;no[j]=sp;np[j]=1;txt+="launched a parasite from "+cn(i)+" to "+cn(j)+"."}
+  // captures by the piece just placed
+  var capd=[];
+  if(x>=0){
+    capd=capRuns(no,x,P);
+    if(s.ko&&s.ko.by===Q&&x===s.ko.at&&capd.length===1&&capd[0]===s.ko.cap)return E("Repetition: you cannot immediately capture back the piece that has just captured.");
+    capd.forEach(function(r){lost[Q][no[r]>2?1:0]++;no[r]=0;np[r]=0});
+    if(capd.length)txt+=" Capture"+(capd.edge?" against the wall":"")+" of "+plural(capd.length,"piece")+".";
+  }
+  // saturation
+  var sat=[],c2,r2,y;
+  for(c2=0;c2<COLS;c2++){var free=false;
+    for(r2=0;r2<ROWS;r2++)if(!no[idx(c2,r2)]&&!no[idx(c2,r2+1)]){free=true;break}
+    if(!free){sat.push(LET[c2]);for(r2=0;r2<ROWS;r2++){y=idx(c2,r2);if(no[y]){lost[own(no[y])][no[y]>2?1:0]++;no[y]=0;np[y]=0}}}}
+  if(sat.length)txt+=" Column "+sat.join(", ")+" saturated.";
+  var iso=cleanup(no,np);lost[0][0]+=iso[0];lost[1][0]+=iso[1];
+  // precedence: the piece placed must not stand in a captured position
+  if(x>=0&&no[x]&&own(no[x])===P)for(d=0;d<3;d++){var e1=endOf(no,x,d,P),e2=endOf(no,x,d+3,P);
+    if((e1===2&&e2>=1)||(e1===1&&e2===2))return E("Forbidden: your piece would stand in a captured position without making a capture that removes the danger.")}
+  // tokens: follow moved parasite sprouts, lose leaf bonuses whose leaf was touched
+  var broken=s.broken,toks=s.toks.map(function(t,ti){
+    if(t.k==="p"||t.pp){var cc=t.c.map(function(z){return z===i?(a.t==="move"?j:-1):z}).filter(function(z){return z>=0&&no[z]===sp});t={k:t.k,pp:t.pp,c:cc,L:t.L}}
+    if(t.k==="b"&&!((broken>>>ti)&1)&&t.L.some(function(z){return no[z]!==sp}))broken|=1<<ti;
+    return t});
+  var acts=s.acts.concat([mask]);
+  if(!feasible(acts,~broken))return E("Not allowed: that would touch a leaf whose extra action has already been used this turn.");
+  var ko=s.ko;if(x>=0&&capd.length===1&&!capd.edge)ko={by:P,at:capd[0],cap:x};
+  var hl=s.hl.map(function(z){return z===i&&(a.t==="move"||a.t==="launch")?j:z}).filter(function(z){return z!==x&&no[z]&&own(no[z])===P});
+  if(x>=0&&no[x])hl.push(x);
+  var hf=s.hf.slice();if(from>=0&&!no[from]&&hf.indexOf(from)<0)hf.push(from);
+  var ns={o:no,par:np,res:res,hl:hl,hf:hf,phl:s.phl,phf:s.phf,turn:P,tn:s.tn,toks:toks,broken:broken,acts:acts,seedPl:s.seedPl||isSeed,
+    launches:a.t==="launch"?s.launches.concat([mask]):s.launches,ko:ko,w:-1,ev:txt+lossText(lost),mv:{from:from,to:x>=0&&no[x]?x:-1}};
+  win(ns);
+  return{ns:ns};
+}
+function newTurn(s){
+  var T=1-s.turn;s.turn=T;s.tn=s.tn.slice();s.tn[T]++;s.toks=makeTokens(s.o,s.par,T,s.res);
+  s.phl=s.hl||[];s.phf=s.hf||[];s.hl=[];s.hf=[];s.acts=[];s.broken=0;s.seedPl=false;s.launches=[];if(s.ko&&s.ko.by===T)s.ko=null;delete s._d;delete s._t;
+}
+function newState(){var s={o:new Uint8Array(NC),par:new Uint8Array(NC),res:[3,3],turn:1,tn:[0,0],toks:[],acts:[],broken:0,seedPl:false,launches:[],ko:null,w:-1,ev:"",mv:null,hl:[],hf:[]};newTurn(s);return s}
+// after an action: end the turn when no further action is possible
+function finalize(ns0,force){
+  var s=Object.assign({},ns0),guard=0;delete s._d;delete s._t;win(s);
+  while(s.w<0&&(force||!gen(s,true).length)){
+    var left=s.toks.length-s.acts.length,bb=s.broken;while(bb){left-=bb&1;bb>>>=1}
+    if(left>0)s.ev=(s.ev?s.ev+" ":"")+nameP(s.turn)+" could not use "+plural(left,"remaining action")+".";
+    if(++guard>2){s.w=2;s.ev+=" Neither player can act: draw.";break}
+    force=false;newTurn(s);win(s);
+  }
+  return s;
+}
+function pick(a,n){a=a.slice();var out=[];while(out.length<n&&a.length)out.push(a.splice(Math.floor(Math.random()*a.length),1)[0]);return out}
+// every legal action (one: stop at the first; ai: pruned list for the computer)
+function gen(s,one,ai){
+  var out=[],P=s.turn,sp=P+1,G=groups(s),o=s.o,done=false,k;
+  if(s.w>=0||s.acts.length>=s.toks.length)return out;
+  function T(a){if(done)return;var r=apply(s,a);if(r.ns){r.a=a;out.push(r);if(one)done=true}}
+  var U=G.list.filter(function(g){return g.P===P&&(g.plant||g.par)&&unitMask(s,g,"grow")});
+  var thr=ai?threat(s,1-P).mark:null,F=[],inF=new Uint8Array(NC);
+  U.forEach(function(g){g.cells.forEach(function(z){NB[z].forEach(function(n){if(!o[n]&&!inF[n]){inF[n]=1;F.push(n)}})})});
+  U.forEach(function(g){var c=g.cells.filter(function(z){return o[z]===sp});
+    if(ai)c=c.filter(function(z){return thr[z]}).concat(pick(c,2));
+    c.forEach(function(z){T({t:"prune",i:z})})});
+  F.forEach(function(z){T({t:"grow",j:z})});
+  if(s.res[P]&&!s.seedPl&&seedMask(s)){
+    var C=[];for(k=0;k<NC;k++)if(!o[k])C.push(k);
+    if(ai)C=F.concat(pick(C,F.length?20:60));
+    C.forEach(function(z){T({t:"seed",j:z})});
+  }
+  U.forEach(function(g){if(g.plant&&g.seeds.length>1)g.seeds.forEach(function(z){T({t:"harvest",i:z})})});
+  U.forEach(function(g){
+    var spr=g.cells.filter(function(z){return o[z]===sp});if(!spr.length)return;
+    if(g.cells.length===1){NB[g.cells[0]].forEach(function(n){if(!o[n])T({t:"move",i:g.cells[0],j:n})});return}
+    var dests=[],seen=new Uint8Array(NC);
+    g.cells.forEach(function(z){NB[z].forEach(function(n){if(!o[n]&&!seen[n]){seen[n]=1;dests.push(n)}})});
+    if(ai){
+      var capD=dests.filter(function(n){return capRuns(o,n,P).length>0}),src=spr.filter(function(z){return thr[z]}),per=spr.filter(function(z){
+        var m=0;for(var q=0;q<NB[z].length;q++)if(own(o[NB[z][q]])===P)m++;return m<=2});
+      src=src.concat(pick(per,4));
+      src.forEach(function(z){capD.concat(pick(dests,2)).forEach(function(n){T({t:"move",i:z,j:n})})});
+      capD.forEach(function(n){pick(per.length?per:spr,3).forEach(function(z){T({t:"move",i:z,j:n})})});
+    }else spr.forEach(function(z){dests.forEach(function(n){T({t:"move",i:z,j:n})})});
+  });
+  U.forEach(function(g){g.cells.forEach(function(z){if(isButton(o,z,P))for(var j=0;j<NC;j++)if(!o[j]&&DIST[z*NC+j]<=5)T({t:"launch",i:z,j:j})})});
+  return out;
+}
+
+/* ================================ 2. ENGINE ================================ */
+var VAL={SEED:45,RES:28,SPR:2,PAR:1,LEAF:9,BTN:2,FR:.3,EDGE:6};
+// best value attacker A can take with one piece placed on a cell he can reach (pincer, wall and saturation),
+// and the enemy pieces that are under such a threat (mark)
+function threat(s,A){
+  if(s._t&&s._t[A])return s._t[A];
+  var o=s.o,mark=new Uint8Array(NC),best=0,any=s.res[A]>0,pc=new Int8Array(COLS),c,r,e,v,d,k;
+  for(c=0;c<COLS;c++)for(r=0;r<ROWS;r++)if(!o[idx(c,r)]&&!o[idx(c,r+1)])pc[c]++;
+  function val(z){return o[z]>2?VAL.SEED:VAL.SPR}
+  for(e=0;e<NC;e++){
+    if(o[e])continue;
+    if(!any){var ok=false;for(k=0;k<NB[e].length;k++)if(own(o[NB[e][k]])===A){ok=true;break}if(!ok)continue}
+    v=0;var cap=capRuns(o,e,A);
+    for(k=0;k<cap.length;k++){v+=val(cap[k]);mark[cap[k]]=1}
+    c=COLOF[e];var lose=(!o[NBD[e*6]]?1:0)+(!o[NBD[e*6+3]]?1:0);
+    if(pc[c]-lose<=0)for(r=0;r<ROWS;r++){var y=idx(c,r);if(o[y])v+=own(o[y])===A?-val(y):val(y)}
+    if(v>best)best=v;
+  }
+  s._t=s._t||[];return s._t[A]={best:best,mark:mark};
+}
+function evalS(s,full){   // value from Terracotta's point of view
+  if(s.w>=0)return s.w===0?1e5:s.w===1?-1e5:0;
+  var o=s.o,G=groups(s),m=[s.res[0]*VAL.RES,s.res[1]*VAL.RES],fr=[new Uint8Array(NC),new Uint8Array(NC)],nf=[0,0];
+  G.list.forEach(function(g){
+    var P=g.P,b=0;
+    m[P]+=VAL.SEED*g.seeds.length+VAL.SPR*(g.cells.length-g.seeds.length)+(g.par?VAL.PAR*g.cells.length:0);
+    m[P]+=VAL.LEAF*leaves(o,g.cells,P).length;
+    g.cells.forEach(function(z){
+      if(o[z]>2){var cc=COLOF[z];if(cc===0||cc===COLS-1)m[P]-=VAL.EDGE;else if(cc===1||cc===COLS-2)m[P]-=VAL.EDGE/2}
+      else if(b<3&&isButton(o,z,P))b++;
+      NB[z].forEach(function(n){if(!o[n]&&!fr[P][n]){fr[P][n]=1;nf[P]++}})});
+    m[P]+=VAL.BTN*b;
+  });
+  var v=m[0]-m[1]+VAL.FR*(Math.min(nf[0],40)-Math.min(nf[1],40));
+  if(full){
+    var t0=threat(s,0).best,t1=threat(s,1).best,more=s.acts.length<s.toks.length,wA=more?.6:.25,wD=more?.5:.85;
+    v+=s.turn===0?wA*t0-wD*t1:wD*t0-wA*t1;
+  }
+  return v;
+}
+// choose one action for the side to move. Easy: greedy on material and shape, noisy. Medium: greedy with threats.
+// Hard: the best 6 actions are looked at together with the best following action of the same turn.
+function aiAction(s,lv){
+  var C=gen(s,false,true),sg=s.turn===0?1:-1,i;
+  if(!C.length)return null;
+  for(i=0;i<C.length;i++)if(C[i].ns.w===s.turn)return C[i];
+  C.forEach(function(c){c.v=sg*evalS(c.ns,lv>1)+Math.random()*(lv===1?4:lv===2?.6:.15)});
+  C.sort(function(a,b){return b.v-a.v});
+  if(lv<3)return C[0];
+  var top=C.slice(0,6);
+  top.forEach(function(c){
+    var ns=c.ns;if(ns.w>=0||ns.acts.length>=ns.toks.length)return;
+    var D=gen(ns,false,true),b=-1e9;
+    D.forEach(function(d){var v=sg*evalS(d.ns,true);if(v>b)b=v});
+    if(D.length)c.v=b+Math.random()*.15;
+  });
+  top.sort(function(a,b){return b.v-a.v});
+  return top[0];
+}
+function aiStep(s,lv){var m=aiAction(s,lv);return m?finalize(m.ns):finalize(s,true)}
+var sim=null;
+function runSim(){   // computer vs computer, to look for first/second-player advantage
+  if(sim){sim.stop=true;return}
+  var CAP=800,me=sim={stop:false},TOTAL=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?4:+$("simR").value)),
+      done=0,w=[0,0,0],un=0,g=newState(),plies=0,lv=+$("level").value,lvName=$("level").options[$("level").selectedIndex].text,nm=GAME.sides.map(function(x){return x.name});
+  ["mode","side","level","new","undo","redo","rem","ptype","simN","simR","nFirst","nPrev","nNext","nLast"].forEach(function(i){$(i).disabled=true});
+  $("sim").textContent="Stop simulation";
+  $("simout").textContent="Simulating at "+lvName+" level… 0/"+TOTAL;
+  function fin(stopped){
+    sim=null;$("sim").textContent="Simulation";
+    $("mode").disabled=$("new").disabled=$("simN").disabled=$("simR").disabled=false;
+    $("level").disabled=$("side").disabled=$("mode").value==="2p";
+    var dec=w[0]+w[1],mg=dec?(196*Math.sqrt((w[0]/dec)*(1-w[0]/dec)/dec)).toFixed(1):"0";
+    var pc=function(n){return done?(100*n/done).toFixed(1)+"%":"n/a"};
+    $("simout").textContent=(stopped?"Stopped after ":"")+done+" games at "+lvName+" level (computer vs computer), first "+RND+" actions random.\n"+
+      "First player ("+nm[0]+") won "+pc(w[0])+" ("+w[0]+" games). Second player ("+nm[1]+") won "+pc(w[1])+" ("+w[1]+" games)."+
+      (dec?" Among decided games the first player won "+(100*w[0]/dec).toFixed(1)+"% (margin ±"+mg+" points at 95% confidence).":"")+
+      (w[2]?" Draws: "+w[2]+".":"")+(un?" Unfinished (stopped at "+CAP+" actions): "+un+".":"");
+    render();
+  }
+  function stepSim(){
+    if(me.stop){fin(true);return}
+    var t0=Date.now();
+    while(Date.now()-t0<40){
+      if(g.w>=0||plies>=CAP){
+        if(g.w>=0)w[g.w]++;else un++;
+        done++;g=newState();plies=0;
+        if(done>=TOTAL){fin(false);return}
+        continue;
+      }
+      if(plies<RND){var ms=gen(g,false,true);g=ms.length?finalize(ms[Math.floor(Math.random()*ms.length)].ns):finalize(g,true)}
+      else g=aiStep(g,lv);
+      plies++;
+    }
+    $("simout").textContent="Simulating at "+lvName+" level… "+done+"/"+TOTAL;
+    setTimeout(stepSim,0);
+  }
+  stepSim();
+}
+
+/* =============================== 3. INTERFACE =============================== */
+var hist,redo=[],view=null,sel,ptype="grow",over,busy,note="";   // view: null = live position, otherwise the index being reviewed
+var S3=Math.sqrt(3),PX=[],PY=[],GOLD="#e0a800",PURPLE="#8e44ad";
+for(var ci=0;ci<NC;ci++){PX[ci]=1.5*COLOF[ci];PY[ci]=S3*(ROWOF[ci]-(COLOF[ci]&1?.5:0))}
+function vx(i,k,r){return PX[i]+Math.cos(Math.PI/3*k)*r}
+function vy(i,k,r){return PY[i]+Math.sin(Math.PI/3*k)*r}
+var HEXP=PX.map(function(x,i){var a=[];for(var k=0;k<6;k++)a.push(vx(i,k,.97).toFixed(3)+","+vy(i,k,.97).toFixed(3));return a.join(" ")});
+var X0=-2.6,X1=1.5*(COLS-1)+2.6,Y0=-S3-1.7,Y1=S3*(ROWS-1)+S3/2+1.7;
+function cur(){return hist[hist.length-1]}
+function line(){return hist.concat(redo.slice().reverse())}   // every position, including those that can still be redone
+function browsing(){return view!==null}
+function shown(){return view===null?cur():line()[view]}
+function aiSide(){return $("mode").value==="ai"?1-+$("side").value:-1}
+function clearSel(){sel=null;note=""}
+function goto(k){
+  if(busy||sim)return;
+  var n=hist.length-1+redo.length;k=Math.max(0,Math.min(n,k));
+  view=k===hist.length-1?null:k;clearSel();render();
+}
+// Undo/Redo while reviewing: leave review and play on from the reviewed position (in computer mode, from the nearest position where it is the human's turn)
+function unlock(dir){
+  var L=line(),k=view,j;
+  if($("mode").value==="ai"){
+    j=k;while(j>=0&&j<L.length&&L[j].w<0&&L[j].turn!==+$("side").value)j+=dir;
+    if(j>=0&&j<L.length)k=j;
+  }
+  hist=L.slice(0,k+1);redo=L.slice(k+1).reverse();view=null;clearSel();over=false;render();maybeAI();
+}
+function humanTurn(){return $("mode").value==="2p"||cur().turn===+$("side").value}
+function start(){
+  hist=[newState()];redo=[];view=null;clearSel();ptype="seed";$("level").disabled=$("side").disabled=$("mode").value==="2p";over=false;busy=false;
+  render();maybeAI();
+}
+// legal placements of the current kind of piece (cached on the state)
+function dots(s,t){
+  s._d=s._d||{};if(s._d[t])return s._d[t];
+  var m={};for(var i=0;i<NC;i++)if(!s.o[i]){var r=apply(s,{t:t,j:i});if(r.ns)m[i]=r.ns}
+  return s._d[t]=m;
+}
+function render(){
+  var br=browsing(),s=shown(),sd=GAME.sides,h=[],P=s.turn,i,k,c,nT=hist.length-1+redo.length,kk=br?view:hist.length-1,lock=busy||!!sim;
+  over=s.w>=0;
+  var canAct=!br&&!over&&humanTurn()&&!busy&&!sim;
+  if(canAct&&!sel){   // pick a sensible piece type when only one kind can be placed
+    var dg=Object.keys(dots(s,"grow")).length,ds=Object.keys(dots(s,"seed")).length;
+    if(ptype==="seed"&&!ds&&dg)ptype="grow";else if(ptype==="grow"&&!dg&&ds&&s.toks[0]&&s.toks[0].k==="f")ptype="seed";
+  }
+  h.push('<svg viewBox="'+[X0,Y0,X1-X0,Y1-Y0].map(function(v){return v.toFixed(2)}).join(" ")+'" role="img" aria-label="Palanquée board">');
+  function lab(x,y,t){h.push('<text x="'+x.toFixed(2)+'" y="'+y.toFixed(2)+'" font-size=".75" text-anchor="middle" dominant-baseline="central" fill="var(--mute)" pointer-events="none">'+t+'</text>')}
+  for(c=0;c<COLS;c++){lab(1.5*c,PY[idx(c,0)]-1.45-(c&1?0:.2),LET[c]);lab(1.5*c,PY[idx(c,ROWS-1)]+1.45+(c&1?.2:0),LET[c])}
+  for(k=0;k<ROWS;k++){lab(-1.85,PY[idx(0,k)],k+1);lab(1.5*(COLS-1)+1.85,PY[idx(COLS-1,k)],k+1)}
+  for(i=0;i<NC;i++)h.push('<polygon data-i="'+i+'" points="'+HEXP[i]+'" fill="var(--cell)" stroke="var(--edge)" stroke-width=".05"/>');
+  function seg(i,a,b,col){h.push('<line x1="'+vx(i,a,1).toFixed(3)+'" y1="'+vy(i,a,1).toFixed(3)+'" x2="'+vx(i,b,1).toFixed(3)+'" y2="'+vy(i,b,1).toFixed(3)+'" stroke="'+col+'" stroke-width=".16" stroke-linecap="round" pointer-events="none"/>')}
+  for(k=0;k<ROWS;k++){seg(idx(0,k),2,3,"#d33");seg(idx(0,k),3,4,"#d33");seg(idx(COLS-1,k),5,0,"#d33");seg(idx(COLS-1,k),0,1,"#d33")}
+  for(c=0;c<COLS;c++){var t=idx(c,0),b=idx(c,ROWS-1);
+    if(c&1){seg(t,3,4,"#2b6cf0");seg(t,4,5,"#2b6cf0");seg(t,5,0,"#2b6cf0");seg(b,1,2,"#2b6cf0")}
+    else{seg(t,4,5,"#2b6cf0");seg(b,0,1,"#2b6cf0");seg(b,1,2,"#2b6cf0");seg(b,2,3,"#2b6cf0")}}
+  // gold: every piece placed or moved in the turn being played (before its first action: in the previous turn)
+  var cu=s.hl.length||s.hf.length,HO=cu?P:1-P,HL={},HF=cu?s.hf:s.phf||[];
+  (cu?s.hl:s.phl||[]).forEach(function(z){if(s.o[z]&&own(s.o[z])===HO)HL[z]=1});
+  HF.forEach(function(z){if(!s.o[z])h.push('<circle cx="'+PX[z]+'" cy="'+PY[z]+'" r=".26" fill="'+GOLD+'" pointer-events="none"/>')});
+  if(canAct&&!sel){var D=dots(s,ptype);for(var key in D){i=+key;
+    h.push('<circle data-i="'+i+'" cx="'+PX[i]+'" cy="'+PY[i]+'" r="'+(ptype==="seed"?.24:.17)+'" fill="'+(ptype==="seed"?"none":"var(--mute)")+'" stroke="var(--mute)" stroke-width=".08" opacity=".75"/>')}}
+  for(i=0;i<NC;i++)if(s.o[i]){
+    var p=own(s.o[i]),on=sel&&sel.i===i,lm=!!HL[i],seed=s.o[i]>2,pa=s.par[i];
+    h.push('<circle data-i="'+i+'" cx="'+PX[i]+'" cy="'+PY[i]+'" r="'+(seed?.78:.64)+'" fill="'+sd[p].color+'" stroke="'+(on?'var(--hi)':lm?GOLD:pa?'#111':'#fff')+'" stroke-width="'+(on||lm?.17:.08)+'"'+(pa&&!on&&!lm?' stroke-dasharray=".2 .13"':'')+'/>');
+    if(seed)h.push('<circle cx="'+PX[i]+'" cy="'+PY[i]+'" r=".34" fill="none" stroke="#fff" stroke-width=".13" pointer-events="none"/>');
+    if(pa)h.push('<circle cx="'+PX[i]+'" cy="'+PY[i]+'" r=".14" fill="#fff" pointer-events="none"/>');
+  }
+  if(sel)sel.list.forEach(function(m){var f=m.j;
+    if(m.k==="launch")h.push('<circle data-i="'+f+'" cx="'+PX[f]+'" cy="'+PY[f]+'" r=".36" fill="none" stroke="'+PURPLE+'" stroke-width=".14"/>');
+    else h.push('<circle data-i="'+f+'" cx="'+PX[f]+'" cy="'+PY[f]+'" r=".3" fill="var(--hi)" fill-opacity=".9"/>')});
+  h.push('</svg>');
+  $("board").innerHTML=h.join("");
+  var names=sd.map(function(x){return x.name}),st;
+  for(i=0;i<2;i++){var tt=GAME.stats(s,i);$("s"+i).textContent=tt.big;$("d"+i).textContent=tt.text;
+    $("p"+i).className="pl"+(!over&&s.turn===i?" on":"")}
+  var turnNo=s.tn[0]+s.tn[1],act=" (turn "+turnNo+", action "+(s.acts.length+1)+" of "+s.toks.length+")";
+  if(br)st="Reviewing history (move "+kk+" of "+nT+"): the board is locked. Press Undo or Redo to play on from here.";
+  else if(over)st=s.w===2?"Game over: draw.":"Game over: "+names[s.w]+" wins.";
+  else if(!humanTurn())st=names[P]+" to act"+act+" – computer thinking…";
+  else if(sel)st=names[P]+act+": click a marked cell, use “Prune / harvest”, or click the piece again to deselect.";
+  else if(s.toks.length===1&&s.toks[0].k==="f")st=names[P]+" has nothing on the board: sow a seed on any empty cell"+(s.tn[P]<=3?" at least 3 cells from enemy pieces":"")+".";
+  else st=names[P]+" to act"+act+".";
+  $("status").textContent=st;
+  $("last").textContent=(GAME.describe(s)+" "+note).trim();
+  $("undo").disabled=lock||!(br||hist.length>=2);
+  $("redo").disabled=lock||!(br||redo.length);
+  $("nFirst").disabled=$("nPrev").disabled=lock||kk<=0;
+  $("nNext").disabled=$("nLast").disabled=lock||kk>=nT;
+  $("nlab").textContent="Move "+kk+" of "+nT;
+  $("ptype").disabled=!canAct;
+  $("ptype").textContent=ptype==="seed"?"Place: seed":"Place: sprout";
+  $("ptype").setAttribute("aria-pressed",ptype==="seed"?"true":"false");
+  $("rem").disabled=!canAct||!sel||!sel.rem;
+  $("rem").textContent=sel&&s.o[sel.i]>2?"Harvest seed":"Prune / harvest";
+}
+function play(ns){hist.push(finalize(ns));redo=[];clearSel();render();maybeAI()}
+function selectPiece(s,i){
+  var P=s.turn,G=groups(s),g=G.list[G.gid[i]],list=[],seenC={},r,j;
+  if(s.o[i]===P+1){
+    g.cells.forEach(function(z){NB[z].forEach(function(n){if(!s.o[n]&&!seenC[n]){seenC[n]=1;var r=apply(s,{t:"move",i:i,j:n});if(r.ns)list.push({j:n,ns:r.ns,k:"move"})}})});
+    if(g.cells.length===1)NB[i].forEach(function(n){if(!s.o[n]&&!seenC[n]){seenC[n]=1;var r=apply(s,{t:"move",i:i,j:n});if(r.ns)list.push({j:n,ns:r.ns,k:"move"})}});
+    if(isButton(s.o,i,P))for(j=0;j<NC;j++)if(!s.o[j]&&!seenC[j]&&DIST[i*NC+j]<=5){r=apply(s,{t:"launch",i:i,j:j});if(r.ns)list.push({j:j,ns:r.ns,k:"launch"})}
+  }
+  r=apply(s,{t:s.o[i]>2?"harvest":"prune",i:i});
+  return{i:i,list:list,rem:r.ns||null,remErr:r.err||""};
+}
+function click(i){
+  if(over||busy||browsing()||!humanTurn()||sim)return;
+  var s=cur(),P=s.turn,v=s.o[i];note="";
+  if(sel){
+    var m=sel.list.filter(function(x){return x.j===i})[0];
+    if(m){play(m.ns);return}
+    var same=i===sel.i;sel=null;
+    if(same){render();return}
+  }
+  if(!v){
+    var r=apply(s,{t:ptype,j:i});
+    if(r.ns){if(ptype==="seed")ptype="grow";play(r.ns);return}
+    note=r.err;
+  }else if(own(v)===P){
+    sel=selectPiece(s,i);
+    if(!sel.list.length&&!sel.rem){note=sel.remErr;sel=null}
+    else if(!sel.list.length)note=v>2?"A seed never moves; it can only be harvested.":"That sprout has no legal move.";
+  }else note="That is an enemy piece: capture it by closing a line on it, against a wall, or by saturating its column.";
+  render();
+}
+function maybeAI(){
+  if(sim||cur().w>=0||$("mode").value!=="ai"||cur().turn===+$("side").value)return;
+  busy=true;render();
+  setTimeout(function(){
+    var c=cur();hist.push(aiStep(c,+$("level").value));redo=[];busy=false;
+    render();maybeAI();
+  },180);
+}
+document.title=GAME.title;$("gtitle").textContent=GAME.title;$("gsub").textContent=GAME.subtitle;
+function li(x){return"<li>"+(typeof x==="string"?x:x.t+"<ul>"+x.sub.map(li).join("")+"</ul>")+"</li>"}
+$("rules").innerHTML=GAME.rules.map(function(sec){return"<li><b>"+sec.h+"</b><ul>"+sec.items.map(li).join("")+"</ul></li>"}).join("");
+$("side").innerHTML=GAME.sides.map(function(x,i){return'<option value="'+i+'">You are '+x.name+'</option>'}).join("");
+for(var ni=0;ni<2;ni++)$("n"+ni).textContent=GAME.sides[ni].name;
+$("board").onclick=function(e){var t=e.target.closest("[data-i]");if(t)click(+t.getAttribute("data-i"))};
+$("new").onclick=start;$("sim").onclick=runSim;
+$("mode").onchange=$("side").onchange=start;
+$("ptype").onclick=function(){ptype=ptype==="seed"?"grow":"seed";clearSel();render()};
+$("rem").onclick=function(){
+  if(over||busy||browsing()||!humanTurn()||!sel)return;
+  if(sel.rem)play(sel.rem);else{note=sel.remErr;render()}
+};
+$("redo").onclick=function(){
+  if(busy||sim)return;
+  if(browsing()){unlock(1);return}
+  if(!redo.length)return;
+  hist.push(redo.pop());
+  while($("mode").value==="ai"&&redo.length&&cur().w<0&&cur().turn!==+$("side").value)hist.push(redo.pop());
+  clearSel();render();
+};
+$("undo").onclick=function(){
+  if(busy||sim)return;
+  if(browsing()){unlock(-1);return}
+  if(hist.length<2)return;
+  redo.push(hist.pop());
+  while($("mode").value==="ai"&&hist.length>1&&cur().turn!==+$("side").value)redo.push(hist.pop());
+  clearSel();over=false;render();
+};
+$("nFirst").onclick=function(){goto(0)};
+$("nPrev").onclick=function(){goto((browsing()?view:hist.length-1)-1)};
+$("nNext").onclick=function(){goto((browsing()?view:hist.length-1)+1)};
+$("nLast").onclick=function(){goto(hist.length-1+redo.length)};
+start();
+})();
+</script>
+</body>
+</html>

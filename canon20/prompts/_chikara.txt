@@ -1,0 +1,31 @@
+Using the webpage made in https://claude.ai/artifact/DAqWHVndo3agKrCg6LbmyD, please replace the GAME definition with the rules stated below. Add other pieces or move types only if the new game needs them, and also change the engine's move generation, evaluation and the interface click handling where needed. Keep the interface features: Undo/Redo, the history navigation buttons, the computer opponent with three levels, the simulation tool, board coordinates, and the gold last-move marker.
+
+The game's name is Chikara.
+
+The game is played on a grid of points of size 10x13. The player's first line is called the defense line. The defense line are across the larger size of the board (so, size 13).
+
+Each player has 26 sticks of one color. The sticks are placed between the grid points.
+
+Definitions 
+
+    * a stronghold is a sequence of sticks that enclose an area of the board. The smallest area is a 1x1 square, requiring four sticks.
+    * a graph is a set of sticks of the same color that are connected to each other via the grid, that are not part of a stronghold.
+
+Rules
+
+Initially, each player places all his 10 initial sticks in a single turn on their defensive lines, either horizontally or vertically. The remaining sticks stay in reserve
+
+On his turn, the player picks a stick from the reserve and places it where it must be connected to another friendly stick already on board.
+    If all sticks are already on board, then players must reposition one of their sticks, that again must be connected to another friendly stick
+    All enemy graphs that touch the current moved stick are captured; in the event of a capture, the moved stick is also permanently removed from play
+    
+If a player creates a stronghold, every friendly every inside it can also the repositioned in this same turn (or afterwards)
+    Relocating sticks from inside a stronghold might create a new stronghold, and the relocation rules apply again
+    
+The player that places a friendly stick over the adversary's defense line (so, the stick must be placed horizontally) wins the game.
+
+Players should be Red and White.
+
+Draw the board with 10 rows and 13 columns, so that the defense lines are horizontal. Draw a horizontal red line near the Red's defense line, and a horizontal white line in White's defense line. Let White be in the bottom.
+
+Also, in order to visualize strongholds use a different color tone. For red sticks, use #EF5350 for normal sticks and #B22222 for sticks from a stronghold. For white sticks use #E8DCCB for normal sticks, and #F2D47A for sticks in a stronghold.

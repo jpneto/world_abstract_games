@@ -1,0 +1,7 @@
+Using the webpage made in Palanquée, please replace the GAME definition with the rules stated below. Add other pieces or move types only if the new game needs them, and also change the engine's move generation, evaluation and the interface click handling where needed. Keep the interface features: Undo/Redo, the history navigation buttons, the computer opponent with three levels, the simulation tool, board coordinates, and the gold last-move marker to identify all pieces moved or placed in the previous turn.
+
+The name of the game is Ringkampf.
+
+Ringkampf is a 1928 Checkers-like game published by Otto Maier Verlag. It is played on a 8x8 square board, with 16 pieces per player, which are placed on the first two rows of each player's side. A metal ring is placed on each piece. Movements and jumps are diagonal. Jumps over enemy stones imply capture, and are multiple. Jumps over friendly are also allowed. If a piece reaches its last row, it becomes a double piece and gets a red ring. If a piece captures a double piece, it becomes a double piece itself by taking over the red ring. The double piece can diagonally slide. If it jumps over a friendly piece, it must move to the immediate next square. The goal is capture the enemy rings. The game ends when a player only has one piece left that cannot capture on the next move. The winner is the player with more rings.
+
+Use Black and White pieces, and red rings.

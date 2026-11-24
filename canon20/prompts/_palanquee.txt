@@ -1,0 +1,3 @@
+Using the webpage made in https://claude.ai/artifact/DAqWHVndo3agKrCg6LbmyD, please replace the GAME definition with the rules stated below. Add other pieces or move types only if the new game needs them, and also change the engine's move generation, evaluation and the interface click handling where needed. Keep the interface features: Undo/Redo, the history navigation buttons, the computer opponent with three levels, the simulation tool, board coordinates, and the gold last-move marker.
+
+The game's name is Palanquée.

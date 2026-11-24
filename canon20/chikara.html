@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Chikara</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
+<style>
+:root{--bg:#eef0e6;--ink:#1f2a1c;--mute:#5d6a56;--cell:#dfe3cf;--edge:#b9bfa3;--hi:#e0803a;--panel:#fff;--line:#c5cab4;--wood:#5f7d68;--woodE:#3f5646;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f;--wood:#3f5a48;--woodE:#24342a}}
+:root[data-theme="dark"]{--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f;--wood:#3f5a48;--woodE:#24342a}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+main{max-width:1080px;margin:0 auto;padding:16px 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.right>.bar:first-child{margin-top:0}
+@media (min-width:860px){.layout{grid-template-columns:minmax(0,600px) minmax(300px,1fr);gap:28px;align-items:start}}
+h1{font:700 2rem/1.1 "Bricolage Grotesque",Georgia,serif;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+select,button.ctl{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.ctl:disabled,select:disabled,input:disabled{opacity:.45;cursor:default}
+label.f{color:var(--mute);font-size:.9rem}
+input[type=number]{width:4.5em;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+button.ctl.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button.ctl.icon{display:inline-flex;align-items:center;justify-content:center;padding:6px 10px}
+button.ctl.icon svg{width:18px;height:18px;fill:currentColor;display:block}
+.navlab{min-width:7.5em;text-align:center;color:var(--mute);font-variant-numeric:tabular-nums}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.pl{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:8px 12px;display:flex;justify-content:space-between;align-items:baseline;gap:6px}
+.pl.on{border-color:var(--hi)}
+.pl b{font:700 1.6rem "Bricolage Grotesque",Georgia,serif}
+.pl small{color:var(--mute)}
+#status{min-height:1.5em;font-weight:600;margin:6px 0}
+#board svg{display:block;width:100%;max-width:600px;margin:0 auto;touch-action:manipulation}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+details li{margin:4px 0}
+.legend{color:var(--mute);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+<h1 id="gtitle"></h1>
+<p class="sub" id="gsub"></p>
+<div class="layout">
+<div class="left">
+<div id="board"></div>
+<p class="legend">Sticks lie between grid points. Click an empty slot marked with a dot to place a stick there, or click one of your sticks to reposition it (allowed once your reserve is empty, or for sticks inside one of your strongholds). Dots: green = legal, red ring = the stick touches an enemy graph and captures it (and is itself lost), gold = wins. Sticks in the darker red or the gold tone form strongholds and cannot be captured. The red and white bars mark the two defense lines. The gold outline marks the stick placed last and the small gold dot where it came from; a gold dashed slot marks a capturing stick that left the board, and faded dashed sticks are the ones it captured.</p>
+</div>
+<aside class="right">
+<div class="bar">
+  <select id="mode" aria-label="Mode"><option value="ai">Play the computer</option><option value="2p">Two players</option></select>
+  <select id="level" aria-label="Computer strength"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select>
+  <select id="side" aria-label="Your side"></select>
+  <button class="ctl primary" id="new">New game</button>
+  <button class="ctl" id="undo">Undo</button>
+  <button class="ctl" id="redo">Redo</button>
+  <button class="ctl" id="rem">End turn</button>
+</div>
+<div class="bar" id="nav" role="group" aria-label="Game history">
+  <button class="ctl icon" id="nFirst" aria-label="Go to the beginning" title="Go to the beginning"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="2.5" height="14"/><path d="M19 5v14L8 12z"/></svg></button>
+  <button class="ctl icon" id="nPrev" aria-label="One move back" title="One move back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 5v14L6 12z"/></svg></button>
+  <span class="navlab" id="nlab" aria-live="polite">Move 0 of 0</span>
+  <button class="ctl icon" id="nNext" aria-label="One move forward" title="One move forward"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5v14l11-7z"/></svg></button>
+  <button class="ctl icon" id="nLast" aria-label="Go to the last move" title="Go to the last move"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5v14l11-7z"/><rect x="17.5" y="5" width="2.5" height="14"/></svg></button>
+</div>
+<div class="score">
+  <div class="pl" id="p0"><span><span id="n0"></span> <small id="d0"></small></span><b id="s0">0</b></div>
+  <div class="pl" id="p1"><span><span id="n1"></span> <small id="d1"></small></span><b id="s1">0</b></div>
+</div>
+<div id="status" aria-live="polite"></div>
+<div id="last" class="legend" style="min-height:2.6em;margin:0 0 8px"></div>
+<div class="bar">
+  <label class="f">Simulation games <input id="simN" type="number" min="10" max="1000" value="10"></label>
+  <label class="f">Random opening moves <input id="simR" type="number" min="0" max="20" value="4"></label>
+  <button class="ctl" id="sim">Simulation</button>
+</div>
+<div id="simout" class="legend" style="white-space:pre-line;margin:0 0 8px"></div>
+<details>
+<summary>Rules</summary>
+<ul id="rules"></ul>
+</details>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+/* =====================================================================
+   1. GAME DEFINITION  - Chikara rules, grid geometry, strongholds, captures, move generation
+   2. ENGINE           - minimax (beam-limited) computer opponent, simulations
+   3. INTERFACE        - SVG board, click handling, controls
+   A move is {t:"set"|"put"|"mov"|"end", i:from stick slot (or null), j:to slot, ns:resulting state}.
+   A state is {e:slots (0 empty, 1 Red, 2 White), turn, res:[reserveRed,reserveWhite], sn:setup sticks placed,
+               cap:[captured by Red, by White], rg:[regions], sg:[stronghold flags], bon:stronghold bonus or null, w:winner or -1}.
+   ===================================================================== */
+var $=function(i){return document.getElementById(i)};
+
+/* ============================ 1. GAME DEFINITION ============================ */
+var TOTAL=26,SETUPN=10;
+var GAME={
+  title:"Chikara",
+  subtitle:"10×13 grid of points, 26 sticks each. Build strongholds, capture loose enemy graphs, and lay a stick on the enemy defense line.",
+  sides:[{name:"Red",color:"#EF5350",strong:"#B22222"},{name:"White",color:"#E8DCCB",strong:"#F2D47A"}],
+  rules:[
+  {h:"Board and sticks",items:[
+    "The board is a grid of 10×13 points. Sticks are placed between two neighbouring points, horizontally or vertically.",
+    "Each player’s first line, along the long (13-point) side, is his defense line: Red’s is the top row (row 10), White’s the bottom row (row 1). Each player has 26 sticks. Red sets up and moves first."]},
+  {h:"Definitions",items:[
+    "A stronghold is a set of friendly sticks that encloses an area of the board; the smallest is a 1×1 square made of four sticks. Stronghold sticks are drawn in a different tone (dark red for Red, gold for White).",
+    "A graph is a set of friendly sticks that are connected to each other through shared grid points and are not part of a stronghold.",
+    "A stick is inside a stronghold when the board areas on both of its sides are enclosed by friendly sticks."]},
+  {h:"Setup",items:[
+    "Red first places all ten of his initial sticks on his defense line in one turn: horizontally on it, or vertically with one end on it. Then White places his ten the same way. The other 16 sticks stay in reserve.", "From then on the players alternate, placing or moving a single stick per turn (Red first)."]},
+  {h:"Turn",items:[
+    "Take a stick from the reserve and place it on an empty slot touching (sharing a grid point with) a friendly stick already on the board.",
+    "When the reserve is empty, reposition one of your sticks instead; at its new place it must touch another friendly stick.",
+    "A stick inside one of your strongholds may always be repositioned as your move, even while you still have a reserve.",
+    {t:"Capture:",sub:[
+      "every enemy graph that touches the stick just placed or moved is captured and leaves the game;",
+      "when that happens, the capturing stick is also permanently removed from play;",
+      "enemy stronghold sticks are never captured."]},
+    {t:"Strongholds:",sub:[
+      "if your move creates a new stronghold, every friendly stick inside it may also be repositioned in this same turn, one at a time, each at most once; press End turn to stop;",
+      "a repositioning that creates another stronghold makes the sticks inside that one available too."]}]},
+  {h:"End of the game",items:[
+    "You win as soon as you place a stick horizontally on the adversary’s defense line. This counts even if that stick also makes a capture.",
+    "A player who cannot move on his turn loses."]}],
+  stats:function(s,i){var p=i+1,n=0,g=0;
+    for(var k=0;k<NE;k++)if(s.e[k]===p){n++;if(s.sg[i][k])g++}
+    return{big:n+s.res[i],text:"· "+n+" on board, "+s.res[i]+" in reserve"+(g?", "+g+" in strongholds":"")+(s.cap[i]?", captured "+s.cap[i]:"")}},
+  describe:function(s){return s.ev||""}
+};
+var W=13,H=10,NP=W*H,CW=W-1,CH=H-1,NCELL=CW*CH,E=[],PE=[],EN=[],SIDE=[],CELLE=[],BORDER=[],DEF=[0,H-1],GOAL=[H-1,0],SETUP=[[],[]],SETUPL=[[],[]],ADV=[[],[]];
+function pt(x,y){return y*W+x}
+for(var k0=0;k0<NP;k0++)PE.push([]);
+for(var c0=0;c0<NCELL;c0++)CELLE.push([]);
+(function(){
+  var x,y,e;
+  for(y=0;y<H;y++)for(x=0;x<CW;x++)E.push({h:1,x:x,y:y,a:pt(x,y),b:pt(x+1,y),s:[y>0?(y-1)*CW+x:-1,y<CH?y*CW+x:-1]});
+  for(y=0;y<CH;y++)for(x=0;x<W;x++)E.push({h:0,x:x,y:y,a:pt(x,y),b:pt(x,y+1),s:[x>0?y*CW+x-1:-1,x<CW?y*CW+x:-1]});
+  E.forEach(function(d,i){
+    PE[d.a].push(i);PE[d.b].push(i);
+    if(d.s[0]>=0)CELLE[d.s[0]].push(i);if(d.s[1]>=0)CELLE[d.s[1]].push(i);
+    if(d.s[0]<0||d.s[1]<0)BORDER.push(i);
+    for(var P=0;P<2;P++){
+      var r=DEF[P],on=d.h?d.y===r:(d.y===r||d.y+1===r);
+      SETUP[P][i]=on?1:0;if(on)SETUPL[P].push(i);
+      ADV[P][i]=P===0?d.y+(d.h?0:1):H-1-d.y;   // how far the stick reaches towards the enemy line
+    }
+  });
+})();
+var NE=E.length;
+E.forEach(function(d,i){var l=[];PE[d.a].concat(PE[d.b]).forEach(function(k){if(k!==i&&l.indexOf(k)<0)l.push(k)});EN[i]=l});
+function pn(p){return String.fromCharCode(97+p%W)+(H-Math.floor(p/W))}
+function sn(i){return pn(E[i].a)+"–"+pn(E[i].b)}
+// enclosed regions of player p: r[cell] = 0 outside, >0 id of an enclosed area; n[id] = its size
+function regions(o,p){
+  var r=new Int16Array(NCELL).fill(-1),n=[0],q=[],h,c,k,e,d,id,i;
+  function grow(lab){
+    for(;h<q.length;h++){c=q[h];
+      for(k=0;k<CELLE[c].length;k++){e=CELLE[c][k];if(o[e]===p)continue;
+        d=E[e].s[0]===c?E[e].s[1]:E[e].s[0];if(d>=0&&r[d]<0){r[d]=lab;q.push(d)}}}
+  }
+  for(i=0;i<BORDER.length;i++){e=BORDER[i];if(o[e]===p)continue;c=E[e].s[0]>=0?E[e].s[0]:E[e].s[1];if(r[c]<0){r[c]=0;q.push(c)}}
+  h=0;grow(0);
+  for(i=0;i<NCELL;i++)if(r[i]<0){id=n.length;q=[i];r[i]=id;h=0;grow(id);n.push(q.length)}
+  return{r:r,n:n};
+}
+function sideR(rg,c){return c<0?0:rg.r[c]}
+// stronghold sticks: the areas on their two sides differ (the stick lies on a closed loop)
+function strong(o,p,rg){
+  var f=new Uint8Array(NE);
+  for(var i=0;i<NE;i++)if(o[i]===p&&sideR(rg,E[i].s[0])!==sideR(rg,E[i].s[1]))f[i]=1;
+  return f;
+}
+function inside(s,P,i){var rg=s.rg[P];return sideR(rg,E[i].s[0])>0&&sideR(rg,E[i].s[1])>0}
+function setupDone(s){return s.sn>=2*SETUPN}
+function mk(o,turn,res,sn0,cap){
+  var rg=[regions(o,1),regions(o,2)];
+  return{e:o,turn:turn,res:res,sn:sn0,cap:cap,rg:rg,sg:[strong(o,1,rg[0]),strong(o,2,rg[1])],w:-1,bon:null,ev:"",mv:null};
+}
+function newState(){return mk(new Uint8Array(NE),0,[TOTAL-SETUPN,TOTAL-SETUPN],0,[0,0])}
+function nameOf(s){return GAME.sides[s.turn].name}
+function touches(o,j,p,skip){for(var m=0;m<EN[j].length;m++){var k=EN[j][m];if(k!==skip&&o[k]===p)return true}return false}
+// slots where stick i (or a reserve stick when i is null) may go
+function targets(s,i){
+  var p=s.turn+1,o=s.e,out=[];
+  for(var j=0;j<NE;j++)if(!o[j]&&touches(o,j,p,i))out.push(j);
+  return out;
+}
+// sticks the player may reposition as his move
+function movable(s){
+  var P=s.turn,p=P+1,out=[];
+  if(s.bon)return s.bon.el.slice();
+  for(var i=0;i<NE;i++)if(s.e[i]===p&&(s.res[P]===0||inside(s,P,i)))out.push(i);
+  return out;
+}
+// areas that are enclosed after the move but were not enclosed (as exactly that area) before
+function newAreas(rb,ra){
+  var first=new Int16Array(ra.n.length).fill(-2),nw=new Uint8Array(ra.n.length),c,a,b;
+  for(c=0;c<NCELL;c++){a=ra.r[c];if(a>0){b=rb.r[c];if(first[a]===-2)first[a]=b;else if(first[a]!==b)first[a]=-1}}
+  for(a=1;a<ra.n.length;a++)nw[a]=!(first[a]>0&&rb.n[first[a]]===ra.n[a])?1:0;
+  return nw;
+}
+function hasMove(s){
+  if(s.w>=0)return false;
+  if(!setupDone(s)||s.bon)return true;
+  var P=s.turn,p=P+1,j,m,i,list;
+  if(s.res[P]>0)for(j=0;j<NE;j++)if(!s.e[j]&&touches(s.e,j,p,-1))return true;
+  list=movable(s);
+  for(m=0;m<list.length;m++){i=list[m];for(j=0;j<NE;j++)if(!s.e[j]&&touches(s.e,j,p,i))return true}
+  return false;
+}
+function fin(ns){if(ns.w<0&&!hasMove(ns)){ns.w=1-ns.turn;ns.ev=(ns.ev+" "+GAME.sides[ns.turn].name+" has no legal move.").trim()}return ns}
+// setup: a stick on one's own defense line
+function setMove(s,j){
+  var o=s.e.slice(),P=s.turn;o[j]=P+1;
+  var n1=s.sn+1,ns=mk(o,n1<SETUPN||n1>=2*SETUPN?0:1,s.res,n1,s.cap);
+  ns.ev=nameOf(s)+" set up a stick on "+sn(j)+".";ns.mv={to:j};
+  return{t:"set",i:null,j:j,ns:fin(ns)};
+}
+// place a reserve stick (i null) or reposition stick i, to slot j
+function act(s,i,j){
+  var P=s.turn,p=P+1,q=3-p,o=s.e.slice(),res=s.res.slice(),cap=s.cap.slice(),esg=s.sg[1-P],gone=[],seen=new Uint8Array(NE),h,k,m,txt;
+  if(i==null)res[P]--;else o[i]=0;
+  o[j]=p;
+  var win=E[j].h&&E[j].y===GOAL[P];
+  for(m=0;m<EN[j].length;m++){k=EN[j][m];if(o[k]===q&&!esg[k]&&!seen[k]){seen[k]=1;gone.push(k)}}
+  for(h=0;h<gone.length;h++)for(m=0;m<EN[gone[h]].length;m++){k=EN[gone[h]][m];if(o[k]===q&&!esg[k]&&!seen[k]){seen[k]=1;gone.push(k)}}
+  txt=nameOf(s)+(i==null?" placed a stick on "+sn(j):" moved "+sn(i)+" to "+sn(j))+".";
+  if(gone.length){for(h=0;h<gone.length;h++)o[gone[h]]=0;o[j]=0;cap[P]+=gone.length;
+    txt+=" It captured "+gone.length+" "+GAME.sides[1-P].name+" stick"+(gone.length>1?"s":"")+" and left the game."}
+  var ns=mk(o,1-P,res,s.sn,cap);
+  ns.mv={to:j,from:i,cap:gone.length>0,gone:gone,by:P};
+  if(win){ns.w=P;ns.turn=P;ns.ev=txt+" It lies on "+GAME.sides[1-P].name+"’s defense line: "+nameOf(s)+" wins!";return{t:i==null?"put":"mov",i:i,j:j,ns:ns}}
+  var done=s.bon?s.bon.done.concat([j]):[j],el=s.bon?s.bon.el.filter(function(x){return x!==i&&o[x]===p}):[],add=0;
+  if(!gone.length){
+    var nw=newAreas(s.rg[P],ns.rg[P]),ra=ns.rg[P],a,b;
+    for(k=0;k<NE;k++)if(o[k]===p&&done.indexOf(k)<0&&el.indexOf(k)<0){
+      a=sideR(ra,E[k].s[0]);b=sideR(ra,E[k].s[1]);
+      if(a>0&&b>0&&(nw[a]||nw[b])){el.push(k);add++}}
+  }
+  if(add)txt+=" New stronghold: "+add+" stick"+(add>1?"s":"")+" inside may be repositioned this turn.";
+  if(el.length){ns.turn=P;ns.bon={el:el,done:done}}
+  ns.ev=txt;
+  return{t:i==null?"put":"mov",i:i,j:j,ns:fin(ns)};
+}
+function endMove(s){
+  var ns={e:s.e,turn:1-s.turn,res:s.res,sn:s.sn,cap:s.cap,rg:s.rg,sg:s.sg,w:-1,bon:null,ev:nameOf(s)+" ended the turn.",mv:s.mv};
+  return{t:"end",i:null,j:null,ns:fin(ns)};
+}
+// move generator. With prune (engine), repositioning considers at most 6 sticks: the ones furthest back that
+// are not in a stronghold, plus every stick inside a stronghold.
+function legal(s,prune){
+  var out=[],P=s.turn,p=P+1,i,j,k,src,t;if(s.w>=0)return out;
+  if(!setupDone(s)){SETUPL[P].forEach(function(j){if(!s.e[j])out.push(setMove(s,j))});return out}
+  if(s.bon)out.push(endMove(s));
+  if(!s.bon&&s.res[P]>0)targets(s,null).forEach(function(j){out.push(act(s,null,j))});
+  src=movable(s);
+  if(prune&&!s.bon&&s.res[P]===0&&src.length>6){
+    var ins=src.filter(function(i){return inside(s,P,i)}),rest=src.filter(function(i){return !inside(s,P,i)});
+    rest.sort(function(a,b){return (s.sg[P][a]-s.sg[P][b])||(ADV[P][a]-ADV[P][b])});
+    src=ins.concat(rest).slice(0,Math.max(6,ins.length));
+  }
+  for(k=0;k<src.length;k++){i=src[k];t=targets(s,i);for(j=0;j<t.length;j++)out.push(act(s,i,t[j]))}
+  return out;
+}
+
+/* ================================ 2. ENGINE ================================ */
+var AIW={M:8,T:40,T0:1,TH:.85,TH2:.35,STR:.15,NEAR:200};   // evaluation weights
+// graphs (non-stronghold components) of player P: id per stick and sizes
+function graphs(s,P){
+  var p=P+1,id=new Int16Array(NE).fill(-1),sz=[],i,h,q,k,m;
+  for(i=0;i<NE;i++)if(s.e[i]===p&&!s.sg[P][i]&&id[i]<0){
+    q=[i];id[i]=sz.length;
+    for(h=0;h<q.length;h++)for(m=0;m<EN[q[h]].length;m++){k=EN[q[h]][m];if(s.e[k]===p&&!s.sg[P][k]&&id[k]<0){id[k]=sz.length;q.push(k)}}
+    sz.push(q.length);
+  }
+  return{id:id,sz:sz};
+}
+// largest number of enemy sticks player P could capture with one stick right now
+function threat(s,P){
+  if(!setupDone(s))return 0;
+  var p=P+1,q=3-p,o=s.e,G=graphs(s,1-P),own=new Uint8Array(NP),best=0,j,a,b,ids,sum,L,m,k,n=0;
+  for(j=0;j<NE;j++)if(o[j]===p){own[E[j].a]=own[E[j].b]=1;n++}
+  if(s.res[P]===0&&n<2)return 0;
+  for(j=0;j<NE;j++){
+    if(o[j])continue;a=E[j].a;b=E[j].b;if(!own[a]&&!own[b])continue;
+    ids=[];sum=0;L=PE[a].concat(PE[b]);
+    for(m=0;m<L.length;m++){k=L[m];if(o[k]===q&&G.id[k]>=0&&ids.indexOf(G.id[k])<0){ids.push(G.id[k]);sum+=G.sz[G.id[k]]}}
+    if(sum>best)best=sum;
+  }
+  return best;
+}
+// fewest sticks player P still needs to lay one on the enemy defense line (0-1 shortest path over grid points;
+// own sticks cost 0, empty slots 1, or 2 when the far point touches an enemy stick, enemy sticks block)
+function dist(s,P){
+  var p=P+1,q=3-p,o=s.e,D=new Int16Array(NP).fill(999),B=[[]],t,h,c,k,j,w,nd,Bt,far,m,en=new Uint8Array(NP),any=0;
+  for(j=0;j<NE;j++){if(o[j]===q){en[E[j].a]=en[E[j].b]=1}else if(o[j]===p){D[E[j].a]=D[E[j].b]=0;any=1}}
+  if(!any)return 99;
+  for(c=0;c<NP;c++)if(D[c]===0)B[0].push(c);
+  for(t=0;t<B.length;t++){
+    Bt=B[t];if(!Bt)continue;
+    for(h=0;h<Bt.length;h++){
+      c=Bt[h];if(D[c]!==t)continue;
+      if(Math.floor(c/W)===GOAL[P])return t+1;
+      for(m=0;m<PE[c].length;m++){
+        k=PE[c][m];if(o[k]===q)continue;
+        far=E[k].a===c?E[k].b:E[k].a;
+        w=o[k]===p?0:(en[far]?2:1);
+        nd=t+w;if(nd<D[far]){D[far]=nd;(B[nd]||(B[nd]=[])).push(far)}
+      }
+    }
+  }
+  return 99;
+}
+function mat(s,P){var p=P+1,n=s.res[P];for(var i=0;i<NE;i++)if(s.e[i]===p)n+=1+(s.sg[P][i]?AIW.STR:0);return n}
+function gd(d){return AIW.T/(d+AIW.T0)}
+function ev(s){   // value from Red's point of view
+  if(s.w>=0)return s.w===0?1000:-1000;
+  var d0=dist(s,0),d1=dist(s,1),v=AIW.M*(mat(s,0)-mat(s,1))+gd(d0)-gd(d1);
+  if(!setupDone(s))return v;
+  var c0=Math.max(0,threat(s,0)-1),c1=Math.max(0,threat(s,1)-1),sg=s.turn===0?1:-1,me=s.turn===0?c0:c1,him=s.turn===0?c1:c0;
+  v+=sg*AIW.M*(AIW.TH*me-AIW.TH2*him);
+  if((s.turn===0?d0:d1)===1)v+=sg*AIW.NEAR;
+  return v;
+}
+var BEAM=[0,0,10,5],NOISE=[0,1.0,.3,.1];
+function val1(ns,P){return ns.w>=0?(ns.w===P?1001:-1001):(P===0?1:-1)*ev(ns)}
+// value of state s for the player to move (a stronghold bonus keeps the same player on move)
+function nega(s,d,al,be){
+  if(s.w>=0)return (s.w===s.turn?1:-1)*(1000+d);
+  if(d===0)return (s.turn===0?1:-1)*ev(s);
+  var ms=legal(s,true),best=-1e9,P=s.turn,i,v;
+  if(!ms.length)return -1000-d;
+  ms.forEach(function(m){m.v=val1(m.ns,P)});
+  if(d===1){ms.forEach(function(m){if(m.v>best)best=m.v});return best}
+  ms.sort(function(a,b){return b.v-a.v});ms=ms.slice(0,BEAM[3]);
+  for(i=0;i<ms.length;i++){v=child(ms[i].ns,d-1,al,be,P);if(v>best)best=v;if(best>al)al=best;if(al>=be)break}
+  return best;
+}
+function child(ns,d,al,be,P){return ns.turn===P&&ns.w<0?nega(ns,d,al,be):(ns.w>=0?(ns.w===P?1:-1)*(1000+d):-nega(ns,d,-be,-al))}
+function aiMove(s){
+  var ms=legal(s,true),lv=+$("level").value,P=s.turn,best=-1e9,pick=null,i,v;
+  if(!ms.length)return null;
+  for(i=0;i<ms.length;i++)if(ms[i].ns.w===P)return ms[i];    // a move that wins right now
+  ms.forEach(function(m){m.v=val1(m.ns,P)+Math.random()*.5});
+  if(lv>1){ms.sort(function(a,b){return b.v-a.v});ms=ms.slice(0,BEAM[2])}
+  for(i=0;i<ms.length;i++){
+    v=(lv===1?ms[i].v:child(ms[i].ns,lv-1,-1e9,1e9,P))+Math.random()*NOISE[lv];
+    if(v>best){best=v;pick=ms[i]}
+  }
+  return pick;
+}
+var sim=null;
+function runSim(){   // computer vs computer, to look for first/second-player advantage
+  if(sim){sim.stop=true;return}
+  var CAP=400,me=sim={stop:false},TOTALG=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?4:+$("simR").value)),
+      done=0,w=[0,0],un=0,g=newState(),plies=0,lvName=$("level").options[$("level").selectedIndex].text,nm=GAME.sides.map(function(x){return x.name});
+  ["mode","side","level","new","undo","redo","rem","simN","simR","nFirst","nPrev","nNext","nLast"].forEach(function(i){$(i).disabled=true});
+  $("sim").textContent="Stop simulation";
+  $("simout").textContent="Simulating at "+lvName+" level… 0/"+TOTALG;
+  function finish(stopped){
+    sim=null;$("sim").textContent="Simulation";
+    $("mode").disabled=$("new").disabled=$("simN").disabled=$("simR").disabled=false;
+    $("level").disabled=$("side").disabled=$("mode").value==="2p";
+    var mg=done?(196*Math.sqrt((w[0]/done)*(1-w[0]/done)/done)).toFixed(1):"0";
+    var pc=function(n){return done?(100*n/done).toFixed(1)+"%":"n/a"};
+    $("simout").textContent=(stopped?"Stopped after ":"")+done+" games at "+lvName+" level (computer vs computer), first "+RND+" moves random.\n"+
+      "First player ("+nm[0]+") won "+pc(w[0])+" ("+w[0]+" games, margin ±"+mg+" points at 95% confidence). Second player ("+nm[1]+") won "+pc(w[1])+" ("+w[1]+" games)."+(un?" Unfinished (stopped at "+CAP+" plies): "+un+".":"");
+    render();
+  }
+  function stepSim(){
+    if(me.stop){finish(true);return}
+    var t0=Date.now(),m,ms;
+    while(Date.now()-t0<40){
+      if(g.w>=0||plies>=CAP){
+        if(g.w>=0)w[g.w]++;else un++;
+        done++;g=newState();plies=0;
+        if(done>=TOTALG){finish(false);return}
+        continue;
+      }
+      if(plies<RND){ms=legal(g,true);m=ms[Math.floor(Math.random()*ms.length)]}
+      else m=aiMove(g);
+      if(!m){g.w=1-g.turn;continue}
+      g=m.ns;plies++;
+    }
+    $("simout").textContent="Simulating at "+lvName+" level… "+done+"/"+TOTALG;
+    setTimeout(stepSim,0);
+  }
+  stepSim();
+}
+
+/* =============================== 3. INTERFACE =============================== */
+var hist,redo=[],view=null,sel,over,busy,note="";   // view: null = live position, otherwise the index being reviewed
+var GREEN="#2e9e4f",RED="#d33",GOLD="#e0a800",OUTL="#1d241d",SH=.1;
+function cur(){return hist[hist.length-1]}
+function line(){return hist.concat(redo.slice().reverse())}   // every position, including those that can still be redone
+function browsing(){return view!==null}
+function shown(){return view===null?cur():line()[view]}
+function goto(k){
+  if(busy||sim)return;
+  var n=hist.length-1+redo.length;k=Math.max(0,Math.min(n,k));
+  view=k===hist.length-1?null:k;sel=null;note="";render();
+}
+// Undo/Redo while reviewing: leave review and play on from the reviewed position (in computer mode, from the nearest position where it is the human's turn)
+function unlock(dir){
+  var L=line(),k=view,j;
+  if($("mode").value==="ai"){
+    j=k;while(j>=0&&j<L.length&&L[j].w<0&&L[j].turn!==+$("side").value)j+=dir;
+    if(j>=0&&j<L.length)k=j;
+  }
+  hist=L.slice(0,k+1);redo=L.slice(k+1).reverse();view=null;sel=null;note="";over=false;render();maybeAI();
+}
+function humanTurn(){return $("mode").value==="2p"||cur().turn===+$("side").value}
+function start(){
+  hist=[newState()];redo=[];view=null;sel=null;note="";$("level").disabled=$("side").disabled=$("mode").value==="2p";over=false;busy=false;
+  render();maybeAI();
+}
+function seg(i,sh){var d=E[i],ax=d.a%W,ay=Math.floor(d.a/W),bx=d.b%W,by=Math.floor(d.b/W),ux=(bx-ax)*sh,uy=(by-ay)*sh;
+  return'x1="'+(ax+ux)+'" y1="'+(ay+uy)+'" x2="'+(bx-ux)+'" y2="'+(by-uy)+'"'}
+function mid(i){var d=E[i];return[(d.a%W+d.b%W)/2,(Math.floor(d.a/W)+Math.floor(d.b/W))/2]}
+function dotFor(m,P){var c=mid(m.j),win=m.ns.w===P,cp=m.ns.mv&&m.ns.mv.cap,col=win?GOLD:cp?RED:GREEN;
+  return'<circle cx="'+c[0]+'" cy="'+c[1]+'" r=".14" fill="'+(cp&&!win?'none':col)+'" stroke="'+col+'" stroke-width=".07" fill-opacity=".9" pointer-events="none"/>'}
+function render(){
+  var br=browsing(),s=shown(),sd=GAME.sides,h=[],P=s.turn,p=P+1,i,k,nT=hist.length-1+redo.length,kk=br?view:hist.length-1,lock=busy||!!sim,mv=s.mv;
+  over=s.w>=0;
+  h.push('<svg viewBox="-1.35 -1.45 14.7 11.9" role="img" aria-label="Chikara board">');
+  h.push('<rect x="-.6" y="-.75" width="13.2" height="10.5" rx=".35" fill="var(--wood)" stroke="var(--woodE)" stroke-width=".06"/>');
+  (function(){   // coordinates: letters = columns (top and bottom), numbers = rows (left and right), row 1 at the bottom
+    function lab(x,y,t){h.push('<text x="'+x+'" y="'+y+'" font-size=".46" text-anchor="middle" dominant-baseline="central" fill="var(--mute)" pointer-events="none">'+t+'</text>')}
+    for(var c=0;c<W;c++){var L=String.fromCharCode(97+c);lab(c,-1.1,L);lab(c,H-1+1.1,L)}
+    for(var r=0;r<H;r++){lab(-.98,r,H-r);lab(W-1+.98,r,H-r)}
+  })();
+  // defense lines
+  h.push('<line x1="-.25" y1="-.45" x2="'+(W-1+.25)+'" y2="-.45" stroke="'+sd[0].color+'" stroke-width=".13" stroke-linecap="round"/>');
+  h.push('<line x1="-.25" y1="'+(H-1+.45)+'" x2="'+(W-1+.25)+'" y2="'+(H-1+.45)+'" stroke="'+OUTL+'" stroke-width=".19" stroke-linecap="round" stroke-opacity=".5"/>');
+  h.push('<line x1="-.25" y1="'+(H-1+.45)+'" x2="'+(W-1+.25)+'" y2="'+(H-1+.45)+'" stroke="#fff" stroke-width=".13" stroke-linecap="round"/>');
+  for(i=0;i<NE;i++)if(!s.e[i])h.push('<line '+seg(i,.12)+' stroke="#fff" stroke-opacity=".13" stroke-width=".05"/>');
+  for(k=0;k<NP;k++)h.push('<circle cx="'+(k%W)+'" cy="'+Math.floor(k/W)+'" r=".075" fill="#101810" fill-opacity=".55"/>');
+  // last move: ghosts of captured sticks, gold dot where the stick came from, dashed gold slot for a capturing stick
+  if(mv){
+    if(mv.gone)mv.gone.forEach(function(g){h.push('<line '+seg(g,SH)+' stroke="'+sd[1-mv.by].color+'" stroke-opacity=".6" stroke-width=".09" stroke-dasharray=".12 .1"/>')});
+    if(mv.cap)h.push('<line '+seg(mv.to,SH)+' stroke="'+GOLD+'" stroke-width=".11" stroke-dasharray=".14 .1"/>');
+    if(mv.from!=null){var f=mid(mv.from);h.push('<circle cx="'+f[0]+'" cy="'+f[1]+'" r=".13" fill="'+GOLD+'"/>')}
+  }
+  var canAct=!br&&!over&&humanTurn()&&!busy,elig=canAct&&s.bon?s.bon.el:[];
+  for(i=0;i<NE;i++)if(s.e[i]){
+    var q=s.e[i],wd=.17,col=s.sg[q-1][i]?sd[q-1].strong:sd[q-1].color;
+    if(sel&&sel.i===i)h.push('<line '+seg(i,SH)+' stroke="var(--hi)" stroke-width="'+(wd+.24)+'" stroke-linecap="round"/>');
+    else if(elig.indexOf(i)>=0)h.push('<line '+seg(i,SH)+' stroke="var(--hi)" stroke-opacity=".7" stroke-width="'+(wd+.2)+'" stroke-linecap="round" stroke-dasharray=".12 .08"/>');
+    else if(mv&&!mv.cap&&mv.to===i)h.push('<line '+seg(i,SH)+' stroke="'+GOLD+'" stroke-width="'+(wd+.2)+'" stroke-linecap="round"/>');
+    h.push('<line '+seg(i,SH)+' stroke="'+OUTL+'" stroke-width="'+(wd+.06)+'" stroke-linecap="round"/>');
+    h.push('<line '+seg(i,SH)+' stroke="'+col+'" stroke-width="'+wd+'" stroke-linecap="round"/>');
+  }
+  // legal destinations
+  if(canAct){
+    if(sel)sel.list.forEach(function(m){h.push(dotFor(m,P))});
+    else if(!setupDone(s))SETUPL[P].forEach(function(j){if(!s.e[j]){var c=mid(j);h.push('<circle cx="'+c[0]+'" cy="'+c[1]+'" r=".14" fill="'+GREEN+'" fill-opacity=".9" pointer-events="none"/>')}});
+    else if(!s.bon&&s.res[P]>0)targets(s,null).forEach(function(j){h.push(dotFor(act(s,null,j),P))});
+  }
+  for(i=0;i<NE;i++)h.push('<line data-i="'+i+'" '+seg(i,.16)+' stroke="#000" stroke-opacity="0" stroke-width=".5" style="cursor:pointer"/>');
+  h.push('</svg>');
+  $("board").innerHTML=h.join("");
+  var names=sd.map(function(x){return x.name}),st;
+  for(i=0;i<2;i++){var t=GAME.stats(s,i);$("s"+i).textContent=t.big;$("d"+i).textContent=t.text;
+    $("p"+i).className="pl"+(!over&&s.turn===i?" on":"")}
+  if(br)st="Reviewing history (move "+kk+" of "+nT+"): the board is locked. Press Undo or Redo to play on from here.";
+  else if(over)st="Game over: "+names[s.w]+" wins.";
+  else if(!humanTurn())st=names[P]+" to move (computer thinking…)";
+  else if(!setupDone(s))st="Setup: "+names[P]+" places stick "+(s.sn%SETUPN+1)+" of "+SETUPN+" on the defense line (all ten this turn).";
+  else if(sel)st=names[P]+": click a dot to move the stick there, or the stick again to deselect.";
+  else if(s.bon)st=names[P]+": new stronghold! Reposition the highlighted sticks, or press End turn.";
+  else if(s.res[P]>0)st=names[P]+" to move: place a stick from the reserve"+(movable(s).length?", or move a stick inside a stronghold":"")+".";
+  else st=names[P]+" to move: all sticks are on the board, select one to reposition it.";
+  $("status").textContent=st;
+  $("last").textContent=(GAME.describe(s)+" "+note).trim();
+  $("undo").disabled=lock||!(br||hist.length>=2);
+  $("redo").disabled=lock||!(br||redo.length);
+  $("nFirst").disabled=$("nPrev").disabled=lock||kk<=0;
+  $("nNext").disabled=$("nLast").disabled=lock||kk>=nT;
+  $("nlab").textContent="Move "+kk+" of "+nT;
+  $("rem").disabled=!canAct||!s.bon||!!sim;
+}
+function play(ns){hist.push(ns);redo=[];sel=null;render();maybeAI()}
+function click(i){
+  if(over||busy||browsing()||!humanTurn())return;
+  var s=cur(),P=s.turn,p=P+1;note="";
+  if(!setupDone(s)){
+    if(!s.e[i]&&SETUP[P][i]){play(setMove(s,i).ns);return}
+    note="During setup, put your sticks on your defense line: lying on it, or standing on it vertically.";render();return;
+  }
+  if(sel){
+    var m=sel.list.filter(function(x){return x.j===i})[0];
+    if(m){play(m.ns);return}
+    var same=i===sel.i;sel=null;
+    if(same){render();return}
+  }
+  if(!s.e[i]){
+    if(s.bon)note="Select one of the highlighted sticks inside your new stronghold, or press End turn.";
+    else if(s.res[P]>0&&touches(s.e,i,p,-1)){play(act(s,null,i).ns);return}
+    else if(s.res[P]>0)note="A new stick must touch one of your sticks already on the board.";
+    else note="Your reserve is empty: select one of your sticks to reposition it.";
+  }else if(s.e[i]===p){
+    if(movable(s).indexOf(i)<0)note=s.bon?"Only the highlighted sticks inside the new stronghold can be repositioned now.":"You still have sticks in reserve: only sticks inside one of your strongholds can be repositioned.";
+    else{var list=targets(s,i).map(function(j){return act(s,i,j)});if(list.length)sel={i:i,list:list};else note="That stick has no slot to go to (it must touch another of your sticks)."}
+  }else note="That is an enemy stick. Capture it by placing a stick that touches its graph.";
+  render();
+}
+function maybeAI(){
+  if(over||$("mode").value!=="ai"||cur().turn===+$("side").value)return;
+  busy=true;render();
+  setTimeout(function(){
+    var c=cur(),m=aiMove(c);busy=false;
+    if(m){hist.push(m.ns);redo=[]}else{c.w=1-c.turn;c.ev=GAME.sides[c.turn].name+" has no legal move."}
+    render();maybeAI();
+  },60);
+}
+document.title=GAME.title;$("gtitle").textContent=GAME.title;$("gsub").textContent=GAME.subtitle;
+function li(x){return"<li>"+(typeof x==="string"?x:x.t+"<ul>"+x.sub.map(li).join("")+"</ul>")+"</li>"}
+$("rules").innerHTML=GAME.rules.map(function(sec){return"<li><b>"+sec.h+"</b><ul>"+sec.items.map(li).join("")+"</ul></li>"}).join("");
+$("side").innerHTML=GAME.sides.map(function(x,i){return'<option value="'+i+'">You are '+x.name+'</option>'}).join("");
+for(var i=0;i<2;i++)$("n"+i).textContent=GAME.sides[i].name;
+$("board").onclick=function(e){var t=e.target.closest("[data-i]");if(t)click(+t.getAttribute("data-i"))};
+$("new").onclick=start;$("sim").onclick=runSim;
+$("mode").onchange=$("side").onchange=start;
+$("rem").onclick=function(){
+  var s=cur();
+  if(over||busy||browsing()||!humanTurn()||!s.bon)return;
+  play(endMove(s).ns);
+};
+function aiSide(){return $("mode").value==="ai"&&cur().turn!==+$("side").value}
+$("redo").onclick=function(){
+  if(busy||sim)return;
+  if(browsing()){unlock(1);return}
+  if(!redo.length)return;
+  hist.push(redo.pop());
+  while(redo.length&&aiSide())hist.push(redo.pop());
+  sel=null;note="";render();
+};
+$("undo").onclick=function(){
+  if(busy||sim)return;
+  if(browsing()){unlock(-1);return}
+  if(hist.length<2)return;
+  redo.push(hist.pop());
+  while(hist.length>1&&aiSide())redo.push(hist.pop());
+  sel=null;over=false;note="";render();maybeAI();
+};
+$("nFirst").onclick=function(){goto(0)};
+$("nPrev").onclick=function(){goto((browsing()?view:hist.length-1)-1)};
+$("nNext").onclick=function(){goto((browsing()?view:hist.length-1)+1)};
+$("nLast").onclick=function(){goto(hist.length-1+redo.length)};
+start();
+})();
+</script>
+</body>
+</html>

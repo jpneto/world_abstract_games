@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Games</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
+<style>
+:root{--bg:#eef0e6;--ink:#1f2a1c;--mute:#5d6a56;--cell:#dfe3cf;--edge:#b9bfa3;--hi:#e0803a;--panel:#fff;--line:#c5cab4;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root{--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f}}
+html{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+main{max-width:1080px;margin:0 auto;padding:16px 12px 40px}
+h1{font:700 2rem/1.1 "Bricolage Grotesque",Georgia,serif;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+a.card{display:flex;flex-direction:column;background:var(--panel);border:2px solid var(--line);border-radius:10px;overflow:hidden;color:inherit;text-decoration:none;transition:border-color .15s,transform .15s}
+a.card:hover,a.card:focus-visible{border-color:var(--hi);transform:translateY(-2px);outline:none}
+.thumb{background:var(--cell);border-bottom:1px solid var(--line);line-height:0}
+.thumb{min-height:0}
+.thumb img{display:block;width:100%;height:240px;object-fit:contain}
+.body{padding:12px 14px 14px}
+.body h2{font:700 1.3rem/1.2 "Bricolage Grotesque",Georgia,serif;margin:0 0 4px}
+.body p{margin:0 0 8px;color:var(--mute);font-size:.95rem}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tags span{font-size:.8rem;color:var(--mute);border:1px solid var(--line);border-radius:999px;padding:1px 9px}
+.search{display:block;width:100%;max-width:420px;box-sizing:border-box;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin:0 0 16px}
+.search:focus{outline:2px solid var(--hi);outline-offset:1px}
+.empty{color:var(--mute)}
+</style>
+</head>
+<body>
+<main>
+<h1 id="title"></h1>
+<p class="sub" id="sub"></p>
+<input class="search" id="search" type="search" placeholder="Search games" aria-label="Search games" autocomplete="off">
+<div class="grid" id="grid"></div>
+</main>
+<script>
+/* =====================================================================
+   TO ADD A GAME:
+   1. Put its HTML file in the same folder.
+   2. Put a thumbnail PNG in the /images folder (about 840x600 works well).
+   3. Add one entry to GAMES below. That's it.
+   Fields: title, file, img (PNG thumbnail in /images), blurb, tags (short labels).
+   ===================================================================== */
+var SITE={title:"A 20th-Century Canon", subtitle:"Towards a Canon of 20th-Century Abstract Games"};
+
+var GAMES=[
+  {title:"Suffragetto",
+   file:"suffragetto.html",
+   blurb:"An Edwardian suffrage halma-like game.",
+   img:"images/suffragetto.png",
+   tags:["17x17","traversal","1909","Women's Social & Political Union"]},   
+
+  {title:"Ringkampf",
+   file:"ringkampf.html",
+   blurb:"A checkers-like fight on all 64 squares: leap over your own pieces, capture the enemy’s, and gather their rings onto yours.",
+   img:"images/ringkampf.png",
+   tags:["8x8","score","1928","Otto Maier Verlag"]},   
+
+  {title:"Tricolor",
+   file:"tricolor.html",
+   blurb:"Stacks where power comes from height and from the colour of the hex.",
+   img:"images/tricolor.png",
+   tags:["hexhex5","stack","elimination","1930","Maurice Kraitchik"]},   
+
+  {title:"Palanquée",
+   file:"palanquée.html",
+   blurb:"Grow plants from your seeds, capture by pincer, against the wall or by saturating a column, and launch parasites.",
+   img:"images/palanquée.png",
+   tags:["8x8","elimination","1988","Ludovic Robillard"]},   
+
+  {title:"Chikara",
+   file:"chikara.html",
+   blurb:"Build strongholds, capture loose enemy graphs, and lay a stick on the enemy defense line.",
+   img:"images/chikara.png",
+   tags:["10x13","position","1989","Mark Craig","Nick Fletcher"]},
+   
+  {title:"Mutternland",
+   file:"mutternland.html",
+   blurb:"Climb stacks of nuts with your marbles, reshape the land one nut at a time.",
+   img:"images/mutternland.png",
+   tags:["random","score","1997","Hartmut Witt"]}
+];
+
+/* ---------------------------- rendering ---------------------------- */
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function thumb(g){return g.img?'<img src="'+esc(g.img)+'" alt="" loading="lazy">':''}
+document.title=SITE.title;
+document.getElementById("title").textContent=SITE.title;
+document.getElementById("sub").textContent=SITE.subtitle;
+var grid=document.getElementById("grid"),box=document.getElementById("search");
+function card(g){
+  return '<a class="card" href="'+esc(g.file)+'"><div class="thumb">'+thumb(g)+'</div><div class="body"><h2>'+esc(g.title)+'</h2><p>'+esc(g.blurb||"")+'</p><div class="tags">'+(g.tags||[]).map(function(t){return"<span>"+esc(t)+"</span>"}).join("")+'</div></div></a>';
+}
+function show(){
+  var words=box.value.toLowerCase().split(/\s+/).filter(Boolean);
+  var list=GAMES.filter(function(g){
+    var hay=(g.title+" "+(g.blurb||"")+" "+(g.tags||[]).join(" ")).toLowerCase();
+    return words.every(function(w){return hay.indexOf(w)>=0});
+  });
+  grid.innerHTML=list.length?list.map(card).join(""):'<p class="empty">'+(GAMES.length?"No games match your search.":"No games yet.")+'</p>';
+}
+box.oninput=function(){
+  show();
+  // keep the address bar in sync so the search can be bookmarked or shared
+  try{
+    var u=new URL(location.href),v=box.value.trim();
+    if(v)u.searchParams.set("q",v);else u.searchParams.delete("q");
+    history.replaceState(null,"",u);
+  }catch(e){}
+};
+// start with a search if the URL has ?q=word
+try{box.value=new URLSearchParams(location.search).get("q")||""}catch(e){}
+show();
+</script>
+</body>
+</html>

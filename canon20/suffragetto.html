@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Suffragetto</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
+<style>
+:root{--bg:#eef0e6;--ink:#1f2a1c;--mute:#5d6a56;--cell:#dfe3cf;--edge:#b9bfa3;--hi:#e0803a;--panel:#fff;--line:#c5cab4;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f}}
+:root[data-theme="dark"]{--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+main{max-width:1120px;margin:0 auto;padding:16px 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.right>.bar:first-child{margin-top:0}
+@media (min-width:860px){.layout{grid-template-columns:minmax(0,620px) minmax(300px,1fr);gap:28px;align-items:start}}
+h1{font:700 2rem/1.1 "Bricolage Grotesque",Georgia,serif;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+select,button.ctl{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.ctl:disabled,select:disabled,input:disabled{opacity:.45;cursor:default}
+label.f{color:var(--mute);font-size:.9rem}
+input[type=number]{width:4.5em;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+button.ctl.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button.ctl.icon{display:inline-flex;align-items:center;justify-content:center;padding:6px 10px}
+button.ctl.icon svg{width:18px;height:18px;fill:currentColor;display:block}
+.navlab{min-width:7.5em;text-align:center;color:var(--mute);font-variant-numeric:tabular-nums}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.pl{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:8px 12px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.pl.on{border-color:var(--hi)}
+.pl b{font:700 1.6rem "Bricolage Grotesque",Georgia,serif;white-space:nowrap}
+.pl small{color:var(--mute)}
+#status{min-height:1.5em;font-weight:600;margin:6px 0}
+#board svg{display:block;width:100%;max-width:620px;margin:0 auto;touch-action:manipulation}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+details li{margin:4px 0}
+.legend{color:var(--mute);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+<h1 id="gtitle"></h1>
+<p class="sub" id="gsub"></p>
+<div class="layout">
+<div class="left">
+<div id="board"></div>
+<p class="legend">Click one of your pieces to select it: orange dots are the squares it can step to, purple rings the squares it can hop to (filled when the hop makes a capture). After a hop the same piece may hop again: click another purple ring, or click the piece or “End hop” to stop. Leaders and Inspectors are the large pieces with a white ring. Gold rings mark the piece moved during the turn being played (before its first action, during the previous turn), and small gold dots the squares it left and the pieces it captured. Captured pieces are shown in the Prison and the Hospital.</p>
+</div>
+<aside class="right">
+<div class="bar">
+  <select id="mode" aria-label="Mode"><option value="ai">Play the computer</option><option value="2p">Two players</option></select>
+  <select id="level" aria-label="Computer strength"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select>
+  <select id="side" aria-label="Your side"></select>
+  <button class="ctl primary" id="new">New game</button>
+  <button class="ctl" id="undo">Undo</button>
+  <button class="ctl" id="redo">Redo</button>
+</div>
+<div class="bar">
+  <button class="ctl" id="exch">Call for an exchange</button>
+  <button class="ctl" id="stop">End hop</button>
+</div>
+<div class="bar" id="nav" role="group" aria-label="Game history">
+  <button class="ctl icon" id="nFirst" aria-label="Go to the beginning" title="Go to the beginning"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="2.5" height="14"/><path d="M19 5v14L8 12z"/></svg></button>
+  <button class="ctl icon" id="nPrev" aria-label="One move back" title="One move back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 5v14L6 12z"/></svg></button>
+  <span class="navlab" id="nlab" aria-live="polite">Move 0 of 0</span>
+  <button class="ctl icon" id="nNext" aria-label="One move forward" title="One move forward"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5v14l11-7z"/></svg></button>
+  <button class="ctl icon" id="nLast" aria-label="Go to the last move" title="Go to the last move"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5v14l11-7z"/><rect x="17.5" y="5" width="2.5" height="14"/></svg></button>
+</div>
+<div class="score">
+  <div class="pl" id="p0"><span><span id="n0"></span> <small id="d0"></small></span><b id="s0">0</b></div>
+  <div class="pl" id="p1"><span><span id="n1"></span> <small id="d1"></small></span><b id="s1">0</b></div>
+</div>
+<div id="status" aria-live="polite"></div>
+<div id="last" class="legend" style="min-height:2.6em;margin:0 0 8px"></div>
+<div class="bar">
+  <label class="f">Simulation games <input id="simN" type="number" min="10" max="1000" value="10"></label>
+  <label class="f">Random opening moves <input id="simR" type="number" min="0" max="20" value="4"></label>
+  <button class="ctl" id="sim">Simulation</button>
+</div>
+<div id="simout" class="legend" style="white-space:pre-line;margin:0 0 8px"></div>
+<details>
+<summary>Rules</summary>
+<ul id="rules"></ul>
+</details>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+/* =====================================================================
+   1. GAME DEFINITION  - Suffragetto rules, board regions, steps, hops, captures, exchange
+   2. ENGINE           - computer opponent (alpha-beta search), simulations
+   3. INTERFACE        - SVG board, click handling, controls
+   A turn is a step or a series of hops by one piece, or an exchange; every step, every single hop and every exchange
+   is one entry in the history. An action is {t:"step"|"hop"|"stop"|"exchange", i:from cell, j:to cell}.
+   A state is {b:cells (0 empty, 1 Suffragette, 2 Leader, 3 Policeman, 4 Inspector), jail:[suffragettes, Leaders in Prison,
+     policemen, Inspectors in Hospital], turn, ply:turns completed, quiet:turns without progress, chain:cell of the
+     piece in the middle of a series of hops (-1 none), vis:squares visited by that series, tx:the turn being played,
+     w:winner (-1 none, 2 draw), ev, hl/hf: piece moved / squares left and captures this turn, phl/phf: same for the previous turn}.
+   ===================================================================== */
+var $=function(i){return document.getElementById(i)};
+
+/* ============================ 1. GAME DEFINITION ============================ */
+var GAME={
+  title:"Suffragetto",
+  subtitle:"An Edwardian suffrage board game. The Suffragettes try to break through the Police lines into the House of Commons, while the Police try to break up the meeting in Albert Hall.",
+  sides:[{name:"Suffragettes",color:"#1f8a3a"},{name:"Police",color:"#1d2f7a"}],
+  rules:[
+  {h:"Object",items:[
+    "The Suffragettes (green) must enter the House of Commons and keep the Police out of Albert Hall; the Police (dark blue) must enter Albert Hall and keep the Suffragettes out of the House of Commons.",
+    "The first side to bring six of its pieces into the building guarded by its opponents wins (each building has exactly six squares)."]},
+  {h:"Pieces and setup",items:[
+    "Each side has 21 pieces: 5 large ones (the Suffragette Leaders, the Police Inspectors, drawn with a white ring) and 16 small ones.",
+    "The Suffragettes start on the squares marked S near Albert Hall, the Police on the squares marked P near the House of Commons. On each side one large piece stands in the middle of the front row and the other four at the ends of the front and second rows.",
+    "The original rules do not say who begins; here the Suffragettes move first."]},
+  {h:"Moving",items:[
+    "Players take turns to move or hop one of their own pieces.",
+    "A move shifts a piece to an adjoining empty square in any of the eight directions.",
+    {t:"Forbidden squares:",sub:[
+      "No piece may be moved onto the Prison, the Prison Yard, the Hospital or the Hospital Grounds (grey and green).",
+      "A Suffragette may never enter Albert Hall; a Policeman may never enter the House of Commons."]},
+    "A piece that has entered the House of Commons or Albert Hall may move about freely inside it but may never move or hop out of it."]},
+  {h:"Hopping",items:[
+    "A piece hops over one adjoining piece (of either side), straight or diagonally, into the empty square directly behind it.",
+    "It may go on hopping, over one piece at a time, as far as it can, and may stop after any hop. In this version a series of hops may not land twice on the same square.",
+    "A piece may not hop over a square it could not move onto, nor land on one."]},
+  {h:"Arrests and disablements",items:[
+    "Only pieces standing on the pink Arena can be taken; pieces on the yellow squares (and inside the buildings) are safe. Pieces are taken only by hopping, never by a simple move.",
+    "A Suffragette disables a Policeman she hops over diagonally; a Leader disables any Policeman she hops over, in any direction.",
+    "A Policeman arrests a Suffragette he hops over diagonally; an Inspector arrests any Suffragette he hops over, in any direction.",
+    "Several pieces can be taken in one series of hops. Here each piece is removed as soon as it is hopped over: arrested Suffragettes go to the Prison, disabled Policemen to the Hospital."]},
+  {h:"Exchange",items:[
+    "When the Prison and the Hospital each hold 12 or more pieces, and nothing stands on the Prison Yard or the Hospital Grounds, the player to move may call for an exchange instead of moving.",
+    "Pieces are exchanged at equal value: Leaders for Inspectors, rank and file for rank and file. The rules allow up to six; here six of each side are always freed, as many Leader–Inspector pairs as possible and the rest rank and file.",
+    "Freed Suffragettes start again from the Prison Yard, freed Policemen from the Hospital Grounds."]},
+  {h:"Added in this version",items:[
+    "A player who has no legal move passes; if neither player can move, the game is drawn.",
+    "If 100 turns go by on each side without a capture, an entry into a building or an exchange, the game is drawn."]}],
+  stats:function(s,i){var n=0,f=0,k,v;for(k=0;k<NC;k++){v=s.b[k];if(v&&own(v)===i){f++;if(REG[k]===TARGET[i])n++}}
+    var j=i?s.jail[2]+s.jail[3]:s.jail[0]+s.jail[1];
+    return{big:n+"/6",text:"in "+BNAME[TARGET[i]]+" · "+f+" at large, "+j+" in "+(i?"Hospital":"Prison")}},
+  describe:function(s){return s.ev||""}
+};
+var N=17,NC=N*N,LET="abcdefghijklmnopq",QUIET=200;
+var DR=[-1,-1,-1,0,0,1,1,1],DC=[-1,0,1,-1,1,-1,0,1],DIAG=[1,0,1,0,0,1,0,1];
+// regions: 0 Prison, 1 Hospital, 2 Prison Yard, 3 Hospital Grounds, 4 yellow (safe), 5 Arena, 6 House of Commons, 7 Albert Hall
+var REG=new Uint8Array(NC),NBR=new Int16Array(NC*8),JMP=new Int16Array(NC*8),DT=[new Uint8Array(NC),new Uint8Array(NC)];
+var TARGET=[6,7],REGN=["the Prison","the Hospital","the Prison Yard","the Hospital Grounds","",""," the House of Commons","Albert Hall"],
+    BNAME={6:"the House of Commons",7:"Albert Hall"},YARD=[],GROUNDS=[],PRISON=[],HOSP=[];
+function idx(r,c){return r*N+c}
+(function(){
+  var r,c,i,k,R,rr,cc;
+  for(r=0;r<N;r++)for(c=0;c<N;c++){
+    i=idx(r,c);
+    if(c===0)R=0;
+    else if(c===1)R=r<=3?0:r<=10?4:2;
+    else if(c<=3)R=4;
+    else if(c<=12)R=c>=7&&c<=9&&(r===3||r===4)?6:c>=7&&c<=9&&(r===12||r===13)?7:5;
+    else if(c<=14)R=4;
+    else if(c===15)R=r<=5?3:r<=12?4:1;
+    else R=1;
+    REG[i]=R;
+    for(k=0;k<8;k++){rr=r+DR[k];cc=c+DC[k];NBR[i*8+k]=rr>=0&&rr<N&&cc>=0&&cc<N?idx(rr,cc):-1;
+      rr=r+2*DR[k];cc=c+2*DC[k];JMP[i*8+k]=rr>=0&&rr<N&&cc>=0&&cc<N?idx(rr,cc):-1}
+  }
+  for(i=0;i<NC;i++)for(var P=0;P<2;P++){var d=99;
+    for(k=0;k<NC;k++)if(REG[k]===TARGET[P])d=Math.min(d,Math.max(Math.abs((i/N|0)-(k/N|0)),Math.abs(i%N-k%N)));DT[P][i]=d}
+  for(r=11;r<=16;r++)YARD.push(idx(r,1));
+  for(r=0;r<=5;r++)GROUNDS.push(idx(r,15));
+  for(r=0;r<4;r++)PRISON.push(idx(r,1));for(r=0;r<N;r++)PRISON.push(idx(r,0));
+  for(r=0;r<N;r++)HOSP.push(idx(r,16));for(r=13;r<N;r++)HOSP.push(idx(r,15));
+})();
+function cn(i){return LET[i%N]+(N-(i/N|0))}
+function own(v){return v?(v>2?1:0):-1}
+function big(v){return v===2||v===4}
+function canEnter(P,i){var R=REG[i];return R===4||R===5||R===TARGET[P]}
+function nameP(P){return GAME.sides[P].name}
+function pname(v,n){var b=big(v),p=own(v);if(n===1||n==null)return p?(b?"Inspector":"policeman"):(b?"Leader":"suffragette");
+  return p?(b?"Inspectors":"policemen"):(b?"Leaders":"suffragettes")}
+function plural(n,v){return n+" "+pname(v,n)}
+function newState(){
+  var b=new Int8Array(NC),c;
+  for(c=2;c<=14;c++){b[idx(5,c)]=3;b[idx(11,c)]=1}
+  [4,5,6,10,11,12].forEach(function(c){b[idx(4,c)]=3;b[idx(12,c)]=1});
+  [6,10].forEach(function(c){b[idx(3,c)]=3;b[idx(13,c)]=1});
+  [[5,8],[5,2],[5,14],[4,4],[4,12]].forEach(function(p){b[idx(p[0],p[1])]=4});
+  [[11,8],[11,2],[11,14],[12,4],[12,12]].forEach(function(p){b[idx(p[0],p[1])]=2});
+  return{b:b,jail:[0,0,0,0],turn:0,ply:0,quiet:0,prog:false,chain:-1,vis:[],tx:null,w:-1,ev:"",hl:[],hf:[],phl:[],phf:[]};
+}
+function clone(s){return{b:s.b.slice(),jail:s.jail.slice(),turn:s.turn,ply:s.ply,quiet:s.quiet,prog:s.prog,chain:s.chain,vis:s.vis.slice(),
+  tx:s.tx?{P:s.tx.P,v:s.tx.v,step:s.tx.step,ex:s.tx.ex,path:s.tx.path.slice(),caps:s.tx.caps.slice()}:null,w:s.w,ev:s.ev,hl:s.hl.slice(),hf:s.hf.slice(),phl:s.phl,phf:s.phf}}
+// direction from i to j at distance n (1 = step, 2 = hop), or -1
+function dirTo(i,j,n){var dr=(j/N|0)-(i/N|0),dc=j%N-i%N;
+  for(var k=0;k<8;k++)if(DR[k]*n===dr&&DC[k]*n===dc)return k;return -1}
+function enterErr(P,i,j){
+  if(!canEnter(P,j)){var R=REG[j];
+    if(R<4)return"No piece may be moved onto "+REGN[R]+".";
+    return P?"A Policeman may never enter the House of Commons.":"A Suffragette may never enter Albert Hall."}
+  if(REG[i]===TARGET[P]&&REG[j]!==TARGET[P])return"A piece inside "+BNAME[TARGET[P]]+" may not leave it.";
+  return"";
+}
+// hop of the piece of P on i in direction k: null, or {mid, land, cap}
+function hopInfo(b,P,i,k,vis){
+  var land=JMP[i*8+k];if(land<0||b[land])return null;
+  var mid=NBR[i*8+k],mv=b[mid];if(!mv||!canEnter(P,mid)||!canEnter(P,land))return null;
+  if(REG[i]===TARGET[P]&&REG[land]!==TARGET[P])return null;
+  if(vis&&vis.indexOf(land)>=0)return null;
+  return{mid:mid,land:land,cap:own(mv)===1-P&&REG[mid]===5&&(DIAG[k]||big(b[i]))};
+}
+function canHop(s,i){for(var k=0;k<8;k++)if(hopInfo(s.b,s.turn,i,k,s.vis))return true;return false}
+function exchangeErr(s){
+  if(s.chain>=0)return"Finish the series of hops first.";
+  if(s.jail[0]+s.jail[1]<12||s.jail[2]+s.jail[3]<12)return"An exchange needs at least 12 pieces in the Prison and 12 in the Hospital.";
+  for(var k=0;k<6;k++)if(s.b[YARD[k]]||s.b[GROUNDS[k]])return"No exchange while pieces remain on the Prison Yard or the Hospital Grounds.";
+  return"";
+}
+function inTarget(b,P){var n=0;for(var k=0;k<NC;k++)if(b[k]&&own(b[k])===P&&REG[k]===TARGET[P])n++;return n}
+// carry out one action on ns (already a copy). Returns an error message or "".
+function doAct(ns,a){
+  var P=ns.turn,b=ns.b,i=a.i,j=a.j,v,k,e;
+  if(ns.w>=0)return"The game is over.";
+  if(a.t==="exchange"){
+    e=exchangeErr(ns);if(e)return e;
+    var pr=Math.min(ns.jail[1],ns.jail[3],6),rf=6-pr;
+    for(k=0;k<6;k++){b[YARD[k]]=k<pr?2:1;b[GROUNDS[k]]=k<pr?4:3}
+    ns.jail[1]-=pr;ns.jail[0]-=rf;ns.jail[3]-=pr;ns.jail[2]-=rf;
+    ns.prog=true;ns.done=true;ns.tx={P:P,ex:pr,path:[],caps:[]};ns.hl=YARD.concat(GROUNDS);ns.hf=[];
+    return"";
+  }
+  if(a.t==="stop"){if(ns.chain<0)return"There is no series of hops to end.";ns.done=true;return""}
+  v=b[i];
+  if(own(v)!==P)return"Select one of your own pieces.";
+  if(ns.chain>=0&&i!==ns.chain)return"Only the hopping piece may go on hopping (or end the series).";
+  if(a.t==="step"){
+    if(ns.chain>=0)return"After a hop the piece may only hop again.";
+    if(dirTo(i,j,1)<0)return"A move goes to an adjoining square.";
+    if(b[j])return"That square is occupied.";
+    e=enterErr(P,i,j);if(e)return e;
+    b[j]=v;b[i]=0;ns.tx={P:P,v:v,step:true,path:[i,j],caps:[]};ns.done=true;ns.hl=[j];ns.hf=[i];
+  }else if(a.t==="hop"){
+    k=dirTo(i,j,2);if(k<0)return"A hop jumps over one adjoining piece, straight or diagonally, to the square just behind it.";
+    var mid=NBR[i*8+k],mv=b[mid];
+    if(!mv)return"There is no piece to hop over.";
+    if(b[j])return"The landing square is occupied.";
+    if(!canEnter(P,mid))return"A piece may not hop over a square it could not move onto.";
+    e=enterErr(P,i,j);if(e)return e;
+    if(ns.chain>=0&&ns.vis.indexOf(j)>=0)return"A series of hops may not land twice on the same square.";
+    var cap=own(mv)===1-P&&REG[mid]===5&&(DIAG[k]||big(v));
+    b[j]=v;b[i]=0;
+    if(ns.chain<0){ns.tx={P:P,v:v,path:[i,j],caps:[]};ns.vis=[i,j];ns.hl=[];ns.hf=[]}else{ns.tx.path.push(j);ns.vis.push(j)}
+    ns.hl=[j];ns.hf.push(i);
+    if(cap){b[mid]=0;ns.jail[(1-P)*2+(big(mv)?1:0)]++;ns.prog=true;ns.tx.caps.push(mv);ns.hf.push(mid)}
+    ns.chain=j;
+  }else return"Unknown action.";
+  if(REG[j]===TARGET[P]&&REG[i]!==TARGET[P])ns.prog=true;
+  if(inTarget(b,P)>=6){ns.w=P;ns.done=true}
+  return"";
+}
+function hasMove(s){
+  var P=s.turn,b=s.b,i,k,n;
+  if(!exchangeErr(s))return true;
+  for(i=0;i<NC;i++)if(b[i]&&own(b[i])===P)for(k=0;k<8;k++){
+    n=NBR[i*8+k];if(n>=0&&!b[n]&&canEnter(P,n)&&!(REG[i]===TARGET[P]&&REG[n]!==TARGET[P]))return true;
+    if(hopInfo(b,P,i,k,null))return true}
+  return false;
+}
+function turnText(s){
+  var t=s.tx;if(!t)return s.ev||"";
+  if(t.ex!=null)return nameP(t.P)+" called for an exchange: "+(t.ex?t.ex+" Leader"+(t.ex>1?"s":"")+" for "+t.ex+" Inspector"+(t.ex>1?"s":"")+" and ":"")+(6-t.ex)+" rank and file on each side are freed.";
+  var nm=pname(t.v),str=nameP(t.P)+": "+(nm[0].toUpperCase()+nm.slice(1))+(t.step?" moved ":" hopped ")+t.path.map(cn).join("–");
+  if(t.caps.length){var cb=0,cs=0;t.caps.forEach(function(v){if(big(v))cb++;else cs++});var q=[],o=t.P?1:3;
+    if(cb)q.push(plural(cb,o+1));if(cs)q.push(plural(cs,o));
+    str+=(t.P?", arresting ":", disabling ")+q.join(" and ")}
+  var last=t.path[t.path.length-1];
+  if(REG[last]===TARGET[t.P]&&REG[t.path[0]]!==TARGET[t.P])str+=" and entered "+BNAME[TARGET[t.P]]+" ("+inTarget(s.b,t.P)+" of 6 inside)";
+  str+=".";
+  if(s.chain>=0&&!s.done&&s.w<0)str+=" It may hop again.";
+  return str;
+}
+function endTurn(ns,light){
+  ns.chain=-1;ns.vis=[];ns.ply++;ns.quiet=ns.prog?0:ns.quiet+1;ns.prog=false;delete ns.done;
+  if(ns.w>=0)return ns;
+  if(ns.quiet>=QUIET){ns.w=2;if(!light)ns.ev+=" 100 turns each without a capture, an entry or an exchange: draw.";return ns}
+  ns.phl=ns.hl;ns.phf=ns.hf;ns.hl=[];ns.hf=[];ns.tx=null;ns.turn=1-ns.turn;
+  if(!hasMove(ns)){
+    if(!light)ns.ev+=" "+nameP(ns.turn)+" cannot move and pass"+(ns.turn?".":".");
+    ns.turn=1-ns.turn;
+    if(!hasMove(ns)){ns.w=2;if(!light)ns.ev+=" Neither side can move: draw."}
+  }
+  return ns;
+}
+// try action a in state s: {ns} or {err}. The turn ends unless a series of hops can go on.
+function apply(s,a){
+  var ns=clone(s);ns.done=false;
+  var e=doAct(ns,a);if(e)return{err:e};
+  if(!ns.done&&ns.chain>=0&&!canHop(ns,ns.chain))ns.done=true;
+  ns.ev=turnText(ns);
+  if(ns.done)endTurn(ns);else delete ns.done;
+  return{ns:ns};
+}
+// every complete turn for the side to move: {i, path, caps, step|ex|stop, o: ordering score}
+function genFull(s){
+  var P=s.turn,b=s.b.slice(),out=[],i,k,n,v;
+  if(s.w>=0)return out;
+  function dfs(i0,i,vis,path,caps,seen,bg){
+    for(var k=0;k<8;k++){
+      var h=hopInfo(b,P,i,k,null);if(!h||vis[h.land])continue;
+      var nc=h.cap?caps.concat([h.mid]):caps,key=h.land+(nc.length?":"+nc.slice().sort().join(","):"");
+      if(seen[key])continue;seen[key]=1;
+      var np=path.concat([h.land]);
+      out.push({i:i0,path:np,caps:nc,o:nc.length*30+(REG[h.land]===TARGET[P]&&REG[i0]!==TARGET[P]?25:0)+DT[P][i0]-DT[P][h.land]});
+      var mv=b[h.mid];b[h.land]=b[i];b[i]=0;if(h.cap)b[h.mid]=0;vis[h.land]=1;
+      dfs(i0,h.land,vis,np,nc,seen,bg);
+      vis[h.land]=0;if(h.cap)b[h.mid]=mv;b[i]=b[h.land];b[h.land]=0;
+    }
+  }
+  if(s.chain>=0){
+    var vv=new Uint8Array(NC);s.vis.forEach(function(z){vv[z]=1});
+    out.push({stop:true,path:[],caps:[],o:0});
+    dfs(s.chain,s.chain,vv,[],[],{},big(b[s.chain]));
+    return out;
+  }
+  if(!exchangeErr(s))out.push({ex:true,path:[],caps:[],o:8});
+  for(i=0;i<NC;i++){v=b[i];if(!v||own(v)!==P)continue;
+    for(k=0;k<8;k++){n=NBR[i*8+k];if(n>=0&&!b[n]&&canEnter(P,n)&&!(REG[i]===TARGET[P]&&REG[n]!==TARGET[P]))
+      out.push({i:i,step:true,path:[n],caps:[],o:(REG[n]===TARGET[P]&&REG[i]!==TARGET[P]?25:0)+DT[P][i]-DT[P][n]})}
+    var vis=new Uint8Array(NC);vis[i]=1;dfs(i,i,vis,[],[],{},big(v));
+  }
+  return out;
+}
+// play a complete turn; light = no text (search)
+function doMove(s,m,light){
+  var ns=clone(s);ns.done=false;
+  if(m.ex)doAct(ns,{t:"exchange"});
+  else if(m.stop)ns.done=true;
+  else if(m.step)doAct(ns,{t:"step",i:m.i,j:m.path[0]});
+  else{var c=s.chain>=0?s.chain:m.i;for(var q=0;q<m.path.length&&ns.w<0;q++){doAct(ns,{t:"hop",i:c,j:m.path[q]});c=m.path[q]}}
+  if(!light){ns.done=true;ns.ev=turnText(ns)}
+  return endTurn(ns,light);
+}
+
+/* ================================ 2. ENGINE ================================ */
+var VAL={R:10,L:14,IN:22,IN2:3,D:1.1,T1:.8,T2:.3,SAFE:.6};
+// largest piece value side A can take with one single hop now
+function threat(b,A){
+  var best=0,i,k,v;
+  for(i=0;i<NC;i++){v=b[i];if(!v||own(v)!==A)continue;
+    for(k=0;k<8;k++){var mid=NBR[i*8+k];if(mid<0||REG[mid]!==5)continue;var mv=b[mid];if(!mv||own(mv)===A)continue;
+      if(!DIAG[k]&&!big(v))continue;var land=JMP[i*8+k];if(land<0||b[land]||!canEnter(A,land))continue;
+      if(REG[i]===TARGET[A]&&REG[land]!==TARGET[A])continue;
+      var x=big(mv)?VAL.L:VAL.R;if(x>best)best=x}}
+  return best;
+}
+function evalS(s){   // value from the Suffragettes' point of view
+  if(s.w>=0)return s.w===2?0:(s.w===0?1:-1)*(1e5-s.ply);
+  var b=s.b,sc=[0,0],nin=[0,0],i,v,P;
+  for(i=0;i<NC;i++){v=b[i];if(!v)continue;P=own(v);
+    sc[P]+=big(v)?VAL.L:VAL.R;
+    if(REG[i]===TARGET[P]){nin[P]++;sc[P]+=VAL.IN}
+    else{sc[P]-=VAL.D*DT[P][i];if(REG[i]===4)sc[P]+=VAL.SAFE}}
+  sc[0]+=VAL.IN2*nin[0]*nin[0];sc[1]+=VAL.IN2*nin[1]*nin[1];
+  var t0=threat(b,0),t1=threat(b,1),v0=sc[0]-sc[1];
+  return v0+(s.turn===0?VAL.T1*t0-VAL.T2*t1:VAL.T2*t0-VAL.T1*t1);
+}
+var ABORT={},deadline=0,nodes=0;
+function rel(s){return(s.turn===0?1:-1)*evalS(s)}
+function negamax(s,d,al,be){
+  if(s.w>=0||d<=0)return rel(s);
+  if((++nodes&255)===0&&Date.now()>deadline)throw ABORT;
+  var M=genFull(s),best=-1e9;
+  if(!M.length)return rel(s);
+  M.sort(function(a,b){return b.o-a.o});
+  for(var q=0;q<M.length;q++){
+    var c=doMove(s,M[q],true),v=c.turn===s.turn&&c.w<0?negamax(c,d-1,al,be):-negamax(c,d-1,-be,-al);
+    if(c.w>=0)v=c.turn===s.turn?rel(c):-rel(c);
+    if(v>best)best=v;if(v>al)al=v;if(al>=be)break;
+  }
+  return best;
+}
+// choose a complete turn. Easy: one turn ahead with noise. Medium: two turns (own move and reply).
+// Hard: iterative deepening up to four turns within a time budget.
+function aiStep(s,lv,fast){
+  var M=genFull(s),q,i;
+  if(!M.length){var e=clone(s);return endTurn(e)}
+  var sg=s.turn===0?1:-1;
+  for(q=0;q<M.length;q++){M[q].c=doMove(s,M[q],true);if(M[q].c.w===s.turn)return doMove(s,M[q],false)}
+  if(lv===1){M.forEach(function(m){m.v=sg*evalS(m.c)+Math.random()*7});}
+  else{
+    var maxD=lv===2?2:4;deadline=Date.now()+(lv===2?(fast?400:2500):(fast?250:1500));
+    M.forEach(function(m){m.v=sg*evalS(m.c)+m.o*.01});
+    for(var d=2;d<=maxD;d++){
+      M.sort(function(a,b){return b.v-a.v});
+      try{
+        var al=-1e9,res=[];
+        for(i=0;i<M.length;i++){var c=M[i].c,v;
+          if(c.w>=0)v=sg*evalS(c);
+          else v=c.turn===s.turn?negamax(c,d-1,al,1e9):-negamax(c,d-1,-1e9,-al);
+          res.push(v);if(v>al)al=v}
+        for(i=0;i<M.length;i++)M[i].v=res[i]+Math.random()*(lv===2?.5:.1);
+      }catch(x){if(x!==ABORT)throw x;break}
+    }
+  }
+  M.sort(function(a,b){return b.v-a.v});
+  return doMove(s,M[0],false);
+}
+var sim=null;
+function runSim(){   // computer vs computer, to look for first/second-player advantage
+  if(sim){sim.stop=true;return}
+  var CAP=600,me=sim={stop:false},TOTAL=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?4:+$("simR").value)),
+      done=0,w=[0,0,0],un=0,g=newState(),plies=0,lv=+$("level").value,lvName=$("level").options[$("level").selectedIndex].text,nm=GAME.sides.map(function(x){return x.name});
+  ["mode","side","level","new","undo","redo","exch","stop","simN","simR","nFirst","nPrev","nNext","nLast"].forEach(function(i){$(i).disabled=true});
+  $("sim").textContent="Stop simulation";
+  $("simout").textContent="Simulating at "+lvName+" level… 0/"+TOTAL;
+  function fin(stopped){
+    sim=null;$("sim").textContent="Simulation";
+    $("mode").disabled=$("new").disabled=$("simN").disabled=$("simR").disabled=false;
+    $("level").disabled=$("side").disabled=$("mode").value==="2p";
+    var dec=w[0]+w[1],mg=dec?(196*Math.sqrt((w[0]/dec)*(1-w[0]/dec)/dec)).toFixed(1):"0";
+    var pc=function(n){return done?(100*n/done).toFixed(1)+"%":"n/a"};
+    $("simout").textContent=(stopped?"Stopped after ":"")+done+" games at "+lvName+" level (computer vs computer), first "+RND+" moves random.\n"+
+      "First player ("+nm[0]+") won "+pc(w[0])+" ("+w[0]+" games). Second player ("+nm[1]+") won "+pc(w[1])+" ("+w[1]+" games)."+
+      (dec?" Among decided games the first player won "+(100*w[0]/dec).toFixed(1)+"% (margin ±"+mg+" points at 95% confidence).":"")+
+      (w[2]?" Draws: "+w[2]+".":"")+(un?" Unfinished (stopped at "+CAP+" moves): "+un+".":"");
+    render();
+  }
+  function stepSim(){
+    if(me.stop){fin(true);return}
+    var t0=Date.now();
+    while(Date.now()-t0<40){
+      if(g.w>=0||plies>=CAP){
+        if(g.w>=0)w[g.w]++;else un++;
+        done++;g=newState();plies=0;
+        if(done>=TOTAL){fin(false);return}
+        continue;
+      }
+      if(plies<RND){var ms=genFull(g);g=ms.length?doMove(g,ms[Math.floor(Math.random()*ms.length)],true):endTurn(clone(g),true)}
+      else g=aiStep(g,lv,true);
+      plies++;
+    }
+    $("simout").textContent="Simulating at "+lvName+" level… "+done+"/"+TOTAL;
+    setTimeout(stepSim,0);
+  }
+  stepSim();
+}
+
+/* =============================== 3. INTERFACE =============================== */
+var hist,redo=[],view=null,sel,over,busy,note="";   // view: null = live position, otherwise the index being reviewed
+var GOLD="#e0a800",PURPLE="#8e44ad",REGC=["#c4c4c4","#c4c4c4","#b8e6a0","#b8e6a0","#f0e46c","#f8d3d3","#ffffff","#ffffff"];
+function cur(){return hist[hist.length-1]}
+function line(){return hist.concat(redo.slice().reverse())}   // every position, including those that can still be redone
+function browsing(){return view!==null}
+function shown(){return view===null?cur():line()[view]}
+function aiSide(){return $("mode").value==="ai"?1-+$("side").value:-1}
+function clearSel(){sel=null;note=""}
+function goto(k){
+  if(busy||sim)return;
+  var n=hist.length-1+redo.length;k=Math.max(0,Math.min(n,k));
+  view=k===hist.length-1?null:k;clearSel();render();
+}
+// Undo/Redo while reviewing: leave review and play on from the reviewed position (in computer mode, from the nearest position where it is the human's turn)
+function unlock(dir){
+  var L=line(),k=view,j;
+  if($("mode").value==="ai"){
+    j=k;while(j>=0&&j<L.length&&L[j].w<0&&L[j].turn!==+$("side").value)j+=dir;
+    if(j>=0&&j<L.length)k=j;
+  }
+  hist=L.slice(0,k+1);redo=L.slice(k+1).reverse();view=null;clearSel();over=false;render();maybeAI();
+}
+function humanTurn(){return $("mode").value==="2p"||cur().turn===+$("side").value}
+function start(){
+  hist=[newState()];redo=[];view=null;clearSel();$("level").disabled=$("side").disabled=$("mode").value==="2p";over=false;busy=false;
+  render();maybeAI();
+}
+function selectPiece(s,i){
+  var list=[],k,n,r;
+  for(k=0;k<8;k++){
+    if(s.chain<0){n=NBR[i*8+k];if(n>=0&&!s.b[n]){r=apply(s,{t:"step",i:i,j:n});if(r.ns)list.push({j:n,ns:r.ns,k:"step"})}}
+    var h=hopInfo(s.b,s.turn,i,k,s.chain>=0?s.vis:null);
+    if(h){r=apply(s,{t:"hop",i:i,j:h.land});if(r.ns)list.push({j:h.land,ns:r.ns,k:"hop",cap:h.cap})}
+  }
+  return{i:i,list:list};
+}
+function render(){
+  var br=browsing(),s=shown(),sd=GAME.sides,h=[],P=s.turn,i,k,r,c,nT=hist.length-1+redo.length,kk=br?view:hist.length-1,lock=busy||!!sim;
+  over=s.w>=0;
+  var canAct=!br&&!over&&humanTurn()&&!busy&&!sim;
+  if(canAct&&s.chain>=0&&(!sel||sel.i!==s.chain))sel=selectPiece(s,s.chain);
+  h.push('<svg viewBox="-1.1 -1.1 19.2 19.2" role="img" aria-label="Suffragetto board">');
+  function lab(x,y,t,fs,fill,rot,ls){h.push('<text x="'+x+'" y="'+y+'" font-size="'+(fs||.42)+'" text-anchor="middle" dominant-baseline="central" fill="'+(fill||"var(--mute)")+'"'+(ls?' letter-spacing="'+ls+'"':'')+(rot?' transform="rotate('+rot+' '+x+' '+y+')"':'')+' pointer-events="none" font-family="Georgia,serif">'+t+'</text>')}
+  for(c=0;c<N;c++){lab(c+.5,-.55,LET[c]);lab(c+.5,N+.55,LET[c])}
+  for(r=0;r<N;r++){lab(-.55,r+.5,N-r);lab(N+.55,r+.5,N-r)}
+  h.push('<rect x="-.08" y="-.08" width="'+(N+.16)+'" height="'+(N+.16)+'" fill="#111"/>');
+  for(i=0;i<NC;i++)h.push('<rect data-i="'+i+'" x="'+(i%N)+'" y="'+(i/N|0)+'" width="1" height="1" fill="'+REGC[REG[i]]+'" stroke="#333" stroke-width=".02"/>');
+  for(i=0;i<NC;i++){r=i/N|0;c=i%N;   // thick lines between regions
+    if(c<N-1&&REG[i]!==REG[i+1]&&!(REG[i]<2&&REG[i+1]<2))h.push('<line x1="'+(c+1)+'" y1="'+r+'" x2="'+(c+1)+'" y2="'+(r+1)+'" stroke="#111" stroke-width=".07" pointer-events="none"/>');
+    if(r<N-1&&REG[i]!==REG[i+N]&&!(REG[i]<2&&REG[i+N]<2))h.push('<line x1="'+c+'" y1="'+(r+1)+'" x2="'+(c+1)+'" y2="'+(r+1)+'" stroke="#111" stroke-width=".07" pointer-events="none"/>')}
+  var LC="rgba(0,0,0,.42)";
+  lab(.5,8.5,"PRISON",.4,LC,-90,".12");lab(1.5,1.8,"PRISON",.36,LC,-90,".1");lab(1.5,14,"PRISON YARD",.36,LC,-90,".08");
+  lab(16.5,8.5,"HOSPITAL",.4,LC,90,".12");lab(15.5,15,"HOSPITAL",.36,LC,90,".08");lab(15.5,3,"HOSPITAL GROUNDS",.32,LC,90,".05");
+  lab(8.5,3.6,"HOUSE OF",.4,LC,0,".08");lab(8.5,4.4,"COMMONS",.4,LC,0,".08");lab(8.5,12.6,"ALBERT",.4,LC,0,".08");lab(8.5,13.4,"HALL",.4,LC,0,".08");
+  lab(8.5,1.5,"THE ARENA",.42,"rgba(0,0,0,.28)",0,".15");lab(8.5,15.5,"THE ARENA",.42,"rgba(0,0,0,.28)",0,".15");
+  function piece(i,v,rr,attrs,op){var x=(i%N)+.5,y=(i/N|0)+.5,col=sd[own(v)].color,R=big(v)?rr*1.15:rr;
+    h.push('<circle cx="'+x+'" cy="'+y+'" r="'+R.toFixed(3)+'" fill="'+col+'"'+(op?' opacity="'+op+'"':'')+' '+attrs+'/>');
+    if(big(v))h.push('<circle cx="'+x+'" cy="'+y+'" r="'+(R*.52).toFixed(3)+'" fill="none" stroke="#fff" stroke-width=".07" pointer-events="none"'+(op?' opacity="'+op+'"':'')+'/>')}
+  // captured pieces in the Prison and the Hospital
+  var jl=[],jp=[];for(k=0;k<s.jail[1];k++)jl.push(2);for(k=0;k<s.jail[0];k++)jl.push(1);for(k=0;k<s.jail[3];k++)jp.push(4);for(k=0;k<s.jail[2];k++)jp.push(3);
+  jl.forEach(function(v,q){if(q<PRISON.length)piece(PRISON[q],v,.3,'stroke="#fff" stroke-width=".04" pointer-events="none"',.8)});
+  jp.forEach(function(v,q){if(q<HOSP.length)piece(HOSP[q],v,.3,'stroke="#fff" stroke-width=".04" pointer-events="none"',.8)});
+  // gold: the piece moved in the turn being played (before its first action: in the previous turn)
+  var cu=s.hl.length||s.hf.length,HL={},HF=cu?s.hf:s.phf||[];
+  (cu?s.hl:s.phl||[]).forEach(function(z){if(s.b[z])HL[z]=1});
+  HF.forEach(function(z){if(!s.b[z])h.push('<circle cx="'+(z%N+.5)+'" cy="'+((z/N|0)+.5)+'" r=".15" fill="'+GOLD+'" pointer-events="none"/>')});
+  for(i=0;i<NC;i++)if(s.b[i]){
+    var on=sel&&sel.i===i,lm=!!HL[i];
+    piece(i,s.b[i],.36,'data-i="'+i+'" stroke="'+(on?'var(--hi)':lm?GOLD:'#fff')+'" stroke-width="'+(on||lm?.11:.05)+'"');
+  }
+  if(sel)sel.list.forEach(function(m){var x=m.j%N+.5,y=(m.j/N|0)+.5;
+    if(m.k==="hop")h.push('<circle data-i="'+m.j+'" cx="'+x+'" cy="'+y+'" r=".3" fill="'+(m.cap?PURPLE:'none')+'" fill-opacity="'+(m.cap?.35:0)+'" stroke="'+PURPLE+'" stroke-width=".09"/>');
+    else h.push('<circle data-i="'+m.j+'" cx="'+x+'" cy="'+y+'" r=".16" fill="var(--hi)" fill-opacity=".9"/>')});
+  h.push('</svg>');
+  $("board").innerHTML=h.join("");
+  var names=sd.map(function(x){return x.name}),st;
+  for(i=0;i<2;i++){var tt=GAME.stats(s,i);$("s"+i).textContent=tt.big;$("d"+i).textContent=tt.text;
+    $("p"+i).className="pl"+(!over&&s.turn===i?" on":"")}
+  var turnNo=" (move "+(s.ply+1)+")";
+  if(br)st="Reviewing history (move "+kk+" of "+nT+"): the board is locked. Press Undo or Redo to play on from here.";
+  else if(over)st=s.w===2?"Game over: draw.":"Game over: the "+names[s.w]+" win.";
+  else if(!humanTurn())st=names[P]+" to play"+turnNo+" – computer thinking…";
+  else if(s.chain>=0)st=names[P]+turnNo+": hop again (purple rings), or click the hopping piece or “End hop” to stop.";
+  else if(sel)st=names[P]+turnNo+": click a marked square, or click the piece again to deselect.";
+  else st=names[P]+" to play"+turnNo+"."+(!exchangeErr(s)?" An exchange of prisoners is possible.":"");
+  $("status").textContent=st;
+  $("last").textContent=(GAME.describe(s)+" "+note).trim();
+  $("undo").disabled=lock||!(br||hist.length>=2);
+  $("redo").disabled=lock||!(br||redo.length);
+  $("nFirst").disabled=$("nPrev").disabled=lock||kk<=0;
+  $("nNext").disabled=$("nLast").disabled=lock||kk>=nT;
+  $("nlab").textContent="Move "+kk+" of "+nT;
+  $("exch").disabled=!canAct||!!exchangeErr(s);
+  $("stop").disabled=!canAct||s.chain<0;
+}
+function play(ns){hist.push(ns);redo=[];clearSel();render();maybeAI()}
+function click(i){
+  if(over||busy||browsing()||!humanTurn()||sim)return;
+  var s=cur(),P=s.turn,v=s.b[i];note="";
+  if(sel){
+    var m=sel.list.filter(function(x){return x.j===i})[0];
+    if(m){play(m.ns);return}
+    if(s.chain>=0){
+      if(i===s.chain){var r0=apply(s,{t:"stop"});if(r0.ns){play(r0.ns);return}}
+      note="Finish the series of hops: click a purple ring, or the hopping piece to stop.";render();return;
+    }
+    var same=i===sel.i;sel=null;
+    if(same){render();return}
+  }
+  if(!v)note=REG[i]<4?"No piece may be moved onto "+REGN[REG[i]]+".":"Select one of your pieces first.";
+  else if(own(v)===P){
+    sel=selectPiece(s,i);
+    if(!sel.list.length){sel=null;note=REG[i]===TARGET[P]?"That piece is inside "+BNAME[TARGET[P]]+" and has no free square there.":"That piece has no legal move."}
+  }else note=P===0?"That is a policeman: disable him by hopping over him while he stands in the Arena (diagonally, or in any direction with a Leader).":
+    "That is a suffragette: arrest her by hopping over her while she stands in the Arena (diagonally, or in any direction with an Inspector).";
+  render();
+}
+function maybeAI(){
+  if(sim||cur().w>=0||$("mode").value!=="ai"||cur().turn===+$("side").value)return;
+  busy=true;render();
+  setTimeout(function(){
+    var c=cur();hist.push(aiStep(c,+$("level").value));redo=[];busy=false;
+    render();maybeAI();
+  },180);
+}
+document.title=GAME.title;$("gtitle").textContent=GAME.title;$("gsub").textContent=GAME.subtitle;
+function li(x){return"<li>"+(typeof x==="string"?x:x.t+"<ul>"+x.sub.map(li).join("")+"</ul>")+"</li>"}
+$("rules").innerHTML=GAME.rules.map(function(sec){return"<li><b>"+sec.h+"</b><ul>"+sec.items.map(li).join("")+"</ul></li>"}).join("");
+$("side").innerHTML=GAME.sides.map(function(x,i){return'<option value="'+i+'">You are the '+x.name+'</option>'}).join("");
+for(var ni=0;ni<2;ni++)$("n"+ni).textContent=GAME.sides[ni].name;
+$("board").onclick=function(e){var t=e.target.closest("[data-i]");if(t)click(+t.getAttribute("data-i"))};
+$("new").onclick=start;$("sim").onclick=runSim;
+$("mode").onchange=$("side").onchange=start;
+$("exch").onclick=function(){
+  if(over||busy||browsing()||!humanTurn()||sim)return;
+  var r=apply(cur(),{t:"exchange"});if(r.ns)play(r.ns);else{note=r.err;render()}
+};
+$("stop").onclick=function(){
+  if(over||busy||browsing()||!humanTurn()||sim)return;
+  var r=apply(cur(),{t:"stop"});if(r.ns)play(r.ns);else{note=r.err;render()}
+};
+$("redo").onclick=function(){
+  if(busy||sim)return;
+  if(browsing()){unlock(1);return}
+  if(!redo.length)return;
+  hist.push(redo.pop());
+  while($("mode").value==="ai"&&redo.length&&cur().w<0&&cur().turn!==+$("side").value)hist.push(redo.pop());
+  clearSel();render();
+};
+$("undo").onclick=function(){
+  if(busy||sim)return;
+  if(browsing()){unlock(-1);return}
+  if(hist.length<2)return;
+  redo.push(hist.pop());
+  while($("mode").value==="ai"&&hist.length>1&&cur().turn!==+$("side").value)redo.push(hist.pop());
+  clearSel();over=false;render();
+};
+$("nFirst").onclick=function(){goto(0)};
+$("nPrev").onclick=function(){goto((browsing()?view:hist.length-1)-1)};
+$("nNext").onclick=function(){goto((browsing()?view:hist.length-1)+1)};
+$("nLast").onclick=function(){goto(hist.length-1+redo.length)};
+start();
+})();
+</script>
+</body>
+</html>

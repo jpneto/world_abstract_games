@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mutternland</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
+<style>
+:root{--bg:#eef0e6;--ink:#1f2a1c;--mute:#5d6a56;--cell:#dfe3cf;--edge:#b9bfa3;--hi:#e0803a;--panel:#fff;--line:#c5cab4;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f}}
+:root[data-theme="dark"]{--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+main{max-width:1120px;margin:0 auto;padding:16px 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.right>.bar:first-child{margin-top:0}
+@media (min-width:860px){.layout{grid-template-columns:minmax(0,620px) minmax(300px,1fr);gap:28px;align-items:start}}
+h1{font:700 2rem/1.1 "Bricolage Grotesque",Georgia,serif;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+select,button.ctl{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.ctl:disabled,select:disabled,input:disabled{opacity:.45;cursor:default}
+button.ctl[aria-pressed="true"]{border-color:var(--hi);box-shadow:inset 0 0 0 1px var(--hi)}
+label.f{color:var(--mute);font-size:.9rem}
+input[type=number]{width:4.5em;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+button.ctl.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button.ctl.icon{display:inline-flex;align-items:center;justify-content:center;padding:6px 10px}
+button.ctl.icon svg{width:18px;height:18px;fill:currentColor;display:block}
+.navlab{min-width:7.5em;text-align:center;color:var(--mute);font-variant-numeric:tabular-nums}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.pl{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:8px 12px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.pl.on{border-color:var(--hi)}
+.pl b{font:700 1.6rem "Bricolage Grotesque",Georgia,serif}
+.pl small{color:var(--mute)}
+#status{min-height:1.5em;font-weight:600;margin:6px 0}
+#board svg{display:block;width:100%;max-width:620px;margin:0 auto;touch-action:manipulation}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+details li{margin:4px 0}
+.legend{color:var(--mute);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+<h1 id="gtitle"></h1>
+<p class="sub" id="gsub"></p>
+<div class="layout">
+<div class="left">
+<div id="board"></div>
+<p class="legend">The small number on each stack is its height; a tower (four nuts) has a dark rim, and dashed outlines are positions with no nut (never laid, or a stack that disappeared). During setup, click an empty nut on the edge of the surface (orange dots). On your turn, click one of your marbles: orange dots are the nuts it can move or jump to, purple rings the enemy marbles it can push (alone or as the rear of a line). Then click a free stack next to one of your marbles (hollow dots) and an orange dot to move one nut there. Clicking a nut before moving a marble skips the marble step. “Place returned marble” puts back a marble that was pushed off. Gold rings mark every marble placed or moved and every stack that received a nut during the turn being played (before its first action, during the previous turn); small gold dots mark the cells they came from.</p>
+</div>
+<aside class="right">
+<div class="bar">
+  <select id="mode" aria-label="Mode"><option value="ai">Play the computer</option><option value="2p">Two players</option></select>
+  <select id="level" aria-label="Computer strength"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select>
+  <select id="side" aria-label="Your side"></select>
+  <button class="ctl primary" id="new">New game</button>
+  <button class="ctl" id="undo">Undo</button>
+  <button class="ctl" id="redo">Redo</button>
+</div>
+<div class="bar">
+  <button class="ctl" id="ptype" aria-pressed="false">Place returned marble</button>
+  <button class="ctl" id="rem">Skip marble step</button>
+</div>
+<div class="bar" id="nav" role="group" aria-label="Game history">
+  <button class="ctl icon" id="nFirst" aria-label="Go to the beginning" title="Go to the beginning"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="2.5" height="14"/><path d="M19 5v14L8 12z"/></svg></button>
+  <button class="ctl icon" id="nPrev" aria-label="One move back" title="One move back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 5v14L6 12z"/></svg></button>
+  <span class="navlab" id="nlab" aria-live="polite">Move 0 of 0</span>
+  <button class="ctl icon" id="nNext" aria-label="One move forward" title="One move forward"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5v14l11-7z"/></svg></button>
+  <button class="ctl icon" id="nLast" aria-label="Go to the last move" title="Go to the last move"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5v14l11-7z"/><rect x="17.5" y="5" width="2.5" height="14"/></svg></button>
+</div>
+<div class="score">
+  <div class="pl" id="p0"><span><span id="n0"></span> <small id="d0"></small></span><b id="s0">0</b></div>
+  <div class="pl" id="p1"><span><span id="n1"></span> <small id="d1"></small></span><b id="s1">0</b></div>
+</div>
+<div id="status" aria-live="polite"></div>
+<div id="last" class="legend" style="min-height:2.6em;margin:0 0 8px"></div>
+<div class="bar">
+  <label class="f">Simulation games <input id="simN" type="number" min="10" max="1000" value="10"></label>
+  <label class="f">Random opening turns <input id="simR" type="number" min="0" max="20" value="4"></label>
+  <button class="ctl" id="sim">Simulation</button>
+</div>
+<div id="simout" class="legend" style="white-space:pre-line;margin:0 0 8px"></div>
+<details>
+<summary>Rules</summary>
+<ul id="rules"></ul>
+</details>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+/* =====================================================================
+   1. GAME DEFINITION  - Mutternland rules, hex geometry, actions
+   2. ENGINE           - computer opponent (whole-turn search), simulations
+   3. INTERFACE        - SVG board, click handling, controls
+   A turn is a marble step then a nut step (both optional); every action is one step in the history.
+   An action is {t:"setup"|"move"|"push"|"enter"|"skip"|"nut"|"end", i:source cell, j:target cell}.
+   A state is {h:nut heights (0 = no nut), m:marbles (0 none, 1 Blue, 2 Red), res:[marbles pushed off, waiting to re-enter],
+     setup:setup placements made (0..10), turn, tn:[turns started], ph:0 marble step / 1 nut step, moved:something moved this turn,
+     done:turn over, passes:consecutive passing turns, w:winner (-1 none, 2 draw), ev,
+     hl/hn/hf: marbles placed or moved, stacks that received a nut, cells vacated this turn; phl/phn/phf: same for the previous turn}.
+   ===================================================================== */
+var $=function(i){return document.getElementById(i)};
+function ab(x){return x<0?-x:x}
+
+/* ============================ 1. GAME DEFINITION ============================ */
+var GAME={
+  title:"Mutternland",
+  subtitle:"Hartmut Witt, 1997. Climb stacks of nuts with your marbles, reshape the land one nut at a time, push enemy marbles off, and stand on three towers to win.",
+  sides:[{name:"Blue",color:"#2b59c3"},{name:"Red",color:"#c0392b"}],
+  rules:[
+  {h:"Material",items:[
+    "70 nuts, laid at random on the base level inside a hexagonal surface of side 7 (127 positions, drawn as faint outlines). The nuts form a single connected shape and every nut touches at least two others; a new layout is drawn for each game. Each player has 5 marbles.",
+    "A free nut is a stack of three or fewer nuts with no marble on it. A tower is a stack of four nuts. A group is a set of connected friendly marbles."]},
+  {h:"Setup",items:[
+    "Players take turns placing two marbles: first one of their own, then one of the opponent’s, each on top of a single empty nut on the edge of the nut surface (a nut with at least one side not touching another nut). Blue starts; after five setup turns (Blue, Red, Blue, Red, Blue) all ten marbles are on the board and Red makes the first move."]},
+  {h:"A turn",items:[
+    "The player may move one friendly marble, and then may move one nut from a free nut that is adjacent to a friendly marble. Both steps are optional, so a turn may be passed.",
+    {t:"A marble can:",sub:[
+      "move to an adjacent nut (with no marble) whose level differs by at most one;",
+      "jump over an adjacent friendly marble, landing on the next nut in the same line, which must be empty; each step respects the level difference (from level 1 over a marble on level 2 onto level 3 is valid);",
+      "push one adjacent opponent marble one nut further in a straight line, if that destination is a free nut that is not higher (same level or lower). The pushing marble takes the pushed marble’s place, again with at most one level of difference.",
+      "A line of friendly marbles (a phalanx) can push in the same way, every marble of the line shifting just one position.",
+      "A marble can be pushed off the playing area (into an empty space or off the edge). It goes back to its owner, who may place it on a later turn, instead of moving a marble, on a free nut of height one."]},
+    "The nut step: choose a friendly marble M; take one nut from any free nut adjacent to M (that stack decreases, and disappears if it had one nut) and place it on another free nut adjacent to the group M belongs to (that stack grows and may become a tower).",
+    "Nuts are never placed on empty space, so the playing area only shrinks and may split into disconnected parts."]},
+  {h:"End of the game",items:[
+    "A player who has three friendly marbles on top of three towers wins at once.",
+    "If both players pass in a row (no marble and no nut moved), the game ends: the player owning more towers (towers topped by their marbles) wins; equal counts are a draw."]}],
+  stats:function(s,i){
+    var on=0,t=0,b=0,me=i+1;for(var k=0;k<NC;k++)if(s.m[k]===me){b++;if(s.h[k]===4)t++}
+    var left=s.setup<10?5-b-s.res[i]:0,parts=[];
+    if(left>0)parts.push(left+" to place");
+    parts.push(b+" on the board");
+    if(s.res[i])parts.push(s.res[i]+" pushed off");
+    return{big:t,text:"on towers · "+parts.join(", ")}},
+  describe:function(s){return s.ev||""}
+};
+// board: axial hex coordinates (q,r), pointy-top. Rows r = -4..4 (letters I..A, A at the bottom); diagonals q = -5..4 (numbers 1..10).
+var QOF=[],ROF=[],KEY={},q0,r0;
+var RAD=6,NNUT=70;   // surface: a hexhex of side 7 (127 positions), 70 nuts
+for(r0=-RAD;r0<=RAD;r0++)for(q0=-RAD;q0<=RAD;q0++)if(ab(q0+r0)<=RAD){KEY[q0+","+r0]=QOF.length;QOF.push(q0);ROF.push(r0)}
+var NC=QOF.length,DQ=[1,1,0,-1,-1,0],DR=[0,-1,-1,0,1,1],NBD=new Int16Array(NC*6),ROWL="ABCDEFGHIJKLM";   // direction d+3 is opposite to d
+for(var c0=0;c0<NC;c0++)for(var d0=0;d0<6;d0++){var k0=KEY[(QOF[c0]+DQ[d0])+","+(ROF[c0]+DR[d0])];NBD[c0*6+d0]=k0===undefined?-1:k0}
+function nb(i,d){return NBD[i*6+d]}
+function cn(i){return ROWL[RAD-ROF[i]]+(QOF[i]+RAD+1)}
+// random surface: grow from a triangle of three nuts, each new nut touching at least two nuts already laid,
+// so the shape is connected and every nut has at least two neighbours. Spots touching exactly two nuts are preferred, for irregular shapes.
+function makeSurface(){
+  var h=new Uint8Array(NC),cnt=0,i,d,k,n,c,C,W,tot,x;
+  while(cnt<NNUT){
+    h.fill(0);
+    do{c=Math.floor(Math.random()*NC)}while(ab(QOF[c])+ab(ROF[c])+ab(QOF[c]+ROF[c])>4);
+    d=Math.floor(Math.random()*6);h[c]=h[nb(c,d)]=h[nb(c,(d+1)%6)]=1;cnt=3;
+    while(cnt<NNUT){
+      C=[];W=[];tot=0;
+      for(i=0;i<NC;i++)if(!h[i]){k=0;for(d=0;d<6;d++){n=nb(i,d);if(n>=0&&h[n])k++}if(k>=2){C.push(i);W.push(k===2?3:k===3?1.5:1);tot+=W[W.length-1]}}
+      if(!C.length)break;
+      x=Math.random()*tot;for(i=0;i<C.length-1&&x>=W[i];i++)x-=W[i];
+      h[C[i]]=1;cnt++;
+    }
+  }
+  return h;
+}
+function onEdge(s,i){for(var d=0;d<6;d++){var n=nb(i,d);if(n<0||!s.h[n])return true}return false}
+function nameP(P){return GAME.sides[P].name}
+function plural(n,w){return n+" "+w+(n===1?"":"s")}
+function E(m){return{err:m}}
+function setupColor(s){return s.setup%2===0?s.turn:1-s.turn}
+// a line of friendly marbles from i in direction d, one enemy marble, then a free nut not higher (to) or no nut (to = -1)
+function pushInfo(s,i,d){
+  var h=s.h,m=s.m,me=m[i],L=[i],c=nb(i,d),t,nx,C;
+  while(c>=0&&m[c]===me){L.push(c);c=nb(c,d)}
+  if(c<0||!m[c])return null;
+  for(t=0;t<L.length;t++){nx=t+1<L.length?L[t+1]:c;if(ab(h[L[t]]-h[nx])>1)return null}
+  C=nb(c,d);
+  if(C<0||!h[C])return{L:L,x:c,to:-1,d:d};
+  if(m[C]||h[C]>3||h[C]>h[c])return null;
+  return{L:L,x:c,to:C,d:d};
+}
+// every marble action of the side to move (marble step)
+function marbleActs(s){
+  var P=s.turn,me=P+1,h=s.h,m=s.m,out=[],i,d,n,k,pi;
+  for(i=0;i<NC;i++)if(m[i]===me)for(d=0;d<6;d++){
+    n=nb(i,d);if(n<0||!h[n])continue;
+    if(!m[n]){if(ab(h[i]-h[n])<=1)out.push({t:"move",i:i,j:n});continue}
+    if(m[n]===me){k=nb(n,d);if(k>=0&&h[k]&&!m[k]&&ab(h[i]-h[n])<=1&&ab(h[n]-h[k])<=1)out.push({t:"move",i:i,j:k})}
+    pi=pushInfo(s,i,d);if(pi)out.push({t:"push",i:i,d:d,j:pi.x});
+  }
+  if(s.res[P])for(i=0;i<NC;i++)if(h[i]===1&&!m[i])out.push({t:"enter",j:i});
+  return out;
+}
+// groups of connected marbles of P (group id per cell, -1 elsewhere)
+function mgroups(s,P){
+  s._mg=s._mg||[];if(s._mg[P])return s._mg[P];
+  var me=P+1,g=new Int16Array(NC).fill(-1),n=0,i,q,x,k,y;
+  for(i=0;i<NC;i++)if(s.m[i]===me&&g[i]<0){q=[i];g[i]=n;
+    for(x=0;x<q.length;x++)for(k=0;k<6;k++){y=nb(q[x],k);if(y>=0&&s.m[y]===me&&g[y]<0){g[y]=n;q.push(y)}}
+    n++}
+  return s._mg[P]=g;
+}
+function isFree(s,i){return s.h[i]>=1&&s.h[i]<=3&&!s.m[i]}
+// nut moves of the side to move; src: only from that cell; one: stop at the first
+function nutActs(s,src,one){
+  var P=s.turn,me=P+1,G=mgroups(s,P),out=[],i,j,k,n,set,F=[],a,b;
+  for(i=0;i<NC;i++)if(isFree(s,i))F.push(i);
+  for(a=0;a<F.length;a++){i=F[a];
+    if(src!==undefined&&i!==src)continue;
+    set={};var any=false;
+    for(k=0;k<6;k++){n=nb(i,k);if(n>=0&&s.m[n]===me){set[G[n]]=1;any=true}}
+    if(!any)continue;
+    for(b=0;b<F.length;b++){j=F[b];if(j===i)continue;
+      for(k=0;k<6;k++){n=nb(j,k);if(n>=0&&s.m[n]===me&&set[G[n]]){out.push({t:"nut",i:i,j:j});if(one)return out;break}}}
+  }
+  return out;
+}
+function onTowers(s,P){var t=0;for(var i=0;i<NC;i++)if(s.m[i]===P+1&&s.h[i]===4)t++;return t}
+function win(s){var a=onTowers(s,0),b=onTowers(s,1);s.w=a>=3?0:b>=3?1:-1}
+// try action a in state s: {ns} (turn not yet advanced) or {err}
+function apply(s,a){
+  if(s.w>=0)return E("The game is over.");
+  var P=s.turn,Q=1-P,me=P+1,h=s.h,m=s.m,nh=h,nm=m,res=s.res,txt=nameP(P)+" ",hl=s.hl.slice(),hn=s.hn.slice(),hf=s.hf.slice(),
+      ph=s.ph,moved=s.moved,done=false,setup=s.setup,st=false,i=a.i,j=a.j,d,n,pi,k;
+  if(setup<10){
+    if(a.t!=="setup")return E("All marbles must be placed first.");
+    if(j===undefined||j<0||!h[j])return E("A marble goes on top of a nut.");
+    if(m[j])return E("That nut already holds a marble.");
+    if(!onEdge(s,j))return E("During setup, marbles go on the edge of the surface: a nut with at least one side not touching another nut.");
+    var col=setupColor(s);nm=m.slice();nm[j]=col+1;hl.push(j);setup++;done=setup%2===0;st=true;
+    txt+="placed "+(col===P?"a":"an opponent")+" "+nameP(col)+" marble on "+cn(j)+".";
+  }else if(a.t==="move"){
+    if(ph)return E("You have already made your marble step this turn; move a nut or end the turn.");
+    if(m[i]!==me)return E("Select one of your own marbles.");
+    if(!h[j])return E("There is no nut there.");
+    if(m[j])return E("That nut already holds a marble.");
+    var over=-1;
+    for(d=0;d<6;d++){n=nb(i,d);if(n===j)break;if(n>=0&&m[n]===me&&nb(n,d)===j){over=n;break}}
+    if(d===6)return E("A marble moves to an adjacent nut, or jumps over one adjacent friendly marble in a straight line.");
+    if(over<0){if(ab(h[i]-h[j])>1)return E("Too steep: a marble can only climb or descend one level.")}
+    else if(ab(h[i]-h[over])>1||ab(h[over]-h[j])>1)return E("Too steep: each part of a jump may change level by at most one.");
+    nm=m.slice();nm[i]=0;nm[j]=me;hl.push(j);hf.push(i);ph=1;moved=true;
+    txt+=(over<0?"moved a marble from "+cn(i)+" to ":"jumped from "+cn(i)+" over "+cn(over)+" to ")+cn(j)+(h[j]===4?", on top of a tower":"")+".";
+  }else if(a.t==="push"){
+    if(ph)return E("You have already made your marble step this turn.");
+    if(m[i]!==me)return E("Select one of your own marbles.");
+    pi=null;
+    if(a.d!==undefined)pi=pushInfo(s,i,a.d);
+    else for(d=0;d<6&&!pi;d++){pi=pushInfo(s,i,d);if(pi&&pi.x!==j)pi=null}
+    if(!pi)return E("That marble cannot be pushed: the next nut must be free and not higher, and the climb at most one level.");
+    nm=m.slice();nm[pi.L[0]]=0;nm[pi.x]=me;
+    for(k=1;k<pi.L.length;k++)hl.push(pi.L[k]);hl.push(pi.x);hf.push(pi.L[0]);
+    if(pi.to>=0){nm[pi.to]=Q+1;hl.push(pi.to)}else{res=res.slice();res[Q]++}
+    ph=1;moved=true;
+    txt+=(pi.L.length>1?"pushed with a line of "+pi.L.length+" marbles the ":"pushed the ")+nameP(Q)+" marble on "+cn(pi.x)+
+      (pi.to>=0?" to "+cn(pi.to)+".":" off the playing area.");
+  }else if(a.t==="enter"){
+    if(ph)return E("You have already made your marble step this turn.");
+    if(!res[P])return E("You have no marble waiting to come back.");
+    if(h[j]!==1||m[j])return E("A returned marble goes on a free nut of height one.");
+    nm=m.slice();nm[j]=me;res=res.slice();res[P]--;hl.push(j);ph=1;moved=true;
+    txt+="placed a returned marble on "+cn(j)+".";
+  }else if(a.t==="skip"){
+    if(ph)return E("The marble step is already over.");
+    ph=1;txt+="skipped the marble step.";
+  }else if(a.t==="nut"){
+    if(!isFree(s,i))return E(h[i]===4?"A tower cannot be taken apart.":!h[i]?"There is no nut there.":"A nut can only be taken from a free stack (no marble on it).");
+    var L=nutActs(s,i);
+    if(!L.length){
+      for(k=0;k<6;k++){n=nb(i,k);if(n>=0&&m[n]===me)break}
+      return E(k===6?"Nuts can only be taken from a free stack next to one of your marbles.":"That nut has nowhere to go: no other free stack touches the group of that marble.");
+    }
+    if(!L.some(function(x){return x.j===j}))return E("The nut must go on another free stack (three nuts or fewer, no marble) next to the group of a marble touching the stack it comes from.");
+    nh=h.slice();nh[i]--;nh[j]++;hn.push(j);hf.push(i);moved=true;done=true;
+    txt+=(ph?"":"skipped the marble step and ")+"moved a nut from "+cn(i)+" to "+cn(j)+(nh[j]===4?", building a tower":"")+(nh[i]?"":"; "+cn(i)+" is now empty")+".";
+    ph=1;
+  }else if(a.t==="end"){
+    if(!ph)return E("Make or skip the marble step first.");
+    done=true;txt+="ended the turn without moving a nut.";
+  }else return E("Unknown action.");
+  var ns={h:nh,m:nm,res:res,setup:setup,turn:P,tn:s.tn,ph:ph,moved:moved,done:done,setupTurn:st,passes:s.passes,
+    hl:hl,hn:hn,hf:hf,phl:s.phl,phn:s.phn,phf:s.phf,w:-1,ev:txt};
+  win(ns);
+  return{ns:ns};
+}
+function newTurn(s){
+  var T=1-s.turn;s.turn=T;s.tn=s.tn.slice();s.tn[T]++;
+  s.phl=s.hl;s.phn=s.hn;s.phf=s.hf;s.hl=[];s.hn=[];s.hf=[];s.ph=0;s.moved=false;s.done=false;s.setupTurn=false;
+  delete s._d;delete s._mg;
+}
+function newState(){
+  var s={h:makeSurface(),m:new Uint8Array(NC),res:[0,0],setup:0,turn:1,tn:[0,0],ph:0,moved:false,done:false,setupTurn:false,passes:0,
+    hl:[],hn:[],hf:[],phl:[],phn:[],phf:[],w:-1,ev:""};
+  newTurn(s);return s;
+}
+// after an action: end the turn when it is over or nothing more is possible; skip steps that cannot be made
+function finalize(ns0){
+  var s=Object.assign({},ns0),g=0;delete s._d;delete s._mg;
+  while(s.w<0&&g++<12){
+    if(s.done){
+      if(!s.setupTurn){
+        if(s.moved)s.passes=0;else{s.passes++;s.ev+=" "+nameP(s.turn)+" passed."}
+        if(s.passes>=2){
+          var a=onTowers(s,0),b=onTowers(s,1);s.w=a>b?0:b>a?1:2;
+          s.ev+=" Both players passed: "+nameP(0)+" owns "+plural(a,"tower")+", "+nameP(1)+" "+b+".";break;
+        }
+      }
+      newTurn(s);continue;
+    }
+    if(s.setup<10)break;
+    if(s.ph===0&&!marbleActs(s).length){s.ph=1;continue}
+    if(s.ph===1&&!nutActs(s,undefined,true).length){s.done=true;continue}
+    break;
+  }
+  return s;
+}
+// every legal action (for random play)
+function allActs(s){
+  if(s.w>=0)return[];
+  if(s.setup<10){var o=[];for(var i=0;i<NC;i++)if(s.h[i]&&!s.m[i])o.push({t:"setup",j:i});return o}
+  return s.ph===0?marbleActs(s).concat(nutActs(s),[{t:"skip"}]):nutActs(s).concat([{t:"end"}]);
+}
+
+/* ================================ 2. ENGINE ================================ */
+// features of side P: marbles on towers, heights, empty towers reachable next move, stacks of 3 nearby, exposure to the edge, mobility
+function feat(s,P){
+  var h=s.h,m=s.m,me=P+1,f={onT:0,hs:0,reach:0,pot:0,edge:0,mob:0,adj:0,res:s.res[P]},R={},T={},i,d,n,k,o;
+  for(i=0;i<NC;i++)if(m[i]===me){
+    if(h[i]===4)f.onT++;f.hs+=h[i];
+    for(d=0;d<6;d++){n=nb(i,d);
+      if(n<0||!h[n]){o=nb(i,(d+3)%6);if(o>=0&&h[o]&&m[o]&&m[o]!==me)f.edge+=2;else if(o>=0&&h[o])f.edge++;continue}
+      if(!m[n]){f.mob++;if(h[n]===4&&h[i]>=3)R[n]=1;else if(h[n]===3&&h[i]>=2)T[n]=1}
+      else if(m[n]===me){f.adj++;k=nb(n,d);if(k>=0&&h[k]===4&&!m[k]&&h[n]>=3&&ab(h[i]-h[n])<=1)R[k]=1}}
+  }
+  for(k in R)f.reach++;for(k in T)f.pot++;
+  // marble steps needed (ignoring jumps) to reach each empty tower and each free stack of three
+  var D=new Uint8Array(NC).fill(99),q=[],x,tw=[],pt=[];
+  for(i=0;i<NC;i++)if(m[i]===me&&h[i]<4){D[i]=0;q.push(i)}
+  for(x=0;x<q.length;x++){i=q[x];for(d=0;d<6;d++){n=nb(i,d);
+    if(n>=0&&h[n]&&D[n]>D[i]+1&&(!m[n]||m[n]===me)&&ab(h[i]-h[n])<=1){D[n]=D[i]+1;if(h[n]<4)q.push(n)}}}
+  for(i=0;i<NC;i++)if(!m[i]&&D[i]<99){if(h[i]===4)tw.push(60/D[i]);else if(h[i]===3)pt.push(14/D[i])}
+  tw.sort(function(a,b){return b-a});pt.sort(function(a,b){return b-a});
+  f.tw=0;for(k=0;k<Math.min(tw.length,3-f.onT);k++)f.tw+=tw[k];
+  f.pt=0;for(k=0;k<Math.min(pt.length,3);k++)f.pt+=pt[k];
+  return f;
+}
+function sc(f){return 120*f.onT+3*f.hs+f.tw+f.pt+2*f.pot-3*f.edge+.3*f.mob+f.adj-25*f.res}
+function pushThreat(s,P){
+  var t={tower:0,off:0},i,d,pi;
+  for(i=0;i<NC;i++)if(s.m[i]===P+1)for(d=0;d<6;d++){pi=pushInfo(s,i,d);if(pi){if(s.h[pi.x]===4)t.tower=1;if(pi.to<0)t.off=1}}
+  return t;
+}
+function evalS(s){   // value from Blue's point of view
+  if(s.w>=0)return s.w===0?1e5:s.w===1?-1e5:0;
+  var f=[feat(s,0),feat(s,1)],mv=s.setup>=10&&(s.ph===1||s.done)?1-s.turn:s.turn,sg=mv===0?1:-1,M=f[mv],N=f[1-mv],v=sc(f[0])-sc(f[1]);
+  if(s.setup<10)return v;
+  if(M.onT>=2&&M.reach)return sg*5e4;   // the side to move steps on its third tower
+  if(N.onT>=2&&N.reach)v-=sg*45;
+  var pt=pushThreat(s,mv);v+=sg*((pt.tower?80:0)+(pt.off?12:0));
+  if(s.passes&&s.ph===0&&!s.done&&M.onT>N.onT)return sg*4e4;   // the opponent just passed: the side to move can end the game by passing
+  return v;
+}
+// whole turns for the side to move: the K best marble steps, each followed by every nut step. v from the mover's point of view.
+function bestTurns(s,K,noise){
+  var P=s.turn,sg=P===0?1:-1,top,out=[];
+  if(s.ph===1)top=[{a:[],s:s}];
+  else{
+    top=[];
+    marbleActs(s).concat([{t:"skip"}]).forEach(function(a){var r=apply(s,a);if(!r.ns)return;var f=finalize(r.ns);top.push({a:[a],s:f,v:sg*evalS(f)+Math.random()*noise})});
+    top.sort(function(x,y){return y.v-x.v});
+    for(var i=0;i<top.length;i++)if(top[i].s.w===P)return[top[i]];
+    top=top.slice(0,K);
+  }
+  top.forEach(function(o){
+    var c=o.s;
+    if(c.w>=0||c.turn!==P||c.ph!==1||c.done){out.push(o);return}
+    nutActs(c).concat([{t:"end"}]).forEach(function(b){var r=apply(c,b);if(!r.ns)return;var f=finalize(r.ns);out.push({a:o.a.concat([b]),s:f,v:sg*evalS(f)+Math.random()*noise})});
+  });
+  out.sort(function(x,y){return y.v-x.v});
+  return out;
+}
+// the computer's whole turn, as the list of positions after each of its actions.
+// Easy: few marble steps considered, noisy. Medium: greedy over whole turns. Hard: the best 10 turns are checked against the best reply.
+function aiTurn(s,lv){
+  var P=s.turn,sg=P===0?1:-1,out=[],c=s,i,b,bv,r,v;
+  if(s.setup<10){
+    while(c.w<0&&c.setup<10&&c.turn===P&&out.length<2){
+      b=null;bv=-1e9;
+      for(i=0;i<NC;i++)if(c.h[i]&&!c.m[i]){r=apply(c,{t:"setup",j:i});if(!r.ns)continue;
+        v=sg*evalS(r.ns)+Math.random()*(lv===1?6:lv===2?1.5:.8);if(v>bv){bv=v;b=r.ns}}
+      if(!b)break;c=finalize(b);out.push(c);
+    }
+    return out;
+  }
+  var L=bestTurns(s,lv===1?4:lv===2?10:8,lv===1?25:lv===2?1:.2);
+  if(!L.length)return[finalize(Object.assign({},s,{done:true,ph:1}))];
+  var best=L[0];
+  if(lv===3&&best.s.w!==P){
+    var T=L.slice(0,10);
+    T.forEach(function(o){
+      if(o.s.w>=0){o.v2=o.s.w===P?1e5:o.s.w===2?0:-1e5;return}
+      var R=bestTurns(o.s,8,0);o.v2=R.length?(o.s.turn===P?R[0].v:-R[0].v):o.v;o.v2+=Math.random()*.2;
+    });
+    T.sort(function(x,y){return y.v2-x.v2});best=T[0];
+  }
+  c=s;best.a.forEach(function(a){r=apply(c,a);if(r.ns){c=finalize(r.ns);out.push(c)}});
+  return out.length?out:[finalize(Object.assign({},s,{done:true,ph:1}))];
+}
+function randomTurn(s){
+  var c=s,P=s.turn,g=0;
+  while(c.w<0&&c.turn===P&&g++<4){var A=allActs(c);if(!A.length)break;var r=apply(c,A[Math.floor(Math.random()*A.length)]);if(!r.ns)break;c=finalize(r.ns)}
+  return c;
+}
+var sim=null;
+function runSim(){   // computer vs computer, to look for first/second-player advantage
+  if(sim){sim.stop=true;return}
+  var CAP=300,me=sim={stop:false},TOTAL=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?4:+$("simR").value)),
+      done=0,w=[0,0,0],un=0,g=newState(),plies=0,lv=+$("level").value,lvName=$("level").options[$("level").selectedIndex].text,nm=GAME.sides.map(function(x){return x.name});
+  ["mode","side","level","new","undo","redo","rem","ptype","simN","simR","nFirst","nPrev","nNext","nLast"].forEach(function(i){$(i).disabled=true});
+  $("sim").textContent="Stop simulation";
+  $("simout").textContent="Simulating at "+lvName+" level… 0/"+TOTAL;
+  function fin(stopped){
+    sim=null;$("sim").textContent="Simulation";
+    $("mode").disabled=$("new").disabled=$("simN").disabled=$("simR").disabled=false;
+    $("level").disabled=$("side").disabled=$("mode").value==="2p";
+    var dec=w[0]+w[1],mg=dec?(196*Math.sqrt((w[0]/dec)*(1-w[0]/dec)/dec)).toFixed(1):"0";
+    var pc=function(n){return done?(100*n/done).toFixed(1)+"%":"n/a"};
+    $("simout").textContent=(stopped?"Stopped after ":"")+done+" games at "+lvName+" level (computer vs computer), first "+RND+" turns random (setup turns included).\n"+
+      "First player ("+nm[0]+", first to place) won "+pc(w[0])+" ("+w[0]+" games). Second player ("+nm[1]+", first to move) won "+pc(w[1])+" ("+w[1]+" games)."+
+      (dec?" Among decided games the first player won "+(100*w[0]/dec).toFixed(1)+"% (margin ±"+mg+" points at 95% confidence).":"")+
+      (w[2]?" Draws: "+w[2]+".":"")+(un?" Unfinished (stopped at "+CAP+" turns): "+un+".":"");
+    render();
+  }
+  function stepSim(){
+    if(me.stop){fin(true);return}
+    var t0=Date.now();
+    while(Date.now()-t0<40){
+      if(g.w>=0||plies>=CAP){
+        if(g.w>=0)w[g.w]++;else un++;
+        done++;g=newState();plies=0;
+        if(done>=TOTAL){fin(false);return}
+        continue;
+      }
+      if(plies<RND)g=randomTurn(g);
+      else{var L=aiTurn(g,lv);g=L[L.length-1]}
+      plies++;
+    }
+    $("simout").textContent="Simulating at "+lvName+" level… "+done+"/"+TOTAL;
+    setTimeout(stepSim,0);
+  }
+  stepSim();
+}
+
+/* =============================== 3. INTERFACE =============================== */
+var hist,redo=[],view=null,sel,ptype="normal",over,busy,note="";   // view: null = live position, otherwise the index being reviewed
+var S3=Math.sqrt(3),PX=[],PY=[],GOLD="#e0a800",PURPLE="#8e44ad",NUTF=["","#e3e7ec","#c4cbd4","#a2adba","#6c7988"],NUTS=["","#8a95a2","#7a8593","#677382","#2e3640"];
+for(var ci=0;ci<NC;ci++){PX[ci]=S3*(QOF[ci]+ROF[ci]/2);PY[ci]=1.5*ROF[ci]}
+function lx(q,r){return S3*(q+r/2)}
+function hexp(x,y,rad){var a=[];for(var k=0;k<6;k++){var t=Math.PI/180*(60*k+30);a.push((x+Math.cos(t)*rad).toFixed(3)+","+(y+Math.sin(t)*rad).toFixed(3))}return a.join(" ")}
+// coordinate labels: row letters at both ends of each row, diagonal numbers at both ends of each diagonal (skipping clashes)
+var LABS=[],X0=1e9,X1=-1e9,Y0=1e9,Y1=-1e9;
+(function(){
+  var used={},i,qq,rr,mn,mx;
+  function add(q,r,t){var k=q+","+r;if(used[k]||KEY[k]!==undefined)return;used[k]=1;LABS.push({x:lx(q,r),y:1.5*r,t:t})}
+  for(rr=-RAD;rr<=RAD;rr++){mn=99;mx=-99;for(i=0;i<NC;i++)if(ROF[i]===rr){mn=Math.min(mn,QOF[i]);mx=Math.max(mx,QOF[i])}
+    add(mn-1,rr,ROWL[RAD-rr]);add(mx+1,rr,ROWL[RAD-rr])}
+  for(qq=-RAD;qq<=RAD;qq++){mn=99;mx=-99;for(i=0;i<NC;i++)if(QOF[i]===qq){mn=Math.min(mn,ROF[i]);mx=Math.max(mx,ROF[i])}
+    add(qq,mn-1,qq+RAD+1);add(qq,mx+1,qq+RAD+1)}
+  LABS.forEach(function(l){X0=Math.min(X0,l.x);X1=Math.max(X1,l.x);Y0=Math.min(Y0,l.y);Y1=Math.max(Y1,l.y)});
+  X0-=.8;X1+=.8;Y0-=.8;Y1+=.8;
+})();
+function cur(){return hist[hist.length-1]}
+function line(){return hist.concat(redo.slice().reverse())}   // every position, including those that can still be redone
+function browsing(){return view!==null}
+function shown(){return view===null?cur():line()[view]}
+function aiSide(){return $("mode").value==="ai"?1-+$("side").value:-1}
+function clearSel(){sel=null;note=""}
+function goto(k){
+  if(busy||sim)return;
+  var n=hist.length-1+redo.length;k=Math.max(0,Math.min(n,k));
+  view=k===hist.length-1?null:k;clearSel();render();
+}
+// Undo/Redo while reviewing: leave review and play on from the reviewed position (in computer mode, from the nearest position where it is the human's turn)
+function unlock(dir){
+  var L=line(),k=view,j;
+  if($("mode").value==="ai"){
+    j=k;while(j>=0&&j<L.length&&L[j].w<0&&L[j].turn!==+$("side").value)j+=dir;
+    if(j>=0&&j<L.length)k=j;
+  }
+  hist=L.slice(0,k+1);redo=L.slice(k+1).reverse();view=null;clearSel();over=false;render();maybeAI();
+}
+function humanTurn(){return $("mode").value==="2p"||cur().turn===+$("side").value}
+function start(){
+  hist=[newState()];redo=[];view=null;clearSel();ptype="normal";$("level").disabled=$("side").disabled=$("mode").value==="2p";over=false;busy=false;
+  render();maybeAI();
+}
+// legal targets of a kind of click (cached on the state)
+function dots(s,t){
+  s._d=s._d||{};if(s._d[t])return s._d[t];
+  var M={},i,r;
+  if(t==="setup"||t==="enter"){for(i=0;i<NC;i++)if(s.h[i]&&!s.m[i]){r=apply(s,{t:t,j:i});if(r.ns)M[i]=r.ns}}
+  else nutActs(s).forEach(function(a){M[a.i]=1});
+  return s._d[t]=M;
+}
+function render(){
+  var br=browsing(),s=shown(),sd=GAME.sides,h=[],P=s.turn,i,k,nT=hist.length-1+redo.length,kk=br?view:hist.length-1,lock=busy||!!sim,x,y;
+  over=s.w>=0;
+  var canAct=!br&&!over&&humanTurn()&&!busy&&!sim;
+  if(!(s.setup>=10&&s.ph===0&&s.res[P]))ptype="normal";
+  h.push('<svg viewBox="'+[X0,Y0,X1-X0,Y1-Y0].map(function(v){return v.toFixed(2)}).join(" ")+'" role="img" aria-label="Mutternland board">');
+  h.push('<defs>'+sd.map(function(x,p){var a=p?["#ffb3aa","#c0392b","#5e0f07"]:["#b4ceff","#2b59c3","#0f2462"];
+    return'<radialGradient id="mg'+p+'" cx=".35" cy=".32" r=".75"><stop offset="0" stop-color="'+a[0]+'"/><stop offset=".55" stop-color="'+a[1]+'"/><stop offset="1" stop-color="'+a[2]+'"/></radialGradient>'}).join("")+'</defs>');
+  LABS.forEach(function(l){h.push('<text x="'+l.x.toFixed(2)+'" y="'+l.y.toFixed(2)+'" font-size=".7" text-anchor="middle" dominant-baseline="central" fill="var(--mute)" pointer-events="none">'+l.t+'</text>')});
+  // gold: every marble placed or moved and every stack that received a nut in the turn being played (before its first action: in the previous turn)
+  var cu=s.hl.length||s.hn.length||s.hf.length,HL={},HN={},HF=cu?s.hf:s.phf||[];
+  (cu?s.hl:s.phl||[]).forEach(function(z){if(s.m[z])HL[z]=1});
+  (cu?s.hn:s.phn||[]).forEach(function(z){if(s.h[z])HN[z]=1});
+  for(i=0;i<NC;i++){x=PX[i];y=PY[i];var ht=s.h[i];
+    if(!ht){h.push('<polygon data-i="'+i+'" points="'+hexp(x,y,.9)+'" fill="transparent" stroke="var(--edge)" stroke-width=".05" stroke-dasharray=".15 .12"/>');continue}
+    for(k=0;k<ht;k++){var off=(ht-1-k)*.1;
+      h.push('<polygon'+(k===ht-1?' data-i="'+i+'"':' pointer-events="none"')+' points="'+hexp(x,y+off,.93)+'" fill="'+NUTF[k+1]+'" stroke="'+(ht===4&&k===3?NUTS[4]:NUTS[k+1])+'" stroke-width="'+(ht===4&&k===3?.14:.05)+'"/>')}
+    if(HN[i])h.push('<polygon points="'+hexp(x,y,.86)+'" fill="none" stroke="'+GOLD+'" stroke-width=".15" pointer-events="none"/>');
+    if(!s.m[i])h.push('<circle cx="'+x+'" cy="'+y+'" r=".33" fill="'+(ht===4?"#3a4350":"#59626e")+'" stroke="#fff" stroke-opacity=".5" stroke-width=".05" pointer-events="none"/>');
+    h.push('<text x="'+x.toFixed(2)+'" y="'+(y-.6).toFixed(2)+'" font-size=".34" font-weight="700" text-anchor="middle" dominant-baseline="central" fill="'+(ht===4?"#fff":"#222")+'" pointer-events="none">'+ht+'</text>');
+  }
+  HF.forEach(function(z){if(!s.m[z])h.push('<circle cx="'+PX[z]+'" cy="'+(PY[z]+.5)+'" r=".14" fill="'+GOLD+'" pointer-events="none"/>')});
+  if(sel&&sel.k==="nut")h.push('<polygon points="'+hexp(PX[sel.i],PY[sel.i],.9)+'" fill="none" stroke="var(--hi)" stroke-width=".16" pointer-events="none"/>');
+  for(i=0;i<NC;i++)if(s.m[i]){
+    var p=s.m[i]-1,on=sel&&sel.k==="marble"&&sel.i===i,lm=!!HL[i];
+    h.push('<circle data-i="'+i+'" cx="'+PX[i]+'" cy="'+PY[i]+'" r=".5" fill="url(#mg'+p+')" stroke="'+(on?'var(--hi)':lm?GOLD:'rgba(0,0,0,.35)')+'" stroke-width="'+(on||lm?.15:.04)+'"/>');
+  }
+  if(canAct&&!sel){
+    var D=s.setup<10?dots(s,"setup"):ptype==="enter"?dots(s,"enter"):dots(s,"src"),full=s.setup<10||ptype==="enter";
+    for(var key in D){i=+key;h.push('<circle data-i="'+i+'" cx="'+PX[i]+'" cy="'+PY[i]+'" r="'+(full?.2:.15)+'" fill="'+(full?"var(--hi)":"none")+'" stroke="'+(full?"none":"#fff")+'" stroke-width=".07" opacity=".9"/>')}
+  }
+  if(sel)sel.list.forEach(function(m){var f=m.j;
+    if(m.k==="push")h.push('<circle data-i="'+f+'" cx="'+PX[f]+'" cy="'+PY[f]+'" r=".66" fill="none" stroke="'+PURPLE+'" stroke-width=".13"/>');
+    else h.push('<circle data-i="'+f+'" cx="'+PX[f]+'" cy="'+PY[f]+'" r=".22" fill="var(--hi)" fill-opacity=".95"/>')});
+  h.push('</svg>');
+  $("board").innerHTML=h.join("");
+  var names=sd.map(function(x){return x.name}),st;
+  for(i=0;i<2;i++){var tt=GAME.stats(s,i);$("s"+i).textContent=tt.big;$("d"+i).textContent=tt.text;
+    $("p"+i).className="pl"+(!over&&s.turn===i?" on":"")}
+  var turnNo=s.tn[0]+s.tn[1]-5;
+  if(br)st="Reviewing history (move "+kk+" of "+nT+"): the board is locked. Press Undo or Redo to play on from here.";
+  else if(over)st=s.w===2?"Game over: draw.":"Game over: "+names[s.w]+" wins.";
+  else if(!humanTurn())st=names[P]+" to play"+(s.setup<10?" (setup)":" (turn "+turnNo+")")+" – computer thinking…";
+  else if(s.setup<10)st=names[P]+" sets up (setup turn "+(s.tn[0]+s.tn[1])+" of 5): place "+(setupColor(s)===P?"one of your "+names[P]+" marbles":"an opponent "+names[setupColor(s)]+" marble")+" on an empty nut at the edge of the surface.";
+  else if(sel)st=names[P]+(sel.k==="nut"?": click an orange dot to put the nut there, or the stack again to deselect.":": click an orange dot to move, a purple ring to push, or the marble again to deselect.");
+  else if(ptype==="enter")st=names[P]+" (turn "+turnNo+"): click a free nut of height one to place your returned marble.";
+  else if(s.ph===0)st=names[P]+" to play (turn "+turnNo+"): marble step – select a marble, or click a nut to skip to the nut step.";
+  else st=names[P]+" (turn "+turnNo+"): nut step – click a free stack next to one of your marbles, or end the turn.";
+  $("status").textContent=st;
+  $("last").textContent=(GAME.describe(s)+" "+note).trim();
+  $("undo").disabled=lock||!(br||hist.length>=2);
+  $("redo").disabled=lock||!(br||redo.length);
+  $("nFirst").disabled=$("nPrev").disabled=lock||kk<=0;
+  $("nNext").disabled=$("nLast").disabled=lock||kk>=nT;
+  $("nlab").textContent="Move "+kk+" of "+nT;
+  $("ptype").disabled=!canAct||s.setup<10||s.ph!==0||!s.res[P];
+  $("ptype").textContent="Place returned marble"+(s.res[P]&&s.setup>=10?" ("+s.res[P]+")":"");
+  $("ptype").setAttribute("aria-pressed",ptype==="enter"?"true":"false");
+  $("rem").disabled=!canAct||s.setup<10;
+  $("rem").textContent=s.setup>=10&&s.ph===1?"End turn":"Skip marble step";
+}
+function play(ns){hist.push(finalize(ns));redo=[];clearSel();render();maybeAI()}
+function selectMarble(s,i){
+  var list=[];
+  marbleActs(s).forEach(function(a){if(a.i===i){var r=apply(s,a);if(r.ns)list.push({j:a.j,ns:r.ns,k:a.t})}});
+  return{k:"marble",i:i,list:list};
+}
+function selectNut(s,i){
+  var list=[];
+  nutActs(s,i).forEach(function(a){var r=apply(s,a);if(r.ns)list.push({j:a.j,ns:r.ns,k:"nut"})});
+  return{k:"nut",i:i,list:list};
+}
+function click(i){
+  if(over||busy||browsing()||!humanTurn()||sim)return;
+  var s=cur(),P=s.turn,v=s.m[i],r;note="";
+  if(sel){
+    var m=sel.list.filter(function(x){return x.j===i})[0];
+    if(m){play(m.ns);return}
+    var same=i===sel.i;sel=null;
+    if(same){render();return}
+  }
+  if(s.setup<10){r=apply(s,{t:"setup",j:i});if(r.ns){play(r.ns);return}note=r.err;render();return}
+  if(ptype==="enter"&&!v){
+    r=apply(s,{t:"enter",j:i});
+    if(r.ns){ptype="normal";play(r.ns);return}
+    note=r.err;render();return;
+  }
+  if(v===P+1){
+    if(s.ph){note="You have already made your marble step this turn: move a nut or end the turn.";render();return}
+    ptype="normal";sel=selectMarble(s,i);
+    if(!sel.list.length){note="That marble has no legal move: neighbours are too high or low, occupied, or missing.";sel=null}
+  }else if(v)note="That is an enemy marble: push it by moving one of your marbles (or the rear of a line of them) into it.";
+  else if(!s.h[i])note="There is no nut here any more.";
+  else{
+    ptype="normal";sel=selectNut(s,i);
+    if(!sel.list.length){note=apply(s,{t:"nut",i:i,j:i}).err;sel=null}
+  }
+  render();
+}
+function maybeAI(){
+  if(sim||cur().w>=0||$("mode").value!=="ai"||cur().turn===+$("side").value)return;
+  busy=true;render();
+  setTimeout(function(){
+    var L=aiTurn(cur(),+$("level").value),k=0;
+    (function next(){
+      hist.push(L[k++]);redo=[];render();
+      if(k<L.length)setTimeout(next,350);
+      else{busy=false;render();maybeAI()}
+    })();
+  },180);
+}
+document.title=GAME.title;$("gtitle").textContent=GAME.title;$("gsub").textContent=GAME.subtitle;
+function li(x){return"<li>"+(typeof x==="string"?x:x.t+"<ul>"+x.sub.map(li).join("")+"</ul>")+"</li>"}
+$("rules").innerHTML=GAME.rules.map(function(sec){return"<li><b>"+sec.h+"</b><ul>"+sec.items.map(li).join("")+"</ul></li>"}).join("");
+$("side").innerHTML=GAME.sides.map(function(x,i){return'<option value="'+i+'">You are '+x.name+'</option>'}).join("");
+for(var ni=0;ni<2;ni++)$("n"+ni).textContent=GAME.sides[ni].name;
+$("board").onclick=function(e){var t=e.target.closest("[data-i]");if(t)click(+t.getAttribute("data-i"))};
+$("new").onclick=start;$("sim").onclick=runSim;
+$("mode").onchange=$("side").onchange=start;
+$("ptype").onclick=function(){ptype=ptype==="enter"?"normal":"enter";clearSel();render()};
+$("rem").onclick=function(){
+  if(over||busy||browsing()||!humanTurn()||sim)return;
+  var s=cur(),r=apply(s,{t:s.ph?"end":"skip"});
+  if(r.ns)play(r.ns);else{note=r.err;render()}
+};
+$("redo").onclick=function(){
+  if(busy||sim)return;
+  if(browsing()){unlock(1);return}
+  if(!redo.length)return;
+  hist.push(redo.pop());
+  while($("mode").value==="ai"&&redo.length&&cur().w<0&&cur().turn!==+$("side").value)hist.push(redo.pop());
+  clearSel();render();
+};
+$("undo").onclick=function(){
+  if(busy||sim)return;
+  if(browsing()){unlock(-1);return}
+  if(hist.length<2)return;
+  redo.push(hist.pop());
+  while($("mode").value==="ai"&&hist.length>1&&cur().turn!==+$("side").value)redo.push(hist.pop());
+  clearSel();over=false;render();
+};
+$("nFirst").onclick=function(){goto(0)};
+$("nPrev").onclick=function(){goto((browsing()?view:hist.length-1)-1)};
+$("nNext").onclick=function(){goto((browsing()?view:hist.length-1)+1)};
+$("nLast").onclick=function(){goto(hist.length-1+redo.length)};
+start();
+})();
+</script>
+</body>
+</html>
