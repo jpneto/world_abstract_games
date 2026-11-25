@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bridg-It</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
+<style>
+:root{--bg:#eef0e6;--ink:#1f2a1c;--mute:#5d6a56;--cell:#dfe3cf;--edge:#b9bfa3;--hi:#e0803a;--panel:#fff;--line:#c5cab4;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f}}
+:root[data-theme="dark"]{--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+main{max-width:1080px;margin:0 auto;padding:16px 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.right>.bar:first-child{margin-top:0}
+@media (min-width:860px){.layout{grid-template-columns:minmax(0,600px) minmax(300px,1fr);gap:28px;align-items:start}}
+h1{font:700 2rem/1.1 "Bricolage Grotesque",Georgia,serif;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+select,button.ctl{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.ctl:disabled,select:disabled,input:disabled{opacity:.45;cursor:default}
+label.f{color:var(--mute);font-size:.9rem}
+input[type=number]{width:4.5em;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+button.ctl.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button.ctl.icon{display:inline-flex;align-items:center;justify-content:center;padding:6px 10px}
+button.ctl.icon svg{width:18px;height:18px;fill:currentColor;display:block}
+.navlab{min-width:7.5em;text-align:center;color:var(--mute);font-variant-numeric:tabular-nums}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.pl{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:8px 12px;display:flex;justify-content:space-between;align-items:baseline;gap:6px}
+.pl.on{border-color:var(--hi)}
+.pl b{font:700 1.6rem "Bricolage Grotesque",Georgia,serif}
+.pl small{color:var(--mute)}
+#status{min-height:1.5em;font-weight:600;margin:6px 0}
+#board svg{display:block;width:100%;max-width:600px;margin:0 auto;touch-action:manipulation}
+#board .sl{cursor:pointer}
+#board .sl .pv{opacity:0;transition:opacity .08s}
+#board .sl:hover .pv{opacity:.55}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+details li{margin:4px 0}
+.legend{color:var(--mute);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+<h1 id="gtitle"></h1>
+<p class="sub" id="gsub"></p>
+<div class="layout">
+<div class="left">
+<div id="board"></div>
+<p class="legend">Click a crossing point between two of your posts to build a bridge there; hovering shows where it would go. Blue’s bridges and Red’s bridges share the same centre points, so a taken point blocks the other player. In the two-bridge variant, green dots mark the legal crossing points; points that would join your first bridge’s group get no dot. The gold outline marks the bridge(s) placed in the last turn. Blue bars mark West and East, red bars North and South.</p>
+</div>
+<aside class="right">
+<div class="bar">
+  <select id="size" aria-label="Board size"><option value="5" selected>5×5 · 20 bridges</option><option value="7">7×7 · 42 bridges</option><option value="9">9×9 · 72 bridges</option><option value="11">11×11 · 110 bridges</option></select>
+  <select id="vr" aria-label="Variant"><option value="1" selected>One bridge per turn</option><option value="2">Two bridges per turn</option></select>
+</div>
+<div class="bar">
+  <select id="mode" aria-label="Mode"><option value="ai">Play the computer</option><option value="2p">Two players</option></select>
+  <select id="level" aria-label="Computer strength"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select>
+  <select id="side" aria-label="Your side"></select>
+  <button class="ctl primary" id="new">New game</button>
+  <button class="ctl" id="undo">Undo</button>
+  <button class="ctl" id="redo">Redo</button>
+</div>
+<div class="bar" id="nav" role="group" aria-label="Game history">
+  <button class="ctl icon" id="nFirst" aria-label="Go to the beginning" title="Go to the beginning"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="2.5" height="14"/><path d="M19 5v14L8 12z"/></svg></button>
+  <button class="ctl icon" id="nPrev" aria-label="One move back" title="One move back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 5v14L6 12z"/></svg></button>
+  <span class="navlab" id="nlab" aria-live="polite">Move 0 of 0</span>
+  <button class="ctl icon" id="nNext" aria-label="One move forward" title="One move forward"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5v14l11-7z"/></svg></button>
+  <button class="ctl icon" id="nLast" aria-label="Go to the last move" title="Go to the last move"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5v14l11-7z"/><rect x="17.5" y="5" width="2.5" height="14"/></svg></button>
+</div>
+<div class="score">
+  <div class="pl" id="p0"><span><span id="n0"></span> <small id="d0"></small></span><b id="s0">0</b></div>
+  <div class="pl" id="p1"><span><span id="n1"></span> <small id="d1"></small></span><b id="s1">0</b></div>
+</div>
+<div id="status" aria-live="polite"></div>
+<div id="last" class="legend" style="min-height:2.6em;margin:0 0 8px"></div>
+<div class="bar">
+  <label class="f">Simulation games <input id="simN" type="number" min="10" max="1000" value="10"></label>
+  <label class="f">Random opening moves <input id="simR" type="number" min="0" max="20" value="4"></label>
+  <button class="ctl" id="sim">Simulation</button>
+</div>
+<div id="simout" class="legend" style="white-space:pre-line;margin:0 0 8px"></div>
+<details>
+<summary>Rules</summary>
+<ul id="rules"></ul>
+</details>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+/* =====================================================================
+   1. GAME DEFINITION  - Bridg-It rules, lattice geometry, connection test, move generation
+   2. ENGINE           - minimax (beam-limited) computer opponent, simulations
+   3. INTERFACE        - SVG board, click handling, controls
+   Lattice: points (x,y), 0..L with L=2n, y=0 is North. Blue posts: x even, y odd (n rows of n+1).
+   Red posts: x odd, y even (n columns of n+1). Slots (crossing points): interior points with x+y even;
+   each slot holds the centre of one possible Blue bridge and one possible Red bridge.
+   A move is {j:slot, ns:resulting state}. Every placed bridge is one move (one history step).
+   A state is {e:slots (0 empty, 1 Blue, 2 Red), turn, res:[bridges left Blue, Red], left:placements left this turn,
+               first:slot of this turn's first bridge or -1, w:winner (-1 none, 0 Blue, 1 Red, 2 draw), mv, ev}.
+   ===================================================================== */
+var $=function(i){return document.getElementById(i)};
+
+/* ============================ 1. GAME DEFINITION ============================ */
+var N=5,VAR=1,L,NS,SX,SY,POST,SP,PADJ,SRC,SNK;
+function bridges(n){return (n*n+(n-1)*(n-1)-1)/2}   // 20, 42, 72, 110
+var GAME={
+  title:"Bridg-It",
+  subtitle:function(){return "David Gale’s connection game (1958). "+N+"×"+N+" board, "+bridges(N)+" bridges each"+(VAR===2?", two bridges per turn":"")+". Blue links West and East, Red links North and South."},
+  sides:[{name:"Blue",color:"#8FCBF0",post:"#3E93CF",dark:"#235f8a",goal:"West–East"},{name:"Red",color:"#F4A3A3",post:"#D95C5C",dark:"#9a3434",goal:"North–South"}],
+  rules:[
+  {h:"Board",items:[
+    "Two interlaced grids of posts. Blue’s posts form n rows of n+1, Red’s posts n columns of n+1 (n = 5 on the classic board, as in the picture). The board starts empty.",
+    "A bridge joins two neighbouring posts of your own colour, horizontally or vertically. Blue’s and Red’s bridges do not end at the same points; instead their centre points coincide, so every crossing point can hold only one bridge: bridges never cross.",
+    "Bridges never run along your own outermost line of posts (they would be useless), so the board has n² + (n−1)² crossing points."]},
+  {h:"Play",items:[
+    "Blue moves first. On each turn a player builds one bridge on an empty crossing point.",
+    "Blue wins by making a chain of blue bridges from the West edge to the East edge; Red wins with a chain from North to South.",
+    "Board sizes and bridges per player: 5×5 – 20, 7×7 – 42, 9×9 – 72, 11×11 – 110. One crossing point is always left over. If the player to move has no bridge left and nobody has connected, the game is a draw (with best play it never comes to that)."]},
+  {h:"Variant: two bridges per turn",items:[
+    "Each turn a player builds two bridges, but the two new bridges must not belong to the same bridge group (a group is a set of friendly bridges linked through shared posts) once both are placed.",
+    "For balance, Blue builds only one bridge on the very first turn of the game.",
+    "If no legal second bridge exists, the turn ends after one. A player wins at once when a bridge completes the connection."]}],
+  stats:function(s,i){var n=0;for(var k=0;k<NS;k++)if(s.e[k]===i+1)n++;
+    return{big:s.res[i],text:"· "+GAME.sides[i].goal+" · "+n+" built, bridges left:"}},
+  describe:function(s){return s.ev||""}
+};
+function build(n){
+  N=n;L=2*n;SX=[];SY=[];var x,y,P,j,S=L+1;
+  for(y=1;y<L;y++)for(x=1;x<L;x++)if((x+y)%2===0){SX.push(x);SY.push(y)}
+  NS=SX.length;POST=[[],[]];SP=[[],[]];PADJ=[[],[]];SRC=[[],[]];SNK=[[],[]];
+  for(P=0;P<2;P++){
+    var id=new Int16Array(S*S).fill(-1);
+    for(y=0;y<=L;y++)for(x=0;x<=L;x++)if(P===0?(x%2===0&&y%2===1):(x%2===1&&y%2===0)){
+      id[y*S+x]=POST[P].length;POST[P].push([x,y]);
+      SRC[P].push(P===0?x===0:y===0);SNK[P].push(P===0?x===L:y===L);
+    }
+    PADJ[P]=POST[P].map(function(){return[]});
+    for(j=0;j<NS;j++){
+      x=SX[j];y=SY[j];var h=hz(P,j),a=h?id[y*S+x-1]:id[(y-1)*S+x],b=h?id[y*S+x+1]:id[(y+1)*S+x];
+      SP[P][j]=[a,b];PADJ[P][a].push(j,b);PADJ[P][b].push(j,a);
+    }
+  }
+}
+function hz(P,j){return (SX[j]%2===1)===(P===0)}   // is player P's bridge at slot j horizontal?
+function cn(x,y){return String.fromCharCode(97+x)+(L+1-y)}
+function sname(j){return cn(SX[j],SY[j])}
+function bname(P,j){var a=POST[P][SP[P][j][0]],b=POST[P][SP[P][j][1]];return cn(a[0],a[1])+"–"+cn(b[0],b[1])}
+function nameOf(s){return GAME.sides[s.turn].name}
+// component label of every post of player P, through P's bridges
+function comps(o,P){
+  var p=P+1,np=POST[P].length,lab=new Int16Array(np).fill(-1),q,h,k,A,i,n=0;
+  for(i=0;i<np;i++)if(lab[i]<0){lab[i]=n;q=[i];
+    for(h=0;h<q.length;h++){A=PADJ[P][q[h]];for(k=0;k<A.length;k+=2)if(o[A[k]]===p&&lab[A[k+1]]<0){lab[A[k+1]]=n;q.push(A[k+1])}}n++}
+  return lab;
+}
+function won(o,P){
+  var p=P+1,np=POST[P].length,seen=new Uint8Array(np),q=[],h,k,A,i;
+  for(i=0;i<np;i++)if(SRC[P][i]){seen[i]=1;q.push(i)}
+  for(h=0;h<q.length;h++){if(SNK[P][q[h]])return true;A=PADJ[P][q[h]];
+    for(k=0;k<A.length;k+=2)if(o[A[k]]===p&&!seen[A[k+1]]){seen[A[k+1]]=1;q.push(A[k+1])}}
+  return false;
+}
+function mk(o,turn,res,left,first,mv,ev){return{e:o,turn:turn,res:res,left:left,first:first,w:-1,mv:mv,ev:ev||"",fl:null,fg:-1}}
+function newState(){var b=bridges(N);return mk(new Uint8Array(NS),0,[b,b],1,-1,null,"")}
+// variant: would a second bridge at slot j join the group of this turn's first bridge?
+function joins(s,j){
+  if(s.first<0)return false;
+  var P=s.turn;if(!s.fl){s.fl=comps(s.e,P);s.fg=s.fl[SP[P][s.first][0]]}
+  return s.fl[SP[P][j][0]]===s.fg||s.fl[SP[P][j][1]]===s.fg;
+}
+function canPlace(s,j){return s.w<0&&!s.e[j]&&!joins(s,j)}
+function anyPlace(s){for(var j=0;j<NS;j++)if(canPlace(s,j))return true;return false}
+function nextTurn(o,Q,res,mv,txt){
+  var ns=mk(o,Q,res,Math.min(VAR,res[Q]),-1,mv,txt),empty=false;
+  for(var j=0;j<NS;j++)if(!o[j]){empty=true;break}
+  if(res[Q]<=0||!empty){ns.w=2;ns.left=0;ns.ev=(txt+" "+(empty?GAME.sides[Q].name+" has no bridge left":"No crossing point is left")+" and nobody is connected: the game is a draw.").trim()}
+  return ns;
+}
+function place(s,j){
+  var P=s.turn,o=s.e.slice(),res=s.res.slice(),ns,to=s.first>=0?[s.first,j]:[j],mv={to:to,by:P},
+      txt=nameOf(s)+" built a bridge at "+sname(j)+" ("+bname(P,j)+").";
+  o[j]=P+1;res[P]--;
+  if(won(o,P)){ns=mk(o,P,res,0,-1,mv,txt+" "+nameOf(s)+" connects "+GAME.sides[P].goal+" and wins!");ns.w=P;return{j:j,ns:ns}}
+  if(s.left>1){
+    ns=mk(o,P,res,1,j,mv,txt);
+    if(res[P]>0&&anyPlace(ns))return{j:j,ns:ns};
+    if(res[P]>0)txt+=" No second bridge can be built apart from this one’s group.";
+  }
+  return{j:j,ns:nextTurn(o,1-P,res,mv,txt)};
+}
+function legal(s){var out=[];if(s.w>=0)return out;for(var j=0;j<NS;j++)if(canPlace(s,j))out.push(place(s,j));return out}
+
+/* ================================ 2. ENGINE ================================ */
+var AIW={D:4};   // evaluation weight of one bridge of distance
+// fewest bridges player P still needs, and how many shortest routes there are. Posts joined by P's bridges are
+// merged (all start-edge posts into one source, all goal-edge posts into one sink); empty crossing points are
+// edges of length 1, points taken by the opponent are cut.
+function dist(o,P){
+  var p=P+1,np=POST[P].length,lab=new Int16Array(np).fill(-1),mem=[],n=0,i,h,k,A,q,c,v,u,m;
+  function flood(seed){
+    for(h=0;h<seed.length;h++){A=PADJ[P][seed[h]];for(k=0;k<A.length;k+=2)if(o[A[k]]===p&&lab[A[k+1]]<0){lab[A[k+1]]=n;seed.push(A[k+1])}}
+    mem.push(seed);n++;
+  }
+  q=[];for(i=0;i<np;i++)if(SRC[P][i]){lab[i]=0;q.push(i)}flood(q);
+  q=[];for(i=0;i<np;i++)if(SNK[P][i]){if(lab[i]===0)return{d:0,n:1};lab[i]=1;q.push(i)}flood(q);
+  for(i=0;i<np;i++)if(lab[i]<0){lab[i]=n;flood([i])}
+  var D=new Int16Array(n).fill(-1),C=new Float64Array(n),Q=[0];D[0]=0;C[0]=1;
+  for(h=0;h<Q.length;h++){c=Q[h];if(c===1)break;
+    for(m=0;m<mem[c].length;m++){A=PADJ[P][mem[c][m]];
+      for(k=0;k<A.length;k+=2){if(o[A[k]])continue;v=lab[A[k+1]];if(v===c)continue;
+        if(D[v]<0){D[v]=D[c]+1;C[v]=C[c];Q.push(v)}else if(D[v]===D[c]+1)C[v]+=C[c]}}}
+  return D[1]<0?{d:99,n:0}:{d:D[1],n:C[1]};
+}
+function ev(s){   // value from Blue's point of view
+  if(s.w>=0)return s.w===2?0:s.w===0?1000:-1000;
+  var a=dist(s.e,0),b=dist(s.e,1),M=s.turn,dm=M?b:a,dop=M?a:b,sg=M?-1:1;
+  if(s.first<0&&dm.d<=1)return sg*900;                  // the player to move completes now
+  if(dop.d<=1&&dop.n>(s.first<0?s.left:1))return -sg*900;  // more open threats than blocks left this turn
+  if(a.d>=99)return -800;if(b.d>=99)return 800;          // one side is cut off for good
+  return AIW.D*(b.d-a.d)+Math.log(a.n)-Math.log(b.n);
+}
+var BEAM=[0,0,10,6],NOISE=[0,3,.4,.1];
+function val1(ns,P){return ns.w>=0?(ns.w===2?0:ns.w===P?1001:-1001):(P===0?1:-1)*ev(ns)}
+function term(ns,d,P){return ns.w===2?0:(ns.w===P?1:-1)*(1000+d)}
+// value of state s for the player to move (a second bridge in the same turn keeps the same player on move)
+function nega(s,d,al,be){
+  if(s.w>=0)return term(s,d,s.turn);
+  if(d===0)return (s.turn===0?1:-1)*ev(s);
+  var ms=legal(s),best=-1e9,P=s.turn,i,v;
+  if(!ms.length)return 0;
+  ms.forEach(function(m){m.v=val1(m.ns,P)});
+  if(d===1){ms.forEach(function(m){if(m.v>best)best=m.v});return best}
+  ms.sort(function(a,b){return b.v-a.v});ms=ms.slice(0,BEAM[3]);
+  for(i=0;i<ms.length;i++){v=child(ms[i].ns,d-1,al,be,P);if(v>best)best=v;if(best>al)al=best;if(al>=be)break}
+  return best;
+}
+function child(ns,d,al,be,P){return ns.w>=0?term(ns,d,P):ns.turn===P?nega(ns,d,al,be):-nega(ns,d,-be,-al)}
+function aiMove(s){
+  var ms=legal(s),lv=+$("level").value,P=s.turn,best=-1e9,pick=null,i,v;
+  if(!ms.length)return null;
+  for(i=0;i<ms.length;i++)if(ms[i].ns.w===P)return ms[i];    // a move that wins right now
+  ms.forEach(function(m){m.v=val1(m.ns,P)+Math.random()*.5});
+  if(lv>1){ms.sort(function(a,b){return b.v-a.v});ms=ms.slice(0,BEAM[2])}
+  for(i=0;i<ms.length;i++){
+    v=(lv===1?ms[i].v:child(ms[i].ns,lv-1,-1e9,1e9,P))+Math.random()*NOISE[lv];
+    if(v>best){best=v;pick=ms[i]}
+  }
+  return pick;
+}
+var sim=null,LOCK=["size","vr","mode","side","level","new","undo","redo","simN","simR","nFirst","nPrev","nNext","nLast"];
+function runSim(){   // computer vs computer, to look for first/second-player advantage
+  if(sim){sim.stop=true;return}
+  var CAP=NS+5,me=sim={stop:false},TOTALG=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?4:+$("simR").value)),
+      done=0,w=[0,0,0],un=0,g=newState(),plies=0,lvName=$("level").options[$("level").selectedIndex].text,nm=GAME.sides.map(function(x){return x.name});
+  LOCK.forEach(function(i){$(i).disabled=true});
+  $("sim").textContent="Stop simulation";
+  $("simout").textContent="Simulating at "+lvName+" level… 0/"+TOTALG;
+  function finish(stopped){
+    sim=null;$("sim").textContent="Simulation";
+    ["size","vr","mode","new","simN","simR"].forEach(function(i){$(i).disabled=false});
+    $("level").disabled=$("side").disabled=$("mode").value==="2p";
+    var mg=done?(196*Math.sqrt((w[0]/done)*(1-w[0]/done)/done)).toFixed(1):"0";
+    var pc=function(n){return done?(100*n/done).toFixed(1)+"%":"n/a"};
+    $("simout").textContent=(stopped?"Stopped after ":"")+done+" games on "+N+"×"+N+(VAR===2?" (two bridges per turn)":"")+" at "+lvName+" level (computer vs computer), first "+RND+" moves random.\n"+
+      "First player ("+nm[0]+") won "+pc(w[0])+" ("+w[0]+" games, margin ±"+mg+" points at 95% confidence). Second player ("+nm[1]+") won "+pc(w[1])+" ("+w[1]+" games)."+(w[2]?" Draws: "+w[2]+".":"")+(un?" Unfinished: "+un+".":"");
+    render();
+  }
+  function stepSim(){
+    if(me.stop){finish(true);return}
+    var t0=Date.now(),m,ms;
+    while(Date.now()-t0<40){
+      if(g.w>=0||plies>=CAP){
+        if(g.w>=0)w[g.w]++;else un++;
+        done++;g=newState();plies=0;
+        if(done>=TOTALG){finish(false);return}
+        continue;
+      }
+      if(plies<RND){ms=legal(g);m=ms[Math.floor(Math.random()*ms.length)]}
+      else m=aiMove(g);
+      if(!m){g.w=2;continue}
+      g=m.ns;plies++;
+    }
+    $("simout").textContent="Simulating at "+lvName+" level… "+done+"/"+TOTALG;
+    setTimeout(stepSim,0);
+  }
+  stepSim();
+}
+
+/* =============================== 3. INTERFACE =============================== */
+var hist,redo=[],view=null,over,busy,note="";   // view: null = live position, otherwise the index being reviewed
+var GREEN="#2e9e4f",GOLD="#e0a800",OUTL="#33404a",BW=.27;
+function cur(){return hist[hist.length-1]}
+function line(){return hist.concat(redo.slice().reverse())}   // every position, including those that can still be redone
+function browsing(){return view!==null}
+function shown(){return view===null?cur():line()[view]}
+function goto(k){
+  if(busy||sim)return;
+  var n=hist.length-1+redo.length;k=Math.max(0,Math.min(n,k));
+  view=k===hist.length-1?null:k;note="";render();
+}
+// Undo/Redo while reviewing: leave review and play on from the reviewed position (in computer mode, from the nearest position where it is the human's turn)
+function unlock(dir){
+  var Ln=line(),k=view,j;
+  if($("mode").value==="ai"){
+    j=k;while(j>=0&&j<Ln.length&&Ln[j].w<0&&Ln[j].turn!==+$("side").value)j+=dir;
+    if(j>=0&&j<Ln.length)k=j;
+  }
+  hist=Ln.slice(0,k+1);redo=Ln.slice(k+1).reverse();view=null;note="";over=false;render();maybeAI();
+}
+function humanTurn(){return $("mode").value==="2p"||cur().turn===+$("side").value}
+function start(){
+  build(+$("size").value);VAR=+$("vr").value;
+  $("gsub").textContent=GAME.subtitle();
+  hist=[newState()];redo=[];view=null;note="";$("level").disabled=$("side").disabled=$("mode").value==="2p";over=false;busy=false;
+  render();maybeAI();
+}
+function bseg(P,j,sh){var a=POST[P][SP[P][j][0]],b=POST[P][SP[P][j][1]],ux=(b[0]-a[0])/2*sh,uy=(b[1]-a[1])/2*sh;
+  return'x1="'+(a[0]+ux)+'" y1="'+(a[1]+uy)+'" x2="'+(b[0]-ux)+'" y2="'+(b[1]-uy)+'"'}
+function render(){
+  var br=browsing(),s=shown(),sd=GAME.sides,h=[],P=s.turn,i,k,nT=hist.length-1+redo.length,kk=br?view:hist.length-1,lock=busy||!!sim,mv=s.mv,M=1.45;
+  over=s.w>=0;
+  h.push('<svg viewBox="'+(-M)+' '+(-M)+' '+(L+2*M)+' '+(L+2*M)+'" role="img" aria-label="Bridg-It board">');
+  h.push('<rect x="-.85" y="-.85" width="'+(L+1.7)+'" height="'+(L+1.7)+'" rx=".3" fill="#cfc8b6"/>');
+  h.push('<rect x="-.75" y="-.75" width="'+(L+1.5)+'" height="'+(L+1.5)+'" rx=".25" fill="#f8f6ef" stroke="#e2ddcf" stroke-width=".05"/>');
+  // goal edges: blue bars West and East, red bars North and South
+  [[-.5,.5,-.5,L-.5,0],[L+.5,.5,L+.5,L-.5,0],[.5,-.5,L-.5,-.5,1],[.5,L+.5,L-.5,L+.5,1]].forEach(function(b){
+    h.push('<line x1="'+b[0]+'" y1="'+b[1]+'" x2="'+b[2]+'" y2="'+b[3]+'" stroke="'+sd[b[4]].post+'" stroke-width=".16" stroke-linecap="round" stroke-opacity=".8"/>')});
+  (function(){   // coordinates: letters = columns (top and bottom), numbers = rows (left and right), row 1 at the bottom
+    var fs=Math.min(.5,.3+L*.008);
+    function lab(x,y,t){h.push('<text x="'+x+'" y="'+y+'" font-size="'+fs+'" text-anchor="middle" dominant-baseline="central" fill="var(--mute)" pointer-events="none">'+t+'</text>')}
+    for(var c=0;c<=L;c++){var Lt=String.fromCharCode(97+c);lab(c,-1.15,Lt);lab(c,L+1.15,Lt)}
+    for(var r=0;r<=L;r++){lab(-1.15,r,L+1-r);lab(L+1.15,r,L+1-r)}
+  })();
+  // posts
+  for(var Q=0;Q<2;Q++)POST[Q].forEach(function(q){
+    h.push('<rect x="'+(q[0]-.2)+'" y="'+(q[1]-.17)+'" width=".46" height=".46" rx=".08" fill="#000" fill-opacity=".14"/>');
+    h.push('<rect x="'+(q[0]-.23)+'" y="'+(q[1]-.23)+'" width=".46" height=".46" rx=".08" fill="#fff" stroke="#d6d0c0" stroke-width=".03"/>');
+    h.push('<rect x="'+(q[0]-.15)+'" y="'+(q[1]-.15)+'" width=".3" height=".3" rx=".04" fill="'+sd[Q].post+'"/>');
+  });
+  var canAct=!br&&!over&&humanTurn()&&!busy,last=mv?mv.to:[],ms=canAct?legal(s):[],mm={};
+  ms.forEach(function(m){mm[m.j]=m});
+  // bridges
+  for(i=0;i<NS;i++)if(s.e[i]){
+    var q=s.e[i]-1;
+    if(last.indexOf(i)>=0)h.push('<line '+bseg(q,i,.05)+' stroke="'+GOLD+'" stroke-width="'+(BW+.2)+'" stroke-linecap="round"/>');
+    h.push('<line '+bseg(q,i,.05)+' stroke="'+OUTL+'" stroke-width="'+(BW+.06)+'" stroke-linecap="round"/>');
+    h.push('<line '+bseg(q,i,.05)+' stroke="'+sd[q].color+'" stroke-width="'+BW+'" stroke-linecap="round"/>');
+  }
+  // legal crossing points
+  if(VAR===2)ms.forEach(function(m){h.push('<circle cx="'+SX[m.j]+'" cy="'+SY[m.j]+'" r=".09" fill="'+GREEN+'" fill-opacity=".55" pointer-events="none"/>')});
+  // click targets: one diamond per crossing point, with a hover preview of the bridge
+  for(i=0;i<NS;i++){var x=SX[i],y=SY[i],d=.97;
+    h.push('<g class="sl" data-i="'+i+'">'+(mm[i]?'<line class="pv" '+bseg(P,i,.05)+' stroke="'+sd[P].color+'" stroke-width="'+BW+'" stroke-linecap="round"/>':'')+
+      '<polygon points="'+(x-d)+','+y+' '+x+','+(y-d)+' '+(x+d)+','+y+' '+x+','+(y+d)+'" fill="#000" fill-opacity="0"/></g>');
+  }
+  h.push('</svg>');
+  $("board").innerHTML=h.join("");
+  var names=sd.map(function(x){return x.name}),st;
+  for(i=0;i<2;i++){var t=GAME.stats(s,i);$("s"+i).textContent=t.big;$("d"+i).textContent=t.text;
+    $("p"+i).className="pl"+(!over&&s.turn===i?" on":"")}
+  if(br)st="Reviewing history (move "+kk+" of "+nT+"): the board is locked. Press Undo or Redo to play on from here.";
+  else if(over)st=s.w===2?"Game over: draw.":"Game over: "+names[s.w]+" wins.";
+  else if(!humanTurn())st=names[P]+" to move (computer thinking…)";
+  else if(VAR===2&&s.first>=0)st=names[P]+": build your second bridge, not joined to the group of the first one ("+sname(s.first)+").";
+  else if(VAR===2)st=names[P]+" to move: build "+(s.left>1?"the first of two bridges":"one bridge"+(hist.length===1&&!br?" (first turn of the game)":""))+" ("+sd[P].goal+").";
+  else st=names[P]+" to move: build a bridge ("+sd[P].goal+").";
+  $("status").textContent=st;
+  $("last").textContent=(GAME.describe(s)+" "+note).trim();
+  $("undo").disabled=lock||!(br||hist.length>=2);
+  $("redo").disabled=lock||!(br||redo.length);
+  $("nFirst").disabled=$("nPrev").disabled=lock||kk<=0;
+  $("nNext").disabled=$("nLast").disabled=lock||kk>=nT;
+  $("nlab").textContent="Move "+kk+" of "+nT;
+}
+function play(ns){hist.push(ns);redo=[];note="";render();maybeAI()}
+function click(i){
+  if(over||busy||browsing()||!humanTurn())return;
+  var s=cur(),p=s.turn+1;note="";
+  if(s.e[i])note=s.e[i]===p?"You already have a bridge on that crossing point.":"That crossing point is taken by "+GAME.sides[s.e[i]-1].name+": bridges cannot cross.";
+  else if(joins(s,i))note="Your second bridge must not join the group of this turn’s first bridge ("+sname(s.first)+").";
+  else{play(place(s,i).ns);return}
+  render();
+}
+function maybeAI(){
+  if(over||$("mode").value!=="ai"||cur().turn===+$("side").value)return;
+  busy=true;render();
+  setTimeout(function(){
+    var c=cur(),m=aiMove(c);busy=false;
+    if(m){hist.push(m.ns);redo=[]}else{c.w=2;c.ev="No legal move: the game is a draw."}
+    render();maybeAI();
+  },60);
+}
+document.title=GAME.title;$("gtitle").textContent=GAME.title;
+function li(x){return"<li>"+(typeof x==="string"?x:x.t+"<ul>"+x.sub.map(li).join("")+"</ul>")+"</li>"}
+$("rules").innerHTML=GAME.rules.map(function(sec){return"<li><b>"+sec.h+"</b><ul>"+sec.items.map(li).join("")+"</ul></li>"}).join("");
+$("side").innerHTML=GAME.sides.map(function(x,i){return'<option value="'+i+'">You are '+x.name+(i?"":" (first)")+'</option>'}).join("");
+for(var i=0;i<2;i++)$("n"+i).textContent=GAME.sides[i].name;
+$("board").onclick=function(e){var t=e.target.closest("[data-i]");if(t)click(+t.getAttribute("data-i"))};
+$("new").onclick=start;$("sim").onclick=runSim;
+$("mode").onchange=$("side").onchange=$("size").onchange=$("vr").onchange=start;
+function aiSide(){return $("mode").value==="ai"&&cur().turn!==+$("side").value}
+$("redo").onclick=function(){
+  if(busy||sim)return;
+  if(browsing()){unlock(1);return}
+  if(!redo.length)return;
+  hist.push(redo.pop());
+  while(redo.length&&aiSide())hist.push(redo.pop());
+  note="";render();
+};
+$("undo").onclick=function(){
+  if(busy||sim)return;
+  if(browsing()){unlock(-1);return}
+  if(hist.length<2)return;
+  redo.push(hist.pop());
+  while(hist.length>1&&aiSide())redo.push(hist.pop());
+  over=false;note="";render();maybeAI();
+};
+$("nFirst").onclick=function(){goto(0)};
+$("nPrev").onclick=function(){goto((browsing()?view:hist.length-1)-1)};
+$("nNext").onclick=function(){goto((browsing()?view:hist.length-1)+1)};
+$("nLast").onclick=function(){goto(hist.length-1+redo.length)};
+start();
+})();
+</script>
+</body>
+</html>
