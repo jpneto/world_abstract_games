@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Scalino</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
+<style>
+:root{--bg:#eaf0f5;--ink:#18232e;--mute:#566574;--panel:#fff;--line:#c3ced8;--hi:#e0803a;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121a22;--ink:#e3eaf0;--mute:#93a3b2;--panel:#1b2530;--line:#33424f}}
+:root[data-theme="dark"]{--bg:#121a22;--ink:#e3eaf0;--mute:#93a3b2;--panel:#1b2530;--line:#33424f}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+main{max-width:1180px;margin:0 auto;padding:16px 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.right>.bar:first-child{margin-top:0}
+@media (min-width:900px){.layout{grid-template-columns:minmax(0,640px) minmax(300px,1fr);gap:28px;align-items:start}}
+h1{font:700 2rem/1.1 "Bricolage Grotesque",Georgia,serif;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+select,button.ctl{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.ctl:disabled,select:disabled,input:disabled{opacity:.45;cursor:default}
+label.f{color:var(--mute);font-size:.9rem}
+input[type=number]{width:4.5em;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+button.ctl.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button.ctl.icon{display:inline-flex;align-items:center;justify-content:center;padding:6px 10px}
+button.ctl.icon svg{width:18px;height:18px;fill:currentColor;display:block}
+.navlab{min-width:7.5em;text-align:center;color:var(--mute);font-variant-numeric:tabular-nums}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.pl{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:8px 12px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.pl.on{border-color:var(--hi)}
+.pl b{font:700 1.6rem "Bricolage Grotesque",Georgia,serif;white-space:nowrap}
+.pl small{color:var(--mute)}
+.sw{display:inline-block;width:.8em;height:.8em;border-radius:2px;vertical-align:-.05em;margin-right:1px}
+#status{min-height:1.5em;font-weight:600;margin:6px 0}
+#board svg{display:block;width:100%;max-width:640px;margin:0 auto;touch-action:manipulation}
+#tray{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 12px;margin:8px 0}
+#tray .row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:4px 0}
+#tray .cn{min-width:4.2em;color:var(--mute);font-size:.9rem}
+#tray .th{color:var(--mute);font-size:.9rem;margin-bottom:2px}
+button.blk{display:inline-flex;align-items:center;gap:4px;font:inherit;font-size:.9rem;color:var(--ink);background:var(--panel);border:2px solid var(--line);border-radius:8px;padding:2px 8px 2px 4px;cursor:pointer;font-variant-numeric:tabular-nums}
+button.blk svg{width:34px;height:34px;display:block}
+button.blk.on{border-color:var(--hi);box-shadow:0 0 0 1px var(--hi)}
+button.blk:disabled{opacity:.35;cursor:default}
+span.blk.ro{display:inline-flex;align-items:center;gap:3px;font-size:.85rem;color:var(--mute);padding:1px 8px 1px 4px;border:1px dashed var(--line);border-radius:8px;font-variant-numeric:tabular-nums}
+span.blk.ro svg{width:24px;height:24px;display:block}
+span.blk.ro.none{opacity:.35}
+#tray .th.op{margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+details li{margin:4px 0}
+.legend{color:var(--mute);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+<h1 id="gtitle"></h1>
+<p class="sub" id="gsub"></p>
+<div class="layout">
+<div class="left">
+<div id="board"></div>
+<p class="legend">Pick a block from your tray (colour and length), then click the space where one end of it goes: green dots mark the spaces where an end of that block can go. For a two- or three-space block the possible positions then appear as shaded outlines with a purple ring on the other end; click the ring (or the outline) to place it. Click the selected end again to cancel; clicking a space without a dot explains why the block cannot go there. Blocks of the same colour may touch at a corner but not along a side. Blocks of higher levels are drawn smaller, inside the ones below (or raised, in the 3D view); the numbers give the level of the top block on each space (blocks without a number are on the first level). The gold outline marks the block or blocks placed in the previous turn.</p>
+</div>
+<aside class="right">
+<div class="bar">
+  <select id="mode" aria-label="Mode"><option value="ai">Play the computer</option><option value="2p">Two players</option></select>
+  <select id="level" aria-label="Computer strength"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select>
+  <select id="side" aria-label="Your side"></select>
+  <button class="ctl primary" id="new">New game</button>
+  <button class="ctl" id="undo">Undo</button>
+  <button class="ctl" id="redo">Redo</button>
+</div>
+<div class="bar">
+  <button class="ctl" id="endt">Skip extra block</button>
+  <label class="f"><input type="checkbox" id="shLv" checked> Show levels</label>
+  <label class="f"><input type="checkbox" id="shCh"> Show scoring chains</label>
+  <label class="f"><input type="checkbox" id="sh3d"> 3D view</label>
+</div>
+<div class="bar" id="nav" role="group" aria-label="Game history">
+  <button class="ctl icon" id="nFirst" aria-label="Go to the beginning" title="Go to the beginning"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="2.5" height="14"/><path d="M19 5v14L8 12z"/></svg></button>
+  <button class="ctl icon" id="nPrev" aria-label="One move back" title="One move back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 5v14L6 12z"/></svg></button>
+  <span class="navlab" id="nlab" aria-live="polite">Move 0 of 0</span>
+  <button class="ctl icon" id="nNext" aria-label="One move forward" title="One move forward"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5v14l11-7z"/></svg></button>
+  <button class="ctl icon" id="nLast" aria-label="Go to the last move" title="Go to the last move"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5v14l11-7z"/><rect x="17.5" y="5" width="2.5" height="14"/></svg></button>
+</div>
+<div class="score">
+  <div class="pl" id="p0"><span><span id="n0"></span> <small id="d0"></small></span><b id="s0">0</b></div>
+  <div class="pl" id="p1"><span><span id="n1"></span> <small id="d1"></small></span><b id="s1">0</b></div>
+</div>
+<div id="status" aria-live="polite"></div>
+<div id="tray"></div>
+<div id="last" class="legend" style="min-height:2.6em;margin:0 0 8px"></div>
+<div class="bar">
+  <label class="f">Simulation games <input id="simN" type="number" min="10" max="1000" value="10"></label>
+  <label class="f">Random opening moves <input id="simR" type="number" min="0" max="20" value="4"></label>
+  <button class="ctl" id="sim">Simulation</button>
+</div>
+<div id="simout" class="legend" style="white-space:pre-line;margin:0 0 8px"></div>
+<details>
+<summary>Rules</summary>
+<ul id="rules"></ul>
+</details>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+/* =====================================================================
+   1. GAME DEFINITION  - Scalino rules: board and pyramid levels, blocks, placement, scoring of steps
+   2. ENGINE           - computer opponent (one-move greedy, or candidates tested against the best reply), simulations
+   3. INTERFACE        - SVG board, block tray, click handling, controls
+   The board is a diamond of 41 square spaces (|p|+|q| <= 4 in grid coordinates p,q), drawn as a square of diamonds.
+   Level L (0-3) covers the spaces with |p|+|q| <= 4-L: 41, 25, 13 and 5 spaces, 84 in all = the 48 blocks.
+   Colours 0,1 belong to the first player (dark, light), 2,3 to the second. Every placement, every skipped extra
+   block is one entry in the history. An action is {t:"place", c:colour, n:length, cells} or {t:"skip"}.
+   A state is {cel: colour+1 per level and space (L*41+i), bid: block id per level and space, blocks:[{c,L,cells}],
+     fill: spaces filled per level, lv: level being built (4 = complete), hand: blocks left per colour and length
+     (c*3+n-1), turn, ply: turns completed, passes: passes in a row, bonus: the extra block after completing a
+     level is pending, w: winner (-1 none, 2 draw), fin: final scores, ev, hl/phl: blocks placed this / previous turn}.
+   ===================================================================== */
+var $=function(i){return document.getElementById(i)};
+
+/* ============================ 1. GAME DEFINITION ============================ */
+var GAME={
+  title:"Scalino",
+  subtitle:"Peter Pallat’s pyramid game (1970). The players build a four-level stepped pyramid together, block by block, each trying to make long connected chains of visible steps in his own colours.",
+  sides:[{name:"Burgundy",cols:["#762D35","#C27F87"]},{name:"Navy",cols:["#263D66","#7F9CCB"]}],
+  rules:[
+  {h:"Object",items:[
+    "The players build a pyramid of four levels together. Each tries to make as many connected visible steps of his own colours as possible: the longer a chain of steps, the more points it scores. Blocks left over score negative. The player with the most points wins."]},
+  {h:"Board and blocks",items:[
+    "The board is a pattern of 41 square spaces set diagonally, with a star on the centre space. The four levels of the pyramid are centred on it: 41 spaces on the first level, 25 on the second, 13 on the third and 5 on the top.",
+    "In the two-player game each player owns two colours (here a dark and a light shade of his colour), with 12 blocks in each: 6 blocks of one space, 3 of two spaces and 3 of three spaces. The 48 blocks fill the pyramid exactly.",
+    "The players decide who starts; here Burgundy starts."]},
+  {h:"Playing",items:[
+    "The starting player places any one of his blocks in the middle of the board, covering the star. Then the players take turns; on his turn a player places one block of either of his colours.",
+    "A newly placed block must touch at least one side of a block already placed.",
+    "A block may never touch a side of a block of the same colour, nor be placed on top of a block of the same colour.",
+    "No court may ever be formed while placing the blocks.",
+    "No block may be placed on a higher level before the level below is complete. The player who places the last block of a level may place another block on the next level in the same turn.",
+    "A player who cannot place a block must pass his turn."]},
+  {h:"End of the game",items:[
+    "The game ends at once when the last block has been placed on the pyramid, or when no player can place a block legally."]},
+  {h:"Scoring",items:[
+    "Each player scores for all the visible steps of his own colours. A visible step is a space of the top surface of the completed pyramid: the outer ring of the first level (16 spaces), of the second (12) and of the third (8), and the whole top level (5). Spaces that would be covered in a completed pyramid do not count.",
+    "Connected steps score more: 1 step scores 1 point, 2 connected steps 3, 3 steps 6, 4 steps 10, 5 steps 15, 6 steps 21, 7 steps 28 and so on. A step that branches off a chain is not part of it but still scores on its own; every step is scored only once.",
+    "If the pyramid is not completed, each block left over subtracts 1, 2 or 3 points according to its length. The highest total wins."]},
+  {h:"Added in this version",items:[
+    "Steps join only when they are of the same colour and their spaces share a side as seen from above (on the same level or one level apart); a player’s two colours do not join each other.",
+    "A group of connected steps that branches is divided into unbranched chains in the way that scores the most points.",
+    "A court is an empty space of the level being built that would have blocks of that level on three or four of its sides (the outer edge of the level does not count as a side). It is allowed when that space and the empty spaces joined to it are closed in and form exactly the shape of one block (one to three spaces in a straight line), since a single block can then fill them.",
+    "Touching sides means touching on the same level. The first block of the second, third and top level may be placed anywhere on that level.",
+    "The extra block after completing a level is optional (“Skip extra block”). Passing is automatic. Equal scores are a draw.",
+    "The rules speak of 40 steps; counting the levels gives 41 visible spaces, and all of them are scored."]}],
+  stats:function(s,i){var st=stepScores(s),h=handCells(s,i),nb=0,c,n;for(c=2*i;c<2*i+2;c++)for(n=1;n<=3;n++)nb+=s.hand[c*3+n-1];
+    return{big:String(s.fin?s.fin[i]:st[i]),text:(s.fin?"final":"steps")+" · "+nb+" block"+(nb===1?"":"s")+" ("+h+" space"+(h===1?"":"s")+") in hand"}},
+  describe:function(s){return s.ev||""}
+};
+var NS=41,LMAX=[4,3,2,1],LSIZE=[41,25,13,5],HAND0=[6,3,3],LET="abcdefghi";
+var PP=[],QQ=[],DD=[],XX=[],YY=[],VIS=[],NB,LINE=[],CEN=-1,AT={};
+(function(){
+  var p,q,i,k;
+  for(var y=-4;y<=4;y++)for(var x=-4;x<=4;x++){if((x+y)&1)continue;p=(x+y)/2;q=(y-x)/2;if(Math.abs(p)+Math.abs(q)>4)continue;
+    i=PP.length;PP.push(p);QQ.push(q);XX.push(x);YY.push(y);DD.push(Math.abs(p)+Math.abs(q));AT[p+","+q]=i;if(!p&&!q)CEN=i}
+  NB=new Int8Array(NS*4).fill(-1);
+  var DP=[[1,0],[-1,0],[0,1],[0,-1]];
+  for(i=0;i<NS;i++){VIS[i]=Math.min(3,4-DD[i]);for(k=0;k<4;k++){var z=AT[(PP[i]+DP[k][0])+","+(QQ[i]+DP[k][1])];if(z!=null)NB[i*4+k]=z}}
+  // LINE[i][dir][n]: the cells of a block of length n with its first cell on i, running along p (dir 0) or q (dir 1)
+  for(i=0;i<NS;i++){LINE[i]=[[],[]];for(var d=0;d<2;d++)for(var n=1;n<=3;n++){var cs=[],ok=true;
+    for(k=0;k<n;k++){z=AT[(PP[i]+(d?0:k))+","+(QQ[i]+(d?k:0))];if(z==null){ok=false;break}cs.push(z)}
+    LINE[i][d][n]=ok?cs:null}}
+})();
+function cn(i){return LET[XX[i]+4]+(5-YY[i])}
+function nameP(P){return GAME.sides[P].name}
+function colHex(c){return GAME.sides[c>>1].cols[c&1]}
+function shade(c){return c&1?"light":"dark"}
+function tri(n){return n*(n+1)/2}
+function newState(){
+  var s={cel:new Int8Array(4*NS),bid:new Int16Array(4*NS).fill(-1),blocks:[],fill:[0,0,0,0],lv:0,hand:new Int8Array(12),
+    turn:0,ply:0,passes:0,bonus:false,w:-1,fin:null,ev:"",hl:[],phl:[],log:[]};
+  for(var c=0;c<4;c++)for(var n=0;n<3;n++)s.hand[c*3+n]=HAND0[n];
+  return s;
+}
+function clone(s){return{cel:s.cel.slice(),bid:s.bid.slice(),blocks:s.blocks.slice(),fill:s.fill.slice(),lv:s.lv,hand:s.hand.slice(),
+  turn:s.turn,ply:s.ply,passes:s.passes,bonus:s.bonus,w:s.w,fin:s.fin,ev:s.ev,hl:s.hl.slice(),phl:s.phl,log:s.log.slice()}}
+function handCells(s,P){var h=0;for(var c=2*P;c<2*P+2;c++)for(var n=1;n<=3;n++)h+=s.hand[c*3+n-1]*n;return h}
+// can colour c place a block on these cells of the level being built?
+function legal(s,c,cells){
+  var L=s.lv,M=LMAX[L],base=L*NS,cl=s.cel,v=c+1,i,k,x,z,y,m,touch=false;
+  for(i=0;i<cells.length;i++){x=cells[i];if(DD[x]>M||cl[base+x])return false;if(L>0&&cl[base-NS+x]===v)return false}
+  if(!s.fill[L]){if(L===0&&cells.indexOf(CEN)<0)return false}
+  else{
+    for(i=0;i<cells.length;i++){x=cells[i];for(k=0;k<4;k++){z=NB[x*4+k];if(z<0||DD[z]>M)continue;y=cl[base+z];if(y){touch=true;if(y===v)return false}}}
+    if(!touch)return false;
+  }
+  return noCourt(s,L,cells,v);
+}
+// a space walled on three or four sides is a court unless its closed-in pocket of empty spaces has the shape of
+// one block (1 to 3 spaces in a straight line), which a single block can fill. emp(y): is y an empty space of the level
+function pocketOK(z,emp){
+  var Q=[z],h,k,y,seen={};seen[z]=1;
+  for(h=0;h<Q.length;h++)for(k=0;k<4;k++){y=NB[Q[h]*4+k];if(y>=0&&!seen[y]&&emp(y)){seen[y]=1;Q.push(y);if(Q.length>3)return false}}
+  var sp=true,sq=true;for(h=1;h<Q.length;h++){if(PP[Q[h]]!==PP[Q[0]])sp=false;if(QQ[Q[h]]!==QQ[Q[0]])sq=false}
+  return sp||sq;
+}
+// no court: no empty space of level L with blocks of that level on three or four sides once cells are filled
+function noCourt(s,L,cells,v){
+  var M=LMAX[L],base=L*NS,cl=s.cel,i,k,m,x,z,y,ok=true;
+  for(i=0;i<cells.length;i++)cl[base+cells[i]]=v;
+  for(i=0;i<cells.length&&ok;i++){x=cells[i];for(k=0;k<4;k++){z=NB[x*4+k];if(z<0||DD[z]>M||cl[base+z])continue;
+    var cnt=0;for(m=0;m<4;m++){y=NB[z*4+m];if(y>=0&&DD[y]<=M&&cl[base+y])cnt++}
+    if(cnt>=3&&!pocketOK(z,function(y){return DD[y]<=M&&!cl[base+y]})){ok=false;break}}}
+  for(i=0;i<cells.length;i++)cl[base+cells[i]]=0;
+  return ok;
+}
+// block mixes [one-space, two-space, three-space] that can fill an empty level 2, 3 and top level (found by search,
+// ignoring colours); used to check that the blocks left after a level can still build the levels above it
+var UPMIX=[[[23,1,0],[21,2,0],[19,3,0],[17,4,0],[15,5,0],[13,6,0],[11,7,0],[9,8,0],[7,9,0],[5,10,0],[3,11,0],[22,0,1],[20,1,1],[18,2,1],[16,3,1],[14,4,1],[12,5,1],[10,6,1],[8,7,1],[6,8,1],[4,9,1],[2,10,1],[19,0,2],[17,1,2],[15,2,2],[13,3,2],[11,4,2],[9,5,2],[7,6,2],[5,7,2],[3,8,2],[1,9,2],[16,0,3],[14,1,3],[12,2,3],[10,3,3],[8,4,3],[6,5,3],[4,6,3],[2,7,3],[13,0,4],[11,1,4],[9,2,4],[7,3,4],[5,4,4],[3,5,4],[1,6,4],[10,0,5],[8,1,5],[6,2,5],[4,3,5],[2,4,5],[7,0,6],[5,1,6],[3,2,6],[4,0,7]],[[13,0,0],[11,1,0],[9,2,0],[7,3,0],[5,4,0],[10,0,1],[8,1,1],[6,2,1],[4,3,1],[7,0,2],[5,1,2],[3,2,2],[4,0,3],[2,1,3]],[[5,0,0],[3,1,0],[2,0,1]]],UPC=new Map();
+function upperOK(a,b,c,L){
+  if(L>3)return!a&&!b&&!c;
+  var k=L+":"+a+","+b+","+c;if(UPC.has(k))return UPC.get(k);
+  var r=UPMIX[L-1].some(function(x){return x[0]<=a&&x[1]<=b&&x[2]<=c&&upperOK(a-x[0],b-x[1],c-x[2],L+1)});
+  UPC.set(k,r);return r;
+}
+// can the level being built still be completed, if both players aim for it? A search over the blocks left, with the
+// colour rules and the order of the turns (a player with no placement passes), leaving blocks that can build
+// the levels above. Gives up after cap steps and then answers yes.
+var CAP=2500,RES=[6,4,2,0],FEAS=new Map(),FAIL=new Set();
+// near the top (levels 3 and 4) the search plays the real rules to the end of the pyramid
+var PYR=new Map();
+function pyrOK(s0,cap){
+  var nodes=0;
+  function key(s){return Array.prototype.join.call(s.cel.subarray(NS),"")+Array.prototype.join.call(s.hand,"")+s.turn+(s.bonus?1:0)}
+  function rec(s){
+    if(s.lv>3)return true;if(s.w>=0)return false;
+    var k=key(s);if(PYR.has(k))return PYR.get(k);
+    if(++nodes>cap)throw 0;
+    var M=choices(s),r=false;
+    for(var i=0;i<M.length&&!r;i++)r=rec(step(s,M[i]));
+    PYR.set(k,r);return r;
+  }
+  if(PYR.size>100000)PYR.clear();
+  try{return rec(s0)?1:0}catch(e){return .5}
+}
+function levelOK(s,cap){
+  var L=s.lv;if(L>3)return 1;
+  if(L>=2)return pyrOK(s,cap);
+  var M=LMAX[L],base=L*NS,f=new Int8Array(NS),below=new Int8Array(NS),hand=s.hand.slice(),i,k,filled=s.fill[L],nodes=0,fail=FAIL,sing=0;
+  if(!filled)return 1;
+  for(i=0;i<NS;i++){f[i]=DD[i]>M?-1:s.cel[base+i];if(L>0)below[i]=s.cel[base-NS+i]}
+  for(var c=0;c<4;c++)sing+=hand[c*3];
+  var spare=sing-RES[L];   // one-space blocks that may be used on this level
+  var turn=s.turn;
+  function key(){return L+Array.prototype.join.call(f,"")+"|"+Array.prototype.join.call(hand,"")+turn}
+  var top=key();if(FEAS.has(top))return FEAS.get(top);
+  if(FAIL.has(top))return 0;
+  // can a block of colour v (1-4) go on cells cs?
+  function fits(cs,v){
+    var x,z,y,m,j,t=false;
+    for(j=0;j<cs.length;j++){x=cs[j];if(f[x])return false;if(below[x]===v)return false}
+    for(j=0;j<cs.length;j++){x=cs[j];for(k=0;k<4;k++){z=NB[x*4+k];if(z<0||f[z]<=0||cs.indexOf(z)>=0)continue;t=true;if(v&&f[z]===v)return false}}
+    if(!t)return false;
+    for(j=0;j<cs.length;j++)f[cs[j]]=9;var ok=true;
+    for(j=0;j<cs.length&&ok;j++){x=cs[j];for(k=0;k<4;k++){z=NB[x*4+k];if(z<0||f[z])continue;
+      var q=0;for(m=0;m<4;m++){y=NB[z*4+m];if(y>=0&&f[y]>0)q++}if(q>=3&&!pocketOK(z,function(y){return f[y]===0})){ok=false;break}}}
+    for(j=0;j<cs.length;j++)f[cs[j]]=0;return ok;
+  }
+  function covers(e,fn){
+    for(var n=3;n>=1;n--){if(n===1&&spare<=0)continue;
+      for(var d=0;d<(n===1?1:2);d++)for(var off=0;off<n;off++){
+        var st=e;for(var b=0;b<off&&st>=0;b++)st=NB[st*4+(d?3:1)];if(st<0)continue;
+        var cs=LINE[st][d][n];if(!cs)continue;
+        for(var v=2*turn+1;v<=2*turn+2;v++)if(hand[(v-1)*3+n-1]>0&&fits(cs,v)){if(fn(cs,v,n))return true}}}
+    return false;
+  }
+  function rec(passed){
+    if(filled===LSIZE[L]&&L===1){
+      // level 2 done: try the real rules on levels 3 and 4 (the completing player has the extra block)
+      var s2=clone(s);s2.log=[];s2.hand=hand.slice();s2.fill=[41,25,0,0];s2.lv=2;s2.turn=1-turn;s2.bonus=true;
+      for(var j2=0;j2<NS;j2++)if(f[j2]>0)s2.cel[NS+j2]=f[j2];
+      return pyrOK(s2,600)!==0}
+    if(filled===LSIZE[L]){var t=[0,0,0,0];for(var c2=0;c2<4;c2++)for(var n2=1;n2<=3;n2++)t[n2]+=hand[c2*3+n2-1];return upperOK(t[1],t[2],t[3],L+1)}
+    if(++nodes>cap)throw 0;
+    var kk=key();if(fail.has(kk))return false;
+    var order=[],o,x,m,y,q,any=false;
+    for(x=0;x<NS;x++){if(f[x])continue;q=0;for(m=0;m<4;m++){y=NB[x*4+m];if(y>=0&&f[y]>0)q++}if(q)order.push([x,q])}
+    order.sort(function(a,b){return b[1]-a[1]});
+    // prune: a space with blocks on two sides that no block left can cover
+    var tn=turn;
+    for(o=0;o<order.length&&order[o][1]>=2;o++){
+      turn=0;var c0=covers(order[o][0],function(){return true});turn=1;var c1=c0||covers(order[o][0],function(){return true});turn=tn;
+      if(!c1){fail.add(kk);return false}}
+    var tried={};
+    for(o=0;o<order.length;o++){
+      if(covers(order[o][0],function(cs,v,n){
+        var id=cs.join(",")+":"+v;if(tried[id])return false;tried[id]=1;any=true;
+        for(var j=0;j<n;j++)f[cs[j]]=v;hand[(v-1)*3+n-1]--;filled+=n;if(n===1)spare--;turn=1-tn;
+        var r=rec(false);
+        turn=tn;for(j=0;j<n;j++)f[cs[j]]=0;hand[(v-1)*3+n-1]++;filled-=n;if(n===1)spare++;
+        return r}))return true}
+    // a player who cannot place passes
+    if(!any&&!passed){turn=1-tn;var r2=rec(true);turn=tn;if(r2)return true}
+    fail.add(kk);return false;
+  }
+  var res;
+  try{res=rec(false)?1:0}catch(e){res=.5}
+  if(FEAS.size>20000)FEAS.clear();if(FAIL.size>200000)FAIL.clear();
+  if(res!==.5)FEAS.set(top,res);
+  return res;
+}
+// spaces of the level being built that no block of any colour can ever fill: empty spaces with blocks on two sides
+// that no block covering them fits without making a court (the level can then not be completed)
+function deadCells(s){
+  var L=s.lv;if(L>3||!s.fill[L])return 0;
+  var M=LMAX[L],base=L*NS,cl=s.cel,i,k,z,n,d,o,dead=0;
+  for(i=0;i<NS;i++){if(DD[i]>M||cl[base+i])continue;var f=0;
+    for(k=0;k<4;k++){z=NB[i*4+k];if(z>=0&&DD[z]<=M&&cl[base+z])f++}
+    if(f<2)continue;
+    var ok=false;
+    for(n=1;n<=3&&!ok;n++)for(d=0;d<(n===1?1:2)&&!ok;d++)for(o=0;o<n&&!ok;o++){
+      // block of length n along d with cell i in position o
+      var st=i;for(var b=0;b<o&&st>=0;b++)st=NB[st*4+(d?3:1)];
+      if(st<0)continue;var cs=LINE[st][d][n];if(!cs)continue;
+      var fits=true;for(var c=0;c<cs.length;c++)if(DD[cs[c]]>M||cl[base+cs[c]]){fits=false;break}
+      if(fits&&noCourt(s,L,cs,9))ok=true}
+    if(!ok)dead++}
+  return dead;
+}
+// why can colour c not place a block on these cells? ("" if it can)
+function whyNot(s,c,cells){
+  var L=s.lv,M=LMAX[L],base=L*NS,v=c+1,i,k,x,z,y,touch=false;
+  for(i=0;i<cells.length;i++){x=cells[i];
+    if(DD[x]>M)return cn(x)+" is not part of level "+(L+1)+", which covers only the "+LSIZE[L]+" spaces from "+LET[L]+" to "+LET[8-L]+" and "+(L+1)+" to "+(9-L)+(L?" (the outer ring of each level stays uncovered as a step)":"");
+    if(s.cel[base+x])return cn(x)+" is already filled on level "+(L+1);
+    if(L>0&&s.cel[base-NS+x]===v)return"it would lie on top of a "+shade(c)+" block (at "+cn(x)+"), its own colour"}
+  if(!s.fill[L]){if(L===0&&cells.indexOf(CEN)<0)return"the first block must cover the star in the centre";return""}
+  for(i=0;i<cells.length;i++){x=cells[i];for(k=0;k<4;k++){z=NB[x*4+k];if(z<0||DD[z]>M||cells.indexOf(z)>=0)continue;y=s.cel[base+z];
+    if(y){touch=true;if(y===v)return"it would share a side with the "+shade(c)+" block at "+cn(z)+" (touching a block of the same colour only at a corner is allowed)"}}}
+  if(!touch)return"it must share a side with a block already on level "+(L+1)+" (touching only at a corner is not enough)";
+  for(i=0;i<cells.length;i++)s.cel[base+cells[i]]=v;
+  var bad=-1;
+  for(i=0;i<cells.length&&bad<0;i++){x=cells[i];for(k=0;k<4;k++){z=NB[x*4+k];if(z<0||DD[z]>M||s.cel[base+z])continue;
+    var q=0;for(var m=0;m<4;m++){y=NB[z*4+m];if(y>=0&&DD[y]<=M&&s.cel[base+y])q++}
+    if(q>=3&&!pocketOK(z,function(y){return DD[y]<=M&&!s.cel[base+y]})){bad=z;break}}}
+  for(i=0;i<cells.length;i++)s.cel[base+cells[i]]=0;
+  if(bad>=0)return"it would leave a court at "+cn(bad)+" (an empty space with blocks on three sides that no single block can fill together with the empty spaces next to it)";
+  return"";
+}
+// why can colour c not put an end of an n-block on space i?
+function placeErr(s,c,n,i){
+  if(s.hand[c*3+n-1]<=0)return"No "+shade(c)+" "+n+"-space blocks are left.";
+  var R=[],seen={};
+  for(var d=0;d<(n===1?1:2);d++)for(var e=0;e<2;e++){
+    var st=i;for(var b=0;b<(e?n-1:0)&&st>=0;b++)st=NB[st*4+(d?3:1)];if(st<0)continue;
+    var cs=LINE[st][d][n];if(!cs)continue;var w=whyNot(s,c,cs);if(w&&!seen[w]){seen[w]=1;R.push(w)}}
+  var R2=R.filter(function(w){return!/already filled|not part of level/.test(w)});if(R2.length)R=R2;
+  if(!R.length)return"A block of that length does not fit there.";
+  var t=(n===1?"A ":"The ")+shade(c)+" "+(n===1?"one":n===2?"two":"three")+"-space block cannot go there: ";
+  return t+R.join("; ")+".";
+}
+// legal placements for the side to move (only: {c,n} to restrict; first: stop at the first one)
+function genMoves(s,only,first){
+  var out=[],P=s.turn,L=s.lv,c,n,i,d,cs;
+  if(s.w>=0||L>3)return out;
+  for(c=2*P;c<2*P+2;c++)for(n=1;n<=3;n++){
+    if(s.hand[c*3+n-1]<=0||only&&(only.c!==c||only.n!==n))continue;
+    for(i=0;i<NS;i++){if(DD[i]>LMAX[L]||s.cel[L*NS+i])continue;
+      for(d=0;d<(n===1?1:2);d++){cs=LINE[i][d][n];if(cs&&legal(s,c,cs)){out.push({t:"place",c:c,n:n,cells:cs});if(first)return out}}}}
+  return out;
+}
+function hasMove(s){return genMoves(s,null,true).length>0}
+// visible steps: colour+1 of the top-surface block of each space (0 if not yet built)
+function visCols(s){var v=new Int8Array(NS);for(var i=0;i<NS;i++)v[i]=s.cel[VIS[i]*NS+i];return v}
+// best division of a connected group of steps into unbranched chains
+var CACHE=new Map();
+function compScore(comp,inS){
+  var n=comp.length;if(n<=2)return tri(n);
+  var E=[],deg={},mx=0,i,k,z;
+  for(i=0;i<n;i++){var x=comp[i],dg=0;for(k=0;k<4;k++){z=NB[x*4+k];if(z>=0&&inS[z]){dg++;if(z>x)E.push([x,z])}}if(dg>mx)mx=dg}
+  if(mx<=2)return tri(n);   // a path or a cycle
+  var key=comp.join(",");if(CACHE.has(key))return CACHE.get(key);
+  var par={},sz={},dgc={},best=0,nodes=0,stack=[];
+  comp.forEach(function(x){par[x]=x;sz[x]=1;dgc[x]=0});
+  function find(x){while(par[x]!==x)x=par[x];return x}
+  function rec(j,cur){
+    if(++nodes>60000)return;
+    // bound: joining everything left into one chain cannot beat the best
+    if(j===E.length){if(cur>best)best=cur;return}
+    var a=E[j][0],b=E[j][1];
+    if(dgc[a]<2&&dgc[b]<2){var ra=find(a),rb=find(b);
+      if(ra!==rb){if(sz[ra]<sz[rb]){var t=ra;ra=rb;rb=t}
+        var gain=tri(sz[ra]+sz[rb])-tri(sz[ra])-tri(sz[rb]);
+        par[rb]=ra;sz[ra]+=sz[rb];dgc[a]++;dgc[b]++;
+        rec(j+1,cur+gain);
+        dgc[a]--;dgc[b]--;sz[ra]-=sz[rb];par[rb]=rb}}
+    rec(j+1,cur);
+  }
+  rec(0,n);
+  if(CACHE.size>40000)CACHE.clear();CACHE.set(key,best);
+  return best;
+}
+// chains of colour v+1 in the visible map vc: {score, comps}
+function colourChains(vc,v){
+  var inS=new Uint8Array(NS),seen=new Uint8Array(NS),i,k,z,tot=0,comps=[];
+  for(i=0;i<NS;i++)if(vc[i]===v)inS[i]=1;
+  for(i=0;i<NS;i++){if(!inS[i]||seen[i])continue;var Q=[i];seen[i]=1;
+    for(var h=0;h<Q.length;h++)for(k=0;k<4;k++){z=NB[Q[h]*4+k];if(z>=0&&inS[z]&&!seen[z]){seen[z]=1;Q.push(z)}}
+    Q.sort(function(a,b){return a-b});var sc=compScore(Q,inS);tot+=sc;comps.push({cells:Q,score:sc})}
+  return{score:tot,comps:comps};
+}
+function stepScores(s){var vc=visCols(s),r=[0,0];for(var v=1;v<=4;v++)r[(v-1)>>1]+=colourChains(vc,v).score;return r}
+function finalScores(s){var st=stepScores(s);return[st[0]-handCells(s,0),st[1]-handCells(s,1)]}
+function gameOver(s,why){
+  var f=finalScores(s);s.fin=f;s.w=f[0]>f[1]?0:f[1]>f[0]?1:2;
+  s.log.push(why+" Final score: "+nameP(0)+" "+f[0]+", "+nameP(1)+" "+f[1]+(s.w===2?" – a draw.":" – "+nameP(s.w)+" wins by "+Math.abs(f[0]-f[1])+"."));
+}
+function endTurn(s){s.bonus=false;s.ply++;if(s.hl.length)s.phl=s.hl;s.hl=[];s.turn=1-s.turn}
+function blockName(cells){return cells.length===1?cn(cells[0]):cn(cells[0])+"–"+cn(cells[cells.length-1])}
+function placeBlock(s,m){
+  var L=s.lv,id=s.blocks.length,P=s.turn,wasBonus=s.bonus;
+  s.blocks.push({c:m.c,L:L,cells:m.cells});
+  m.cells.forEach(function(x){s.cel[L*NS+x]=m.c+1;s.bid[L*NS+x]=id});
+  s.hand[m.c*3+m.n-1]--;s.fill[L]+=m.n;s.hl.push(id);s.passes=0;
+  var t=nameP(P)+(wasBonus?" places the extra block, ":" places ")+"a "+shade(m.c)+" "+(m.n===1?"one":m.n===2?"two":"three")+"-space block on level "+(L+1)+" at "+blockName(m.cells)+".";
+  if(s.fill[L]===LSIZE[L]){
+    s.lv=L+1;
+    if(L===3){s.log.push(t);gameOver(s,"The pyramid is complete.");return}
+    if(!wasBonus){s.bonus=true;s.log.push(t+" That completes level "+(L+1)+": "+nameP(P)+" may place an extra block on level "+(L+2)+".");return}
+  }
+  s.log.push(t);endTurn(s);
+}
+// pass or drop the extra block automatically when nothing can be placed
+function settle(s){
+  for(var g=0;g<6&&s.w<0;g++){
+    if(hasMove(s))return s;
+    if(s.bonus){s.log.push(nameP(s.turn)+" cannot place an extra block.");endTurn(s);continue}
+    s.log.push(nameP(s.turn)+" cannot place a block and passes.");s.passes++;
+    if(s.passes>=2){gameOver(s,"Neither player can place a block: the game is over.");return s}
+    endTurn(s);
+  }
+  return s;
+}
+function sameCells(a,b){if(a.length!==b.length)return false;for(var i=0;i<a.length;i++)if(a[i]!==b[i])return false;return true}
+// carry out one action on ns (a copy). Returns an error message or "".
+function doAct(ns,a){
+  if(ns.w>=0)return"The game is over.";
+  if(a.t==="skip"){if(!ns.bonus)return"There is no extra block to skip.";ns.log.push(nameP(ns.turn)+" does not place an extra block.");endTurn(ns);return""}
+  if(a.t==="place"){
+    if((a.c>>1)!==ns.turn)return"Those blocks belong to the other player.";
+    if(ns.hand[a.c*3+a.n-1]<=0)return"No such blocks are left.";
+    var ok=genMoves(ns,{c:a.c,n:a.n}).some(function(m){return sameCells(m.cells,a.cells)});
+    if(!ok){var w=whyNot(ns,a.c,a.cells);return w?"That block cannot go there: "+w+".":placeErr(ns,a.c,a.n,a.cells[0])}
+    placeBlock(ns,a);return"";
+  }
+  return"Unknown action.";
+}
+function step(s,a){var ns=clone(s);ns.log=s.log.slice();doAct(ns,a);settle(ns);return ns}
+// try action a in state s: {ns} or {err}
+function apply(s,a){
+  var ns=clone(s);ns.log=[];var e=doAct(ns,a);if(e)return{err:e};
+  settle(ns);ns.ev=ns.log.join(" ");ns.log=[];
+  return{ns:ns};
+}
+
+/* ================================ 2. ENGINE ================================ */
+// value of the position for P: step points, blocks in hand, and room to extend chains onto visible spaces not yet built
+var W={HAND:.45,HANDD:.9,POT:.55,POT2:.25,DOOM:0};
+function evalFor(s,P){
+  if(s.w>=0)return termVal(s,P);
+  var vc=visCols(s),st=[0,0],v,i,k,z,pot=[0,0],O=1-P,doom=deadCells(s)>0,L=s.lv;
+  for(v=1;v<=4;v++)st[(v-1)>>1]+=colourChains(vc,v).score;
+  // room to extend: visible spaces not yet built next to own steps (only on the level being built if it cannot be completed)
+  for(i=0;i<NS;i++){if(vc[i]||doom&&VIS[i]!==L)continue;var f=0;
+    for(k=0;k<4;k++){z=NB[i*4+k];if(z>=0&&vc[z])f|=1<<(vc[z]-1)}
+    for(v=0;v<4;v++)if(f>>v&1){var o=v>>1;pot[o]+=(f>>(v^1)&1)?W.POT2:W.POT}}
+  return st[P]-st[O]-(doom?W.HANDD:W.HAND)*(handCells(s,P)-handCells(s,O))+(pot[P]-pot[O])-(doom?W.DOOM:0);
+}
+function termVal(s,P){if(s.w===2)return-4;var d=s.fin[P]-s.fin[1-P];return(s.w===P?1:-1)*1e4+d}
+function choices(s){var M=genMoves(s);if(s.bonus)M.push({t:"skip"});return M}
+// one choice by one-move look-ahead (rnd: chance of a random choice, noise)
+function greedy(s,o){
+  var P=s.turn,M=choices(s),C=[];
+  if(!M.length)return s;
+  if(o.rnd&&Math.random()<o.rnd){shuffle(M);for(var q=0;q<M.length;q++){var x=step(s,M[q]);if(q>=5||levelOK(x,o.cap||CAP)===1)return x}}
+  M.forEach(function(m){var t=step(s,m);C.push({s:t,v:evalFor(t,P)+o.noise*Math.random()})});
+  return pickOK(C,o).s;
+}
+// the best candidate after which the level can still be completed (or the best one if there is none)
+function pickOK(C,o){
+  C.sort(function(a,b){return b.v-a.v});
+  var un=null,t0=Date.now(),ms=o.pms||500;
+  for(var q=0;q<C.length&&q<40;q++){if(q>2&&Date.now()-t0>ms)break;if(C[q].s.w>=0){if(C[q].v>=1e3)return C[q];continue}var r=levelOK(C[q].s,o.cap||CAP);if(r===1)return C[q];if(r&&!un)un=C[q]}
+  return un||C[0];
+}
+function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.random()*(i+1)|0,t=a[i];a[i]=a[j];a[j]=t}return a}
+// finish the turn of P (the extra block, if any) greedily
+function finishTurn(t,P,o){var g=0;while(t.w<0&&t.turn===P&&t.bonus&&g++<3)t=greedy(t,o);return t}
+var LV={1:{rnd:.25,noise:4},2:{rnd:0,noise:.3},3:{rnd:0,noise:.05,K:6,ms:1500}};
+var FAST={1:{rnd:.25,noise:4},2:{rnd:0,noise:.3},3:{rnd:0,noise:.05,K:6,ms:250}};
+// play the turn of the side to move. Easy: greedy with noise and random choices. Medium: greedy.
+// Hard: the best candidates of the greedy ranking, each tested against the opponent's best (greedy) reply.
+function aiStep(s,lv,fast){
+  var P=s.turn,o=(fast?FAST:LV)[lv],t;
+  s=clone(s);s.log=[];
+  if(lv<3)t=finishTurn(greedy(s,o),P,o);
+  else{
+    var M=choices(s),deadline=Date.now()+o.ms,C=[],bv=-1e9;
+    M.forEach(function(m){var x=step(s,m);C.push({s:x,v:evalFor(x,P)+o.noise*Math.random()})});
+    C.sort(function(a,b){return b.v-a.v});
+    t=C.length?pickOK(C,o).s:s;
+    var used=0;
+    for(var q=0;q<C.length&&used<o.K&&q<40;q++){
+      if(used>1&&Date.now()>deadline)break;
+      if(C[q].s.w>=0?C[q].v<1e3:levelOK(C[q].s,o.cap||CAP)!==1)continue;used++;
+      var z={rnd:0,noise:0,pms:120},x=finishTurn(C[q].s,P,z),v;
+      if(x.w>=0||x.turn===P)v=evalFor(x,P);
+      else{var r=finishTurn(greedy(x,z),1-P,z);v=evalFor(r,P)}
+      if(v>bv){bv=v;t=x}
+    }
+  }
+  t.ev=t.log.join(" ");t.log=[];
+  return t;
+}
+var sim=null;
+function runSim(){   // computer vs computer, to look for first/second-player advantage
+  if(sim){sim.stop=true;return}
+  var CAP=200,me=sim={stop:false},TOTAL=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?4:+$("simR").value)),
+      done=0,w=[0,0,0],un=0,g=newState(),plies=0,lv=+$("level").value,lvName=$("level").options[$("level").selectedIndex].text,nm=GAME.sides.map(function(x){return x.name}),
+      mg=[0,0],full=0;
+  ["mode","side","level","new","undo","redo","endt","simN","simR","nFirst","nPrev","nNext","nLast"].forEach(function(i){$(i).disabled=true});
+  $("sim").textContent="Stop simulation";
+  $("simout").textContent="Simulating at "+lvName+" level… 0/"+TOTAL;
+  function fin(stopped){
+    sim=null;$("sim").textContent="Simulation";
+    $("mode").disabled=$("new").disabled=$("simN").disabled=$("simR").disabled=false;
+    $("level").disabled=$("side").disabled=$("mode").value==="2p";
+    var dec=w[0]+w[1],mgn=dec?(196*Math.sqrt((w[0]/dec)*(1-w[0]/dec)/dec)).toFixed(1):"0";
+    var pc=function(n){return done?(100*n/done).toFixed(1)+"%":"n/a"};
+    $("simout").textContent=(stopped?"Stopped after ":"")+done+" games at "+lvName+" level (computer vs computer), first "+RND+" turns random.\n"+
+      "First player ("+nm[0]+") won "+pc(w[0])+" ("+w[0]+" games). Second player ("+nm[1]+") won "+pc(w[1])+" ("+w[1]+" games)."+
+      (dec?" Among decided games the first player won "+(100*w[0]/dec).toFixed(1)+"% (margin ±"+mgn+" points at 95% confidence).":"")+
+      (w[2]?" Draws: "+w[2]+".":"")+(un?" Unfinished: "+un+".":"")+
+      (done-un?"\nAverage final score: "+nm[0]+" "+(mg[0]/(done-un)).toFixed(1)+", "+nm[1]+" "+(mg[1]/(done-un)).toFixed(1)+". Pyramid completed in "+full+" of "+(done-un)+" games.":"");
+    render();
+  }
+  function stepSim(){
+    if(me.stop){fin(true);return}
+    var t0=Date.now();
+    while(Date.now()-t0<40){
+      if(g.w>=0||plies>=CAP){
+        if(g.w>=0){w[g.w]++;mg[0]+=g.fin[0];mg[1]+=g.fin[1];if(g.lv>3)full++}else un++;
+        done++;g=newState();plies=0;
+        if(done>=TOTAL){fin(false);return}
+        continue;
+      }
+      if(plies<RND){var M=choices(g);g=M.length?step(g,M[Math.random()*M.length|0]):settle(clone(g))}
+      else g=aiStep(g,lv,true);
+      plies++;
+    }
+    $("simout").textContent="Simulating at "+lvName+" level… "+done+"/"+TOTAL;
+    setTimeout(stepSim,0);
+  }
+  stepSim();
+}
+
+/* =============================== 3. INTERFACE =============================== */
+var hist,redo=[],view=null,selB=null,selE=-1,over,busy,note="";   // view: null = live position, otherwise the index being reviewed
+var GOLD="#e0a800",PURPLE="#8e44ad",GREEN="#2e9e4f";
+function cur(){return hist[hist.length-1]}
+function line(){return hist.concat(redo.slice().reverse())}   // every position, including those that can still be redone
+function browsing(){return view!==null}
+function shown(){return view===null?cur():line()[view]}
+function clearSel(){selE=-1;note=""}
+function goto(k){
+  if(busy||sim)return;
+  var n=hist.length-1+redo.length;k=Math.max(0,Math.min(n,k));
+  view=k===hist.length-1?null:k;clearSel();render();
+}
+// Undo/Redo while reviewing: leave review and play on from the reviewed position (in computer mode, from the nearest position where it is the human's turn)
+function unlock(dir){
+  var L=line(),k=view,j;
+  if($("mode").value==="ai"){
+    j=k;while(j>=0&&j<L.length&&L[j].w<0&&L[j].turn!==+$("side").value)j+=dir;
+    if(j>=0&&j<L.length)k=j;
+  }
+  hist=L.slice(0,k+1);redo=L.slice(k+1).reverse();view=null;clearSel();over=false;render();maybeAI();
+}
+function humanTurn(){return $("mode").value==="2p"||cur().turn===+$("side").value}
+function start(){
+  var s=newState();settle(s);
+  hist=[s];redo=[];view=null;selB=null;clearSel();$("level").disabled=$("side").disabled=$("mode").value==="2p";over=false;busy=false;
+  render();maybeAI();
+}
+// plan rectangle of a block, inset by e, as an SVG polygon
+function blockCorners(cells,e,dy){
+  var p0=1e9,p1=-1e9,q0=1e9,q1=-1e9;cells.forEach(function(x){p0=Math.min(p0,PP[x]);p1=Math.max(p1,PP[x]);q0=Math.min(q0,QQ[x]);q1=Math.max(q1,QQ[x])});
+  var C=[[p0-.5+e,q0-.5+e],[p1+.5-e,q0-.5+e],[p1+.5-e,q1+.5-e],[p0-.5+e,q1+.5-e]];
+  return C.map(function(c){return[c[0]-c[1],c[0]+c[1]+(dy||0)]});
+}
+function ptsStr(C){return C.map(function(c){return c[0].toFixed(3)+","+c[1].toFixed(3)}).join(" ")}
+function blockPts(cells,e,dy){return ptsStr(blockCorners(cells,e,dy))}
+// a colour darkened to the fraction f
+function dim(hex,f){var n=parseInt(hex.slice(1),16);return"rgb("+[n>>16,n>>8&255,n&255].map(function(v){return Math.round(v*f)}).join(",")+")"}
+// the line between two cells of a block, inset by e
+function divider(a,z,e,dy){dy=dy||0;
+  var A,B;
+  if(QQ[a]===QQ[z]){var p=(PP[a]+PP[z])/2,q=QQ[a];A=[p,q-.5+e];B=[p,q+.5-e]}
+  else{var q2=(QQ[a]+QQ[z])/2,p2=PP[a];A=[p2-.5+e,q2];B=[p2+.5-e,q2]}
+  return'<line x1="'+(A[0]-A[1])+'" y1="'+(A[0]+A[1]+dy)+'" x2="'+(B[0]-B[1])+'" y2="'+(B[0]+B[1]+dy)+'" stroke="rgba(0,0,0,.28)" stroke-width=".04" pointer-events="none"/>';
+}
+function ends(m){return[m.cells[0],m.cells[m.cells.length-1]]}
+// keep a usable block selected for the side to move
+function fixSel(s){
+  var P=s.turn;
+  if(selB&&(selB.c>>1)===P&&genMoves(s,selB,true).length)return;
+  selB=null;
+  for(var n=3;n>=1&&!selB;n--)for(var c=2*P;c<2*P+2;c++)if(genMoves(s,{c:c,n:n},true).length){selB={c:c,n:n};break}
+}
+function miniBlock(c,n){
+  var pts=blockPts(LINE[CEN][0][n],0.04),h=[];
+  h.push('<svg viewBox="-1.25 -1.25 4.5 4.5" aria-hidden="true"><polygon points="'+pts+'" fill="'+colHex(c)+'" stroke="rgba(0,0,0,.45)" stroke-width=".08"/>');
+  for(var k=1;k<n;k++)h.push('<line x1="'+(k-1)+'" y1="'+k+'" x2="'+k+'" y2="'+(k-1)+'" stroke="rgba(0,0,0,.35)" stroke-width=".06"/>');
+  h.push('</svg>');return h.join("");
+}
+function render(){
+  var br=browsing(),s=shown(),sd=GAME.sides,h=[],P=s.turn,i,k,nT=hist.length-1+redo.length,kk=br?view:hist.length-1,lock=busy||!!sim;
+  over=s.w>=0;
+  var canAct=!br&&!over&&humanTurn()&&!busy&&!sim;
+  if(canAct)fixSel(s);
+  var M=canAct&&selB?genMoves(s,selB):[],opts=[];
+  if(selE>=0)opts=M.filter(function(m){return ends(m).indexOf(selE)>=0});
+  if(selE>=0&&!opts.length)selE=-1;
+  h.push('<svg viewBox="-6.4 -6.4 12.8 12.8" role="img" aria-label="Scalino board">');
+  function lab(x,y,t){h.push('<text x="'+x.toFixed(2)+'" y="'+y.toFixed(2)+'" font-size=".46" text-anchor="middle" dominant-baseline="central" fill="#eaf3fb" pointer-events="none" font-family="Georgia,serif">'+t+'</text>')}
+  h.push('<rect x="-6.35" y="-6.35" width="12.7" height="12.7" rx=".35" fill="#6F9B91" stroke="#4E7A70" stroke-width=".06"/>');
+  // spaces of the board
+  for(i=0;i<NS;i++)h.push('<polygon points="'+blockPts([i],0)+'" fill="#e3eef8" stroke="#3a3330" stroke-width=".04" pointer-events="none"/>');
+  h.push('<text x="0" y="0" font-size=".9" text-anchor="middle" dominant-baseline="central" fill="#3a3330" pointer-events="none">✱</text>');
+  // coordinates: letters for the columns, numbers for the rows (1 at the bottom)
+  for(k=-4;k<=4;k++){lab(k,-5.75,LET[k+4]);lab(k,5.75,LET[k+4]);lab(-5.75,k,5-k);lab(5.75,k,5-k)}
+  // blocks, level by level; higher levels are drawn smaller, inside the ones below. In the 3D view each level is
+  // raised by Z and the front faces of the blocks are drawn (seen slightly from the front, so nothing behind is hidden)
+  var Z=$("sh3d").checked?.26:0,ins=function(L){return Z?.035:.05+.045*L},up=function(L){return-(L+1)*Z};
+  var gold={};(s.hl.length?s.hl:s.phl||[]).forEach(function(b){gold[b]=1});
+  for(var L=0;L<4;L++){var e=ins(L),dy=up(L);
+    var BL=[];s.blocks.forEach(function(b,id){if(b.L===L)BL.push(b)});
+    if(Z)BL.sort(function(a,b){var ya=0,yb=0;a.cells.forEach(function(x){ya+=YY[x]});b.cells.forEach(function(x){yb+=YY[x]});return ya/a.cells.length-yb/b.cells.length});
+    BL.forEach(function(b){
+      var C=blockCorners(b.cells,e,dy);
+      if(Z){var cx=0,cy=0;C.forEach(function(c){cx+=c[0]/4;cy+=c[1]/4});
+        for(var k=0;k<4;k++){var A=C[k],B=C[(k+1)%4],mx=(A[0]+B[0])/2-cx,my=(A[1]+B[1])/2-cy;if(my<=.01)continue;
+          h.push('<polygon points="'+ptsStr([A,B,[B[0],B[1]+Z],[A[0],A[1]+Z]])+'" fill="'+dim(colHex(b.c),mx<0?.78:.6)+'" stroke="rgba(0,0,0,.45)" stroke-width=".03" stroke-linejoin="round" pointer-events="none"/>')}}
+      else h.push('<polygon points="'+ptsStr(C)+'" fill="rgba(0,0,0,'+(.3+.06*L)+')" transform="translate('+(.06+.03*L)+' '+(.09+.04*L)+')" pointer-events="none"/>');
+      h.push('<polygon points="'+ptsStr(C)+'" fill="'+colHex(b.c)+'" stroke="rgba(0,0,0,.5)" stroke-width=".05" stroke-linejoin="round" pointer-events="none"/>');
+      for(var q=1;q<b.cells.length;q++)h.push(divider(b.cells[q-1],b.cells[q],e,dy));
+    })}
+  var topL=function(i){for(var L=3;L>=0;L--)if(s.cel[L*NS+i])return L;return-1};
+  var cy3=function(i){var L=topL(i);return YY[i]+(L>=0?up(L):0)};
+  // level numbers on the top block of each space
+  if($("shLv").checked)for(i=0;i<NS;i++){L=topL(i);if(L<1)continue;var c=s.cel[L*NS+i]-1;
+    h.push('<text x="'+XX[i]+'" y="'+(cy3(i)+.03)+'" font-size=".5" font-weight="700" text-anchor="middle" dominant-baseline="central" fill="'+(c&1?"#1d1d1d":"#f4f0ea")+'" pointer-events="none" font-family="system-ui,sans-serif">'+(L+1)+'</text>')}
+  // scoring chains
+  if($("shCh").checked){var vc=visCols(s);for(var v=1;v<=4;v++)colourChains(vc,v).comps.forEach(function(cp){
+    var x0=0,y0=0;cp.cells.forEach(function(x){x0+=XX[x];y0+=YY[x];
+      cp.cells.forEach(function(z){if(z>x&&NB.slice(x*4,x*4+4).indexOf(z)>=0)h.push('<line x1="'+XX[x]+'" y1="'+cy3(x)+'" x2="'+XX[z]+'" y2="'+cy3(z)+'" stroke="#fff" stroke-opacity=".75" stroke-width=".09" stroke-linecap="round" pointer-events="none"/>')})});
+    var cx=cp.cells[0];h.push('<circle cx="'+(XX[cx]+.45)+'" cy="'+(cy3(cx)-.45)+'" r=".27" fill="#fff" stroke="'+colHex(v-1)+'" stroke-width=".06" pointer-events="none"/><text x="'+(XX[cx]+.45)+'" y="'+(cy3(cx)-.43)+'" font-size=".3" font-weight="700" text-anchor="middle" dominant-baseline="central" fill="#222" pointer-events="none">'+cp.score+'</text>')})}
+  // gold outline on the blocks of the previous turn (or of the turn being played)
+  s.blocks.forEach(function(b,id){if(gold[id])h.push('<polygon points="'+blockPts(b.cells,ins(b.L),up(b.L))+'" fill="none" stroke="'+GOLD+'" stroke-width=".13" pointer-events="none"/>')});
+  // placement markers
+  var my=s.lv<=3?up(s.lv):0;
+  if(canAct&&selB){
+    if(selE<0){var E={};M.forEach(function(m){ends(m).forEach(function(x){E[x]=1})});
+      Object.keys(E).forEach(function(x){h.push('<circle cx="'+XX[x]+'" cy="'+(YY[x]+my)+'" r=".2" fill="'+GREEN+'" fill-opacity=".9" pointer-events="none"/>')})}
+    else{
+      opts.forEach(function(m){h.push('<polygon points="'+blockPts(m.cells,.1,my)+'" fill="'+colHex(selB.c)+'" fill-opacity=".35" stroke="'+colHex(selB.c)+'" stroke-width=".06" stroke-dasharray=".16 .1" pointer-events="none"/>')});
+      opts.forEach(function(m){var o=ends(m)[0]===selE?ends(m)[1]:ends(m)[0];if(o!==selE)h.push('<circle cx="'+XX[o]+'" cy="'+(YY[o]+my)+'" r=".42" fill="none" stroke="'+PURPLE+'" stroke-width=".1" pointer-events="none"/>')});
+      h.push('<circle cx="'+XX[selE]+'" cy="'+(YY[selE]+my)+'" r=".42" fill="none" stroke="var(--hi)" stroke-width=".12" pointer-events="none"/>');
+    }
+  }
+  // click targets
+  for(i=0;i<NS;i++)h.push('<polygon data-i="'+i+'" points="'+blockPts([i],0,my)+'" fill="transparent"/>');
+  h.push('</svg>');
+  $("board").innerHTML=h.join("");
+  // tray of blocks of the side to move (or of the human player while the computer thinks)
+  var TP=$("mode").value==="ai"&&!br?+$("side").value:P,t=[];
+  t.push('<div class="th">'+(canAct?nameP(TP)+"’s blocks – choose one to place":nameP(TP)+"’s blocks")+'</div>');
+  for(var c2=2*TP;c2<2*TP+2;c2++){t.push('<div class="row"><span class="cn">'+(c2&1?"Light":"Dark")+'</span>');
+    for(var n=1;n<=3;n++){var cnt=s.hand[c2*3+n-1],can=canAct&&cnt>0&&genMoves(s,{c:c2,n:n},true).length>0,on=canAct&&selB&&selB.c===c2&&selB.n===n;
+      t.push('<button class="blk'+(on?" on":"")+'" data-c="'+c2+'" data-n="'+n+'"'+(can?"":" disabled")+' aria-label="'+shade(c2)+" "+n+'-space block, '+cnt+' left" title="'+(cnt&&canAct&&!can?"Cannot be placed now":shade(c2)+" "+n+"-space block")+'">'+miniBlock(c2,n)+'×'+cnt+'</button>')}
+    t.push('</div>')}
+  // the opponent's blocks still in reserve (for information only)
+  var OP=1-TP;
+  t.push('<div class="th op">'+nameP(OP)+'’s blocks in reserve</div>');
+  for(c2=2*OP;c2<2*OP+2;c2++){t.push('<div class="row"><span class="cn">'+(c2&1?"Light":"Dark")+'</span>');
+    for(n=1;n<=3;n++){cnt=s.hand[c2*3+n-1];t.push('<span class="blk ro'+(cnt?"":" none")+'" aria-label="'+nameP(OP)+": "+shade(c2)+" "+n+'-space blocks, '+cnt+' left">'+miniBlock(c2,n)+'×'+cnt+'</span>')}
+    t.push('</div>')}
+  $("tray").innerHTML=t.join("");
+  var names=sd.map(function(x){return x.name}),stt;
+  for(i=0;i<2;i++){var tt=GAME.stats(s,i);$("s"+i).textContent=tt.big;$("d"+i).textContent=tt.text;
+    $("p"+i).className="pl"+(!over&&s.turn===i?" on":"")}
+  var turnNo=" (turn "+(s.ply+1)+", level "+Math.min(4,s.lv+1)+")";
+  if(br)stt="Reviewing history (move "+kk+" of "+nT+"): the board is locked. Press Undo or Redo to play on from here.";
+  else if(over)stt=s.w===2?"Game over: draw, "+s.fin[0]+"–"+s.fin[1]+".":"Game over: "+names[s.w]+" wins, "+s.fin[s.w]+" to "+s.fin[1-s.w]+".";
+  else if(!humanTurn())stt=names[P]+" to play"+turnNo+" – computer thinking…";
+  else if(!selB)stt=names[P]+turnNo+".";
+  else stt=names[P]+turnNo+(s.bonus?" – extra block on level "+(s.lv+1)+" (or skip it)":"")+": "+(selE>=0?"click the purple ring or a shaded outline to place the block.":
+    (s.lv===0&&!s.fill[0]?"place the first block over the star – ":"")+"click a green dot for one end of the "+shade(selB.c)+" "+selB.n+"-space block.");
+  $("status").textContent=stt;
+  $("last").textContent=(GAME.describe(s)+" "+note).trim();
+  $("undo").disabled=lock||!(br||hist.length>=2);
+  $("redo").disabled=lock||!(br||redo.length);
+  $("nFirst").disabled=$("nPrev").disabled=lock||kk<=0;
+  $("nNext").disabled=$("nLast").disabled=lock||kk>=nT;
+  $("nlab").textContent="Move "+kk+" of "+nT;
+  $("endt").disabled=!canAct||!s.bonus;
+}
+function play(ns){hist.push(ns);redo=[];clearSel();render();maybeAI()}
+function act(a){var r=apply(cur(),a);if(r.ns){play(r.ns);return true}note=r.err;render();return false}
+function click(i){
+  if(over||busy||browsing()||!humanTurn()||sim)return;
+  var s=cur();note="";fixSel(s);if(!selB)return;
+  var M=genMoves(s,selB);
+  if(selE>=0){
+    if(i===selE){selE=-1;render();return}
+    var opts=M.filter(function(m){return ends(m).indexOf(selE)>=0});
+    var hit=opts.filter(function(m){return ends(m).indexOf(i)>=0&&i!==selE});
+    if(!hit.length)hit=opts.filter(function(m){return m.cells.indexOf(i)>=0});
+    if(hit.length===1){act(hit[0]);return}
+    selE=-1;
+  }
+  var mine=M.filter(function(m){return ends(m).indexOf(i)>=0});
+  if(!mine.length){note=placeErr(s,selB.c,selB.n,i);if(M.some(function(m){return m.cells.indexOf(i)>=0}))note="Click the space for one end of the block (a green dot).";render();return}
+  if(selB.n===1){act(mine[0]);return}
+  selE=i;render();
+}
+function maybeAI(){
+  if(sim||cur().w>=0||$("mode").value!=="ai"||cur().turn===+$("side").value)return;
+  busy=true;render();
+  setTimeout(function(){
+    var c=cur();hist.push(aiStep(c,+$("level").value));redo=[];busy=false;
+    render();maybeAI();
+  },180);
+}
+document.title=GAME.title;$("gtitle").textContent=GAME.title;$("gsub").textContent=GAME.subtitle;
+function li(x){return"<li>"+(typeof x==="string"?x:x.t+"<ul>"+x.sub.map(li).join("")+"</ul>")+"</li>"}
+$("rules").innerHTML=GAME.rules.map(function(sec){return"<li><b>"+sec.h+"</b><ul>"+sec.items.map(li).join("")+"</ul></li>"}).join("");
+$("side").innerHTML=GAME.sides.map(function(x,i){return'<option value="'+i+'">You are '+x.name+(i?"":" (first)")+'</option>'}).join("");
+for(var ni=0;ni<2;ni++)$("n"+ni).innerHTML=GAME.sides[ni].cols.map(function(c){return'<span class="sw" style="background:'+c+'"></span>'}).join("")+" "+GAME.sides[ni].name;
+$("board").onclick=function(e){var t=e.target.closest("[data-i]");if(t)click(+t.getAttribute("data-i"))};
+$("tray").onclick=function(e){var t=e.target.closest("[data-c]");if(!t||t.disabled)return;selB={c:+t.getAttribute("data-c"),n:+t.getAttribute("data-n")};clearSel();render()};
+$("new").onclick=start;$("sim").onclick=runSim;$("shLv").onchange=$("shCh").onchange=$("sh3d").onchange=function(){render()};
+$("mode").onchange=$("side").onchange=start;
+$("endt").onclick=function(){if(over||busy||browsing()||!humanTurn()||sim)return;act({t:"skip"})};
+$("redo").onclick=function(){
+  if(busy||sim)return;
+  if(browsing()){unlock(1);return}
+  if(!redo.length)return;
+  hist.push(redo.pop());
+  while($("mode").value==="ai"&&redo.length&&cur().w<0&&cur().turn!==+$("side").value)hist.push(redo.pop());
+  clearSel();render();
+};
+$("undo").onclick=function(){
+  if(busy||sim)return;
+  if(browsing()){unlock(-1);return}
+  if(hist.length<2)return;
+  redo.push(hist.pop());
+  while($("mode").value==="ai"&&hist.length>1&&cur().turn!==+$("side").value)redo.push(hist.pop());
+  clearSel();over=false;render();
+};
+$("nFirst").onclick=function(){goto(0)};
+$("nPrev").onclick=function(){goto((browsing()?view:hist.length-1)-1)};
+$("nNext").onclick=function(){goto((browsing()?view:hist.length-1)+1)};
+$("nLast").onclick=function(){goto(hist.length-1+redo.length)};
+start();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Y</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
+<style>
+:root{--bg:#eaf0f5;--ink:#18232e;--mute:#566574;--panel:#fff;--line:#c3ced8;--hi:#e0803a;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121a22;--ink:#e3eaf0;--mute:#93a3b2;--panel:#1b2530;--line:#33424f}}
+:root[data-theme="dark"]{--bg:#121a22;--ink:#e3eaf0;--mute:#93a3b2;--panel:#1b2530;--line:#33424f}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+main{max-width:1180px;margin:0 auto;padding:16px 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.right>.bar:first-child{margin-top:0}
+@media (min-width:900px){.layout{grid-template-columns:minmax(0,640px) minmax(300px,1fr);gap:28px;align-items:start}}
+h1{font:700 2rem/1.1 "Bricolage Grotesque",Georgia,serif;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+select,button.ctl{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.ctl:disabled,select:disabled,input:disabled{opacity:.45;cursor:default}
+label.f{color:var(--mute);font-size:.9rem}
+input[type=number]{width:4.5em;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+button.ctl.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button.ctl.icon{display:inline-flex;align-items:center;justify-content:center;padding:6px 10px}
+button.ctl.icon svg{width:18px;height:18px;fill:currentColor;display:block}
+.navlab{min-width:7.5em;text-align:center;color:var(--mute);font-variant-numeric:tabular-nums}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.pl{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:8px 12px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.pl.on{border-color:var(--hi)}
+.pl b{font:700 1.6rem "Bricolage Grotesque",Georgia,serif;white-space:nowrap}
+.pl small{color:var(--mute)}
+.st{display:inline-block;width:.95em;height:.95em;border-radius:50%;vertical-align:-.12em;margin-right:5px;box-shadow:1px 1.5px 2px rgba(0,0,0,.35)}
+.st.b{background:radial-gradient(circle at 35% 30%,#6a6a6a,#2a2a2a 35%,#0a0a0a)}
+.st.w{background:radial-gradient(circle at 35% 30%,#fff,#eef0f4 55%,#b9bec8)}
+#status{min-height:1.5em;font-weight:600;margin:6px 0}
+#board svg{display:block;width:100%;max-width:640px;margin:0 auto;touch-action:manipulation}
+#board .tgt{fill-opacity:0}
+#board .tgt.e{cursor:pointer}
+@media (hover:hover){#board .tgt.e:hover{fill-opacity:.55}}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+details li{margin:4px 0}
+.legend{color:var(--mute);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+<h1 id="gtitle"></h1>
+<p class="sub" id="gsub"></p>
+<div class="layout">
+<div class="left">
+<div id="board"></div>
+<p class="legend">Click any empty point to place a stone. The gold dot marks the last stone played; when a group links all three sides, the winning group is traced in red. Each corner belongs to both sides that meet there. Points are named by row and letter, as in e5; tick “Show coordinates” to see them. Rows are numbered from the bottom edge: a row is the line of points running parallel to the bottom edge, from the left edge round to the right edge, and its number is printed where it meets the edges. The letters on the empty points count along each row from its left end. Hover over a point to see its full name. With the pie rule on, the second player may answer the first stone with “Swap colours” and take it over.</p>
+</div>
+<aside class="right">
+<div class="bar">
+  <select id="mode" aria-label="Mode"><option value="ai">Play the computer</option><option value="2p">Two players</option></select>
+  <select id="level" aria-label="Computer strength"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select>
+  <select id="side" aria-label="Your side"></select>
+  <button class="ctl primary" id="new">New game</button>
+  <button class="ctl" id="undo">Undo</button>
+  <button class="ctl" id="redo">Redo</button>
+</div>
+<div class="bar">
+  <select id="size" aria-label="Board size"><option value="9" selected>Size 9 (93 points)</option><option value="13">Size 13 (199 points)</option><option value="19">Size 19 (433 points)</option></select>
+  <label class="f"><input type="checkbox" id="pie" checked> Pie rule</label>
+  <button class="ctl" id="swap">Swap colours</button>
+  <label class="f"><input type="checkbox" id="shL"> Show coordinates</label>
+</div>
+<div class="bar" id="nav" role="group" aria-label="Game history">
+  <button class="ctl icon" id="nFirst" aria-label="Go to the beginning" title="Go to the beginning"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="2.5" height="14"/><path d="M19 5v14L8 12z"/></svg></button>
+  <button class="ctl icon" id="nPrev" aria-label="One move back" title="One move back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 5v14L6 12z"/></svg></button>
+  <span class="navlab" id="nlab" aria-live="polite">Move 0 of 0</span>
+  <button class="ctl icon" id="nNext" aria-label="One move forward" title="One move forward"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5v14l11-7z"/></svg></button>
+  <button class="ctl icon" id="nLast" aria-label="Go to the last move" title="Go to the last move"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5v14l11-7z"/><rect x="17.5" y="5" width="2.5" height="14"/></svg></button>
+</div>
+<div class="score">
+  <div class="pl" id="p0"><span><span class="st b"></span><span id="n0"></span> <small id="d0"></small></span><b id="s0">0</b></div>
+  <div class="pl" id="p1"><span><span class="st w"></span><span id="n1"></span> <small id="d1"></small></span><b id="s1">0</b></div>
+</div>
+<div id="status" aria-live="polite"></div>
+<div id="last" class="legend" style="min-height:2.6em;margin:0 0 8px"></div>
+<div class="bar">
+  <label class="f">Simulation games <input id="simN" type="number" min="10" max="1000" value="10"></label>
+  <label class="f">Random opening moves <input id="simR" type="number" min="0" max="20" value="4"></label>
+  <button class="ctl" id="sim">Simulation</button>
+</div>
+<div id="simout" class="legend" style="white-space:pre-line;margin:0 0 8px"></div>
+<details>
+<summary>Rules</summary>
+<ul id="rules"></ul>
+</details>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+/* =====================================================================
+   1. GAME DEFINITION  - Y rules: the curved triangular board, placement, the three-sided connection
+   2. ENGINE           - computer opponent (Monte Carlo tree search with RAVE and random-fill playouts), simulations
+   3. INTERFACE        - SVG board in the Go-stone style, click handling, controls
+   An action is {t:"place", j} or {t:"swap"} (pie rule). A state is {b:points (0 empty, 1 Black, 2 White), turn:colour to
+     move, ply:stones placed, mvn:moves made (a swap is a move), last:point of the last stone (-1 none), w:winning colour
+     (-1 none), win:points of the winning group, ev:text of the last move, pie:pie rule in force, sw:1 once colours were swapped}.
+   ===================================================================== */
+var $=function(i){return document.getElementById(i)};
+
+/* ============================ 1. GAME DEFINITION ============================ */
+var GAME={
+  title:"Y",
+  subtitle:"Charles Titus and Craige Schensted’s connection game (1953). Place stones one at a time and be the first to link all three sides of the curved triangular board.",
+  sides:[{name:"Black"},{name:"White"}],
+  rules:function(){var n=SIZE;return[
+  {h:"Object",items:[
+    "Each player tries to link all three edges of the board with one connected group of stones of his colour.",
+    "A corner point belongs to both edges that meet there, so a stone on a corner touches two edges at once."]},
+  {h:"Board",items:[
+    "The board is a curved triangle of "+NC+" points joined by lines, with "+n+" points along each edge. Two points are adjacent when a line joins them directly, and stones on adjacent points of the same colour are connected.",
+    "Most points have six neighbours. The three corners have three, and three points near the centre have five: that is what bends the lines of the board."]},
+  {h:"Play",items:[
+    "The board starts empty. Players take turns, strictly alternating; each turn consists of placing one stone of your colour on any empty point.",
+    "Stones never move and are never captured."]},
+  {h:"Pie rule (when switched on)",items:[
+    "After the first stone is placed, the second player may either play normally or swap colours instead of placing a stone. After a swap he owns the first stone and plays Black, the first player becomes White, and it is White’s turn.",
+    "This keeps the first player honest: a very strong first move will simply be taken over, so the first player should open with a move he considers fair."]},
+  {h:"End of the game",items:[
+    "The first player whose stones form a connected group touching all three edges wins.",
+    "A game of Y cannot end in a draw: once the board is full exactly one of the players has such a group, so someone always wins before or when the last point is filled."]},
+  {h:"Added in this version",items:[
+    "The rules don’t say who starts: here Black plays first.",
+    "The standard board is size 9 (93 points). Sizes 13 (199 points) and 19 (433 points) are built the same way, with the three five-neighbour points in the same relative places: a hexagon of the triangular grid with sides n−1 and (n−1)/2, whose three short sides are closed up into corners.",
+    "Points are named by row and letter. Row 1 is the bottom edge; row n is the line of points n−1 steps away from it, which runs parallel to the bottom edge from the left edge round to the right edge. Points are lettered along the row from its left end"+(n>9?" (after z come aa, ab, …)":"")+"."]}]},
+  stats:function(s,i){var n=0,k;for(k=0;k<NC;k++)if(s.b[k]===i+1)n++;var bs=bestSides(s.b,i+1);
+    return{big:String(n),text:n?"stones · best group: "+bs+" side"+(bs===1?"":"s"):"stones"}},
+  describe:function(s){return s.ev||""}
+};
+var LET="abcdefghijklmnopqrstuvwxyz",SIZES=[9,13,19],SIZE=9,NC=0,PX=[],PY=[],ROW=[],COL=[],SIDE,NB,EDGES=[],BOT=[],ROWEND=[],RC={};
+/* Board of size n (n points along each edge): on the triangular lattice, a hexagon with sides n-1 and (n-1)/2
+   alternating (8,4,8,4,8,4 for the standard 93-point board) from which three triangles of side 4 (standing on
+   the short sides) are cut out and their two cut edges glued together. The long sides become the board's edges, each
+   short side shrinks to a corner with three neighbours, and the apex of each cut becomes a point with five neighbours.
+   Side bits: 1 bottom, 2 left, 4 right. */
+function setBoard(sz){
+  SIZE=sz;PX=[];PY=[];ROW=[];COL=[];EDGES=[];BOT=[];ROWEND=[];
+  var SA=sz-1,SB=SA/2,L=SA+2*SB,M=L-SB,id={},pts=[],adj=[],i,j,k,n,r,q;
+  function canon(i,j,k){
+    if(j<=SB&&k<=SB){if(j<SB&&k<SB)return null;return k===SB&&j<SB?[i,SB,j]:[i,j,k]}
+    if(k<=SB&&i<=SB){if(k<SB&&i<SB)return null;return i===SB&&k<SB?[k,j,SB]:[i,j,k]}
+    if(i<=SB&&j<=SB){if(i<SB&&j<SB)return null;return j===SB&&i<SB?[SB,i,k]:[i,j,k]}
+    return[i,j,k];
+  }
+  function idOf(i,j,k){var c=canon(i,j,k);return c?id[c.join(",")]:null}
+  for(i=0;i<=M;i++)for(j=0;j<=M;j++){k=L-i-j;if(k<0||k>M)continue;var c=canon(i,j,k);if(!c)continue;q=c.join(",");
+    if(id[q]==null){id[q]=pts.length;pts.push({i:c[0],j:c[1],k:c[2],m:0});adj.push({})}
+    pts[id[q]].m|=(i===0?1:0)|(j===0?2:0)|(k===0?4:0)}
+  var D=[[1,-1,0],[-1,1,0],[1,0,-1],[-1,0,1],[0,1,-1],[0,-1,1]];
+  for(i=0;i<=M;i++)for(j=0;j<=M;j++){k=L-i-j;if(k<0||k>M)continue;var a=idOf(i,j,k);if(a==null)continue;
+    D.forEach(function(d){var x=i+d[0],y=j+d[1],z=k+d[2];if(Math.min(x,y,z)<0||Math.max(x,y,z)>M)return;var e=idOf(x,y,z);if(e!=null&&e!==a){adj[a][e]=1;adj[e][a]=1}})}
+  n=pts.length;var A=adj.map(function(o){return Object.keys(o).map(Number)});
+  // layout: the edges are the arcs of a Reuleaux triangle, the inside is relaxed with springs
+  var S=10,r3=Math.sqrt(3),T=[0,-S/r3],BL=[-S/2,S/(2*r3)],BR=[S/2,S/(2*r3)],X=new Float64Array(n),Y=new Float64Array(n),fix=new Uint8Array(n),it;
+  function arc(c,p0,p1,t){var a0=Math.atan2(p0[1]-c[1],p0[0]-c[0]),a1=Math.atan2(p1[1]-c[1],p1[0]-c[0]),d=a1-a0;
+    while(d>Math.PI)d-=2*Math.PI;while(d<-Math.PI)d+=2*Math.PI;return[c[0]+S*Math.cos(a0+d*t),c[1]+S*Math.sin(a0+d*t)]}
+  pts.forEach(function(p,x){var w=null;
+    if(p.m===6)w=T;else if(p.m===3)w=BL;else if(p.m===5)w=BR;
+    else if(p.m===1)w=arc(T,BL,BR,(p.j-SB)/SA);else if(p.m===4)w=arc(BL,BR,T,(p.i-SB)/SA);else if(p.m===2)w=arc(BR,T,BL,(M-p.i)/SA);
+    if(w){X[x]=w[0];Y[x]=w[1];fix[x]=1}});
+  var IT1=40*sz*sz,IT2=30*sz*sz;
+  for(it=0;it<IT1;it++)for(i=0;i<n;i++)if(!fix[i]){var sx=0,sy=0;A[i].forEach(function(m){sx+=X[m];sy+=Y[m]});X[i]=sx/A[i].length;Y[i]=sy/A[i].length}
+  var L0=.8*S*Math.PI/3/SA,fx=new Float64Array(n),fy=new Float64Array(n);
+  for(it=0;it<IT2;it++){fx.fill(0);fy.fill(0);
+    for(i=0;i<n;i++)A[i].forEach(function(m){var dx=X[m]-X[i],dy=Y[m]-Y[i],d=Math.sqrt(dx*dx+dy*dy),f=(d-L0)/d;fx[i]+=f*dx;fy[i]+=f*dy});
+    for(i=0;i<n;i++)if(!fix[i]){X[i]+=.1*fx[i];Y[i]+=.1*fy[i]}}
+  var tot=0,ne=0;for(i=0;i<n;i++)A[i].forEach(function(m){if(m>i){tot+=Math.hypot(X[m]-X[i],Y[m]-Y[i]);ne++}});
+  var sc=ne/tot;   // mean distance between neighbours = 1
+  RC={T:[T[0]*sc,T[1]*sc],BL:[BL[0]*sc,BL[1]*sc],BR:[BR[0]*sc,BR[1]*sc],S:S*sc};
+  // rows: distance from the bottom edge; each row is walked from its point on the left edge
+  var dB=new Int16Array(n).fill(-1),Q=[];for(i=0;i<n;i++)if(pts[i].m&1){dB[i]=0;Q.push(i)}
+  for(q=0;q<Q.length;q++)A[Q[q]].forEach(function(m){if(dB[m]<0){dB[m]=dB[Q[q]]+1;Q.push(m)}});
+  var order=[],used=new Uint8Array(n),maxr=0;for(i=0;i<n;i++)maxr=Math.max(maxr,dB[i]);
+  for(r=0;r<=maxr;r++){var row=[],cur=-1;for(i=0;i<n;i++)if(dB[i]===r&&(pts[i].m&2))cur=i;
+    while(cur>=0){row.push(cur);used[cur]=1;var nx=-1;A[cur].forEach(function(m){if(nx<0&&!used[m]&&dB[m]===r)nx=m});cur=nx}
+    var rest=[];for(i=0;i<n;i++)if(dB[i]===r&&!used[i]){rest.push(i);used[i]=1}
+    rest.sort(function(a,b){return X[a]-X[b]});row=row.concat(rest);
+    row.forEach(function(x,c){order.push(x);ROW.push(r);COL.push(c)});ROWEND.push(row)}
+  var nid=new Int16Array(n);order.forEach(function(o,x){nid[o]=x});
+  ROWEND=ROWEND.map(function(rw){return[nid[rw[0]],nid[rw[rw.length-1]]]});
+  NC=n;SIDE=new Uint8Array(NC);NB=new Int16Array(NC*6).fill(-1);
+  order.forEach(function(o,x){PX[x]=X[o]*sc;PY[x]=Y[o]*sc;SIDE[x]=pts[o].m;A[o].forEach(function(m,t){NB[x*6+t]=nid[m]});
+    A[o].forEach(function(m){if(nid[m]>x)EDGES.push([x,nid[m]])});if(pts[o].m&1)BOT.push(x)});
+}
+function colName(c){return c<26?LET[c]:LET[(c/26|0)-1]+LET[c%26]}
+function cn(i){return colName(COL[i])+(ROW[i]+1)}
+function nameP(P){return GAME.sides[P].name}
+function popc(m){return(m&1)+(m>>1&1)+(m>>2&1)}
+// group of the stone on j: points and the sides it touches
+function groupAt(b,j){var c=b[j],seen=new Uint8Array(NC),Q=[j],m=0,h,k,z;seen[j]=1;
+  for(h=0;h<Q.length;h++){var x=Q[h];m|=SIDE[x];for(k=0;k<6;k++){z=NB[x*6+k];if(z>=0&&b[z]===c&&!seen[z]){seen[z]=1;Q.push(z)}}}
+  return{cells:Q,mask:m}}
+function bestSides(b,c){var seen=new Uint8Array(NC),best=0,i;
+  for(i=0;i<NC;i++){if(b[i]!==c||seen[i])continue;var g=groupAt(b,i);g.cells.forEach(function(x){seen[x]=1});best=Math.max(best,popc(g.mask))}
+  return best}
+function newState(pie){return{b:new Int8Array(NC),turn:0,ply:0,mvn:0,last:-1,w:-1,win:null,ev:"",pie:!!pie,sw:0}}
+function clone(s){return{b:s.b.slice(),turn:s.turn,ply:s.ply,mvn:s.mvn,last:s.last,w:s.w,win:s.win,ev:s.ev,pie:s.pie,sw:s.sw}}
+// pie rule: the second player, on his first move, may take over the first stone by swapping colours
+function canSwap(s){return s.pie&&s.w<0&&s.mvn===1&&s.ply===1&&!s.sw}
+function doSwap(s){s.sw=1;s.mvn++;s.ev="Pie rule: the second player swapped colours. He now plays Black and owns the first stone; the first player continues as White, to move."}
+function placeErr(s,j){if(s.w>=0)return"The game is over.";if(j<0||j>=NC)return"That is not a point of the board.";if(s.b[j])return"That point is already taken.";return""}
+function doPlace(s,j){
+  var P=s.turn;s.b[j]=P+1;s.last=j;s.ply++;s.mvn++;
+  var g=groupAt(s.b,j);
+  if(g.mask===7){s.w=P;s.win=g.cells;s.ev=nameP(P)+" played "+cn(j)+" and linked all three sides.";return}
+  s.ev=nameP(P)+" played "+cn(j)+".";s.turn=1-P;
+}
+// try action a in state s: {ns} or {err}
+function apply(s,a){
+  if(a.t==="swap"){if(!canSwap(s))return{err:"Colours can only be swapped by the second player, instead of his first move, when the pie rule is on."};var t=clone(s);doSwap(t);return{ns:t}}
+  if(a.t!=="place")return{err:"Unknown action."};
+  var e=placeErr(s,a.j);if(e)return{err:e};
+  var ns=clone(s);doPlace(ns,a.j);return{ns:ns};
+}
+
+/* ================================ 2. ENGINE ================================ */
+var _seen,_stamp=0,_Q;
+// does the stone just placed on j belong to a group touching all three sides?
+function linked(b,j){
+  var c=b[j],h=0,qn=1,m=0,k,e,x,z;_stamp++;_Q[0]=j;_seen[j]=_stamp;
+  while(h<qn){x=_Q[h++];m|=SIDE[x];if(m===7)return true;for(k=x*6,e=k+6;k<e;k++){z=NB[k];if(z>=0&&b[z]===c&&_seen[z]!==_stamp){_seen[z]=_stamp;_Q[qn++]=z}}}
+  return false;
+}
+// winner of a full board: 0 if a Black group links the three sides, otherwise 1 (on a full board exactly one side has one)
+function fullWinner(b){
+  _stamp++;
+  for(var t=0;t<BOT.length;t++){var s0=BOT[t];if(b[s0]!==1||_seen[s0]===_stamp)continue;
+    var h=0,qn=1,m=0,k,e,x,z;_Q[0]=s0;_seen[s0]=_stamp;
+    while(h<qn){x=_Q[h++];m|=SIDE[x];for(k=x*6,e=k+6;k<e;k++){z=NB[k];if(z>=0&&b[z]===1&&_seen[z]!==_stamp){_seen[z]=_stamp;_Q[qn++]=z}}}
+    if(m===7)return 0}
+  return 1;
+}
+/* Bridge replies for the playouts: when the opponent plays x, one of the two points shared by two of my stones that
+   are not adjacent (or by my stone and an edge), I reply on the other one, z. BRT holds triples (y1, y2 or -1 for an
+   edge, z) for each x, from BRO[x] to BRO[x+1]. */
+var BRIDGES=true,BRO,BRT,NODES=0,MAXNODES=0;
+function initEngine(){
+  _seen=new Int32Array(NC);_Q=new Int16Array(NC);_stamp=0;BRO=new Int32Array(NC+1);
+  MAXNODES=Math.floor(3e7/(NC*16));   // about 30 MB of search tree at most
+  var L=[],x;
+  function nb(a){var o=[];for(var q=0;q<6;q++)if(NB[a*6+q]>=0)o.push(NB[a*6+q]);return o}
+  for(x=0;x<NC;x++){BRO[x]=L.length;var A=nb(x);
+    A.forEach(function(z){var C=nb(z).filter(function(y){return A.indexOf(y)>=0});
+      if(C.length===2&&nb(C[0]).indexOf(C[1])<0)L.push(C[0],C[1],z);
+      else if(C.length===1&&(SIDE[x]&SIDE[z]))L.push(C[0],-1,z)})}
+  BRO[NC]=L.length;BRT=new Int16Array(L);
+}
+function empties(b){var o=[];for(var i=0;i<NC;i++)if(!b[i])o.push(i);return o}
+function Node(mv){NODES++;var n=mv.length;this.mv=mv;this.N=0;this.n=new Float32Array(n);this.w=new Float32Array(n);this.an=new Float32Array(n);this.aw=new Float32Array(n);this.ch=new Array(n)}
+var RAVEK=400,UCTC=.08,EXPAND=2;
+function pick(nd){
+  var best=0,bv=-1,lg=Math.log(nd.N+1),t,n,an,q,a,be,v;
+  for(t=0;t<nd.mv.length;t++){n=nd.n[t];an=nd.an[t];q=n?nd.w[t]/n:.5;a=an?nd.aw[t]/an:.5;be=Math.sqrt(RAVEK/(3*n+RAVEK));
+    v=(1-be)*q+be*a+UCTC*Math.sqrt(lg/(n+1))+Math.random()*1e-6;if(v>bv){bv=v;best=t}}
+  return best;
+}
+// Monte Carlo tree search from s: at most iters iterations or ms milliseconds. Returns {mv:the point to play, v:its win rate}.
+function mcts(s,iters,ms){
+  NODES=0;var root=new Node(empties(s.b)),b=new Int8Array(NC),path=[],idx=[],emp=new Int16Array(NC),t0=Date.now(),it,np,nd,p,k,j,winner,d,q,r,tmp,ne,pl,wn,i;
+  if(root.mv.length===1)return{mv:root.mv[0],v:.5};
+  for(it=0;it<iters;it++){
+    if((it&127)===127&&Date.now()-t0>ms)break;
+    b.set(s.b);nd=root;p=s.turn;np=0;winner=-1;
+    for(;;){
+      k=pick(nd);j=nd.mv[k];b[j]=p+1;path[np]=nd;idx[np]=k;np++;
+      if(linked(b,j)){winner=p;break}
+      var ch=nd.ch[k];p=1-p;
+      if(!ch){if(nd.n[k]>=EXPAND&&nd.mv.length>1&&NODES<MAXNODES){var mv=new Int16Array(nd.mv.length-1);for(q=0,r=0;q<nd.mv.length;q++)if(q!==k)mv[r++]=nd.mv[q];ch=nd.ch[k]=new Node(mv)}
+        else break}
+      nd=ch;
+    }
+    if(winner<0){
+      ne=0;for(i=0;i<NC;i++)if(!b[i])emp[ne++]=i;
+      for(q=0;q<ne;q++){r=q+(Math.random()*(ne-q)|0);tmp=emp[r];emp[r]=emp[q];emp[q]=tmp}
+      if(BRIDGES){var ptr=0,lm=j,me,y,mv,e2;
+        for(q=0;q<ne;q++){me=p+1;mv=-1;
+          for(r=BRO[lm],e2=BRO[lm+1];r<e2;r+=3){if(b[BRT[r+2]])continue;y=BRT[r];if(b[y]!==me)continue;y=BRT[r+1];if(y<0||b[y]===me){mv=BRT[r+2];break}}
+          if(mv<0){while(b[emp[ptr]])ptr++;mv=emp[ptr++]}
+          b[mv]=me;lm=mv;p=1-p}}
+      else for(q=0;q<ne;q++)b[emp[q]]=((q&1)?1-p:p)+1;
+      winner=fullWinner(b);
+    }
+    for(d=0;d<np;d++){nd=path[d];pl=s.turn^(d&1);wn=winner===pl?1:0;k=idx[d];
+      nd.N++;nd.n[k]++;nd.w[k]+=wn;
+      var mvs=nd.mv,c=pl+1;for(q=0;q<mvs.length;q++)if(b[mvs[q]]===c){nd.an[q]++;nd.aw[q]+=wn}}
+  }
+  var best=0;for(k=1;k<root.mv.length;k++)if(root.n[k]>root.n[best]||root.n[k]===root.n[best]&&root.w[k]>root.w[best])best=k;
+  return{mv:root.mv[best],v:root.n[best]?root.w[best]/root.n[best]:.5};
+}
+// points where colour c would link the three sides at once
+function winsFor(b,c){var o=[],i;for(i=0;i<NC;i++){if(b[i])continue;b[i]=c;if(linked(b,i))o.push(i);b[i]=0}return o}
+// Easy: a short search. Medium and Hard: take a win at once, block a single winning threat, otherwise search longer.
+var LV={1:{it:250,ms:500,tac:false},2:{it:30000,ms:1000,tac:true},3:{it:300000,ms:2500,tac:true}};
+var FAST={1:{it:80,ms:100,tac:false},2:{it:900,ms:150,tac:true},3:{it:2500,ms:300,tac:true}};
+function aiMove(s,lv,fast){
+  var o=(fast?FAST:LV)[lv],P=s.turn,b=s.b.slice();
+  if(o.tac){var w=winsFor(b,P+1);if(w.length)return w[0];var x=winsFor(b,2-P);if(x.length===1)return x[0]}
+  return mcts(s,o.it,o.ms).mv;
+}
+function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.random()*(i+1)|0,t=a[i];a[i]=a[j];a[j]=t}return a}
+// random playouts overrate stones on the edge and above all in the corners, so the swap needs a clearer case there
+function swapThr(j){var p=popc(SIDE[j]);return p===2?.44:p===1?.47:.5}
+// first move under the pie rule: among a few random points, the one the opponent would value closest to even
+function fairOpening(s,o){
+  var E=shuffle(empties(s.b)).slice(0,10),best=E[0],bd=9;
+  E.forEach(function(j){var t=clone(s);doPlace(t,j);var d=Math.abs(mcts(t,Math.max(40,o.it/10|0),o.ms/10).v-swapThr(j));if(d<bd){bd=d;best=j}});
+  return best;
+}
+// the computer's move. As second player under the pie rule it swaps when the first stone looks better than even for Black.
+// As first player it opens with the point it judges closest to even.
+function aiStep(s,lv,fast){
+  var o=(fast?FAST:LV)[lv];
+  if(canSwap(s)){var r=mcts(s,o.it,o.ms);return apply(s,r.v<swapThr(s.last)?{t:"swap"}:{t:"place",j:r.mv}).ns}
+  if(s.pie&&s.mvn===0)return apply(s,{t:"place",j:fairOpening(s,o)}).ns;
+  return apply(s,{t:"place",j:aiMove(s,lv,fast)}).ns;
+}
+function randomStep(s){var E=empties(s.b);return apply(s,{t:"place",j:E[Math.random()*E.length|0]}).ns}
+var sim=null;
+function runSim(){   // computer vs computer, to look for first/second-player advantage
+  if(sim){sim.stop=true;return}
+  var CAP=NC+1,me=sim={stop:false},TOTAL=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?4:+$("simR").value)),
+      done=0,w=[0,0,0],un=0,pie=$("pie").checked,g=newState(pie),swaps=0,fpw=0,plies=0,lv=+$("level").value,lvName=$("level").options[$("level").selectedIndex].text,nm=GAME.sides.map(function(x){return x.name}),
+      len=0;
+  ["mode","side","level","size","pie","swap","new","undo","redo","simN","simR","nFirst","nPrev","nNext","nLast"].forEach(function(i){$(i).disabled=true});
+  $("sim").textContent="Stop simulation";
+  $("simout").textContent="Simulating at "+lvName+" level… 0/"+TOTAL;
+  function fin(stopped){
+    sim=null;$("sim").textContent="Simulation";
+    $("mode").disabled=$("new").disabled=$("simN").disabled=$("simR").disabled=$("size").disabled=$("pie").disabled=false;
+    $("level").disabled=$("side").disabled=$("mode").value==="2p";
+    var dec=w[0]+w[1],mgn=dec?(196*Math.sqrt((w[0]/dec)*(1-w[0]/dec)/dec)).toFixed(1):"0";
+    var pc=function(n){return done?(100*n/done).toFixed(1)+"%":"n/a"};
+    $("simout").textContent=(stopped?"Stopped after ":"")+done+" games on the size "+SIZE+" board at "+lvName+" level (computer vs computer), first "+RND+" moves random"+(pie?", pie rule on":"")+".\n"+
+      "First player ("+nm[0]+", the colour that moves first) won "+pc(w[0])+" ("+w[0]+" games). Second colour ("+nm[1]+") won "+pc(w[1])+" ("+w[1]+" games)."+
+      (dec?" Among decided games the first player won "+(100*w[0]/dec).toFixed(1)+"% (margin ±"+mgn+" points at 95% confidence).":"")+
+      (w[2]?" Draws: "+w[2]+".":"")+(un?" Unfinished: "+un+".":"")+
+      (pie&&done?"\nColours were swapped in "+swaps+" games; the player who placed the first stone won "+pc(fpw)+".":"")+
+      (done-un?"\nAverage game length: "+(len/(done-un)).toFixed(1)+" stones.":"");
+    render();
+  }
+  function stepSim(){
+    if(me.stop){fin(true);return}
+    var t0=Date.now();
+    while(Date.now()-t0<40){
+      if(g.w>=0||plies>=CAP){
+        if(g.w>=0){w[g.w]++;len+=g.ply;if(g.sw)swaps++;if(g.w===(g.sw?1:0))fpw++}else un++;
+        done++;g=newState(pie);plies=0;
+        if(done>=TOTAL){fin(false);return}
+        continue;
+      }
+      g=plies<RND?randomStep(g):aiStep(g,lv,true);
+      plies++;
+    }
+    $("simout").textContent="Simulating at "+lvName+" level… "+done+"/"+TOTAL;
+    setTimeout(stepSim,0);
+  }
+  stepSim();
+}
+
+/* =============================== 3. INTERFACE =============================== */
+var hist,redo=[],view=null,over,busy,note="";   // view: null = live position, otherwise the index being reviewed
+var GOLD="#e0a800",RED="#e0491b",GRID="#6b4a22",SR=.4;
+function cur(){return hist[hist.length-1]}
+function line(){return hist.concat(redo.slice().reverse())}   // every position, including those that can still be redone
+function browsing(){return view!==null}
+function shown(){return view===null?cur():line()[view]}
+function clearSel(){note=""}
+function goto(k){
+  if(busy||sim)return;
+  var n=hist.length-1+redo.length;k=Math.max(0,Math.min(n,k));
+  view=k===hist.length-1?null:k;clearSel();render();
+}
+// Undo/Redo while reviewing: leave review and play on from the reviewed position (in computer mode, from the nearest position where it is the human's turn)
+function unlock(dir){
+  var L=line(),k=view,j;
+  if($("mode").value==="ai"){
+    j=k;while(j>=0&&j<L.length&&L[j].w<0&&L[j].turn!==humanCol(L[j]))j+=dir;
+    if(j>=0&&j<L.length)k=j;
+  }
+  hist=L.slice(0,k+1);redo=L.slice(k+1).reverse();view=null;clearSel();over=false;render();maybeAI();
+}
+function humanCol(s){return +$("side").value^s.sw}   // colour of the human player in computer mode
+function humanTurn(){return $("mode").value==="2p"||cur().turn===humanCol(cur())}
+function useSize(z){
+  setBoard(z);initEngine();buildView();
+  $("rules").innerHTML=GAME.rules().map(function(sec){return"<li><b>"+sec.h+"</b><ul>"+sec.items.map(li).join("")+"</ul></li>"}).join("");
+}
+function start(){
+  var z=+$("size").value;if(z!==SIZE||!NC)useSize(z);
+  hist=[newState($("pie").checked)];redo=[];view=null;clearSel();$("level").disabled=$("side").disabled=$("mode").value==="2p";over=false;busy=false;
+  render();maybeAI();
+}
+var DEFS='<defs><radialGradient id="gB" cx=".35" cy=".3" r=".75"><stop offset="0" stop-color="#6a6a6a"/><stop offset=".35" stop-color="#2a2a2a"/><stop offset="1" stop-color="#0a0a0a"/></radialGradient>'+
+  '<radialGradient id="gW" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#ffffff"/><stop offset=".55" stop-color="#eef0f4"/><stop offset="1" stop-color="#b9bec8"/></radialGradient>'+
+  '<linearGradient id="gWood" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#EDBE78"/><stop offset=".5" stop-color="#E6B26A"/><stop offset="1" stop-color="#DDA65C"/></linearGradient>'+
+  '<filter id="fGrain" x="0" y="0" width="1" height="1"><feTurbulence type="fractalNoise" baseFrequency=".9 .035" numOctaves="2" seed="7"/><feColorMatrix values="0 0 0 0 .45  0 0 0 0 .28  0 0 0 0 .1  0 0 0 .55 -.18"/><feComposite in2="SourceGraphic" operator="in"/></filter>'+
+  '<filter id="fSh" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx=".05" dy=".07" stdDeviation=".05" flood-color="#000" flood-opacity=".4"/></filter></defs>';
+// the wooden board: the Reuleaux triangle of the edges, grown by m; built for each board size
+var WM=1.25,BOARD,VB,STATIC,LABELS;
+function buildView(){
+BOARD=(function(){
+  var T=RC.T,A=RC.BL,B=RC.BR,R=RC.S+WM,m=WM;
+  function u(p,q){var dx=q[0]-p[0],dy=q[1]-p[1],d=Math.hypot(dx,dy);return[dx/d,dy/d]}
+  function at(c,v,r){return(c[0]+v[0]*r).toFixed(3)+" "+(c[1]+v[1]*r).toFixed(3)}
+  var seq=[[T,A,B],[A,B,T],[B,T,A]],d="";   // [arc centre, from corner, to corner]
+  seq.forEach(function(x,q){var c=x[0],f=x[1],t=x[2];
+    if(!q)d+="M"+at(c,u(c,f),R);
+    d+="A"+R.toFixed(3)+" "+R.toFixed(3)+" 0 0 0 "+at(c,u(c,t),R);
+    var nc=seq[(q+1)%3][0];   // corner t: round it from the direction away from c to the direction away from the next centre
+    d+="A"+m+" "+m+" 0 0 0 "+at(t,u(nc,t),m)});
+  return d+"Z";
+})();
+VB=(function(){var x0=RC.BL[0]-WM-.1,x1=RC.BR[0]+WM+.1,y0=RC.T[1]-WM-.1,y1=RC.T[1]+RC.S+WM+.1;return[x0,y0,x1-x0,y1-y0].map(function(v){return v.toFixed(2)}).join(" ")})();
+// static part of the board: wood, lines, coordinates
+STATIC=(function(){
+  var h=[],cx=(RC.T[0]+RC.BL[0]+RC.BR[0])/3,cy=(RC.T[1]+RC.BL[1]+RC.BR[1])/3;
+  h.push('<path d="'+BOARD+'" fill="url(#gWood)" stroke="#b9853f" stroke-width=".05" pointer-events="none"/>');
+  h.push('<path d="'+BOARD+'" fill="#fff" filter="url(#fGrain)" pointer-events="none"/>');
+  h.push('<path d="'+EDGES.map(function(e){return"M"+PX[e[0]].toFixed(3)+" "+PY[e[0]].toFixed(3)+"L"+PX[e[1]].toFixed(3)+" "+PY[e[1]].toFixed(3)}).join("")+'" stroke="'+GRID+'" stroke-width=".035" fill="none" pointer-events="none"/>');
+  function out(i){var c=null;if(SIDE[i]===2)c=RC.BR;else if(SIDE[i]===4)c=RC.BL;else if(SIDE[i]===1)c=RC.T;
+    var dx=PX[i]-(c?c[0]:cx),dy=PY[i]-(c?c[1]:cy),d=Math.hypot(dx,dy);return[dx/d,dy/d]}
+  function lab(i,t){var v=out(i);h.push('<text x="'+(PX[i]+v[0]*.82).toFixed(2)+'" y="'+(PY[i]+v[1]*.82).toFixed(2)+'" font-size="'+(.34*(1+(SIZE-9)/18)).toFixed(2)+'" text-anchor="middle" dominant-baseline="central" fill="'+GRID+'" pointer-events="none" font-family="Georgia,serif">'+t+'</text>')}
+  // each row number once at each end of the row that lies on an edge (the top row ends inside the board)
+  var h0=h.length;
+  ROWEND.forEach(function(e,r){if(SIDE[e[0]])lab(e[0],r+1);if(e[1]!==e[0]&&(SIDE[e[1]]&4))lab(e[1],r+1)});
+  LABELS=h.splice(h0).join("");
+  return h.join("");
+})();
+}
+function render(){
+  var br=browsing(),s=shown(),sd=GAME.sides,h=[],P=s.turn,i,nT=hist.length-1+redo.length,kk=br?view:hist.length-1,lock=busy||!!sim;
+  over=s.w>=0;
+  var canAct=!br&&!over&&humanTurn()&&!busy&&!sim;
+  h.push('<svg viewBox="'+VB+'" role="img" aria-label="Y board">'+DEFS+STATIC+($("shL").checked?LABELS:""));
+  for(i=0;i<NC;i++){var v=s.b[i];if(!v)continue;
+    h.push('<circle cx="'+PX[i].toFixed(3)+'" cy="'+PY[i].toFixed(3)+'" r="'+SR+'" fill="url(#'+(v===1?"gB":"gW")+')" stroke="'+(v===1?"#000":"#9aa0aa")+'" stroke-width=".02" filter="url(#fSh)" pointer-events="none"/>')}
+  // letters of the empty points (their place along the row, counted from the row's left end)
+  if($("shL").checked){var lt=[];for(i=0;i<NC;i++)if(!s.b[i])lt.push('<text x="'+PX[i].toFixed(3)+'" y="'+(PY[i]+.01).toFixed(3)+'">'+colName(COL[i])+'</text>');
+    h.push('<g font-size="'+(SIZE>13?.4:SIZE>9?.32:.26)+'" text-anchor="middle" dominant-baseline="central" fill="'+GRID+'" stroke="#e8b670" stroke-width="'+(SIZE>13?.12:.09)+'" paint-order="stroke" font-family="Georgia,serif" pointer-events="none">'+lt.join("")+'</g>')}
+  if(s.win){var inW={};s.win.forEach(function(x){inW[x]=1});
+    var d=EDGES.filter(function(e){return inW[e[0]]&&inW[e[1]]}).map(function(e){return"M"+PX[e[0]].toFixed(3)+" "+PY[e[0]].toFixed(3)+"L"+PX[e[1]].toFixed(3)+" "+PY[e[1]].toFixed(3)}).join("");
+    h.push('<path d="'+d+'" stroke="'+RED+'" stroke-width=".13" stroke-linecap="round" stroke-opacity=".85" fill="none" pointer-events="none"/>');
+    s.win.forEach(function(x){h.push('<circle cx="'+PX[x].toFixed(3)+'" cy="'+PY[x].toFixed(3)+'" r=".09" fill="'+RED+'" pointer-events="none"/>')})}
+  if(s.last>=0)h.push('<circle cx="'+PX[s.last].toFixed(3)+'" cy="'+PY[s.last].toFixed(3)+'" r=".12" fill="'+GOLD+'" stroke="#7a5c00" stroke-width=".02" pointer-events="none"/>');
+  // click targets (with the point's name as a tooltip); on empty points they show the stone about to be placed on hover
+  var gh=P===0?"gB":"gW";
+  for(i=0;i<NC;i++){var e=canAct&&!s.b[i];
+    h.push('<circle class="tgt'+(e?" e":"")+'" data-i="'+i+'" cx="'+PX[i].toFixed(3)+'" cy="'+PY[i].toFixed(3)+'" r="'+(e?SR:.5)+'" fill="'+(e?"url(#"+gh+")":"#000")+'"><title>'+cn(i)+'</title></circle>')}
+  h.push('</svg>');
+  $("board").innerHTML=h.join("");
+  var names=sd.map(function(x){return x.name}),stt;
+  var ai=$("mode").value==="ai";
+  for(i=0;i<2;i++){var tt=GAME.stats(s,i);$("s"+i).textContent=tt.big;$("d"+i).textContent=tt.text;
+    $("n"+i).textContent=names[i]+(ai?(humanCol(s)===i?" (you)":" (computer)"):"");
+    $("p"+i).className="pl"+(!over&&s.turn===i?" on":"")}
+  var moveNo=" (move "+(s.ply+1)+")";
+  if(br)stt="Reviewing history (move "+kk+" of "+nT+"): the board is locked. Press Undo or Redo to play on from here.";
+  else if(over)stt="Game over: "+names[s.w]+" wins, linking all three sides in "+s.ply+" stones.";
+  else if(!humanTurn())stt=names[P]+" to play"+moveNo+" – computer thinking…";
+  else if(canSwap(s))stt=names[P]+" to play"+moveNo+": click an empty point, or press “Swap colours” to take over the first stone.";
+  else stt=names[P]+" to play"+moveNo+": click an empty point.";
+  $("status").textContent=stt;
+  $("last").textContent=(GAME.describe(s)+" "+note).trim();
+  $("undo").disabled=lock||!(br||hist.length>=2);
+  $("redo").disabled=lock||!(br||redo.length);
+  $("nFirst").disabled=$("nPrev").disabled=lock||kk<=0;
+  $("nNext").disabled=$("nLast").disabled=lock||kk>=nT;
+  $("nlab").textContent="Move "+kk+" of "+nT;
+  $("swap").disabled=!canAct||!canSwap(s);
+}
+function play(ns){hist.push(ns);redo=[];clearSel();render();maybeAI()}
+function act(a){var r=apply(cur(),a);if(r.ns){play(r.ns);return true}note=r.err;render();return false}
+function click(i){
+  if(over||busy||browsing()||!humanTurn()||sim)return;
+  note="";act({t:"place",j:i});
+}
+function maybeAI(){
+  if(sim||cur().w>=0||$("mode").value!=="ai"||cur().turn===humanCol(cur()))return;
+  busy=true;render();
+  setTimeout(function(){
+    var c=cur();hist.push(aiStep(c,+$("level").value));redo=[];busy=false;
+    render();maybeAI();
+  },180);
+}
+document.title=GAME.title;$("gtitle").textContent=GAME.title;$("gsub").textContent=GAME.subtitle;
+function li(x){return"<li>"+(typeof x==="string"?x:x.t+"<ul>"+x.sub.map(li).join("")+"</ul>")+"</li>"}
+$("side").innerHTML=GAME.sides.map(function(x,i){return'<option value="'+i+'">You are '+x.name+(i?"":" (first)")+'</option>'}).join("");
+for(var ni=0;ni<2;ni++)$("n"+ni).textContent=GAME.sides[ni].name;
+$("board").onclick=function(e){var t=e.target.closest("[data-i]");if(t)click(+t.getAttribute("data-i"))};
+$("new").onclick=start;$("sim").onclick=runSim;
+$("mode").onchange=$("side").onchange=$("size").onchange=$("pie").onchange=start;
+$("shL").onchange=function(){render()};
+$("swap").onclick=function(){if(over||busy||browsing()||!humanTurn()||sim)return;note="";act({t:"swap"})};
+$("redo").onclick=function(){
+  if(busy||sim)return;
+  if(browsing()){unlock(1);return}
+  if(!redo.length)return;
+  hist.push(redo.pop());
+  while($("mode").value==="ai"&&redo.length&&cur().w<0&&cur().turn!==humanCol(cur()))hist.push(redo.pop());
+  clearSel();render();
+};
+$("undo").onclick=function(){
+  if(busy||sim)return;
+  if(browsing()){unlock(-1);return}
+  if(hist.length<2)return;
+  redo.push(hist.pop());
+  while($("mode").value==="ai"&&hist.length>1&&cur().turn!==humanCol(cur()))redo.push(hist.pop());
+  clearSel();over=false;render();
+};
+$("nFirst").onclick=function(){goto(0)};
+$("nPrev").onclick=function(){goto((browsing()?view:hist.length-1)-1)};
+$("nNext").onclick=function(){goto((browsing()?view:hist.length-1)+1)};
+$("nLast").onclick=function(){goto(hist.length-1+redo.length)};
+start();
+})();
+</script>
+</body>
+</html>
