@@ -28,12 +28,46 @@ a.card:hover,a.card:focus-visible{border-color:var(--hi);transform:translateY(-2
 .search{display:block;width:100%;max-width:420px;box-sizing:border-box;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin:0 0 16px}
 .search:focus{outline:2px solid var(--hi);outline-offset:1px}
 .empty{color:var(--mute)}
+.sub{margin-bottom:10px}
+.intro{max-width:760px;margin:0 0 18px;font-size:.88rem;line-height:1.55}
+.intro summary{cursor:pointer;color:var(--mute);font-weight:600;list-style:none;display:inline-flex;align-items:center;gap:6px;user-select:none}
+.intro summary::-webkit-details-marker{display:none}
+.intro summary::before{content:"";width:0;height:0;border-left:6px solid currentColor;border-top:4px solid transparent;border-bottom:4px solid transparent;transition:transform .15s}
+.intro[open] summary::before{transform:rotate(90deg)}
+.intro summary:hover,.intro summary:focus-visible{color:var(--hi);outline:none}
+.intro .text{margin-top:8px;padding:10px 14px;background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--hi);border-radius:8px}
+.intro .text p{margin:0 0 8px}
+.intro .text p:last-child{margin-bottom:0}
+.intro .text a{color:var(--hi)}
 </style>
 </head>
 <body>
 <main>
 <h1 id="title"></h1>
 <p class="sub" id="sub"></p>
+<!-- =====================================================================
+     INTRO TEXT: write your text between <div class="text"> and </div>.
+     Use one <p>...</p> per paragraph. Links work: <a href="...">...</a>
+     The box starts collapsed; add the word "open" to <details> to start it expanded.
+     ===================================================================== -->
+<details class="intro">
+<summary>About this collection</summary>
+<div class="text">
+<p>The number of published games is immense. As an example, BGG indexes around 5000 board games in the Abstract Strategy category alone. Interested players may feel overwhelmed, and in choosing what to play, will inevitably miss many excellent games they might otherwise enjoy.</p> 
+
+<p>This list proposes a 20th century canon of abstract games for two players. Abstract games are defined as being deterministic, with all information available to both players at all times. This excludes randomness, hidden information, and also simultaneous turns.</p> 
+
+<p>To narrow the scope further, I've chosen not to include close variants of classical games, with a major exception for Checkers. Why this exception? Checkers underwent significant development during the 20th century, resulting in versions that are better than most traditional variants. Some of these deserve inclusion. The same cannot be said, in my opinion, for Chess and Go.</p> 
+
+<p>The games on this list were selected based on whether they meet two or more of the following criteria: (a) they were culturally or commercially relevant, (b) they introduced innovative ludemes or rule interactions, (c) they exhibit above-average depth or dramatic tension, (d) they are simply fun to play.</p> 
+
+<p>The list also aims to strike a balance across decades, acknowledging that the average quality of games has improved over time. Later decades are more heavily represented, but my standards are also higher for newer games.</p>
+
+<p>The selection includes both classic board games that many would expect in a canon like this, and more obscure titles that deserve greater recognition. The goal is to offer something valuable for beginners, seasoned players, and game designers alike.</p> 
+
+<p>Notes: (a) some dates are estimates, (b) ★★ games would make my Top10, (c) ★ games stand out a bit more than the others.</p>
+</div>
+</details>
 <input class="search" id="search" type="search" placeholder="Search games" aria-label="Search games" autocomplete="off">
 <div class="grid" id="grid"></div>
 </main>
@@ -65,6 +99,18 @@ var GAMES=[
    blurb:"Stacks where power comes from height and from the colour of the hex.",
    img:"images/tricolor.png",
    tags:["hexhex5","stack","elimination","1930","Maurice Kraitchik"]},   
+
+  {title:"Guerilla",
+   file:"guerilla.html",
+   blurb:"Groups grow, jump across the board and kill weaker neighbours.",
+   img:"images/guerilla.png",
+   tags:["hexhex12,7","territory","1976","David Wells","★"]},   
+
+  {title:"Le Manipulateur",
+   file:"manipulateur.html",
+   blurb:"Join your two edges with a continuous line of pions, or leave the enemy manipulator with no move.",
+   img:"images/manipulateur.png",
+   tags:["17x17","connection","stalemate","1983","Jacques Fradkine"]},   
 
   {title:"Palanquée",
    file:"palanquée.html",

@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Guerilla</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
+<style>
+:root{--bg:#eaf0f5;--ink:#18232e;--mute:#566574;--panel:#fff;--line:#c3ced8;--hi:#e0803a;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121a22;--ink:#e3eaf0;--mute:#93a3b2;--panel:#1b2530;--line:#33424f}}
+:root[data-theme="dark"]{--bg:#121a22;--ink:#e3eaf0;--mute:#93a3b2;--panel:#1b2530;--line:#33424f}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+main{max-width:1180px;margin:0 auto;padding:16px 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.right>.bar:first-child{margin-top:0}
+@media (min-width:900px){.layout{grid-template-columns:minmax(0,680px) minmax(300px,1fr);gap:28px;align-items:start}}
+h1{font:700 2rem/1.1 "Bricolage Grotesque",Georgia,serif;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+select,button.ctl{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.ctl:disabled,select:disabled,input:disabled{opacity:.45;cursor:default}
+label.f{color:var(--mute);font-size:.9rem}
+input[type=number]{width:4.5em;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+button.ctl.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button.ctl.icon{display:inline-flex;align-items:center;justify-content:center;padding:6px 10px}
+button.ctl.icon svg{width:18px;height:18px;fill:currentColor;display:block}
+.navlab{min-width:7.5em;text-align:center;color:var(--mute);font-variant-numeric:tabular-nums}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.pl{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:8px 12px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.pl.on{border-color:var(--hi)}
+.pl b{font:700 1.6rem "Bricolage Grotesque",Georgia,serif;white-space:nowrap}
+.pl small{color:var(--mute)}
+#status{min-height:1.5em;font-weight:600;margin:6px 0}
+#board svg{display:block;width:100%;max-width:680px;margin:0 auto;touch-action:manipulation}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+details li{margin:4px 0}
+.legend{color:var(--mute);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+<h1 id="gtitle"></h1>
+<p class="sub" id="gsub"></p>
+<div class="layout">
+<div class="left">
+<div id="board"></div>
+<p class="legend">Each turn has three stages: grow, move, kill. While growing, orange dots mark the points where one of your groups may grow and green dots the points where you may start the new group; growth goes on until no placement is left. Then click a piece of a group of two or more to move that group: purple rings are the points a piece can jump to over a neighbour from its own group. Click another group to move it next, and “End turn” when you are done. Red dashed rings mark the enemy pieces your pieces would kill if the turn ended now; when a choice of kills is needed they get solid red rings. The numbers on the pieces are their strengths. Gold rings mark the pieces placed or moved during the turn being played (before its first action, during the previous turn), small gold dots the points they left and the pieces killed. Red discs are massacre tokens.</p>
+</div>
+<aside class="right">
+<div class="bar">
+  <select id="mode" aria-label="Mode"><option value="ai">Play the computer</option><option value="2p">Two players</option></select>
+  <select id="level" aria-label="Computer strength"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select>
+  <select id="side" aria-label="Your side"></select>
+  <button class="ctl primary" id="new">New game</button>
+  <button class="ctl" id="undo">Undo</button>
+  <button class="ctl" id="redo">Redo</button>
+</div>
+<div class="bar">
+  <button class="ctl" id="endt">End turn</button>
+  <button class="ctl" id="pass">Pass</button>
+  <label class="f"><input type="checkbox" id="shStr" checked> Show strengths</label>
+</div>
+<div class="bar" id="nav" role="group" aria-label="Game history">
+  <button class="ctl icon" id="nFirst" aria-label="Go to the beginning" title="Go to the beginning"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="2.5" height="14"/><path d="M19 5v14L8 12z"/></svg></button>
+  <button class="ctl icon" id="nPrev" aria-label="One move back" title="One move back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 5v14L6 12z"/></svg></button>
+  <span class="navlab" id="nlab" aria-live="polite">Move 0 of 0</span>
+  <button class="ctl icon" id="nNext" aria-label="One move forward" title="One move forward"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5v14l11-7z"/></svg></button>
+  <button class="ctl icon" id="nLast" aria-label="Go to the last move" title="Go to the last move"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5v14l11-7z"/><rect x="17.5" y="5" width="2.5" height="14"/></svg></button>
+</div>
+<div class="score">
+  <div class="pl" id="p0"><span><span id="n0"></span> <small id="d0"></small></span><b id="s0">0</b></div>
+  <div class="pl" id="p1"><span><span id="n1"></span> <small id="d1"></small></span><b id="s1">0</b></div>
+</div>
+<div id="status" aria-live="polite"></div>
+<div id="last" class="legend" style="min-height:2.6em;margin:0 0 8px"></div>
+<div class="bar">
+  <label class="f">Simulation games <input id="simN" type="number" min="10" max="1000" value="10"></label>
+  <label class="f">Random opening moves <input id="simR" type="number" min="0" max="20" value="4"></label>
+  <button class="ctl" id="sim">Simulation</button>
+</div>
+<div id="simout" class="legend" style="white-space:pre-line;margin:0 0 8px"></div>
+<details>
+<summary>Rules</summary>
+<ul id="rules"></ul>
+</details>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+/* =====================================================================
+   1. GAME DEFINITION  - Guerilla rules: board, groups, growth, movement, killing, scoring
+   2. ENGINE           - computer opponent (greedy turn building with look-ahead), simulations
+   3. INTERFACE        - SVG board, click handling, controls
+   A turn has three stages: grow (ph "grow"), move (ph "move", with "split" when a moved group broke into equal largest
+   parts) and kill (ph "kill"). Every placement, every single jump, every kill chosen and every split choice is one
+   entry in the history. An action is {t:"place"|"jump"|"keep"|"kill"|"end"|"pass", i, j}.
+   A state is {b:points (0 empty, 1 White, 2 Black, 3 massacre token), turn, ply:turns completed, passes:passes in a row,
+     quiet:turns without a placement or a kill, ph, gid/gsz:groups of the side to move, grown/moved:per group,
+     newDone, mg:group being moved (-1 none), mj:jumps made, mn:jumps allowed, parts, kE/kU/kD:kill edges, attackers
+     used, pieces killed, acted, tx:the turn being played, w:winner (-1 none, 2 draw), fin:final scores, ev,
+     hl/hf: pieces placed or moved / points left and pieces killed this turn, phl/phf: same for the previous turn}.
+   ===================================================================== */
+var $=function(i){return document.getElementById(i)};
+
+/* ============================ 1. GAME DEFINITION ============================ */
+var GAME={
+  title:"Guerilla",
+  subtitle:"David Wells’ abstract game of growth, movement and attack (1976), simulating some features of guerilla warfare. Groups grow, jump across the board and kill weaker neighbours; the player who controls the most territory wins.",
+  sides:[{name:"White",color:"#f6f1e4"},{name:"Black",color:"#1b1d22"}],
+  rules:[
+  {h:"Object",items:[
+    "The winner is the player controlling the most territory when the game ends.",
+    "Each player scores one point for each point he occupies, plus one point for each empty point that is directly adjacent to at least one of his pieces but not to any enemy piece. Massacre tokens, and empty points adjacent to pieces of both colours, score for nobody."]},
+  {h:"Board and pieces",items:[
+    "The board is a hexagonal pattern of 192 points joined by lines (12 points along the top and bottom edges, 18 across the middle). Pieces stand on the points; two points are adjacent when a line joins them directly.",
+    "Each player has 60 pieces; pieces killed return to their owner and can be played again. There are also red massacre tokens.",
+    "The board starts empty and White plays first."]},
+  {h:"Groups and strength",items:[
+    "A group is a set of a player’s pieces connected through adjacent points. Groups have 1 to 5 pieces; two different groups of the same player never touch.",
+    "The strength of a piece is the number of other pieces of its group directly adjacent to it (0 to 6)."]},
+  {h:"Order of play",items:[
+    "Every turn is played in the same order: grow, move, kill."]},
+  {h:"Growth",items:[
+    "At the start of his turn each of the player’s groups of fewer than five pieces grows by one piece, placed on an empty point adjacent to the group.",
+    "He also starts one new group by placing one piece on any point not adjacent to any piece, White or Black, already on the board.",
+    "No group may grow onto a point adjacent to an enemy piece or adjacent to a friendly piece from a different group. Massacre tokens may not be used.",
+    "A new group must be started if possible and every group that can grow must do so. The player chooses the order, and growing one group may leave another unable to grow. A group started this turn does not also grow this turn.",
+    {t:"The start of the game:",sub:[
+      "White can only start one group by placing one piece, and it must stand no further than four lines from the edge (counting the edge as line one); the allowed points are marked.",
+      "Black then places one piece anywhere except adjacent to the White piece, White starts a new group and grows his one-group into a two-group, and play goes on by the rules."]}]},
+  {h:"Movement",items:[
+    "A group of n pieces (2 to 5) may move by up to n jumps per turn; a single piece cannot move. A jump takes a piece of the group over one other, adjacent piece of the same group, in a straight line, to the empty point directly beyond.",
+    "Any pieces of the group may jump, and one piece may make several jumps. No group is obliged to move, and several groups may move in one turn, but one at a time: a player may not start moving one group, move another and return to the first.",
+    "No piece of a moving group may land on a point adjacent to any piece of the same player outside the group, during or at the end of the movement. Landing next to enemy pieces is allowed: that is how attacks are made.",
+    "A group may break into parts during a movement and reform. If it is still in two or more parts when its movement ends, only the largest part survives; the others die and are taken off at once. If two parts are equal largest, the player chooses which one survives."]},
+  {h:"Killing",items:[
+    "At the end of a player’s turn each of his pieces that is stronger than an adjacent enemy piece kills it. Killing is automatic and cannot be declined; a piece can kill without having moved.",
+    "No piece kills more than one enemy piece in a turn. A piece stronger than two or more adjacent enemies kills only one of them, at the player’s choice, unless the others are killed by other pieces; when several pieces could kill the same enemy, the player chooses which one does.",
+    "Killed pieces return to their owner. If the group of the killing piece has two, three or four more pieces than the group of the piece killed, the piece is massacred: its point is covered by a massacre token and cannot be used for the rest of the game.",
+    "A group split into parts by an attack becomes that many smaller groups, which grow and move separately."]},
+  {h:"End of the game",items:[
+    "A player may pass at any turn (the whole turn, growth included), without losing the right to play normally later.",
+    "The game ends when neither player can improve his score; here it ends when both players pass in succession, and the higher total wins."]},
+  {h:"Added in this version",items:[
+    "A turn in which the player can do nothing at all counts as a pass.",
+    "The game also ends after 30 turns in a row without any piece placed or killed, or after 200 turns by each side; equal scores are a draw.",
+    "All kills are worked out on the position at the end of the movement. The rules’ advice about points held only temporarily is not adjudicated: the position is scored as it stands."]}],
+  stats:function(s,i){var sc=score(s.b),n=0,g=0,k;for(k=0;k<NC;k++)if(s.b[k]===i+1)n++;g=comps(s.b,i+1).sz.length;
+    return{big:String(sc[i]),text:n+" on the board · "+g+" group"+(g===1?"":"s")+" · "+(PIECES-n)+" in hand"}},
+  describe:function(s){return s.ev||""}
+};
+var LROW=[12,13,14,15,16,17,18,17,16,15,14,13,12],NR=13,H=Math.sqrt(3)/2,PIECES=60,QUIET=30,MAXPLY=400,LET="abcdefghijklmnopqrstuvwxyz";
+var NC=0,PX=[],PY=[],RW=[],X2=[],KD=[],NBR,DEPTH,LABS=[];
+// directions (row step, doubled x step): E, W, NE, SW, NW, SE; k and k^1 are opposite
+var DIRS=[[0,2],[0,-2],[-1,1],[1,-1],[-1,-1],[1,1]];
+(function(){
+  var at={},r,c,i,k,x2;
+  for(r=0;r<NR;r++)for(c=0;c<LROW[r];c++){x2=18-LROW[r]+2*c;at[r+","+x2]=NC;PX.push(x2/2);PY.push(r*H);RW.push(r);X2.push(x2);NC++}
+  NBR=new Int16Array(NC*6).fill(-1);
+  for(i=0;i<NC;i++)for(k=0;k<6;k++){var q=at[(RW[i]+DIRS[k][0])+","+(X2[i]+DIRS[k][1])];if(q!=null)NBR[i*6+k]=q}
+  DEPTH=new Int8Array(NC).fill(-1);var Q=[];
+  for(i=0;i<NC;i++){var n=0;for(k=0;k<6;k++)if(NBR[i*6+k]>=0)n++;if(n<6){DEPTH[i]=0;Q.push(i)}}
+  for(var h=0;h<Q.length;h++){i=Q[h];for(k=0;k<6;k++){var z=NBR[i*6+k];if(z>=0&&DEPTH[z]<0){DEPTH[z]=DEPTH[i]+1;Q.push(z)}}}
+  // coordinates: rows 1-13 from the bottom; letters for the lines running up to the right ("/"), from the left
+  var kmin=99;for(i=0;i<NC;i++){KD[i]=X2[i]-(NR-1-RW[i]);kmin=Math.min(kmin,KD[i])}
+  for(i=0;i<NC;i++){KD[i]=(KD[i]-kmin)/2;if(NBR[i*6+3]<0)LABS.push(i)}
+})();
+function cn(i){return LET[KD[i]]+(NR-RW[i])}
+function nameP(P){return GAME.sides[P].name}
+function cnt(b,v){var n=0;for(var i=0;i<NC;i++)if(b[i]===v)n++;return n}
+// groups of colour c: gid per point (-1 elsewhere) and sizes
+function comps(b,c){
+  var gid=new Int16Array(NC).fill(-1),sz=[],i,k,Q,h,z;
+  for(i=0;i<NC;i++){if(b[i]!==c||gid[i]>=0)continue;var g=sz.length;gid[i]=g;Q=[i];
+    for(h=0;h<Q.length;h++)for(k=0;k<6;k++){z=NBR[Q[h]*6+k];if(z>=0&&b[z]===c&&gid[z]<0){gid[z]=g;Q.push(z)}}
+    sz.push(Q.length)}
+  return{gid:gid,sz:sz};
+}
+function strengths(b){var st=new Int8Array(NC),i,k,z;
+  for(i=0;i<NC;i++){var v=b[i];if(v!==1&&v!==2)continue;for(k=0;k<6;k++){z=NBR[i*6+k];if(z>=0&&b[z]===v)st[i]++}}
+  return st}
+// final score of each side (rule 5.1)
+function score(b){var sc=[0,0],i,k,n,f,v;
+  for(i=0;i<NC;i++){v=b[i];if(v===1||v===2){sc[v-1]++;continue}if(v===3)continue;f=0;
+    for(k=0;k<6;k++){n=NBR[i*6+k];if(n>=0){if(b[n]===1)f|=1;else if(b[n]===2)f|=2}}
+    if(f===1)sc[0]++;else if(f===2)sc[1]++}
+  return sc}
+function startTurn(s){
+  var g=comps(s.b,s.turn+1);
+  s.gid=g.gid;s.gsz=g.sz;s.grown=g.sz.map(function(){return 0});s.moved=g.sz.map(function(){return 0});s.newDone=false;
+  s.mg=-1;s.mj=0;s.mn=0;s.ph="grow";s.parts=null;s.kE=null;s.kU=[];s.kD=[];s.acted=false;s.placed=0;s.killed=0;
+  s.tx={P:s.turn,place:[],newg:-1,moves:[],kills:[],deaths:0};
+}
+function newState(){
+  var s={b:new Int8Array(NC),turn:0,ply:0,passes:0,quiet:0,w:-1,fin:null,ev:"",hl:[],hf:[],phl:[],phf:[],log:[]};
+  startTurn(s);return s;
+}
+function clone(s){return{b:s.b.slice(),turn:s.turn,ply:s.ply,passes:s.passes,quiet:s.quiet,w:s.w,fin:s.fin,ev:s.ev,
+  gid:s.gid.slice(),gsz:s.gsz.slice(),grown:s.grown.slice(),moved:s.moved.slice(),newDone:s.newDone,mg:s.mg,mj:s.mj,mn:s.mn,ph:s.ph,
+  parts:s.parts?s.parts.map(function(p){return p.slice()}):null,kE:s.kE,kU:s.kU.slice(),kD:s.kD.slice(),acted:s.acted,placed:s.placed,killed:s.killed,
+  tx:{P:s.tx.P,place:s.tx.place.slice(),newg:s.tx.newg,moves:s.tx.moves.map(function(m){return m.slice()}),kills:s.tx.kills.slice(),deaths:s.tx.deaths},
+  hl:s.hl.slice(),hf:s.hf.slice(),phl:s.phl,phf:s.phf,log:[]}}
+// legal placements for the side to move: {j, g} (g = group that grows, -1 = new group)
+function growPts(s){
+  var P=s.turn,c=P+1,e=2-P,b=s.b,out=[],i,k,n,v,g,bad,any,first=s.ply===0;
+  if(s.ph!=="grow"||cnt(b,c)>=PIECES)return out;
+  for(i=0;i<NC;i++){if(b[i])continue;g=-1;bad=false;any=false;
+    for(k=0;k<6;k++){n=NBR[i*6+k];if(n<0)continue;v=b[n];if(v===e){bad=true;break}
+      if(v===c){any=true;if(g<0)g=s.gid[n];else if(g!==s.gid[n]){bad=true;break}}}
+    if(bad)continue;
+    if(!any){if(!s.newDone&&(!first||DEPTH[i]<=3))out.push({j:i,g:-1})}
+    else if(!s.grown[g]&&s.gsz[g]<5)out.push({j:i,g:g});
+  }
+  return out;
+}
+function placeErr(s,j){
+  var P=s.turn,c=P+1,e=2-P,b=s.b,k,n,g=-1,any=false;
+  if(b[j]===3)return"A massacre token’s point cannot be used for the rest of the game.";
+  if(b[j])return"That point is occupied.";
+  for(k=0;k<6;k++){n=NBR[j*6+k];if(n<0)continue;
+    if(b[n]===e)return"No piece may be placed adjacent to an enemy piece.";
+    if(b[n]===c){any=true;if(g<0)g=s.gid[n];else if(g!==s.gid[n])return"A group may not grow next to a friendly piece from a different group."}}
+  if(!any){if(s.newDone)return"You have already started a new group this turn.";if(s.ply===0)return"White’s first piece must stand no further than four lines from the edge.";return"No more pieces are left in hand."}
+  if(s.grown[g])return s.gsz[g]===1&&s.tx.newg>=0&&s.gid[s.tx.newg]===g?"A group started this turn grows from the next turn.":"That group has already grown this turn.";
+  if(s.gsz[g]>=5)return"A group of five pieces cannot grow.";
+  return"No more pieces are left in hand.";
+}
+// legal jumps of group g: {i, j, o:the piece jumped over}
+function jumpsOf(s,g){
+  var c=s.turn+1,b=s.b,out=[],i,k,q,r,m,z,ok;
+  for(i=0;i<NC;i++){if(b[i]!==c||s.gid[i]!==g)continue;
+    for(k=0;k<6;k++){q=NBR[i*6+k];if(q<0||b[q]!==c||s.gid[q]!==g)continue;r=NBR[q*6+k];if(r<0||b[r])continue;
+      ok=true;for(m=0;m<6;m++){z=NBR[r*6+m];if(z>=0&&b[z]===c&&s.gid[z]!==g){ok=false;break}}
+      if(ok)out.push({i:i,j:r,o:q})}}
+  return out;
+}
+function canMoveAny(s){for(var g=0;g<s.gsz.length;g++)if(!s.moved[g]&&s.gsz[g]>=2&&jumpsOf(s,g).length)return true;return false}
+function removeCells(s,cells){cells.forEach(function(x){s.b[x]=0;s.gsz[s.gid[x]]--;s.gid[x]=-1;s.tx.deaths++;s.hf.push(x);
+  var q=s.hl.indexOf(x);if(q>=0)s.hl.splice(q,1)})}
+// parts of group g (connected components of its pieces)
+function partsOf(s,g){
+  var c=s.turn+1,seen={},out=[],i,k,z,h;
+  for(i=0;i<NC;i++){if(s.b[i]!==c||s.gid[i]!==g||seen[i])continue;var Q=[i];seen[i]=1;
+    for(h=0;h<Q.length;h++)for(k=0;k<6;k++){z=NBR[Q[h]*6+k];if(z>=0&&s.b[z]===c&&s.gid[z]===g&&!seen[z]){seen[z]=1;Q.push(z)}}
+    out.push(Q)}
+  return out;
+}
+// the movement of the group being moved ends: only the largest part survives (8.3)
+function finishGroup(s){
+  var g=s.mg;if(g<0)return;
+  var P=partsOf(s,g);
+  if(P.length>1){var mx=0;P.forEach(function(p){mx=Math.max(mx,p.length)});
+    var top=P.filter(function(p){return p.length===mx});
+    if(top.length>1){s.ph="split";s.parts=P;return}
+    P.forEach(function(p){if(p.length<mx)removeCells(s,p)})}
+  s.moved[g]=1;s.mg=-1;s.parts=null;if(s.ph==="split")s.ph="move";
+}
+// kill edges for side P: {a: attacker, t: target, m: massacre}
+function killEdges(b,P){
+  var c=P+1,e=2-P,st=strengths(b),G=[comps(b,1),comps(b,2)],E=[],i,k,t;
+  function size(x){var C=G[b[x]-1];return C.sz[C.gid[x]]}
+  for(i=0;i<NC;i++){if(b[i]!==c)continue;
+    for(k=0;k<6;k++){t=NBR[i*6+k];if(t>=0&&b[t]===e&&st[i]>st[t])E.push({a:i,t:t,m:size(i)-size(t)>=2})}}
+  return E;
+}
+function remEdges(s){return s.kE.filter(function(e){return s.kU.indexOf(e.a)<0&&s.kD.indexOf(e.t)<0})}
+// distinct results (targets killed, massacred or not) of the maximal sets of kills still open; at most cap search nodes
+function outcomes(s,cap){
+  var R=remEdges(s),T=[],byT={},seen={},list=[],nodes=0,trunc=false,uA={},dT={},ch=[];
+  R.forEach(function(e){if(!byT[e.t]){byT[e.t]=[];T.push(e.t)}byT[e.t].push(e)});
+  function rec(x){
+    if(++nodes>cap){trunc=true;return}
+    if(x===T.length){
+      for(var q=0;q<R.length;q++)if(!uA[R[q].a]&&!dT[R[q].t])return;
+      var key=ch.map(function(e){return e.t+(e.m?"m":"")}).sort().join(",");
+      if(!seen[key]){seen[key]=1;list.push(ch.slice())}return}
+    var t=T[x];
+    byT[t].forEach(function(e){if(uA[e.a]||trunc)return;uA[e.a]=1;dT[t]=1;ch.push(e);rec(x+1);ch.pop();uA[e.a]=0;dT[t]=0});
+    if(!trunc)rec(x+1);
+  }
+  rec(0);
+  return{list:list,trunc:trunc};
+}
+function okey(L){return L.map(function(e){return e.t+(e.m?"m":"")}).sort().join(",")}
+function doKill(s,e){s.kU.push(e.a);s.kD.push(e.t);s.b[e.t]=e.m?3:0;s.tx.kills.push({t:e.t,m:e.m});s.hf.push(e.t);s.killed++;s.acted=true}
+function turnText(s){
+  var t=s.tx,q=[];
+  if(t.place.length)q.push("grew at "+t.place.map(cn).join(", "));
+  if(t.newg>=0)q.push("started a new group at "+cn(t.newg));
+  t.moves.forEach(function(m){if(m.length)q.push("moved a group, jumping "+m.map(function(p){return cn(p[0])+"–"+cn(p[1])}).join(", "))});
+  if(t.deaths)q.push("lost "+t.deaths+" piece"+(t.deaths>1?"s":"")+" by leaving a group broken up");
+  if(t.kills.length){var mm=t.kills.filter(function(k){return k.m}).length;
+    q.push("killed "+t.kills.length+" "+nameP(1-t.P)+" piece"+(t.kills.length>1?"s":"")+" ("+t.kills.map(function(k){return cn(k.t)}).join(", ")+")"+(mm?", "+(mm===t.kills.length&&mm>1?"all ":"")+mm+" massacred":""))}
+  return q.length?nameP(t.P)+": "+q.join("; ")+".":"";
+}
+function gameOver(s,why){
+  var f=score(s.b);s.fin=f;s.w=f[0]>f[1]?0:f[1]>f[0]?1:2;
+  s.log.push(why+" Final score: White "+f[0]+", Black "+f[1]+(s.w===2?" – a draw.":" – "+nameP(s.w)+" wins by "+Math.abs(f[0]-f[1])+"."));
+}
+function endTurn(s,passed){
+  var empty=!s.acted,txt=turnText(s);
+  if(passed)s.log.push(nameP(s.turn)+" passes.");else if(empty)s.log.push(nameP(s.turn)+" can do nothing and passes.");else s.log.push(txt);
+  s.ply++;s.passes=empty?s.passes+1:0;s.quiet=s.placed||s.killed?0:s.quiet+1;
+  if(s.passes>=2){gameOver(s,"Both players passed: the game is over.");return}
+  if(s.quiet>=QUIET){gameOver(s,QUIET+" turns without a piece placed or killed: the game is over.");return}
+  if(s.ply>=MAXPLY){gameOver(s,"200 turns each have been played: the game is over.");return}
+  s.phl=s.hl;s.phf=s.hf;s.hl=[];s.hf=[];s.turn=1-s.turn;startTurn(s);
+}
+// advance through the stages that need no decision
+function settle(s){
+  for(var guard=0;guard<40&&s.w<0;guard++){
+    if(s.ph==="grow"){if(growPts(s).length)return s;s.ph="move";continue}
+    if(s.ph==="split")return s;
+    if(s.ph==="move"){
+      if(s.mg>=0){if(s.mj>=s.mn||!jumpsOf(s,s.mg).length){finishGroup(s);continue}return s}
+      if(canMoveAny(s))return s;
+      s.ph="kill";s.kE=killEdges(s.b,s.turn);s.kU=[];s.kD=[];continue}
+    if(s.ph==="kill"){
+      if(!remEdges(s).length){endTurn(s);continue}
+      var o=outcomes(s,3000);
+      if(!o.trunc&&o.list.length===1){o.list[0].forEach(function(e){doKill(s,e)});endTurn(s);continue}
+      return s}
+  }
+  return s;
+}
+// carry out one action on ns (a copy). Returns an error message or "".
+function doAct(ns,a){
+  var P=ns.turn,c=P+1,b=ns.b,i=a.i,j=a.j,k,e,L;
+  if(ns.w>=0)return"The game is over.";
+  if(a.t==="pass"){if(ns.acted)return"You can only pass before doing anything else in the turn.";endTurn(ns,true);return""}
+  if(a.t==="place"){
+    if(ns.ph!=="grow")return"The growth stage is over.";
+    L=growPts(ns).filter(function(x){return x.j===j})[0];if(!L)return placeErr(ns,j);
+    b[j]=c;
+    if(L.g<0){ns.gid[j]=ns.gsz.length;ns.gsz.push(1);ns.grown.push(1);ns.moved.push(0);ns.newDone=true;ns.tx.newg=j}
+    else{ns.gid[j]=L.g;ns.gsz[L.g]++;ns.grown[L.g]=1;ns.tx.place.push(j)}
+    ns.hl.push(j);ns.acted=true;ns.placed++;return"";
+  }
+  if(a.t==="jump"){
+    if(ns.ph==="grow")return"Growth comes first: place the pieces marked by the dots.";
+    if(ns.ph!=="move")return"The movement stage is over.";
+    if(b[i]!==c)return"Select one of your own pieces.";
+    var g=ns.gid[i];
+    if(ns.moved[g])return"That group has already moved this turn.";
+    if(ns.gsz[g]<2)return"A single piece cannot move.";
+    if(ns.mg>=0&&g!==ns.mg){finishGroup(ns);if(ns.ph==="split")return""}
+    var J=jumpsOf(ns,g).filter(function(x){return x.i===i&&x.j===j})[0];
+    if(!J)return"A jump goes over an adjacent piece of the same group to the empty point just beyond, and may not land next to another of your groups.";
+    if(ns.mg<0){ns.mg=g;ns.mj=0;ns.mn=ns.gsz[g];ns.tx.moves.push([])}
+    b[j]=c;b[i]=0;ns.gid[j]=g;ns.gid[i]=-1;ns.mj++;ns.tx.moves[ns.tx.moves.length-1].push([i,j]);
+    k=ns.hl.indexOf(i);if(k>=0)ns.hl[k]=j;else ns.hl.push(j);ns.hf.push(i);ns.acted=true;return"";
+  }
+  if(a.t==="keep"){
+    if(ns.ph!=="split")return"There is nothing to choose.";
+    var mx=0;ns.parts.forEach(function(p){mx=Math.max(mx,p.length)});
+    var keep=ns.parts.filter(function(p){return p.length===mx&&p.indexOf(i)>=0})[0];
+    if(!keep)return"Click a piece of one of the equal largest parts (marked).";
+    ns.parts.forEach(function(p){if(p!==keep)removeCells(ns,p)});
+    ns.moved[ns.mg]=1;ns.mg=-1;ns.parts=null;ns.ph="move";return"";
+  }
+  if(a.t==="end"){
+    if(ns.ph==="grow")return"Finish growing first.";
+    if(ns.ph==="split")return"Choose which part of the group survives first.";
+    if(ns.ph!=="move")return"Choose the kills first.";
+    if(ns.mg>=0){finishGroup(ns);if(ns.ph==="split")return""}
+    for(k=0;k<ns.moved.length;k++)ns.moved[k]=1;
+    return"";
+  }
+  if(a.t==="kill"){
+    if(ns.ph!=="kill")return"Kills come at the end of the turn.";
+    e=remEdges(ns).filter(function(x){return x.a===i&&x.t===j})[0];if(!e)return"That piece cannot make that kill.";
+    doKill(ns,e);return"";
+  }
+  return"Unknown action.";
+}
+// try action a in state s: {ns} or {err}
+function apply(s,a){
+  var ns=clone(s),e=doAct(ns,a);if(e)return{err:e};
+  settle(ns);
+  ns.ev=ns.log.length?ns.log.join(" "):(turnText(ns)||ns.ev);ns.log=[];
+  return{ns:ns};
+}
+
+/* ================================ 2. ENGINE ================================ */
+// value of the position for P, who has just finished his turn (the opponent moves next)
+var W={SURE:3,POSS:1.2,CTR:1,GROWP:.5,GROWO:.9,REACH:1.3,REACHC:.3};
+function dist(a,b){var dr=Math.abs(RW[a]-RW[b]),dc=Math.abs(X2[a]-X2[b]);return dr+Math.max(0,(dc-dr)/2)}
+// pieces of colour c (strengths st) within reach of a group of colour e that may attack them on e's next turn
+function reach(b,st,G,gr,e,c){
+  var C=G[e-1],grp=[],i,n=0,ng=0;
+  for(i=0;i<NC;i++)if(b[i]===e){var g=C.gid[i];(grp[g]=grp[g]||[]).push(i)}
+  var hit=new Uint8Array(NC);
+  grp.forEach(function(L,g){var sz=C.sz[g]+(gr[e-1][g]&&C.sz[g]<5?1:0);if(sz<2)return;var A=sz-1,R=sz+1,any=false;
+    for(var p=0;p<NC;p++){if(b[p]!==c||st[p]>=A||hit[p])continue;
+      for(var q=0;q<L.length;q++)if(dist(p,L[q])<=R){hit[p]=1;n++;any=true;break}}
+    if(any)ng+=sz});
+  return Math.min(n,ng);
+}
+function evalFor(b,P){
+  var O=1-P,c=P+1,e=O+1,sc=score(b),st=strengths(b),G=[comps(b,1),comps(b,2)],i,k,z,v;
+  // groups that can grow next time
+  var gr=[new Uint8Array(G[0].sz.length),new Uint8Array(G[1].sz.length)];
+  for(i=0;i<NC;i++){if(b[i])continue;var f=0,g1=-1,g2=-1,bad1=false,bad2=false;
+    for(k=0;k<6;k++){z=NBR[i*6+k];if(z<0)continue;v=b[z];
+      if(v===1){f|=1;var q=G[0].gid[z];if(g1<0)g1=q;else if(g1!==q)bad1=true}
+      else if(v===2){f|=2;q=G[1].gid[z];if(g2<0)g2=q;else if(g2!==q)bad2=true}}
+    if(f===1&&!bad1&&G[0].sz[g1]<5)gr[0][g1]=1;
+    if(f===2&&!bad2&&G[1].sz[g2]<5)gr[1][g2]=1}
+  var nG=[0,0];for(k=0;k<2;k++)for(i=0;i<gr[k].length;i++)nG[k]+=gr[k][i];
+  // threats: greedy matchings over the adjacent enemy pairs
+  var uA=new Uint8Array(NC),uT=new Uint8Array(NC),sure=0,poss=0,ctr=0;
+  for(i=0;i<NC;i++){if(b[i]!==e)continue;for(k=0;k<6;k++){z=NBR[i*6+k];if(z>=0&&b[z]===c&&st[i]>st[z]&&!uA[i]&&!uT[z]){uA[i]=uT[z]=1;sure++}}}
+  for(i=0;i<NC;i++){if(b[i]!==e||uA[i])continue;var gg=G[O].gid[i],cg=gr[O][gg];
+    for(k=0;k<6;k++){z=NBR[i*6+k];if(z>=0&&b[z]===c&&!uT[z]&&(st[i]===st[z]&&cg)){uA[i]=uT[z]=1;poss++}}}
+  uA.fill(0);uT.fill(0);
+  for(i=0;i<NC;i++){if(b[i]!==c)continue;for(k=0;k<6;k++){z=NBR[i*6+k];if(z>=0&&b[z]===e&&st[i]>st[z]&&!uA[i]&&!uT[z]){uA[i]=uT[z]=1;ctr++}}}
+  var rO=reach(b,st,G,gr,e,c),rP=reach(b,st,G,gr,c,e);
+  return sc[P]-sc[O]-W.SURE*sure-W.POSS*poss+W.CTR*ctr+W.GROWP*nG[P]-W.GROWO*nG[O]-W.REACH*rO+W.REACHC*rP;
+}
+function termVal(s,P){if(s.w===2)return 0;var d=s.fin[P]-s.fin[1-P];return(s.w===P?1:-1)*1e4+d}
+// value of board b for P after the kills that would follow now (greedy choice)
+function evalKills(b,P){
+  var E=killEdges(b,P);
+  if(E.length){b=b.slice();var uA={},uT={};E.sort(function(x,y){return(y.m?1:0)-(x.m?1:0)});
+    E.forEach(function(x){if(uA[x.a]||uT[x.t])return;uA[x.a]=uT[x.t]=1;b[x.t]=x.m?3:0})}
+  return evalFor(b,P);
+}
+function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.random()*(i+1)|0,t=a[i];a[i]=a[j];a[j]=t}return a}
+// best movement of group g: list of jumps, or null to leave it where it is
+function bestMove(s,g,o){
+  var P=s.turn,c=P+1,b=s.b,cells=[],i,k,z;
+  for(i=0;i<NC;i++)if(b[i]===c&&s.gid[i]===g)cells.push(i);
+  var n=cells.length,forb=new Uint8Array(NC),sb=b.slice();
+  for(i=0;i<NC;i++)if(b[i]===c&&s.gid[i]!==g)for(k=0;k<6;k++){z=NBR[i*6+k];if(z>=0)forb[z]=1}
+  cells.forEach(function(x){sb[x]=0});
+  var Q=[{cs:cells,path:[]}],seen={},res=[],h;seen[cells.join(",")]=1;
+  for(h=0;h<Q.length&&res.length<o.cap;h++){
+    var st=Q[h];if(st.path.length)res.push(st);if(st.path.length>=n)continue;
+    st.cs.forEach(function(x){sb[x]=c});
+    for(var a=0;a<st.cs.length;a++){var x=st.cs[a];
+      for(k=0;k<6;k++){var q=NBR[x*6+k];if(q<0||sb[q]!==c)continue;var r=NBR[q*6+k];if(r<0||sb[r]||forb[r])continue;
+        var ncs=st.cs.slice();ncs[a]=r;ncs.sort(function(u,v){return u-v});var key=ncs.join(",");
+        if(seen[key])continue;seen[key]=1;Q.push({cs:ncs,path:st.path.concat([[x,r]])})}}
+    st.cs.forEach(function(x){sb[x]=0});
+  }
+  if(!res.length)return null;
+  if(Math.random()<o.rnd){var pk=res[Math.random()*(res.length+1)|0];return pk?pk.path:null}
+  var best=null,bv=evalKills(b,P)+o.noise*Math.random();
+  res.forEach(function(st){
+    var tb=sb.slice();st.cs.forEach(function(x){tb[x]=c});
+    // parts left at the end: keep the largest
+    var seenP={},parts=[];st.cs.forEach(function(x){if(seenP[x])return;var Q2=[x];seenP[x]=1;
+      for(var h2=0;h2<Q2.length;h2++)for(var k2=0;k2<6;k2++){var z2=NBR[Q2[h2]*6+k2];if(z2>=0&&tb[z2]===c&&st.cs.indexOf(z2)>=0&&!seenP[z2]){seenP[z2]=1;Q2.push(z2)}}
+      parts.push(Q2)});
+    if(parts.length>1){parts.sort(function(u,v){return v.length-u.length});for(var p=1;p<parts.length;p++)parts[p].forEach(function(x){tb[x]=0})}
+    var v=evalKills(tb,P)+o.noise*Math.random();
+    if(v>bv){bv=v;best=st.path}
+  });
+  return best;
+}
+function nearEnemy(s,g){var c=s.turn+1,e=2-s.turn,i,k,z,m;
+  for(i=0;i<NC;i++){if(s.b[i]!==c||s.gid[i]!==g)continue;
+    for(k=0;k<6;k++){z=NBR[i*6+k];if(z<0)continue;if(s.b[z]===e)return 2;for(m=0;m<6;m++){var y=NBR[z*6+m];if(y>=0&&s.b[y]===e)return 1}}}
+  return 0}
+// play the rest of the turn of the side to move. o: rnd (chance of a random choice), gs (placements tried), cap (movements tried per group), noise
+function buildTurn(s,o){
+  var ns=clone(s),P=s.turn,c=P+1,guard=0;
+  settle(ns);
+  while(ns.w<0&&ns.ply===s.ply&&guard++<300){
+    if(ns.ph==="grow"){
+      var C=growPts(ns),pick=null;
+      if(Math.random()<o.rnd)pick=C[Math.random()*C.length|0];
+      else{
+        var gc=C.filter(function(x){return x.g>=0}),nc=shuffle(C.filter(function(x){return x.g<0})).slice(0,Math.max(4,o.gs-gc.length));
+        var bv=-1e9;gc.concat(nc).forEach(function(x){ns.b[x.j]=c;var v=evalFor(ns.b,P)+o.noise*Math.random();ns.b[x.j]=0;if(v>bv){bv=v;pick=x}});
+      }
+      doAct(ns,{t:"place",j:pick.j});settle(ns);continue;
+    }
+    if(ns.ph==="move"){
+      if(ns.mg>=0){finishGroup(ns);settle(ns);continue}
+      var gs=[];for(var g=0;g<ns.gsz.length;g++)if(!ns.moved[g]&&ns.gsz[g]>=2&&jumpsOf(ns,g).length)gs.push(g);
+      if(!gs.length){doAct(ns,{t:"end"});settle(ns);continue}
+      gs.sort(function(x,y){return nearEnemy(ns,y)-nearEnemy(ns,x)});
+      g=gs[0];var path=bestMove(ns,g,o);
+      if(!path){ns.moved[g]=1;settle(ns);continue}
+      for(var q=0;q<path.length&&ns.ph==="move"&&ns.turn===P;q++)doAct(ns,{t:"jump",i:path[q][0],j:path[q][1]});
+      if(ns.ph==="move"&&ns.mg>=0)finishGroup(ns);
+      settle(ns);continue;
+    }
+    if(ns.ph==="split"){
+      var mx=0,bestI=-1,bvs=-1e9;ns.parts.forEach(function(p){mx=Math.max(mx,p.length)});
+      ns.parts.forEach(function(p){if(p.length!==mx)return;var t=clone(ns);doAct(t,{t:"keep",i:p[0]});var v=evalKills(t.b,P);if(v>bvs){bvs=v;bestI=p[0]}});
+      doAct(ns,{t:"keep",i:bestI});settle(ns);continue;
+    }
+    if(ns.ph==="kill"){
+      var O=outcomes(ns,o.kcap||600),L;
+      if(!O.list.length)L=[remEdges(ns)[0]];
+      else if(Math.random()<o.rnd)L=O.list[Math.random()*O.list.length|0];
+      else{var bk=-1e9;O.list.forEach(function(x){var tb=ns.b.slice();x.forEach(function(e){tb[e.t]=e.m?3:0});var v=evalFor(tb,P);if(v>bk){bk=v;L=x}})}
+      L.forEach(function(e){doKill(ns,e)});settle(ns);continue;
+    }
+  }
+  return ns;
+}
+var LV={1:{rnd:.25,gs:12,cap:25,noise:3},2:{rnd:0,gs:40,cap:160,noise:.3},3:{rnd:0,gs:60,cap:320,noise:.15}};
+var FAST={1:{rnd:.25,gs:8,cap:15,noise:3},2:{rnd:0,gs:20,cap:60,noise:.3},3:{rnd:0,gs:25,cap:90,noise:.15}};
+// choose and play the rest of the turn. Easy: greedy choices with noise. Medium: greedy with a wide search of each
+// group's movements. Hard: several candidate turns, each tested against the opponent's best (Medium) reply.
+function aiStep(s,lv,fast){
+  var P=s.turn,r,f;
+  if(!s.acted&&s.passes>=1){f=score(s.b);if(f[P]>f[1-P]){r=apply(s,{t:"pass"});if(r.ns)return r.ns}}
+  var o=(fast?FAST:LV)[lv],best=null;
+  if(lv<3)best=buildTurn(s,o);
+  else{
+    var deadline=Date.now()+(fast?300:2200),bv=-1e9,K=fast?3:6,ro=fast?FAST[2]:{rnd:0,gs:25,cap:80,noise:0};
+    for(var q=0;q<K;q++){
+      if(q>1&&Date.now()>deadline)break;
+      var c=buildTurn(s,q?{rnd:0,gs:o.gs,cap:o.cap,noise:q===1?.15:1.5+q*.3}:o),v;
+      if(c.w>=0)v=termVal(c,P);
+      else if(c.turn===P)v=evalFor(c.b,P);
+      else{var rep=buildTurn(c,ro);v=rep.w>=0?termVal(rep,P):-evalFor(rep.b,1-P)}
+      if(v>bv){bv=v;best=c}
+    }
+  }
+  best.ev=best.log.join(" ");best.log=[];
+  return best;
+}
+var sim=null;
+function runSim(){   // computer vs computer, to look for first/second-player advantage
+  if(sim){sim.stop=true;return}
+  var CAP=MAXPLY+10,me=sim={stop:false},TOTAL=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?4:+$("simR").value)),
+      done=0,w=[0,0,0],un=0,g=newState(),plies=0,lv=+$("level").value,lvName=$("level").options[$("level").selectedIndex].text,nm=GAME.sides.map(function(x){return x.name}),
+      mg=[0,0];
+  ["mode","side","level","new","undo","redo","endt","pass","simN","simR","nFirst","nPrev","nNext","nLast"].forEach(function(i){$(i).disabled=true});
+  $("sim").textContent="Stop simulation";
+  $("simout").textContent="Simulating at "+lvName+" level… 0/"+TOTAL;
+  function fin(stopped){
+    sim=null;$("sim").textContent="Simulation";
+    $("mode").disabled=$("new").disabled=$("simN").disabled=$("simR").disabled=false;
+    $("level").disabled=$("side").disabled=$("mode").value==="2p";
+    var dec=w[0]+w[1],mgn=dec?(196*Math.sqrt((w[0]/dec)*(1-w[0]/dec)/dec)).toFixed(1):"0";
+    var pc=function(n){return done?(100*n/done).toFixed(1)+"%":"n/a"};
+    $("simout").textContent=(stopped?"Stopped after ":"")+done+" games at "+lvName+" level (computer vs computer), first "+RND+" turns random.\n"+
+      "First player ("+nm[0]+") won "+pc(w[0])+" ("+w[0]+" games). Second player ("+nm[1]+") won "+pc(w[1])+" ("+w[1]+" games)."+
+      (dec?" Among decided games the first player won "+(100*w[0]/dec).toFixed(1)+"% (margin ±"+mgn+" points at 95% confidence).":"")+
+      (w[2]?" Draws: "+w[2]+".":"")+(un?" Unfinished (stopped at "+CAP+" turns): "+un+".":"")+
+      (done-un?"\nAverage final score: "+nm[0]+" "+(mg[0]/(done-un)).toFixed(1)+", "+nm[1]+" "+(mg[1]/(done-un)).toFixed(1)+".":"");
+    render();
+  }
+  function stepSim(){
+    if(me.stop){fin(true);return}
+    var t0=Date.now();
+    while(Date.now()-t0<40){
+      if(g.w>=0||plies>=CAP){
+        if(g.w>=0){w[g.w]++;mg[0]+=g.fin[0];mg[1]+=g.fin[1]}else un++;
+        done++;g=newState();plies=0;
+        if(done>=TOTAL){fin(false);return}
+        continue;
+      }
+      if(plies<RND)g=buildTurn(g,{rnd:1,gs:1,cap:20,noise:0});
+      else g=aiStep(g,lv,true);
+      plies++;
+    }
+    $("simout").textContent="Simulating at "+lvName+" level… "+done+"/"+TOTAL;
+    setTimeout(stepSim,0);
+  }
+  stepSim();
+}
+
+/* =============================== 3. INTERFACE =============================== */
+var hist,redo=[],view=null,sel,selK=-1,over,busy,note="";   // view: null = live position, otherwise the index being reviewed
+var GOLD="#e0a800",PURPLE="#8e44ad",RED="#d8342c",GREEN="#2e9e4f",ORANGE="#e0803a";
+function cur(){return hist[hist.length-1]}
+function line(){return hist.concat(redo.slice().reverse())}   // every position, including those that can still be redone
+function browsing(){return view!==null}
+function shown(){return view===null?cur():line()[view]}
+function aiSide(){return $("mode").value==="ai"?1-+$("side").value:-1}
+function clearSel(){sel=null;selK=-1;note=""}
+function goto(k){
+  if(busy||sim)return;
+  var n=hist.length-1+redo.length;k=Math.max(0,Math.min(n,k));
+  view=k===hist.length-1?null:k;clearSel();render();
+}
+// Undo/Redo while reviewing: leave review and play on from the reviewed position (in computer mode, from the nearest position where it is the human's turn)
+function unlock(dir){
+  var L=line(),k=view,j;
+  if($("mode").value==="ai"){
+    j=k;while(j>=0&&j<L.length&&L[j].w<0&&L[j].turn!==+$("side").value)j+=dir;
+    if(j>=0&&j<L.length)k=j;
+  }
+  hist=L.slice(0,k+1);redo=L.slice(k+1).reverse();view=null;clearSel();over=false;render();maybeAI();
+}
+function humanTurn(){return $("mode").value==="2p"||cur().turn===+$("side").value}
+function start(){
+  var s=newState();settle(s);
+  hist=[s];redo=[];view=null;clearSel();$("level").disabled=$("side").disabled=$("mode").value==="2p";over=false;busy=false;
+  render();maybeAI();
+}
+// jumps of the piece on i: [{j, ns}]
+function selectPiece(s,i){
+  var g=s.gid[i],t=s,list=[];
+  if(s.mg>=0&&g!==s.mg){t=clone(s);finishGroup(t);if(t.ph==="split")return{i:i,list:[]}}
+  jumpsOf(t,g).forEach(function(x){if(x.i!==i)return;var r=apply(s,{t:"jump",i:i,j:x.j});if(r.ns)list.push({j:x.j,ns:r.ns})});
+  return{i:i,list:list};
+}
+// for a target in the kill stage: the attackers to choose between (empty if the choice makes no difference)
+function attackerChoice(s,t){
+  var A=remEdges(s).filter(function(e){return e.t===t});if(A.length<2)return{A:A,ask:false};
+  var keys=A.map(function(e){var x=clone(s);doKill(x,e);var o=outcomes(x,1500);if(o.trunc)return"?"+Math.random();
+    return o.list.map(function(L){return okey(L.concat([e]))}).sort().join("|")});
+  var ask=keys.some(function(k){return k!==keys[0]});
+  return{A:A,ask:ask};
+}
+function render(){
+  var br=browsing(),s=shown(),sd=GAME.sides,h=[],P=s.turn,i,k,nT=hist.length-1+redo.length,kk=br?view:hist.length-1,lock=busy||!!sim;
+  over=s.w>=0;
+  var canAct=!br&&!over&&humanTurn()&&!busy&&!sim,R=.4;
+  h.push('<svg viewBox="-1.75 -1.2 20.5 13.35" role="img" aria-label="Guerilla board">');
+  function lab(x,y,t){h.push('<text x="'+x.toFixed(2)+'" y="'+y.toFixed(2)+'" font-size=".42" text-anchor="middle" dominant-baseline="central" fill="#eaf3fb" pointer-events="none" font-family="Georgia,serif">'+t+'</text>')}
+  // board: blue cover with the light hexagon of lines
+  var cx=[3,14,17,14,3,0],cy=[0,0,6*H,12*H,12*H,6*H];
+  function poly(d,fill,extra){var p=[],q;for(q=0;q<6;q++){var dx=cx[q]-8.5,dy=cy[q]-6*H,len=Math.sqrt(dx*dx+dy*dy);p.push((cx[q]+dx/len*d).toFixed(2)+","+(cy[q]+dy/len*d).toFixed(2))}
+    h.push('<polygon points="'+p.join(" ")+'" fill="'+fill+'" '+(extra||"")+'/>')}
+  h.push('<rect x="-1.7" y="-1.15" width="20.4" height="13.25" rx=".35" fill="#3d7fb8" stroke="#2c5f8c" stroke-width=".06"/>');
+  poly(.55,"#e3eef8",'stroke="#9fc0dd" stroke-width=".03"');
+  var ln=[];for(i=0;i<NC;i++)[0,5,3].forEach(function(d){var z=NBR[i*6+d];if(z>=0)ln.push("M"+PX[i]+" "+PY[i].toFixed(3)+"L"+PX[z]+" "+PY[z].toFixed(3))});
+  h.push('<path d="'+ln.join("")+'" stroke="#3a3330" stroke-width=".035" fill="none" pointer-events="none"/>');
+  // coordinates
+  for(var r=0;r<NR;r++){var a0=-1,a1=-1;for(i=0;i<NC;i++)if(RW[i]===r){if(a0<0)a0=i;a1=i}
+    var y=PY[a0];if(r<=6)lab(PX[a0]-1.05,y,NR-r);lab(PX[a1]+1.05,y,NR-r)}
+  LABS.forEach(function(i){lab(PX[i]-.55,PY[i]+H*1.08,LET[KD[i]])});
+  // click targets
+  for(i=0;i<NC;i++)h.push('<circle data-i="'+i+'" cx="'+PX[i]+'" cy="'+PY[i].toFixed(3)+'" r=".48" fill="transparent"/>');
+  var st=strengths(s.b),showS=$("shStr").checked;
+  // gold marks: the turn being played (before its first action: the previous turn)
+  var cu=s.hl.length||s.hf.length||s.acted,HL={},HF=cu?s.hf:s.phf||[];
+  (cu?s.hl:s.phl||[]).forEach(function(z){if(s.b[z]===1||s.b[z]===2)HL[z]=1});
+  // markers for the stage being played
+  var ring={},dots=[],selI=sel?sel.i:-1,threat={};
+  if(!over&&s.ph!=="kill"){killEdges(s.b,P).forEach(function(e){threat[e.t]=1})}
+  if(canAct){
+    if(s.ph==="grow")growPts(s).forEach(function(x){dots.push({j:x.j,c:x.g<0?GREEN:ORANGE})});
+    if(s.ph==="split"){var mx=0;s.parts.forEach(function(p){mx=Math.max(mx,p.length)});s.parts.forEach(function(p){if(p.length===mx)p.forEach(function(z){ring[z]=PURPLE})})}
+    if(s.ph==="kill"){
+      if(selK>=0){ring[selK]=RED;remEdges(s).forEach(function(e){if(e.t===selK)ring[e.a]=ORANGE})}
+      else remEdges(s).forEach(function(e){ring[e.t]=RED});
+    }
+  }
+  for(i=0;i<NC;i++){var v=s.b[i],x=PX[i],yy=PY[i].toFixed(3);if(!v)continue;
+    if(v===3){h.push('<circle cx="'+x+'" cy="'+yy+'" r="'+R+'" fill="'+RED+'" stroke="#8f1d17" stroke-width=".04" pointer-events="none"/>');continue}
+    var on=i===selI,lm=!!HL[i],mv=canAct&&s.ph==="move"&&s.mg>=0&&s.gid[i]===s.mg&&v===P+1;
+    var stroke=on?"var(--hi)":lm?GOLD:mv?PURPLE:(v===1?"#8a8070":"#000"),sw=on||lm||mv?.1:.04;
+    h.push('<circle data-i="'+i+'" cx="'+x+'" cy="'+yy+'" r="'+R+'" fill="'+sd[v-1].color+'" stroke="'+stroke+'" stroke-width="'+sw+'"/>');
+    if(showS)h.push('<text x="'+x+'" y="'+(PY[i]+.02).toFixed(3)+'" font-size=".42" font-weight="700" text-anchor="middle" dominant-baseline="central" fill="'+(v===1?"#333":"#eee")+'" pointer-events="none" font-family="system-ui,sans-serif">'+st[i]+'</text>');
+    if(ring[i])h.push('<circle data-i="'+i+'" cx="'+x+'" cy="'+yy+'" r=".5" fill="none" stroke="'+ring[i]+'" stroke-width=".09"/>');
+    else if(threat[i])h.push('<circle cx="'+x+'" cy="'+yy+'" r=".5" fill="none" stroke="'+RED+'" stroke-width=".06" stroke-dasharray=".13 .09" pointer-events="none"/>');
+  }
+  HF.forEach(function(z){if(s.b[z]!==1&&s.b[z]!==2)h.push('<circle cx="'+PX[z]+'" cy="'+PY[z].toFixed(3)+'" r=".14" fill="'+GOLD+'" stroke="#7a5c00" stroke-width=".02" pointer-events="none"/>')});
+  dots.forEach(function(d){h.push('<circle data-i="'+d.j+'" cx="'+PX[d.j]+'" cy="'+PY[d.j].toFixed(3)+'" r=".17" fill="'+d.c+'" fill-opacity=".9"/>')});
+  if(sel)sel.list.forEach(function(m){h.push('<circle data-i="'+m.j+'" cx="'+PX[m.j]+'" cy="'+PY[m.j].toFixed(3)+'" r=".3" fill="none" stroke="'+PURPLE+'" stroke-width=".09"/>')});
+  h.push('</svg>');
+  $("board").innerHTML=h.join("");
+  var names=sd.map(function(x){return x.name}),stt;
+  for(i=0;i<2;i++){var tt=GAME.stats(s,i);$("s"+i).textContent=tt.big;$("d"+i).textContent=tt.text;
+    $("p"+i).className="pl"+(!over&&s.turn===i?" on":"")}
+  var turnNo=" (turn "+(s.ply+1)+")";
+  if(br)stt="Reviewing history (move "+kk+" of "+nT+"): the board is locked. Press Undo or Redo to play on from here.";
+  else if(over)stt=s.w===2?"Game over: draw, "+s.fin[0]+"–"+s.fin[1]+".":"Game over: "+names[s.w]+" wins, "+s.fin[s.w]+" to "+s.fin[1-s.w]+".";
+  else if(!humanTurn())stt=names[P]+" to play"+turnNo+" – computer thinking…";
+  else if(s.ph==="grow"){var G=growPts(s),ng=G.some(function(x){return x.g<0}),gg={};G.forEach(function(x){if(x.g>=0)gg[x.g]=1});var n=Object.keys(gg).length;
+    stt=names[P]+turnNo+" – grow: "+(n?n+" group"+(n>1?"s":"")+" to grow (orange)":"")+(n&&ng?" and ":"")+(ng?"start a new group (green)":"")+".";}
+  else if(s.ph==="split")stt=names[P]+turnNo+": the moved group is in equal largest parts – click a piece of the part that survives.";
+  else if(s.ph==="move")stt=s.mg>=0?names[P]+turnNo+" – moving a group: "+s.mj+" of "+s.mn+" jumps made. Click one of its pieces to jump again, another group to move it, or “End turn”.":
+    names[P]+turnNo+" – move: click a piece of a group to move it, or “End turn”.";
+  else stt=names[P]+turnNo+" – kill: "+(selK>=0?"click the piece (orange) that kills "+cn(selK)+".":"click an enemy piece marked red to kill it.");
+  $("status").textContent=stt;
+  $("last").textContent=(GAME.describe(s)+" "+note).trim();
+  $("undo").disabled=lock||!(br||hist.length>=2);
+  $("redo").disabled=lock||!(br||redo.length);
+  $("nFirst").disabled=$("nPrev").disabled=lock||kk<=0;
+  $("nNext").disabled=$("nLast").disabled=lock||kk>=nT;
+  $("nlab").textContent="Move "+kk+" of "+nT;
+  $("endt").disabled=!canAct||s.ph!=="move";
+  $("pass").disabled=!canAct||s.acted;
+}
+function play(ns){hist.push(ns);redo=[];clearSel();render();maybeAI()}
+function act(a){var r=apply(cur(),a);if(r.ns){play(r.ns);return true}note=r.err;render();return false}
+function click(i){
+  if(over||busy||browsing()||!humanTurn()||sim)return;
+  var s=cur(),P=s.turn,v=s.b[i];note="";
+  if(s.ph==="grow"){act({t:"place",j:i});return}
+  if(s.ph==="split"){act({t:"keep",i:i});return}
+  if(s.ph==="kill"){
+    if(selK>=0){var e=remEdges(s).filter(function(x){return x.t===selK&&x.a===i})[0];
+      if(e){act({t:"kill",i:i,j:selK});return}var was=selK;selK=-1;if(i===was){render();return}}
+    var ch=attackerChoice(s,i);
+    if(!ch.A.length){note=v===2-P?"None of your pieces next to that piece is stronger than it.":"Click an enemy piece marked red.";render();return}
+    if(!ch.ask){act({t:"kill",i:ch.A[0].a,j:i});return}
+    selK=i;render();return;
+  }
+  // movement
+  if(sel){var m=sel.list.filter(function(x){return x.j===i})[0];
+    if(m){var ns=m.ns;play(ns);
+      if(ns.turn===P&&ns.ph==="move"&&ns.mg>=0&&!busy){var s2=selectPiece(ns,i);if(s2.list.length){sel=s2;render()}}
+      return}
+    var same=i===sel.i;sel=null;if(same){render();return}}
+  if(v===P+1){
+    var g=s.gid[i];
+    if(s.moved[g])note="That group has already moved this turn.";
+    else if(s.gsz[g]<2)note="A single piece cannot move: it grows into a larger group first.";
+    else{sel=selectPiece(s,i);if(!sel.list.length){sel=null;note=s.mg>=0&&g!==s.mg?"Click “End turn”, or finish the group being moved first.":"That piece has no legal jump (it needs a neighbour from its group, an empty point beyond, and no other of your groups next to the landing point)."}}
+  }else if(v===2-P)note="That is an enemy piece: attack it by moving a stronger piece next to it.";
+  else if(v===3)note="That is a massacre token: its point cannot be used for the rest of the game.";
+  render();
+}
+function maybeAI(){
+  if(sim||cur().w>=0||$("mode").value!=="ai"||cur().turn===+$("side").value)return;
+  busy=true;render();
+  setTimeout(function(){
+    var c=cur();hist.push(aiStep(c,+$("level").value));redo=[];busy=false;
+    render();maybeAI();
+  },180);
+}
+document.title=GAME.title;$("gtitle").textContent=GAME.title;$("gsub").textContent=GAME.subtitle;
+function li(x){return"<li>"+(typeof x==="string"?x:x.t+"<ul>"+x.sub.map(li).join("")+"</ul>")+"</li>"}
+$("rules").innerHTML=GAME.rules.map(function(sec){return"<li><b>"+sec.h+"</b><ul>"+sec.items.map(li).join("")+"</ul></li>"}).join("");
+$("side").innerHTML=GAME.sides.map(function(x,i){return'<option value="'+i+'">You are '+x.name+(i?"":" (first)")+'</option>'}).join("");
+for(var ni=0;ni<2;ni++)$("n"+ni).textContent=GAME.sides[ni].name;
+$("board").onclick=function(e){var t=e.target.closest("[data-i]");if(t)click(+t.getAttribute("data-i"))};
+$("new").onclick=start;$("sim").onclick=runSim;$("shStr").onchange=function(){render()};
+$("mode").onchange=$("side").onchange=start;
+$("endt").onclick=function(){if(over||busy||browsing()||!humanTurn()||sim)return;act({t:"end"})};
+$("pass").onclick=function(){if(over||busy||browsing()||!humanTurn()||sim)return;act({t:"pass"})};
+$("redo").onclick=function(){
+  if(busy||sim)return;
+  if(browsing()){unlock(1);return}
+  if(!redo.length)return;
+  hist.push(redo.pop());
+  while($("mode").value==="ai"&&redo.length&&cur().w<0&&cur().turn!==+$("side").value)hist.push(redo.pop());
+  clearSel();render();
+};
+$("undo").onclick=function(){
+  if(busy||sim)return;
+  if(browsing()){unlock(-1);return}
+  if(hist.length<2)return;
+  redo.push(hist.pop());
+  while($("mode").value==="ai"&&hist.length>1&&cur().turn!==+$("side").value)redo.push(hist.pop());
+  clearSel();over=false;render();
+};
+$("nFirst").onclick=function(){goto(0)};
+$("nPrev").onclick=function(){goto((browsing()?view:hist.length-1)-1)};
+$("nNext").onclick=function(){goto((browsing()?view:hist.length-1)+1)};
+$("nLast").onclick=function(){goto(hist.length-1+redo.length)};
+start();
+})();
+</script>
+</body>
+</html>

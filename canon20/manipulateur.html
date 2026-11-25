@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Le Manipulateur</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
+<style>
+:root{--bg:#f1ece2;--ink:#231d18;--mute:#6a5f55;--panel:#fff;--line:#d3c8b8;--hi:#2f7fd0;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1a1714;--ink:#ece5dc;--mute:#a89b8e;--panel:#25201c;--line:#41382f}}
+:root[data-theme="dark"]{--bg:#1a1714;--ink:#ece5dc;--mute:#a89b8e;--panel:#25201c;--line:#41382f}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+main{max-width:1180px;margin:0 auto;padding:16px 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.right>.bar:first-child{margin-top:0}
+@media (min-width:900px){.layout{grid-template-columns:minmax(0,680px) minmax(300px,1fr);gap:28px;align-items:start}}
+h1{font:700 2rem/1.1 "Bricolage Grotesque",Georgia,serif;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+select,button.ctl{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.ctl:disabled,select:disabled,input:disabled{opacity:.45;cursor:default}
+label.f{color:var(--mute);font-size:.9rem}
+input[type=number]{width:4.5em;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+button.ctl.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button.ctl.icon{display:inline-flex;align-items:center;justify-content:center;padding:6px 10px}
+button.ctl.icon svg{width:18px;height:18px;fill:currentColor;display:block}
+.navlab{min-width:7.5em;text-align:center;color:var(--mute);font-variant-numeric:tabular-nums}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.pl{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:8px 12px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.pl.on{border-color:var(--hi)}
+.pl b{font:700 1.6rem "Bricolage Grotesque",Georgia,serif;white-space:nowrap}
+.pl small{color:var(--mute)}
+#status{min-height:1.5em;font-weight:600;margin:6px 0}
+#board svg{display:block;width:100%;max-width:680px;margin:0 auto;touch-action:manipulation}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+details li{margin:4px 0}
+.legend{color:var(--mute);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+<h1 id="gtitle"></h1>
+<p class="sub" id="gsub"></p>
+<div class="layout">
+<div class="left">
+<div id="board"></div>
+<p class="legend">Click your manipulator (the tall piece) to see where it can go: purple dots mark its destinations. When two routes lead to the same point, orange rings mark the two corners and you click the one where your pion is placed. Orange rings on your pions show which of them can capture, and red dashed rings the enemy pions they can take; click such a pion, then a purple ring to jump. During a chain of captures the pions already taken are shown faded, and you keep jumping until the chain is complete. Gold rings mark the pieces placed or moved by the last turn, small gold dots the points they left and the pions captured. The coloured bands show which edges each player must join.</p>
+</div>
+<aside class="right">
+<div class="bar">
+  <select id="mode" aria-label="Mode"><option value="ai">Play the computer</option><option value="2p">Two players</option></select>
+  <select id="level" aria-label="Computer strength"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select>
+  <select id="side" aria-label="Your side"></select>
+  <button class="ctl primary" id="new">New game</button>
+  <button class="ctl" id="undo">Undo</button>
+  <button class="ctl" id="redo">Redo</button>
+</div>
+<div class="bar" id="nav" role="group" aria-label="Game history">
+  <button class="ctl icon" id="nFirst" aria-label="Go to the beginning" title="Go to the beginning"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="2.5" height="14"/><path d="M19 5v14L8 12z"/></svg></button>
+  <button class="ctl icon" id="nPrev" aria-label="One move back" title="One move back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 5v14L6 12z"/></svg></button>
+  <span class="navlab" id="nlab" aria-live="polite">Move 0 of 0</span>
+  <button class="ctl icon" id="nNext" aria-label="One move forward" title="One move forward"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5v14l11-7z"/></svg></button>
+  <button class="ctl icon" id="nLast" aria-label="Go to the last move" title="Go to the last move"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5v14l11-7z"/><rect x="17.5" y="5" width="2.5" height="14"/></svg></button>
+</div>
+<div class="score">
+  <div class="pl" id="p0"><span><span id="n0"></span> <small id="d0"></small></span><b id="s0">0</b></div>
+  <div class="pl" id="p1"><span><span id="n1"></span> <small id="d1"></small></span><b id="s1">0</b></div>
+</div>
+<div id="status" aria-live="polite"></div>
+<div id="last" class="legend" style="min-height:2.6em;margin:0 0 8px"></div>
+<div class="bar">
+  <label class="f">Simulation games <input id="simN" type="number" min="10" max="1000" value="10"></label>
+  <label class="f">Random opening moves <input id="simR" type="number" min="0" max="20" value="4"></label>
+  <button class="ctl" id="sim">Simulation</button>
+</div>
+<div id="simout" class="legend" style="white-space:pre-line;margin:0 0 8px"></div>
+<details>
+<summary>Rules</summary>
+<ul id="rules"></ul>
+</details>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+/* =====================================================================
+   1. GAME DEFINITION  - Le Manipulateur rules: board, manipulator moves, captures, winning
+   2. ENGINE           - computer opponent (one or two plies with a connection/mobility evaluation), simulations
+   3. INTERFACE        - SVG board, click handling, controls
+   A turn is one manipulator move, or one chain of captures. Every manipulator move and every single jump of a chain is
+   one entry in the history. An action is {t:"man", i:corner, j:destination} or {t:"jump", i:pion, j:landing}.
+   A state is {b:points (0 empty, 1 Red pion, 2 Black pion, 3 Red manipulator, 4 Black manipulator), m:manipulator points,
+     res:pions in hand, cp:pions captured by each side, turn, ply:turns completed, w:winner (-1 none, 2 draw), why/wk:how the
+     game ended, ch:capture chain in progress {o:start, p:current point, J:pions jumped, path} or null, ev,
+     hl/hf: pieces placed or moved / points left and pions captured this turn, phl/phf: same for the previous turn}.
+   ===================================================================== */
+var $=function(i){return document.getElementById(i)};
+
+/* ============================ 1. GAME DEFINITION ============================ */
+var GAME={
+  title:"Le Manipulateur",
+  subtitle:"Jacques Fradkine’s connection game, winner of the 1983 Pion d’Or awarded by Jeux & Stratégie. Join your two edges with a continuous line of pions, or leave the enemy manipulator with no move — but beware of walling in your own.",
+  sides:[{name:"Red",color:"#d0573a"},{name:"Black",color:"#1d1b1a"}],
+  rules:[
+  {h:"Object",items:[
+    "The winner is the first player to join his edge of the board to the opposite edge with a continuous line of his pions, or to leave the enemy manipulator with no freedom of movement at all.",
+    "Here Red joins the bottom and top edges (red bands) and Black the left and right edges (black bands). Two pions are connected when they stand on neighbouring points of the same line."]},
+  {h:"Board and pieces",items:[
+    "The board is a grid of 17 × 17 lines; pieces stand on the intersections.",
+    "Each player has 145 pions of one colour (red or black) and one taller piece, the manipulator."]},
+  {h:"Turn",items:[
+    "On his turn a player chooses between two actions: move his manipulator, or, if possible, capture one or more enemy pions."]},
+  {h:"The manipulator",items:[
+    "The manipulator moves first along a horizontal line and then along a vertical line, or the other way round, at least one step each way. At the point where it changes direction the player places one of his pions.",
+    "The manipulator may not jump over the enemy manipulator or over pions of either colour, and it may not capture."]},
+  {h:"The pions",items:[
+    "A pion can only move to capture one or more enemy pions. It captures by jumping, as in draughts, over an adjacent enemy pion to the empty point just beyond.",
+    "Captures are orthogonal: forward, to the right or to the left, but never diagonally nor backward.",
+    "Capturing is not compulsory, but a player who decides to capture must take the whole chain of pions open to capture: the pion keeps jumping as long as it can."]},
+  {h:"Added in this version",items:[
+    "The article does not say who starts, where the manipulators begin, or which edges belong to whom. Here Red plays first; Red’s manipulator starts on i1, in the middle of Red’s bottom edge, and Black’s on a9, in the middle of Black’s left edge.",
+    "“Forward” is towards the edge opposite the player’s own: up for Red, to the right for Black. The article’s authors found the no-backward rule of little importance, but it is applied here.",
+    "During a chain the pions jumped stay on the board until the chain is over, and none can be jumped twice; then they are removed from the game. When a chain can branch, the player chooses the branch.",
+    "Pions connect only along the lines, not diagonally; the manipulators are not part of a line.",
+    "The result is checked at the end of each turn: the player who has just moved wins if his pions join his two edges, or if the enemy manipulator has no legal move. A player who has no pion left in hand cannot move his manipulator; if he has nothing to capture either, he loses.",
+    "A game reaching 600 turns is a draw (it practically never happens)."]}],
+  stats:function(s,i){var n=0,k;for(k=0;k<NC;k++)if(s.b[k]===i+1)n++;var mv=manMoves(s.b,s.m[i]);
+    return{big:String(n),text:"on the board · "+s.res[i]+" in hand · "+s.cp[i]+" captured · manipulator: "+mv+" move"+(mv===1?"":"s")}},
+  describe:function(s){return s.ev||""}
+};
+var N=17,NC=N*N,PIECES=145,MAXPLY=600,LET="abcdefghijklmnopq";
+// directions: 0 up, 1 right, 2 down, 3 left; d and (d+2)&3 are opposite
+var NBR=new Int16Array(NC*4);
+(function(){for(var i=0;i<NC;i++){var r=i/N|0,c=i%N;NBR[i*4]=r<N-1?i+N:-1;NBR[i*4+1]=c<N-1?i+1:-1;NBR[i*4+2]=r>0?i-N:-1;NBR[i*4+3]=c>0?i-1:-1}})();
+var CAPD=[[0,1,3],[1,0,2]];   // capture directions: forward, right, left (Red forward = up, Black forward = right)
+var START=[8,8*N];            // i1 and a9
+function cn(i){return LET[i%N]+((i/N|0)+1)}
+function nameP(P){return GAME.sides[P].name}
+function newState(){var b=new Int8Array(NC);b[START[0]]=3;b[START[1]]=4;
+  return{b:b,m:START.slice(),res:[PIECES,PIECES],cp:[0,0],turn:0,ply:0,w:-1,why:"",wk:"",ch:null,ev:"",hl:[],hf:[],phl:[],phf:[],log:[]}}
+function clone(s){return{b:s.b.slice(),m:s.m.slice(),res:s.res.slice(),cp:s.cp.slice(),turn:s.turn,ply:s.ply,w:s.w,why:s.why,wk:s.wk,
+  ch:s.ch?{o:s.ch.o,p:s.ch.p,J:s.ch.J.slice(),path:s.ch.path.slice()}:null,ev:s.ev,hl:s.hl.slice(),hf:s.hf.slice(),phl:s.phl,phf:s.phf,log:[]}}
+// manipulator moves from m: count, and [corner, destination] pairs pushed onto out
+function manMoves(b,m,out){var n=0,d1,d2,c,t,q;
+  for(d1=0;d1<4;d1++){c=NBR[m*4+d1];
+    while(c>=0&&!b[c]){for(q=1;q<4;q+=2){d2=(d1+q)&3;t=NBR[c*4+d2];while(t>=0&&!b[t]){n++;if(out)out.push([c,t]);t=NBR[t*4+d2]}}c=NBR[c*4+d1]}}
+  return n}
+function legalMan(b,m,c,t){var d1,z,y,q,d2;
+  for(d1=0;d1<4;d1++){z=NBR[m*4+d1];
+    while(z>=0&&!b[z]){if(z===c){for(q=1;q<4;q+=2){d2=(d1+q)&3;y=NBR[c*4+d2];while(y>=0&&!b[y]){if(y===t)return true;y=NBR[y*4+d2]}}return false}z=NBR[z*4+d1]}}
+  return false}
+// single jumps of P's pion on p (J: pions already jumped in this chain): {j:landing, o:pion jumped}
+function jumpsFrom(b,P,p,J){var e=2-P,out=[],k,d,q,r;
+  for(k=0;k<3;k++){d=CAPD[P][k];q=NBR[p*4+d];if(q<0||b[q]!==e||J.indexOf(q)>=0)continue;r=NBR[q*4+d];if(r>=0&&!b[r])out.push({j:r,o:q})}
+  return out}
+function anyCapture(b,P){for(var i=0;i<NC;i++)if(b[i]===P+1&&jumpsFrom(b,P,i,[]).length)return true;return false}
+// complete chains (lists of landings) of the pion on p, continuing a chain that has already jumped J0
+function chains(b,P,p,J0){var c=P+1,res=[],path=[],J=J0.slice();
+  function rec(p){if(res.length>=60)return;var js=jumpsFrom(b,P,p,J);if(!js.length){if(path.length)res.push(path.slice());return}
+    js.forEach(function(x){b[p]=0;b[x.j]=c;path.push(x.j);J.push(x.o);rec(x.j);J.pop();path.pop();b[x.j]=0;b[p]=c})}
+  rec(p);return res}
+// connection distance: number of empty points still needed to join P's edges (0 = joined). Manipulators count as empty points.
+var DQ=new Int16Array(NC*8),DA=new Int16Array(NC),DB=new Int16Array(NC);
+function edgeCell(P,side,k){return P===0?(side?(N-1)*N+k:k):(side?k*N+N-1:k*N)}
+function cost(v,c){return v===c?0:(v===0||v>=3)?1:99}
+function bfs(b,P,side,out){var c=P+1,head=NC*4,tail=NC*4,i,k,z,w,di;out.fill(999);
+  for(k=0;k<N;k++){i=edgeCell(P,side,k);w=cost(b[i],c);if(w>9)continue;out[i]=w;if(w)DQ[tail++]=i;else DQ[--head]=i}
+  while(head<tail){i=DQ[head++];di=out[i];
+    for(k=0;k<4;k++){z=NBR[i*4+k];if(z<0)continue;w=cost(b[z],c);if(w>9)continue;if(di+w<out[z]){out[z]=di+w;if(w)DQ[tail++]=z;else DQ[--head]=z}}}}
+function dist(b,P){bfs(b,P,0,DA);var m=999,k,i;for(k=0;k<N;k++){i=edgeCell(P,1,k);if(DA[i]<m)m=DA[i]}return m}
+function distW(b,P){bfs(b,P,0,DA);bfs(b,P,1,DB);var d=999,w=0,k,i,c=P+1;
+  for(k=0;k<N;k++){i=edgeCell(P,1,k);if(DA[i]<d)d=DA[i]}
+  if(d<999)for(i=0;i<NC;i++)if(b[i]!==c&&DA[i]+DB[i]-1===d&&cost(b[i],c)===1)w++;
+  return{d:d,w:w}}
+function finishTurn(s,txt){
+  var P=s.turn,O=1-P;s.ply++;s.log.push(txt);
+  if(dist(s.b,P)===0){s.w=P;s.wk="c";s.why=nameP(P)+" has joined both edges with a continuous line of pions."}
+  else if(!manMoves(s.b,s.m[O])){s.w=P;s.wk="t";s.why=nameP(O)+"’s manipulator has no move left."}
+  else if(!s.res[O]&&!anyCapture(s.b,O)){s.w=P;s.wk="n";s.why=nameP(O)+" has no pion left in hand and nothing to capture."}
+  else if(s.ply>=MAXPLY){s.w=2;s.wk="d";s.why=MAXPLY+" turns have been played: the game is a draw."}
+  if(s.w>=0)s.log.push(s.why+(s.w<2?" "+nameP(s.w)+" wins.":""));
+  s.phl=s.hl;s.phf=s.hf;s.hl=[];s.hf=[];s.turn=O;
+}
+function chainText(s){var c=s.ch;return nameP(s.turn)+": pion "+[c.o].concat(c.path).map(cn).join("–")+", capturing ("+c.J.length+" taken so far)."}
+// carry out one action on ns (a copy). Returns an error message or "".
+function doAct(ns,a){
+  var P=ns.turn,c=P+1,b=ns.b,i=a.i,j=a.j;
+  if(ns.w>=0)return"The game is over.";
+  if(a.t==="man"){
+    if(ns.ch)return"Finish the capture first: the whole chain must be taken.";
+    if(!ns.res[P])return"You have no pion left in hand, so your manipulator cannot move.";
+    var m=ns.m[P];
+    if(!legalMan(b,m,i,j))return"The manipulator moves along one line and then along the other, through empty points only, and the pion goes where it turns.";
+    b[m]=0;b[j]=3+P;ns.m[P]=j;b[i]=c;ns.res[P]--;ns.hl=[i,j];ns.hf=[m];
+    finishTurn(ns,nameP(P)+": manipulator "+cn(m)+"–"+cn(j)+", pion placed on "+cn(i)+".");return"";
+  }
+  if(a.t==="jump"){
+    if(ns.ch&&i!==ns.ch.p)return"You must go on capturing with the pion on "+cn(ns.ch.p)+".";
+    if(b[i]!==c)return"Select one of your own pions.";
+    var x=jumpsFrom(b,P,i,ns.ch?ns.ch.J:[]).filter(function(y){return y.j===j})[0];
+    if(!x)return"A pion captures by jumping over an adjacent enemy pion — forward, right or left, never backward — to the empty point just beyond.";
+    if(!ns.ch){ns.ch={o:i,p:i,J:[],path:[]};ns.hf=[i]}
+    var ch=ns.ch;b[i]=0;b[j]=c;ch.p=j;ch.J.push(x.o);ch.path.push(j);ns.hl=[j];ns.hf.push(x.o);
+    if(!jumpsFrom(b,P,j,ch.J).length){
+      ch.J.forEach(function(z){b[z]=0});ns.cp[P]+=ch.J.length;ns.ch=null;
+      finishTurn(ns,nameP(P)+": pion "+[ch.o].concat(ch.path).map(cn).join("–")+" captured "+ch.J.length+" "+nameP(1-P)+" pion"+(ch.J.length>1?"s":"")+" ("+ch.J.map(cn).join(", ")+").");
+    }
+    return"";
+  }
+  return"Unknown action.";
+}
+// try action a in state s: {ns} or {err}
+function apply(s,a){
+  var ns=clone(s),e=doAct(ns,a);if(e)return{err:e};
+  ns.ev=ns.log.length?ns.log.join(" "):ns.ch?chainText(ns):ns.ev;ns.log=[];
+  return{ns:ns};
+}
+// every complete move of the side to move: {k:"m", c, t} or {k:"x", i, path}
+function genAll(s){var P=s.turn,b=s.b,out=[],i,L;
+  if(s.ch){chains(b,P,s.ch.p,s.ch.J).forEach(function(x){out.push({k:"x",i:s.ch.p,path:x})});return out}
+  if(s.res[P]){L=[];manMoves(b,s.m[P],L);L.forEach(function(x){out.push({k:"m",c:x[0],t:x[1]})})}
+  for(i=0;i<NC;i++)if(b[i]===P+1&&jumpsFrom(b,P,i,[]).length)chains(b,P,i,[]).forEach(function(x){out.push({k:"x",i:i,path:x})});
+  return out}
+function applyFull(s,mv){var ns=clone(s),p,q;
+  if(mv.k==="m")doAct(ns,{t:"man",i:mv.c,j:mv.t});
+  else{p=mv.i;for(q=0;q<mv.path.length;q++){doAct(ns,{t:"jump",i:p,j:mv.path[q]});p=mv.path[q]}}
+  return ns}
+
+/* ================================ 2. ENGINE ================================ */
+// number of enemy pions that O could capture with one jump right now
+var MK=new Uint8Array(NC);
+function threats(b,O){var c=O+1,e=2-O,n=0,i,k,d,q,r;MK.fill(0);
+  for(i=0;i<NC;i++){if(b[i]!==c)continue;
+    for(k=0;k<3;k++){d=CAPD[O][k];q=NBR[i*4+d];if(q<0||b[q]!==e||MK[q])continue;r=NBR[q*4+d];if(r>=0&&!b[r]){MK[q]=1;n++}}}
+  return n}
+// value of the position for P, who has just finished his turn (the opponent moves next)
+function evalS(s,P){
+  if(s.w>=0)return s.w===2?0:(s.w===P?1e5-s.ply:-1e5+s.ply);
+  var O=1-P,b=s.b,a=distW(b,P),o=distW(b,O),mP=manMoves(b,s.m[P]),mO=manMoves(b,s.m[O]);
+  var v=10*(Math.min(o.d,40)-Math.min(a.d,40))+.12*(Math.min(a.w,40)-Math.min(o.w,40));
+  v+=2.5*(Math.log(1+mP)-Math.log(1+mO));
+  if(mP<6)v-=(6-mP)*5;if(mO<6)v+=(6-mO)*2.5;
+  v-=4*threats(b,O);v+=1.5*threats(b,P);
+  v+=1.5*(s.cp[P]-s.cp[O]);
+  if(o.d<=1)v-=25;
+  return v;
+}
+// can the side to move in ns win at once?
+function oppWins(ns){var O=ns.turn,R=genAll(ns);for(var q=0;q<R.length;q++)if(applyFull(ns,R[q]).w===O)return true;return false}
+// value for P of ns (P has just moved): the opponent's best one-ply reply
+function replyVal(ns,P,deadline){var O=ns.turn,R=genAll(ns),worst=1e9,q,rs,v;
+  for(q=0;q<R.length;q++){rs=applyFull(ns,R[q]);if(rs.w===O)return -1e5+rs.ply;v=-evalS(rs,O);if(v<worst)worst=v}
+  return worst===1e9?evalS(ns,P):worst}
+var LV={1:{rnd:.3,noise:4,K:0},2:{rnd:0,noise:.4,K:8},3:{rnd:0,noise:.2,K:20,ms:2500}};
+var FAST={1:{rnd:.3,noise:4,K:0},2:{rnd:0,noise:.4,K:3},3:{rnd:0,noise:.2,K:3,ms:250}};
+// Easy: one ply with noise and some random moves. Medium: one ply, skipping moves that allow an immediate loss.
+// Hard: the best candidates of one ply, each tested against every reply of the opponent.
+function aiPick(s,lv,fast){
+  var P=s.turn,o=(fast?FAST:LV)[lv],M=genAll(s),C=[],q,ns,best,bv;
+  for(q=0;q<M.length;q++){ns=applyFull(s,M[q]);if(ns.w===P)return ns;C.push({ns:ns,v:evalS(ns,P)+o.noise*Math.random()})}
+  if(Math.random()<o.rnd)return C[Math.random()*C.length|0].ns;
+  C.sort(function(x,y){return y.v-x.v});
+  if(lv===1)return C[0].ns;
+  if(lv===2){for(q=0;q<Math.min(o.K,C.length);q++)if(!oppWins(C[q].ns))return C[q].ns;return C[0].ns}
+  var deadline=Date.now()+o.ms;best=C[0].ns;bv=-1e9;
+  for(q=0;q<Math.min(o.K,C.length);q++){
+    if(q>2&&Date.now()>deadline)break;
+    var v=replyVal(C[q].ns,P)+.01*C[q].v;
+    if(v>bv){bv=v;best=C[q].ns}
+  }
+  return best;
+}
+function aiStep(s,lv,fast){var ns=aiPick(s,lv,fast);ns.ev=ns.log.join(" ");ns.log=[];return ns}
+function randomMove(s){var M=genAll(s);return applyFull(s,M[Math.random()*M.length|0])}
+var sim=null;
+function runSim(){   // computer vs computer, to look for first/second-player advantage
+  if(sim){sim.stop=true;return}
+  var CAP=MAXPLY+10,me=sim={stop:false},TOTAL=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?4:+$("simR").value)),
+      done=0,w=[0,0,0],un=0,g=newState(),plies=0,lv=+$("level").value,lvName=$("level").options[$("level").selectedIndex].text,nm=GAME.sides.map(function(x){return x.name}),
+      kinds={c:0,t:0,n:0},len=0;
+  ["mode","side","level","new","undo","redo","simN","simR","nFirst","nPrev","nNext","nLast"].forEach(function(i){$(i).disabled=true});
+  $("sim").textContent="Stop simulation";
+  $("simout").textContent="Simulating at "+lvName+" level… 0/"+TOTAL;
+  function fin(stopped){
+    sim=null;$("sim").textContent="Simulation";
+    $("mode").disabled=$("new").disabled=$("simN").disabled=$("simR").disabled=false;
+    $("level").disabled=$("side").disabled=$("mode").value==="2p";
+    var dec=w[0]+w[1],mgn=dec?(196*Math.sqrt((w[0]/dec)*(1-w[0]/dec)/dec)).toFixed(1):"0";
+    var pc=function(n){return done?(100*n/done).toFixed(1)+"%":"n/a"};
+    $("simout").textContent=(stopped?"Stopped after ":"")+done+" games at "+lvName+" level (computer vs computer), first "+RND+" turns random.\n"+
+      "First player ("+nm[0]+") won "+pc(w[0])+" ("+w[0]+" games). Second player ("+nm[1]+") won "+pc(w[1])+" ("+w[1]+" games)."+
+      (dec?" Among decided games the first player won "+(100*w[0]/dec).toFixed(1)+"% (margin ±"+mgn+" points at 95% confidence).":"")+
+      (w[2]?" Draws: "+w[2]+".":"")+(un?" Unfinished (stopped at "+CAP+" turns): "+un+".":"")+
+      (dec?"\nWins by connection: "+kinds.c+"; by trapping the manipulator: "+kinds.t+(kinds.n?"; by running out of pions: "+kinds.n:"")+".":"")+
+      (done-un?" Average length: "+(len/(done-un)).toFixed(1)+" turns.":"");
+    render();
+  }
+  function stepSim(){
+    if(me.stop){fin(true);return}
+    var t0=Date.now();
+    while(Date.now()-t0<40){
+      if(g.w>=0||plies>=CAP){
+        if(g.w>=0){w[g.w]++;if(kinds[g.wk]!=null)kinds[g.wk]++;len+=g.ply}else un++;
+        done++;g=newState();plies=0;
+        if(done>=TOTAL){fin(false);return}
+        continue;
+      }
+      if(plies<RND)g=randomMove(g);
+      else g=aiPick(g,lv,true);
+      plies++;
+    }
+    $("simout").textContent="Simulating at "+lvName+" level… "+done+"/"+TOTAL;
+    setTimeout(stepSim,0);
+  }
+  stepSim();
+}
+
+/* =============================== 3. INTERFACE =============================== */
+var hist,redo=[],view=null,sel,over,busy,note="";   // view: null = live position, otherwise the index being reviewed
+var GOLD="#e0a800",PURPLE="#8e44ad",RED="#d8342c",ORANGE="#e0803a";
+function cur(){return hist[hist.length-1]}
+function line(){return hist.concat(redo.slice().reverse())}   // every position, including those that can still be redone
+function browsing(){return view!==null}
+function shown(){return view===null?cur():line()[view]}
+function clearSel(){sel=null;note=""}
+function goto(k){
+  if(busy||sim)return;
+  var n=hist.length-1+redo.length;k=Math.max(0,Math.min(n,k));
+  view=k===hist.length-1?null:k;clearSel();render();
+}
+// Undo/Redo while reviewing: leave review and play on from the reviewed position (in computer mode, from the nearest position where it is the human's turn)
+function unlock(dir){
+  var L=line(),k=view,j;
+  if($("mode").value==="ai"){
+    j=k;while(j>=0&&j<L.length&&L[j].w<0&&L[j].turn!==+$("side").value)j+=dir;
+    if(j>=0&&j<L.length)k=j;
+  }
+  hist=L.slice(0,k+1);redo=L.slice(k+1).reverse();view=null;clearSel();over=false;render();maybeAI();
+}
+function humanTurn(){return $("mode").value==="2p"||cur().turn===+$("side").value}
+function start(){
+  hist=[newState()];redo=[];view=null;clearSel();$("level").disabled=$("side").disabled=$("mode").value==="2p";over=false;busy=false;
+  render();maybeAI();
+}
+// capture jumps of the pion on i: {k:"j", i, list:[{j, ns}]}
+function selectJ(s,i){var list=[];
+  jumpsFrom(s.b,s.turn,i,s.ch?s.ch.J:[]).forEach(function(x){var r=apply(s,{t:"jump",i:i,j:x.j});if(r.ns)list.push({j:x.j,ns:r.ns})});
+  return{k:"j",i:i,list:list}}
+function selectM(s){var L=[];manMoves(s.b,s.m[s.turn],L);return{k:"m",i:s.m[s.turn],list:L,dest:-1}}
+function px(i){return i%N}
+function py(i){return N-1-(i/N|0)}
+function render(){
+  var br=browsing(),s=shown(),sd=GAME.sides,h=[],P=s.turn,i,k,nT=hist.length-1+redo.length,kk=br?view:hist.length-1,lock=busy||!!sim;
+  over=s.w>=0;
+  var canAct=!br&&!over&&humanTurn()&&!busy&&!sim;
+  if(canAct&&s.ch&&(!sel||sel.k!=="j"||sel.i!==s.ch.p))sel=selectJ(s,s.ch.p);
+  if(!canAct)sel=null;
+  h.push('<svg viewBox="-2 -2 20 20" role="img" aria-label="Le Manipulateur board">');
+  function lab(x,y,t){h.push('<text x="'+x+'" y="'+y+'" font-size=".5" text-anchor="middle" dominant-baseline="central" fill="#6a5a48" pointer-events="none" font-family="Georgia,serif">'+t+'</text>')}
+  h.push('<rect x="-1.95" y="-1.95" width="19.9" height="19.9" rx=".4" fill="#efe6d2" stroke="#c9b997" stroke-width=".06"/>');
+  // edge bands: Red joins bottom and top, Black left and right
+  h.push('<rect x="-.2" y="-.78" width="16.4" height=".24" rx=".08" fill="'+sd[0].color+'"/><rect x="-.2" y="16.54" width="16.4" height=".24" rx=".08" fill="'+sd[0].color+'"/>');
+  h.push('<rect x="-.78" y="-.2" width=".24" height="16.4" rx=".08" fill="'+sd[1].color+'"/><rect x="16.54" y="-.2" width=".24" height="16.4" rx=".08" fill="'+sd[1].color+'"/>');
+  var ln=[];for(k=0;k<N;k++){ln.push("M"+k+" 0V16");ln.push("M0 "+k+"H16")}
+  h.push('<path d="'+ln.join("")+'" stroke="#7d7064" stroke-width=".035" fill="none" pointer-events="none"/>');
+  [3,8,13].forEach(function(x){[3,8,13].forEach(function(y){h.push('<circle cx="'+x+'" cy="'+y+'" r=".09" fill="#7d7064" pointer-events="none"/>')})});
+  for(k=0;k<N;k++){lab(k,17.45,LET[k]);lab(k,-1.45,LET[k]);lab(-1.45,N-1-k,k+1);lab(17.45,N-1-k,k+1)}
+  // click targets
+  for(i=0;i<NC;i++)h.push('<circle data-i="'+i+'" cx="'+px(i)+'" cy="'+py(i)+'" r=".5" fill="transparent"/>');
+  // gold marks: the turn being played (a chain in progress), otherwise the previous turn
+  var HL={},HF=s.ch?s.hf:s.phf||[];
+  (s.ch?s.hl:s.phl||[]).forEach(function(z){if(s.b[z])HL[z]=1});
+  var ring={},dash={},dots=[],faded={};
+  if(s.ch)s.ch.J.forEach(function(z){faded[z]=1});
+  if(canAct){
+    if(sel&&sel.k==="m"){
+      if(sel.dest>=0){ring[sel.dest]=PURPLE;sel.list.forEach(function(x){if(x[1]===sel.dest)ring[x[0]]=ORANGE})}
+      else{var seen={};sel.list.forEach(function(x){if(!seen[x[1]]){seen[x[1]]=1;dots.push(x[1])}})}
+    }else if(sel&&sel.k==="j")sel.list.forEach(function(m){ring[m.j]=PURPLE});
+    else for(i=0;i<NC;i++)if(s.b[i]===P+1){var js=jumpsFrom(s.b,P,i,[]);if(js.length){ring[i]=ORANGE;js.forEach(function(x){dash[x.o]=1})}}
+  }
+  for(i=0;i<NC;i++){var v=s.b[i],x=px(i),y=py(i);if(!v)continue;
+    var on=sel&&sel.i===i,lm=!!HL[i],op=faded[i]?' opacity=".4"':'';
+    if(v<=2){
+      var stroke=on?"var(--hi)":lm?GOLD:(v===1?"#8e3520":"#000"),sw=on||lm?.1:.04;
+      h.push('<circle data-i="'+i+'" cx="'+x+'" cy="'+y+'" r=".38" fill="'+sd[v-1].color+'" stroke="'+stroke+'" stroke-width="'+sw+'"'+op+'/>');
+    }else{
+      var c=sd[v-3].color,inner=v===3?"#f3c2ae":"#8a8580";
+      h.push('<circle cx="'+(x+.07)+'" cy="'+(y+.09)+'" r=".47" fill="#000" opacity=".28" pointer-events="none"/>');
+      h.push('<circle data-i="'+i+'" cx="'+x+'" cy="'+y+'" r=".46" fill="'+c+'" stroke="'+(on?"var(--hi)":lm?GOLD:"#000")+'" stroke-width="'+(on||lm?.11:.05)+'"/>');
+      h.push('<circle cx="'+x+'" cy="'+y+'" r=".28" fill="none" stroke="'+inner+'" stroke-width=".06" pointer-events="none"/>');
+      h.push('<circle cx="'+x+'" cy="'+y+'" r=".1" fill="'+inner+'" pointer-events="none"/>');
+    }
+    if(faded[i])h.push('<circle cx="'+x+'" cy="'+y+'" r=".14" fill="'+GOLD+'" stroke="#7a5c00" stroke-width=".02" pointer-events="none"/>');
+    if(dash[i]&&!ring[i])h.push('<circle cx="'+x+'" cy="'+y+'" r=".5" fill="none" stroke="'+RED+'" stroke-width=".06" stroke-dasharray=".13 .09" pointer-events="none"/>');
+  }
+  HF.forEach(function(z){if(!s.b[z])h.push('<circle cx="'+px(z)+'" cy="'+py(z)+'" r=".14" fill="'+GOLD+'" stroke="#7a5c00" stroke-width=".02" pointer-events="none"/>')});
+  for(i in ring){i=+i;h.push('<circle data-i="'+i+'" cx="'+px(i)+'" cy="'+py(i)+'" r="'+(s.b[i]?.52:.3)+'" fill="'+(s.b[i]?"none":"transparent")+'" stroke="'+ring[i]+'" stroke-width=".09"/>')}
+  dots.forEach(function(d){h.push('<circle data-i="'+d+'" cx="'+px(d)+'" cy="'+py(d)+'" r=".16" fill="'+PURPLE+'" fill-opacity=".8"/>')});
+  h.push('</svg>');
+  $("board").innerHTML=h.join("");
+  var names=sd.map(function(x){return x.name}),stt;
+  for(i=0;i<2;i++){var tt=GAME.stats(s,i);$("s"+i).textContent=tt.big;$("d"+i).textContent=tt.text;
+    $("p"+i).className="pl"+(!over&&s.turn===i?" on":"")}
+  var turnNo=" (turn "+(s.ply+1)+")";
+  if(br)stt="Reviewing history (move "+kk+" of "+nT+"): the board is locked. Press Undo or Redo to play on from here.";
+  else if(over)stt=s.w===2?"Game over: draw.":"Game over: "+names[s.w]+" wins. "+s.why;
+  else if(!humanTurn())stt=names[P]+" to play"+turnNo+" – computer thinking…";
+  else if(s.ch)stt=names[P]+turnNo+" – capturing ("+s.ch.J.length+" taken): the whole chain must be taken, so jump again with the pion on "+cn(s.ch.p)+" (purple rings).";
+  else if(sel&&sel.k==="m")stt=sel.dest>=0?names[P]+turnNo+": two routes lead to "+cn(sel.dest)+" – click the corner (orange) where your pion is placed.":
+    names[P]+turnNo+": click a purple dot to move your manipulator there; your pion goes where it turns.";
+  else if(sel&&sel.k==="j")stt=names[P]+turnNo+": click a purple ring to jump with the pion on "+cn(sel.i)+".";
+  else stt=names[P]+" to play"+turnNo+": click your manipulator"+(anyCapture(s.b,P)?", or a pion with an orange ring to capture":"")+".";
+  $("status").textContent=stt;
+  $("last").textContent=(GAME.describe(s)+" "+note).trim();
+  $("undo").disabled=lock||!(br||hist.length>=2);
+  $("redo").disabled=lock||!(br||redo.length);
+  $("nFirst").disabled=$("nPrev").disabled=lock||kk<=0;
+  $("nNext").disabled=$("nLast").disabled=lock||kk>=nT;
+  $("nlab").textContent="Move "+kk+" of "+nT;
+}
+function play(ns){hist.push(ns);redo=[];clearSel();render();maybeAI()}
+function act(a){var r=apply(cur(),a);if(r.ns){play(r.ns);return true}note=r.err;render();return false}
+function click(i){
+  if(over||busy||browsing()||!humanTurn()||sim)return;
+  var s=cur(),P=s.turn,v=s.b[i],opts;note="";
+  if(s.ch){var m=sel&&sel.list.filter(function(x){return x.j===i})[0];
+    if(m){play(m.ns);return}
+    note="The whole chain must be taken: jump again with the pion on "+cn(s.ch.p)+".";render();return}
+  if(sel&&sel.k==="m"){
+    if(sel.dest>=0){var cs=sel.list.filter(function(x){return x[1]===sel.dest&&x[0]===i})[0];
+      if(cs){act({t:"man",i:cs[0],j:cs[1]});return}
+      var was=sel.dest;sel.dest=-1;if(i===was){render();return}}
+    opts=sel.list.filter(function(x){return x[1]===i});
+    if(opts.length===1){act({t:"man",i:opts[0][0],j:i});return}
+    if(opts.length>1){sel.dest=i;render();return}
+    if(i===sel.i){sel=null;render();return}
+    sel=null;
+  }else if(sel&&sel.k==="j"){
+    var mj=sel.list.filter(function(x){return x.j===i})[0];
+    if(mj){play(mj.ns);return}
+    var same=i===sel.i;sel=null;if(same){render();return}
+  }
+  if(v===3+P){
+    if(!s.res[P])note="You have no pion left in hand, so your manipulator cannot move.";
+    else sel=selectM(s);
+  }else if(v===P+1){
+    var jj=selectJ(s,i);
+    if(jj.list.length)sel=jj;
+    else note="A pion only moves to capture: it jumps over an adjacent enemy pion — forward, right or left, never backward — to the empty point beyond.";
+  }else if(v===4-P)note="That is the enemy manipulator: it can be neither jumped nor captured, but it can be walled in.";
+  else if(v)note="That is an enemy pion: capture it by jumping over it with one of your pions.";
+  else if(s.res[P]){var sm=selectM(s);opts=sm.list.filter(function(x){return x[1]===i});
+    if(opts.length===1){act({t:"man",i:opts[0][0],j:i});return}
+    if(opts.length>1){sm.dest=i;sel=sm;render();return}
+    note="Your manipulator cannot reach that point: it moves along a horizontal and then a vertical line (or the reverse), through empty points only.";}
+  render();
+}
+function maybeAI(){
+  if(sim||cur().w>=0||$("mode").value!=="ai"||cur().turn===+$("side").value)return;
+  busy=true;render();
+  setTimeout(function(){
+    var c=cur();hist.push(aiStep(c,+$("level").value));redo=[];busy=false;
+    render();maybeAI();
+  },180);
+}
+document.title=GAME.title;$("gtitle").textContent=GAME.title;$("gsub").textContent=GAME.subtitle;
+function li(x){return"<li>"+(typeof x==="string"?x:x.t+"<ul>"+x.sub.map(li).join("")+"</ul>")+"</li>"}
+$("rules").innerHTML=GAME.rules.map(function(sec){return"<li><b>"+sec.h+"</b><ul>"+sec.items.map(li).join("")+"</ul></li>"}).join("");
+$("side").innerHTML=GAME.sides.map(function(x,i){return'<option value="'+i+'">You are '+x.name+(i?"":" (first)")+'</option>'}).join("");
+for(var ni=0;ni<2;ni++)$("n"+ni).textContent=GAME.sides[ni].name;
+$("board").onclick=function(e){var t=e.target.closest("[data-i]");if(t)click(+t.getAttribute("data-i"))};
+$("new").onclick=start;$("sim").onclick=runSim;
+$("mode").onchange=$("side").onchange=start;
+$("redo").onclick=function(){
+  if(busy||sim)return;
+  if(browsing()){unlock(1);return}
+  if(!redo.length)return;
+  hist.push(redo.pop());
+  while($("mode").value==="ai"&&redo.length&&cur().w<0&&cur().turn!==+$("side").value)hist.push(redo.pop());
+  clearSel();render();
+};
+$("undo").onclick=function(){
+  if(busy||sim)return;
+  if(browsing()){unlock(-1);return}
+  if(hist.length<2)return;
+  redo.push(hist.pop());
+  while($("mode").value==="ai"&&hist.length>1&&cur().turn!==+$("side").value)redo.push(hist.pop());
+  clearSel();over=false;render();
+};
+$("nFirst").onclick=function(){goto(0)};
+$("nPrev").onclick=function(){goto((browsing()?view:hist.length-1)-1)};
+$("nNext").onclick=function(){goto((browsing()?view:hist.length-1)+1)};
+$("nLast").onclick=function(){goto(hist.length-1+redo.length)};
+start();
+})();
+</script>
+</body>
+</html>
