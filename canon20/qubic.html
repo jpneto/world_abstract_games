@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Qubic</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
+<style>
+:root{--bg:#eef0e6;--ink:#1f2a1c;--mute:#5d6a56;--cell:#dfe3cf;--edge:#b9bfa3;--hi:#e0803a;--panel:#fff;--line:#c5cab4;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f}}
+:root[data-theme="dark"]{--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+main{max-width:1080px;margin:0 auto;padding:16px 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.right>.bar:first-child{margin-top:0}
+@media (min-width:860px){.layout{grid-template-columns:minmax(0,600px) minmax(300px,1fr);gap:28px;align-items:start}}
+h1{font:700 2rem/1.1 "Bricolage Grotesque",Georgia,serif;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+select,button.ctl{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.ctl:disabled,select:disabled,input:disabled{opacity:.45;cursor:default}
+label.f{color:var(--mute);font-size:.9rem}
+input[type=number]{width:4.5em;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+button.ctl.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button.ctl.icon{display:inline-flex;align-items:center;justify-content:center;padding:6px 10px}
+button.ctl.icon svg{width:18px;height:18px;fill:currentColor;display:block}
+.navlab{min-width:7.5em;text-align:center;color:var(--mute);font-variant-numeric:tabular-nums}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.pl{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:8px 12px;display:flex;justify-content:space-between;align-items:baseline;gap:6px}
+.pl.on{border-color:var(--hi)}
+.pl b{font:700 1.6rem "Bricolage Grotesque",Georgia,serif}
+.pl small{color:var(--mute)}
+#status{min-height:1.5em;font-weight:600;margin:6px 0}
+#board svg{display:block;width:100%;max-width:600px;max-height:86vh;margin:0 auto;touch-action:manipulation}
+#board .sl{cursor:pointer}
+#board .sl .pv{opacity:0;transition:opacity .08s}
+#board .sl:hover .pv{opacity:.5}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+details li{margin:4px 0}
+.legend{color:var(--mute);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+<h1 id="gtitle"></h1>
+<p class="sub" id="gsub"></p>
+<div class="layout">
+<div class="left">
+<div id="board"></div>
+<p class="legend">The four levels of the cube are drawn one above the other, level 4 at the top and level 1 at the bottom. Click any empty cell on any level to place a marker; hovering shows where it would go. A line can run along one level, straight down through all four levels, or diagonally through them, one marker per level. The gold point marks the last marker placed; when a player wins, the four winning markers get a white point at their centre.</p>
+</div>
+<aside class="right">
+<div class="bar">
+  <select id="mode" aria-label="Mode"><option value="ai">Play the computer</option><option value="2p">Two players</option></select>
+  <select id="level" aria-label="Computer strength"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select>
+  <select id="side" aria-label="Your side"></select>
+  <button class="ctl primary" id="new">New game</button>
+  <button class="ctl" id="undo">Undo</button>
+  <button class="ctl" id="redo">Redo</button>
+</div>
+<div class="bar" id="nav" role="group" aria-label="Game history">
+  <button class="ctl icon" id="nFirst" aria-label="Go to the beginning" title="Go to the beginning"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="2.5" height="14"/><path d="M19 5v14L8 12z"/></svg></button>
+  <button class="ctl icon" id="nPrev" aria-label="One move back" title="One move back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 5v14L6 12z"/></svg></button>
+  <span class="navlab" id="nlab" aria-live="polite">Move 0 of 0</span>
+  <button class="ctl icon" id="nNext" aria-label="One move forward" title="One move forward"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5v14l11-7z"/></svg></button>
+  <button class="ctl icon" id="nLast" aria-label="Go to the last move" title="Go to the last move"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5v14l11-7z"/><rect x="17.5" y="5" width="2.5" height="14"/></svg></button>
+</div>
+<div class="score">
+  <div class="pl" id="p0"><span><span id="n0"></span> <small id="d0"></small></span><b id="s0">0</b></div>
+  <div class="pl" id="p1"><span><span id="n1"></span> <small id="d1"></small></span><b id="s1">0</b></div>
+</div>
+<div id="status" aria-live="polite"></div>
+<div id="last" class="legend" style="min-height:2.6em;margin:0 0 8px"></div>
+<div class="bar">
+  <label class="f">Simulation games <input id="simN" type="number" min="10" max="1000" value="10"></label>
+  <label class="f">Random opening moves <input id="simR" type="number" min="0" max="20" value="2"></label>
+  <button class="ctl" id="sim">Simulation</button>
+</div>
+<div id="simout" class="legend" style="white-space:pre-line;margin:0 0 8px"></div>
+<details>
+<summary>Rules</summary>
+<ul id="rules"></ul>
+</details>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+/* =====================================================================
+   1. GAME DEFINITION  - Qubic rules: 4×4×4 cube, the 76 winning lines, move generation
+   2. ENGINE           - alpha-beta search with forced-block extension and threat-sequence (VCF) search, simulations
+   3. INTERFACE        - SVG board (four stacked levels), click handling, controls
+   Cells: index c = z*16 + y*4 + x, with x = column (a–d), y = row (1–4, row 1 at the front), z = level (1–4, level 1 at the bottom).
+   A move is {j:cell, ns:resulting state}. A state is {e:cells (0 empty, 1 Red, 2 Blue), turn, n:[markers Red, Blue],
+   w:winner (-1 none, 0 Red, 1 Blue, 2 draw), wl:winning line index or -1, mv, ev}.
+   ===================================================================== */
+var $=function(i){return document.getElementById(i)};
+
+/* ============================ 1. GAME DEFINITION ============================ */
+var NC=64,LN=[],CL=[];
+(function(){   // all straight lines of four: 48 within a level or vertical through the levels, 28 diagonals → 76
+  var c,dx,dy,dz,x,y,z,k,ok;
+  for(c=0;c<NC;c++)CL.push([]);
+  function inb(x,y,z){return x>=0&&x<4&&y>=0&&y<4&&z>=0&&z<4}
+  for(dz=-1;dz<=1;dz++)for(dy=-1;dy<=1;dy++)for(dx=-1;dx<=1;dx++){
+    if(!(dz>0||(dz===0&&(dy>0||(dy===0&&dx>0)))))continue;   // one direction per line
+    for(z=0;z<4;z++)for(y=0;y<4;y++)for(x=0;x<4;x++){
+      if(!inb(x+3*dx,y+3*dy,z+3*dz)||inb(x-dx,y-dy,z-dz))continue;
+      var l=[];for(k=0;k<4;k++)l.push((z+k*dz)*16+(y+k*dy)*4+x+k*dx);
+      LN.push(l);l.forEach(function(q){CL[q].push(LN.length-1)});
+    }
+  }
+})();
+var NL=LN.length;
+function cx(c){return c&3}function cy(c){return (c>>2)&3}function cz(c){return c>>4}
+function sname(c){return String.fromCharCode(97+cx(c))+(cy(c)+1)+" on level "+(cz(c)+1)}
+var GAME={
+  title:"Qubic",
+  subtitle:function(){return "3-D tic-tac-toe by Don Cornish, Howard Moore and Rolfe Pottberg (1947). Four levels of 4×4 cells; four in a straight line wins. Red moves first."},
+  sides:[{name:"Red",color:"#E0483F",light:"#F59A93",dark:"#9a2a24"},{name:"Blue",color:"#2F7ED0",light:"#8CC2F2",dark:"#1c4c82"}],
+  rules:[
+  {h:"Board",items:[
+    "A see-through cube of four 4×4 levels, numbered 1 (bottom) to 4 (top): 64 cells. Here the levels are drawn one above the other, level 4 at the top. On every level the columns are a–d and the rows 1–4, row 1 nearest to you.",
+    "The board starts empty. Each player has markers of one colour: Red and Blue."]},
+  {h:"Play",items:[
+    "The players decide who goes first; on this page Red moves first, and you can choose which side you play.",
+    "Players take turns placing one marker on any empty cell of any level. Markers do not fall to a lower level, and once placed a marker stays where it is.",
+    {t:"The first player to have four markers in a straight line wins. The line may be:",sub:["a row, a column or a diagonal on one level;","a vertical line through the same cell on all four levels;","a line running diagonally through the four levels, one marker on each level (across the cube or corner to corner)."]},
+    "There are 76 such lines. If all 64 cells are filled with no line of four, the game is a draw."]},
+  {h:"More players (not played on this page)",items:[
+    "With four players, those sitting opposite each other are partners and share one colour; play goes in rotation and partners may not talk about or signal their strategy. Six players form three pairs with three colours.",
+    "With three players and three colours, a player who sees both others holding three in a line must block the first such line formed, if asked to by one of the other players."]},
+  {h:"Strategy (from the rules)",items:[
+    "Always block a straight line of three markers.",
+    "Plan ahead and keep new lines forming in different directions: a marker that makes two open lines of three at once cannot be stopped.",
+    "Lines through the middle of the cube are harder for your opponent to spot."]}],
+  stats:function(s,i){return{big:s.n[i],text:"· markers placed:"}},
+  describe:function(s){return s.ev||""}
+};
+function nameOf(s){return GAME.sides[s.turn].name}
+function mk(o,turn,n,mv,ev){return{e:o,turn:turn,n:n,w:-1,wl:-1,mv:mv,ev:ev||""}}
+function newState(){return mk(new Uint8Array(NC),0,[0,0],null,"")}
+function lineWith(o,c,p){var L=CL[c],i,l;for(i=0;i<L.length;i++){l=LN[L[i]];if(o[l[0]]===p&&o[l[1]]===p&&o[l[2]]===p&&o[l[3]]===p)return L[i]}return -1}
+function place(s,j){
+  var P=s.turn,o=s.e.slice(),n=s.n.slice(),ns,txt=nameOf(s)+" placed a marker on "+sname(j)+".",wl;
+  o[j]=P+1;n[P]++;
+  wl=lineWith(o,j,P+1);
+  if(wl>=0){ns=mk(o,P,n,{to:[j],by:P},txt+" "+nameOf(s)+" has four in a line ("+LN[wl].map(sname).join(", ").replace(/ on level /g," L")+") and wins!");ns.w=P;ns.wl=wl;return{j:j,ns:ns}}
+  ns=mk(o,1-P,n,{to:[j],by:P},txt);
+  if(n[0]+n[1]>=NC){ns.w=2;ns.ev=txt+" The cube is full with no line of four: the game is a draw."}
+  return{j:j,ns:ns};
+}
+function legal(s){var out=[];if(s.w>=0)return out;for(var j=0;j<NC;j++)if(!s.e[j])out.push(place(s,j));return out}
+
+/* ================================ 2. ENGINE ================================ */
+// Mutable search board: B cells, LC[p][l] = markers of player p on line l.
+var B=new Int8Array(NC),LC=[new Int8Array(NL),new Int8Array(NL)],WIN=10000,INF=1e9,BUD=0;
+var AIW={W:[0,1,5,30,0],H:[1,3,12,90,0]};   // line weights for evaluation (W) and move ordering (H), by markers on the line
+function load(o){B.fill(0);LC[0].fill(0);LC[1].fill(0);for(var c=0;c<NC;c++)if(o[c])put(c,o[c]-1)}
+function put(c,p){B[c]=p+1;var L=CL[c],a=LC[p];for(var i=0;i<L.length;i++)a[L[i]]++}
+function take(c,p){B[c]=0;var L=CL[c],a=LC[p];for(var i=0;i<L.length;i++)a[L[i]]--}
+function gap(l){var q=LN[l];for(var k=0;k<4;k++)if(!B[q[k]])return q[k];return -1}
+function threats(p){   // empty cells completing a line of player p
+  var a=LC[p],b=LC[1-p],out=[],l,c;
+  for(l=0;l<NL;l++)if(a[l]===3&&!b[l]){c=gap(l);if(out.indexOf(c)<0)out.push(c)}
+  return out;
+}
+function hasThreat(p){var a=LC[p],b=LC[1-p];for(var l=0;l<NL;l++)if(a[l]===3&&!b[l])return gap(l);return -1}
+function evalP(p){   // static value for player p (to move)
+  var a=LC[p],b=LC[1-p],W=AIW.W,s=0;
+  for(var l=0;l<NL;l++){if(!b[l])s+=W[a[l]];else if(!a[l])s-=W[b[l]]}
+  return s;
+}
+function hcell(c,p){var L=CL[c],a=LC[p],b=LC[1-p],H=AIW.H,s=0,i,l;
+  for(i=0;i<L.length;i++){l=L[i];if(!b[l])s+=H[a[l]];if(!a[l])s+=H[b[l]]*.9}return s}
+function order(p,k){var c,ms=[];for(c=0;c<NC;c++)if(!B[c])ms.push({c:c,h:hcell(c,p)});
+  ms.sort(function(x,y){return y.h-x.h});return ms.slice(0,k).map(function(m){return m.c})}
+// negamax value for player p to move; a single forced block does not use up depth
+function nega(d,al,be,p,ply){
+  if(hasThreat(p)>=0)return WIN-ply;
+  var th=threats(1-p),ms,best=-INF,v,i,f;
+  if(th.length>=2)return -(WIN-ply-1);
+  f=th.length===1;
+  if(f)ms=th;else{if(d<=0)return evalP(p);ms=order(p,BEAM[3])}
+  if(!ms.length)return 0;
+  for(i=0;i<ms.length;i++){
+    put(ms[i],p);v=-nega(f?d:d-1,-be,-al,1-p,ply+1);take(ms[i],p);
+    if(v>best)best=v;if(best>al)al=best;if(al>=be)break;
+  }
+  return best;
+}
+// threat-sequence search: can p (to move) win by a chain of threes the opponent must block, ending in a double threat?
+// returns the first move of such a chain, or -1
+function vcf(p,depth){
+  if(--BUD<0)return -1;
+  var w=hasThreat(p);if(w>=0)return w;
+  var o=1-p,oth=threats(o),cand=[],a=LC[p],b=LC[o],l,k,c,t,r,ok,i;
+  if(oth.length>=2||depth<=0)return -1;
+  if(oth.length===1)cand=oth;
+  else{var sc={};
+    for(l=0;l<NL;l++)if(a[l]===2&&!b[l])for(k=0;k<4;k++){c=LN[l][k];if(!B[c])sc[c]=(sc[c]||0)+1}
+    for(c in sc)cand.push(+c);
+    cand.sort(function(x,y){return sc[y]-sc[x]});
+  }
+  for(i=0;i<cand.length;i++){
+    c=cand[i];put(c,p);t=threats(p);ok=false;
+    if(t.length>=2)ok=true;
+    else if(t.length===1){r=t[0];put(r,o);ok=vcf(p,depth-1)>=0;take(r,o)}
+    take(c,p);
+    if(ok)return c;
+    if(BUD<0)return -1;
+  }
+  return -1;
+}
+var BEAM=[0,64,14,12],NOISE=[0,30,1.5,.4];
+function aiMove(s){
+  var ms=legal(s),lv=+$("level").value,P=s.turn,byJ={},best=-INF,pick=null,i,v,c,w,th,cand;
+  if(!ms.length)return null;
+  ms.forEach(function(m){byJ[m.j]=m});
+  load(s.e);
+  w=hasThreat(P);if(w>=0)return byJ[w];                     // complete a line now
+  th=threats(1-P);if(th.length)return byJ[th[Math.floor(Math.random()*th.length)]];   // block the opponent's three
+  if(lv>1){BUD=lv===3?60000:4000;c=vcf(P,lv===3?12:4);if(c>=0)return byJ[c]}   // a forced win by threats
+  if(lv===1){for(i=0;i<ms.length;i++){v=hcell(ms[i].j,P)+Math.random()*NOISE[1];if(v>best){best=v;pick=ms[i]}}return pick}
+  cand=order(P,BEAM[lv]);
+  for(i=0;i<cand.length;i++){
+    c=cand[i];put(c,P);
+    v=-nega(lv===3?3:1,-INF,INF,1-P,1);
+    BUD=lv===3?6000:800;if(v>-WIN/2&&vcf(1-P,lv===3?8:3)>=0)v-=WIN/2;   // the opponent would have a forced win
+    take(c,P);
+    v+=Math.random()*NOISE[lv];
+    if(v>best){best=v;pick=byJ[c]}
+  }
+  return pick;
+}
+var sim=null,LOCK=["mode","side","level","new","undo","redo","simN","simR","nFirst","nPrev","nNext","nLast"];
+function runSim(){   // computer vs computer, to look for first/second-player advantage
+  if(sim){sim.stop=true;return}
+  var CAP=NC+1,me=sim={stop:false},TOTALG=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?2:+$("simR").value)),
+      done=0,w=[0,0,0],un=0,g=newState(),plies=0,lvName=$("level").options[$("level").selectedIndex].text,nm=GAME.sides.map(function(x){return x.name});
+  LOCK.forEach(function(i){$(i).disabled=true});
+  $("sim").textContent="Stop simulation";
+  $("simout").textContent="Simulating at "+lvName+" level… 0/"+TOTALG;
+  function finish(stopped){
+    sim=null;$("sim").textContent="Simulation";
+    ["mode","new","simN","simR"].forEach(function(i){$(i).disabled=false});
+    $("level").disabled=$("side").disabled=$("mode").value==="2p";
+    var mg=done?(196*Math.sqrt((w[0]/done)*(1-w[0]/done)/done)).toFixed(1):"0";
+    var pc=function(n){return done?(100*n/done).toFixed(1)+"%":"n/a"};
+    $("simout").textContent=(stopped?"Stopped after ":"")+done+" games at "+lvName+" level (computer vs computer), first "+RND+" moves random.\n"+
+      "First player ("+nm[0]+") won "+pc(w[0])+" ("+w[0]+" games, margin ±"+mg+" points at 95% confidence). Second player ("+nm[1]+") won "+pc(w[1])+" ("+w[1]+" games)."+(w[2]?" Draws: "+w[2]+".":"")+(un?" Unfinished: "+un+".":"");
+    render();
+  }
+  function stepSim(){
+    if(me.stop){finish(true);return}
+    var t0=Date.now(),m,ms;
+    while(Date.now()-t0<40){
+      if(g.w>=0||plies>=CAP){
+        if(g.w>=0)w[g.w]++;else un++;
+        done++;g=newState();plies=0;
+        if(done>=TOTALG){finish(false);return}
+        continue;
+      }
+      if(plies<RND){ms=legal(g);m=ms[Math.floor(Math.random()*ms.length)]}
+      else m=aiMove(g);
+      if(!m){g.w=2;continue}
+      g=m.ns;plies++;
+    }
+    $("simout").textContent="Simulating at "+lvName+" level… "+done+"/"+TOTALG;
+    setTimeout(stepSim,0);
+  }
+  stepSim();
+}
+
+/* =============================== 3. INTERFACE =============================== */
+var hist,redo=[],view=null,over,busy,note="";   // view: null = live position, otherwise the index being reviewed
+var GOLD="#e0a800",CD=.42,SH=.5,GAP=2.3;
+// screen point of plane coordinates (u across, v into the board) on level z; level 4 (z=3) at the top
+function pt(u,v,z){return[u+v*SH,(3-z)*GAP+4*CD-v*CD]}
+function ps(a){return a[0].toFixed(3)+","+a[1].toFixed(3)}
+function ctr(c){return pt(cx(c)+.5,cy(c)+.5,cz(c))}
+function cur(){return hist[hist.length-1]}
+function line(){return hist.concat(redo.slice().reverse())}   // every position, including those that can still be redone
+function browsing(){return view!==null}
+function shown(){return view===null?cur():line()[view]}
+function goto(k){
+  if(busy||sim)return;
+  var n=hist.length-1+redo.length;k=Math.max(0,Math.min(n,k));
+  view=k===hist.length-1?null:k;note="";render();
+}
+// Undo/Redo while reviewing: leave review and play on from the reviewed position (in computer mode, from the nearest position where it is the human's turn)
+function unlock(dir){
+  var Ln=line(),k=view,j;
+  if($("mode").value==="ai"){
+    j=k;while(j>=0&&j<Ln.length&&Ln[j].w<0&&Ln[j].turn!==+$("side").value)j+=dir;
+    if(j>=0&&j<Ln.length)k=j;
+  }
+  hist=Ln.slice(0,k+1);redo=Ln.slice(k+1).reverse();view=null;note="";over=false;render();maybeAI();
+}
+function humanTurn(){return $("mode").value==="2p"||cur().turn===+$("side").value}
+function start(){
+  $("gsub").textContent=GAME.subtitle();
+  hist=[newState()];redo=[];view=null;note="";$("level").disabled=$("side").disabled=$("mode").value==="2p";over=false;busy=false;
+  render();maybeAI();
+}
+function disc(c,q,op,cls){var p=ctr(c),sd=GAME.sides[q];
+  return'<g'+(cls?' class="'+cls+'"':'')+(op?' opacity="'+op+'"':'')+'><ellipse cx="'+p[0]+'" cy="'+(p[1]+.05)+'" rx=".32" ry=".165" fill="#000" fill-opacity=".28"/>'+
+    '<ellipse cx="'+p[0]+'" cy="'+p[1]+'" rx=".32" ry=".165" fill="url(#g'+q+')" stroke="'+sd.dark+'" stroke-width=".025"/></g>'}
+function render(){
+  var br=browsing(),s=shown(),sd=GAME.sides,h=[],P=s.turn,i,z,k,nT=hist.length-1+redo.length,kk=br?view:hist.length-1,lock=busy||!!sim,mv=s.mv;
+  over=s.w>=0;
+  var x0=-1.1,y0=-.75,W=4+4*SH+2.4,Hh=3*GAP+4*CD+1.55;
+  h.push('<svg viewBox="'+x0+' '+y0+' '+W+' '+Hh+'" role="img" aria-label="Qubic board: four levels of 4 by 4 cells">');
+  h.push('<defs>'+sd.map(function(d,q){return'<radialGradient id="g'+q+'" cx="40%" cy="30%" r="75%"><stop offset="0" stop-color="'+d.light+'"/><stop offset=".55" stop-color="'+d.color+'"/><stop offset="1" stop-color="'+d.dark+'"/></radialGradient>'}).join("")+'</defs>');
+  h.push('<rect x="'+(x0+.1)+'" y="'+(y0+.1)+'" width="'+(W-.2)+'" height="'+(Hh-.2)+'" rx=".3" fill="#f8f6ef" stroke="#e2ddcf" stroke-width=".05"/>');
+  var fs=.3;
+  function lab(p,t,anc){h.push('<text x="'+p[0].toFixed(3)+'" y="'+p[1].toFixed(3)+'" font-size="'+fs+'" text-anchor="'+(anc||"middle")+'" dominant-baseline="central" fill="var(--mute)" pointer-events="none">'+t+'</text>')}
+  for(z=3;z>=0;z--){
+    h.push('<polygon points="'+[pt(0,0,z),pt(4,0,z),pt(4,4,z),pt(0,4,z)].map(ps).join(" ")+'" fill="#e9e4d4" fill-opacity=".92" stroke="#8f887a" stroke-width=".045" stroke-linejoin="round"/>');
+    for(k=1;k<4;k++){
+      var a=pt(k,0,z),b=pt(k,4,z),c=pt(0,k,z),d=pt(4,k,z);
+      h.push('<line x1="'+a[0]+'" y1="'+a[1]+'" x2="'+b[0]+'" y2="'+b[1]+'" stroke="#a9a290" stroke-width=".025"/><line x1="'+c[0]+'" y1="'+c[1]+'" x2="'+d[0]+'" y2="'+d[1]+'" stroke="#a9a290" stroke-width=".025"/>');
+    }
+    // coordinates: rows 1–4 on the left of every level, level number on the right
+    for(k=0;k<4;k++){var r=pt(0,k+.5,z);lab([r[0]-.28,r[1]],k+1)}
+    var m=pt(4,2,z);lab([m[0]+.3,m[1]],"Level "+(z+1),"start");
+  }
+  // columns a–d under level 1 and above level 4
+  for(k=0;k<4;k++){var lo=pt(k+.5,0,0),hi=pt(k+.5,4,3),Lt=String.fromCharCode(97+k);lab([lo[0],lo[1]+.33],Lt);lab([hi[0],hi[1]-.33],Lt)}
+  var canAct=!br&&!over&&humanTurn()&&!busy,last=mv?mv.to:[];
+  // markers
+  for(i=0;i<NC;i++)if(s.e[i]){
+    h.push(disc(i,s.e[i]-1));
+  }
+  // winning markers: a white point at the centre of each of the four
+  if(s.wl>=0)LN[s.wl].forEach(function(c){var g=ctr(c);h.push('<ellipse cx="'+g[0]+'" cy="'+g[1]+'" rx=".085" ry=".05" fill="#fff" stroke="#000" stroke-opacity=".35" stroke-width=".015" pointer-events="none"/>')});
+  // the last move: a gold point at the centre of its marker (inside the white point if it is also a winning marker)
+  last.forEach(function(c){if(!s.e[c])return;var g=ctr(c),w=s.wl>=0&&LN[s.wl].indexOf(c)>=0;
+    h.push('<ellipse cx="'+g[0]+'" cy="'+g[1]+'" rx="'+(w?.055:.085)+'" ry="'+(w?.032:.05)+'" fill="'+GOLD+'" stroke="#000" stroke-opacity="'+(w?0:.35)+'" stroke-width=".015" pointer-events="none"/>')});
+  // click targets: one cell polygon per cell, with a hover preview of the marker on empty cells
+  for(i=0;i<NC;i++){var X=cx(i),Y=cy(i),Zl=cz(i);
+    h.push('<g class="sl" data-i="'+i+'">'+(canAct&&!s.e[i]?disc(i,P,0,"pv"):'')+
+      '<polygon points="'+[pt(X,Y,Zl),pt(X+1,Y,Zl),pt(X+1,Y+1,Zl),pt(X,Y+1,Zl)].map(ps).join(" ")+'" fill="#000" fill-opacity="0"/></g>');
+  }
+  h.push('</svg>');
+  $("board").innerHTML=h.join("");
+  var names=sd.map(function(x){return x.name}),st;
+  for(i=0;i<2;i++){var t=GAME.stats(s,i);$("s"+i).textContent=t.big;$("d"+i).textContent=t.text;
+    $("p"+i).className="pl"+(!over&&s.turn===i?" on":"")}
+  if(br)st="Reviewing history (move "+kk+" of "+nT+"): the board is locked. Press Undo or Redo to play on from here.";
+  else if(over)st=s.w===2?"Game over: draw.":"Game over: "+names[s.w]+" wins.";
+  else if(!humanTurn())st=names[P]+" to move (computer thinking…)";
+  else st=names[P]+" to move: place a marker on any empty cell.";
+  $("status").textContent=st;
+  $("last").textContent=(GAME.describe(s)+" "+note).trim();
+  $("undo").disabled=lock||!(br||hist.length>=2);
+  $("redo").disabled=lock||!(br||redo.length);
+  $("nFirst").disabled=$("nPrev").disabled=lock||kk<=0;
+  $("nNext").disabled=$("nLast").disabled=lock||kk>=nT;
+  $("nlab").textContent="Move "+kk+" of "+nT;
+}
+function play(ns){hist.push(ns);redo=[];note="";render();maybeAI()}
+function click(i){
+  if(over||busy||browsing()||!humanTurn())return;
+  var s=cur();note="";
+  if(s.e[i])note=s.e[i]===s.turn+1?"You already have a marker on "+sname(i)+".":sname(i).charAt(0).toUpperCase()+sname(i).slice(1)+" is taken by "+GAME.sides[s.e[i]-1].name+".";
+  else{play(place(s,i).ns);return}
+  render();
+}
+function maybeAI(){
+  if(over||$("mode").value!=="ai"||cur().turn===+$("side").value)return;
+  busy=true;render();
+  setTimeout(function(){
+    var c=cur(),m=aiMove(c);busy=false;
+    if(m){hist.push(m.ns);redo=[]}else{c.w=2;c.ev="No legal move: the game is a draw."}
+    render();maybeAI();
+  },60);
+}
+document.title=GAME.title;$("gtitle").textContent=GAME.title;
+function li(x){return"<li>"+(typeof x==="string"?x:x.t+"<ul>"+x.sub.map(li).join("")+"</ul>")+"</li>"}
+$("rules").innerHTML=GAME.rules.map(function(sec){return"<li><b>"+sec.h+"</b><ul>"+sec.items.map(li).join("")+"</ul></li>"}).join("");
+$("side").innerHTML=GAME.sides.map(function(x,i){return'<option value="'+i+'">You are '+x.name+(i?"":" (first)")+'</option>'}).join("");
+for(var i=0;i<2;i++)$("n"+i).textContent=GAME.sides[i].name;
+$("board").onclick=function(e){var t=e.target.closest("[data-i]");if(t)click(+t.getAttribute("data-i"))};
+$("new").onclick=start;$("sim").onclick=runSim;
+$("mode").onchange=$("side").onchange=start;
+function aiSide(){return $("mode").value==="ai"&&cur().turn!==+$("side").value}
+$("redo").onclick=function(){
+  if(busy||sim)return;
+  if(browsing()){unlock(1);return}
+  if(!redo.length)return;
+  hist.push(redo.pop());
+  while(redo.length&&aiSide())hist.push(redo.pop());
+  note="";render();
+};
+$("undo").onclick=function(){
+  if(busy||sim)return;
+  if(browsing()){unlock(-1);return}
+  if(hist.length<2)return;
+  redo.push(hist.pop());
+  while(hist.length>1&&aiSide())redo.push(hist.pop());
+  over=false;note="";render();maybeAI();
+};
+$("nFirst").onclick=function(){goto(0)};
+$("nPrev").onclick=function(){goto((browsing()?view:hist.length-1)-1)};
+$("nNext").onclick=function(){goto((browsing()?view:hist.length-1)+1)};
+$("nLast").onclick=function(){goto(hist.length-1+redo.length)};
+start();
+})();
+</script>
+</body>
+</html>
