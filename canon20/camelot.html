@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Camelot</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
+<style>
+:root{--bg:#eef0e6;--ink:#1f2a1c;--mute:#5d6a56;--hi:#e0803a;--panel:#fff;--line:#c5cab4;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--panel:#1f271c;--line:#37422f}}
+:root[data-theme="dark"]{--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--panel:#1f271c;--line:#37422f}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+main{max-width:1080px;margin:0 auto;padding:16px 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.right>.bar:first-child{margin-top:0}
+@media (min-width:860px){.layout{grid-template-columns:minmax(0,560px) minmax(300px,1fr);gap:28px;align-items:start}}
+h1{font:700 2rem/1.1 "Bricolage Grotesque",Georgia,serif;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+select,button.ctl{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.ctl:disabled,select:disabled,input:disabled{opacity:.45;cursor:default}
+label.f{color:var(--mute);font-size:.9rem}
+input[type=number]{width:4.5em;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+button.ctl.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button.ctl.icon{display:inline-flex;align-items:center;justify-content:center;padding:6px 10px}
+button.ctl.icon svg{width:18px;height:18px;fill:currentColor;display:block}
+.navlab{min-width:7.5em;text-align:center;color:var(--mute);font-variant-numeric:tabular-nums}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.pl{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:8px 12px;display:flex;justify-content:space-between;align-items:baseline;gap:6px}
+.pl.on{border-color:var(--hi)}
+.pl b{font:700 1.6rem "Bricolage Grotesque",Georgia,serif}
+.pl small{color:var(--mute)}
+#status{min-height:1.5em;font-weight:600;margin:6px 0}
+#board svg{display:block;width:100%;max-width:560px;margin:0 auto;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+#board .sq{cursor:pointer}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+details li{margin:4px 0}
+.legend{color:var(--mute);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+<h1 id="gtitle"></h1>
+<p class="sub" id="gsub"></p>
+<div class="layout">
+<div class="left">
+<div id="board"></div>
+<p class="legend">Click one of your pieces, then click the squares it lands on, one step or leap at a time; green dots show where it can go next. A green ring means the move may stop here: click the piece again to end it. Click the square the piece started from to cancel. Squares numbered as on the original board; the starred squares A–B are Red’s castle, Y–Z White’s. The gold outline marks the last move.</p>
+</div>
+<aside class="right">
+<div class="bar">
+  <select id="mode" aria-label="Mode"><option value="ai">Play the computer</option><option value="2p">Two players</option></select>
+  <select id="level" aria-label="Computer strength"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select>
+  <select id="side" aria-label="Your side"></select>
+  <button class="ctl primary" id="new">New game</button>
+  <button class="ctl" id="undo">Undo</button>
+  <button class="ctl" id="redo">Redo</button>
+</div>
+<div class="bar" id="nav" role="group" aria-label="Game history">
+  <button class="ctl icon" id="nFirst" aria-label="Go to the beginning" title="Go to the beginning"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="2.5" height="14"/><path d="M19 5v14L8 12z"/></svg></button>
+  <button class="ctl icon" id="nPrev" aria-label="One move back" title="One move back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 5v14L6 12z"/></svg></button>
+  <span class="navlab" id="nlab" aria-live="polite">Move 0 of 0</span>
+  <button class="ctl icon" id="nNext" aria-label="One move forward" title="One move forward"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5v14l11-7z"/></svg></button>
+  <button class="ctl icon" id="nLast" aria-label="Go to the last move" title="Go to the last move"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5v14l11-7z"/><rect x="17.5" y="5" width="2.5" height="14"/></svg></button>
+</div>
+<div class="score">
+  <div class="pl" id="p0"><span><span id="n0"></span> <small id="d0"></small></span><b id="s0">0</b></div>
+  <div class="pl" id="p1"><span><span id="n1"></span> <small id="d1"></small></span><b id="s1">0</b></div>
+</div>
+<div id="status" aria-live="polite"></div>
+<div id="last" class="legend" style="min-height:2.6em;margin:0 0 8px"></div>
+<div class="bar">
+  <label class="f">Simulation games <input id="simN" type="number" min="10" max="1000" value="10"></label>
+  <label class="f">Random opening moves <input id="simR" type="number" min="0" max="20" value="4"></label>
+  <button class="ctl" id="sim">Simulation</button>
+</div>
+<div id="simout" class="legend" style="white-space:pre-line;margin:0 0 8px"></div>
+<details>
+<summary>Rules</summary>
+<ul id="rules"></ul>
+</details>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+/* =====================================================================
+   1. GAME DEFINITION  - Camelot rules, board geometry, move generation
+   2. ENGINE           - alpha-beta (beam-limited) computer opponent with capture search, simulations
+   3. INTERFACE        - SVG board, click handling, controls
+   Board: grid of 12 columns x 16 rows, index i = r*12+c, r=0 at the top (Red's side). 160 squares are on the board:
+   row 0 = castle A,B (Red's), rows 1..14 numbered 1..156 as on the original board, row 15 = castle Y,Z (White's).
+   Pieces in b[i]: 0 empty, 1 White man, 2 White knight, 3 Red man, 4 Red knight. Side 0 = White, 1 = Red.
+   A move is {p:[squares visited: start, then each landing square], c:[captured squares], k:kind}
+   kind: "P" plain move, "CM" castle move, "C" canter, "J" jump, "KC" knight's charge.
+   A state is {b, turn, cm:[castle moves used White, Red], w:winner (-1 none, 0 White, 1 Red, 2 draw), mv, ply}.
+   ===================================================================== */
+var $=function(i){return document.getElementById(i)};
+
+/* ============================ 1. GAME DEFINITION ============================ */
+var W=12,H=16,NSQ=W*H,VALID=new Uint8Array(NSQ),LAB=[],OWN=new Int8Array(NSQ).fill(-1),NB=new Int16Array(NSQ*8).fill(-1),
+    DIRS=[[-1,-1],[0,-1],[1,-1],[-1,0],[1,0],[-1,1],[0,1],[1,1]],CASTLE=[[],[]],BYLAB={},SQS=[];
+function rowRange(r){return r===0||r===15?[5,6]:r===1||r===14?[2,9]:r===2||r===13?[1,10]:[0,11]}
+(function(){
+  var n=1,r,c,d,i;
+  for(r=0;r<H;r++){var g=rowRange(r);for(c=g[0];c<=g[1];c++){i=r*W+c;VALID[i]=1;SQS.push(i);
+    LAB[i]=r===0?(c===5?"A":"B"):r===15?(c===5?"Y":"Z"):String(n++);BYLAB[LAB[i]]=i;
+    if(r===0){OWN[i]=1;CASTLE[1].push(i)}if(r===15){OWN[i]=0;CASTLE[0].push(i)}}}
+  for(i=0;i<NSQ;i++)if(VALID[i])for(d=0;d<8;d++){r=(i/W|0)+DIRS[d][1];c=i%W+DIRS[d][0];
+    if(r>=0&&r<H&&c>=0&&c<W&&VALID[r*W+c])NB[i*8+d]=r*W+c}
+})();
+function sideOf(p){return (p-1)>>1}
+function isK(p){return (p&1)===0}
+function pieceName(p){return GAME.sides[sideOf(p)].name+" "+(isK(p)?"knight":"man")}
+var SETUP={men:[[95,96,97,98,106,107,108,109,110,111],[46,47,48,49,50,51,59,60,61,62]],knights:[[94,99,105,112],[45,52,58,63]]};
+var GAME={
+  title:"Camelot",
+  subtitle:function(){return "George S. Parker’s battle game (1930). Each side has 4 knights and 10 men; get two pieces into the enemy castle."},
+  sides:[{name:"White",fill:"#f7f2e6",stroke:"#3b352c",goal:"castle A–B"},{name:"Red",fill:"#c3303a",stroke:"#4d0c12",goal:"castle Y–Z"}],
+  rules:[
+  {h:"Board and pieces",items:[
+    "160 squares of two tints. The two starred squares at each end are a castle: A–B is Red’s castle (top), Y–Z is White’s castle (bottom).",
+    "Each side has 4 knights (shown as chess knights) and 10 men (shown as pawns), set up in two ranks: White on 94–99 and 105–112, Red on 45–52 and 58–63, knights on the end squares 45, 52, 58, 63, 94, 99, 105, 112.",
+    "The original leaves the first player to a toss; here White moves first. Players then alternate, one move per turn."]},
+  {h:"Moves (for knights and men)",items:[
+    "Plain move: one square in any of the 8 directions to an empty square.",
+    "Canter: leap over an adjacent piece of your own colour to the empty square directly beyond it, in any of the 8 directions. The piece leapt over stays. Several canters may be chained in one move, changing direction freely; the piece may stop after any leap, but may not come back to a square it has already visited in that move.",
+    "Jump: leap over an adjacent enemy piece to the empty square directly beyond it; the enemy piece is captured and removed at once. As long as the piece lands next to another enemy piece it can jump, it must keep jumping in the same move (it chooses the route).",
+    "A leap always lands on a square of the same tint; only a plain move changes tint. A plain move can never be combined with a leap."]},
+  {h:"Knight’s charge",items:[
+    "A knight (never a man) may canter one or more times and then continue the same move with one or more jumps. The canter must come first; it cannot canter again after jumping.",
+    "A knight is never forced to charge, but if its canter ends next to an enemy piece it can jump, it must go on and jump (unless the move captures elsewhere)."]},
+  {h:"Compulsory capture",items:[
+    "If any of your pieces stands next to an enemy piece it can jump, you must capture this turn: by that jump, by any other jump, or by a knight’s charge anywhere on the board. You choose which.",
+    "In the original rules the opponent may ignore a missed capture or demand that it be corrected; here the computer simply allows only capturing moves."]},
+  {h:"Castles",items:[
+    "You may not plain-move or canter into your own castle. You may jump into it (also as the jumping part of a knight’s charge); the move ends there, and that piece must leave the castle on your very next move, ahead of any other play. If it can jump out, it must.",
+    "A piece that enters the enemy castle can never come out again, not even by a leap. It may make a castle move from one castle square to the other, at most twice per game per player."]},
+  {h:"Winning",items:[
+    "You win as soon as two of your pieces (any mix of knights and men) stand on the enemy castle squares.",
+    "You also win by capturing all enemy pieces, or all but one, while you keep at least two. If both sides are down to one piece the game is a draw.",
+    "Added for computer play: a player who has no legal move loses."]}],
+  stats:function(s,i){var k=0,m=0,inC=0;for(var j=0;j<SQS.length;j++){var q=SQS[j],p=s.b[q];if(p&&sideOf(p)===i){if(isK(p))k++;else m++;if(OWN[q]===1-i)inC++}}
+    return{big:k+m,text:"· "+k+" knight"+(k===1?"":"s")+", "+m+" "+(m===1?"man":"men")+(inC?" · "+inC+" in enemy castle · castle moves left "+(2-s.cm[i]):"")}},
+  describe:function(s){
+    if(!s.mv)return "";
+    var m=s.mv,t=GAME.sides[m.by].name+" "+(m.knight?"knight":"man")+" ",k=m.k;
+    if(k==="P"||k==="CM")t+=(k==="CM"?"castle move ":"")+LAB[m.p[0]]+"–"+LAB[m.p[1]];
+    else{t+=(k==="KC"?"KC ":"")+LAB[m.p[0]];for(var i=1;i<m.p.length;i++)t+=" "+(m.leg[i-1]?"J":"C")+" "+LAB[m.p[i]]}
+    if(m.c.length)t+=", capturing "+m.c.length+" piece"+(m.c.length>1?"s":"")+" ("+m.c.map(function(q,i){return (m.ck[i]?"knight ":"man ")+LAB[q]}).join(", ")+")";
+    t+=".";
+    if(s.w===2)t+=" Both sides are down to one piece: the game is a draw.";
+    else if(s.w>=0)t+=" "+GAME.sides[s.w].name+(s.why==="castle"?" has two pieces in the enemy castle and wins!":s.why==="stuck"?" wins: "+GAME.sides[1-s.w].name+" has no legal move.":" has destroyed the enemy army and wins!");
+    else if(s.must)t+=" "+GAME.sides[s.turn].name+" must move the piece out of its own castle.";
+    return t;
+  }
+};
+function newState(){
+  var b=new Int8Array(NSQ);
+  for(var P=0;P<2;P++){SETUP.men[P].forEach(function(l){b[BYLAB[l]]=P*2+1});SETUP.knights[P].forEach(function(l){b[BYLAB[l]]=P*2+2})}
+  return{b:b,turn:0,cm:[0,0],w:-1,mv:null,ply:0};
+}
+function canJumpFrom(w,P,f){
+  for(var d=0;d<8;d++){var n=NB[f*8+d];if(n<0)continue;var q=w[n];if(!q||sideOf(q)===P)continue;var t=NB[n*8+d];if(t>=0&&!w[t])return true}
+  return false;
+}
+// all jump continuations from f; a jump that lands in a castle ends the move, otherwise jumping continues while possible
+function jumpDFS(w,P,f,path,caps,out,kind,pc){
+  for(var d=0;d<8;d++){var n=NB[f*8+d];if(n<0)continue;var q=w[n];if(!q||sideOf(q)===P)continue;var t=NB[n*8+d];if(t<0||w[t])continue;
+    w[n]=0;path.push(t);caps.push(n);
+    if(OWN[t]>=0||!canJumpFrom(w,P,t))out.push({p:path.slice(),c:caps.slice(),k:kind});
+    else jumpDFS(w,P,t,path,caps,out,kind,pc);
+    path.pop();caps.pop();w[n]=q;
+  }
+}
+// canter paths from f (the moving piece already lifted from the board); all=false gives one path per landing square
+function canterDFS(w,P,f,path,vis,out,all){
+  for(var d=0;d<8;d++){var n=NB[f*8+d];if(n<0)continue;var q=w[n];if(!q||sideOf(q)!==P)continue;var t=NB[n*8+d];
+    if(t<0||w[t]||vis[t]||OWN[t]===P)continue;
+    if(out.length>4000)return;
+    vis[t]=1;path.push(t);out.push(path.slice());
+    if(OWN[t]!==1-P)canterDFS(w,P,t,path,vis,out,all);
+    path.pop();if(all)vis[t]=0;
+  }
+}
+function pieceMoves(s,w,f,P,mode,all,jumps,charges,quiet){
+  // mode: which kinds to collect for piece on f
+  var pc=w[f];w[f]=0;
+  if(mode.j)jumpDFS(w,P,f,[f],[],jumps,"J",pc);
+  if(isK(pc)||mode.q){
+    var cps=[],vis=new Uint8Array(NSQ);vis[f]=1;canterDFS(w,P,f,[f],vis,cps,all);
+    for(var i=0;i<cps.length;i++){var pa=cps[i],e=pa[pa.length-1],jr=OWN[e]<0&&canJumpFrom(w,P,e);
+      if(isK(pc)&&jr&&mode.c)jumpDFS(w,P,e,pa.slice(),[],charges,"KC",pc);
+      if(mode.q&&!(isK(pc)&&jr))quiet.push({p:pa,c:[],k:"C"});
+    }
+  }
+  if(mode.q){
+    for(var d=0;d<8;d++){var t=NB[f*8+d];if(t>=0&&!w[t]&&OWN[t]!==P)quiet.push({p:[f,t],c:[],k:"P"})}
+  }
+  w[f]=pc;
+}
+// legal moves: {ms, forced:true when a capture or a castle exit is compulsory, why}
+function gen(s,all,onlyForced){
+  if(s.w>=0)return{ms:[],forced:false};
+  var P=s.turn,w=s.b.slice(),mine=[],i,f,jumps=[],charges=[],quiet=[];
+  for(i=0;i<SQS.length;i++){f=SQS[i];if(w[f]&&sideOf(w[f])===P)mine.push(f)}
+  // 1. a piece that jumped into its own castle must leave it first
+  var ex=mine.filter(function(q){return OWN[q]===P});
+  if(ex.length){
+    ex.forEach(function(q){pieceMoves(s,w,q,P,{j:1},all,jumps,charges,quiet)});
+    if(jumps.length)return{ms:jumps,forced:true,why:"exit"};
+    ex.forEach(function(q){pieceMoves(s,w,q,P,{c:1,q:1},all,jumps,charges,quiet)});
+    if(charges.length||quiet.length)return{ms:charges.concat(quiet),forced:true,why:"exit"};
+  }
+  // 2. compulsory capture
+  for(i=0;i<mine.length;i++){f=mine[i];if(OWN[f]===1-P)continue;pieceMoves(s,w,f,P,{j:1},all,jumps,charges,quiet)}
+  if(jumps.length||!onlyForced)for(i=0;i<mine.length;i++){f=mine[i];if(OWN[f]===1-P||!isK(w[f]))continue;pieceMoves(s,w,f,P,{c:1},all,jumps,charges,quiet)}
+  if(jumps.length)return{ms:jumps.concat(charges),forced:true,why:"capture"};
+  if(onlyForced)return{ms:null,forced:false};
+  // 3. free choice
+  for(i=0;i<mine.length;i++){f=mine[i];
+    if(OWN[f]===1-P){var o=CASTLE[1-P][0]===f?CASTLE[1-P][1]:CASTLE[1-P][0];if(s.cm[P]<2&&!w[o])quiet.push({p:[f,o],c:[],k:"CM"});continue}
+    pieceMoves(s,w,f,P,{q:1},all,jumps,charges,quiet);
+  }
+  return{ms:charges.concat(quiet),forced:false};
+}
+function apply(s,m){
+  var P=s.turn,b=s.b.slice(),f=m.p[0],t=m.p[m.p.length-1],pc=b[f],ck=m.c.map(function(q){return isK(b[q])}),i,q,cnt=[0,0],inC=0;
+  b[f]=0;for(i=0;i<m.c.length;i++)b[m.c[i]]=0;b[t]=pc;
+  var cm=s.cm.slice();if(m.k==="CM")cm[P]++;
+  var ns={b:b,turn:1-P,cm:cm,w:-1,mv:{p:m.p,c:m.c,ck:ck,k:m.k,by:P,knight:isK(pc),leg:null},ply:s.ply+1,why:"",must:false};
+  for(i=0;i<SQS.length;i++){q=SQS[i];if(b[q]){cnt[sideOf(b[q])]++;if(OWN[q]===1-P&&sideOf(b[q])===P)inC++;if(OWN[q]===1-P&&sideOf(b[q])===1-P)ns.must=true}}
+  if(inC>=2){ns.w=P;ns.why="castle"}
+  else if(cnt[1-P]<=1&&cnt[P]>=2){ns.w=P;ns.why="army"}
+  else if(cnt[0]<=1&&cnt[1]<=1){ns.w=2}
+  return ns;
+}
+// leg types for the move notation (C canter / J jump), worked out from the board before the move
+function legs(s,m){var b=s.b,out=[],ci=0;for(var i=1;i<m.p.length;i++){var a=m.p[i-1],z=m.p[i];
+  if(m.k==="P"||m.k==="CM"){out.push(0);continue}
+  var mid=((a/W|0)+(z/W|0))/2*W+((a%W)+(z%W))/2;out.push(m.c.indexOf(mid)>=0?1:0)}return out}
+function play1(s,m){var ns=apply(s,m);ns.mv.leg=legs(s,m);return ns}
+// a player with no legal move loses (checked for positions actually reached in play)
+function settle(ns){if(ns.w<0&&!gen(ns,false).ms.length){ns.w=1-ns.turn;ns.why="stuck"}return ns}
+
+/* ================================ 2. ENGINE ================================ */
+var ADV=[];for(var a=0;a<16;a++)ADV[a]=a<=6?0:(a-6)*(a-6)*1.6;
+function ev(s){   // value from White's point of view
+  var b=s.b,v=0,i,q,p,P,r,pr,val;
+  for(i=0;i<SQS.length;i++){q=SQS[i];p=b[q];if(!p)continue;P=sideOf(p);r=q/W|0;pr=P===0?15-r:r;
+    val=(isK(p)?175:100)+ADV[pr]*(isK(p)?1.25:1);
+    if(pr>=9){var cd=Math.abs((q%W)-5.5)-.5;val-=cd*(pr-8)*.9}
+    if(OWN[q]===1-P)val+=160;
+    v+=P===0?val:-val}
+  return v;
+}
+var WIN=100000;
+function term(s,d,P){return s.w===2?0:(s.w===P?1:-1)*(WIN+d)}
+function stand(s){return (s.turn===0?1:-1)*ev(s)}
+function dedup(ms){var seen={},out=[];ms.forEach(function(m){var k=m.p[0]+">"+m.p[m.p.length-1]+":"+m.c.slice().sort().join(",");if(!seen[k]){seen[k]=1;out.push(m)}});return out}
+// capture search: positions where the side to move must capture are searched further
+function qs(s,al,be,d){
+  if(s.w>=0)return term(s,d,s.turn);
+  var g=gen(s,false,true);
+  if(!g.forced||d<=0)return stand(s);
+  var ms=dedup(g.ms),best=-1e9,i,v;
+  for(i=0;i<ms.length;i++){v=-qs(apply(s,ms[i]),-be,-al,d-1);if(v>best)best=v;if(best>al)al=best;if(al>=be)break}
+  return best;
+}
+var BEAM=[0,0,12,8],NOISE=[0,45,10,2],QD=[0,3,4,5],DEP=[0,1,2,4],LV=2;
+function order(s,ms){var P=s.turn;ms.forEach(function(m){var ns=apply(s,m);m.ns=ns;m.v=ns.w>=0?term(ns,9,P):-stand(ns)+m.c.length*30});ms.sort(function(a,b){return b.v-a.v});return ms}
+function nega(s,d,al,be){
+  if(s.w>=0)return term(s,d,s.turn);
+  if(d===0)return qs(s,al,be,QD[LV]);
+  var g=gen(s,false),ms=dedup(g.ms),best=-1e9,i,v;
+  if(!ms.length)return -(WIN+d);
+  order(s,ms);if(!g.forced)ms=ms.slice(0,BEAM[LV]);
+  for(i=0;i<ms.length;i++){v=-nega(ms[i].ns,d-1,-be,-al);if(v>best)best=v;if(best>al)al=best;if(al>=be)break}
+  return best;
+}
+function aiMove(s){
+  var g=gen(s,false),ms=dedup(g.ms),lv=+$("level").value,best=-1e9,pick=null,i,v;LV=lv;
+  if(!ms.length)return null;
+  order(s,ms);
+  if(ms[0].ns.w===s.turn)return ms[0];
+  if(lv>1&&!g.forced)ms=ms.slice(0,lv>=3?16:14);
+  for(i=0;i<ms.length;i++){
+    v=-(lv===1?qs(ms[i].ns,-1e9,1e9,QD[1]):nega(ms[i].ns,DEP[lv]-1,-1e9,1e9))+Math.random()*NOISE[lv];
+    if(v>best){best=v;pick=ms[i]}
+  }
+  return pick;
+}
+var sim=null,LOCK=["mode","side","level","new","undo","redo","simN","simR","nFirst","nPrev","nNext","nLast"];
+function runSim(){   // computer vs computer, to look for first/second-player advantage
+  if(sim){sim.stop=true;return}
+  var CAP=400,me=sim={stop:false},TOTALG=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?4:+$("simR").value)),
+      done=0,w=[0,0,0],un=0,g=newState(),lvName=$("level").options[$("level").selectedIndex].text,nm=GAME.sides.map(function(x){return x.name});
+  LOCK.forEach(function(i){$(i).disabled=true});
+  $("sim").textContent="Stop simulation";
+  $("simout").textContent="Simulating at "+lvName+" level… 0/"+TOTALG;
+  function finish(stopped){
+    sim=null;$("sim").textContent="Simulation";
+    ["mode","new","simN","simR"].forEach(function(i){$(i).disabled=false});
+    $("level").disabled=$("side").disabled=$("mode").value==="2p";
+    var mg=done?(196*Math.sqrt((w[0]/done)*(1-w[0]/done)/done)).toFixed(1):"0";
+    var pc=function(n){return done?(100*n/done).toFixed(1)+"%":"n/a"};
+    $("simout").textContent=(stopped?"Stopped after ":"")+done+" games at "+lvName+" level (computer vs computer), first "+RND+" moves random, unfinished after "+CAP+" moves.\n"+
+      "First player ("+nm[0]+") won "+pc(w[0])+" ("+w[0]+" games, margin ±"+mg+" points at 95% confidence). Second player ("+nm[1]+") won "+pc(w[1])+" ("+w[1]+" games)."+(w[2]?" Draws: "+w[2]+".":"")+(un?" Unfinished: "+un+".":"");
+    render();
+  }
+  function stepSim(){
+    if(me.stop){finish(true);return}
+    var t0=Date.now(),m,ms;
+    while(Date.now()-t0<40){
+      if(g.w>=0||g.ply>=CAP){
+        if(g.w>=0)w[g.w]++;else un++;
+        done++;g=newState();
+        if(done>=TOTALG){finish(false);return}
+        continue;
+      }
+      if(g.ply<RND){ms=dedup(gen(g,false).ms);m=ms[Math.floor(Math.random()*ms.length)]}
+      else m=aiMove(g);
+      if(!m){g.w=1-g.turn;continue}
+      g=apply(g,m);
+    }
+    $("simout").textContent="Simulating at "+lvName+" level… "+done+"/"+TOTALG;
+    setTimeout(stepSim,0);
+  }
+  stepSim();
+}
+
+/* =============================== 3. INTERFACE =============================== */
+var hist,redo=[],view=null,over,busy,note="",sel=null;   // view: null = live position; sel: {path:[...], ms:[matching moves]}
+var GREEN="#2e9e4f",GOLD="#e0a800";
+function cur(){return hist[hist.length-1]}
+function line(){return hist.concat(redo.slice().reverse())}
+function browsing(){return view!==null}
+function shown(){return view===null?cur():line()[view]}
+function goto(k){
+  if(busy||sim)return;
+  var n=hist.length-1+redo.length;k=Math.max(0,Math.min(n,k));
+  view=k===hist.length-1?null:k;note="";sel=null;render();
+}
+function unlock(dir){
+  var Ln=line(),k=view,j;
+  if($("mode").value==="ai"){
+    j=k;while(j>=0&&j<Ln.length&&Ln[j].w<0&&Ln[j].turn!==+$("side").value)j+=dir;
+    if(j>=0&&j<Ln.length)k=j;
+  }
+  hist=Ln.slice(0,k+1);redo=Ln.slice(k+1).reverse();view=null;note="";sel=null;over=false;render();maybeAI();
+}
+function humanTurn(){return $("mode").value==="2p"||cur().turn===+$("side").value}
+function legalUI(s){if(!s._ms)s._ms=gen(s,true);return s._ms}
+function start(){
+  $("gsub").textContent=GAME.subtitle();
+  hist=[newState()];redo=[];view=null;note="";sel=null;$("level").disabled=$("side").disabled=$("mode").value==="2p";over=false;busy=false;
+  render();maybeAI();
+}
+var KN="M24 92H76V85Q76 80 71 80H29Q24 80 24 85Z M31 80C31 68 37 60 47 53C41 55 35 57 29 61C23 64 16 60 18 53C20 47 26 41 30 35C34 27 39 21 45 17L45 8L53 15C65 19 74 31 76 45C78 59 75 71 72 80Z";
+var PW="M24 92H76V85Q76 80 71 80H29Q24 80 24 85Z M50 12A13 13 0 1 0 50.01 12Z M35 42H65V49H35Z M40 49C40 62 35 71 29 80H71C65 71 60 62 60 49Z";
+function cx(q){return q%W+.5}function cy(q){return (q/W|0)+.5}
+function drawPiece(h,q,p,op,at){
+  var sd=GAME.sides[sideOf(p)],x=(at!=null?at:q)%W,y=((at!=null?at:q)/W|0),k=isK(p);
+  h.push('<g transform="translate('+(x+.06)+','+(y+.05)+') scale(.0088)" opacity="'+(op||1)+'" pointer-events="none">'+
+    '<path d="'+(k?KN:PW)+'" transform="translate(3,4)" fill="#000" fill-opacity=".22"/>'+
+    '<path d="'+(k?KN:PW)+'" fill="'+sd.fill+'" stroke="'+sd.stroke+'" stroke-width="3.2" stroke-linejoin="round"/>'+
+    (k?'<circle cx="38" cy="31" r="3.6" fill="'+sd.stroke+'"/><path d="M53 19C61 25 66 33 68 44" fill="none" stroke="'+sd.stroke+'" stroke-width="2.6" stroke-linecap="round" opacity=".7"/>':'')+'</g>');
+}
+function outline(){   // board outline polygon (clockwise), in grid units
+  var pts=[],r,g;
+  for(r=0;r<H;r++){g=rowRange(r);pts.push([g[1]+1,r],[g[1]+1,r+1])}
+  for(r=H-1;r>=0;r--){g=rowRange(r);pts.push([g[0],r+1],[g[0],r])}
+  return pts.map(function(p){return p[0]+","+p[1]}).join(" ");
+}
+var OUTLINE=outline();
+function star(x,y,R){var p=[];for(var i=0;i<10;i++){var a=-Math.PI/2+i*Math.PI/5,rr=i%2?R*.42:R;p.push((x+rr*Math.cos(a)).toFixed(3)+","+(y+rr*Math.sin(a)).toFixed(3))}return'<polygon points="'+p.join(" ")+'" fill="#fff" stroke="#8a8a8a" stroke-width=".02"/>'}
+function shield(x,y,flip){return'<g transform="translate('+x+','+y+')'+(flip?' rotate(180)':'')+'"><path d="M-.55 -.6H.55V0C.55 .45 .2 .7 0 .8C-.2 .7 -.55 .45 -.55 0Z" fill="#f2c230" stroke="#7a1d1d" stroke-width=".05"/>'+
+  '<path d="M0 -.45V.55M-.38 -.05H.38" stroke="#c3303a" stroke-width=".16"/></g>'}
+function render(){
+  var br=browsing(),s=shown(),sd=GAME.sides,h=[],P=s.turn,i,q,nT=hist.length-1+redo.length,kk=br?view:hist.length-1,lock=busy||!!sim,mv=s.mv,M=1.25;
+  over=s.w>=0;
+  var canAct=!br&&!over&&humanTurn()&&!busy,L=canAct?legalUI(s):{ms:[],forced:false};
+  h.push('<svg viewBox="'+(-M)+' '+(-M)+' '+(W+2*M)+' '+(H+2*M)+'" role="img" aria-label="Camelot board">');
+  h.push('<rect x="'+(-M)+'" y="'+(-M)+'" width="'+(W+2*M)+'" height="'+(H+2*M)+'" rx=".25" fill="#2f4f5f"/>');
+  h.push('<rect x="'+(-M+.12)+'" y="'+(-M+.12)+'" width="'+(W+2*M-.24)+'" height="'+(H+2*M-.24)+'" rx=".18" fill="#f3ead2"/>');
+  h.push('<rect x="-.75" y="-.75" width="'+(W+1.5)+'" height="'+(H+1.5)+'" fill="#4d9fd6" stroke="#c0392b" stroke-width=".07"/>');
+  h.push('<rect x="-.6" y="-.6" width="'+(W+1.2)+'" height="'+(H+1.2)+'" fill="none" stroke="#f3ead2" stroke-width=".04"/>');
+  // corner shields in the blue band beside the castles
+  [[1.6,.9,1],[W-1.6,.9,1],[1.6,H-.9,0],[W-1.6,H-.9,0]].forEach(function(c){h.push(shield(c[0],c[1],c[2]))});
+  // side banners
+  [[-.95,H/2,-90],[W+.95,H/2,90]].forEach(function(t){
+    h.push('<g transform="translate('+t[0]+','+t[1]+') rotate('+t[2]+')"><rect x="-1.9" y="-.3" width="3.8" height=".6" fill="#f3ead2" stroke="#7a6a50" stroke-width=".03"/>'+
+      '<text x="0" y=".02" font-size=".46" font-family="Georgia,serif" font-style="italic" text-anchor="middle" dominant-baseline="central" fill="#2f3a44">Camelot</text></g>')});
+  h.push('<polygon points="'+OUTLINE+'" fill="#f6c7b6" stroke="#c0392b" stroke-width=".16" stroke-linejoin="round"/>');
+  // squares
+  for(i=0;i<SQS.length;i++){q=SQS[i];var x=q%W,y=q/W|0;
+    if((x+y)%2===0)h.push('<rect x="'+x+'" y="'+y+'" width="1" height="1" fill="#a7b19c"/>');
+  }
+  for(i=0;i<SQS.length;i++){q=SQS[i];var x2=q%W,y2=q/W|0;
+    h.push('<rect x="'+x2+'" y="'+y2+'" width="1" height="1" fill="none" stroke="#6d6a5e" stroke-width=".02"/>');
+    if(OWN[q]>=0)h.push(star(x2+.5,y2+.55,.3));
+    h.push('<text x="'+(x2+.07)+'" y="'+(y2+.2)+'" font-size=".19" fill="#3d3a33" fill-opacity=".75" pointer-events="none">'+LAB[q]+'</text>');
+  }
+  h.push('<polygon points="'+OUTLINE+'" fill="none" stroke="#c0392b" stroke-width=".1" stroke-linejoin="round"/>');
+  // last move: gold outlines on the squares visited and a gold path
+  if(mv){
+    mv.p.forEach(function(q){h.push('<rect x="'+(q%W+.05)+'" y="'+((q/W|0)+.05)+'" width=".9" height=".9" rx=".08" fill="none" stroke="'+GOLD+'" stroke-width=".09"/>')});
+    if(mv.p.length>1)h.push('<polyline points="'+mv.p.map(function(q){return cx(q)+","+cy(q)}).join(" ")+'" fill="none" stroke="'+GOLD+'" stroke-width=".07" stroke-dasharray=".18 .1" stroke-linecap="round" stroke-linejoin="round" opacity=".9"/>');
+    mv.c.forEach(function(q){var X=cx(q),Y=cy(q);h.push('<path d="M'+(X-.18)+' '+(Y-.18)+'L'+(X+.18)+' '+(Y+.18)+'M'+(X+.18)+' '+(Y-.18)+'L'+(X-.18)+' '+(Y+.18)+'" stroke="'+GOLD+'" stroke-width=".08" stroke-linecap="round"/>')});
+  }
+  // movable pieces when a capture or castle exit is compulsory
+  if(canAct&&!sel&&L.forced){var fr={};L.ms.forEach(function(m){fr[m.p[0]]=1});
+    Object.keys(fr).forEach(function(q){q=+q;h.push('<rect x="'+(q%W+.04)+'" y="'+((q/W|0)+.04)+'" width=".92" height=".92" rx=".1" fill="none" stroke="'+GREEN+'" stroke-width=".06" stroke-dasharray=".14 .08"/>')})}
+  // pieces (with the partial move shown when a piece is selected)
+  var path=sel?sel.path:null,capd={},endq=path?path[path.length-1]:-1;
+  if(path)sel.caps.forEach(function(q){capd[q]=1});
+  for(i=0;i<SQS.length;i++){q=SQS[i];var p=s.b[q];if(!p)continue;
+    if(path&&q===path[0])continue;
+    drawPiece(h,q,p,capd[q]?.3:1);
+  }
+  if(path){
+    h.push('<rect x="'+(path[0]%W+.04)+'" y="'+((path[0]/W|0)+.04)+'" width=".92" height=".92" rx=".1" fill="none" stroke="'+GREEN+'" stroke-width=".05" stroke-dasharray=".12 .08"/>');
+    if(path.length>1)h.push('<polyline points="'+path.map(function(q){return cx(q)+","+cy(q)}).join(" ")+'" fill="none" stroke="'+GREEN+'" stroke-width=".07" stroke-linecap="round" stroke-linejoin="round" opacity=".85"/>');
+    h.push('<rect x="'+(endq%W+.04)+'" y="'+((endq/W|0)+.04)+'" width=".92" height=".92" rx=".1" fill="'+GREEN+'" fill-opacity=".18" stroke="'+GREEN+'" stroke-width=".08"/>');
+    drawPiece(h,path[0],s.b[path[0]],1,endq);
+    if(sel.done&&path.length>1)h.push('<circle cx="'+cx(endq)+'" cy="'+cy(endq)+'" r=".47" fill="none" stroke="'+GREEN+'" stroke-width=".07"/>');
+    sel.next.forEach(function(q){h.push('<circle cx="'+cx(q)+'" cy="'+cy(q)+'" r=".14" fill="'+GREEN+'" fill-opacity=".85" pointer-events="none"/>')});
+  }
+  // click targets
+  for(i=0;i<SQS.length;i++){q=SQS[i];h.push('<rect class="sq" data-i="'+q+'" x="'+(q%W)+'" y="'+(q/W|0)+'" width="1" height="1" fill="#000" fill-opacity="0"/>')}
+  h.push('</svg>');
+  $("board").innerHTML=h.join("");
+  var names=sd.map(function(x){return x.name}),st;
+  for(i=0;i<2;i++){var t=GAME.stats(s,i);$("s"+i).textContent=t.big;$("d"+i).textContent=t.text;
+    $("p"+i).className="pl"+(!over&&s.turn===i?" on":"")}
+  if(br)st="Reviewing history (move "+kk+" of "+nT+"): the board is locked. Press Undo or Redo to play on from here.";
+  else if(over)st=s.w===2?"Game over: draw.":"Game over: "+names[s.w]+" wins.";
+  else if(!humanTurn())st=names[P]+" to move (computer thinking…)";
+  else if(sel&&sel.path.length>1)st=names[P]+": "+(sel.next.length?(sel.done?"leap on, or click the piece to stop here.":(sel.caps.length?"keep jumping: the capture must continue.":"choose the next landing square.")):"…");
+  else if(L.forced&&L.why==="exit")st=names[P]+" to move: your piece must leave your own castle first.";
+  else if(L.forced)st=names[P]+" to move: you must capture (dashed green pieces can).";
+  else st=names[P]+" to move (attack "+sd[P].goal+").";
+  $("status").textContent=st;
+  $("last").textContent=(GAME.describe(s)+" "+note).trim();
+  $("undo").disabled=lock||!(br||hist.length>=2);
+  $("redo").disabled=lock||!(br||redo.length);
+  $("nFirst").disabled=$("nPrev").disabled=lock||kk<=0;
+  $("nNext").disabled=$("nLast").disabled=lock||kk>=nT;
+  $("nlab").textContent="Move "+kk+" of "+nT;
+}
+function play(ns){hist.push(settle(ns));redo=[];note="";sel=null;render();maybeAI()}
+function pre(m,path){if(m.p.length<path.length)return false;for(var i=0;i<path.length;i++)if(m.p[i]!==path[i])return false;return true}
+function setSel(s,path){
+  var ms=legalUI(s).ms.filter(function(m){return pre(m,path)}),nx={},done=null;
+  ms.forEach(function(m){if(m.p.length===path.length)done=m;else nx[m.p[path.length]]=1});
+  var caps=[];if(ms.length){var m0=ms[0];var c=m0.c;   // captures along the chosen prefix
+    for(var i=1;i<path.length;i++){var a=path[i-1],z=path[i],mid=((a/W|0)+(z/W|0))/2*W+((a%W)+(z%W))/2;if(Math.abs((a%W)-(z%W))>1||Math.abs((a/W|0)-(z/W|0))>1){if(s.b[mid]&&sideOf(s.b[mid])!==s.turn)caps.push(mid)}}}
+  sel={path:path,ms:ms,next:Object.keys(nx).map(Number),done:done,caps:caps};
+  return sel;
+}
+function why(s,q){
+  var p=s.b[q],L=legalUI(s);
+  if(OWN[q]===1-s.turn)return "A piece in the enemy castle cannot leave it"+(s.cm[s.turn]>=2?" and you have used both castle moves.":"; its only possible move is to the other castle square, which is taken.");
+  if(L.forced&&L.why==="exit")return "You must first move your piece out of your own castle.";
+  if(L.forced)return "A capture is compulsory: move one of the pieces with a dashed green outline.";
+  return "That "+(isK(p)?"knight":"man")+" has no legal move.";
+}
+function click(q){
+  if(over||busy||browsing()||!humanTurn())return;
+  var s=cur(),P=s.turn,p=s.b[q];note="";
+  if(!sel){
+    if(!p||sideOf(p)!==P){note=p?"That is an enemy piece.":"";render();return}
+    if(!legalUI(s).ms.some(function(m){return m.p[0]===q})){note=why(s,q);render();return}
+    setSel(s,[q]);render();return;
+  }
+  var path=sel.path,end=path[path.length-1];
+  if(path.length===1){
+    if(q===path[0]){sel=null;render();return}
+    if(p&&sideOf(p)===P&&sel.next.indexOf(q)<0){sel=null;click(q);return}
+  }else{
+    if(q===path[0]&&q!==end){sel=null;note="Move cancelled.";render();return}
+    if(q===end&&sel.done){play(play1(s,sel.done));return}
+  }
+  if(sel.next.indexOf(q)<0){
+    note=path.length===1?"That piece cannot go there.":"Not a legal landing square. Click "+LAB[path[0]]+" to cancel the move.";render();return}
+  setSel(s,path.concat([q]));
+  if(sel.done&&!sel.next.length){play(play1(s,sel.done));return}
+  render();
+}
+function maybeAI(){
+  if(over||$("mode").value!=="ai"||cur().turn===+$("side").value)return;
+  busy=true;render();
+  setTimeout(function(){
+    var c=cur(),m=aiMove(c);busy=false;
+    if(m){hist.push(settle(play1(c,m)));redo=[]}else{c.w=1-c.turn;c.why="stuck"}
+    render();maybeAI();
+  },60);
+}
+document.title=GAME.title;$("gtitle").textContent=GAME.title;
+function li(x){return"<li>"+(typeof x==="string"?x:x.t+"<ul>"+x.sub.map(li).join("")+"</ul>")+"</li>"}
+$("rules").innerHTML=GAME.rules.map(function(sec){return"<li><b>"+sec.h+"</b><ul>"+sec.items.map(li).join("")+"</ul></li>"}).join("");
+$("side").innerHTML=GAME.sides.map(function(x,i){return'<option value="'+i+'">You are '+x.name+(i?"":" (first)")+'</option>'}).join("");
+for(var i=0;i<2;i++)$("n"+i).textContent=GAME.sides[i].name;
+$("board").onclick=function(e){var t=e.target.closest("[data-i]");if(t)click(+t.getAttribute("data-i"))};
+$("new").onclick=start;$("sim").onclick=runSim;
+$("mode").onchange=$("side").onchange=start;
+function aiSide(){return $("mode").value==="ai"&&cur().turn!==+$("side").value}
+$("redo").onclick=function(){
+  if(busy||sim)return;
+  if(browsing()){unlock(1);return}
+  if(!redo.length)return;
+  hist.push(redo.pop());
+  while(redo.length&&aiSide())hist.push(redo.pop());
+  note="";sel=null;render();
+};
+$("undo").onclick=function(){
+  if(busy||sim)return;
+  if(browsing()){unlock(-1);return}
+  if(hist.length<2)return;
+  redo.push(hist.pop());
+  while(hist.length>1&&aiSide())redo.push(hist.pop());
+  over=false;note="";sel=null;render();maybeAI();
+};
+$("nFirst").onclick=function(){goto(0)};
+$("nPrev").onclick=function(){goto((browsing()?view:hist.length-1)-1)};
+$("nNext").onclick=function(){goto((browsing()?view:hist.length-1)+1)};
+$("nLast").onclick=function(){goto(hist.length-1+redo.length)};
+document.addEventListener("keydown",function(e){if(e.key==="Escape"&&sel){sel=null;note="";render()}});
+start();
+})();
+</script>
+</body>
+</html>

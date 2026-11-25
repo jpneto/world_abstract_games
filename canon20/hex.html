@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hex</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
+<style>
+:root{--bg:#eef0e6;--ink:#1f2a1c;--mute:#5d6a56;--cell:#e6e0d2;--grid:#b4ab97;--hi:#e0803a;--panel:#fff;--line:#c5cab4;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#35332e;--grid:#56524a;--panel:#1f271c;--line:#37422f}}
+:root[data-theme="dark"]{--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#35332e;--grid:#56524a;--panel:#1f271c;--line:#37422f}
+[hidden]{display:none!important}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+main{max-width:1140px;margin:0 auto;padding:16px 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.right>.bar:first-child{margin-top:0}
+@media (min-width:880px){.layout{grid-template-columns:minmax(0,740px) minmax(290px,1fr);gap:28px;align-items:start}}
+h1{font:700 2rem/1.1 "Bricolage Grotesque",Georgia,serif;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+select,button.ctl{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.ctl:disabled,select:disabled,input:disabled{opacity:.45;cursor:default}
+label.f,span.f{color:var(--mute);font-size:.9rem}
+input[type=number]{width:4.5em;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+button.ctl.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button.ctl.icon{display:inline-flex;align-items:center;justify-content:center;padding:6px 10px}
+button.ctl.icon svg{width:18px;height:18px;fill:currentColor;display:block}
+button.ctl.tog{display:inline-flex;align-items:center;gap:6px}
+button.ctl.tog[aria-pressed="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink);font-weight:600}
+.sw{width:14px;height:14px;border-radius:50%;display:inline-block}
+.navlab{min-width:7.5em;text-align:center;color:var(--mute);font-variant-numeric:tabular-nums}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.pl{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:8px 12px;display:flex;justify-content:space-between;align-items:baseline;gap:6px}
+.pl.on{border-color:var(--hi)}
+.pl b{font:700 1.6rem "Bricolage Grotesque",Georgia,serif}
+.pl small{color:var(--mute)}
+#status{min-height:1.5em;font-weight:600;margin:6px 0}
+#board svg{display:block;width:100%;max-width:740px;margin:0 auto;touch-action:manipulation}
+#board .sl{cursor:pointer}
+#board .sl .pv{opacity:0;transition:opacity .08s}
+#board .sl:hover .pv{opacity:.55}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+details li{margin:4px 0}
+.legend{color:var(--mute);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+<h1 id="gtitle"></h1>
+<p class="sub" id="gsub"></p>
+<div class="layout">
+<div class="left">
+<div id="board"></div>
+<p class="legend">Click an empty cell to place a stone; hovering shows where it would go. Red links the top and bottom edges, Blue the left and right edges (the coloured borders). The gold ring marks the stone(s) placed in the last turn. In Chameleon, choose the colour with the stone buttons; right-clicking a cell places the other colour. In 12* Hex, while you place your second stone, shaded cells would join the first stone’s group and are not allowed.</p>
+</div>
+<aside class="right">
+<div class="bar">
+  <select id="size" aria-label="Board size"><option value="11" selected>11×11</option><option value="13">13×13</option><option value="15">15×15</option><option value="19">19×19</option></select>
+  <select id="vr" aria-label="Variant"><option value="0" selected>Hex (swap rule)</option><option value="1">Chameleon</option><option value="2">12* Hex</option></select>
+</div>
+<div class="bar">
+  <select id="mode" aria-label="Mode"><option value="ai">Play the computer</option><option value="2p">Two players</option></select>
+  <select id="level" aria-label="Computer strength"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select>
+  <select id="side" aria-label="Your side"></select>
+  <button class="ctl primary" id="new">New game</button>
+  <button class="ctl" id="undo">Undo</button>
+  <button class="ctl" id="redo">Redo</button>
+  <button class="ctl" id="swap" hidden>Swap</button>
+</div>
+<div class="bar" id="cham" role="group" aria-label="Stone colour to place" hidden>
+  <span class="f">Stone to place:</span>
+  <button class="ctl tog" id="cR"><span class="sw" style="background:#d6453d"></span>Red stone</button>
+  <button class="ctl tog" id="cB"><span class="sw" style="background:#2f6bd0"></span>Blue stone</button>
+</div>
+<div class="bar" id="nav" role="group" aria-label="Game history">
+  <button class="ctl icon" id="nFirst" aria-label="Go to the beginning" title="Go to the beginning"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="2.5" height="14"/><path d="M19 5v14L8 12z"/></svg></button>
+  <button class="ctl icon" id="nPrev" aria-label="One move back" title="One move back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 5v14L6 12z"/></svg></button>
+  <span class="navlab" id="nlab" aria-live="polite">Move 0 of 0</span>
+  <button class="ctl icon" id="nNext" aria-label="One move forward" title="One move forward"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5v14l11-7z"/></svg></button>
+  <button class="ctl icon" id="nLast" aria-label="Go to the last move" title="Go to the last move"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5v14l11-7z"/><rect x="17.5" y="5" width="2.5" height="14"/></svg></button>
+</div>
+<div class="score">
+  <div class="pl" id="p0"><span><span id="n0"></span> <small id="d0"></small></span><b id="s0">0</b></div>
+  <div class="pl" id="p1"><span><span id="n1"></span> <small id="d1"></small></span><b id="s1">0</b></div>
+</div>
+<div id="status" aria-live="polite"></div>
+<div id="last" class="legend" style="min-height:2.6em;margin:0 0 8px"></div>
+<div class="bar">
+  <label class="f">Simulation games <input id="simN" type="number" min="10" max="1000" value="10"></label>
+  <label class="f">Random opening moves <input id="simR" type="number" min="0" max="20" value="1"></label>
+  <button class="ctl" id="sim">Simulation</button>
+</div>
+<div id="simout" class="legend" style="white-space:pre-line;margin:0 0 8px"></div>
+<details>
+<summary>Rules</summary>
+<ul id="rules"></ul>
+</details>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+/* =====================================================================
+   1. GAME DEFINITION  - Hex rules (standard with swap, Chameleon, 12* Hex), board geometry, connection test, moves
+   2. ENGINE           - two-distance evaluation, beam-limited negamax computer opponent, simulations
+   3. INTERFACE        - SVG board, click handling, controls
+   Board: N x N rhombus of hexagons, cell c = row*N + col, row 0 at the top. Red (1) links rows 0 and N-1,
+   Blue (2) links columns 0 and N-1.
+   A state is {b: cells (0 empty, 1 red, 2 blue), turn: 0 Red / 1 Blue, left: placements left this turn,
+               first: cell of this turn's first stone (12*) or -1, n: turns completed, w: winner or -1, mv, ev}.
+   Every placed stone and every swap is one history step.
+   ===================================================================== */
+var $=function(i){return document.getElementById(i)};
+
+/* ============================ 1. GAME DEFINITION ============================ */
+var N=11,NN=121,VAR=0,NB,EDGE,INF=9999,GID,MARK,GM,CNT,VA,VB,T=0,
+    HR=[-1,-1,0,0,1,1],HC=[0,1,-1,1,-1,0];     // hex neighbours: NW, NE, W, E, SW, SE
+var VNAME=["Hex","Chameleon","12* Hex"];
+var GAME={
+  title:"Hex",
+  subtitle:function(){return "Piet Hein’s connection game (1942). "+N+"×"+N+" board"+
+    (VAR===1?", Chameleon: either player may place stones of either colour":VAR===2?", 12* Hex: two stones per turn, no swap rule":", with the swap rule")+
+    ". Red links top and bottom, Blue links left and right."},
+  sides:[{name:"Red",color:"#d6453d",dark:"#8f2620",goal:"top–bottom"},{name:"Blue",color:"#2f6bd0",dark:"#1c4590",goal:"left–right"}],
+  rules:[
+  {h:"Board",items:[
+    "A rhombus of hexagons, 11×11 by default; 13×13, 15×15 and 19×19 are also available. The board starts empty.",
+    "Red owns the top and bottom edges, Blue the left and right edges. Each corner cell belongs to both of its edges."]},
+  {h:"Play",items:[
+    "Red moves first. On each turn a player places one stone of their colour on any empty cell. Stones never move and are never captured.",
+    "A player wins by connecting their two edges with an unbroken chain of their own stones. A draw is impossible: a full board always holds exactly one chain."]},
+  {h:"Swap rule (pie rule)",items:[
+    "Moving first is a big advantage. To compensate, on Blue’s first turn Blue may swap instead of placing a stone.",
+    "Swapping replaces Red’s stone by a Blue stone on the cell mirrored across the long diagonal that starts at a1 (for example c5 becomes e3), so it serves Blue exactly as it served Red. Red then moves.",
+    "So Red’s best opening is a stone that is neither too strong (it would be swapped) nor too weak."]},
+  {h:"Variant: Chameleon",items:[
+    "On each turn a player places one stone of either colour on an empty cell.",
+    "Red still wins with a red chain linking top and bottom, Blue with a blue chain linking left and right. A move that completes only the opponent’s chain makes the opponent win; a move that completes both chains wins for the mover. (On a Hex board the two chains cannot both form, so in practice exactly one chain decides.)",
+    "The swap rule applies: when swapping, the opening stone is mirrored and changes colour."]},
+  {h:"Variant: 12* Hex",items:[
+    "On each turn a player places two stones of their colour on empty cells, but once both are placed they must not belong to the same group (a group is a set of friendly stones linked through adjacent cells). So the second stone may not touch the group of the first one.",
+    "For balance, Red places only one stone on the very first turn. There is no swap rule.",
+    "A stone that completes a chain wins at once. If no legal cell is left for the second stone, the turn ends after one."]}],
+  stats:function(s,i){var n=0;for(var c=0;c<NN;c++)if(s.b[c]===i+1)n++;
+    return{big:n,text:"· "+GAME.sides[i].goal+" · stones:"}},
+  describe:function(s){return s.ev||""}
+};
+function build(n){
+  N=n;NN=n*n;NB=[];var c,r,k,d,rr,kk,a;
+  EDGE=[null,[new Uint8Array(NN),new Uint8Array(NN)],[new Uint8Array(NN),new Uint8Array(NN)]];
+  for(c=0;c<NN;c++){r=c/n|0;k=c%n;a=[];
+    for(d=0;d<6;d++){rr=r+HR[d];kk=k+HC[d];if(rr>=0&&rr<n&&kk>=0&&kk<n)a.push(rr*n+kk)}
+    NB[c]=a;
+    if(r===0)EDGE[1][0][c]=1;if(r===n-1)EDGE[1][1][c]=1;if(k===0)EDGE[2][0][c]=1;if(k===n-1)EDGE[2][1][c]=1}
+  GID=new Int32Array(NN);MARK=new Int32Array(NN);GM=new Int32Array(NN);CNT=new Uint8Array(NN);VA=new Int32Array(NN);VB=new Int32Array(NN);T=0;
+}
+function cn(c){return String.fromCharCode(97+c%N)+((c/N|0)+1)}
+function mirror(c){return(c%N)*N+(c/N|0)}
+function hd(c){var dr=(c/N|0)-(N-1)/2,dk=c%N-(N-1)/2;return Math.max(Math.abs(dr),Math.abs(dk),Math.abs(dr+dk))}   // hex distance from the centre
+// does player p (1 Red, 2 Blue) link its two edges?
+function connected(b,p){
+  var E0=EDGE[p][0],E1=EDGE[p][1],q=[],h,c,i,nb,n;T++;
+  for(c=0;c<NN;c++)if(E0[c]&&b[c]===p){MARK[c]=T;q.push(c)}
+  for(h=0;h<q.length;h++){c=q[h];if(E1[c])return true;nb=NB[c];
+    for(i=0;i<nb.length;i++){n=nb[i];if(b[n]===p&&MARK[n]!==T){MARK[n]=T;q.push(n)}}}
+  return false}
+function mk(b,turn,left,first,n,mv,ev){return{b:b,turn:turn,left:left,first:first,n:n,w:-1,mv:mv,ev:ev||"",fm:null}}
+function newState(){return mk(new Uint8Array(NN),0,1,-1,0,null,"")}
+function canSwap(s){return VAR!==2&&s.w<0&&s.n===1&&s.turn===1&&!!s.mv&&s.mv.t==="p"}
+// 12*: would a second stone on c join the group of this turn's first stone?
+function joins(s,c){
+  if(s.first<0)return false;
+  if(!s.fm){var p=s.turn+1,fm=new Uint8Array(NN),seen=new Uint8Array(NN),q=[s.first],h,x,i,nb,y;seen[s.first]=1;
+    for(h=0;h<q.length;h++){x=q[h];nb=NB[x];
+      for(i=0;i<nb.length;i++){y=nb[i];if(s.b[y]===p){if(!seen[y]){seen[y]=1;q.push(y)}}else if(!s.b[y])fm[y]=1}}
+    s.fm=fm}
+  return !!s.fm[c]}
+function canPlace(s,c){return s.w<0&&!s.b[c]&&!joins(s,c)}
+function anyPlace(s){for(var c=0;c<NN;c++)if(canPlace(s,c))return true;return false}
+function winner(b,P,col){
+  if(VAR!==1)return connected(b,col)?col-1:-1;
+  var r=connected(b,1),u=connected(b,2);
+  return r&&u?P:r?0:u?1:-1}
+// place a stone of colour col (1 red, 2 blue) on c for the player to move
+function place(s,c,col){
+  var P=s.turn,sd=GAME.sides,nm=sd[P].name,b=s.b.slice(),to=s.first>=0?[s.first,c]:[c],mv={t:"p",to:to,by:P,col:col},ns,w,
+      txt=nm+" placed "+(VAR===1?"a "+sd[col-1].name.toLowerCase()+" stone":s.first>=0?"a second stone":"a stone")+" on "+cn(c)+".";
+  b[c]=col;w=winner(b,P,col);
+  if(w>=0){ns=mk(b,P,0,-1,s.n+1,mv,txt+" "+(w===P?nm+" connects "+sd[P].goal+" and wins!":"That completes "+sd[w].name+"’s chain: "+sd[w].name+" wins!"));ns.w=w;return ns}
+  if(s.left>1){ns=mk(b,P,1,c,s.n,mv,txt);if(anyPlace(ns))return ns;txt+=" No second stone can be placed outside this stone’s group."}
+  return mk(b,1-P,VAR===2?2:1,-1,s.n+1,mv,txt)}
+function swapIt(s){
+  var b=new Uint8Array(NN),c,f=s.mv.to[0],t=mirror(f),was=s.b[f]===1?"red":"blue",now=s.b[f]===1?"blue":"red";
+  for(c=0;c<NN;c++)if(s.b[c])b[mirror(c)]=3-s.b[c];
+  return mk(b,0,1,-1,s.n+1,{t:"w",to:[t],by:1,from:f},"Blue swapped: the "+was+" stone on "+cn(f)+" became a "+now+" stone on "+cn(t)+". Red to move.")}
+function randMove(s){var E=[],c;for(c=0;c<NN;c++)if(canPlace(s,c))E.push(c);return E.length?place(s,E[Math.floor(Math.random()*E.length)],s.turn+1):null}
+
+/* ================================ 2. ENGINE ================================ */
+/* Two-distance (as in Queenbee): from an edge, a cell's distance is 1 if it touches that edge (directly or through a
+   friendly group), otherwise 1 + the second-smallest distance among its neighbours, where cells linked through a
+   friendly group count as neighbours and enemy stones are walls. A player's potential is the minimum over empty
+   cells of (distance from one edge + distance from the other); 2 means a winning cell. Evaluation for the player to
+   move = opponent's potential - own potential + a small bonus for having more cells at the minimum. */
+function groups(b,p){
+  var gid=GID,libs=[],e0=[],e1=[],E0=EDGE[p][0],E1=EDGE[p][1],n=0,c,q,h,i,x,y,nb,L,a0,a1;
+  gid.fill(-1);
+  for(c=0;c<NN;c++)if(b[c]===p&&gid[c]<0){
+    T++;q=[c];gid[c]=n;L=[];a0=0;a1=0;
+    for(h=0;h<q.length;h++){x=q[h];if(E0[x])a0=1;if(E1[x])a1=1;nb=NB[x];
+      for(i=0;i<nb.length;i++){y=nb[i];if(b[y]===p){if(gid[y]<0){gid[y]=n;q.push(y)}}else if(!b[y]&&MARK[y]!==T){MARK[y]=T;L.push(y)}}}
+    libs.push(L);e0.push(a0);e1.push(a1);n++}
+  return{gid:gid,libs:libs,e0:e0,e1:e1}}
+function tdist(b,p,side,G,val){
+  var E=EDGE[p][side],ge=side?G.e1:G.e0,gid=G.gid,libs=G.libs,cur=[],nxt,v=1,c,i,j,q,n,nb,g,L,t;
+  function vis(x){if(MARK[x]===T)return;MARK[x]=T;if(val[x]<INF)return;if(++CNT[x]===2){val[x]=v+1;nxt.push(x)}}
+  val.fill(INF);CNT.fill(0);
+  for(c=0;c<NN;c++)if(!b[c]){t=E[c];
+    if(!t){nb=NB[c];for(i=0;i<nb.length;i++){n=nb[i];if(b[n]===p&&ge[gid[n]]){t=1;break}}}
+    if(t){val[c]=1;cur.push(c)}}
+  for(;cur.length;v++){nxt=[];
+    for(j=0;j<cur.length;j++){c=cur[j];T++;MARK[c]=T;nb=NB[c];
+      for(i=0;i<nb.length;i++){n=nb[i];
+        if(!b[n])vis(n);
+        else if(b[n]===p){g=gid[n];if(GM[g]!==T){GM[g]=T;L=libs[g];for(q=0;q<L.length;q++)vis(L[q])}}}}
+    cur=nxt}}
+function pot(b,p){
+  var G=groups(b,p),S=new Int32Array(NN),P=INF,M=0,c,v;
+  tdist(b,p,0,G,VA);tdist(b,p,1,G,VB);
+  for(c=0;c<NN;c++){if(b[c]||VA[c]>=INF||VB[c]>=INF){S[c]=INF;continue}
+    v=VA[c]+VB[c];S[c]=v;if(v<P){P=v;M=1}else if(v===P)M++}
+  return{S:S,P:P,M:M}}
+function ev(s){   // value for the player to move
+  var me=s.turn+1,A=pot(s.b,me),B=pot(s.b,3-me),c,wm=0,wo=0;
+  for(c=0;c<NN;c++)if(!s.b[c]){if(A.S[c]===2&&!joins(s,c))wm++;if(B.S[c]===2)wo++}
+  if(wm)return 900;                 // can win with the next stone
+  if(wo>s.left)return -900;         // more winning cells for the opponent than stones left to block them
+  return Math.min(B.P,80)-Math.min(A.P,80)+.06*(Math.min(A.M,15)-Math.min(B.M,15))}
+function val1(ns,P){return ns.w>=0?(ns.w===P?1000:-1000):ns.turn===P?ev(ns):-ev(ns)}
+// best candidate moves for the player to move, sorted, each {ns, v}
+function cands(s,k,nz){
+  var P=s.turn,me=P+1,op=3-me,A=pot(s.b,me),B=pot(s.b,op),pre=[],out=[],c,ns,i,ka,kb;
+  for(c=0;c<NN;c++)if(!s.b[c]&&!joins(s,c)){
+    if(A.S[c]===2){ns=place(s,c,me);if(ns.w===P)return[{ns:ns,v:1000}]}
+    ka=A.S[c]>=INF?999:A.S[c]-A.P;kb=B.S[c]>=INF?999:B.S[c]-B.P;
+    pre.push({c:c,k:Math.min(ka,kb)+.01*hd(c)+Math.random()*.001})}
+  pre.sort(function(a,b){return a.k-b.k});pre=pre.slice(0,k+6);
+  for(i=0;i<pre.length;i++){ns=place(s,pre[i].c,me);out.push({ns:ns,v:val1(ns,P)+(nz?Math.random()*nz:0)})}
+  if(VAR===1)for(i=0;i<Math.min(2,pre.length);i++){ns=place(s,pre[i].c,op);out.push({ns:ns,v:val1(ns,P)+(nz?Math.random()*nz:0)})}
+  out.sort(function(a,b){return b.v-a.v});
+  return out.slice(0,k)}
+var ROOT=[0,10,10,10],BEAM=[0,10,8],NOISE=[0,1.2,.25,.08];
+function term(ns,d,P){return(ns.w===P?1:-1)*(1000+d)}
+function nega(s,d,al,be){   // value for the player to move (a 12* second stone keeps the same player on move)
+  if(d===0)return ev(s);
+  var ms=cands(s,BEAM[d],0),best=-1e9,P=s.turn,i,v;
+  if(!ms.length)return 0;
+  if(d===1)return ms[0].v;
+  for(i=0;i<ms.length;i++){v=child(ms[i].ns,d-1,al,be,P);if(v>best)best=v;if(best>al)al=best;if(al>=be)break}
+  return best}
+function child(ns,d,al,be,P){return ns.w>=0?term(ns,d,P):ns.turn===P?nega(ns,d,al,be):-nega(ns,d,-be,-al)}
+// returns the next state chosen by the computer, or null
+function aiMove(s){
+  var lv=+$("level").value,P=s.turn,ms,i,v,best=-1e9,pick=null,f,c,op=[];
+  if(s.w>=0)return null;
+  if(VAR!==2&&s.n===0){   // swap variants: open away from the centre, so that the opening is not worth swapping
+    for(c=0;c<NN;c++){var r=c/N|0,k=c%N;v=hd(c);if(r>0&&k>0&&r<N-1&&k<N-1&&v>=.4*N&&v<=.55*N)op.push(c)}
+    return place(s,op[Math.floor(Math.random()*op.length)],1)}
+  if(canSwap(s)){f=s.mv.to[0];if(s.b[f]===1&&hd(f)<.4*N&&(lv>1||Math.random()<.5))return swapIt(s)}
+  ms=cands(s,ROOT[lv],NOISE[lv]);
+  if(!ms.length)return null;
+  if(ms[0].ns.w===P||lv===1)return ms[0].ns;
+  for(i=0;i<ms.length;i++){
+    v=child(ms[i].ns,lv-1,-1e9,1e9,P)+Math.random()*NOISE[lv];
+    if(v>best){best=v;pick=ms[i]}}
+  return pick.ns}
+var sim=null,LOCK=["size","vr","mode","side","level","new","undo","redo","swap","cR","cB","simN","simR","nFirst","nPrev","nNext","nLast"];
+function runSim(){   // computer vs computer, to look for first/second-player advantage
+  if(sim){sim.stop=true;return}
+  var CAP=NN+5,me=sim={stop:false},TOTALG=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?1:+$("simR").value)),
+      done=0,w=[0,0],un=0,sw=0,g=newState(),plies=0,len=0,lvName=$("level").options[$("level").selectedIndex].text,nm=GAME.sides.map(function(x){return x.name});
+  LOCK.forEach(function(i){$(i).disabled=true});
+  $("sim").textContent="Stop simulation";
+  $("simout").textContent="Simulating at "+lvName+" level… 0/"+TOTALG;
+  function finish(stopped){
+    sim=null;$("sim").textContent="Simulation";
+    ["size","vr","mode","new","simN","simR"].forEach(function(i){$(i).disabled=false});
+    $("level").disabled=$("side").disabled=$("mode").value==="2p";
+    var mg=done?(196*Math.sqrt((w[0]/done)*(1-w[0]/done)/done)).toFixed(1):"0";
+    var pc=function(n){return done?(100*n/done).toFixed(1)+"%":"n/a"};
+    $("simout").textContent=(stopped?"Stopped after ":"")+done+" games of "+VNAME[VAR]+" on "+N+"×"+N+" at "+lvName+" level (computer vs computer), first "+RND+" moves random.\n"+
+      "First player ("+nm[0]+") won "+pc(w[0])+" ("+w[0]+" games, margin ±"+mg+" points at 95% confidence). Second player ("+nm[1]+") won "+pc(w[1])+" ("+w[1]+" games)."+
+      (VAR!==2?" Blue swapped in "+sw+" games.":"")+" Average length: "+(done?(len/done).toFixed(0):"n/a")+" stones."+(un?" Unfinished: "+un+".":"");
+    render()}
+  function stepSim(){
+    if(me.stop){finish(true);return}
+    var t0=Date.now(),ns;
+    while(Date.now()-t0<40){
+      if(g.w>=0||plies>=CAP){
+        if(g.w>=0)w[g.w]++;else un++;
+        done++;len+=plies;g=newState();plies=0;
+        if(done>=TOTALG){finish(false);return}
+        continue}
+      ns=plies<RND?randMove(g):aiMove(g);
+      if(!ns){plies=CAP;continue}
+      if(ns.mv&&ns.mv.t==="w")sw++;
+      g=ns;plies++}
+    $("simout").textContent="Simulating at "+lvName+" level… "+done+"/"+TOTALG;
+    setTimeout(stepSim,0)}
+  stepSim()}
+
+/* =============================== 3. INTERFACE =============================== */
+var hist,redo=[],view=null,over,busy,note="",pickOther=false;   // view: null = live position, otherwise the index being reviewed
+var GOLD="#e0a800",S3=Math.sqrt(3),HH=S3/2,RS=1/S3,
+    V=[[0,-RS],[.5,-RS/2],[.5,RS/2],[0,RS],[-.5,RS/2],[-.5,-RS/2]];   // hex corners; side k runs V[k]->V[k+1]: NE,E,SE,SW,W,NW
+function cur(){return hist[hist.length-1]}
+function line(){return hist.concat(redo.slice().reverse())}   // every position, including those that can still be redone
+function browsing(){return view!==null}
+function shown(){return view===null?cur():line()[view]}
+function goto(k){
+  if(busy||sim)return;
+  var n=hist.length-1+redo.length;k=Math.max(0,Math.min(n,k));
+  view=k===hist.length-1?null:k;note="";render()}
+// Undo/Redo while reviewing: leave review and play on from the reviewed position (in computer mode, from the nearest position where it is the human's turn)
+function unlock(dir){
+  var Ln=line(),k=view,j;
+  if($("mode").value==="ai"){
+    j=k;while(j>=0&&j<Ln.length&&Ln[j].w<0&&Ln[j].turn!==+$("side").value)j+=dir;
+    if(j>=0&&j<Ln.length)k=j}
+  hist=Ln.slice(0,k+1);redo=Ln.slice(k+1).reverse();view=null;note="";pickOther=false;over=false;render();maybeAI()}
+function humanTurn(){return $("mode").value==="2p"||cur().turn===+$("side").value}
+function start(){
+  build(+$("size").value);VAR=+$("vr").value;
+  $("gsub").textContent=GAME.subtitle();
+  hist=[newState()];redo=[];view=null;note="";pickOther=false;$("level").disabled=$("side").disabled=$("mode").value==="2p";over=false;busy=false;
+  render();maybeAI()}
+function px(r,k){return k+r/2}
+function py(r){return r*HH}
+function X(c){return px(c/N|0,c%N)}
+function Y(c){return py(c/N|0)}
+function f3(v){return Math.round(v*1000)/1000}
+function hexPts(x,y){return V.map(function(v){return f3(x+v[0])+","+f3(y+v[1])}).join(" ")}
+function ring(c,r,clr,w){return'<circle cx="'+f3(X(c))+'" cy="'+f3(Y(c))+'" r="'+r+'" fill="none" stroke="'+clr+'" stroke-width="'+w+'" pointer-events="none"/>'}
+function stone(c,v,cls){var sd=GAME.sides[v-1];
+  return'<circle'+(cls?' class="'+cls+'"':'')+' cx="'+f3(X(c))+'" cy="'+f3(Y(c))+'" r=".36" fill="'+sd.color+'" stroke="'+sd.dark+'" stroke-width=".04" pointer-events="none"/>'}
+function seg(x1,y1,x2,y2,clr){return'<line x1="'+f3(x1)+'" y1="'+f3(y1)+'" x2="'+f3(x2)+'" y2="'+f3(y2)+'" stroke="'+clr+'" stroke-width=".3" stroke-linecap="round"/>'}
+// outside sides of edge cells: Red (top/bottom rows), Blue (left/right columns); the obtuse corners' shared side is split in half
+function borders(){
+  var g=[],c,r,k,sd,s,x,y,a,b,mx,my,C=GAME.sides.map(function(z){return z.color}),add=function(side,col){(sd[side]=sd[side]||[]).push(col)};
+  for(c=0;c<NN;c++){r=c/N|0;k=c%N;if(r&&k&&r<N-1&&k<N-1)continue;sd={};
+    if(r===0){add(5,0);add(0,0)}
+    if(r===N-1){add(2,0);add(3,0)}
+    if(k===0){add(4,1);add(3,1)}
+    if(k===N-1){add(1,1);add(0,1)}
+    x=X(c);y=Y(c);
+    for(s in sd){s=+s;a=V[s];b=V[(s+1)%6];
+      if(sd[s].length===1)g.push(seg(x+a[0],y+a[1],x+b[0],y+b[1],C[sd[s][0]]));
+      else{mx=(a[0]+b[0])/2;my=(a[1]+b[1])/2;g.push(seg(x+a[0],y+a[1],x+mx,y+my,C[0]),seg(x+mx,y+my,x+b[0],y+b[1],C[1]))}}}
+  return g.join("")}
+function render(){
+  var br=browsing(),s=shown(),sd=GAME.sides,g=[],P=s.turn,c,i,nT=hist.length-1+redo.length,kk=br?view:hist.length-1,lock=busy||!!sim,mv=s.mv,
+      x0=-1.35,y0=-HH-.45,w=N+(N-1)/2+.5+1.35+.1,h=N*HH+.45-y0,canAct,col,pts,cell,st;
+  over=s.w>=0;
+  canAct=!br&&!over&&humanTurn()&&!lock;
+  col=VAR===1&&pickOther?2-P:P+1;
+  g.push('<svg viewBox="'+f3(x0)+' '+f3(y0)+' '+f3(w)+' '+f3(h)+'" role="img" aria-label="Hex board" font-family="system-ui,sans-serif">');
+  g.push(borders());
+  for(c=0;c<NN;c++){pts=hexPts(X(c),Y(c));cell='<polygon points="'+pts+'" fill="var(--cell)" stroke="var(--grid)" stroke-width=".04"/>';
+    if(canAct&&canPlace(s,c))g.push('<g class="sl" data-i="'+c+'">'+cell+stone(c,col,"pv")+'</g>');
+    else g.push('<g data-i="'+c+'">'+cell+(canAct&&!s.b[c]?'<polygon points="'+pts+'" fill="#000" fill-opacity=".16" pointer-events="none"/>':'')+'</g>')}
+  for(i=0;i<N;i++){
+    var Lt=String.fromCharCode(97+i),nn=i+1,tx=function(x,y,t){g.push('<text x="'+f3(x)+'" y="'+f3(y)+'" font-size=".34" text-anchor="middle" fill="var(--mute)" pointer-events="none">'+t+'</text>')};
+    tx(px(-1,i)+.05,py(-1)+.12,Lt);tx(px(N,i)-.05,py(N)+.05,Lt);
+    tx(px(i,-1)+.05,py(i)+.12,nn);tx(px(i,N)-.05,py(i)+.12,nn)}
+  for(c=0;c<NN;c++)if(s.b[c])g.push(stone(c,s.b[c]));
+  if(mv)mv.to.forEach(function(c){g.push(ring(c,.44,GOLD,.09))});
+  g.push('</svg>');
+  $("board").innerHTML=g.join("");
+  var names=sd.map(function(x){return x.name});
+  for(i=0;i<2;i++){var t=GAME.stats(s,i);$("s"+i).textContent=t.big;$("d"+i).textContent=t.text;
+    $("p"+i).className="pl"+(!over&&s.turn===i?" on":"");$("p"+i).style.borderLeft="8px solid "+sd[i].color;
+    $("n"+i).textContent=names[i]}
+  if(br)st="Reviewing history (move "+kk+" of "+nT+"): the board is locked. Press Undo or Redo to play on from here.";
+  else if(over)st="Game over: "+names[s.w]+" wins.";
+  else if(!humanTurn())st=names[P]+" to move (computer thinking…)";
+  else if(VAR===2&&s.first>=0)st=names[P]+": place your second stone, not joined to the group of the first one ("+cn(s.first)+"). Shaded cells would join it.";
+  else if(VAR===2)st=names[P]+" to move: place "+(s.left>1?"the first of two stones":"one stone (first turn of the game)")+" ("+sd[P].goal+").";
+  else if(VAR===1)st=names[P]+" to move ("+sd[P].goal+"): place a red or a blue stone. Selected: "+sd[col-1].name.toLowerCase()+".";
+  else st=names[P]+" to move: place a stone ("+sd[P].goal+").";
+  if(!br&&canSwap(s)&&humanTurn()&&!over)st+=" Or press Swap to take over Red’s opening stone.";
+  $("status").textContent=st;
+  $("last").textContent=(GAME.describe(s)+" "+note).trim();
+  $("undo").disabled=lock||!(br||hist.length>=2);
+  $("redo").disabled=lock||!(br||redo.length);
+  $("nFirst").disabled=$("nPrev").disabled=lock||kk<=0;
+  $("nNext").disabled=$("nLast").disabled=lock||kk>=nT;
+  $("nlab").textContent="Move "+kk+" of "+nT;
+  $("swap").hidden=!(canAct&&canSwap(s));$("swap").disabled=lock;
+  $("cham").hidden=VAR!==1;
+  $("cR").disabled=$("cB").disabled=!canAct;
+  $("cR").setAttribute("aria-pressed",String(col===1));$("cB").setAttribute("aria-pressed",String(col===2));
+}
+function play(ns){hist.push(ns);redo=[];note="";pickOther=false;render();maybeAI()}
+function click(i,other){
+  if(over||busy||sim||browsing()||!humanTurn())return;
+  var s=cur(),col;note="";
+  if(s.b[i])note="That cell is already taken.";
+  else if(joins(s,i))note="Your second stone must not join the group of this turn’s first stone ("+cn(s.first)+").";
+  else{col=VAR===1&&(!!other!==pickOther)?2-s.turn:s.turn+1;play(place(s,i,col));return}
+  render()}
+function maybeAI(){
+  if(over||$("mode").value!=="ai"||cur().turn===+$("side").value)return;
+  busy=true;render();
+  setTimeout(function(){
+    var c=cur(),ns=aiMove(c);busy=false;
+    if(ns){hist.push(ns);redo=[]}
+    render();maybeAI()},60)}
+document.title=GAME.title;$("gtitle").textContent=GAME.title;
+function li(x){return"<li>"+x+"</li>"}
+$("rules").innerHTML=GAME.rules.map(function(sec){return"<li><b>"+sec.h+"</b><ul>"+sec.items.map(li).join("")+"</ul></li>"}).join("");
+$("side").innerHTML=GAME.sides.map(function(x,i){return'<option value="'+i+'">You are '+x.name+(i?"":" (first)")+'</option>'}).join("");
+$("board").onclick=function(e){var t=e.target.closest("[data-i]");if(t)click(+t.getAttribute("data-i"),false)};
+$("board").oncontextmenu=function(e){if(VAR!==1)return;var t=e.target.closest("[data-i]");if(t){e.preventDefault();click(+t.getAttribute("data-i"),true)}};
+$("new").onclick=start;$("sim").onclick=runSim;
+$("swap").onclick=function(){var s=cur();if(!over&&!busy&&!sim&&!browsing()&&humanTurn()&&canSwap(s))play(swapIt(s))};
+$("cR").onclick=function(){if(browsing()||busy||sim)return;pickOther=cur().turn!==0;render()};
+$("cB").onclick=function(){if(browsing()||busy||sim)return;pickOther=cur().turn!==1;render()};
+$("mode").onchange=$("side").onchange=$("size").onchange=$("vr").onchange=start;
+function aiSide(){return $("mode").value==="ai"&&cur().turn!==+$("side").value}
+$("redo").onclick=function(){
+  if(busy||sim)return;
+  if(browsing()){unlock(1);return}
+  if(!redo.length)return;
+  hist.push(redo.pop());
+  while(redo.length&&aiSide())hist.push(redo.pop());
+  note="";pickOther=false;render()};
+$("undo").onclick=function(){
+  if(busy||sim)return;
+  if(browsing()){unlock(-1);return}
+  if(hist.length<2)return;
+  redo.push(hist.pop());
+  while(hist.length>1&&aiSide())redo.push(hist.pop());
+  over=false;note="";pickOther=false;render();maybeAI()};
+$("nFirst").onclick=function(){goto(0)};
+$("nPrev").onclick=function(){goto((browsing()?view:hist.length-1)-1)};
+$("nNext").onclick=function(){goto((browsing()?view:hist.length-1)+1)};
+$("nLast").onclick=function(){goto(hist.length-1+redo.length)};
+start();
+})();
+</script>
+</body>
+</html>
