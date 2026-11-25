@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pentominoes</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
+<style>
+:root{--bg:#eaf0f5;--ink:#18232e;--mute:#566574;--panel:#fff;--line:#c3ced8;--hi:#e0803a;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121a22;--ink:#e3eaf0;--mute:#93a3b2;--panel:#1b2530;--line:#33424f}}
+:root[data-theme="dark"]{--bg:#121a22;--ink:#e3eaf0;--mute:#93a3b2;--panel:#1b2530;--line:#33424f}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+main{max-width:1180px;margin:0 auto;padding:16px 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.right>.bar:first-child{margin-top:0}
+@media (min-width:900px){.layout{grid-template-columns:minmax(0,680px) minmax(300px,1fr);gap:28px;align-items:start}}
+h1{font:700 2rem/1.1 "Bricolage Grotesque",Georgia,serif;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+select,button.ctl{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.ctl:disabled,select:disabled,input:disabled{opacity:.45;cursor:default}
+label.f{color:var(--mute);font-size:.9rem}
+input[type=number]{width:4.5em;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+button.ctl.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button.ctl.icon{display:inline-flex;align-items:center;justify-content:center;padding:6px 10px}
+button.ctl.icon svg{width:18px;height:18px;fill:currentColor;display:block}
+.navlab{min-width:7.5em;text-align:center;color:var(--mute);font-variant-numeric:tabular-nums}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.pl{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:8px 12px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.pl.on{border-color:var(--hi)}
+.pl b{font:700 1.6rem "Bricolage Grotesque",Georgia,serif;white-space:nowrap}
+.pl small{color:var(--mute)}
+.mk{display:inline-block;width:.8em;height:.8em;border-radius:50%;border:2px solid #333;vertical-align:-.05em;margin-right:4px}
+#status{min-height:1.5em;font-weight:600;margin:6px 0}
+#board svg{display:block;width:75%;max-width:510px;margin:0 auto;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+#board text{fill:var(--mute)}
+.trayh{color:var(--mute);font-size:.9rem;margin:12px 0 4px}
+.tray{display:grid;grid-template-columns:repeat(auto-fill,minmax(50px,1fr));gap:6px;max-width:680px}
+.tile{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:3px;cursor:pointer;aspect-ratio:1;font:inherit;color:inherit}
+.tile svg{width:100%;height:100%;display:block}
+.tile.sel{border-color:var(--hi);box-shadow:0 0 0 2px var(--hi)}
+.tile.used{opacity:.22;cursor:default}
+.tile.stuck{opacity:.5}
+.tile:disabled{cursor:default}
+.tile text{fill:var(--mute)}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+details li{margin:4px 0}
+.legend{color:var(--mute);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+<h1 id="gtitle"></h1>
+<p class="sub" id="gsub"></p>
+<div class="layout">
+<div class="left">
+<div id="board"></div>
+<div id="tray"></div>
+<p class="legend">Pick a piece from the reserve, then point at the board: the shaded outline shows where it would go, and a click drops it. Rotate with R, the right mouse button or the “Rotate” button, mirror with F or “Mirror”; clicking the selected piece in the reserve also rotates it. On a touch screen, tap a square to show the piece there and tap the outline again to drop it. Grey dots mark the squares where the selected piece, as it is turned now, can be dropped (the dot is the square under the pointer). A gold outline marks the piece placed last; the small white or dark disc on each piece shows who placed it.</p>
+</div>
+<aside class="right">
+<div class="bar">
+  <select id="variant" aria-label="Variant"><option value="golomb">Pentominoes (8×8, shared pieces)</option><option value="pankai">Pan-Kai (10×10, a set each)</option></select>
+</div>
+<div class="bar">
+  <select id="mode" aria-label="Mode"><option value="ai">Play the computer</option><option value="2p">Two players</option></select>
+  <select id="level" aria-label="Computer strength"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select>
+  <select id="side" aria-label="Your side"></select>
+  <button class="ctl primary" id="new">New game</button>
+  <button class="ctl" id="undo">Undo</button>
+  <button class="ctl" id="redo">Redo</button>
+</div>
+<div class="bar">
+  <button class="ctl" id="rot" title="Rotate a quarter turn clockwise (R; Shift+R anticlockwise)">Rotate ⟳</button>
+  <button class="ctl" id="mir" title="Mirror left to right (F)">Mirror ⇋</button>
+  <label class="f"><input type="checkbox" id="shHint" checked> Show legal spots</label>
+</div>
+<div class="bar" id="nav" role="group" aria-label="Game history">
+  <button class="ctl icon" id="nFirst" aria-label="Go to the beginning" title="Go to the beginning"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="2.5" height="14"/><path d="M19 5v14L8 12z"/></svg></button>
+  <button class="ctl icon" id="nPrev" aria-label="One move back" title="One move back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 5v14L6 12z"/></svg></button>
+  <span class="navlab" id="nlab" aria-live="polite">Move 0 of 0</span>
+  <button class="ctl icon" id="nNext" aria-label="One move forward" title="One move forward"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5v14l11-7z"/></svg></button>
+  <button class="ctl icon" id="nLast" aria-label="Go to the last move" title="Go to the last move"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5v14l11-7z"/><rect x="17.5" y="5" width="2.5" height="14"/></svg></button>
+</div>
+<div class="score">
+  <div class="pl" id="p0"><span><span class="mk" id="m0"></span><span id="n0"></span> <small id="d0"></small></span><b id="s0">0</b></div>
+  <div class="pl" id="p1"><span><span class="mk" id="m1"></span><span id="n1"></span> <small id="d1"></small></span><b id="s1">0</b></div>
+</div>
+<div id="status" aria-live="polite"></div>
+<div id="last" class="legend" style="min-height:2.6em;margin:0 0 8px"></div>
+<div class="bar">
+  <label class="f">Simulation games <input id="simN" type="number" min="10" max="1000" value="10"></label>
+  <label class="f">Random opening moves <input id="simR" type="number" min="0" max="20" value="2"></label>
+  <button class="ctl" id="sim">Simulation</button>
+</div>
+<div id="simout" class="legend" style="white-space:pre-line;margin:0 0 8px"></div>
+<details>
+<summary>Rules</summary>
+<ul id="rules"></ul>
+</details>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+/* =====================================================================
+   1. GAME DEFINITION  - Pentominoes rules (Golomb 1953) and the Pan-Kai variant (Randolph 1960):
+                         pieces, orientations, every placement on the board, legal moves, end of the game
+   2. ENGINE           - computer opponent (Monte Carlo playouts with successive halving, exact endgame solver), simulations
+   3. INTERFACE        - SVG board, reserve trays, piece rotation/mirroring, click handling, controls
+   Every placement of every piece in every orientation is precomputed as a bit mask (W 32-bit words per placement).
+   An action is {t:"place", k:placement index}.
+   A state is {pid:placement covering each square (-1 empty), ow:who placed it, occ:occupied squares as bit words,
+     res:[reserve masks] (12 bits; in the shared game both entries are the same), turn, ply:moves made,
+     L:placements still geometrically possible (pieces still in some reserve, no overlap), placed:[pieces placed per side],
+     last:last placement (-1 none), w:winner (-1 none), ev:text of the last move}.
+   ===================================================================== */
+var $=function(i){return document.getElementById(i)};
+
+/* ============================ 1. GAME DEFINITION ============================ */
+var ORDER="FILNPTUVWXYZ",LET="abcdefghijklmnopqrstuvwxyz";
+var SHAPE={F:[".##","##.",".#."],I:["#","#","#","#","#"],L:["#.","#.","#.","##"],N:["..##","###."],P:["##","##","#."],
+  T:["###",".#.",".#."],U:["#.#","###"],V:["#..","#..","###"],W:["#..","##.",".##"],X:[".#.","###",".#."],Y:[".#","##",".#",".#"],Z:["##.",".#.",".##"]};
+var COLOR=["#ddbb99","#eeaaaa","#cccc88","#aaeeaa","#bbdd99","#99ddbb","#88cccc","#99bbdd","#aaaaee","#bb99dd","#cc88cc","#dd99bb"];
+var VARS={golomb:{N:8,shared:true,name:"Pentominoes"},pankai:{N:10,shared:false,name:"Pan-Kai"}};
+var GAME={
+  title:"Pentominoes",
+  subtitle:"Solomon W. Golomb’s game of dropping the twelve pentominoes on a chessboard (1953): the player who places the last piece wins. Also playable as Alex Randolph’s Pan-Kai (1960), on a 10×10 board with a set of pieces for each player.",
+  sides:[{name:"Player 1",mark:"#ffffff"},{name:"Player 2",mark:"#333333"}],
+  rules:[
+  {h:"Object",items:["The player who makes the last move wins: a player who cannot place a piece on his turn loses."]},
+  {h:"Equipment",items:[
+    "An 8×8 board, initially empty.",
+    "The twelve pentominoes F, I, L, N, P, T, U, V, W, X, Y and Z, each made of five squares, all in a common reserve at the start."]},
+  {h:"Play",items:[
+    "Player 1 moves first, then the players alternate.",
+    "On his turn a player picks any one piece from the reserve and drops it on the board, covering five empty squares exactly. Before placing it he may rotate it or turn it over (mirror it).",
+    "A piece may not overlap a piece already on the board or stick out over the edge. It need not touch the other pieces.",
+    "Placed pieces stay where they are for the rest of the game.",
+    "Since both players draw from the same reserve, they always have the same moves available: this is an impartial game."]},
+  {h:"Pan-Kai (Alex Randolph, 1960)",items:[
+    "The board is 10×10, and each player has his own complete set of the twelve pentominoes.",
+    "On his turn a player places one piece from his own set, following the same rules; the player who cannot place one of his own pieces loses.",
+    "The players have different moves available, so Pan-Kai is a partizan game."]},
+  {h:"Notes on this version",items:[
+    "There is no passing, and no draws are possible: the game always ends after at most 12 moves (24 in Pan-Kai).",
+    "Hilarie Orman showed by computer search (1996) that with perfect play the first player wins Golomb’s game on the 8×8 board."]}],
+  stats:function(s,i){var n=legal(s,i).length,h=popc(avail(s,i));
+    return{big:String(s.placed[i]),text:(VAR.shared?"":h+" in hand · ")+n+" placement"+(n===1?"":"s")+" open"}},
+  describe:function(s){return s.ev||""}
+};
+var VAR,N,NC,W,FULL=4095,BASE=[],ORI=[],OKEY=[],PLP,PLO,PLC,PM,PIX,PKEY,ALL,NP,SYM,PSYM,SCR,FITS;
+function popc(m){var n=0;while(m){m&=m-1;n++}return n}
+function norm(cs){var mr=1e9,mc=1e9;cs.forEach(function(p){mr=Math.min(mr,p[0]);mc=Math.min(mc,p[1])});
+  cs=cs.map(function(p){return[p[0]-mr,p[1]-mc]});cs.sort(function(a,b){return a[0]-b[0]||a[1]-b[1]});return cs}
+function ckey(cs){return cs.map(function(p){return p[0]+"."+p[1]}).join(" ")}
+function rotC(cs){return norm(cs.map(function(p){return[p[1],-p[0]]}))}   // a quarter turn clockwise
+function mirC(cs){return norm(cs.map(function(p){return[p[0],-p[1]]}))}   // left-right mirror
+(function(){
+  for(var p=0;p<12;p++){var cs=[];SHAPE[ORDER[p]].forEach(function(row,r){for(var c=0;c<row.length;c++)if(row[c]==="#")cs.push([r,c])});
+    BASE[p]=norm(cs);ORI[p]=[];OKEY[p]={};
+    var c0=BASE[p];
+    for(var f=0;f<2;f++){var t=f?mirC(BASE[p]):c0;
+      for(var r=0;r<4;r++){var k=ckey(t);if(OKEY[p][k]==null){
+          var mr=0,mc=0,h=0,w=0;t.forEach(function(q){mr+=q[0]/5;mc+=q[1]/5;h=Math.max(h,q[0]+1);w=Math.max(w,q[1]+1)});
+          var ai=0,bd=1e9;t.forEach(function(q,i){var d=(q[0]-mr)*(q[0]-mr)+(q[1]-mc)*(q[1]-mc);if(d<bd-1e-9){bd=d;ai=i}});
+          OKEY[p][k]=ORI[p].length;ORI[p].push({cs:t,h:h,w:w,ai:ai})}
+        t=rotC(t)}}
+  }
+})();
+// board tables for the variant: every placement, its mask, symmetry images
+function setup(v){
+  VAR=VARS[v];N=VAR.N;NC=N*N;W=Math.ceil(NC/32);
+  var P=[],O=[],C=[],p,o,r0,c0;PIX={};PKEY={};
+  for(p=0;p<12;p++)for(o=0;o<ORI[p].length;o++){var Or=ORI[p][o];
+    for(r0=0;r0+Or.h<=N;r0++)for(c0=0;c0+Or.w<=N;c0++){var cells=Or.cs.map(function(q){return(r0+q[0])*N+c0+q[1]});
+      PIX[p+","+o+","+r0+","+c0]=P.length;PKEY[p+":"+cells.slice().sort(function(a,b){return a-b}).join(",")]=P.length;
+      P.push(p);O.push(o);C.push(cells)}}
+  NP=P.length;PLP=Int8Array.from(P);PLO=Int8Array.from(O);PLC=C;PM=new Uint32Array(NP*W);
+  for(var k=0;k<NP;k++)C[k].forEach(function(x){PM[k*W+(x>>5)]|=1<<(x&31)});
+  ALL=new Int32Array(NP);for(k=0;k<NP;k++)ALL[k]=k;SCR=new Int32Array(NP);
+  var T=[function(r,c){return[r,c]},function(r,c){return[c,N-1-r]},function(r,c){return[N-1-r,N-1-c]},function(r,c){return[N-1-c,r]},
+         function(r,c){return[r,N-1-c]},function(r,c){return[N-1-r,c]},function(r,c){return[c,r]},function(r,c){return[N-1-c,N-1-r]}];
+  SYM=T.map(function(f){var a=new Int16Array(NC);for(var i=0;i<NC;i++){var q=f(i/N|0,i%N);a[i]=q[0]*N+q[1]}return a});
+  PSYM=SYM.map(function(m){var a=new Int32Array(NP);for(var k=0;k<NP;k++)a[k]=PKEY[PLP[k]+":"+C[k].map(function(x){return m[x]}).sort(function(x,y){return x-y}).join(",")];return a});
+}
+function cn(i){return LET[i%N]+(N-(i/N|0))}
+function nameP(P){return GAME.sides[P].name}
+function bit(occ,i){return occ[i>>5]>>>(i&31)&1}
+function avail(s,P){return VAR.shared?s.res[0]:s.res[P]}
+function legal(s,P){var a=avail(s,P),L=s.L,o=[];for(var i=0;i<L.length;i++)if(a>>PLP[L[i]]&1)o.push(L[i]);return o}
+function fits(occ,k){for(var w=0;w<W;w++)if(PM[k*W+w]&occ[w])return false;return true}
+// placements of L still possible after placement m, keeping only pieces in the reserve mask keep
+function filterAfter(L,m,keep){
+  var out=new Int32Array(L.length),n=0,mb=m*W,i,k,kb,w;
+  for(i=0;i<L.length;i++){k=L[i];if(!(keep>>PLP[k]&1))continue;kb=k*W;for(w=0;w<W;w++)if(PM[kb+w]&PM[mb+w])break;if(w===W)out[n++]=k}
+  return out.slice(0,n);
+}
+function newState(){return{pid:new Int16Array(NC).fill(-1),ow:new Int8Array(NC).fill(-1),occ:new Uint32Array(W),res:[FULL,FULL],
+  turn:0,ply:0,w:-1,ev:"",last:-1,L:ALL,placed:[0,0],log:[]}}
+function clone(s){return{pid:s.pid.slice(),ow:s.ow.slice(),occ:s.occ.slice(),res:s.res.slice(),turn:s.turn,ply:s.ply,w:s.w,ev:s.ev,
+  last:s.last,L:s.L,placed:s.placed.slice(),log:[]}}
+function cellsText(k){return PLC[k].slice().sort(function(a,b){return a%N-b%N||b-a}).map(cn).join(" ")}
+function resAfter(s,k){var P=s.turn,b=1<<PLP[k],r=s.res.slice();if(VAR.shared){r[0]&=~b;r[1]=r[0]}else r[P]&=~b;return r}
+// carry out one action on ns (a copy). Returns an error message or "".
+function doAct(ns,a){
+  if(ns.w>=0)return"The game is over.";
+  if(a.t!=="place"||!(a.k>=0&&a.k<NP))return"Unknown action.";
+  var P=ns.turn,k=a.k,p=PLP[k];
+  if(!(avail(ns,P)>>p&1))return VAR.shared?"The "+ORDER[p]+" is already on the board.":"Your "+ORDER[p]+" is already on the board.";
+  if(!fits(ns.occ,k))return"The piece would overlap a piece already on the board.";
+  PLC[k].forEach(function(x){ns.pid[x]=k;ns.ow[x]=P});
+  for(var w=0;w<W;w++)ns.occ[w]|=PM[k*W+w];
+  ns.res=resAfter(ns,k);ns.L=filterAfter(ns.L,k,ns.res[0]|ns.res[1]);
+  ns.placed[P]++;ns.last=k;ns.ply++;
+  ns.log.push(nameP(P)+" placed the "+ORDER[p]+" on "+cellsText(k)+".");
+  ns.turn=1-P;
+  if(!legal(ns,ns.turn).length){ns.w=P;var O=ns.turn,why;
+    if(VAR.shared)why=ns.res[0]?"no remaining piece fits on the board":"all twelve pieces are on the board";
+    else why=ns.res[O]?"none of "+nameP(O)+"’s remaining pieces fits on the board":nameP(O)+" has no pieces left";
+    ns.log.push("Game over: "+why+". "+nameP(P)+" made the last move and wins.")}
+  return"";
+}
+// try action a in state s: {ns} or {err}
+function apply(s,a){var ns=clone(s),e=doAct(ns,a);if(e)return{err:e};ns.ev=ns.log.join(" ");ns.log=[];return{ns:ns}}
+
+/* ================================ 2. ENGINE ================================ */
+// random game from the position (placements L, reserves r0/r1, P to move); returns the winner
+function playout(L,r0,r1,P){
+  var n=L.length,buf=SCR,i,j,k,m,c,a,t,b,keep,mb,kb,w,sh=VAR.shared;
+  for(i=0;i<n;i++)buf[i]=L[i];
+  for(;;){
+    a=sh?r0:(P?r1:r0);
+    if(sh)c=n;else{c=0;for(i=0;i<n;i++)if(a>>PLP[buf[i]]&1)c++}
+    if(!c)return 1-P;
+    t=Math.random()*c|0;
+    if(sh)m=buf[t];else for(i=0;i<n;i++)if(a>>PLP[buf[i]]&1){if(!t){m=buf[i];break}t--}
+    b=1<<PLP[m];if(sh)r0&=~b;else if(P)r1&=~b;else r0&=~b;
+    keep=sh?r0:(r0|r1);mb=m*W;j=0;
+    for(i=0;i<n;i++){k=buf[i];if(!(keep>>PLP[k]&1))continue;kb=k*W;for(w=0;w<W;w++)if(PM[kb+w]&PM[mb+w])break;if(w===W)buf[j++]=k}
+    n=j;P=1-P;
+  }
+}
+// legal moves of the side to move, one per class of moves equivalent under the symmetries of the position
+function rootMoves(s){
+  var C=legal(s,s.turn),G=[],t,i;
+  for(t=1;t<8;t++){for(i=0;i<NC;i++)if(bit(s.occ,i)!==bit(s.occ,SYM[t][i]))break;if(i===NC)G.push(t)}
+  if(!G.length)return C;
+  return C.filter(function(k){for(var q=0;q<G.length;q++)if(PSYM[G[q]][k]<k)return false;return true});
+}
+function after(s,k){var r=resAfter(s,k),o=s.occ.slice();for(var w=0;w<W;w++)o[w]|=PM[k*W+w];
+  return{k:k,L:filterAfter(s.L,k,r[0]|r[1]),r0:r[0],r1:r[1],occ:o,w:0,n:0}}
+function countFor(L,a){var n=0;for(var i=0;i<L.length;i++)if(a>>PLP[L[i]]&1)n++;return n}
+function oppCount(c,O){return countFor(c.L,VAR.shared?c.r0:(O?c.r1:c.r0))}
+// exact search: a winning move {win:true,k}, {win:false} if every move loses, null if the node budget ran out
+var ABORT={};
+function solve(P,cands,cap,until){
+  var memo=new Map(),nodes=0,sh=VAR.shared;
+  function win(L,occ,r0,r1,P){
+    if(++nodes>cap||(!(nodes&255)&&Date.now()>until))throw ABORT;
+    var key=Array.prototype.join.call(occ,",")+"|"+r0+(sh?"":"|"+r1+"|"+P),v=memo.get(key);
+    if(v!==undefined)return v;
+    var a=sh?r0:(P?r1:r0),res=false;
+    for(var i=0;i<L.length&&!res;i++){var k=L[i],p=PLP[k];if(!(a>>p&1))continue;
+      var b=1<<p,n0=r0,n1=r1;if(sh)n0&=~b;else if(P)n1&=~b;else n0&=~b;
+      var o2=occ.slice();for(var w=0;w<W;w++)o2[w]|=PM[k*W+w];
+      if(!win(filterAfter(L,k,sh?n0:(n0|n1)),o2,n0,n1,1-P))res=true}
+    memo.set(key,res);return res;
+  }
+  var C=cands.slice().sort(function(x,y){return oppCount(x,1-P)-oppCount(y,1-P)});
+  try{for(var i=0;i<C.length;i++)if(!win(C[i].L,C[i].occ,C[i].r0,C[i].r1,1-P))return{win:true,k:C[i].k};return{win:false}}
+  catch(e){if(e===ABORT)return null;throw e}
+}
+// Monte Carlo with successive halving: every round, playouts from each candidate, then the better half goes on
+function mcChoose(P,cands,ms){
+  var end=Date.now()+ms,C=cands.slice(),O=1-P,i,j,t;
+  for(i=C.length-1;i>0;i--){j=Math.random()*(i+1)|0;t=C[i];C[i]=C[j];C[j]=t}
+  while(C.length>1){
+    var rEnd=Date.now()+Math.max(0,end-Date.now())/Math.ceil(Math.log2(C.length)),first=true;
+    while(first||Date.now()<rEnd){
+      for(i=0;i<C.length;i++){var c=C[i];if(playout(c.L,c.r0,c.r1,O)===P)c.w++;c.n++;
+        // too many candidates for the time left: keep only those sampled so far
+        if(first&&i>=7&&!(i&15)&&Date.now()>end){C=C.slice(0,i+1);break}}
+      first=false}
+    C.sort(function(a,b){return b.w/b.n-a.w/a.n});
+    C=C.slice(0,Math.ceil(C.length/2));
+  }
+  return C[0].k;
+}
+var LV={1:{rnd:.35,ms:150,sol:0,cap:0},2:{rnd:0,ms:700,sol:150,cap:30000},3:{rnd:0,ms:2200,sol:450,cap:250000}};
+var FAST={1:{rnd:.35,ms:15,sol:0,cap:0},2:{rnd:0,ms:40,sol:90,cap:6000},3:{rnd:0,ms:120,sol:220,cap:40000}};
+// choose and play a move. Easy: some random moves, short Monte Carlo search otherwise. Medium: longer search, immediate
+// wins taken, exact solving near the end. Hard: much longer search and exact solving from earlier in the game.
+function aiStep(s,lv,fast){
+  var o=(fast?FAST:LV)[lv],P=s.turn,C=legal(s,P),k;
+  if(C.length===1)k=C[0];
+  else if(Math.random()<o.rnd)k=C[Math.random()*C.length|0];
+  else{
+    var cands=rootMoves(s).map(function(x){return after(s,x)}),wn=lv>1?cands.filter(function(c){return!oppCount(c,1-P)})[0]:null;
+    if(wn)k=wn.k;
+    else{var t0=Date.now(),sol=o.sol&&s.L.length<=o.sol?solve(P,cands,o.cap,t0+o.ms*.6):null;
+      k=sol&&sol.win?sol.k:mcChoose(P,cands,Math.max(o.ms*.4,o.ms-(Date.now()-t0)))}
+  }
+  return apply(s,{t:"place",k:k}).ns;
+}
+var sim=null;
+function runSim(){   // computer vs computer, to look for first/second-player advantage
+  if(sim){sim.stop=true;return}
+  var me=sim={stop:false},TOTAL=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?2:+$("simR").value)),
+      done=0,w=[0,0],len=0,g=newState(),lv=+$("level").value,lvName=$("level").options[$("level").selectedIndex].text,nm=GAME.sides.map(function(x){return x.name});
+  ["mode","side","level","variant","new","undo","redo","rot","mir","simN","simR","nFirst","nPrev","nNext","nLast"].forEach(function(i){$(i).disabled=true});
+  $("sim").textContent="Stop simulation";
+  $("simout").textContent="Simulating "+VAR.name+" at "+lvName+" level… 0/"+TOTAL;
+  function fin(stopped){
+    sim=null;$("sim").textContent="Simulation";
+    $("mode").disabled=$("new").disabled=$("simN").disabled=$("simR").disabled=$("variant").disabled=false;
+    $("level").disabled=$("side").disabled=$("mode").value==="2p";
+    var mgn=done?(196*Math.sqrt((w[0]/done)*(1-w[0]/done)/done)).toFixed(1):"0";
+    var pc=function(n){return done?(100*n/done).toFixed(1)+"%":"n/a"};
+    $("simout").textContent=(stopped?"Stopped after ":"")+done+" games of "+VAR.name+" at "+lvName+" level (computer vs computer), first "+RND+" moves random.\n"+
+      "First player ("+nm[0]+") won "+pc(w[0])+" ("+w[0]+" games). Second player ("+nm[1]+") won "+pc(w[1])+" ("+w[1]+" games)."+
+      (done?" Margin ±"+mgn+" points at 95% confidence.\nAverage length: "+(len/done).toFixed(1)+" pieces placed.":"");
+    render();
+  }
+  function stepSim(){
+    if(me.stop){fin(true);return}
+    var t0=Date.now();
+    while(Date.now()-t0<40){
+      if(g.w>=0){w[g.w]++;len+=g.ply;done++;g=newState();if(done>=TOTAL){fin(false);return}continue}
+      if(g.ply<RND){var C=legal(g,g.turn);g=apply(g,{t:"place",k:C[Math.random()*C.length|0]}).ns}
+      else g=aiStep(g,lv,true);
+    }
+    $("simout").textContent="Simulating "+VAR.name+" at "+lvName+" level… "+done+"/"+TOTAL;
+    setTimeout(stepSim,0);
+  }
+  stepSim();
+}
+
+/* =============================== 3. INTERFACE =============================== */
+var hist,redo=[],view=null,selP=-1,curCs=null,hov=-1,ptype="mouse",over,busy,note="";   // view: null = live position, otherwise the index being reviewed
+var GOLD="#e0a800";
+function cur(){return hist[hist.length-1]}
+function line(){return hist.concat(redo.slice().reverse())}   // every position, including those that can still be redone
+function browsing(){return view!==null}
+function shown(){return view===null?cur():line()[view]}
+function clearSel(){selP=-1;curCs=null;note="";if(ptype!=="mouse")hov=-1}
+function goto(k){
+  if(busy||sim)return;
+  var n=hist.length-1+redo.length;k=Math.max(0,Math.min(n,k));
+  view=k===hist.length-1?null:k;clearSel();render();
+}
+// Undo/Redo while reviewing: leave review and play on from the reviewed position (in computer mode, from the nearest position where it is the human's turn)
+function unlock(dir){
+  var L=line(),k=view,j;
+  if($("mode").value==="ai"){
+    j=k;while(j>=0&&j<L.length&&L[j].w<0&&L[j].turn!==+$("side").value)j+=dir;
+    if(j>=0&&j<L.length)k=j;
+  }
+  hist=L.slice(0,k+1);redo=L.slice(k+1).reverse();view=null;clearSel();over=false;render();maybeAI();
+}
+function humanTurn(){return $("mode").value==="2p"||cur().turn===+$("side").value}
+function canAct(){return!browsing()&&cur().w<0&&humanTurn()&&!busy&&!sim}
+function start(){
+  setup($("variant").value);
+  hist=[newState()];redo=[];view=null;clearSel();hov=-1;$("level").disabled=$("side").disabled=$("mode").value==="2p";over=false;busy=false;
+  render();maybeAI();
+}
+function curOri(){return selP<0?-1:OKEY[selP][ckey(curCs)]}
+// the selected piece, as turned now, with its anchor square on cell
+function preview(s,cell){
+  var oi=curOri(),O=ORI[selP][oi],a=O.cs[O.ai],r0=(cell/N|0)-a[0],c0=cell%N-a[1],cells=[],inb=true;
+  O.cs.forEach(function(q){var r=r0+q[0],c=c0+q[1];if(r<0||c<0||r>=N||c>=N)inb=false;else cells.push(r*N+c)});
+  var k=inb?PIX[selP+","+oi+","+r0+","+c0]:-1,err="";
+  if(!inb)err="The piece must lie entirely on the board.";else if(!fits(s.occ,k))err="The piece would overlap a piece already on the board.";
+  return{cells:cells,k:k,err:err};
+}
+function outline(cellsOf,stroke,sw,extra){   // boundary of a set of squares (cellsOf: square -> group id or -1)
+  var d=[],i,r,c,g;
+  for(i=0;i<NC;i++){g=cellsOf(i);if(g<0)continue;r=i/N|0;c=i%N;
+    if(r===0||cellsOf(i-N)!==g)d.push("M"+c+" "+r+"h1");
+    if(r===N-1||cellsOf(i+N)!==g)d.push("M"+c+" "+(r+1)+"h1");
+    if(c===0||cellsOf(i-1)!==g)d.push("M"+c+" "+r+"v1");
+    if(c===N-1||cellsOf(i+1)!==g)d.push("M"+(c+1)+" "+r+"v1")}
+  return'<path d="'+d.join("")+'" fill="none" stroke="'+stroke+'" stroke-width="'+sw+'" stroke-linecap="square" pointer-events="none" '+(extra||"")+'/>';
+}
+function tileSVG(cs,p,dim){
+  var h=0,w=0;cs.forEach(function(q){h=Math.max(h,q[0]+1);w=Math.max(w,q[1]+1)});
+  var ox=(5-w)/2,oy=(5-h)/2,o=['<svg viewBox="-0.45 -0.45 5.9 5.9" aria-hidden="true">'];
+  cs.forEach(function(q){o.push('<rect x="'+(ox+q[1])+'" y="'+(oy+q[0])+'" width="1" height="1" fill="'+(dim?"none":COLOR[p])+'" stroke="'+(dim?"#8a96a3":"rgba(0,0,0,.55)")+'" stroke-width=".07"'+(dim?' stroke-dasharray=".2 .14"':'')+'/>')});
+  o.push('<text x="5.3" y="5.3" font-size="1.3" text-anchor="end" font-family="Georgia,serif">'+ORDER[p]+'</text></svg>');
+  return o.join("");
+}
+function render(){
+  var br=browsing(),s=shown(),sd=GAME.sides,h=[],P=s.turn,i,k,nT=hist.length-1+redo.length,kk=br?view:hist.length-1,lock=busy||!!sim;
+  over=s.w>=0;
+  var act=canAct(),pv=act&&selP>=0&&hov>=0?preview(s,hov):null;
+  h.push('<svg viewBox="-0.85 -0.25 '+(N+1.1)+' '+(N+1.1)+'" role="img" aria-label="'+VAR.name+' board">');
+  h.push('<rect x="0" y="0" width="'+N+'" height="'+N+'" fill="#fff"/>');
+  var gl=[];for(i=1;i<N;i++)gl.push("M"+i+" 0v"+N+"M0 "+i+"h"+N);
+  h.push('<path d="'+gl.join("")+'" stroke="#d3dae1" stroke-width=".03" fill="none"/>');
+  for(i=0;i<NC;i++){k=s.pid[i];if(k<0)continue;
+    h.push('<rect x="'+i%N+'" y="'+(i/N|0)+'" width="1" height="1" fill="'+COLOR[PLP[k]]+'" stroke="rgba(0,0,0,.22)" stroke-width=".03"/>')}
+  h.push(outline(function(x){return s.pid[x]},"#333",".07"));
+  var seen={};for(i=0;i<NC;i++){k=s.pid[i];if(k<0||seen[k])continue;seen[k]=1;
+    var Ok=ORI[PLP[k]][PLO[k]],ac=PLC[k][Ok.ai];
+    h.push('<circle cx="'+(ac%N+.5)+'" cy="'+((ac/N|0)+.5)+'" r=".15" fill="'+sd[s.ow[ac]].mark+'" stroke="#333" stroke-width=".04" pointer-events="none"/>')}
+  if(s.last>=0)h.push(outline(function(x){return s.pid[x]===s.last?1:-1},GOLD,".16"));
+  if(act&&selP>=0&&$("shHint").checked){var oi=curOri(),ai=ORI[selP][oi].ai;
+    legal(s,P).forEach(function(q){if(PLP[q]===selP&&PLO[q]===oi){var x=PLC[q][ai];h.push('<circle cx="'+(x%N+.5)+'" cy="'+((x/N|0)+.5)+'" r=".09" fill="#7d8a97" pointer-events="none"/>')}})}
+  if(pv){var ok=!pv.err,set={};pv.cells.forEach(function(x){set[x]=1;h.push('<rect x="'+x%N+'" y="'+(x/N|0)+'" width="1" height="1" fill="'+(ok?COLOR[selP]:"#e05050")+'" fill-opacity="'+(ok?.75:.35)+'" pointer-events="none"/>')});
+    h.push(outline(function(x){return set[x]?1:-1},ok?"#333":"#c0392b",".08",ok?'':'stroke-dasharray=".18 .12"'))}
+  h.push('<rect x="0" y="0" width="'+N+'" height="'+N+'" fill="none" stroke="#56606a" stroke-width=".06"/>');
+  for(i=0;i<N;i++){h.push('<text x="'+(i+.5)+'" y="'+(N+.45)+'" font-size=".42" text-anchor="middle" dominant-baseline="central" font-family="Georgia,serif">'+LET[i]+'</text>');
+    h.push('<text x="-.42" y="'+(i+.5)+'" font-size=".42" text-anchor="middle" dominant-baseline="central" font-family="Georgia,serif">'+(N-i)+'</text>')}
+  h.push('</svg>');
+  $("board").innerHTML=h.join("");
+  // reserve trays
+  var fitN=new Int32Array(12);for(i=0;i<s.L.length;i++)fitN[PLP[s.L[i]]]++;
+  var sets=VAR.shared?[-1]:[0,1],t=[];
+  sets.forEach(function(who){var res=who<0?s.res[0]:s.res[who],mine=who<0||who===P;
+    t.push('<div class="trayh">'+(who<0?"Reserve (shared by both players)":nameP(who)+"’s set"+(mine&&!over?" – to move":""))+'</div><div class="tray">');
+    for(var p=0;p<12;p++){var inR=res>>p&1,sel=act&&mine&&p===selP,cls="tile"+(sel?" sel":"")+(!inR?" used":inR&&!fitN[p]?" stuck":"");
+      t.push('<button class="'+cls+'" data-p="'+p+'" data-w="'+who+'" aria-label="'+ORDER[p]+(inR?"":" (played)")+'"'+(!act||!mine||!inR?" disabled":"")+'>'+tileSVG(sel?curCs:BASE[p],p,!inR)+'</button>')}
+    t.push('</div>')});
+  $("tray").innerHTML=t.join("");
+  var names=sd.map(function(x){return x.name}),stt;
+  for(i=0;i<2;i++){var tt=GAME.stats(s,i);$("s"+i).textContent=tt.big;$("d"+i).textContent=tt.text;
+    $("p"+i).className="pl"+(!over&&s.turn===i?" on":"")}
+  var turnNo=" (move "+(s.ply+1)+")";
+  if(br)stt="Reviewing history (move "+kk+" of "+nT+"): the board is locked. Press Undo or Redo to play on from here.";
+  else if(over)stt="Game over: "+names[s.w]+" made the last move and wins.";
+  else if(!humanTurn())stt=names[P]+" to play"+turnNo+" – computer thinking…";
+  else if(selP<0)stt=names[P]+" to play"+turnNo+" – choose a piece from "+(VAR.shared?"the reserve":"your set")+".";
+  else stt=names[P]+turnNo+" – drop the "+ORDER[selP]+(ptype==="mouse"?": click to place, R or right-click rotates, F mirrors.":": tap a square to show it there, tap the outline to drop it.");
+  $("status").textContent=stt;
+  $("last").textContent=(GAME.describe(s)+" "+note).trim();
+  $("undo").disabled=lock||!(br||hist.length>=2);
+  $("redo").disabled=lock||!(br||redo.length);
+  $("nFirst").disabled=$("nPrev").disabled=lock||kk<=0;
+  $("nNext").disabled=$("nLast").disabled=lock||kk>=nT;
+  $("nlab").textContent="Move "+kk+" of "+nT;
+  $("rot").disabled=$("mir").disabled=!act||selP<0;
+}
+function play(ns){hist.push(ns);redo=[];clearSel();render();maybeAI()}
+function act(a){var r=apply(cur(),a);if(r.ns){play(r.ns);return true}note=r.err;render();return false}
+function tryPlace(pv){if(!pv.err&&pv.k>=0){act({t:"place",k:pv.k});return}note=pv.err;render()}
+function boardClick(cell){
+  if(!canAct()||cell<0)return;
+  var s=cur();note="";
+  if(selP<0){note=s.pid[cell]>=0?"That square holds the "+ORDER[PLP[s.pid[cell]]]+", placed by "+nameP(s.ow[cell])+". Choose a piece from the reserve to play.":"Choose a piece from the reserve first.";render();return}
+  if(ptype==="mouse"){hov=cell;tryPlace(preview(s,cell));return}
+  var pv=hov>=0?preview(s,hov):null;
+  if(pv&&pv.cells.indexOf(cell)>=0&&!pv.err){tryPlace(pv);return}
+  hov=cell;render();
+}
+function turn(f){if(!canAct()||selP<0)return;curCs=f(curCs);note="";render()}
+function rotate(n){turn(function(c){for(var q=0;q<n;q++)c=rotC(c);return c})}
+function cellAt(e){var sv=$("board").querySelector("svg");if(!sv||!sv.getScreenCTM())return-1;var pt=sv.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;
+  var q=pt.matrixTransform(sv.getScreenCTM().inverse()),c=Math.floor(q.x),r=Math.floor(q.y);return r>=0&&c>=0&&r<N&&c<N?r*N+c:-1}
+function maybeAI(){
+  if(sim||cur().w>=0||$("mode").value!=="ai"||cur().turn===+$("side").value)return;
+  busy=true;render();
+  setTimeout(function(){
+    var c=cur();hist.push(aiStep(c,+$("level").value));redo=[];busy=false;
+    render();maybeAI();
+  },180);
+}
+document.title=GAME.title;$("gtitle").textContent=GAME.title;$("gsub").textContent=GAME.subtitle;
+function li(x){return"<li>"+(typeof x==="string"?x:x.t+"<ul>"+x.sub.map(li).join("")+"</ul>")+"</li>"}
+$("rules").innerHTML=GAME.rules.map(function(sec){return"<li><b>"+sec.h+"</b><ul>"+sec.items.map(li).join("")+"</ul></li>"}).join("");
+$("side").innerHTML=GAME.sides.map(function(x,i){return'<option value="'+i+'">You are '+x.name+(i?" (second)":" (first)")+'</option>'}).join("");
+for(var ni=0;ni<2;ni++){$("n"+ni).textContent=GAME.sides[ni].name;$("m"+ni).style.background=GAME.sides[ni].mark}
+var bd=$("board");
+bd.addEventListener("pointerdown",function(e){ptype=e.pointerType||"mouse"});
+bd.addEventListener("pointermove",function(e){if(e.pointerType!=="mouse")return;ptype="mouse";if(!canAct()||selP<0)return;var c=cellAt(e);if(c!==hov){hov=c;render()}});
+bd.addEventListener("pointerleave",function(e){if(e.pointerType==="mouse"&&hov>=0){hov=-1;if(canAct())render()}});
+bd.addEventListener("click",function(e){boardClick(cellAt(e))});
+bd.addEventListener("contextmenu",function(e){if(canAct()&&selP>=0){e.preventDefault();rotate(1)}});
+$("tray").addEventListener("click",function(e){var b=e.target.closest("[data-p]");if(!b||b.disabled||!canAct())return;
+  var p=+b.getAttribute("data-p");note="";if(p===selP){rotate(1);return}selP=p;curCs=BASE[p];render()});
+document.addEventListener("keydown",function(e){
+  var tg=e.target.tagName;if(tg==="INPUT"||tg==="SELECT"||tg==="TEXTAREA"||e.ctrlKey||e.metaKey||e.altKey)return;
+  var c=e.key.toLowerCase();
+  if(c==="r"&&selP>=0&&canAct()){e.preventDefault();rotate(e.shiftKey?3:1)}
+  else if(c==="f"&&selP>=0&&canAct()){e.preventDefault();turn(mirC)}
+  else if(e.key==="Escape"&&selP>=0){clearSel();render()}
+});
+$("rot").onclick=function(){rotate(1)};$("mir").onclick=function(){turn(mirC)};
+$("new").onclick=start;$("sim").onclick=runSim;$("shHint").onchange=function(){render()};
+$("mode").onchange=$("side").onchange=$("variant").onchange=start;
+$("redo").onclick=function(){
+  if(busy||sim)return;
+  if(browsing()){unlock(1);return}
+  if(!redo.length)return;
+  hist.push(redo.pop());
+  while($("mode").value==="ai"&&redo.length&&cur().w<0&&cur().turn!==+$("side").value)hist.push(redo.pop());
+  clearSel();render();
+};
+$("undo").onclick=function(){
+  if(busy||sim)return;
+  if(browsing()){unlock(-1);return}
+  if(hist.length<2)return;
+  redo.push(hist.pop());
+  while($("mode").value==="ai"&&hist.length>1&&cur().turn!==+$("side").value)redo.push(hist.pop());
+  clearSel();over=false;render();
+};
+$("nFirst").onclick=function(){goto(0)};
+$("nPrev").onclick=function(){goto((browsing()?view:hist.length-1)-1)};
+$("nNext").onclick=function(){goto((browsing()?view:hist.length-1)+1)};
+$("nLast").onclick=function(){goto(hist.length-1+redo.length)};
+start();
+})();
+</script>
+</body>
+</html>
