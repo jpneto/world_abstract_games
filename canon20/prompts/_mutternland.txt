@@ -1,7 +1,0 @@
-Using the webpage made in Palanquée, please replace the GAME definition with the rules stated below. Add other pieces or move types only if the new game needs them, and also change the engine's move generation, evaluation and the interface click handling where needed. Keep the interface features: Undo/Redo, the history navigation buttons, the computer opponent with three levels, the simulation tool, board coordinates, and the gold last-move marker to identify all pieces moved or placed in the previous turn.
-
-The game's name is Mutternland. The rules are described in the pdf.
-
-The nuts are to be placed randomly over the surface board. Assume a maximum surface of a hexhex7, and randomly distribute the nuts inside. However, the nuts should define a single connected shape (so, no two or more disconnect islands of nuts) and all nuts should have at least two adjacent nuts (to prevent very strange shapes).
-
-About the setup: the marbles must be placed on the edges of the random nut surface.
