@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Epaminondas</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
+<style>
+:root{--bg:#eef0e6;--ink:#1f2a1c;--mute:#5d6a56;--cell:#dfe3cf;--edge:#b9bfa3;--hi:#e0803a;--panel:#fff;--line:#c5cab4;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f}}
+:root[data-theme="dark"]{--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+main{max-width:1080px;margin:0 auto;padding:16px 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.right>.bar:first-child{margin-top:0}
+@media (min-width:860px){.layout{grid-template-columns:minmax(0,600px) minmax(300px,1fr);gap:28px;align-items:start}}
+h1{font:700 2rem/1.1 "Bricolage Grotesque",Georgia,serif;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+select,button.ctl{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.ctl:disabled,select:disabled,input:disabled{opacity:.45;cursor:default}
+label.f{color:var(--mute);font-size:.9rem}
+input[type=number]{width:4.5em;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+button.ctl.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button.ctl.icon{display:inline-flex;align-items:center;justify-content:center;padding:6px 10px}
+button.ctl.icon svg{width:18px;height:18px;fill:currentColor;display:block}
+.navlab{min-width:7.5em;text-align:center;color:var(--mute);font-variant-numeric:tabular-nums}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.pl{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:8px 12px;display:flex;justify-content:space-between;align-items:baseline;gap:6px}
+.pl.on{border-color:var(--hi)}
+.pl b{font:700 1.6rem "Bricolage Grotesque",Georgia,serif}
+.pl small{color:var(--mute)}
+#status{min-height:1.5em;font-weight:600;margin:6px 0}
+#board svg{display:block;width:100%;max-width:600px;margin:0 auto;touch-action:manipulation}
+#board .sq{cursor:pointer}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+details li{margin:4px 0}
+.legend{color:var(--mute);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+<h1 id="gtitle"></h1>
+<p class="sub" id="gsub"></p>
+<div class="layout">
+<div class="left">
+<div id="board"></div>
+<p class="legend">To move, click the <b>rear</b> stone of the group you want to move, then the square its <b>front</b> stone should reach. Every stone of yours lined up in front of the clicked stone, in that direction, moves with it; so to split a phalanx, click the stone where the moving part begins. The numbers beside each player are stones left; “far row” counts stones on the enemy’s home row. Thin dashed rings mark the squares the front stone can reach (red rings are captures). The light yellow arrow shows the last move, from the rear stone’s start to the front stone’s landing square; small crosses mark stones it captured. In Force, a gold star marks a Hero. Untick “Show highlights” to show only the board and stones (moves are entered the same way).</p>
+</div>
+<aside class="right">
+<div class="bar">
+  <select id="vr" aria-label="Variant"><option value="0" selected>Epaminondas (classic)</option><option value="1">Aggressive Epaminondas</option><option value="2">Force</option></select>
+</div>
+<div class="bar">
+  <select id="mode" aria-label="Mode"><option value="ai">Play the computer</option><option value="2p">Two players</option></select>
+  <select id="level" aria-label="Computer strength"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select>
+  <select id="side" aria-label="Your side"></select>
+  <button class="ctl primary" id="new">New game</button>
+  <button class="ctl" id="undo">Undo</button>
+  <button class="ctl" id="redo">Redo</button>
+</div>
+<div class="bar" id="nav" role="group" aria-label="Game history">
+  <button class="ctl icon" id="nFirst" aria-label="Go to the beginning" title="Go to the beginning"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="2.5" height="14"/><path d="M19 5v14L8 12z"/></svg></button>
+  <button class="ctl icon" id="nPrev" aria-label="One move back" title="One move back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 5v14L6 12z"/></svg></button>
+  <span class="navlab" id="nlab" aria-live="polite">Move 0 of 0</span>
+  <button class="ctl icon" id="nNext" aria-label="One move forward" title="One move forward"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5v14l11-7z"/></svg></button>
+  <button class="ctl icon" id="nLast" aria-label="Go to the last move" title="Go to the last move"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5v14l11-7z"/><rect x="17.5" y="5" width="2.5" height="14"/></svg></button>
+  <label class="f"><input type="checkbox" id="showLast" checked> Show highlights</label>
+</div>
+<div class="score">
+  <div class="pl" id="p0"><span><span id="n0"></span> <small id="d0"></small></span><b id="s0">0</b></div>
+  <div class="pl" id="p1"><span><span id="n1"></span> <small id="d1"></small></span><b id="s1">0</b></div>
+</div>
+<div id="status" aria-live="polite"></div>
+<div id="last" class="legend" style="min-height:2.6em;margin:0 0 8px"></div>
+<div class="bar">
+  <label class="f">Simulation games <input id="simN" type="number" min="10" max="1000" value="10"></label>
+  <label class="f">Random opening moves <input id="simR" type="number" min="0" max="20" value="4"></label>
+  <button class="ctl" id="sim">Simulation</button>
+</div>
+<div id="simout" class="legend" style="white-space:pre-line;margin:0 0 8px"></div>
+<details>
+<summary>Rules</summary>
+<ul id="rules"></ul>
+</details>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+/* =====================================================================
+   1. GAME DEFINITION  - Epaminondas rules, 14×12 board geometry, phalanx moves and captures, variants
+   2. ENGINE           - evaluation, alpha-beta search with transposition table and quiescence, simulations
+   3. INTERFACE        - SVG board, click handling, controls
+   Board: squares i = r*14 + c, c = 0..13 (files a–n), r = 0..11 (ranks 1–12, rank 1 at the bottom).
+   Green (side 0) starts on ranks 1–2 and moves first; Black (side 1) starts on ranks 11–12.
+   The engine keeps one mutable position (B, HERO, TURN, CNT, FAR, HC, QUIET, hash) with make/unmake.
+   A move is an integer: lead square p | direction d<<8 | stones moving k<<11 | distance m<<16.
+   The k stones are p and the k-1 friendly stones directly behind it; all move m (1..k) squares along d.
+   A history state is {b, hero, turn, cnt, far, hc, quiet, w (-1 none, 0 Green, 1 Black, 2 draw), mv, ev}.
+   ===================================================================== */
+var $=function(i){return document.getElementById(i)};
+
+/* ============================ 1. GAME DEFINITION ============================ */
+var W=14,H=12,N=W*H,CLASSIC=0,AGGR=1,FORCE=2,VAR=0,QUIETMAX=100;
+var VNAMES=["Epaminondas","Aggressive Epaminondas","Force"];
+var GAME={
+  title:"Epaminondas",
+  subtitle:function(){return ["Robert Abbott’s phalanx game (1963). 14×12 board, 28 stones each. Get more stones onto the enemy’s home row than the enemy has on yours.",
+    "Aggressive Epaminondas (Paul Lieberman, 2013): quiet moves only go forward, straight or diagonally; captures are unchanged. The game always ends.",
+    "Force (Chris Huntoon, 2000): a stone reaching the enemy’s home row becomes a Hero. Have two Heroes on the board at once, or cut the enemy’s army below two stones."][VAR]},
+  sides:[{name:"Green",dark:"#16492b"},{name:"Black",dark:"#111"}],
+  rules:[
+  {h:"Board and stones",items:[
+    "A 14×12 checkered board. Green’s 28 stones fill ranks 1 and 2, Black’s 28 stones fill ranks 11 and 12. Green moves first; players alternate and may not pass.",
+    "Rank 1 is Green’s home row and rank 12 is Black’s home row."]},
+  {h:"Moving",items:[
+    "A phalanx is two or more friendly stones in an unbroken straight line, orthogonal or diagonal. A stone can belong to several phalanxes in different directions. A single stone is a phalanx of one.",
+    "On your turn, move one stone one square in any of the eight directions to an empty square, or move a phalanx along its own line, forwards or backwards.",
+    "All stones of a moving phalanx move the same number of squares in the same direction, at most as many squares as there are stones moving. A phalanx may be split: only the front part moves, and its distance is limited by the number of stones that move.",
+    "A phalanx cannot leave the board or move onto or over a friendly stone, and it can never move over an enemy stone."]},
+  {h:"Capturing",items:[
+    "The front stone of a moving phalanx may land on an enemy stone if the enemy phalanx it belongs to, counted from that stone onwards in the direction of movement, has strictly fewer stones than the moving phalanx. The move stops there.",
+    "All those enemy stones are captured and removed. A single stone never captures (no enemy line is shorter than one)."]},
+  {h:"Winning (classic and Aggressive)",items:[
+    "If at the start of your turn you have more stones on the enemy’s home row than the enemy has on yours, you win. So when the enemy reaches your home row you must at once capture that stone or reach theirs.",
+    "Symmetry rule: you may not move a stone onto the enemy’s home row if that would make the position mirror-symmetric (each square matching the square on the opposite side of the centre line, rank 1↔12, 2↔11 and so on, with colours swapped). This stops Black from drawing by copying Green’s moves.",
+    "A player with no legal move loses. Classic only: if 100 moves in a row (50 each) pass without a capture, the game is a draw (a rule of this page, so computer games always end)."]},
+  {h:"Aggressive Epaminondas (Paul Lieberman, 2013)",items:[
+    "Every non-capturing move must go forward, straight towards the enemy or diagonally forward. Sideways and backward moves are allowed only when they capture. Capture rules are unchanged, so the game is finite."]},
+  {h:"Force (Chris Huntoon, 2000)",items:[
+    "A stone that reaches the enemy’s home row becomes a Hero (marked with a gold star). Heroes stay on the board and move, capture and can be captured exactly like other stones.",
+    "The first player to have two Heroes on the board at the same time wins. You also win by reducing the enemy’s army to fewer than two stones. The home-row majority and symmetry rules do not apply.",
+    "A player with no legal move loses. 100 moves in a row without a capture or a new Hero is a draw."]}],
+  stats:function(s,i){
+    if(VAR===FORCE)return{big:s.cnt[i],text:"· Heroes "+s.hc[i]+"/2"};
+    return{big:s.cnt[i],text:"· far row "+s.far[i]}},
+  describe:function(s){return s.ev||""}
+};
+// geometry
+var DC=[1,1,0,-1,-1,-1,0,1],DR=[0,1,1,1,0,-1,-1,-1],OPP=[4,5,6,7,0,1,2,3];
+var DNAME=["east","north-east","north","north-west","west","south-west","south","south-east"];
+var DEL=DC.map(function(c,d){return DR[d]*W+c});
+var RAY=[],ROW=new Int8Array(N),COL=new Int8Array(N),FARROW=[H-1,0],FW=[1,-1];
+(function(){for(var i=0;i<N;i++){ROW[i]=Math.floor(i/W);COL[i]=i%W}
+  for(var d=0;d<8;d++){RAY[d]=new Int16Array(N);for(i=0;i<N;i++){var c=COL[i]+DC[d],r=ROW[i]+DR[d];RAY[d][i]=(c<0||c>=W||r<0||r>=H)?-1:r*W+c}}})();
+function sq(i){return String.fromCharCode(97+COL[i])+(ROW[i]+1)}
+// zobrist keys (two 32-bit halves)
+var Z1=[new Int32Array(N),new Int32Array(N)],Z2=[new Int32Array(N),new Int32Array(N)],ZH1=new Int32Array(N),ZH2=new Int32Array(N),ZT1,ZT2;
+(function(){var x=0x9e3779b9|0;function rnd(){x^=x<<13;x^=x>>>17;x^=x<<5;return x|0}
+  for(var s=0;s<2;s++)for(var i=0;i<N;i++){Z1[s][i]=rnd();Z2[s][i]=rnd()}for(i=0;i<N;i++){ZH1[i]=rnd();ZH2[i]=rnd()}ZT1=rnd();ZT2=rnd()})();
+// the engine position
+var B=new Int8Array(N),HERO=new Uint8Array(N),TURN=0,CNT=[0,0],FAR=[0,0],HC=[0,0],QUIET=0,H1=0,H2=0;   // HERO, HC: Force variant Heroes
+function put(i,s){B[i]=s+1;CNT[s]++;if(ROW[i]===FARROW[s])FAR[s]++;H1^=Z1[s][i];H2^=Z2[s][i]}
+function clr(i,s){B[i]=0;CNT[s]--;if(ROW[i]===FARROW[s])FAR[s]--;H1^=Z1[s][i];H2^=Z2[s][i]}
+function hset(i,s){HERO[i]=1;HC[s]++;H1^=ZH1[i];H2^=ZH2[i]}
+function hclr(i,s){HERO[i]=0;HC[s]--;H1^=ZH1[i];H2^=ZH2[i]}
+function load(st){
+  US=0;B.fill(0);HERO.fill(0);CNT=[0,0];FAR=[0,0];HC=[0,0];H1=0;H2=0;
+  for(var i=0;i<N;i++)if(st.b[i]){put(i,st.b[i]-1);if(st.hero[i])hset(i,st.b[i]-1)}
+  TURN=st.turn;QUIET=st.quiet;if(TURN){H1^=ZT1;H2^=ZT2}
+}
+function snap(mv,ev){return{b:Uint8Array.from(B),turn:TURN,cnt:CNT.slice(),far:FAR.slice(),hero:Uint8Array.from(HERO),hc:HC.slice(),quiet:QUIET,w:-1,mv:mv||null,ev:ev||""}}
+function newState(){B.fill(0);for(var c=0;c<W;c++){B[c]=1;B[W+c]=1;B[(H-1)*W+c]=2;B[(H-2)*W+c]=2}
+  var st={b:Uint8Array.from(B),turn:0,cnt:[28,28],far:[0,0],hero:new Uint8Array(N),quiet:0};load(st);return snap()}
+// undo stack
+var US=0,U_MV=new Int32Array(512),U_C=new Int8Array(512),U_P=new Int8Array(512),U_Q=new Int16Array(512),U_HC=new Int16Array(512),U_HM=new Int16Array(512);
+function make(mv){
+  var p=mv&255,d=(mv>>8)&7,k=(mv>>11)&31,m=(mv>>16)&31,s=TURN,o=1-s,en=o+1,dl=DEL[d],t=p+dl*m,c=0,j,pr=0,hc=0,hm=0,q;
+  if(B[t]===en){j=t;while(j>=0&&B[j]===en){if(HERO[j]){hc|=1<<c;hclr(j,o)}clr(j,o);c++;j=RAY[d][j]}}
+  for(j=0;j<k;j++){q=p-dl*j;if(HERO[q]){hm|=1<<j;hclr(q,s)}clr(q,s)}
+  for(j=0;j<k;j++){q=p-dl*j+dl*m;put(q,s);if(hm>>j&1)hset(q,s)}
+  if(VAR===FORCE&&ROW[t]===FARROW[s]&&!HERO[t]){hset(t,s);pr=1}   // Force: the stone becomes a Hero
+  U_MV[US]=mv;U_C[US]=c;U_P[US]=pr;U_Q[US]=QUIET;U_HC[US]=hc;U_HM[US]=hm;US++;
+  QUIET=(c||pr)?0:QUIET+1;TURN=o;H1^=ZT1;H2^=ZT2;
+}
+function unmake(){
+  US--;var mv=U_MV[US],c=U_C[US],p=mv&255,d=(mv>>8)&7,k=(mv>>11)&31,m=(mv>>16)&31,dl=DEL[d],t=p+dl*m,j,s,o,q,hm=U_HM[US],hc=U_HC[US],e;
+  TURN=1-TURN;H1^=ZT1;H2^=ZT2;s=TURN;o=1-s;
+  if(U_P[US])hclr(t,s);
+  for(j=0;j<k;j++){q=p-dl*j+dl*m;if(hm>>j&1)hclr(q,s);clr(q,s)}
+  for(j=0;j<k;j++){q=p-dl*j;put(q,s);if(hm>>j&1)hset(q,s)}
+  for(j=t,e=0;e<c;e++){put(j,o);if(hc>>e&1)hset(j,o);j=RAY[d][j]}
+  QUIET=U_Q[US];
+}
+// symmetry rule: the position equals its reflection across the centre line with colours swapped
+function symmetric(){
+  for(var r=0;r<H/2;r++)for(var c=0;c<W;c++){var a=B[r*W+c],b=B[(H-1-r)*W+c];if(a?(!b||a===b):b)return false}
+  return true;
+}
+// after make(mv) by the side now NOT to move: does the move break the symmetry rule?
+function badSym(mv){
+  if(VAR===FORCE)return false;
+  var p=mv&255,d=(mv>>8)&7,m=(mv>>16)&31,s=1-TURN,t=p+DEL[d]*m;
+  return DR[d]===FW[s]&&ROW[t]===FARROW[s]&&symmetric();
+}
+// generate moves for the side to move into buf (with ordering scores in ord); tac: captures and home-row arrivals only
+function gen(buf,ord,tac){
+  var s=TURN,me=s+1,en=2-s,n=0,p,d,q,j,len,fwd,quietOK,t,m,k,c,v,far,od;
+  for(p=0;p<N;p++){if(B[p]!==me)continue;
+    for(d=0;d<8;d++){q=RAY[d][p];if(q<0||B[q]===me)continue;
+      fwd=DR[d]===FW[s];quietOK=!(VAR===AGGR&&!fwd);od=OPP[d];
+      len=1;j=RAY[od][p];while(j>=0&&B[j]===me){len++;j=RAY[od][j]}
+      t=p;
+      for(m=1;m<=len;m++){t=RAY[d][t];if(t<0)break;v=B[t];
+        far=fwd&&ROW[t]===FARROW[s];
+        if(v===0){
+          if(quietOK&&(!tac||far))for(k=m;k<=len;k++){buf[n]=p|d<<8|k<<11|m<<16;ord[n]=far?9000:(fwd?m:0);n++}
+          continue;
+        }
+        if(v===en){c=0;j=t;while(j>=0&&B[j]===en){c++;j=RAY[d][j]}
+          for(k=Math.max(m,c+1);k<=len;k++){buf[n]=p|d<<8|k<<11|m<<16;ord[n]=10000+c*1000+(far?500:0)-k;n++}
+        }
+        break;
+      }
+    }
+  }
+  return n;
+}
+// result for the side to move, without move generation: -1 none, 0/1 winner, 2 draw
+function outcome(){
+  var Q=TURN,O=1-Q;
+  if(VAR===FORCE){if(HC[O]>=2||CNT[Q]<2)return O;if(HC[Q]>=2||CNT[O]<2)return Q}
+  else if(FAR[Q]>FAR[O])return Q;
+  if(VAR!==AGGR&&QUIET>=QUIETMAX)return 2;
+  return -1;
+}
+var GB=new Int32Array(1200),GO=new Int32Array(1200);
+// legal moves of a history state, for the interface and simulations
+function legal(st){
+  var out=[];if(st.w>=0)return out;load(st);
+  var n=gen(GB,GO,false),i,mv;
+  for(i=0;i<n;i++){mv=GB[i];var x=info(mv);make(mv);if(!badSym(mv))out.push(x);unmake()}
+  return out;
+}
+function info(mv){
+  var p=mv&255,d=(mv>>8)&7,k=(mv>>11)&31,m=(mv>>16)&31,dl=DEL[d],t=p+dl*m,caps=[],j,en=2-TURN;
+  if(B[t]===en){j=t;while(j>=0&&B[j]===en){caps.push(j);j=RAY[d][j]}}
+  return{mv:mv,lead:p,tail:p-dl*(k-1),to:t,d:d,k:k,m:m,caps:caps,by:TURN};
+}
+// play move mv (from legal()) on state st: returns the new state
+function apply(st,x){
+  load(st);var nm=GAME.sides[st.turn].name,txt;
+  txt=nm+(x.k>1?" moved the "+x.k+"-stone phalanx "+sq(x.tail)+"–"+sq(x.lead):" moved "+sq(x.lead))+" "+(x.m>1?x.m+" squares ":"")+DNAME[x.d]+" to "+sq(x.to)+
+      (x.caps.length?", capturing "+x.caps.length+" stone"+(x.caps.length>1?"s":"")+" ("+x.caps.map(sq).join(", ")+")":"")+".";
+  make(x.mv);
+  x.pro=U_P[US-1]===1;if(x.pro)txt+=" The stone on "+sq(x.to)+" becomes a Hero ("+HC[st.turn]+" on the board).";
+  var ns=snap(x,txt);finish(ns);return ns;
+}
+function finish(ns){   // fill in ns.w from the engine position (which must hold ns)
+  var o=outcome(),Q=TURN,O=1-Q,nm=GAME.sides;
+  if(o<0&&!legal(ns).length){load(ns);o=O;ns.ev+=" "+nm[Q].name+" has no legal move and loses.";}
+  else if(o>=0){
+    if(o===2)ns.ev+=" "+QUIETMAX+" moves without a capture"+(VAR===FORCE?" or promotion":"")+": the game is a draw.";
+    else if(VAR===FORCE)ns.ev+=" "+nm[o].name+(HC[o]>=2?" has two Heroes on the board":" leaves "+nm[1-o].name+" with fewer than two stones")+" and wins!";
+    else ns.ev+=" "+nm[o].name+" starts the turn with more stones on the enemy’s home row ("+FAR[o]+" to "+FAR[1-o]+") and wins!";
+  }
+  ns.w=o;load(ns);
+}
+
+/* ================================ 2. ENGINE ================================ */
+var WIN=100000,ADV=[[],[]],COH=4;
+(function(){var a=[0,1,3,5,8,11,15,20,26,33,42,0];for(var i=0;i<N;i++){ADV[0][i]=a[ROW[i]];ADV[1][i]=a[H-1-ROW[i]]}})();
+var FADV=[[],[]];   // Force: steeper advancement, promotion is the goal
+(function(){var a=[0,1,3,6,10,15,21,29,39,52,70,0];for(var i=0;i<N;i++){FADV[0][i]=a[ROW[i]];FADV[1][i]=a[H-1-ROW[i]]}})();
+// static evaluation for the side to move
+function evaluate(){
+  var sc=[0,0],i,s,v,A=VAR===FORCE?FADV:ADV,j;
+  for(i=0;i<N;i++){v=B[i];if(!v)continue;s=v-1;
+    sc[s]+=100+A[s][i];
+    // cohesion: friendly neighbours east, north, north-east, north-west (each pair once)
+    j=RAY[0][i];if(j>=0&&B[j]===v)sc[s]+=COH;
+    j=RAY[1][i];if(j>=0&&B[j]===v)sc[s]+=COH;
+    j=RAY[2][i];if(j>=0&&B[j]===v)sc[s]+=COH+2;
+    j=RAY[3][i];if(j>=0&&B[j]===v)sc[s]+=COH;
+  }
+  if(VAR===FORCE){sc[0]+=HC[0]*450;sc[1]+=HC[1]*450}
+  else{sc[0]+=FAR[0]*60;sc[1]+=FAR[1]*60}
+  var e=sc[TURN]-sc[1-TURN]+8;
+  return e;
+}
+var TTN=1<<20,TTM=TTN-1,TK=new Int32Array(TTN),TV=new Int32Array(TTN),TM=new Int32Array(TTN),TD=new Int8Array(TTN),TF=new Int8Array(TTN);
+var HIST=new Int32Array(N*8*16),KILL=new Int32Array(128*2),nodes=0,deadline=0,ABORT={},QMAX=6;
+var MB=[],MO=[];for(var _i=0;_i<128;_i++){MB.push(new Int32Array(1200));MO.push(new Int32Array(1200))}
+function hk(mv){return ((mv&255)*8+((mv>>8)&7))*16+((mv>>16)&15)}
+function pick(buf,ord,n,i){   // selection sort step: bring the best remaining move to index i
+  var b=i,j,t;for(j=i+1;j<n;j++)if(ord[j]>ord[b])b=j;
+  if(b!==i){t=buf[i];buf[i]=buf[b];buf[b]=t;t=ord[i];ord[i]=ord[b];ord[b]=t}
+  return buf[i];
+}
+function terminal(o,ply){return o===2?0:(o===TURN?WIN-ply:-(WIN-ply))}
+var QN=0;function qs(al,be,ply,qd){QN++;
+  if((++nodes&2047)===0&&Date.now()>deadline)throw ABORT;
+  var o=outcome();if(o>=0)return terminal(o,ply);
+  var chk=VAR!==FORCE&&FAR[1-TURN]>FAR[TURN],best,sp,buf=MB[ply],ord=MO[ply],n,i,mv,v,legalN=0;
+  if(!chk){sp=evaluate();if(sp>=be||qd>=QMAX)return sp;if(sp>al)al=sp;best=sp}
+  else{if(qd>=QMAX+2)return evaluate()-300;best=-WIN}
+  n=gen(buf,ord,!chk);
+  for(i=0;i<n;i++){mv=pick(buf,ord,n,i);make(mv);if(badSym(mv)){unmake();continue}legalN++;
+    v=-qs(-be,-al,ply+1,qd+1);unmake();
+    if(v>best){best=v;if(v>al){al=v;if(al>=be)break}}}
+  if(chk&&!legalN)return -(WIN-ply);
+  return best;
+}
+function search(depth,al,be,ply){
+  if((++nodes&2047)===0&&Date.now()>deadline)throw ABORT;
+  var o=outcome();if(o>=0)return terminal(o,ply);
+  if(depth<=0)return qs(al,be,ply,0);
+  var idx=H1&TTM,ttm=0,v,a0=al;
+  if(TK[idx]===H2){ttm=TM[idx];
+    if(TD[idx]>=depth){v=TV[idx];if(v>WIN-1000)v-=ply;else if(v<-WIN+1000)v+=ply;
+      if(TF[idx]===0)return v;if(TF[idx]===1&&v>=be)return v;if(TF[idx]===2&&v<=al)return v}}
+  var chk=VAR!==FORCE&&FAR[1-TURN]>FAR[TURN];
+  // null move: if passing still fails high, this position is good enough (never when the enemy leads on the home rows)
+  if(!chk&&depth>=3&&ply>1&&be<WIN-1000&&CNT[TURN]>4){
+    TURN=1-TURN;H1^=ZT1;H2^=ZT2;v=-search(depth-3,-be,-be+1,ply+1);TURN=1-TURN;H1^=ZT1;H2^=ZT2;
+    if(v>=be)return be;
+  }
+  var buf=MB[ply],ord=MO[ply],n=gen(buf,ord,false),i,mv,best=-WIN-1,bm=0,legalN=0,k1=KILL[ply*2],k2=KILL[ply*2+1],r;
+  for(i=0;i<n;i++){mv=buf[i];
+    if(mv===ttm)ord[i]=1e6;else if(ord[i]<9000){if(mv===k1)ord[i]=8000;else if(mv===k2)ord[i]=7900;else ord[i]+=HIST[hk(mv)]>>4}}
+  for(i=0;i<n;i++){mv=pick(buf,ord,n,i);make(mv);if(badSym(mv)){unmake();continue}legalN++;
+    if(legalN===1)v=-search(depth-1,-be,-al,ply+1);
+    else{   // principal variation search, with late quiet moves searched one ply shallower first
+      r=(!chk&&depth>=3&&legalN>3&&ord[i]<7000)?(legalN>12&&depth>=5?2:1):0;
+      v=-search(depth-1-r,-al-1,-al,ply+1);
+      if(v>al&&(r||v<be))v=-search(depth-1,-be,-al,ply+1);
+    }
+    unmake();
+    if(v>best){best=v;bm=mv;if(v>al){al=v;if(al>=be){
+      if(ord[i]<9000){HIST[hk(mv)]+=depth*depth;if(KILL[ply*2]!==mv){KILL[ply*2+1]=KILL[ply*2];KILL[ply*2]=mv}}break}}}}
+  if(!legalN)return -(WIN-ply);
+  var sv=best;if(sv>WIN-1000)sv+=ply;else if(sv<-WIN+1000)sv-=ply;
+  if(TD[idx]<=depth||TK[idx]!==H2){TK[idx]=H2;TV[idx]=sv;TM[idx]=bm;TD[idx]=depth;TF[idx]=best<=a0?2:best>=be?1:0}
+  return best;
+}
+var LASTD=0,TIME=[0,0,700,2500],NOISE=[0,90,6,0];
+// choose a move for state st at level lv (1..3); tscale shortens thinking time (simulations)
+function aiMove(st,lv,tscale){
+  var ms=legal(st),i,v,best,bi,d,P=st.turn;
+  if(!ms.length)return null;
+  if(ms.length===1)return ms[0];
+  load(st);US=0;nodes=0;deadline=Date.now()+1e9;HIST.fill(0);KILL.fill(0);
+  // a move that wins at once
+  for(i=0;i<ms.length;i++){make(ms[i].mv);v=outcome();unmake();if(v===P)return ms[i]}
+  if(lv===1){QMAX=2;
+    for(i=0;i<ms.length;i++){make(ms[i].mv);v=-qs(-WIN-1,WIN+1,1,0);unmake();ms[i].v=v+Math.random()*NOISE[1]}
+    QMAX=6;best=-1e9;ms.forEach(function(m){if(m.v>best){best=m.v;bi=m}});return bi;
+  }
+  deadline=Date.now()+TIME[lv]*(tscale||1);
+  ms.forEach(function(m){m.v=0;m.r=Math.random()*NOISE[lv]});
+  var done=null;
+  try{
+    for(d=1;d<=30;d++){
+      var al=-WIN-1,res=[],bestThis=null;
+      for(i=0;i<ms.length;i++){make(ms[i].mv);
+        try{var th=al-NOISE[lv];
+          if(i===0)v=-search(d-1,-WIN-1,WIN+1,1);
+          else{v=-search(d-1,-th-1,-th,1);if(v>th)v=-search(d-1,-WIN-1,-th,1)}}finally{unmake()}
+        res.push(v);if(v>al){al=v;bestThis=ms[i]}}
+      for(i=0;i<ms.length;i++)ms[i].v=res[i];
+      ms.sort(function(a,b){return b.v-a.v});done=ms[0];LASTD=d;
+      if(al>WIN-1000||al<-WIN+1000)break;   // forced result found
+      if(Date.now()>deadline)break;
+    }
+  }catch(e){if(e!==ABORT)throw e;US=0}
+  load(st);
+  // pick the best of the last finished ordering, with a little noise among near-equal moves (Medium)
+  best=-1e9;bi=ms[0];
+  ms.forEach(function(m){var t=m.v+(Math.abs(m.v)<WIN-1000?m.r:0);if(t>best){best=t;bi=m}});
+  return done?bi:ms[0];
+}
+var sim=null,LOCK=["vr","mode","side","level","new","undo","redo","simN","simR","nFirst","nPrev","nNext","nLast"],SIMT=.2;
+function runSim(){   // computer vs computer, to look for first/second-player advantage
+  if(sim){sim.stop=true;return}
+  var CAP=600,me=sim={stop:false},TOTALG=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?4:+$("simR").value)),
+      lv=+$("level").value,done=0,w=[0,0,0],un=0,g=newState(),plies=0,lvName=$("level").options[$("level").selectedIndex].text,nm=GAME.sides.map(function(x){return x.name});
+  LOCK.forEach(function(i){$(i).disabled=true});
+  $("sim").textContent="Stop simulation";
+  $("simout").textContent="Simulating "+VNAMES[VAR]+" at "+lvName+" level… 0/"+TOTALG;
+  function finish(stopped){
+    sim=null;$("sim").textContent="Simulation";
+    ["vr","mode","new","simN","simR"].forEach(function(i){$(i).disabled=false});
+    $("level").disabled=$("side").disabled=$("mode").value==="2p";
+    var mg=done?(196*Math.sqrt((w[0]/done)*(1-w[0]/done)/done)).toFixed(1):"0";
+    var pc=function(n){return done?(100*n/done).toFixed(1)+"%":"n/a"};
+    $("simout").textContent=(stopped?"Stopped after ":"")+done+" games of "+VNAMES[VAR]+" at "+lvName+" level (computer vs computer"+(lv>1?", thinking time cut to "+Math.round(TIME[lv]*SIMT)+" ms a move":"")+"), first "+RND+" moves random.\n"+
+      "First player ("+nm[0]+") won "+pc(w[0])+" ("+w[0]+" games, margin ±"+mg+" points at 95% confidence). Second player ("+nm[1]+") won "+pc(w[1])+" ("+w[1]+" games)."+(w[2]?" Draws: "+w[2]+".":"")+(un?" Unfinished: "+un+".":"");
+    render();
+  }
+  function stepSim(){
+    if(me.stop){finish(true);return}
+    var t0=Date.now(),m,ms;
+    while(Date.now()-t0<40){
+      if(g.w>=0||plies>=CAP){
+        if(g.w>=0)w[g.w]++;else un++;
+        done++;g=newState();plies=0;
+        if(done>=TOTALG){finish(false);return}
+        continue;
+      }
+      if(plies<RND){ms=legal(g);m=ms[Math.floor(Math.random()*ms.length)]}
+      else m=aiMove(g,lv,SIMT);
+      if(!m){g.w=1-g.turn;continue}
+      g=apply(g,m);plies++;
+      if(lv>1)break;
+    }
+    $("simout").textContent="Simulating "+VNAMES[VAR]+" at "+lvName+" level… "+done+"/"+TOTALG+" (move "+plies+" of game "+(done+1)+")";
+    setTimeout(stepSim,0);
+  }
+  stepSim();
+}
+
+/* =============================== 3. INTERFACE =============================== */
+var hist,redo=[],view=null,over,busy,note="",sel=-1;   // view: null = live position, otherwise the index being reviewed
+var GOLD="#fff09a",RING="#fffbe6",CAPR="#ff8a7a",BAND=.9,M=.75;
+function cur(){return hist[hist.length-1]}
+function line(){return hist.concat(redo.slice().reverse())}
+function browsing(){return view!==null}
+function shown(){return view===null?cur():line()[view]}
+function goto(k){
+  if(busy||sim)return;
+  var n=hist.length-1+redo.length;k=Math.max(0,Math.min(n,k));
+  view=k===hist.length-1?null:k;note="";sel=-1;render();
+}
+function unlock(dir){
+  var Ln=line(),k=view,j;
+  if($("mode").value==="ai"){
+    j=k;while(j>=0&&j<Ln.length&&Ln[j].w<0&&Ln[j].turn!==+$("side").value)j+=dir;
+    if(j>=0&&j<Ln.length)k=j;
+  }
+  hist=Ln.slice(0,k+1);redo=Ln.slice(k+1).reverse();view=null;note="";sel=-1;over=false;render();maybeAI();
+}
+function humanTurn(){return $("mode").value==="2p"||cur().turn===+$("side").value}
+function start(){
+  VAR=+$("vr").value;
+  $("gsub").textContent=GAME.subtitle();
+  hist=[newState()];redo=[];view=null;note="";sel=-1;$("level").disabled=$("side").disabled=$("mode").value==="2p";over=false;busy=false;
+  render();maybeAI();
+}
+function X(i){return COL[i]+.5}
+function Y(i){return H-ROW[i]-.5+BAND}
+var DEFS='<defs>'+
+  '<filter id="marb" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="1.7" numOctaves="4" seed="7"/>'+
+  '<feColorMatrix type="matrix" values="0 0 0 0 .55  0 0 0 0 .24  0 0 0 0 .17  1.6 0 0 0 -.3"/>'+
+  '<feComponentTransfer><feFuncA type="table" tableValues="0 0 0 .15 .85 .25 0 0 0 0"/></feComponentTransfer></filter>'+
+  '<radialGradient id="gG" cx=".38" cy=".32" r=".75"><stop offset="0" stop-color="#4f9e6b"/><stop offset=".45" stop-color="#1f6a3d"/><stop offset="1" stop-color="#0b331c"/></radialGradient>'+
+  '<radialGradient id="gB" cx=".38" cy=".32" r=".75"><stop offset="0" stop-color="#6a6a6a"/><stop offset=".45" stop-color="#262626"/><stop offset="1" stop-color="#050505"/></radialGradient>'+
+  '<linearGradient id="gO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d2953a"/><stop offset="1" stop-color="#bf7f29"/></linearGradient>'+
+  '<marker id="ah" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="2.6" markerHeight="2.6" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="'+GOLD+'" stroke="#6b5400" stroke-width=".8" stroke-opacity=".6"/></marker>'+
+  '</defs>';
+function star(cx,cy){var p=[],a,r;for(var k=0;k<10;k++){a=-Math.PI/2+k*Math.PI/5;r=k%2?.1:.24;p.push((cx+r*Math.cos(a)).toFixed(3)+","+(cy+r*Math.sin(a)).toFixed(3))}
+  return'<circle cx="'+cx+'" cy="'+cy+'" r=".29" fill="none" stroke="#e9c75a" stroke-width=".03" stroke-opacity=".8"/><polygon points="'+p.join(" ")+'" fill="#f0cf5e" stroke="#7a5a10" stroke-width=".015"/>'}
+function render(){
+  var br=browsing(),s=shown(),sd=GAME.sides,h=[],P=s.turn,i,nT=hist.length-1+redo.length,kk=br?view:hist.length-1,lock=busy||!!sim,mv=s.mv,HL=$("showLast").checked;
+  over=s.w>=0;
+  var TW=W,TH=H+2*BAND;
+  h.push('<svg viewBox="'+(-M)+' '+(-M)+' '+(TW+2*M)+' '+(TH+2*M)+'" role="img" aria-label="Epaminondas board">'+DEFS);
+  // frame, yellow end bands, squares with thin dark seams
+  h.push('<rect x="-.12" y="-.12" width="'+(TW+.24)+'" height="'+(TH+.24)+'" rx=".12" fill="#9aa0a4"/>');
+  h.push('<rect x="0" y="0" width="'+TW+'" height="'+TH+'" fill="#e0b52a"/>');
+  h.push('<rect x="0" y="'+BAND+'" width="'+W+'" height="'+H+'" fill="#7a4b1c"/>');
+  var cream=[];
+  for(var r=0;r<H;r++)for(var c=0;c<W;c++){var x=c+.03,y=H-1-r+BAND+.03;
+    if((r+c)%2===0)cream.push('<rect x="'+x+'" y="'+y+'" width=".94" height=".94"/>');
+    else h.push('<rect x="'+x+'" y="'+y+'" width=".94" height=".94" fill="url(#gO)"/>');}
+  h.push('<clipPath id="cc">'+cream.join("")+'</clipPath><g clip-path="url(#cc)"><rect x="0" y="'+BAND+'" width="'+W+'" height="'+H+'" fill="#f1e8d8"/>'+
+         '<rect x="0" y="'+BAND+'" width="'+W+'" height="'+H+'" filter="url(#marb)"/></g>');
+  (function(){   // coordinates: letters = files (top and bottom, in the margin), numbers = ranks (left and right), rank 1 at the bottom
+    var fs=.36;
+    function lab(x,y,t){h.push('<text x="'+x+'" y="'+y+'" font-size="'+fs+'" text-anchor="middle" dominant-baseline="central" fill="var(--mute)" pointer-events="none">'+t+'</text>')}
+    for(var c=0;c<W;c++){var Lt=String.fromCharCode(97+c);lab(c+.5,-.42,Lt);lab(c+.5,TH+.42,Lt)}
+    for(var r=0;r<H;r++){lab(-.42,H-r-.5+BAND,r+1);lab(W+.42,H-r-.5+BAND,r+1)}
+  })();
+  var canAct=!br&&!over&&humanTurn()&&!busy,ms=canAct?legal(s):[],tg={};
+  if(sel>=0)ms.forEach(function(m){if(m.tail===sel)tg[m.to]=m});
+  // stones
+  for(i=0;i<N;i++)if(s.b[i]){var q=s.b[i]-1;
+    h.push('<circle cx="'+(X(i)+.03)+'" cy="'+(Y(i)+.05)+'" r=".39" fill="#000" fill-opacity=".3"/>');
+    h.push('<circle cx="'+X(i)+'" cy="'+Y(i)+'" r=".39" fill="url(#'+(q?"gB":"gG")+')" stroke="'+(q?"#000":"#08240f")+'" stroke-width=".03"/>');
+    if(s.hero&&s.hero[i])h.push(star(X(i),Y(i)));
+    h.push('<ellipse cx="'+(X(i)-.11)+'" cy="'+(Y(i)-.14)+'" rx=".13" ry=".07" fill="#fff" fill-opacity="'+(q?.22:.28)+'" transform="rotate(-30 '+(X(i)-.11)+' '+(Y(i)-.14)+')"/>');
+  }
+  if(HL){
+    // last move: one light yellow arrow from the rear stone's start to the front stone's landing square; crosses on captured squares
+    if(mv){
+      var x1=X(mv.tail),y1=Y(mv.tail),x2=X(mv.to),y2=Y(mv.to),L=Math.hypot(x2-x1,y2-y1),ux=(x2-x1)/L,uy=(y2-y1)/L;
+      var sx=x1-ux*.18,sy=y1-uy*.18,ex=x2-ux*.32,ey=y2-uy*.32;
+      h.push('<line x1="'+sx+'" y1="'+sy+'" x2="'+ex+'" y2="'+ey+'" stroke="#5c4800" stroke-opacity=".45" stroke-width=".25" stroke-linecap="round"/>');
+      h.push('<line x1="'+sx+'" y1="'+sy+'" x2="'+ex+'" y2="'+ey+'" stroke="'+GOLD+'" stroke-width=".16" stroke-linecap="round" marker-end="url(#ah)" opacity=".95"/>');
+      mv.caps.forEach(function(j){var a=X(j),b=Y(j),e=.16;
+        h.push('<path d="M'+(a-e)+','+(b-e)+'L'+(a+e)+','+(b+e)+'M'+(a+e)+','+(b-e)+'L'+(a-e)+','+(b+e)+'" stroke="'+GOLD+'" stroke-width=".07" stroke-linecap="round"/>')});
+      if(mv.pro)h.push('<circle cx="'+X(mv.to)+'" cy="'+Y(mv.to)+'" r=".47" fill="none" stroke="'+GOLD+'" stroke-width=".05"/>');
+    }
+    if(sel>=0){
+      h.push('<circle cx="'+X(sel)+'" cy="'+Y(sel)+'" r=".45" fill="none" stroke="#3b2a10" stroke-opacity=".5" stroke-width=".11"/><circle cx="'+X(sel)+'" cy="'+Y(sel)+'" r=".45" fill="none" stroke="'+RING+'" stroke-width=".06"/>');
+      for(var t in tg){t=+t;var cp=tg[t].caps.length>0;
+        h.push('<circle cx="'+X(t)+'" cy="'+Y(t)+'" r="'+(cp?.44:.3)+'" fill="none" stroke="#3b2a10" stroke-opacity=".28" stroke-width=".085" pointer-events="none"/>'+
+               '<circle cx="'+X(t)+'" cy="'+Y(t)+'" r="'+(cp?.44:.3)+'" fill="none" stroke="'+(cp?CAPR:RING)+'" stroke-width=".045" stroke-dasharray=".1 .07" pointer-events="none"/>');}
+    }
+  }
+  // click targets
+  for(i=0;i<N;i++)h.push('<rect class="sq" data-i="'+i+'" x="'+COL[i]+'" y="'+(H-1-ROW[i]+BAND)+'" width="1" height="1" fill="#000" fill-opacity="0"/>');
+  h.push('</svg>');
+  $("board").innerHTML=h.join("");
+  var names=sd.map(function(x){return x.name}),st;
+  for(i=0;i<2;i++){var tt=GAME.stats(s,i);$("s"+i).textContent=tt.big;$("d"+i).textContent=tt.text;
+    $("p"+i).className="pl"+(!over&&s.turn===i?" on":"")}
+  if(br)st="Reviewing history (move "+kk+" of "+nT+"): the board is locked. Press Undo or Redo to play on from here.";
+  else if(over)st=s.w===2?"Game over: draw.":"Game over: "+names[s.w]+" wins.";
+  else if(!humanTurn())st=names[P]+" to move (computer thinking…)";
+  else if(sel>=0)st=names[P]+": click where the front stone should go (or another stone to change the selection).";
+  else st=names[P]+" to move: click the rear stone of the stone or phalanx to move."+(VAR!==FORCE&&s.far[1-P]>s.far[P]?" You must capture on your home row or reach the enemy’s, or you lose!":"");
+  $("status").textContent=st;
+  $("last").textContent=(GAME.describe(s)+" "+note).trim();
+  $("undo").disabled=lock||!(br||hist.length>=2);
+  $("redo").disabled=lock||!(br||redo.length);
+  $("nFirst").disabled=$("nPrev").disabled=lock||kk<=0;
+  $("nNext").disabled=$("nLast").disabled=lock||kk>=nT;
+  $("nlab").textContent="Move "+kk+" of "+nT;
+}
+function play(ns){hist.push(ns);redo=[];note="";sel=-1;render();maybeAI()}
+function click(i){
+  if(over||busy||browsing()||!humanTurn())return;
+  var s=cur(),me=s.turn+1,ms=legal(s);note="";
+  if(sel>=0){
+    for(var k=0;k<ms.length;k++)if(ms[k].tail===sel&&ms[k].to===i){play(apply(s,ms[k]));return}
+  }
+  if(s.b[i]===me){
+    if(i===sel)sel=-1;
+    else if(ms.some(function(m){return m.tail===i}))sel=i;
+    else{sel=-1;note="That stone has no legal move"+(VAR===AGGR?" (in Aggressive Epaminondas quiet moves must go forward).":".")}
+  }else if(sel>=0){note="The group led from "+sq(sel)+" cannot reach "+sq(i)+".";sel=-1}
+  render();
+}
+function maybeAI(){
+  if(over||$("mode").value!=="ai"||cur().turn===+$("side").value)return;
+  busy=true;render();
+  setTimeout(function(){
+    var c=cur(),m=aiMove(c,+$("level").value);busy=false;
+    if(m){hist.push(apply(c,m));redo=[]}
+    render();maybeAI();
+  },60);
+}
+document.title=GAME.title;$("gtitle").textContent=GAME.title;
+function li(x){return"<li>"+(typeof x==="string"?x:x.t+"<ul>"+x.sub.map(li).join("")+"</ul>")+"</li>"}
+$("rules").innerHTML=GAME.rules.map(function(sec){return"<li><b>"+sec.h+"</b><ul>"+sec.items.map(li).join("")+"</ul></li>"}).join("");
+$("side").innerHTML=GAME.sides.map(function(x,i){return'<option value="'+i+'">You are '+x.name+(i?"":" (first)")+'</option>'}).join("");
+for(var i=0;i<2;i++)$("n"+i).textContent=GAME.sides[i].name;
+$("board").onclick=function(e){var t=e.target.closest("[data-i]");if(t)click(+t.getAttribute("data-i"))};
+$("new").onclick=start;$("sim").onclick=runSim;$("showLast").onchange=render;
+$("mode").onchange=$("side").onchange=$("vr").onchange=start;
+function aiSide(){return $("mode").value==="ai"&&cur().turn!==+$("side").value}
+$("redo").onclick=function(){
+  if(busy||sim)return;
+  if(browsing()){unlock(1);return}
+  if(!redo.length)return;
+  hist.push(redo.pop());
+  while(redo.length&&aiSide())hist.push(redo.pop());
+  note="";sel=-1;render();
+};
+$("undo").onclick=function(){
+  if(busy||sim)return;
+  if(browsing()){unlock(-1);return}
+  if(hist.length<2)return;
+  redo.push(hist.pop());
+  while(hist.length>1&&aiSide())redo.push(hist.pop());
+  over=false;note="";sel=-1;render();maybeAI();
+};
+$("nFirst").onclick=function(){goto(0)};
+$("nPrev").onclick=function(){goto((browsing()?view:hist.length-1)-1)};
+$("nNext").onclick=function(){goto((browsing()?view:hist.length-1)+1)};
+$("nLast").onclick=function(){goto(hist.length-1+redo.length)};
+if(typeof window!=="undefined"&&window.__EP_TEST)window.__EP={newState:newState,legal:legal,apply:apply,aiMove:aiMove,setVar:function(v){VAR=v},sq:sq,
+  load:load,gen:gen,make:make,unmake:unmake,state:function(){return{B:B,H1:H1,H2:H2,CNT:CNT,FAR:FAR,HC:HC,HERO:HERO}},nodes:function(){return nodes},depth:function(){return LASTD},qn:function(){var q=QN;QN=0;return q},hist:function(){return hist},render:function(){render()}};
+start();
+})();
+</script>
+</body>
+</html>
