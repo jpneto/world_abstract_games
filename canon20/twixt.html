@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Twixt</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
+<style>
+:root{--bg:#eef0e6;--ink:#1f2a1c;--mute:#5d6a56;--cell:#dfe3cf;--edge:#b9bfa3;--hi:#e0803a;--panel:#fff;--line:#c5cab4;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f}}
+:root[data-theme="dark"]{--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+main{max-width:1080px;margin:0 auto;padding:16px 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.right>.bar:first-child{margin-top:0}
+@media (min-width:860px){.layout{grid-template-columns:minmax(0,600px) minmax(300px,1fr);gap:28px;align-items:start}}
+h1{font:700 2rem/1.1 "Bricolage Grotesque",Georgia,serif;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+select,button.ctl{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.ctl:disabled,select:disabled,input:disabled{opacity:.45;cursor:default}
+label.f{color:var(--mute);font-size:.9rem}
+input[type=number]{width:4.5em;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+button.ctl.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button.ctl.icon{display:inline-flex;align-items:center;justify-content:center;padding:6px 10px}
+button.ctl.icon svg{width:18px;height:18px;fill:currentColor;display:block}
+.navlab{min-width:7.5em;text-align:center;color:var(--mute);font-variant-numeric:tabular-nums}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.pl{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:8px 12px;display:flex;justify-content:space-between;align-items:baseline;gap:6px}
+.pl.on{border-color:var(--hi)}
+.pl b{font:700 1.6rem "Bricolage Grotesque",Georgia,serif}
+.pl small{color:var(--mute)}
+#status{min-height:1.5em;font-weight:600;margin:6px 0}
+#board svg{display:block;width:100%;max-width:600px;margin:0 auto;touch-action:manipulation}
+#board .sl{cursor:pointer}
+#board .sl .pv{opacity:0;transition:opacity .08s}
+#board .sl:hover .pv{opacity:.55}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+details li{margin:4px 0}
+.legend{color:var(--mute);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+<h1 id="gtitle"></h1>
+<p class="sub" id="gsub"></p>
+<div class="layout">
+<div class="left">
+<div id="board"></div>
+<p class="legend">Click an empty hole to place your peg; hovering shows where it would go. With “Auto-link and end turn” ticked, every legal link from the new peg is added and the turn ends at once. Untick it to choose links yourself: click one of your pegs, then one of the dashed-ringed pegs to link them, and press End turn. Click one of your own links to remove it (allowed any time during your turn). Red’s border rows are the top and bottom rows (red lines), Black’s are the left and right columns (black lines); you may not place a peg in the opponent’s border rows. The gold rings and outlines mark the peg and links of the last turn. Untick “Show highlights” to show only the board and pieces.</p>
+</div>
+<aside class="right">
+<div class="bar">
+  <select id="hc" aria-label="Swap rule or handicap"><option value="s" selected>24×24 · swap allowed</option><option value="n">24×24 · no swap (smallest handicap)</option><option value="1">Red handicap 1 row · 24×23</option><option value="2">Red handicap 2 rows · 24×22</option><option value="3">Red handicap 3 rows · 24×21</option><option value="4">Red handicap 4 rows · 24×20</option><option value="5">Red handicap 5 rows · 24×19</option><option value="6">Red handicap 6 rows · 24×18</option></select>
+  <label class="f"><input type="checkbox" id="auto" checked> Auto-link and end turn</label>
+</div>
+<div class="bar">
+  <select id="mode" aria-label="Mode"><option value="ai">Play the computer</option><option value="2p">Two players</option></select>
+  <select id="level" aria-label="Computer strength"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select>
+  <select id="side" aria-label="Your side"></select>
+  <button class="ctl primary" id="new">New game</button>
+  <button class="ctl" id="undo">Undo</button>
+  <button class="ctl" id="redo">Redo</button>
+</div>
+<div class="bar">
+  <button class="ctl" id="endt">End turn</button>
+  <button class="ctl" id="swap">Swap sides</button>
+</div>
+<div class="bar" id="nav" role="group" aria-label="Game history">
+  <button class="ctl icon" id="nFirst" aria-label="Go to the beginning" title="Go to the beginning"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="2.5" height="14"/><path d="M19 5v14L8 12z"/></svg></button>
+  <button class="ctl icon" id="nPrev" aria-label="One move back" title="One move back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 5v14L6 12z"/></svg></button>
+  <span class="navlab" id="nlab" aria-live="polite">Move 0 of 0</span>
+  <button class="ctl icon" id="nNext" aria-label="One move forward" title="One move forward"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5v14l11-7z"/></svg></button>
+  <button class="ctl icon" id="nLast" aria-label="Go to the last move" title="Go to the last move"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5v14l11-7z"/><rect x="17.5" y="5" width="2.5" height="14"/></svg></button>
+  <label class="f"><input type="checkbox" id="showLast" checked> Show highlights</label>
+</div>
+<div class="score">
+  <div class="pl" id="p0"><span><span id="n0"></span> <small id="d0"></small></span><b id="s0">0</b></div>
+  <div class="pl" id="p1"><span><span id="n1"></span> <small id="d1"></small></span><b id="s1">0</b></div>
+</div>
+<div id="status" aria-live="polite"></div>
+<div id="last" class="legend" style="min-height:2.6em;margin:0 0 8px"></div>
+<div class="bar">
+  <label class="f">Simulation games <input id="simN" type="number" min="10" max="1000" value="10"></label>
+  <label class="f">Random opening moves <input id="simR" type="number" min="0" max="20" value="4"></label>
+  <button class="ctl" id="sim">Simulation</button>
+</div>
+<div id="simout" class="legend" style="white-space:pre-line;margin:0 0 8px"></div>
+<details>
+<summary>Rules</summary>
+<ul id="rules"></ul>
+</details>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+/* =====================================================================
+   1. GAME DEFINITION  - Twixt rules, hole grid, knight links, crossing test, turn actions
+   2. ENGINE           - peg-distance evaluation, 1-2 ply search computer opponent, simulations
+   3. INTERFACE        - SVG board, click handling, controls
+   Holes (c,r): c = 0..W-1 columns (W = 24), r = 0..H-1 rows (H = 24 minus the handicap), r = 0 is the top row;
+   the four corner holes do not exist. Red's border rows are r = 0 and r = H-1, Black's are c = 0 and c = W-1.
+   A link joins two pegs a knight's move apart; every possible link has an id, and CR[id] lists the links that cross it.
+   A state is {pg:holes (0 empty, 1 Red, 2 Black), lk:links (0 none, 1 Red, 2 Black), turn (0 Red, 1 Black),
+               placed:peg already placed this turn, sw:sides swapped (players exchanged colours), swapOK:Black may swap now,
+               nt:turns completed, ta:this turn's actions {peg,add,rem}, pt:the last completed turn's actions,
+               w:winner (-1 none, 0 Red, 1 Black, 2 draw), ev:text}.
+   Every action (a link removed or added, a peg, End turn, a swap) is one history step; an auto-linked turn is one step.
+   ===================================================================== */
+var $=function(i){return document.getElementById(i)};
+
+/* ============================ 1. GAME DEFINITION ============================ */
+var W=24,H=24,HCAP=0,SWAP=true,NH,HC,HR,GID,NB,LID,LA,LB,NL,CR,ALLOW,BORD;
+var DX=[1,2,2,1,-1,-2,-2,-1],DY=[2,1,-1,-2,-2,-1,1,2];
+var GAME={
+  title:"Twixt",
+  subtitle:function(){return "Alex Randolph’s connection game (1962). "+W+"×"+H+" holes"+(HCAP?", Red handicap of "+HCAP+" row"+(HCAP>1?"s":""):"")+(SWAP?", swap allowed after Red’s first peg":", no swap")+". Red links top to bottom, Black links left to right."},
+  sides:[{name:"Red",color:"#d3262d",dark:"#8a1217",lite:"#ff8d8d",goal:"top–bottom"},{name:"Black",color:"#262626",dark:"#000",lite:"#9a9a9a",goal:"left–right"}],
+  rules:[
+  {h:"Board",items:[
+    "A 24×24 grid of holes without the four corner holes. The outermost rows are border rows: Red’s are the top and bottom rows (marked by red lines), Black’s are the left and right columns (black lines).",
+    "Each player has pegs and links of their own colour; the supply is unlimited here (40 of each is ample on a real board). The board starts empty."]},
+  {h:"A turn",items:[
+    "Red moves first. On your turn you may first remove as many of your own links as you wish (rarely done, but sometimes you need the elbow room).",
+    "Then place exactly one peg of your colour in any vacant hole, except in either of your opponent’s border rows.",
+    "Then add as many legal links between pegs of your colour as you wish. A link is legal when the two pegs are at opposite corners of a six-hole rectangle (a knight’s move in chess) and no other link crosses its path, not even one of your own."]},
+  {h:"Swap rule",items:[
+    "After Red places the first peg, the second player may either answer normally as Black, or swap sides: the second player takes over Red (and its peg), and the first player becomes Black and makes the next move.",
+    "Sides may be swapped only once, and only at that moment; if the second player places a peg instead, there is no swap that game."]},
+  {h:"Winning",items:[
+    "You win by connecting a peg in one of your border rows to a peg in your other border row with a continuous chain of linked pegs.",
+    "If neither side can achieve this any more, the game is a draw. Here the game ends as a draw when neither player could connect even with every remaining hole and uncrossed link path in their favour, or when the player to move has no hole left to place a peg in."]},
+  {h:"Handicaps",items:[
+    "The smallest handicap is to play without the swap option. Beyond that the grid is shortened by 1 to 6 rows (24×23 down to 24×18), bringing Red’s two border rows closer together.",
+    "The weaker player should move first (Red) to be sure of receiving the handicap. The swap option is never available in a handicap game."]}],
+  stats:function(s,i){var n=0,m=0,k;for(k=0;k<NH;k++)if(s.pg[k]===i+1)n++;for(k=0;k<NL;k++)if(s.lk[k]===i+1)m++;
+    return{big:n,text:"· "+m+" link"+(m===1?"":"s")+" · pegs"}},
+  describe:function(s){return s.ev||""}
+};
+function build(){
+  var c,r,h,d,g,x,y,i,j;
+  GID=new Int16Array(W*H).fill(-1);HC=[];HR=[];
+  for(r=0;r<H;r++)for(c=0;c<W;c++){if((c===0||c===W-1)&&(r===0||r===H-1))continue;GID[r*W+c]=HC.length;HC.push(c);HR.push(r)}
+  NH=HC.length;NB=new Int16Array(NH*8).fill(-1);LID=new Int16Array(NH*8).fill(-1);LA=[];LB=[];
+  for(h=0;h<NH;h++)for(d=0;d<8;d++){x=HC[h]+DX[d];y=HR[h]+DY[d];if(x<0||y<0||x>=W||y>=H)continue;g=GID[y*W+x];if(g<0)continue;NB[h*8+d]=g}
+  for(h=0;h<NH;h++)for(d=0;d<4;d++){g=NB[h*8+d];if(g<0)continue;var id=LA.length;LA.push(h);LB.push(g);LID[h*8+d]=id;LID[g*8+d+4]=id}
+  NL=LA.length;CR=[];
+  for(i=0;i<NL;i++){var L=[],a=LA[i],cx=HC[a],cy=HR[a];
+    for(y=Math.max(0,cy-3);y<=Math.min(H-1,cy+3);y++)for(x=Math.max(0,cx-3);x<=Math.min(W-1,cx+3);x++){h=GID[y*W+x];if(h<0)continue;
+      for(d=0;d<4;d++){j=LID[h*8+d];if(j>=0&&j!==i&&crosses(i,j))L.push(j)}}
+    CR.push(L)}
+  ALLOW=[new Uint8Array(NH),new Uint8Array(NH)];BORD=[[[],[]],[[],[]]];
+  for(h=0;h<NH;h++){c=HC[h];r=HR[h];
+    ALLOW[0][h]=c>0&&c<W-1?1:0;ALLOW[1][h]=r>0&&r<H-1?1:0;
+    if(r===0)BORD[0][0].push(h);if(r===H-1)BORD[0][1].push(h);if(c===0)BORD[1][0].push(h);if(c===W-1)BORD[1][1].push(h)}
+}
+function crosses(i,j){
+  var a=LA[i],b=LB[i],p=LA[j],q=LB[j];
+  if(a===p||a===q||b===p||b===q)return false;
+  function o(u,v,w){return Math.sign((HC[v]-HC[u])*(HR[w]-HR[u])-(HR[v]-HR[u])*(HC[w]-HC[u]))}
+  return o(a,b,p)*o(a,b,q)<0&&o(p,q,a)*o(p,q,b)<0;
+}
+function hn(h){return String.fromCharCode(97+HC[h])+(HR[h]+1)}
+function ln(id){return hn(LA[id])+"–"+hn(LB[id])}
+function nm(P){return GAME.sides[P].name}
+function canPeg(s,h,P){return !s.pg[h]&&ALLOW[P][h]===1}
+function linkFree(s,id){if(s.lk[id])return false;var C=CR[id];for(var k=0;k<C.length;k++)if(s.lk[C[k]])return false;return true}
+// link id between own pegs a and b of player P if it is legal right now, else -1
+function canLink(s,a,b,P){
+  if(s.pg[a]!==P+1||s.pg[b]!==P+1)return -1;
+  for(var d=0;d<8;d++)if(NB[a*8+d]===b){var id=LID[a*8+d];return linkFree(s,id)?id:-1}
+  return -1;
+}
+function partners(s,a,P){var out=[],d,g,id;for(d=0;d<8;d++){g=NB[a*8+d];if(g<0||s.pg[g]!==P+1)continue;id=LID[a*8+d];if(linkFree(s,id))out.push(g)}return out}
+function won(s,P){
+  var p=P+1,seen=new Uint8Array(NH),q=[],h,d,g,i,A=BORD[P][0],E=BORD[P][1];
+  for(i=0;i<A.length;i++)if(s.pg[A[i]]===p){seen[A[i]]=1;q.push(A[i])}
+  var end=new Uint8Array(NH);for(i=0;i<E.length;i++)end[E[i]]=1;
+  for(i=0;i<q.length;i++){h=q[i];if(end[h])return true;
+    for(d=0;d<8;d++){g=NB[h*8+d];if(g>=0&&!seen[g]&&s.lk[LID[h*8+d]]===p){seen[g]=1;q.push(g)}}}
+  return false;
+}
+function noTurn(){return{peg:-1,add:[],rem:[]}}
+function newState(){return{pg:new Uint8Array(NH),lk:new Uint8Array(NL),turn:0,placed:false,sw:0,swapOK:false,nt:0,ta:noTurn(),pt:null,w:-1,ev:""}}
+function cp(s){return{pg:s.pg.slice(),lk:s.lk.slice(),turn:s.turn,placed:s.placed,sw:s.sw,swapOK:s.swapOK,nt:s.nt,
+  ta:{peg:s.ta.peg,add:s.ta.add.slice(),rem:s.ta.rem.slice()},pt:s.pt,w:-1,ev:""}}
+function removeLink(s,id){var ns=cp(s),P=s.turn,k=ns.ta.add.indexOf(id);ns.lk[id]=0;if(k>=0)ns.ta.add.splice(k,1);else ns.ta.rem.push(id);
+  ns.ev=nm(P)+" removed the link "+ln(id)+".";return ns}
+function addLink(s,id){var ns=cp(s),P=s.turn;ns.lk[id]=P+1;ns.ta.add.push(id);ns.ev=nm(P)+" linked "+ln(id)+".";
+  if(won(ns,P)){ns.w=P;ns.ev+=" "+nm(P)+" connects "+GAME.sides[P].goal+" and wins!"}return ns}
+function placePeg(s,h){var ns=cp(s),P=s.turn;ns.pg[h]=P+1;ns.placed=true;ns.swapOK=false;ns.ta.peg=h;ns.ev=nm(P)+" placed a peg at "+hn(h)+".";return ns}
+function autoLinks(ns,h){var P=ns.turn,d,g,id,n=0;
+  for(d=0;d<8;d++){g=NB[h*8+d];if(g<0||ns.pg[g]!==P+1)continue;id=LID[h*8+d];if(linkFree(ns,id)){ns.lk[id]=P+1;ns.ta.add.push(id);n++}}
+  return n}
+function endTurn(s,fast){
+  var P=s.turn,ns=cp(s),t=s.ta,txt;
+  ns.turn=1-P;ns.placed=false;ns.pt={peg:t.peg,add:t.add,rem:t.rem,by:P};ns.ta=noTurn();ns.nt=s.nt+1;
+  ns.swapOK=SWAP&&s.nt===0&&P===0;
+  txt=nm(P)+(t.rem.length?" removed "+t.rem.length+" link"+(t.rem.length>1?"s":"")+",":"")+" placed a peg at "+hn(t.peg)+
+      (t.add.length?" and linked "+t.add.map(ln).join(", "):"")+".";
+  ns.ev=txt;
+  if(won(ns,P)){ns.w=P;ns.turn=P;ns.ev=txt+" "+nm(P)+" connects "+GAME.sides[P].goal+" and wins!";return ns}
+  if(fast)return ns;
+  var any=false;for(var h=0;h<NH;h++)if(canPeg(ns,h,1-P)){any=true;break}
+  if(!any){ns.w=2;ns.ev=txt+" "+nm(1-P)+" has no hole left to place a peg: the game is a draw."}
+  else if(pinfo(ns,0,false).d>=999&&pinfo(ns,1,false).d>=999){ns.w=2;ns.ev=txt+" Neither player can connect any more: the game is a draw."}
+  return ns;
+}
+// a whole turn: peg at h, every legal link from it, end of turn
+function fullTurn(s,h,fast){var ns=placePeg(s,h);autoLinks(ns,h);return endTurn(ns,fast)}
+function swapState(s){var ns=cp(s);ns.sw=1-s.sw;ns.swapOK=false;ns.pt=s.pt;
+  ns.ev="Sides swapped: the second player takes over Red’s peg, and the first player now plays Black and moves next.";return ns}
+
+/* ================================ 2. ENGINE ================================ */
+// links that player P can never use while the opponent's links stay: those crossing an opponent link
+function blk(s,P){var o=2-P,b=new Uint8Array(NL),i,k,C;for(i=0;i<NL;i++)if(s.lk[i]===o){C=CR[i];for(k=0;k<C.length;k++)b[C[k]]=1}return b}
+// links the opponent of P could still add next to its pegs (to an empty hole it may use, or between two of its pegs);
+// pen[id] counts how many of them cross link path id: such a path of P's can be cut with a single opponent peg
+function threats(s,P){
+  var O=1-P,o=O+1,pen=new Uint8Array(NL),h,d,g,id,k,C;
+  for(h=0;h<NH;h++){if(s.pg[h]!==o)continue;
+    for(d=0;d<8;d++){g=NB[h*8+d];if(g<0)continue;
+      if(s.pg[g]===o){if(g<h)continue}else if(s.pg[g]||!ALLOW[O][g])continue;
+      id=LID[h*8+d];if(!linkFree(s,id))continue;
+      C=CR[id];for(k=0;k<C.length;k++)if(pen[C[k]]<3)pen[C[k]]++}}
+  return pen;
+}
+// cheapest route for P from border side 'side' to every hole, by Dijkstra with a bucket queue. Units: AIW.HU per empty hole
+// (own pegs are free), plus AIW.PE for every opponent link that could cut the link path used; P's own links are safe.
+function sp(s,bk,pen,P,side){
+  var p=P+1,D=new Int32Array(NH).fill(1<<20),Bk=[],i,h,g,d,nd,c,id,B=BORD[P][side],AL=ALLOW[P],pg=s.pg,lk=s.lk,PE=AIW.PE,HU=AIW.HU,t,q;
+  function push(h,v){D[h]=v;(Bk[v]||(Bk[v]=[])).push(h)}
+  for(i=0;i<B.length;i++){h=B[i];if(pg[h]===p)push(h,0);else if(!pg[h]&&AL[h])push(h,HU)}
+  for(t=0;t<Bk.length;t++){q=Bk[t];if(!q)continue;
+    for(var j=0;j<q.length;j++){h=q[j];if(D[h]!==t)continue;
+      for(d=0;d<8;d++){g=NB[h*8+d];if(g<0)continue;
+        if(pg[g]===p)c=0;else if(!pg[g]&&AL[g])c=HU;else continue;
+        id=LID[h*8+d];if(bk[id])continue;
+        nd=t+c+(lk[id]?0:pen[id]*PE);if(nd<D[g])push(g,nd)}}}
+  return D;
+}
+function pinfo(s,P,full){
+  var bk=blk(s,P),pen=threats(s,P),A=sp(s,bk,pen,P,0),E=BORD[P][1],d=1<<20,i;
+  for(i=0;i<E.length;i++)if(A[E[i]]<d)d=A[E[i]];
+  if(d>=1<<20)return{d:999,f:0,A:A,Z:null};
+  if(!full)return{d:d/AIW.HU,f:0,A:A,Z:null};
+  var Z=sp(s,bk,pen,P,1),f=0;
+  for(i=0;i<NH;i++)if(!s.pg[i]&&A[i]+Z[i]-AIW.HU===d)f++;
+  return{d:d/AIW.HU,f:f,A:A,Z:Z,r:d};
+}
+var AIW={D:10,F:6,L:1,PE:1,DO:10,B:8,NR:2,HU:4};
+function ev(s){   // value from Red's point of view
+  if(s.w>=0)return s.w===2?0:s.w===0?1000:-1000;
+  var a=pinfo(s,0,true),b=pinfo(s,1,true);
+  if(a.d>=999&&b.d>=999)return 0;
+  if(a.d>=999)return -800;if(b.d>=999)return 800;
+  var M=1-s.turn,me=M?b:a,op=M?a:b,v=AIW.DO*op.d-AIW.D*me.d+AIW.F*(Math.log(1+me.f)-Math.log(1+op.f));   // M just moved
+  return M?-v:v;
+}
+function val(ns,P){return ns.w>=0?(ns.w===2?0:ns.w===P?1001:-1001):(P===0?1:-1)*ev(ns)}
+// candidate holes for player P: empty holes on a shortest route of either player, plus holes near the last pegs
+function cands(s,P,cap,near){
+  var a=pinfo(s,0,true),b=pinfo(s,1,true),out=[],h,i,mark=new Uint8Array(NH),any=false,lastp=[];
+  for(h=0;h<NH;h++)if(s.pg[h]){any=true;break}
+  if(!any){var mc=(W-1)/2,mr=(H-1)/2;for(h=0;h<NH;h++)if(canPeg(s,h,P)&&Math.abs(HC[h]-mc)<4&&Math.abs(HR[h]-mr)<4)out.push(h);return out}
+  [a,b].forEach(function(I){if(I.d>=999)return;for(h=0;h<NH;h++)if(!s.pg[h]&&I.A[h]+I.Z[h]-AIW.HU===I.r)mark[h]=1});
+  if(s.pt&&s.pt.peg>=0)lastp.push(s.pt.peg);if(near>=0)lastp.push(near);
+  lastp.forEach(function(q){for(h=0;h<NH;h++)if(Math.max(Math.abs(HC[h]-HC[q]),Math.abs(HR[h]-HR[q]))<=AIW.NR)mark[h]=1});
+  var me=P?b:a,edge=function(h){return P?HC[h]===0||HC[h]===W-1:HR[h]===0||HR[h]===H-1};   // own border row: only worth a peg near the finish
+  for(h=0;h<NH;h++)if(mark[h]&&canPeg(s,h,P)&&(me.d<=2||!edge(h)))out.push(h);
+  if(out.length<8)for(h=0;h<NH;h++)if(!mark[h]&&canPeg(s,h,P))out.push(h);
+  if(cap&&out.length>cap&&near>=0){out.sort(function(x,y){return cheb(x,near)-cheb(y,near)});out=out.slice(0,cap)}
+  return out;
+}
+function cheb(x,y){return Math.max(Math.abs(HC[x]-HC[y]),Math.abs(HR[x]-HR[y]))}
+var BEAM=[0,0,0,8],REPLY=0,NOISE=[0,9,2.5,.15];
+function firstPeg(s){   // Red's opening peg: central without swap, off-centre (so swapping is a real decision) with swap
+  var mc=(W-1)/2,mr=(H-1)/2,L=[],h;
+  for(h=0;h<NH;h++){var dc=Math.abs(HC[h]-mc),dr=Math.abs(HR[h]-mr);
+    if(SWAP?(dr>=mr-5.5&&dr<=mr-3.5&&dc<=4):(dc<2&&dr<2))L.push(h)}
+  return L[Math.floor(Math.random()*L.length)];
+}
+function wantSwap(s){var h=s.pt.peg,c=HC[h],r=HR[h];return c>=5&&c<=W-6&&r>=5&&r<=H-6}
+function aiMove(s){
+  var lv=+$("level").value,P=s.turn,i,v,best=-1e9,pick=null,ms;
+  if(s.swapOK&&P===1&&wantSwap(s))return{ns:swapState(s)};
+  if(s.nt===0)return{ns:fullTurn(s,firstPeg(s))};
+  ms=cands(s,P,0,-1).map(function(h){var ns=fullTurn(s,h,true);return{h:h,ns:ns,v:val(ns,P)+Math.random()*NOISE[lv]}});
+  if(!ms.length)return null;
+  for(i=0;i<ms.length;i++)if(ms[i].ns.w===P)return{ns:fullTurn(s,ms[i].h)};
+  ms.sort(function(x,y){return y.v-x.v});
+  if(lv<3)return{ns:fullTurn(s,ms[0].h)};
+  ms=ms.slice(0,AIW.B);
+  for(i=0;i<ms.length;i++){   // Hard: look at every reply, never allow an immediate loss, and blend in the worst reply's value
+    var ns=ms[i].ns,Q=1-P,rs=cands(ns,Q,REPLY,ms[i].h),worst=1e9;
+    for(var k=0;k<rs.length;k++){var r=fullTurn(ns,rs[k],true);v=r.w===Q?-1001:-val(r,Q);if(v<worst)worst=v}
+    v=worst<=-1000||!rs.length?(rs.length?worst:ms[i].v):ms[i].v+AIW.L*(worst-ms[i].v);
+    if(v>best){best=v;pick=ms[i]}
+  }
+  return{ns:fullTurn(s,pick.h)};
+}
+var sim=null,LOCK=["hc","auto","mode","side","level","new","undo","redo","endt","swap","simN","simR","nFirst","nPrev","nNext","nLast"];
+function runSim(){   // computer vs computer, to look for first/second-player advantage
+  if(sim){sim.stop=true;return}
+  var CAP=NH+10,me=sim={stop:false},TOTALG=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?4:+$("simR").value)),
+      done=0,w=[0,0,0],fw=0,sws=0,un=0,g=newState(),plies=0,lvName=$("level").options[$("level").selectedIndex].text,nms=GAME.sides.map(function(x){return x.name}),L=0;
+  LOCK.forEach(function(i){$(i).disabled=true});
+  $("sim").textContent="Stop simulation";
+  $("simout").textContent="Simulating at "+lvName+" level… 0/"+TOTALG;
+  function finish(stopped){
+    sim=null;$("sim").textContent="Simulation";
+    ["hc","auto","mode","new","simN","simR"].forEach(function(i){$(i).disabled=false});
+    $("level").disabled=$("side").disabled=$("mode").value==="2p";
+    var mg=done?(196*Math.sqrt((fw/done)*(1-fw/done)/done)).toFixed(1):"0";
+    var pc=function(n){return done?(100*n/done).toFixed(1)+"%":"n/a"};
+    $("simout").textContent=(stopped?"Stopped after ":"")+done+" games on "+W+"×"+H+(SWAP?" with swap":" without swap")+" at "+lvName+" level (computer vs computer), first "+RND+" turns random, "+(done?(L/done).toFixed(0):0)+" pegs per game on average.\n"+
+      "First player won "+pc(fw)+" ("+fw+" games, margin ±"+mg+" points at 95% confidence). "+nms[0]+" won "+w[0]+", "+nms[1]+" won "+w[1]+"."+(SWAP?" Swaps: "+sws+".":"")+(w[2]?" Draws: "+w[2]+".":"")+(un?" Unfinished: "+un+".":"");
+    render();
+  }
+  function stepSim(){
+    if(me.stop){finish(true);return}
+    var t0=Date.now(),m,ms,h;
+    while(Date.now()-t0<40){
+      if(g.w>=0||plies>=CAP){
+        if(g.w>=0){w[g.w]++;if(g.w<2&&(g.w===0)!==(g.sw===1))fw++;if(g.sw)sws++}else un++;
+        for(h=0;h<NH;h++)if(g.pg[h])L++;
+        done++;g=newState();plies=0;
+        if(done>=TOTALG){finish(false);return}
+        continue;
+      }
+      if(g.nt<RND){ms=[];for(h=0;h<NH;h++)if(canPeg(g,h,g.turn))ms.push(h);m=ms.length?{ns:fullTurn(g,ms[Math.floor(Math.random()*ms.length)])}:null}
+      else m=aiMove(g);
+      if(!m){g.w=2;continue}
+      g=m.ns;plies++;
+    }
+    $("simout").textContent="Simulating at "+lvName+" level… "+done+"/"+TOTALG;
+    setTimeout(stepSim,0);
+  }
+  stepSim();
+}
+
+/* =============================== 3. INTERFACE =============================== */
+var hist,redo=[],view=null,over,busy,note="",sel=-1;   // view: null = live position, otherwise the index being reviewed; sel: peg picked for linking
+var GREEN="#2e9e4f",GOLD="#e0a800",BOARD="#ece6d4";
+function cur(){return hist[hist.length-1]}
+function line(){return hist.concat(redo.slice().reverse())}
+function browsing(){return view!==null}
+function shown(){return view===null?cur():line()[view]}
+function hcol(s){return (+$("side").value)^s.sw}   // the colour the human plays in state s (computer mode)
+function goto(k){
+  if(busy||sim)return;
+  var n=hist.length-1+redo.length;k=Math.max(0,Math.min(n,k));
+  view=k===hist.length-1?null:k;note="";sel=-1;render();
+}
+function unlock(dir){
+  var Ln=line(),k=view,j;
+  if($("mode").value==="ai"){
+    j=k;while(j>=0&&j<Ln.length&&Ln[j].w<0&&Ln[j].turn!==hcol(Ln[j]))j+=dir;
+    if(j>=0&&j<Ln.length)k=j;
+  }
+  hist=Ln.slice(0,k+1);redo=Ln.slice(k+1).reverse();view=null;note="";sel=-1;over=false;render();maybeAI();
+}
+function humanTurn(){return $("mode").value==="2p"||cur().turn===hcol(cur())}
+function start(){
+  var v=$("hc").value;HCAP=/\d/.test(v)?+v:0;H=24-HCAP;SWAP=v==="s";build();
+  $("gsub").textContent=GAME.subtitle();
+  hist=[newState()];redo=[];view=null;note="";sel=-1;$("level").disabled=$("side").disabled=$("mode").value==="2p";over=false;busy=false;
+  render();maybeAI();
+}
+function seg(id,extra){return'x1="'+HC[LA[id]]+'" y1="'+HR[LA[id]]+'" x2="'+HC[LB[id]]+'" y2="'+HR[LB[id]]+'"'+(extra||"")}
+function peg(h,P,op){var x=HC[h],y=HR[h],sd=GAME.sides[P];
+  return'<g'+(op?' opacity="'+op+'"':'')+' pointer-events="none"><circle cx="'+(x+.05)+'" cy="'+(y+.07)+'" r=".3" fill="#000" fill-opacity=".25"/>'+
+    '<circle cx="'+x+'" cy="'+y+'" r=".3" fill="'+sd.color+'" stroke="'+sd.dark+'" stroke-width=".06"/>'+
+    '<circle cx="'+x+'" cy="'+y+'" r=".14" fill="'+sd.color+'" stroke="'+sd.dark+'" stroke-width=".04"/>'+
+    '<circle cx="'+(x-.1)+'" cy="'+(y-.11)+'" r=".07" fill="#fff" fill-opacity="'+(P?.3:.45)+'"/></g>'}
+function render(){
+  var br=browsing(),s=shown(),sd=GAME.sides,h=[],P=s.turn,i,k,nT=hist.length-1+redo.length,kk=br?view:hist.length-1,lock=busy||!!sim,M=1.5,HL=$("showLast").checked,pt=s.pt;
+  over=s.w>=0;
+  var canAct=!br&&!over&&humanTurn()&&!busy&&!sim;
+  if(!canAct)sel=-1;
+  h.push('<svg viewBox="'+(-M)+' '+(-M)+' '+(W-1+2*M)+' '+(H-1+2*M)+'" role="img" aria-label="Twixt board">');
+  h.push('<rect x="-.85" y="-.85" width="'+(W-1+1.7)+'" height="'+(H-1+1.7)+'" rx=".3" fill="#cfc8b6"/>');
+  h.push('<rect x="-.75" y="-.75" width="'+(W-1+1.5)+'" height="'+(H-1+1.5)+'" rx=".25" fill="'+BOARD+'" stroke="#d8d1bd" stroke-width=".05"/>');
+  // border lines: red above the bottom of the top row and below the bottom row's neighbour, black beside the left and right columns
+  h.push('<line x1=".5" y1=".5" x2="'+(W-1.5)+'" y2=".5" stroke="'+sd[0].color+'" stroke-width=".11"/>');
+  h.push('<line x1=".5" y1="'+(H-1.5)+'" x2="'+(W-1.5)+'" y2="'+(H-1.5)+'" stroke="'+sd[0].color+'" stroke-width=".11"/>');
+  h.push('<line x1=".5" y1=".75" x2=".5" y2="'+(H-1.75)+'" stroke="'+sd[1].color+'" stroke-width=".11"/>');
+  h.push('<line x1="'+(W-1.5)+'" y1=".75" x2="'+(W-1.5)+'" y2="'+(H-1.75)+'" stroke="'+sd[1].color+'" stroke-width=".11"/>');
+  (function(){   // coordinates: letters = columns (top and bottom), numbers = rows (left and right), row 1 at the top
+    var fs=.42;
+    function lab(x,y,t){h.push('<text x="'+x+'" y="'+y+'" font-size="'+fs+'" text-anchor="middle" dominant-baseline="central" fill="var(--mute)" pointer-events="none">'+t+'</text>')}
+    for(var c=0;c<W;c++){var Lt=String.fromCharCode(97+c);lab(c,-1.18,Lt);lab(c,H-1+1.18,Lt)}
+    for(var r=0;r<H;r++){lab(-1.2,r,r+1);lab(W-1+1.2,r,r+1)}
+  })();
+  // holes
+  for(i=0;i<NH;i++)if(!s.pg[i])h.push('<circle cx="'+HC[i]+'" cy="'+HR[i]+'" r=".1" fill="#2c2924" pointer-events="none"/>');
+  // last turn: gold under its links
+  var lastL=HL&&pt?pt.add:[],lastP=HL&&pt?pt.peg:-1;
+  lastL.forEach(function(id){if(s.lk[id])h.push('<line '+seg(id)+' stroke="'+GOLD+'" stroke-width=".36" stroke-linecap="round"/>')});
+  // links
+  for(i=0;i<NL;i++)if(s.lk[i]){var q=s.lk[i]-1;
+    h.push('<line '+seg(i)+' transform="translate(.04 .06)" stroke="#000" stroke-opacity=".18" stroke-width=".17" stroke-linecap="round"/>');
+    h.push('<line '+seg(i)+' stroke="'+sd[q].color+'" stroke-width=".16" stroke-linecap="round"/>')}
+  // pegs
+  if(lastP>=0&&s.pg[lastP])h.push('<circle cx="'+HC[lastP]+'" cy="'+HR[lastP]+'" r=".44" fill="none" stroke="'+GOLD+'" stroke-width=".09"/>');
+  for(i=0;i<NH;i++)if(s.pg[i])h.push(peg(i,s.pg[i]-1));
+  // selection and its legal link partners (thin dashed rings)
+  var part=canAct&&sel>=0?partners(s,sel,P):[];
+  if(HL&&sel>=0){h.push('<circle cx="'+HC[sel]+'" cy="'+HR[sel]+'" r=".44" fill="none" stroke="'+GREEN+'" stroke-width=".07" pointer-events="none"/>');
+    part.forEach(function(g){h.push('<circle cx="'+HC[g]+'" cy="'+HR[g]+'" r=".43" fill="none" stroke="'+GREEN+'" stroke-width=".04" stroke-opacity=".6" stroke-dasharray=".1 .07" pointer-events="none"/>')})}
+  // click targets: own links (to remove them), then every hole (pegs and empty holes), with a hover preview on legal empty holes
+  if(canAct)for(i=0;i<NL;i++)if(s.lk[i]===P+1)h.push('<line class="lh" data-l="'+i+'" '+seg(i)+' stroke="#000" stroke-opacity="0" stroke-width=".34" style="cursor:pointer"/>');
+  for(i=0;i<NH;i++){var ok=canAct&&!s.placed&&canPeg(s,i,P),mine=canAct&&s.pg[i]===P+1;
+    h.push('<g class="sl" data-i="'+i+'"'+(ok||mine?'':' style="cursor:default"')+'>'+(ok&&HL?'<g class="pv">'+peg(i,P)+'</g>':'')+
+      '<circle cx="'+HC[i]+'" cy="'+HR[i]+'" r=".42" fill="#000" fill-opacity="0"/></g>')}
+  h.push('</svg>');
+  $("board").innerHTML=h.join("");
+  var names=sd.map(function(x){return x.name}),st,ai=$("mode").value==="ai";
+  for(i=0;i<2;i++){var t=GAME.stats(s,i);$("s"+i).textContent=t.big;
+    $("d"+i).textContent=(ai?(i===hcol(s)?"(you) ":"(computer) "):"")+t.text;
+    $("p"+i).className="pl"+(!over&&s.turn===i?" on":"")}
+  if(br)st="Reviewing history (move "+kk+" of "+nT+"): the board is locked. Press Undo or Redo to play on from here.";
+  else if(over)st=s.w===2?"Game over: draw.":"Game over: "+names[s.w]+" wins.";
+  else if(!humanTurn())st=names[P]+" to move (computer thinking…)";
+  else if(sel>=0)st=names[P]+": click a dashed-ringed peg to link it to "+hn(sel)+(part.length?"":" (no legal link from this peg)")+", or click "+hn(sel)+" again to cancel.";
+  else if(s.placed)st=names[P]+": add more links (click a peg, then its partner), remove your own links, then press End turn.";
+  else if(s.swapOK)st=names[P]+" to move: place a peg, or press Swap sides to take over Red’s peg"+(ai?" (you would then play Red and the computer moves next as Black).":" (the players exchange colours and the first player moves next as Black).");
+  else st=names[P]+" to move: place a peg ("+sd[P].goal+").";
+  $("status").textContent=st;
+  $("last").textContent=(GAME.describe(s)+" "+note).trim();
+  $("undo").disabled=lock||!(br||hist.length>=2);
+  $("redo").disabled=lock||!(br||redo.length);
+  $("endt").disabled=lock||!canAct||!s.placed;
+  $("swap").disabled=lock||!canAct||!s.swapOK;
+  $("swap").style.display=SWAP?"":"none";
+  $("nFirst").disabled=$("nPrev").disabled=lock||kk<=0;
+  $("nNext").disabled=$("nLast").disabled=lock||kk>=nT;
+  $("nlab").textContent="Move "+kk+" of "+nT;
+}
+function play(ns){hist.push(ns);redo=[];note="";sel=-1;render();maybeAI()}
+function click(i){
+  if(over||busy||browsing()||!humanTurn())return;
+  var s=cur(),P=s.turn,p=P+1,id;note="";
+  if(s.pg[i]===p){
+    if(sel<0||sel===i){sel=sel===i?-1:i;render();return}
+    id=canLink(s,sel,i,P);
+    if(id>=0){var a=sel;play(addLink(s,id));return}
+    var adj=false;for(var d=0;d<8;d++)if(NB[sel*8+d]===i)adj=true;
+    note=adj?"That link is blocked: another link crosses its path (or it is already there).":"Links join pegs a knight’s move apart only. Now "+hn(i)+" is selected.";
+    sel=adj?sel:i;render();return;
+  }
+  sel=-1;
+  if(s.pg[i])note="That hole is taken by "+nm(s.pg[i]-1)+".";
+  else if(s.placed)note="You have already placed your peg this turn: add links or press End turn.";
+  else if(!ALLOW[P][i])note=nm(P)+" may not place a peg in "+nm(1-P)+"’s border rows.";
+  else{
+    if($("auto").checked){play(fullTurn(s,i));return}
+    var ns=placePeg(s,i);
+    if(won(ns,P)){ns.w=P}
+    play(ns);return;
+  }
+  render();
+}
+function clickLink(id){
+  if(over||busy||browsing()||!humanTurn())return;
+  var s=cur();if(s.lk[id]!==s.turn+1)return;sel=-1;play(removeLink(s,id));
+}
+function maybeAI(){
+  if(over||$("mode").value!=="ai"||cur().turn===hcol(cur()))return;
+  busy=true;render();
+  setTimeout(function(){
+    var c=cur(),m=aiMove(c);busy=false;
+    if(m){hist.push(m.ns);redo=[]}else{var d=cp(c);d.w=2;d.ev="No legal move: the game is a draw.";hist.push(d)}
+    render();maybeAI();
+  },60);
+}
+document.title=GAME.title;$("gtitle").textContent=GAME.title;
+function li(x){return"<li>"+(typeof x==="string"?x:x.t+"<ul>"+x.sub.map(li).join("")+"</ul>")+"</li>"}
+$("rules").innerHTML=GAME.rules.map(function(sec){return"<li><b>"+sec.h+"</b><ul>"+sec.items.map(li).join("")+"</ul></li>"}).join("");
+$("side").innerHTML=GAME.sides.map(function(x,i){return'<option value="'+i+'">You are '+x.name+(i?"":" (first)")+'</option>'}).join("");
+for(var i=0;i<2;i++)$("n"+i).textContent=GAME.sides[i].name;
+$("board").onclick=function(e){var t=e.target.closest("[data-i],[data-l]");if(!t)return;
+  if(t.hasAttribute("data-l"))clickLink(+t.getAttribute("data-l"));else click(+t.getAttribute("data-i"))};
+$("new").onclick=start;$("sim").onclick=runSim;$("showLast").onchange=render;
+$("endt").onclick=function(){var s=cur();if(busy||sim||browsing()||over||!humanTurn()||!s.placed)return;play(endTurn(s))};
+$("swap").onclick=function(){var s=cur();if(busy||sim||browsing()||over||!humanTurn()||!s.swapOK)return;play(swapState(s))};
+$("mode").onchange=$("side").onchange=$("hc").onchange=start;
+function aiSide(){return $("mode").value==="ai"&&cur().turn!==hcol(cur())}
+$("redo").onclick=function(){
+  if(busy||sim)return;
+  if(browsing()){unlock(1);return}
+  if(!redo.length)return;
+  hist.push(redo.pop());
+  while(redo.length&&aiSide())hist.push(redo.pop());
+  note="";sel=-1;render();
+};
+$("undo").onclick=function(){
+  if(busy||sim)return;
+  if(browsing()){unlock(-1);return}
+  if(hist.length<2)return;
+  redo.push(hist.pop());
+  while(hist.length>1&&aiSide())redo.push(hist.pop());
+  over=false;note="";sel=-1;render();maybeAI();
+};
+$("nFirst").onclick=function(){goto(0)};
+$("nPrev").onclick=function(){goto((browsing()?view:hist.length-1)-1)};
+$("nNext").onclick=function(){goto((browsing()?view:hist.length-1)+1)};
+$("nLast").onclick=function(){goto(hist.length-1+redo.length)};
+start();
+})();
+</script>
+</body>
+</html>
