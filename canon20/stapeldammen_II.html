@@ -94,10 +94,10 @@ details li{margin:4px 0}
    1. GAME DEFINITION  - Stapeldammen II rules, board geometry, move generation
    2. ENGINE           - alpha-beta computer opponent, simulations
    3. INTERFACE        - SVG board, click handling, controls
-   Board: 10x10, columns a-j (c = 0..9), rows 1-10 (r = 0..9, row 1 at the bottom, Blue's side).
+   Board: 10x10, columns a-j (c = 0..9), rows 1-10 (r = 0..9, row 1 at the bottom, Red's side).
    Only the 50 dark squares (c+r even, so a1 is dark) are used; they are numbered 0..49.
    A stack is a string, top man first: r = red man, b = blue man. The player whose man is on top controls the stack.
-   Red plays the rules' "Black" (moves first, starts on rows 9-10); Blue plays "White" (starts on rows 1-2).
+   Red plays the rules' "Black" (moves first, starts on rows 1-2); Blue plays "White" (starts on rows 9-10).
    A move descriptor is {p:[squares visited, origin first], c:[squares jumped over]}; a move is {m, ns:resulting state}.
    A state is {b:50 stacks, turn (0 Red, 1 Blue), w:winner (-1 none, 0 Red, 1 Blue, 2 tie), pa:previous state,
                pts:[Red points, Blue points] once the game is over, ml:cached legal move descriptors, mv:last move, ev:text}.
@@ -107,21 +107,21 @@ var $=function(i){return document.getElementById(i)};
 /* ============================ 1. GAME DEFINITION ============================ */
 var SZ=10,NSQ,SQC=[],SQR=[],ID,NB=[],JP=[];
 var COL={r:0,b:1};
-var FWD=[[2,3],[0,1]];   // 0 NE, 1 NW (forward for Blue), 2 SE, 3 SW (forward for Red)
-var GOAL=[0,SZ-1];       // the row each side scores on: Red on row 1 (Blue's back row), Blue on row 10
+var FWD=[[0,1],[2,3]];   // 0 NE, 1 NW (forward for Red), 2 SE, 3 SW (forward for Blue)
+var GOAL=[SZ-1,0];       // the row each side scores on: Red on row 10 (Blue's back row), Blue on row 1
 var GAME={
   title:"Stapeldammen II",
   subtitle:function(){return "Tim ter Kuile’s stacking game (1960). 10×10 board, 20 men each, starting in stacks of two. Men only move forward, captured men go under the capturing stack, and the points are scored by the stacks that reach the far row."},
   sides:[{name:"Red",fill:"#d8333f",edge:"#6e1017",band:"#a8212c"},{name:"Blue",fill:"#2a63c9",edge:"#0d2558",band:"#1b4596"}],
   rules:[
   {h:"Board",items:[
-    "A 10×10 checkered board; play uses only the 50 dark squares (a1, the left corner square on Blue’s side, is dark).",
-    "Each player has 20 men, stacked in twos on the dark squares of their first two rows: Blue (the rules’ “White”) on rows 1–2, Red (the rules’ “Black”) on rows 9–10.",
+    "A 10×10 checkered board; play uses only the 50 dark squares (a1, the left corner square on Red’s side, is dark).",
+    "Each player has 20 men, stacked in twos on the dark squares of their first two rows: Red (the rules’ “Black”) on rows 1–2, Blue (the rules’ “White”) on rows 9–10.",
     "Men form stacks. Whoever owns the top man controls the stack, and a stack always moves as a whole. Single men and stacks are both called pieces."]},
   {h:"Moving",items:[
     "Red moves first. Passing is not allowed.",
     "A piece moves one square diagonally forward (towards the opponent) to an empty square.",
-    "A piece that has reached the opponent’s back row (row 1 for Red, row 10 for Blue) can no longer move, but it can still capture."]},
+    "A piece that has reached the opponent’s back row (row 10 for Red, row 1 for Blue) can no longer move, but it can still capture."]},
   {h:"Capturing",items:[
     "A capture is a short checkers leap: over a diagonally adjacent piece controlled by the opponent onto the empty square right behind it. Captures may go forwards or backwards.",
     "Only the top man of a leaped stack is captured: it goes beneath the leaping piece. The rest of the leaped stack stays, and whoever’s man is now on top controls it.",
@@ -159,7 +159,7 @@ function mk(b,turn,pa,mv,ev){
   return s;
 }
 function newState(){
-  var b=[];for(var i=0;i<NSQ;i++)b.push(SQR[i]<2?"bb":SQR[i]>SZ-3?"rr":"");
+  var b=[];for(var i=0;i<NSQ;i++)b.push(SQR[i]<2?"rr":SQR[i]>SZ-3?"bb":"");
   return mk(b,0,null,null,"");
 }
 // all capture sequences of the stack st that has reached square at (bb: board with the capture so far applied; last: square leaped last)
@@ -201,7 +201,7 @@ function ev(s){   // value from Red's point of view
   if(s.w>=0)return s.w===2?0:s.w===0?1000:-1000;
   var b=s.b,v=0,i,st,ctl,adv,x;
   for(i=0;i<NSQ;i++){st=b[i];if(!st)continue;ctl=COL[st[0]];
-    adv=ctl?SQR[i]:SZ-1-SQR[i];
+    adv=ctl?SZ-1-SQR[i]:SQR[i];
     if(adv===SZ-1)x=AIW.B*st.length;
     else x=st.length*(AIW.N+AIW.A*adv+(SQC[i]===0||SQC[i]===SZ-1?AIW.E:0));
     v+=ctl?-x:x;

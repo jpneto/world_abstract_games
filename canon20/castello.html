@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Castello</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
+<style>
+:root{--bg:#eef0e6;--ink:#1f2a1c;--mute:#5d6a56;--cell:#dfe3cf;--edge:#b9bfa3;--hi:#e0803a;--panel:#fff;--line:#c5cab4;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f}}
+:root[data-theme="dark"]{--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+main{max-width:1080px;margin:0 auto;padding:16px 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.right>.bar:first-child{margin-top:0}
+@media (min-width:860px){.layout{grid-template-columns:minmax(0,600px) minmax(300px,1fr);gap:28px;align-items:start}}
+h1{font:700 2rem/1.1 "Bricolage Grotesque",Georgia,serif;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+select,button.ctl{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.ctl:disabled,select:disabled,input:disabled{opacity:.45;cursor:default}
+label.f{color:var(--mute);font-size:.9rem}
+input[type=number]{width:4.5em;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+button.ctl.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button.ctl.icon{display:inline-flex;align-items:center;justify-content:center;padding:6px 10px}
+button.ctl.icon svg{width:18px;height:18px;fill:currentColor;display:block}
+.navlab{min-width:7.5em;text-align:center;color:var(--mute);font-variant-numeric:tabular-nums}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.pl{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:8px 12px;display:flex;justify-content:space-between;align-items:baseline;gap:6px}
+.pl.on{border-color:var(--hi)}
+.pl b{font:700 1.6rem "Bricolage Grotesque",Georgia,serif}
+.pl small{color:var(--mute)}
+#status{min-height:1.5em;font-weight:600;margin:6px 0}
+#board svg{display:block;width:100%;max-width:470px;margin:0 auto;touch-action:manipulation}
+#board .sl{cursor:pointer}
+#board .sl .pv{opacity:0;transition:opacity .08s}
+#board .sl:hover .pv{opacity:.55}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+details li{margin:4px 0}
+.legend{color:var(--mute);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+<h1 id="gtitle"></h1>
+<p class="sub" id="gsub"></p>
+<div class="layout">
+<div class="left">
+<div id="board"></div>
+<p class="legend">Click one of your pieces, then a green dot. A dot one square away is a step, two squares away in a straight line over an empty square is a first-move double step, and two squares away over a piece is a jump. After a jump the piece waits on its landing square: click another dot to keep jumping, or click the piece again to end the move (clicking its starting square cancels). Jumped enemies are faded until the move ends. Pieces that can capture right now get a thin dashed ring. The big number next to each player is the castles they have captured (4 wins). The gold outline marks the last move’s route, and gold crosses its captures. Untick “Show highlights” to show only the board and pieces (moves are entered the same way).</p>
+</div>
+<aside class="right">
+<div class="bar">
+  <select id="mode" aria-label="Mode"><option value="ai">Play the computer</option><option value="2p">Two players</option></select>
+  <select id="level" aria-label="Computer strength"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select>
+  <select id="side" aria-label="Your side"></select>
+  <button class="ctl primary" id="new">New game</button>
+  <button class="ctl" id="undo">Undo</button>
+  <button class="ctl" id="redo">Redo</button>
+</div>
+<div class="bar" id="nav" role="group" aria-label="Game history">
+  <button class="ctl icon" id="nFirst" aria-label="Go to the beginning" title="Go to the beginning"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="2.5" height="14"/><path d="M19 5v14L8 12z"/></svg></button>
+  <button class="ctl icon" id="nPrev" aria-label="One move back" title="One move back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 5v14L6 12z"/></svg></button>
+  <span class="navlab" id="nlab" aria-live="polite">Move 0 of 0</span>
+  <button class="ctl icon" id="nNext" aria-label="One move forward" title="One move forward"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5v14l11-7z"/></svg></button>
+  <button class="ctl icon" id="nLast" aria-label="Go to the last move" title="Go to the last move"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5v14l11-7z"/><rect x="17.5" y="5" width="2.5" height="14"/></svg></button>
+  <label class="f"><input type="checkbox" id="showLast" checked> Show highlights</label>
+</div>
+<div class="score">
+  <div class="pl" id="p0"><span><span id="n0"></span> <small id="d0"></small></span><b id="s0">0</b></div>
+  <div class="pl" id="p1"><span><span id="n1"></span> <small id="d1"></small></span><b id="s1">0</b></div>
+</div>
+<div id="status" aria-live="polite"></div>
+<div id="last" class="legend" style="min-height:2.6em;margin:0 0 8px"></div>
+<div class="bar">
+  <label class="f">Simulation games <input id="simN" type="number" min="10" max="1000" value="10"></label>
+  <label class="f">Random opening moves <input id="simR" type="number" min="0" max="20" value="4"></label>
+  <button class="ctl" id="sim">Simulation</button>
+</div>
+<div id="simout" class="legend" style="white-space:pre-line;margin:0 0 8px"></div>
+<details>
+<summary>Rules</summary>
+<ul id="rules"></ul>
+</details>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+/* =====================================================================
+   1. GAME DEFINITION  - Castello rules, board geometry, move generation
+   2. ENGINE           - alpha-beta computer opponent, simulations
+   3. INTERFACE        - SVG board, click handling, controls
+   Board: 15 columns a-o (c = 0..14) by 21 rows 1-21 (r = 0..20, row 1 at the bottom, Red's side).
+   Square index i = r*15 + c. Board cells: 0 empty, 1 Red piece, 2 Black piece, 3 castle.
+   fr[i] = 1 while the piece on square i has not moved yet (it may still make a double step).
+   Castle zones: ZR = the four castles near Red's home rows (only Black may capture them), ZB = the four near Black's
+   home rows (only Red may capture them), ZC = the three central castles (a player may capture them only after
+   taking one of their four far castles).
+   A move descriptor is {p:[squares visited, origin first], c:[enemy pieces jumped], j:true for a jump}; a move is {m, ns}.
+   A state is {b, fr, turn (0 Red, 1 Black), cap:[enemy pieces captured by Red, by Black], cc:[castles captured],
+               far:[has taken a far castle], hm:moves since the last capture, w:winner (-1 none, 0 Red, 1 Black, 2 draw),
+               ml:cached legal moves, mv:last move, ev:text}.
+   ===================================================================== */
+var $=function(i){return document.getElementById(i)};
+
+/* ============================ 1. GAME DEFINITION ============================ */
+var W=15,H=21,NSQ=W*H,NB=[],J2=[],ORTH=[];
+var D8=[[1,0],[1,1],[0,1],[-1,1],[-1,0],[-1,-1],[0,-1],[1,-1]];
+var ZR=1,ZB=2,ZC=3;
+var CASTLES=[[5,6,ZR],[13,6,ZR],[1,5,ZR],[9,5,ZR],[2,10,ZC],[7,10,ZC],[12,10,ZC],[5,15,ZB],[13,15,ZB],[1,14,ZB],[9,14,ZB]];   // [column, row index, zone]
+var ZONE=new Int8Array(NSQ),CSQ=[];
+var FARZ=[ZB,ZR];         // the zone each side may capture without condition
+var MAXCAP=5,WINC=4,WINP=28,DRAWN=200;
+var GAME={
+  title:"Castello",
+  subtitle:function(){return "Carl Renström’s castle game (1965). 15×21 board, 30 pieces each and 11 neutral castles. Capture four castles, or 28 enemy pieces."},
+  sides:[{name:"Red",fill:"#c8262e",edge:"#5e0d12",shine:"#ef7b7f"},{name:"Black",fill:"#2b2b2e",edge:"#000",shine:"#8a8a92"}],
+  rules:[
+  {h:"Board",items:[
+    "A 15×21 board. Red’s 30 pieces start on rows 1–2 (bottom), Black’s 30 on rows 20–21 (top).",
+    "Eleven neutral castles stand on the board: b6, j6, f7, n7 near Red’s side; c11, h11, m11 in the centre; b15, j15, f16, n16 near Black’s side."]},
+  {h:"Moving",items:[
+    "Red moves first. On your turn you pick one of your pieces and either step or jump with it.",
+    "Step: one square in any of the 8 directions (orthogonal or diagonal) to an empty square. On a piece’s very first move it may instead go two squares in a straight line, if both squares are empty.",
+    "Jump: over an adjacent piece of either colour (never over a castle), in any of the 8 directions, landing on the empty square right behind it. Every enemy piece jumped is captured.",
+    "Jumps may be chained, changing direction freely, and you may stop after any jump. Friendly pieces may be jumped more than once in a sequence, but an enemy piece only once; captured pieces are removed when the move ends.",
+    "A jumping piece may never land on the square it started from, and a sequence ends at once after its fifth capture.",
+    "Jumping is never compulsory."]},
+  {h:"Castles",items:[
+    "A castle is captured (and removed from the board) when, after your move, three of your pieces stand orthogonally next to it.",
+    "You can never capture the four castles near your own home rows: Red never takes b6, j6, f7, n7, and Black never takes b15, j15, f16, n16.",
+    "The three central castles can be captured only by a player who has already captured one of the four castles near the opponent’s side."]},
+  {h:"End of the game",items:[
+    "You win by capturing four castles, or by capturing 28 enemy pieces.",
+    "A player who cannot move loses.",
+    "If 200 moves in a row (100 each) pass without any piece or castle being captured, the game is a draw."]}],
+  stats:function(s,i){var n=0;for(var k=0;k<NSQ;k++)if(s.b[k]===i+1)n++;
+    return{big:s.cc[i],text:"· "+n+" left, "+s.cap[i]+" taken · castles:"}},
+  describe:function(s){return s.ev||""}
+};
+function build(){
+  var i,c,r,d,x,y;NB=[];J2=[];ORTH=[];
+  for(i=0;i<NSQ;i++){c=i%W;r=(i-c)/W;NB.push([]);J2.push([]);ORTH.push([]);
+    for(d=0;d<8;d++){x=c+D8[d][0];y=r+D8[d][1];NB[i].push(x<0||y<0||x>=W||y>=H?-1:y*W+x);
+      x+=D8[d][0];y+=D8[d][1];J2[i].push(x<0||y<0||x>=W||y>=H?-1:y*W+x);
+      if(d%2===0&&NB[i][d]>=0)ORTH[i].push(NB[i][d])}}
+  ZONE.fill(0);CSQ=[];
+  CASTLES.forEach(function(q){var k=q[1]*W+q[0];ZONE[k]=q[2];CSQ.push(k)});
+}
+function sname(i){return String.fromCharCode(97+i%W)+(Math.floor(i/W)+1)}
+function nameOf(P){return GAME.sides[P].name}
+function mk(b,fr,turn,cap,cc,far,hm,mv,ev){return{b:b,fr:fr,turn:turn,cap:cap,cc:cc,far:far,hm:hm,w:-1,ml:null,mv:mv,ev:ev||""}}
+function newState(){
+  var b=new Int8Array(NSQ),fr=new Uint8Array(NSQ),i;
+  for(i=0;i<2*W;i++){b[i]=1;fr[i]=1;b[NSQ-1-i]=2;fr[NSQ-1-i]=1}
+  CSQ.forEach(function(k){b[k]=3});
+  return mk(b,fr,0,[0,0],[0,0],[false,false],0,null,"");
+}
+// single jumps available from square at: the piece started on O, has already jumped the enemies in C (still on the board)
+function hops(b,O,at,C,P,out){
+  if(C.length>=MAXCAP)return out;
+  var d,o,t,v,E=2-P;
+  for(d=0;d<8;d++){t=J2[at][d];if(t<0||t===O||b[t])continue;o=NB[at][d];v=b[o];
+    if(v===P+1||(v===E&&C.indexOf(o)<0))out.push({t:t,o:v===E?o:-1})}
+  return out;
+}
+function canCapture(b,i,P){   // can the piece on i jump an enemy piece right now?
+  var d,o,t;for(d=0;d<8;d++){t=J2[i][d];o=NB[i][d];if(t>=0&&!b[t]&&b[o]===2-P)return true}return false;
+}
+var BFSCAP=400;
+function gen(s){
+  if(s.ml)return s.ml;
+  var b=s.b,P=s.turn,out=[],i,d,t,t2,me=P+1;
+  for(i=0;i<NSQ;i++){if(b[i]!==me)continue;
+    var seen={};
+    for(d=0;d<8;d++){t=NB[i][d];if(t<0||b[t])continue;out.push({p:[i,t],c:[]});seen[t+":"]=1;
+      if(s.fr[i]){t2=J2[i][d];if(t2>=0&&!b[t2]){out.push({p:[i,t2],c:[]});seen[t2+":"]=1}}}
+    // jump sequences: breadth first over (square, captured set); every reached state is a legal stopping point
+    b[i]=0;
+    var Q=[{at:i,C:[],p:[i]}],h,q,hs,k,nc,key,n=0;
+    for(h=0;h<Q.length&&n<BFSCAP;h++){q=Q[h];hs=hops(b,i,q.at,q.C,P,[]);
+      for(k=0;k<hs.length;k++){nc=hs[k].o>=0?q.C.concat(hs[k].o).sort(function(a,z){return a-z}):q.C;
+        key=hs[k].t+":"+nc.join(",");if(seen[key])continue;seen[key]=1;n++;
+        var np=q.p.concat(hs[k].t);Q.push({at:hs[k].t,C:nc,p:np});out.push({p:np,c:nc,j:true})}}
+    b[i]=me;
+  }
+  return s.ml=out;
+}
+function castleCheck(b,P,far,log){   // capture every castle that P now surrounds on three sides and may take
+  var n=0,again=true,k,z,a,j;
+  while(again){again=false;
+    for(j=0;j<CSQ.length;j++){k=CSQ[j];if(b[k]!==3)continue;z=ZONE[k];
+      if(z!==FARZ[P]&&!(z===ZC&&far[P]))continue;
+      a=0;ORTH[k].forEach(function(q){if(b[q]===P+1)a++});
+      if(a>=3){b[k]=0;n++;if(log)log.push(sname(k));if(z!==ZC&&!far[P]){far[P]=true;again=true}}}}
+  return n;
+}
+function apply(s,m,quick){
+  var b=s.b.slice(),fr=s.fr.slice(),P=s.turn,p=m.p,from=p[0],to=p[p.length-1],cap=s.cap.slice(),cc=s.cc.slice(),far=s.far.slice(),
+      n=m.c.length,log=quick?null:[],nc,txt="",ns;
+  b[from]=0;fr[from]=0;b[to]=P+1;fr[to]=0;
+  m.c.forEach(function(o){b[o]=0;fr[o]=0});cap[P]+=n;
+  nc=castleCheck(b,P,far,log);cc[P]+=nc;
+  if(!quick){
+    txt=nameOf(P)+(m.j?" jumped ":" moved ")+p.map(sname).join("–")+(n?", capturing "+(n===1?"a piece":n+" pieces")+" ("+m.c.map(sname).join(", ")+")":"")+".";
+    if(nc)txt+=" "+nameOf(P)+" captures the castle"+(nc>1?"s":"")+" at "+log.join(" and ")+".";
+  }
+  ns=mk(b,fr,1-P,cap,cc,far,(n||nc)?0:s.hm+1,{p:p,c:m.c,k:log||[],by:P},txt);
+  if(cc[P]>=WINC){ns.w=P;if(!quick)ns.ev+=" "+nameOf(P)+" has captured "+WINC+" castles and wins!"}
+  else if(cap[P]>=WINP){ns.w=P;if(!quick)ns.ev+=" "+nameOf(P)+" has captured "+WINP+" pieces and wins!"}
+  else if(ns.hm>=DRAWN){ns.w=2;if(!quick)ns.ev+=" "+DRAWN+" moves without a capture: the game is a draw."}
+  else if(!quick&&!gen(ns).length){ns.w=P;ns.ev+=" "+nameOf(1-P)+" cannot move, so "+nameOf(P)+" wins!"}
+  return ns;
+}
+function legal(s){if(s.w>=0)return[];return gen(s).map(function(m){return{m:m,ns:apply(s,m)}})}
+
+/* ================================ 2. ENGINE ================================ */
+// weights: piece, castle captured, castle threats (two / one of your pieces beside an open castle you may take),
+// approach to the castles you may take now (overall, and a bonus within 3 squares), a piece the side to move can jump at once
+var AIW={P:1,C:7,T2:1.6,T1:.45,A:.8,N:.4,H:.55};
+function ev(s){   // value from Red's point of view
+  if(s.w>=0)return s.w===2?0:s.w===0?1000:-1000;
+  var b=s.b,v=AIW.P*(s.cap[0]-s.cap[1])+AIW.C*(s.cc[0]-s.cc[1]),j,k,z,P,a,o,f,i,c,r,tg=[[],[]],hang=0,T=s.turn;
+  for(j=0;j<CSQ.length;j++){k=CSQ[j];if(b[k]!==3)continue;z=ZONE[k];
+    for(P=0;P<2;P++){
+      f=z===FARZ[P]?1:z===ZC?(s.far[P]?1:.35):0;if(!f)continue;
+      if(f===1)tg[P].push(k);a=0;o=0;ORTH[k].forEach(function(q){if(b[q]===P+1)a++;else if(b[q]===2-P)o++});
+      if(o>=2)continue;   // the opponent holds two sides: the castle is safe for now
+      v+=(P?-1:1)*f*(a===2?AIW.T2:a===1?AIW.T1:0);
+    }}
+  for(i=0;i<NSQ;i++){P=b[i]-1;if(P!==0&&P!==1)continue;
+    c=i%W;r=(i-c)/W;var best=99,t;
+    for(j=0;j<tg[P].length;j++){t=tg[P][j];best=Math.min(best,Math.max(Math.abs(t%W-c),Math.abs(Math.floor(t/W)-r)))}
+    if(best<99)v+=(P?-1:1)*(AIW.A*(1-best/20)+AIW.N*Math.max(0,4-best)/4);
+    if(P!==T&&canCaptureBy(b,i,T))hang++;
+  }
+  v+=(T?-1:1)*AIW.H*Math.min(hang,3);
+  return v;
+}
+function canCaptureBy(b,i,T){   // can a piece of T jump the piece on i?
+  var d,a,t;for(d=0;d<8;d++){a=NB[i][d];if(a<0||b[a]!==T+1)continue;t=NB[i][(d+4)%8];if(t>=0&&!b[t])return true}return false;
+}
+var NOISE=[0,1.2,.05,.02],TIME=[0,0,0,1800],nodes=0,deadline=1e18,abort=false;
+function order(s,ms){
+  return ms.map(function(m){var ns=apply(s,m,true);ns.o=-(ns.turn?-1:1)*ev(ns);return ns}).sort(function(a,z){return z.o-a.o});
+}
+function nega(s,d,al,be,ply){
+  if(s.w>=0)return s.w===2?0:s.w===s.turn?1000-ply:-(1000-ply);
+  if(d<=0)return (s.turn?-1:1)*ev(s);
+  if((++nodes&255)===0&&Date.now()>deadline){abort=true;return 0}
+  var ms=gen(s);if(!ms.length)return -(1000-ply);
+  var kids=d>=2?order(s,ms):ms.map(function(m){return apply(s,m,true)}),best=-1e9,i,v;
+  for(i=0;i<kids.length;i++){v=-nega(kids[i],d-1,-be,-al,ply+1);if(abort)return 0;
+    if(v>best)best=v;if(best>al)al=best;if(al>=be)break}
+  return best;
+}
+function aiMove(s){
+  var gm=gen(s),lv=+$("level").value,P=s.turn,i,v,best,pick=null,d;
+  if(!gm.length)return null;
+  var ms=gm.map(function(m){return{m:m,ns:apply(s,m,true)}});
+  for(i=0;i<ms.length;i++)if(ms[i].ns.w===P){return{m:ms[i].m,ns:apply(s,ms[i].m)}}   // a move that wins right now
+  nodes=0;deadline=1e18;abort=false;
+  ms.forEach(function(m){m.v=-nega(m.ns,0,-1e9,1e9,1);m.r=Math.random()*NOISE[lv]});
+  if(lv>1){
+    ms.sort(function(a,z){return z.v-a.v});
+    deadline=lv===3?Date.now()+TIME[3]:1e18;
+    for(d=2;d<=(lv===2?2:6);d++){
+      var al=-1e9,res=[];
+      for(i=0;i<ms.length;i++){v=-nega(ms[i].ns,d-1,-1e9,-(al-NOISE[lv])+.001,1);if(abort)break;res.push(v);if(v>al)al=v}
+      if(abort)break;
+      for(i=0;i<ms.length;i++)ms[i].v=res[i];
+      ms.sort(function(a,z){return z.v-a.v});
+      if(al>900||al<-900)break;
+    }
+  }
+  best=-1e9;ms.forEach(function(m){if(m.v+m.r>best){best=m.v+m.r;pick=m}});
+  return{m:pick.m,ns:apply(s,pick.m)};
+}
+var sim=null,LOCK=["mode","side","level","new","undo","redo","simN","simR","nFirst","nPrev","nNext","nLast"];
+function runSim(){   // computer vs computer, to look for first/second-player advantage
+  if(sim){sim.stop=true;return}
+  var CAP=800,me=sim={stop:false},TOTALG=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?4:+$("simR").value)),
+      done=0,w=[0,0,0],un=0,g=newState(),plies=0,lvName=$("level").options[$("level").selectedIndex].text,nm=GAME.sides.map(function(x){return x.name});
+  LOCK.forEach(function(i){$(i).disabled=true});
+  $("sim").textContent="Stop simulation";
+  $("simout").textContent="Simulating at "+lvName+" level… 0/"+TOTALG;
+  function finish(stopped){
+    sim=null;$("sim").textContent="Simulation";
+    ["mode","new","simN","simR"].forEach(function(i){$(i).disabled=false});
+    $("level").disabled=$("side").disabled=$("mode").value==="2p";
+    var mg=done?(196*Math.sqrt((w[0]/done)*(1-w[0]/done)/done)).toFixed(1):"0";
+    var pc=function(n){return done?(100*n/done).toFixed(1)+"%":"n/a"};
+    $("simout").textContent=(stopped?"Stopped after ":"")+done+" games at "+lvName+" level (computer vs computer), first "+RND+" moves random.\n"+
+      "First player ("+nm[0]+") won "+pc(w[0])+" ("+w[0]+" games, margin ±"+mg+" points at 95% confidence). Second player ("+nm[1]+") won "+pc(w[1])+" ("+w[1]+" games)."+(w[2]?" Draws: "+w[2]+".":"")+(un?" Unfinished: "+un+".":"");
+    render();
+  }
+  function stepSim(){
+    if(me.stop){finish(true);return}
+    var t0=Date.now(),m,ms;
+    while(Date.now()-t0<40){
+      if(g.w>=0||plies>=CAP){
+        if(g.w>=0)w[g.w]++;else un++;
+        done++;g=newState();plies=0;
+        if(done>=TOTALG){finish(false);return}
+        continue;
+      }
+      if(plies<RND){ms=gen(g);m=ms.length?{ns:apply(g,ms[Math.floor(Math.random()*ms.length)])}:null}
+      else m=aiMove(g);
+      if(!m){g.w=1-g.turn;continue}
+      g=m.ns;plies++;
+    }
+    $("simout").textContent="Simulating at "+lvName+" level… "+done+"/"+TOTALG;
+    setTimeout(stepSim,0);
+  }
+  stepSim();
+}
+
+/* =============================== 3. INTERFACE =============================== */
+var hist,redo=[],view=null,over,busy,note="",sel=[],selC=[];   // sel: squares visited by the move being entered; selC: enemies it has jumped
+var GREEN="#2e9e4f",GOLD="#e0a800",HI="#e0803a",IVORY="#F2EDE3",BLUE="#829FB5",FRAME="#4d6577";
+function cur(){return hist[hist.length-1]}
+function line(){return hist.concat(redo.slice().reverse())}   // every position, including those that can still be redone
+function browsing(){return view!==null}
+function shown(){return view===null?cur():line()[view]}
+function clearSel(){sel=[];selC=[]}
+function goto(k){
+  if(busy||sim)return;
+  var n=hist.length-1+redo.length;k=Math.max(0,Math.min(n,k));
+  view=k===hist.length-1?null:k;note="";clearSel();render();
+}
+// Undo/Redo while reviewing: leave review and play on from the reviewed position (in computer mode, from the nearest position where it is the human's turn)
+function unlock(dir){
+  var Ln=line(),k=view,j;
+  if($("mode").value==="ai"){
+    j=k;while(j>=0&&j<Ln.length&&Ln[j].w<0&&Ln[j].turn!==+$("side").value)j+=dir;
+    if(j>=0&&j<Ln.length)k=j;
+  }
+  hist=Ln.slice(0,k+1);redo=Ln.slice(k+1).reverse();view=null;note="";clearSel();over=false;render();maybeAI();
+}
+function humanTurn(){return $("mode").value==="2p"||cur().turn===+$("side").value}
+function start(){
+  build();
+  $("gsub").textContent=GAME.subtitle();
+  hist=[newState()];redo=[];view=null;note="";clearSel();$("level").disabled=$("side").disabled=$("mode").value==="2p";over=false;busy=false;
+  render();maybeAI();
+}
+function px(i){return i%W+.5}
+function py(i){return H-1-Math.floor(i/W)+.5}
+function pawn(h,cx,cy,sd,op){
+  var t='transform="translate('+cx+' '+cy+')"',st=' fill="'+sd.fill+'" stroke="'+sd.edge+'" stroke-width=".03" stroke-linejoin="round"';
+  h.push('<g '+t+(op<1?' opacity="'+op+'"':'')+' pointer-events="none">'+
+    '<ellipse cx=".03" cy=".36" rx=".27" ry=".05" fill="#000" fill-opacity=".18"/>'+
+    '<path d="M-.27 .34 L.27 .34 L.27 .27 Q.27 .21 .2 .2 Q.11 .12 .1 -.07 L-.1 -.07 Q-.11 .12 -.2 .2 Q-.27 .21 -.27 .27 Z"'+st+'/>'+
+    '<rect x="-.15" y="-.12" width=".3" height=".07" rx=".03"'+st+'/>'+
+    '<circle cx="0" cy="-.22" r=".125"'+st+'/>'+
+    '<ellipse cx="-.04" cy="-.26" rx=".045" ry=".035" fill="'+sd.shine+'" fill-opacity=".7"/>'+
+    '<path d="M-.07 -.04 Q-.08 .1 -.15 .19" fill="none" stroke="'+sd.shine+'" stroke-opacity=".55" stroke-width=".03" stroke-linecap="round"/></g>');
+}
+function rook(h,cx,cy){
+  var st=' fill="#C0C0C0" stroke="#5f6366" stroke-width=".03" stroke-linejoin="round"';
+  h.push('<g transform="translate('+cx+' '+cy+')" pointer-events="none">'+
+    '<ellipse cx=".03" cy=".36" rx=".29" ry=".05" fill="#000" fill-opacity=".18"/>'+
+    '<path d="M-.29 .34 L.29 .34 L.29 .25 L.2 .21 L.17 -.1 L.24 -.13 L.24 -.33 L.15 -.33 L.15 -.25 L.055 -.25 L.055 -.33 L-.055 -.33 L-.055 -.25 L-.15 -.25 L-.15 -.33 L-.24 -.33 L-.24 -.13 L-.17 -.1 L-.2 .21 L-.29 .25 Z"'+st+'/>'+
+    '<path d="M-.17 -.1 L.17 -.1 M-.2 .21 L.2 .21" stroke="#5f6366" stroke-width=".025"/>'+
+    '<path d="M-.1 -.05 L-.12 .17" stroke="#f4f4f4" stroke-opacity=".8" stroke-width=".04" stroke-linecap="round"/></g>');
+}
+// enemies a jump from square at can take, given the move entered so far
+function selHops(s){var b=s.b.slice();b[sel[0]]=0;return hops(b,sel[0],sel[sel.length-1],selC,s.turn,[])}
+function stepTargets(s,i){
+  var out=[],d,t,t2;
+  for(d=0;d<8;d++){t=NB[i][d];if(t<0||s.b[t])continue;out.push(t);
+    if(s.fr[i]){t2=J2[i][d];if(t2>=0&&!s.b[t2])out.push(t2)}}
+  return out;
+}
+function render(){
+  var br=browsing(),s=shown(),sd=GAME.sides,h=[],P=s.turn,i,k,nT=hist.length-1+redo.length,kk=br?view:hist.length-1,lock=busy||!!sim,mv=s.mv,M=1,HL=$("showLast").checked;
+  over=s.w>=0;
+  h.push('<svg viewBox="'+(-M)+' '+(-M)+' '+(W+2*M)+' '+(H+2*M)+'" role="img" aria-label="Castello board">');
+  h.push('<rect x="-.4" y="-.4" width="'+(W+.8)+'" height="'+(H+.8)+'" rx=".16" fill="'+FRAME+'"/>');
+  (function(){   // coordinates: letters = columns (top and bottom), numbers = rows (left and right), row 1 at the bottom
+    function lab(x,y,t){h.push('<text x="'+x+'" y="'+y+'" font-size=".34" text-anchor="middle" dominant-baseline="central" fill="var(--mute)" pointer-events="none">'+t+'</text>')}
+    for(var c=0;c<W;c++){var Lt=String.fromCharCode(97+c);lab(c+.5,-.72,Lt);lab(c+.5,H+.72,Lt)}
+    for(var r=0;r<H;r++){lab(-.72,H-r-.5,r+1);lab(W+.72,H-r-.5,r+1)}
+  })();
+  for(i=0;i<NSQ;i++){var c=i%W,r=(i-c)/W;h.push('<rect x="'+c+'" y="'+(H-1-r)+'" width="1" height="1" fill="'+((c+r)%2===0?BLUE:IVORY)+'"/>')}
+  h.push('<rect x="0" y="0" width="'+W+'" height="'+H+'" fill="none" stroke="'+FRAME+'" stroke-width=".05"/>');
+  // last move: gold route, outlines, and crosses on the captured squares
+  if(mv&&HL){
+    for(k=0;k<mv.p.length;k++)h.push('<rect x="'+(mv.p[k]%W+.05)+'" y="'+(py(mv.p[k])-.45)+'" width=".9" height=".9" rx=".06" fill="none" stroke="'+GOLD+'" stroke-width=".07"/>');
+    h.push('<polyline points="'+mv.p.map(function(q){return px(q)+','+py(q)}).join(' ')+'" fill="none" stroke="'+GOLD+'" stroke-width=".07" stroke-linecap="round" stroke-linejoin="round" stroke-opacity=".8"/>');
+    mv.c.concat(mv.k.map(function(n){return(+n.slice(1)-1)*W+n.charCodeAt(0)-97})).forEach(function(q){var x=px(q),y=py(q),e=.22;
+      h.push('<path d="M'+(x-e)+' '+(y-e)+'L'+(x+e)+' '+(y+e)+'M'+(x+e)+' '+(y-e)+'L'+(x-e)+' '+(y+e)+'" stroke="'+GOLD+'" stroke-width=".08" stroke-linecap="round"/>')});
+  }
+  var canAct=!br&&!over&&humanTurn()&&!busy,dots=[],moving=sel.length>1;
+  if(canAct&&sel.length){
+    if(HL)h.push('<rect x="'+(sel[0]%W+.05)+'" y="'+(py(sel[0])-.45)+'" width=".9" height=".9" rx=".06" fill="'+HI+'" fill-opacity=".18" stroke="'+HI+'" stroke-width=".06"/>');
+    if(moving){
+      if(HL){h.push('<polyline points="'+sel.map(function(q){return px(q)+','+py(q)}).join(' ')+'" fill="none" stroke="'+HI+'" stroke-width=".06" stroke-dasharray=".12 .08"/>');
+        var e2=sel[sel.length-1];h.push('<rect x="'+(e2%W+.05)+'" y="'+(py(e2)-.45)+'" width=".9" height=".9" rx=".06" fill="none" stroke="'+HI+'" stroke-width=".06"/>')}
+    }else dots=stepTargets(s,sel[0]);
+    selHops(s).forEach(function(x){dots.push(x.t)});
+  }else if(canAct&&HL){   // light dashed rings on the pieces that can capture now
+    for(i=0;i<NSQ;i++)if(s.b[i]===P+1&&canCapture(s.b,i,P))h.push('<circle cx="'+px(i)+'" cy="'+py(i)+'" r=".46" fill="none" stroke="'+GREEN+'" stroke-width=".035" stroke-opacity=".45" stroke-dasharray=".1 .07"/>');
+  }
+  // pieces and castles (while a jump is being entered, the piece is shown on its latest landing square)
+  for(i=0;i<NSQ;i++){var v=s.b[i];if(!v)continue;
+    if(v===3){rook(h,px(i),py(i));continue}
+    if(moving&&i===sel[0])continue;
+    pawn(h,px(i),py(i),sd[v-1],moving&&selC.indexOf(i)>=0?.4:1);
+  }
+  if(moving)pawn(h,px(sel[sel.length-1]),py(sel[sel.length-1]),sd[P],1);
+  if(HL)dots.forEach(function(q){h.push('<circle cx="'+px(q)+'" cy="'+py(q)+'" r=".12" fill="'+GREEN+'" fill-opacity=".75" pointer-events="none"/>')});
+  for(i=0;i<NSQ;i++)h.push('<rect data-i="'+i+'" x="'+(i%W)+'" y="'+(py(i)-.5)+'" width="1" height="1" fill="#000" fill-opacity="0" style="cursor:pointer"/>');
+  h.push('</svg>');
+  $("board").innerHTML=h.join("");
+  var names=sd.map(function(x){return x.name}),st;
+  for(i=0;i<2;i++){var t=GAME.stats(s,i);$("s"+i).textContent=t.big;$("d"+i).textContent=t.text;
+    $("p"+i).className="pl"+(!over&&s.turn===i?" on":"")}
+  if(br)st="Reviewing history (move "+kk+" of "+nT+"): the board is locked. Press Undo or Redo to play on from here.";
+  else if(over)st=s.w===2?"Game over: draw.":"Game over: "+names[s.w]+" wins.";
+  else if(!humanTurn())st=names[P]+" to move (computer thinking…)";
+  else if(moving)st=names[P]+": jump again, or click the piece to end the move"+(selC.length?" ("+selC.length+" captured so far"+(selC.length>=MAXCAP?", the maximum":"")+")":"")+".";
+  else if(sel.length)st=names[P]+": choose where the piece on "+sname(sel[0])+" goes.";
+  else st=names[P]+" to move: pick one of your pieces.";
+  $("status").textContent=st;
+  $("last").textContent=(GAME.describe(s)+" "+note).trim();
+  $("undo").disabled=lock||!(br||hist.length>=2||sel.length>1);
+  $("redo").disabled=lock||!(br||redo.length);
+  $("nFirst").disabled=$("nPrev").disabled=lock||kk<=0;
+  $("nNext").disabled=$("nLast").disabled=lock||kk>=nT;
+  $("nlab").textContent="Move "+kk+" of "+nT;
+}
+function play(ns){hist.push(ns);redo=[];note="";clearSel();render();maybeAI()}
+function finishJump(s){play(apply(s,{p:sel.slice(),c:selC.slice(),j:true}))}
+function click(i){
+  if(over||busy||browsing()||!humanTurn())return;
+  var s=cur(),P=s.turn,hs,k;note="";
+  if(sel.length>1){   // a jump sequence is under way
+    if(i===sel[sel.length-1]){finishJump(s);return}
+    if(i===sel[0]){clearSel();note="Jump cancelled.";render();return}
+    hs=selHops(s);
+    for(k=0;k<hs.length;k++)if(hs[k].t===i){sel.push(i);if(hs[k].o>=0)selC.push(hs[k].o);
+      if(!selHops(s).length){finishJump(s);return}
+      render();return}
+    note="Click a green dot to keep jumping, or click the piece again to end the move.";render();return;
+  }
+  if(sel.length===1){
+    if(i===sel[0]){clearSel();render();return}
+    if(stepTargets(s,sel[0]).indexOf(i)>=0){play(apply(s,{p:[sel[0],i],c:[]}));return}
+    hs=selHops(s);
+    for(k=0;k<hs.length;k++)if(hs[k].t===i){sel.push(i);if(hs[k].o>=0)selC.push(hs[k].o);
+      if(!selHops(s).length){finishJump(s);return}
+      render();return}
+  }
+  if(s.b[i]===P+1){
+    clearSel();sel=[i];
+    if(!stepTargets(s,i).length&&!selHops(s).length){clearSel();note="That piece has nowhere to go."}
+  }else{
+    note=sel.length?"That is not a legal move for the piece on "+sname(sel[0])+".":s.b[i]===3?"Castles never move.":s.b[i]?"That piece belongs to "+nameOf(s.b[i]-1)+".":"Click one of your pieces first.";
+  }
+  render();
+}
+function maybeAI(){
+  if(over||$("mode").value!=="ai"||cur().turn===+$("side").value)return;
+  busy=true;render();
+  setTimeout(function(){
+    var c=cur(),m=aiMove(c);busy=false;
+    if(m){hist.push(m.ns);redo=[]}
+    render();maybeAI();
+  },60);
+}
+document.title=GAME.title;$("gtitle").textContent=GAME.title;
+function li(x){return"<li>"+(typeof x==="string"?x:x.t+"<ul>"+x.sub.map(li).join("")+"</ul>")+"</li>"}
+$("rules").innerHTML=GAME.rules.map(function(sec){return"<li><b>"+sec.h+"</b><ul>"+sec.items.map(li).join("")+"</ul></li>"}).join("");
+$("side").innerHTML=GAME.sides.map(function(x,i){return'<option value="'+i+'">You are '+x.name+(i?"":" (first)")+'</option>'}).join("");
+for(var i=0;i<2;i++)$("n"+i).textContent=GAME.sides[i].name;
+$("board").onclick=function(e){var t=e.target.closest("[data-i]");if(t)click(+t.getAttribute("data-i"))};
+$("new").onclick=start;$("sim").onclick=runSim;$("showLast").onchange=render;
+$("mode").onchange=$("side").onchange=start;
+function aiSide(){return $("mode").value==="ai"&&cur().turn!==+$("side").value}
+$("redo").onclick=function(){
+  if(busy||sim)return;
+  if(browsing()){unlock(1);return}
+  if(!redo.length)return;
+  hist.push(redo.pop());
+  while(redo.length&&aiSide())hist.push(redo.pop());
+  note="";clearSel();render();
+};
+$("undo").onclick=function(){
+  if(busy||sim)return;
+  if(browsing()){unlock(-1);return}
+  if(sel.length>1){clearSel();note="Jump cancelled.";render();return}   // Undo first cancels a jump being entered
+  if(hist.length<2)return;
+  redo.push(hist.pop());
+  while(hist.length>1&&aiSide())redo.push(hist.pop());
+  over=false;note="";clearSel();render();maybeAI();
+};
+$("nFirst").onclick=function(){goto(0)};
+$("nPrev").onclick=function(){goto((browsing()?view:hist.length-1)-1)};
+$("nNext").onclick=function(){goto((browsing()?view:hist.length-1)+1)};
+$("nLast").onclick=function(){goto(hist.length-1+redo.length)};
+start();
+})();
+</script>
+</body>
+</html>
