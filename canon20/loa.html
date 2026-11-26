@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lines of Action</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
+<style>
+:root{--bg:#eef0e6;--ink:#1f2a1c;--mute:#5d6a56;--cell:#dfe3cf;--edge:#b9bfa3;--hi:#e0803a;--panel:#fff;--line:#c5cab4;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f}}
+:root[data-theme="dark"]{--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+main{max-width:1080px;margin:0 auto;padding:16px 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.right>.bar:first-child{margin-top:0}
+@media (min-width:860px){.layout{grid-template-columns:minmax(0,600px) minmax(300px,1fr);gap:28px;align-items:start}}
+h1{font:700 2rem/1.1 "Bricolage Grotesque",Georgia,serif;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+select,button.ctl{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.ctl:disabled,select:disabled,input:disabled{opacity:.45;cursor:default}
+label.f{color:var(--mute);font-size:.9rem}
+input[type=number]{width:4.5em;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+button.ctl.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button.ctl.icon{display:inline-flex;align-items:center;justify-content:center;padding:6px 10px}
+button.ctl.icon svg{width:18px;height:18px;fill:currentColor;display:block}
+.navlab{min-width:7.5em;text-align:center;color:var(--mute);font-variant-numeric:tabular-nums}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.pl{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:8px 12px;display:flex;justify-content:space-between;align-items:baseline;gap:6px}
+.pl.on{border-color:var(--hi)}
+.pl b{font:700 1.6rem "Bricolage Grotesque",Georgia,serif}
+.pl small{color:var(--mute)}
+#status{min-height:1.5em;font-weight:600;margin:6px 0}
+#board svg{display:block;width:100%;max-width:470px;margin:0 auto;touch-action:manipulation}
+#board .sl{cursor:pointer}
+#board .sl .pv{opacity:0;transition:opacity .08s}
+#board .sl:hover .pv{opacity:.55}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+details li{margin:4px 0}
+.legend{color:var(--mute);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+<h1 id="gtitle"></h1>
+<p class="sub" id="gsub"></p>
+<div class="layout">
+<div class="left">
+<div id="board"></div>
+<p class="legend">Click one of your pieces, then a green dot. A piece moves exactly as many squares as there are pieces (of both colours, itself included) on the line it moves along; it may pass over its own pieces but not over enemy pieces, and it captures an enemy piece by landing on it (a dot with a ring). Your pieces that can move get a thin dashed outline. The big number next to each player is their pieces left; the small text counts how many separate groups they have. The gold outlines and line mark the last move. Untick “Show highlights” to show only the board and pieces (moves are entered the same way).</p>
+</div>
+<aside class="right">
+<div class="bar">
+  <select id="mode" aria-label="Mode"><option value="ai">Play the computer</option><option value="2p">Two players</option></select>
+  <select id="level" aria-label="Computer strength"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select>
+  <select id="side" aria-label="Your side"></select>
+  <select id="setup" aria-label="Starting position"><option value="std">Standard setup</option><option value="egg">Scrambled Eggs</option></select>
+  <button class="ctl primary" id="new">New game</button>
+  <button class="ctl" id="undo">Undo</button>
+  <button class="ctl" id="redo">Redo</button>
+</div>
+<div class="bar" id="nav" role="group" aria-label="Game history">
+  <button class="ctl icon" id="nFirst" aria-label="Go to the beginning" title="Go to the beginning"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="2.5" height="14"/><path d="M19 5v14L8 12z"/></svg></button>
+  <button class="ctl icon" id="nPrev" aria-label="One move back" title="One move back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 5v14L6 12z"/></svg></button>
+  <span class="navlab" id="nlab" aria-live="polite">Move 0 of 0</span>
+  <button class="ctl icon" id="nNext" aria-label="One move forward" title="One move forward"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5v14l11-7z"/></svg></button>
+  <button class="ctl icon" id="nLast" aria-label="Go to the last move" title="Go to the last move"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5v14l11-7z"/><rect x="17.5" y="5" width="2.5" height="14"/></svg></button>
+  <label class="f"><input type="checkbox" id="showLast" checked> Show highlights</label>
+</div>
+<div class="score">
+  <div class="pl" id="p0"><span><span id="n0"></span> <small id="d0"></small></span><b id="s0">0</b></div>
+  <div class="pl" id="p1"><span><span id="n1"></span> <small id="d1"></small></span><b id="s1">0</b></div>
+</div>
+<div id="status" aria-live="polite"></div>
+<div id="last" class="legend" style="min-height:2.6em;margin:0 0 8px"></div>
+<div class="bar">
+  <label class="f">Simulation games <input id="simN" type="number" min="10" max="1000" value="10"></label>
+  <label class="f">Random opening moves <input id="simR" type="number" min="0" max="20" value="4"></label>
+  <button class="ctl" id="sim">Simulation</button>
+</div>
+<div id="simout" class="legend" style="white-space:pre-line;margin:0 0 8px"></div>
+<details>
+<summary>Rules</summary>
+<ul id="rules"></ul>
+</details>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+/* =====================================================================
+   1. GAME DEFINITION  - Lines of Action rules, board geometry, move generation
+   2. ENGINE           - alpha-beta computer opponent, simulations
+   3. INTERFACE        - SVG board, click handling, controls
+   Board: 8 columns a-h (c = 0..7) by 8 rows 1-8 (r = 0..7, row 1 at the bottom, Coral's side).
+   Square index i = r*8 + c. Board cells: 0 empty, 1 Coral, 2 Blue.
+   Every square lies on 4 lines (row, column, diagonal, anti-diagonal); LID[i*4+d] is the line id (46 lines in all).
+   A move is {f:from, t:to, x:1 if it captures} ({f:-1} is a forced pass); a legal move entry is {m, ns}.
+   A state is {b, turn (0 Coral, 1 Blue), w:winner (-1 none, 0 Coral, 1 Blue), ml:cached moves, mv:last move, ev:text}.
+   ===================================================================== */
+var $=function(i){return document.getElementById(i)};
+
+/* ============================ 1. GAME DEFINITION ============================ */
+var W=8,H=8,NSQ=64;
+var D4=[[1,0],[0,1],[1,1],[1,-1]];        // row, column, diagonal, anti-diagonal
+var LID=new Int8Array(NSQ*4),NLINES=46;
+var GAME={
+  title:"Lines of Action",
+  subtitle:function(){return "Claude Soucie’s unification game (1965). 8×8 board, 12 pieces each. Join all your pieces into one connected group."},
+  sides:[{name:"Coral",fill:"#FF7F50",edge:"#a8441f",emb:"#FBF6EC"},{name:"Blue",fill:"#8FBAD1",edge:"#3f6c84",emb:"#1b3341"}],
+  setups:{
+    std:function(b){var k;for(k=1;k<7;k++){b[k]=1;b[56+k]=1;b[k*8]=2;b[k*8+7]=2}},
+    egg:function(b){var k;for(k=1;k<7;k++){b[k]=k%2?1:2;b[56+k]=k%2?2:1;b[k*8]=k%2?1:2;b[k*8+7]=k%2?2:1}}   // Scrambled Eggs: alternating colours round the edge
+  },
+  rules:[
+  {h:"Board",items:[
+    "An 8×8 checkered board. Coral’s 12 pieces start on b1–g1 and b8–g8, Blue’s 12 on a2–a7 and h2–h7. The four corners start empty.",
+    "Scrambled Eggs (choose it under the setup menu): Soucie’s alternative opening, with the colours alternating round the edge. Every other rule is the same."]},
+  {h:"Moving",items:[
+    "Coral moves first, then the players alternate. On your turn you move one of your pieces in a straight line: horizontally, vertically or diagonally, forwards or backwards.",
+    "A piece moves exactly as many squares as there are pieces, of both colours and counting itself, on the whole line it moves along.",
+    "It may pass over its own pieces and over empty squares, but never over an enemy piece.",
+    "It may land on an empty square, or on an enemy piece, which is captured and removed from the game. It may never land on one of its own pieces.",
+    "If a player has no legal move (very rare), they pass."]},
+  {h:"End of the game",items:[
+    "You win as soon as all your pieces on the board form one group: every piece is linked to the others through pieces of your colour on neighbouring squares (orthogonally or diagonally). A single remaining piece counts as one group.",
+    "If one move connects both players at the same time (for example a capture that joins the opponent’s last pieces), the player who made the move wins.",
+    "There are no draws in the rules; the simulation stops a game after 400 moves and counts it as unfinished."]}],
+  stats:function(s,i){var n=0,k;for(k=0;k<NSQ;k++)if(s.b[k]===i+1)n++;var g=groups(s.b,i+1);
+    return{big:n,text:"· "+g+" group"+(g===1?"":"s")}},
+  describe:function(s){return s.ev||""}
+};
+function build(){
+  var i,c,r;
+  for(i=0;i<NSQ;i++){c=i%W;r=(i-c)/W;LID[i*4]=r;LID[i*4+1]=8+c;LID[i*4+2]=16+(c-r+7);LID[i*4+3]=31+(c+r)}
+}
+function sname(i){return String.fromCharCode(97+i%W)+(Math.floor(i/W)+1)}
+function nameOf(P){return GAME.sides[P].name}
+function mk(b,turn,mv,ev){return{b:b,turn:turn,w:-1,ml:null,mv:mv,ev:ev||""}}
+function newState(){var b=new Int8Array(NSQ);GAME.setups[$("setup").value](b);return mk(b,0,null,"")}
+var NBR=[];(function(){for(var i=0;i<NSQ;i++){var c=i%8,r=(i-c)/8,a=[],dx,dy;
+  for(dx=-1;dx<2;dx++)for(dy=-1;dy<2;dy++)if((dx||dy)&&c+dx>=0&&c+dx<8&&r+dy>=0&&r+dy<8)a.push((r+dy)*8+c+dx);NBR.push(a)}})();
+var GQ=new Int8Array(NSQ),GSEEN=new Uint8Array(NSQ);
+function groups(b,v){   // number of 8-connected groups of colour v
+  var g=0,i,h,t,q,k,a;GSEEN.fill(0);
+  for(i=0;i<NSQ;i++){if(b[i]!==v||GSEEN[i])continue;g++;GSEEN[i]=1;h=0;t=0;GQ[t++]=i;
+    while(h<t){q=GQ[h++];a=NBR[q];for(k=0;k<a.length;k++)if(b[a[k]]===v&&!GSEEN[a[k]]){GSEEN[a[k]]=1;GQ[t++]=a[k]}}}
+  return g;
+}
+function lineCounts(b){var n=new Int8Array(NLINES),i,d;for(i=0;i<NSQ;i++)if(b[i])for(d=0;d<4;d++)n[LID[i*4+d]]++;return n}
+function targets(b,i,cnt,out){   // legal destinations of the piece on i
+  var me=b[i],c=i%W,r=(i-c)/W,d,sg,n,k,x,y,ok,q;
+  for(d=0;d<4;d++){n=cnt[LID[i*4+d]];
+    for(sg=-1;sg<2;sg+=2){x=c+sg*D4[d][0]*n;y=r+sg*D4[d][1]*n;if(x<0||y<0||x>=W||y>=H)continue;
+      q=y*W+x;if(b[q]===me)continue;ok=true;
+      for(k=1;k<n;k++){var z=b[(r+sg*D4[d][1]*k)*W+c+sg*D4[d][0]*k];if(z&&z!==me){ok=false;break}}
+      if(ok)out.push({f:i,t:q,x:b[q]?1:0})}}
+  return out;
+}
+function gen(s){
+  if(s.ml)return s.ml;
+  var b=s.b,me=s.turn+1,cnt=lineCounts(b),out=[],i;
+  for(i=0;i<NSQ;i++)if(b[i]===me)targets(b,i,cnt,out);
+  if(!out.length)out.push({f:-1,t:-1,x:0});
+  return s.ml=out;
+}
+function apply(s,m,quick){
+  var b=s.b.slice(),P=s.turn,ns,txt="",mine,theirs;
+  if(m.f>=0){b[m.f]=0;b[m.t]=P+1}
+  if(!quick)txt=m.f<0?nameOf(P)+" has no legal move and passes.":nameOf(P)+" moved "+sname(m.f)+"–"+sname(m.t)+(m.x?", capturing the "+nameOf(1-P)+" piece there.":".");
+  ns=mk(b,1-P,m.f<0?null:{f:m.f,t:m.t,x:m.x,by:P},txt);
+  mine=groups(b,P+1)===1;theirs=m.x?groups(b,2-P)===1:false;   // a quiet move cannot connect the opponent
+  if(mine){ns.w=P;if(!quick)ns.ev+=" All "+nameOf(P)+" pieces are connected: "+nameOf(P)+" wins!"+(theirs?" (Both sides were connected by this move; the mover wins.)":"")}
+  else if(theirs){ns.w=1-P;if(!quick)ns.ev+=" The capture leaves the "+nameOf(1-P)+" pieces in one group: "+nameOf(1-P)+" wins!"}
+  return ns;
+}
+function legal(s){if(s.w>=0)return[];return gen(s).map(function(m){return{m:m,ns:apply(s,m)}})}
+
+/* ================================ 2. ENGINE ================================ */
+// per side: concentration (excess distance from the centre of mass), number of groups, centralisation,
+// a small bonus for pieces with a friendly neighbour, and a small material term
+var AIW={C:2.6,G:.45,Z:.35,L:.5,M:.08,T:.15};
+var PST=new Float32Array(NSQ);(function(){for(var i=0;i<NSQ;i++){var c=i%8,r=(i-c)/8;PST[i]=(3.5-Math.max(Math.abs(c-3.5),Math.abs(r-3.5)))/3}})();
+var MINSUM=[0];(function(){for(var n=1;n<=12;n++)MINSUM.push(MINSUM[n-1]+(n<=1?0:n<=9?1:2))})();
+function side(b,v){
+  var n=0,sx=0,sy=0,i,c,r,ps=[],z=0,lk=0,k,a,cx,cy,sum=0;
+  for(i=0;i<NSQ;i++)if(b[i]===v){ps.push(i);c=i%8;r=(i-c)/8;sx+=c;sy+=r;n++;z+=PST[i];
+    a=NBR[i];for(k=0;k<a.length;k++)if(b[a[k]]===v){lk++;break}}
+  if(!n)return 0;
+  cx=Math.round(sx/n);cy=Math.round(sy/n);
+  for(k=0;k<n;k++){c=ps[k]%8;r=(ps[k]-c)/8;sum+=Math.max(Math.abs(c-cx),Math.abs(r-cy))}
+  var conc=(sum-MINSUM[n])/Math.max(1,n-1);
+  return -AIW.C*conc-AIW.G*(groups(b,v)-1)+AIW.Z*z/n+AIW.L*lk/n+AIW.M*n;
+}
+function ev(s){   // value from Coral's point of view
+  if(s.w>=0)return s.w===0?1000:-1000;
+  return side(s.b,1)-side(s.b,2)+(s.turn?-1:1)*AIW.T;
+}
+var NOISE=[0,1.5,.08,.02],TIME=[0,0,0,1800],nodes=0,deadline=1e18,abort=false;
+function order(s,ms){
+  return ms.map(function(m){var ns=apply(s,m,true);ns.o=ns.w>=0?(ns.w===s.turn?1e4:-1e4):-(ns.turn?-1:1)*ev(ns);return ns}).sort(function(a,z){return z.o-a.o});
+}
+function nega(s,d,al,be,ply){
+  if(s.w>=0)return s.w===s.turn?1000-ply:-(1000-ply);
+  if(d<=0)return (s.turn?-1:1)*ev(s);
+  if((++nodes&255)===0&&Date.now()>deadline){abort=true;return 0}
+  var ms=gen(s),kids=d>=2?order(s,ms):ms.map(function(m){return apply(s,m,true)}),best=-1e9,i,v;
+  for(i=0;i<kids.length;i++){v=-nega(kids[i],d-1,-be,-al,ply+1);if(abort)return 0;
+    if(v>best)best=v;if(best>al)al=best;if(al>=be)break}
+  return best;
+}
+function aiMove(s){
+  var gm=gen(s),lv=+$("level").value,P=s.turn,i,v,best,pick=null,d;
+  if(!gm.length)return null;
+  var ms=gm.map(function(m){return{m:m,ns:apply(s,m,true)}});
+  for(i=0;i<ms.length;i++)if(ms[i].ns.w===P){return{m:ms[i].m,ns:apply(s,ms[i].m)}}   // a move that wins right now
+  nodes=0;deadline=1e18;abort=false;
+  ms.forEach(function(m){m.v=-nega(m.ns,0,-1e9,1e9,1);m.r=Math.random()*NOISE[lv]});
+  if(lv>1){
+    ms.sort(function(a,z){return z.v-a.v});
+    deadline=lv===3?Date.now()+TIME[3]:1e18;
+    for(d=2;d<=(lv===2?2:8);d++){
+      var al=-1e9,res=[];
+      for(i=0;i<ms.length;i++){v=-nega(ms[i].ns,d-1,-1e9,-(al-NOISE[lv])+.001,1);if(abort)break;res.push(v);if(v>al)al=v}
+      if(abort)break;
+      for(i=0;i<ms.length;i++)ms[i].v=res[i];
+      ms.sort(function(a,z){return z.v-a.v});
+      if(al>900||al<-900)break;
+    }
+  }
+  best=-1e9;ms.forEach(function(m){if(m.v+m.r>best){best=m.v+m.r;pick=m}});
+  return{m:pick.m,ns:apply(s,pick.m)};
+}
+var sim=null,LOCK=["mode","side","level","setup","new","undo","redo","simN","simR","nFirst","nPrev","nNext","nLast"];
+function runSim(){   // computer vs computer, to look for first/second-player advantage
+  if(sim){sim.stop=true;return}
+  var CAP=400,me=sim={stop:false},TOTALG=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?4:+$("simR").value)),
+      done=0,w=[0,0,0],un=0,g=newState(),plies=0,lvName=$("level").options[$("level").selectedIndex].text,nm=GAME.sides.map(function(x){return x.name});
+  LOCK.forEach(function(i){$(i).disabled=true});
+  $("sim").textContent="Stop simulation";
+  $("simout").textContent="Simulating at "+lvName+" level… 0/"+TOTALG;
+  function finish(stopped){
+    sim=null;$("sim").textContent="Simulation";
+    ["mode","setup","new","simN","simR"].forEach(function(i){$(i).disabled=false});
+    $("level").disabled=$("side").disabled=$("mode").value==="2p";
+    var mg=done?(196*Math.sqrt((w[0]/done)*(1-w[0]/done)/done)).toFixed(1):"0";
+    var pc=function(n){return done?(100*n/done).toFixed(1)+"%":"n/a"};
+    $("simout").textContent=(stopped?"Stopped after ":"")+done+" games at "+lvName+" level (computer vs computer, "+$("setup").options[$("setup").selectedIndex].text+"), first "+RND+" moves random.\n"+
+      "First player ("+nm[0]+") won "+pc(w[0])+" ("+w[0]+" games, margin ±"+mg+" points at 95% confidence). Second player ("+nm[1]+") won "+pc(w[1])+" ("+w[1]+" games)."+(un?" Unfinished after "+CAP+" moves: "+un+".":"");
+    render();
+  }
+  function stepSim(){
+    if(me.stop){finish(true);return}
+    var t0=Date.now(),m,ms;
+    while(Date.now()-t0<40){
+      if(g.w>=0||plies>=CAP){
+        if(g.w>=0)w[g.w]++;else un++;
+        done++;g=newState();plies=0;
+        if(done>=TOTALG){finish(false);return}
+        continue;
+      }
+      if(plies<RND){ms=gen(g);m={ns:apply(g,ms[Math.floor(Math.random()*ms.length)])}}
+      else m=aiMove(g);
+      g=m.ns;plies++;
+    }
+    $("simout").textContent="Simulating at "+lvName+" level… "+done+"/"+TOTALG;
+    setTimeout(stepSim,0);
+  }
+  stepSim();
+}
+
+/* =============================== 3. INTERFACE =============================== */
+var hist,redo=[],view=null,over,busy,note="",sel=-1;   // sel: the piece picked for the move being entered
+var GREEN="#2e9e4f",GOLD="#e0a800",HI="#e0803a",IVORY="#F2EDE3",TEAL="#1F5F5B",FRAME="#163f3d";
+function cur(){return hist[hist.length-1]}
+function line(){return hist.concat(redo.slice().reverse())}   // every position, including those that can still be redone
+function browsing(){return view!==null}
+function shown(){return view===null?cur():line()[view]}
+function goto(k){
+  if(busy||sim)return;
+  var n=hist.length-1+redo.length;k=Math.max(0,Math.min(n,k));
+  view=k===hist.length-1?null:k;note="";sel=-1;render();
+}
+// Undo/Redo while reviewing: leave review and play on from the reviewed position (in computer mode, from the nearest position where it is the human's turn)
+function unlock(dir){
+  var Ln=line(),k=view,j;
+  if($("mode").value==="ai"){
+    j=k;while(j>=0&&j<Ln.length&&Ln[j].w<0&&Ln[j].turn!==+$("side").value)j+=dir;
+    if(j>=0&&j<Ln.length)k=j;
+  }
+  hist=Ln.slice(0,k+1);redo=Ln.slice(k+1).reverse();view=null;note="";sel=-1;over=false;render();maybeAI();
+}
+function humanTurn(){return $("mode").value==="2p"||cur().turn===+$("side").value}
+function start(){
+  build();
+  $("gsub").textContent=GAME.subtitle();
+  hist=[newState()];redo=[];view=null;note="";sel=-1;$("level").disabled=$("side").disabled=$("mode").value==="2p";over=false;busy=false;
+  render();maybeAI();
+}
+function px(i){return i%W+.5}
+function py(i){return H-1-Math.floor(i/W)+.5}
+// square tile with a fleur-de-lis (the emblem is drawn in a 100-unit box and scaled to the tile)
+var FLEUR='<path d="M-.5 -44 C6 -36 10.5 -27 10.5 -17 C10.5 -9 7 -2 3.5 5 L-.5 5 Z"/>'+
+  '<path d="M7.5 5 C9 -5 14 -17 23 -23 C31 -29 41 -26 43 -18 C45 -11 40 -5 34 -6 C38 -9 38 -15 33 -17 C26 -19 19 -12 17 -4 C16 0 16 3 16 5 Z"/>'+
+  '<path d="M-.5 12 L5 12 C6 18 9 23 15 25 C20 27 25 30 25 36 C21 32 16 31 11 32 C6 33 3 30 2 26 L-.5 26 Z"/>';
+var FLEURG='<g>'+FLEUR+'</g><g transform="scale(-1 1)">'+FLEUR+'</g><rect x="-19" y="5" width="38" height="7" rx="2.5"/>';
+function tile(h,cx,cy,sd,op){
+  h.push('<g transform="translate('+cx+' '+cy+')"'+(op<1?' opacity="'+op+'"':'')+' pointer-events="none">'+
+    '<rect x="-.36" y="-.33" width=".76" height=".76" rx=".11" fill="#000" fill-opacity=".22"/>'+
+    '<rect x="-.38" y="-.38" width=".76" height=".76" rx=".11" fill="'+sd.fill+'" stroke="'+sd.edge+'" stroke-width=".03"/>'+
+    '<rect x="-.33" y="-.33" width=".66" height=".66" rx=".08" fill="none" stroke="#fff" stroke-opacity=".22" stroke-width=".02"/>'+
+    '<g transform="translate(0 .012) scale(.0062)" fill="'+sd.emb+'">'+FLEURG+'</g></g>');
+}
+function render(){
+  var br=browsing(),s=shown(),sd=GAME.sides,h=[],P=s.turn,i,nT=hist.length-1+redo.length,kk=br?view:hist.length-1,lock=busy||!!sim,mv=s.mv,M=1,HL=$("showLast").checked;
+  over=s.w>=0;
+  h.push('<svg viewBox="'+(-M)+' '+(-M)+' '+(W+2*M)+' '+(H+2*M)+'" role="img" aria-label="Lines of Action board">');
+  h.push('<rect x="-.4" y="-.4" width="'+(W+.8)+'" height="'+(H+.8)+'" rx=".16" fill="'+FRAME+'"/>');
+  (function(){   // coordinates: letters = columns (top and bottom), numbers = rows (left and right), row 1 at the bottom
+    function lab(x,y,t){h.push('<text x="'+x+'" y="'+y+'" font-size=".34" text-anchor="middle" dominant-baseline="central" fill="var(--mute)" pointer-events="none">'+t+'</text>')}
+    for(var c=0;c<W;c++){var Lt=String.fromCharCode(97+c);lab(c+.5,-.72,Lt);lab(c+.5,H+.72,Lt)}
+    for(var r=0;r<H;r++){lab(-.72,H-r-.5,r+1);lab(W+.72,H-r-.5,r+1)}
+  })();
+  for(i=0;i<NSQ;i++){var c=i%W,r=(i-c)/W;h.push('<rect x="'+c+'" y="'+(H-1-r)+'" width="1" height="1" fill="'+((c+r)%2===0?TEAL:IVORY)+'"/>')}
+  h.push('<rect x="0" y="0" width="'+W+'" height="'+H+'" fill="none" stroke="'+FRAME+'" stroke-width=".05"/>');
+  if(mv&&HL){   // last move: gold outlines on both squares and a line between them
+    [mv.f,mv.t].forEach(function(q){h.push('<rect x="'+(q%W+.05)+'" y="'+(py(q)-.45)+'" width=".9" height=".9" rx=".06" fill="none" stroke="'+GOLD+'" stroke-width=".07"/>')});
+    h.push('<line x1="'+px(mv.f)+'" y1="'+py(mv.f)+'" x2="'+px(mv.t)+'" y2="'+py(mv.t)+'" stroke="'+GOLD+'" stroke-width=".07" stroke-linecap="round" stroke-opacity=".8"/>');
+  }
+  var canAct=!br&&!over&&humanTurn()&&!busy,dots=[],cnt=lineCounts(s.b),movable={};
+  if(canAct)gen(s).forEach(function(m){if(m.f>=0)movable[m.f]=1});
+  if(canAct&&sel>=0){
+    if(HL)h.push('<rect x="'+(sel%W+.05)+'" y="'+(py(sel)-.45)+'" width=".9" height=".9" rx=".06" fill="'+HI+'" fill-opacity=".22" stroke="'+HI+'" stroke-width=".06"/>');
+    dots=targets(s.b,sel,cnt,[]);
+  }
+  for(i=0;i<NSQ;i++){var v=s.b[i];if(!v)continue;tile(h,px(i),py(i),sd[v-1],1)}
+  if(canAct&&HL&&sel<0)   // thin, light, dashed outlines on the pieces that can move
+    for(i=0;i<NSQ;i++)if(movable[i]){var dk=((i%W)+Math.floor(i/W))%2===0;
+      h.push('<rect x="'+(i%W+.06)+'" y="'+(py(i)-.44)+'" width=".88" height=".88" rx=".14" fill="none" stroke="'+(dk?"#fff":TEAL)+'" stroke-width=".03" stroke-opacity="'+(dk?.7:.55)+'" stroke-dasharray=".09 .06" pointer-events="none"/>')}
+  if(HL)dots.forEach(function(m){var q=m.t;
+    if(m.x)h.push('<rect x="'+(q%W+.08)+'" y="'+(py(q)-.42)+'" width=".84" height=".84" rx=".12" fill="none" stroke="'+GREEN+'" stroke-width=".07" pointer-events="none"/>');
+    h.push('<circle cx="'+px(q)+'" cy="'+py(q)+'" r=".12" fill="'+GREEN+'" fill-opacity=".85" stroke="#fff" stroke-opacity=".6" stroke-width=".02" pointer-events="none"/>')});
+  for(i=0;i<NSQ;i++)h.push('<rect data-i="'+i+'" x="'+(i%W)+'" y="'+(py(i)-.5)+'" width="1" height="1" fill="#000" fill-opacity="0" style="cursor:pointer"/>');
+  h.push('</svg>');
+  $("board").innerHTML=h.join("");
+  var names=sd.map(function(x){return x.name}),st;
+  for(i=0;i<2;i++){var t=GAME.stats(s,i);$("s"+i).textContent=t.big;$("d"+i).textContent=t.text;
+    $("p"+i).className="pl"+(!over&&s.turn===i?" on":"")}
+  if(br)st="Reviewing history (move "+kk+" of "+nT+"): the board is locked. Press Undo or Redo to play on from here.";
+  else if(over)st="Game over: "+names[s.w]+" wins.";
+  else if(!humanTurn())st=names[P]+" to move (computer thinking…)";
+  else if(sel>=0)st=names[P]+": choose where the piece on "+sname(sel)+" goes.";
+  else st=names[P]+" to move: pick one of your pieces.";
+  $("status").textContent=st;
+  $("last").textContent=(GAME.describe(s)+" "+note).trim();
+  $("undo").disabled=lock||!(br||hist.length>=2);
+  $("redo").disabled=lock||!(br||redo.length);
+  $("nFirst").disabled=$("nPrev").disabled=lock||kk<=0;
+  $("nNext").disabled=$("nLast").disabled=lock||kk>=nT;
+  $("nlab").textContent="Move "+kk+" of "+nT;
+}
+function autoPass(){   // a human with no legal move passes automatically
+  var s=cur();
+  if(s.w<0&&humanTurn()&&gen(s)[0].f<0){hist.push(apply(s,gen(s)[0]));redo=[]}
+}
+function play(ns){hist.push(ns);redo=[];note="";sel=-1;autoPass();render();maybeAI()}
+function click(i){
+  if(over||busy||browsing()||!humanTurn())return;
+  var s=cur(),P=s.turn,ts,k;note="";
+  if(sel>=0){
+    if(i===sel){sel=-1;render();return}
+    ts=targets(s.b,sel,lineCounts(s.b),[]);
+    for(k=0;k<ts.length;k++)if(ts[k].t===i){play(apply(s,ts[k]));return}
+  }
+  if(s.b[i]===P+1){
+    sel=i;
+    if(!targets(s.b,i,lineCounts(s.b),[]).length){sel=-1;note="That piece has nowhere to go."}
+  }else{
+    note=sel>=0?"That is not a legal move for the piece on "+sname(sel)+".":s.b[i]?"That piece belongs to "+nameOf(s.b[i]-1)+".":"Click one of your pieces first.";
+  }
+  render();
+}
+function maybeAI(){
+  if(over||$("mode").value!=="ai"||cur().turn===+$("side").value)return;
+  busy=true;render();
+  setTimeout(function(){
+    var c=cur(),m=aiMove(c);busy=false;
+    if(m){hist.push(m.ns);redo=[]}
+    autoPass();render();maybeAI();
+  },60);
+}
+document.title=GAME.title;$("gtitle").textContent=GAME.title;
+function li(x){return"<li>"+(typeof x==="string"?x:x.t+"<ul>"+x.sub.map(li).join("")+"</ul>")+"</li>"}
+$("rules").innerHTML=GAME.rules.map(function(sec){return"<li><b>"+sec.h+"</b><ul>"+sec.items.map(li).join("")+"</ul></li>"}).join("");
+$("side").innerHTML=GAME.sides.map(function(x,i){return'<option value="'+i+'">You are '+x.name+(i?"":" (first)")+'</option>'}).join("");
+for(var i=0;i<2;i++)$("n"+i).textContent=GAME.sides[i].name;
+$("board").onclick=function(e){var t=e.target.closest("[data-i]");if(t)click(+t.getAttribute("data-i"))};
+$("new").onclick=start;$("sim").onclick=runSim;$("showLast").onchange=render;
+$("mode").onchange=$("side").onchange=$("setup").onchange=start;
+function aiSide(){return $("mode").value==="ai"&&cur().turn!==+$("side").value}
+$("redo").onclick=function(){
+  if(busy||sim)return;
+  if(browsing()){unlock(1);return}
+  if(!redo.length)return;
+  hist.push(redo.pop());
+  while(redo.length&&aiSide())hist.push(redo.pop());
+  note="";sel=-1;render();
+};
+$("undo").onclick=function(){
+  if(busy||sim)return;
+  if(browsing()){unlock(-1);return}
+  if(hist.length<2)return;
+  redo.push(hist.pop());
+  while(hist.length>1&&aiSide())redo.push(hist.pop());
+  over=false;note="";sel=-1;render();maybeAI();
+};
+$("nFirst").onclick=function(){goto(0)};
+$("nPrev").onclick=function(){goto((browsing()?view:hist.length-1)-1)};
+$("nNext").onclick=function(){goto((browsing()?view:hist.length-1)+1)};
+$("nLast").onclick=function(){goto(hist.length-1+redo.length)};
+start();
+})();
+</script>
+</body>
+</html>
