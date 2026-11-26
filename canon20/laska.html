@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Laska</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
+<style>
+:root{--bg:#eef0e6;--ink:#1f2a1c;--mute:#5d6a56;--cell:#dfe3cf;--edge:#b9bfa3;--hi:#e0803a;--panel:#fff;--line:#c5cab4;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f}}
+:root[data-theme="dark"]{--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+main{max-width:1080px;margin:0 auto;padding:16px 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.right>.bar:first-child{margin-top:0}
+@media (min-width:860px){.layout{grid-template-columns:minmax(0,600px) minmax(300px,1fr);gap:28px;align-items:start}}
+h1{font:700 2rem/1.1 "Bricolage Grotesque",Georgia,serif;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+select,button.ctl{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.ctl:disabled,select:disabled,input:disabled{opacity:.45;cursor:default}
+label.f{color:var(--mute);font-size:.9rem}
+input[type=number]{width:4.5em;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+button.ctl.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button.ctl.icon{display:inline-flex;align-items:center;justify-content:center;padding:6px 10px}
+button.ctl.icon svg{width:18px;height:18px;fill:currentColor;display:block}
+.navlab{min-width:7.5em;text-align:center;color:var(--mute);font-variant-numeric:tabular-nums}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.pl{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:8px 12px;display:flex;justify-content:space-between;align-items:baseline;gap:6px}
+.pl.on{border-color:var(--hi)}
+.pl b{font:700 1.6rem "Bricolage Grotesque",Georgia,serif}
+.pl small{color:var(--mute)}
+#status{min-height:1.5em;font-weight:600;margin:6px 0}
+#board svg{display:block;width:100%;max-width:600px;margin:0 auto;touch-action:manipulation}
+#board .sl{cursor:pointer}
+#board .sl .pv{opacity:0;transition:opacity .08s}
+#board .sl:hover .pv{opacity:.55}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+details li{margin:4px 0}
+.legend{color:var(--mute);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+<h1 id="gtitle"></h1>
+<p class="sub" id="gsub"></p>
+<div class="layout">
+<div class="left">
+<div id="board"></div>
+<p class="legend">Click a stack you control (your piece on top), then click the square to move to; green dots mark the legal squares. For a multiple capture, click each landing square in turn (the rest is filled in once only one route is left). When a capture is available, only the stacks that can capture are ringed in green. Stacks are drawn from the side, bottom piece lowest; a red spot is an officer, and the number shows the stack height. The gold outline marks the last move’s route. Untick “Show highlights” to show only the board and pieces (moves are entered the same way).</p>
+</div>
+<aside class="right">
+<div class="bar">
+  <select id="mode" aria-label="Mode"><option value="ai">Play the computer</option><option value="2p">Two players</option></select>
+  <select id="level" aria-label="Computer strength"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select>
+  <select id="side" aria-label="Your side"></select>
+  <button class="ctl primary" id="new">New game</button>
+  <button class="ctl" id="undo">Undo</button>
+  <button class="ctl" id="redo">Redo</button>
+</div>
+<div class="bar" id="nav" role="group" aria-label="Game history">
+  <button class="ctl icon" id="nFirst" aria-label="Go to the beginning" title="Go to the beginning"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="2.5" height="14"/><path d="M19 5v14L8 12z"/></svg></button>
+  <button class="ctl icon" id="nPrev" aria-label="One move back" title="One move back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 5v14L6 12z"/></svg></button>
+  <span class="navlab" id="nlab" aria-live="polite">Move 0 of 0</span>
+  <button class="ctl icon" id="nNext" aria-label="One move forward" title="One move forward"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5v14l11-7z"/></svg></button>
+  <button class="ctl icon" id="nLast" aria-label="Go to the last move" title="Go to the last move"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5v14l11-7z"/><rect x="17.5" y="5" width="2.5" height="14"/></svg></button>
+  <label class="f"><input type="checkbox" id="showLast" checked> Show highlights</label>
+</div>
+<div class="score">
+  <div class="pl" id="p0"><span><span id="n0"></span> <small id="d0"></small></span><b id="s0">0</b></div>
+  <div class="pl" id="p1"><span><span id="n1"></span> <small id="d1"></small></span><b id="s1">0</b></div>
+</div>
+<div id="status" aria-live="polite"></div>
+<div id="last" class="legend" style="min-height:2.6em;margin:0 0 8px"></div>
+<div class="bar">
+  <label class="f">Simulation games <input id="simN" type="number" min="10" max="1000" value="10"></label>
+  <label class="f">Random opening moves <input id="simR" type="number" min="0" max="20" value="4"></label>
+  <button class="ctl" id="sim">Simulation</button>
+</div>
+<div id="simout" class="legend" style="white-space:pre-line;margin:0 0 8px"></div>
+<details>
+<summary>Rules</summary>
+<ul id="rules"></ul>
+</details>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+/* =====================================================================
+   1. GAME DEFINITION  - Laska rules, board geometry, move generation
+   2. ENGINE           - alpha-beta computer opponent, simulations
+   3. INTERFACE        - SVG board, click handling, controls
+   Board: 7x7, columns a-g (c = 0..6), rows 1-7 (r = 0..6, row 1 at the bottom, White's side).
+   Only the 25 squares with c+r even are used (a1 is one of them); they are numbered 0..24.
+   A stack is a string, top piece first: w = white soldier, W = white officer, b = black soldier, B = black officer.
+   The player whose piece is on top controls the stack.
+   A move descriptor is {p:[squares visited, origin first], c:[squares jumped over]}; a move is {m, ns:resulting state}.
+   A state is {b:25 stacks, turn (0 White, 1 Black), w:winner (-1 none, 0 White, 1 Black, 2 draw), pa:previous state,
+               q:plies since the last capture or promotion, key, ml:cached legal move descriptors, mv:last move, ev:text}.
+   ===================================================================== */
+var $=function(i){return document.getElementById(i)};
+
+/* ============================ 1. GAME DEFINITION ============================ */
+var SZ=7,NSQ,SQC=[],SQR=[],ID,NB=[],JP=[];
+var DRAW={rep:3,quiet:60};   // draw on threefold repetition, or after 60 plies (30 moves each) with no capture and no promotion (0 = off)
+var COL={w:0,W:0,b:1,B:1},OFF={w:0,W:1,b:0,B:1};
+var DIRS={w:[0,1],b:[2,3],W:[0,1,2,3],B:[0,1,2,3]};   // 0 NE, 1 NW (forward for White), 2 SE, 3 SW (forward for Black)
+var PNAME={w:"soldier",b:"soldier",W:"officer",B:"officer"};
+var GAME={
+  title:"Laska",
+  subtitle:function(){return "Emanuel Lasker’s stacking checkers game (1911). 7×7 board, 25 playable squares, 11 soldiers each. Captured pieces are not removed: they are trapped under the capturing stack and can be freed later."},
+  sides:[{name:"White",fill:"#f6f3ea",edge:"#8a8574",band:"#dcd6c6"},{name:"Black",fill:"#33312e",edge:"#0e0d0c",band:"#1f1e1c"}],
+  rules:[
+  {h:"Board",items:[
+    "A 7×7 board, of which only the 25 squares of one colour are used (the corners a1, g1, a7 and g7 among them).",
+    "Each player has 11 soldiers. White starts on rows 1–3, Black on rows 5–7; row 4 starts empty.",
+    "Pieces form stacks. Whoever owns the top piece controls the stack, and a stack always moves as a whole: it is never split by a move."]},
+  {h:"Moving",items:[
+    "White moves first. On a turn a player moves one single piece or stack they control.",
+    "A soldier (or a stack with a soldier on top) moves one square diagonally forward to an empty square. An officer (or a stack with an officer on top) moves one square diagonally in any direction."]},
+  {h:"Capturing",items:[
+    "A capture is a jump, as in checkers: over a diagonally adjacent stack controlled by the opponent onto the empty square right behind it. Soldiers capture forward only, officers in all four directions.",
+    "Only the top piece of the jumped stack is captured: it goes underneath the capturing stack. The rest of the jumped stack stays where it is, and whoever’s piece is now on top controls it, so a capture can free your own trapped pieces.",
+    "Capturing is compulsory. If several captures are possible, you choose which one. After a jump, if the same stack can jump again it must go on (a multiple capture), but it may not jump over the same square twice in one turn."]},
+  {h:"Promotion",items:[
+    "A soldier on top of a stack that ends its move on the opponent’s back row (row 7 for White, row 1 for Black) is flipped and becomes an officer. Only that top piece is promoted.",
+    "If a soldier reaches the back row during a capture, it is promoted and the turn ends there, as in Lasker’s rules."]},
+  {h:"End of the game",items:[
+    "A player who cannot move on their turn, because they control no stack or none of their stacks can move, loses.",
+    "Draw (added for this version, the rulebook gives none): the same position with the same player to move occurs for the third time, or 30 moves by each player in a row pass with no capture and no promotion."]}],
+  stats:function(s,i){var st=0,off=0,pr=0,k,j,x;
+    for(k=0;k<NSQ;k++){x=s.b[k];if(!x||COL[x[0]]!==i)continue;st++;if(OFF[x[0]])off++;for(j=1;j<x.length;j++)if(COL[x[j]]!==i)pr++}
+    return{big:st,text:"· "+off+" officer"+(off===1?"":"s")+", "+pr+" prisoner"+(pr===1?"":"s")+" · stacks:"}},
+  describe:function(s){return s.ev||""}
+};
+function build(){
+  var r,c,d,D=[[1,1],[-1,1],[1,-1],[-1,-1]];
+  ID=new Int8Array(SZ*SZ).fill(-1);SQC=[];SQR=[];
+  for(r=0;r<SZ;r++)for(c=0;c<SZ;c++)if((r+c)%2===0){ID[r*SZ+c]=SQC.length;SQC.push(c);SQR.push(r)}
+  NSQ=SQC.length;NB=[];JP=[];
+  function at(c,r){return c<0||r<0||c>=SZ||r>=SZ?-1:ID[r*SZ+c]}
+  for(var i=0;i<NSQ;i++){NB.push([]);JP.push([]);
+    for(d=0;d<4;d++){NB[i].push(at(SQC[i]+D[d][0],SQR[i]+D[d][1]));JP[i].push(at(SQC[i]+2*D[d][0],SQR[i]+2*D[d][1]))}}
+}
+function sname(i){return String.fromCharCode(97+SQC[i])+(SQR[i]+1)}
+function nameOf(P){return GAME.sides[P].name}
+function promotes(top,i){return (top==="w"&&SQR[i]===SZ-1)||(top==="b"&&SQR[i]===0)}
+function mk(b,turn,pa,mv,ev,reset){
+  var s={b:b,turn:turn,w:-1,pa:pa,q:reset||!pa?0:pa.q+1,key:b.join("|")+"/"+turn,ml:null,mv:mv,ev:ev||""};
+  if(DRAW.quiet&&s.q>=DRAW.quiet){s.w=2;s.ev=(s.ev+" "+(DRAW.quiet/2)+" moves each without a capture or promotion: the game is a draw.").trim();return s}
+  if(DRAW.rep&&s.q>=4){var n=1,a=pa,k=1;
+    for(;a&&k<=s.q;a=a.pa,k++)if(!(k&1)&&a.key===s.key&&++n>=DRAW.rep){s.w=2;s.ev=(s.ev+" The same position has occurred three times: the game is a draw.").trim();return s}}
+  if(!gen(s).length){s.w=1-turn;s.ev=(s.ev+" "+nameOf(turn)+" cannot move: "+nameOf(1-turn)+" wins!").trim()}
+  return s;
+}
+function newState(){
+  var b=[];for(var i=0;i<NSQ;i++)b.push(SQR[i]<3?"w":SQR[i]>3?"b":"");
+  return mk(b,0,null,null,"");
+}
+// all capture sequences of the stack st that has reached square at (bb: board with the capture so far applied)
+function capDFS(bb,at,st,path,jumped,mask,out){
+  var ds=DIRS[st[0]],me=COL[st[0]],ext=false,k,d,o,t;
+  for(k=0;k<ds.length;k++){d=ds[k];o=NB[at][d];t=JP[at][d];
+    if(t<0||bb[t]||!bb[o]||COL[bb[o][0]]===me||(mask>>o)&1)continue;
+    ext=true;
+    var nb=bb.slice(),ns=st+nb[o][0];nb[o]=nb[o].slice(1);
+    if(promotes(st[0],t))out.push({p:path.concat(t),c:jumped.concat(o)});
+    else capDFS(nb,t,ns,path.concat(t),jumped.concat(o),mask|(1<<o),out);
+  }
+  if(!ext&&jumped.length)out.push({p:path,c:jumped});
+}
+function gen(s){
+  if(s.ml)return s.ml;
+  var b=s.b,P=s.turn,caps=[],quiet=[],i,k,t,st,ds;
+  for(i=0;i<NSQ;i++){st=b[i];if(!st||COL[st[0]]!==P)continue;
+    var bb=b.slice();bb[i]="";capDFS(bb,i,st,[i],[],0,caps);
+    if(!caps.length){ds=DIRS[st[0]];for(k=0;k<ds.length;k++){t=NB[i][ds[k]];if(t>=0&&!b[t])quiet.push({p:[i,t],c:[]})}}
+  }
+  return s.ml=caps.length?caps:quiet;
+}
+function apply(s,m){
+  var b=s.b.slice(),P=s.turn,p=m.p,st=b[p[0]],to=p[p.length-1],i,o,taken=[],freed=[],txt,pro=false;
+  b[p[0]]="";
+  for(i=0;i<m.c.length;i++){o=m.c[i];taken.push(b[o][0]);st+=b[o][0];b[o]=b[o].slice(1);
+    if(b[o]&&COL[b[o][0]]===P)freed.push(sname(o))}
+  if(promotes(st[0],to)){st=st[0].toUpperCase()+st.slice(1);pro=true}
+  b[to]=st;
+  txt=nameOf(P)+(m.c.length?" captured: ":" moved ")+p.map(sname).join(m.c.length?"×":"–")+
+    (m.c.length?", taking "+(taken.length===1?"a "+PNAME[taken[0]]:taken.length+" pieces"):"")+
+    (freed.length?" and freeing the stack"+(freed.length>1?"s":"")+" on "+freed.join(", "):"")+
+    (pro?". The soldier is promoted to an officer":"")+".";
+  return mk(b,1-P,s,{p:p,c:m.c,by:P},txt,m.c.length>0||pro);
+}
+function legal(s){if(s.w>=0)return[];return gen(s).map(function(m){return{m:m,ns:apply(s,m)}})}
+
+/* ================================ 2. ENGINE ================================ */
+var AIW={O:2.4,U:.55,C:.3,A:.05,G:.12,M:.03};   // officer value, own piece buried under an enemy, prisoner, advance per row, back-row guard, mobility
+function ev(s){   // value from White's point of view
+  if(s.w>=0)return s.w===2?0:s.w===0?1000:-1000;
+  var b=s.b,v=0,i,k,st,ctl,p,c,x,under;
+  for(i=0;i<NSQ;i++){st=b[i];if(!st)continue;ctl=COL[st[0]];under=false;
+    for(k=0;k<st.length;k++){p=st[k];c=COL[p];x=OFF[p]?AIW.O:1;
+      if(c!==ctl){under=true;x*=AIW.C}else if(under)x*=AIW.U;
+      v+=c?-x:x;
+    }
+    if(!OFF[st[0]]){var adv=ctl?SZ-1-SQR[i]:SQR[i];v+=(ctl?-1:1)*(adv===0?AIW.G:AIW.A*adv)}
+  }
+  return v+(s.turn?-1:1)*AIW.M*gen(s).length;
+}
+var NOISE=[0,1.2,.15,.03],LIM=[0,0,0,60000],QX=6,nodes=0,limit=1e9,abort=false;
+function nega(s,d,al,be,ply){
+  if(s.w>=0)return s.w===2?0:-(1000-ply);
+  var ms=gen(s),sg=s.turn?-1:1;
+  if(++nodes>limit){abort=true;return 0}
+  if(d<=0&&(!ms[0].c.length||d<=-QX))return sg*ev(s);   // forced captures are searched to the end (up to QX extra plies)
+  var kids=ms.map(function(m){return apply(s,m)}),best=-1e9,i,v;
+  if(d>=2){kids.forEach(function(k){k.o=-(k.turn?-1:1)*ev(k)});kids.sort(function(a,b){return b.o-a.o})}
+  for(i=0;i<kids.length;i++){v=-nega(kids[i],d-1,-be,-al,ply+1);if(abort)return 0;
+    if(v>best)best=v;if(best>al)al=best;if(al>=be)break}
+  return best;
+}
+function aiMove(s){
+  var ms=legal(s),lv=+$("level").value,P=s.turn,i,v,best,pick=null,d;
+  if(!ms.length)return null;
+  if(ms.length===1)return ms[0];
+  for(i=0;i<ms.length;i++)if(ms[i].ns.w===P)return ms[i];    // a move that wins right now
+  nodes=0;limit=1e9;abort=false;
+  ms.forEach(function(m){m.v=-nega(m.ns,0,-1e9,1e9,1);m.r=Math.random()*NOISE[lv]});
+  if(lv===1){best=-1e9;ms.forEach(function(m){if(m.v+m.r>best){best=m.v+m.r;pick=m}});return pick}
+  var maxD=lv===2?4:20;nodes=0;limit=lv===2?1e9:LIM[3];
+  for(d=lv===2?4:2;d<=maxD;d++){
+    ms.sort(function(a,b){return b.v-a.v});
+    var al=-1e9,res=[];
+    for(i=0;i<ms.length;i++){v=-nega(ms[i].ns,d-1,-1e9,-(al-NOISE[lv])+.001,1);if(abort)break;res.push(v);if(v>al)al=v}
+    if(abort)break;
+    for(i=0;i<ms.length;i++)ms[i].v=res[i];
+    if(al>900||al<-900)break;   // a forced result is found
+  }
+  best=-1e9;ms.forEach(function(m){if(m.v+m.r>best){best=m.v+m.r;pick=m}});
+  return pick;
+}
+var sim=null,LOCK=["mode","side","level","new","undo","redo","simN","simR","nFirst","nPrev","nNext","nLast"];
+function runSim(){   // computer vs computer, to look for first/second-player advantage
+  if(sim){sim.stop=true;return}
+  var CAP=400,me=sim={stop:false},TOTALG=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?4:+$("simR").value)),
+      done=0,w=[0,0,0],un=0,g=newState(),plies=0,lvName=$("level").options[$("level").selectedIndex].text,nm=GAME.sides.map(function(x){return x.name});
+  LOCK.forEach(function(i){$(i).disabled=true});
+  $("sim").textContent="Stop simulation";
+  $("simout").textContent="Simulating at "+lvName+" level… 0/"+TOTALG;
+  function finish(stopped){
+    sim=null;$("sim").textContent="Simulation";
+    ["mode","new","simN","simR"].forEach(function(i){$(i).disabled=false});
+    $("level").disabled=$("side").disabled=$("mode").value==="2p";
+    var mg=done?(196*Math.sqrt((w[0]/done)*(1-w[0]/done)/done)).toFixed(1):"0";
+    var pc=function(n){return done?(100*n/done).toFixed(1)+"%":"n/a"};
+    $("simout").textContent=(stopped?"Stopped after ":"")+done+" games at "+lvName+" level (computer vs computer), first "+RND+" moves random.\n"+
+      "First player ("+nm[0]+") won "+pc(w[0])+" ("+w[0]+" games, margin ±"+mg+" points at 95% confidence). Second player ("+nm[1]+") won "+pc(w[1])+" ("+w[1]+" games)."+(w[2]?" Draws: "+w[2]+".":"")+(un?" Unfinished: "+un+".":"");
+    render();
+  }
+  function stepSim(){
+    if(me.stop){finish(true);return}
+    var t0=Date.now(),m,ms;
+    while(Date.now()-t0<40){
+      if(g.w>=0||plies>=CAP){
+        if(g.w>=0)w[g.w]++;else un++;
+        done++;g=newState();plies=0;
+        if(done>=TOTALG){finish(false);return}
+        continue;
+      }
+      if(plies<RND){ms=legal(g);m=ms[Math.floor(Math.random()*ms.length)]}
+      else m=aiMove(g);
+      if(!m){g.w=2;continue}
+      g=m.ns;plies++;
+    }
+    $("simout").textContent="Simulating at "+lvName+" level… "+done+"/"+TOTALG;
+    setTimeout(stepSim,0);
+  }
+  stepSim();
+}
+
+/* =============================== 3. INTERFACE =============================== */
+var hist,redo=[],view=null,over,busy,note="",sel=[];   // view: null = live position, otherwise the index being reviewed; sel: squares clicked so far this move
+var GREEN="#2e9e4f",GOLD="#e0a800",SPOT="#d0453a",HI="#e0803a";
+function cur(){return hist[hist.length-1]}
+function line(){return hist.concat(redo.slice().reverse())}   // every position, including those that can still be redone
+function browsing(){return view!==null}
+function shown(){return view===null?cur():line()[view]}
+function goto(k){
+  if(busy||sim)return;
+  var n=hist.length-1+redo.length;k=Math.max(0,Math.min(n,k));
+  view=k===hist.length-1?null:k;note="";sel=[];render();
+}
+// Undo/Redo while reviewing: leave review and play on from the reviewed position (in computer mode, from the nearest position where it is the human's turn)
+function unlock(dir){
+  var Ln=line(),k=view,j;
+  if($("mode").value==="ai"){
+    j=k;while(j>=0&&j<Ln.length&&Ln[j].w<0&&Ln[j].turn!==+$("side").value)j+=dir;
+    if(j>=0&&j<Ln.length)k=j;
+  }
+  hist=Ln.slice(0,k+1);redo=Ln.slice(k+1).reverse();view=null;note="";sel=[];over=false;render();maybeAI();
+}
+function humanTurn(){return $("mode").value==="2p"||cur().turn===+$("side").value}
+function start(){
+  build();
+  $("gsub").textContent=GAME.subtitle();
+  hist=[newState()];redo=[];view=null;note="";sel=[];$("level").disabled=$("side").disabled=$("mode").value==="2p";over=false;busy=false;
+  render();maybeAI();
+}
+function px(i){return SQC[i]+.5}
+function py(i){return SZ-1-SQR[i]+.5}
+function pre(m,a){if(m.p.length<a.length)return false;for(var k=0;k<a.length;k++)if(m.p[k]!==a[k])return false;return true}
+function drawStack(h,cx,cy,st){
+  var n=st.length,th=Math.min(.11,.6/n),rx=.36,ry=.2,base=cy+.13,j,p,sd,y0,y1;
+  for(j=0;j<n;j++){p=st[n-1-j];sd=GAME.sides[COL[p]];y0=base-j*th;y1=y0-th;
+    h.push('<ellipse cx="'+cx+'" cy="'+y0+'" rx="'+rx+'" ry="'+ry+'" fill="'+sd.band+'" stroke="'+sd.edge+'" stroke-width=".025"/>');
+    h.push('<rect x="'+(cx-rx)+'" y="'+y1+'" width="'+(2*rx)+'" height="'+th+'" fill="'+sd.band+'"/>');
+    h.push('<line x1="'+(cx-rx)+'" y1="'+y1+'" x2="'+(cx-rx)+'" y2="'+y0+'" stroke="'+sd.edge+'" stroke-width=".025"/><line x1="'+(cx+rx)+'" y1="'+y1+'" x2="'+(cx+rx)+'" y2="'+y0+'" stroke="'+sd.edge+'" stroke-width=".025"/>');
+    h.push('<ellipse cx="'+cx+'" cy="'+y1+'" rx="'+rx+'" ry="'+ry+'" fill="'+sd.fill+'" stroke="'+sd.edge+'" stroke-width=".025"/>');
+    if(OFF[p]&&j<n-1)h.push('<circle cx="'+(cx-rx*.55)+'" cy="'+(y1+th*.55)+'" r="'+Math.min(.045,th*.4)+'" fill="'+SPOT+'"/>');
+  }
+  y1=base-n*th;
+  if(OFF[st[0]])h.push('<ellipse cx="'+cx+'" cy="'+y1+'" rx=".11" ry=".065" fill="'+SPOT+'"/>');
+  if(n>1)h.push('<text x="'+(cx+.4)+'" y="'+(y1-.12)+'" font-size=".24" font-weight="700" text-anchor="middle" dominant-baseline="central" fill="#1f2a1c" pointer-events="none">'+n+'</text>');
+}
+function render(){
+  var br=browsing(),s=shown(),sd=GAME.sides,h=[],P=s.turn,i,k,nT=hist.length-1+redo.length,kk=br?view:hist.length-1,lock=busy||!!sim,mv=s.mv,M=1;
+  over=s.w>=0;
+  h.push('<svg viewBox="'+(-M)+' '+(-M)+' '+(SZ+2*M)+' '+(SZ+2*M)+'" role="img" aria-label="Laska board">');
+  h.push('<rect x="-.4" y="-.4" width="'+(SZ+.8)+'" height="'+(SZ+.8)+'" rx=".16" fill="#cfc8b6"/>');
+  h.push('<rect x="-.32" y="-.32" width="'+(SZ+.64)+'" height="'+(SZ+.64)+'" rx=".12" fill="#f8f6ef" stroke="#e2ddcf" stroke-width=".04"/>');
+  (function(){   // coordinates: letters = columns (top and bottom), numbers = rows (left and right), row 1 at the bottom
+    function lab(x,y,t){h.push('<text x="'+x+'" y="'+y+'" font-size=".3" text-anchor="middle" dominant-baseline="central" fill="var(--mute)" pointer-events="none">'+t+'</text>')}
+    for(var c=0;c<SZ;c++){var Lt=String.fromCharCode(97+c);lab(c+.5,-.7,Lt);lab(c+.5,SZ+.7,Lt)}
+    for(var r=0;r<SZ;r++){lab(-.7,SZ-r-.5,r+1);lab(SZ+.7,SZ-r-.5,r+1)}
+  })();
+  // squares: the 25 playable squares are the darker ones
+  for(i=0;i<NSQ;i++)h.push('<rect x="'+SQC[i]+'" y="'+(SZ-1-SQR[i])+'" width="1" height="1" fill="#c3c9ae"/>');
+  h.push('<rect x="0" y="0" width="'+SZ+'" height="'+SZ+'" fill="none" stroke="#b9bfa3" stroke-width=".03"/>');
+  // last move: gold route and outlines
+  var HL=$("showLast").checked;
+  if(mv&&HL){
+    for(k=0;k<mv.p.length;k++)h.push('<rect x="'+(SQC[mv.p[k]]+.05)+'" y="'+(SZ-1-SQR[mv.p[k]]+.05)+'" width=".9" height=".9" rx=".06" fill="none" stroke="'+GOLD+'" stroke-width=".07"/>');
+    h.push('<polyline points="'+mv.p.map(function(q){return px(q)+','+py(q)}).join(' ')+'" fill="none" stroke="'+GOLD+'" stroke-width=".07" stroke-linecap="round" stroke-linejoin="round" stroke-opacity=".8"/>');
+  }
+  var canAct=!br&&!over&&humanTurn()&&!busy,ms=canAct?gen(s):[],cand=[],nxt={};
+  if(canAct&&sel.length){cand=ms.filter(function(m){return pre(m,sel)});if(!cand.length)sel=[]}
+  if(canAct&&sel.length){
+    cand.forEach(function(m){nxt[m.p[sel.length]]=1});
+    if(HL)sel.forEach(function(q){h.push('<rect x="'+(SQC[q]+.05)+'" y="'+(SZ-1-SQR[q]+.05)+'" width=".9" height=".9" rx=".06" fill="'+HI+'" fill-opacity=".18" stroke="'+HI+'" stroke-width=".06"/>')});
+    if(HL&&sel.length>1)h.push('<polyline points="'+sel.map(function(q){return px(q)+','+py(q)}).join(' ')+'" fill="none" stroke="'+HI+'" stroke-width=".06" stroke-dasharray=".12 .08"/>');
+  }else if(HL&&canAct&&ms.length&&ms[0].c.length){   // compulsory capture: ring the stacks that can capture
+    var seen={};ms.forEach(function(m){if(!seen[m.p[0]]){seen[m.p[0]]=1;h.push('<circle cx="'+px(m.p[0])+'" cy="'+py(m.p[0])+'" r=".45" fill="none" stroke="'+GREEN+'" stroke-width=".035" stroke-opacity=".45" stroke-dasharray=".1 .07"/>')}});
+  }
+  // stacks (while a move is being entered, the moving stack is shown on its starting square)
+  for(i=0;i<NSQ;i++)if(s.b[i])drawStack(h,px(i),py(i),s.b[i]);
+  if(HL)for(k in nxt)h.push('<circle cx="'+px(+k)+'" cy="'+py(+k)+'" r=".12" fill="'+GREEN+'" fill-opacity=".75" pointer-events="none"/>');
+  // click targets
+  for(i=0;i<NSQ;i++)h.push('<rect data-i="'+i+'" x="'+SQC[i]+'" y="'+(SZ-1-SQR[i])+'" width="1" height="1" fill="#000" fill-opacity="0" style="cursor:pointer"/>');
+  h.push('</svg>');
+  $("board").innerHTML=h.join("");
+  var names=sd.map(function(x){return x.name}),st;
+  for(i=0;i<2;i++){var t=GAME.stats(s,i);$("s"+i).textContent=t.big;$("d"+i).textContent=t.text;
+    $("p"+i).className="pl"+(!over&&s.turn===i?" on":"")}
+  if(br)st="Reviewing history (move "+kk+" of "+nT+"): the board is locked. Press Undo or Redo to play on from here.";
+  else if(over)st=s.w===2?"Game over: draw.":"Game over: "+names[s.w]+" wins.";
+  else if(!humanTurn())st=names[P]+" to move (computer thinking…)";
+  else{var cap=gen(s)[0].c.length>0;
+    if(sel.length>1)st=names[P]+": the capture goes on, choose the next landing square.";
+    else if(sel.length)st=names[P]+": choose where the stack on "+sname(sel[0])+" goes"+(cap?" (it must capture)":"")+".";
+    else st=names[P]+" to move"+(cap?": a capture is compulsory.":": pick a stack you control.")}
+  $("status").textContent=st;
+  $("last").textContent=(GAME.describe(s)+" "+note).trim();
+  $("undo").disabled=lock||!(br||hist.length>=2);
+  $("redo").disabled=lock||!(br||redo.length);
+  $("nFirst").disabled=$("nPrev").disabled=lock||kk<=0;
+  $("nNext").disabled=$("nLast").disabled=lock||kk>=nT;
+  $("nlab").textContent="Move "+kk+" of "+nT;
+}
+function play(ns){hist.push(ns);redo=[];note="";sel=[];render();maybeAI()}
+function click(i){
+  if(over||busy||browsing()||!humanTurn())return;
+  var s=cur(),ms=gen(s),x=s.b[i],cand,full;note="";
+  if(sel.length){
+    var a=sel.concat(i);cand=ms.filter(function(m){return pre(m,a)});
+    if(cand.length){
+      full=cand.filter(function(m){return m.p.length===a.length});
+      if(full.length||cand.length===1){play(apply(s,full.length?full[0]:cand[0]));return}
+      sel=a;render();return;
+    }
+    if(sel.length>1){note="That is not a landing square for this capture: the capture must go on.";render();return}
+    if(i===sel[0]){sel=[];render();return}
+  }
+  if(x&&COL[x[0]]===s.turn){
+    if(ms.some(function(m){return m.p[0]===i}))sel=[i];
+    else{sel=[];note=ms[0].c.length?"A capture is compulsory, and this stack cannot capture.":"This stack has no free square to move to."}
+  }else{
+    note=sel.length?"That is not a legal move for the stack on "+sname(sel[0])+".":x?"That stack is controlled by "+nameOf(COL[x[0]])+".":"Click a stack you control first.";
+  }
+  render();
+}
+function maybeAI(){
+  if(over||$("mode").value!=="ai"||cur().turn===+$("side").value)return;
+  busy=true;render();
+  setTimeout(function(){
+    var c=cur(),m=aiMove(c);busy=false;
+    if(m){hist.push(m.ns);redo=[]}
+    render();maybeAI();
+  },60);
+}
+document.title=GAME.title;$("gtitle").textContent=GAME.title;
+function li(x){return"<li>"+(typeof x==="string"?x:x.t+"<ul>"+x.sub.map(li).join("")+"</ul>")+"</li>"}
+$("rules").innerHTML=GAME.rules.map(function(sec){return"<li><b>"+sec.h+"</b><ul>"+sec.items.map(li).join("")+"</ul></li>"}).join("");
+$("side").innerHTML=GAME.sides.map(function(x,i){return'<option value="'+i+'">You are '+x.name+(i?"":" (first)")+'</option>'}).join("");
+for(var i=0;i<2;i++)$("n"+i).textContent=GAME.sides[i].name;
+$("board").onclick=function(e){var t=e.target.closest("[data-i]");if(t)click(+t.getAttribute("data-i"))};
+$("new").onclick=start;$("sim").onclick=runSim;$("showLast").onchange=render;
+$("mode").onchange=$("side").onchange=start;
+function aiSide(){return $("mode").value==="ai"&&cur().turn!==+$("side").value}
+$("redo").onclick=function(){
+  if(busy||sim)return;
+  if(browsing()){unlock(1);return}
+  if(!redo.length)return;
+  hist.push(redo.pop());
+  while(redo.length&&aiSide())hist.push(redo.pop());
+  note="";sel=[];render();
+};
+$("undo").onclick=function(){
+  if(busy||sim)return;
+  if(browsing()){unlock(-1);return}
+  if(hist.length<2)return;
+  redo.push(hist.pop());
+  while(hist.length>1&&aiSide())redo.push(hist.pop());
+  over=false;note="";sel=[];render();maybeAI();
+};
+$("nFirst").onclick=function(){goto(0)};
+$("nPrev").onclick=function(){goto((browsing()?view:hist.length-1)-1)};
+$("nNext").onclick=function(){goto((browsing()?view:hist.length-1)+1)};
+$("nLast").onclick=function(){goto(hist.length-1+redo.length)};
+start();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Troke</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
+<style>
+:root{--bg:#eef0e6;--ink:#1f2a1c;--mute:#5d6a56;--cell:#dfe3cf;--edge:#b9bfa3;--hi:#e0803a;--panel:#fff;--line:#c5cab4;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f}}
+:root[data-theme="dark"]{--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+main{max-width:1080px;margin:0 auto;padding:16px 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.right>.bar:first-child{margin-top:0}
+@media (min-width:860px){.layout{grid-template-columns:minmax(0,600px) minmax(300px,1fr);gap:28px;align-items:start}}
+h1{font:700 2rem/1.1 "Bricolage Grotesque",Georgia,serif;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+select,button.ctl{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.ctl:disabled,select:disabled,input:disabled{opacity:.45;cursor:default}
+label.f{color:var(--mute);font-size:.9rem}
+input[type=number]{width:4.5em;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+button.ctl.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button.ctl.icon{display:inline-flex;align-items:center;justify-content:center;padding:6px 10px}
+button.ctl.icon svg{width:18px;height:18px;fill:currentColor;display:block}
+.navlab{min-width:7.5em;text-align:center;color:var(--mute);font-variant-numeric:tabular-nums}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.pl{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:8px 12px;display:flex;justify-content:space-between;align-items:baseline;gap:6px}
+.pl.on{border-color:var(--hi)}
+.pl b{font:700 1.6rem "Bricolage Grotesque",Georgia,serif}
+.pl small{color:var(--mute)}
+#status{min-height:1.5em;font-weight:600;margin:6px 0}
+#board svg{display:block;width:100%;max-width:600px;margin:0 auto;touch-action:manipulation}
+#board .sl{cursor:pointer}
+#board .sl .pv{opacity:0;transition:opacity .08s}
+#board .sl:hover .pv{opacity:.55}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+details li{margin:4px 0}
+.legend{color:var(--mute);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+<h1 id="gtitle"></h1>
+<p class="sub" id="gsub"></p>
+<div class="layout">
+<div class="left">
+<div id="board"></div>
+<p class="legend">Click a point holding one of your pieces, then click the point to move to; green dots mark the legal points, and light dashed rings mark the points with a piece that can move. If several of your pieces share the point, click it again to switch between them (the selected piece is outlined in orange). For a capture, click each point of the route in turn (the rest is filled in once only one route is left); when a capture reaches your Goal Line early, click that point again to stop there. Pieces are drawn from the side: the Tower is tall and narrow, the Wall medium, the Moat low and wide. The gold outline marks the last move’s route. Untick “Show highlights” to show only the board and pieces (moves are entered the same way).</p>
+</div>
+<aside class="right">
+<div class="bar">
+  <select id="score" aria-label="Scoring"><option value="0">Standard scoring</option><option value="1">Alternate scoring</option></select>
+</div>
+<div class="bar">
+  <select id="mode" aria-label="Mode"><option value="ai">Play the computer</option><option value="2p">Two players</option></select>
+  <select id="level" aria-label="Computer strength"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select>
+  <select id="side" aria-label="Your side"></select>
+  <button class="ctl primary" id="new">New game</button>
+  <button class="ctl" id="undo">Undo</button>
+  <button class="ctl" id="redo">Redo</button>
+</div>
+<div class="bar" id="nav" role="group" aria-label="Game history">
+  <button class="ctl icon" id="nFirst" aria-label="Go to the beginning" title="Go to the beginning"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="2.5" height="14"/><path d="M19 5v14L8 12z"/></svg></button>
+  <button class="ctl icon" id="nPrev" aria-label="One move back" title="One move back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 5v14L6 12z"/></svg></button>
+  <span class="navlab" id="nlab" aria-live="polite">Move 0 of 0</span>
+  <button class="ctl icon" id="nNext" aria-label="One move forward" title="One move forward"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5v14l11-7z"/></svg></button>
+  <button class="ctl icon" id="nLast" aria-label="Go to the last move" title="Go to the last move"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5v14l11-7z"/><rect x="17.5" y="5" width="2.5" height="14"/></svg></button>
+  <label class="f"><input type="checkbox" id="showLast" checked> Show highlights</label>
+</div>
+<div class="score">
+  <div class="pl" id="p0"><span><span id="n0"></span> <small id="d0"></small></span><b id="s0">0</b></div>
+  <div class="pl" id="p1"><span><span id="n1"></span> <small id="d1"></small></span><b id="s1">0</b></div>
+</div>
+<div id="status" aria-live="polite"></div>
+<div id="last" class="legend" style="min-height:2.6em;margin:0 0 8px"></div>
+<div class="bar">
+  <label class="f">Simulation games <input id="simN" type="number" min="10" max="1000" value="10"></label>
+  <label class="f">Random opening moves <input id="simR" type="number" min="0" max="20" value="4"></label>
+  <button class="ctl" id="sim">Simulation</button>
+</div>
+<div id="simout" class="legend" style="white-space:pre-line;margin:0 0 8px"></div>
+<details>
+<summary>Rules</summary>
+<ul id="rules"></ul>
+</details>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+/* =====================================================================
+   1. GAME DEFINITION  - Troke rules, board geometry, move generation
+   2. ENGINE           - alpha-beta computer opponent, simulations
+   3. INTERFACE        - SVG board, click handling, controls
+   Board: points (i,j) with i,j in 0..10 and i+j even, j=0 is North. Columns a-k (i), rows 1-11 (row 1 = j 10, South).
+   The 41 playable points are numbered 0..40; the 8 side circles (i = 0 or 10, the Red and Green lines of the
+   3-4 player game) are drawn but never used. Lines (EDGES) were read from the board picture.
+   Yellow starts on the South line (j 10) and its goal is the North line (j 0); Blue the other way round.
+   Piece types: 0 Tower, 1 Wall, 2 Moat. A point holds at most one piece of each type, of any colour.
+   Board b: Int8Array(41*3), b[p*3+t] = 0 empty, 1 Yellow, 2 Blue.
+   A move descriptor is {t:type of the piece moved, p:[points visited, origin first], cap:[[point,type,colour]...]}.
+   A state is {b, turn, w:winner (-1 none, 0, 1, 2 draw), ch:[chips won], cl:[holder of the first-1..4-castles bonus],
+               sw:[[sideways steps of each player's last turn]], n:plies, ml, mv, ev}.
+   ===================================================================== */
+var $=function(i){return document.getElementById(i)};
+
+/* ============================ 1. GAME DEFINITION ============================ */
+var ROWS={0:[2,4,6,8],1:[3,5,7],2:[4,6],3:[1,3,5,7,9],4:[2,4,6,8],5:[1,3,5,7,9],6:[2,4,6,8],7:[1,3,5,7,9],8:[4,6],9:[3,5,7],10:[2,4,6,8]};
+var SIDE=[[0,2],[0,4],[0,6],[0,8],[10,2],[10,4],[10,6],[10,8]];
+var EDGES=[[2,0,4,0],[4,0,6,0],[6,0,8,0],[2,0,3,1],[4,0,3,1],[4,0,5,1],[6,0,5,1],[6,0,7,1],[8,0,7,1],[4,0,4,2],[6,0,6,2],
+ [3,1,5,1],[5,1,7,1],[3,1,4,2],[5,1,4,2],[5,1,6,2],[7,1,6,2],[3,1,3,3],[5,1,5,3],[7,1,7,3],
+ [4,2,6,2],[4,2,3,3],[4,2,5,3],[6,2,5,3],[6,2,7,3],[4,2,4,4],[6,2,6,4],
+ [1,3,3,3],[3,3,5,3],[5,3,7,3],[7,3,9,3],[1,3,2,4],[3,3,2,4],[3,3,4,4],[5,3,4,4],[5,3,6,4],[7,3,6,4],[7,3,8,4],[9,3,8,4],
+ [1,3,1,5],[3,3,3,5],[5,3,5,5],[7,3,7,5],[9,3,9,5],
+ [2,4,4,4],[4,4,6,4],[6,4,8,4],[2,4,1,5],[2,4,3,5],[4,4,3,5],[4,4,5,5],[6,4,5,5],[6,4,7,5],[8,4,7,5],[8,4,9,5],
+ [2,4,2,6],[4,4,4,6],[6,4,6,6],[8,4,8,6],
+ [1,5,3,5],[3,5,5,5],[5,5,7,5],[7,5,9,5],[1,5,2,6],[3,5,2,6],[3,5,4,6],[5,5,4,6],[5,5,6,6],[7,5,6,6],[7,5,8,6],[9,5,8,6],
+ [1,5,1,7],[3,5,3,7],[5,5,5,7],[7,5,7,7],[9,5,9,7],
+ [2,6,4,6],[4,6,6,6],[6,6,8,6],[2,6,1,7],[2,6,3,7],[4,6,3,7],[4,6,5,7],[6,6,5,7],[6,6,7,7],[8,6,7,7],[8,6,9,7],
+ [4,6,4,8],[6,6,6,8],
+ [1,7,3,7],[3,7,5,7],[5,7,7,7],[7,7,9,7],[3,7,4,8],[5,7,4,8],[5,7,6,8],[7,7,6,8],[3,7,3,9],[5,7,5,9],[7,7,7,9],
+ [4,8,6,8],[4,8,3,9],[4,8,5,9],[6,8,5,9],[6,8,7,9],[4,8,4,10],[6,8,6,10],
+ [3,9,5,9],[5,9,7,9],[3,9,2,10],[3,9,4,10],[5,9,4,10],[5,9,6,10],[7,9,6,10],[7,9,8,10],
+ [2,10,4,10],[4,10,6,10],[6,10,8,10]];
+// lines to the side circles (decoration only)
+var SEDGES=[[0,2,0,4],[0,4,0,6],[0,6,0,8],[0,2,1,3],[0,4,1,3],[0,4,1,5],[0,6,1,5],[0,6,1,7],[0,8,1,7],[0,4,2,4],[0,6,2,6],
+ [10,2,10,4],[10,4,10,6],[10,6,10,8],[10,2,9,3],[10,4,9,3],[10,4,9,5],[10,6,9,5],[10,6,9,7],[10,8,9,7],[10,4,8,4],[10,6,8,6]];
+var NP,PI=[],PJ=[],ID={},NB=[],TN=["Tower","Wall","Moat"],VAL=[[1,1,1],[1,2,3]],SCORING=0,FIRST=0,CAP=400;
+var START=[10,0],GOALR=[0,10],FWD=[-1,1];   // per side (0 Yellow, 1 Blue): starting row, goal row, forward direction of j
+var GAME={
+  title:"Troke",
+  subtitle:function(){return "James Brunot and Arpad Rosti’s race-and-capture game (1956), two-player version. Twelve pieces each, assembled into four Castles: race them across the board and rebuild the Castles on your Goal Line, capturing on the way to win chips."+(SCORING?" Alternate scoring.":"")},
+  sides:[{name:"Yellow",fill:"#f6cf2e",edge:"#6b5200",where:"South"},{name:"Blue",fill:"#3f86e0",edge:"#0f2f63",where:"North"}],
+  rules:[
+  {h:"Board and pieces",items:[
+    "Pieces move from point to point along the lines. Yellow’s Starting Line is the row of four big circles in the South (yellow rings); its Goal Line is the row in the North (yellow centres). Blue’s are the other way round. The side circles belong to the 3–4 player game and are not used.",
+    "Each player has 12 pieces: 4 Towers, 4 Walls and 4 Moats. The three types fit together, so a point can hold up to three pieces, but never two of the same type, whatever their colours. A Tower, a Wall and a Moat of one colour on one point form a Castle.",
+    "Each player starts with four Castles on their Starting Line."]},
+  {h:"Moving",items:[
+    "Yellow moves first. On a turn you move one of your pieces (a single Tower, Wall or Moat, even out of a mixed point) one point along a line: straight forward, diagonally forward, or sideways, never backward.",
+    "A piece cannot move onto a point that already holds a piece of the same type. Moving onto an empty point ends the turn.",
+    "No shuttling: you may not move sideways back between the same two points in the same turn, or reverse a sideways step you made on your previous turn."]},
+  {h:"Capturing",items:[
+    "Moving onto a point that holds other pieces (of different types) captures them, whatever their colour. For each piece captured, the whole assembly (the mover plus the captured pieces) must move one more point, straight or diagonally forward or sideways, and it can capture again on the way.",
+    "If the extra moves cannot all be made, the capture is not allowed, with one exception: when the assembly reaches one of your own goal points, you may stop there, or carry on sideways along your Goal Line.",
+    "Captured opposing pieces are carried back toward your side, but they may never be carried into their own Starting Line. After the turn they belong to their owner again and can move away or be captured again.",
+    "Pieces standing on their own Goal Line cannot be captured or moved by the opponent. A player whose pieces are still on their Starting Line may move them sideways onto such a point (if the types differ), but that is not a capture."]},
+  {h:"Lines",items:[
+    "Once a piece has left its Starting Line it can never return to it, and it may never enter any Goal Line but its own. On its Starting Line a piece may move sideways and capture its own pieces; on its Goal Line it may move sideways and capture.",
+    "You may build up Castles on your Goal Line, but you may not complete one while any of your pieces is still on your Starting Line."]},
+  {h:"Chips and the end",items:[
+    {t:"Each capture of an opposing piece wins chips from its owner:",sub:["Standard scoring: 1 chip per piece.","Alternate scoring: Tower 1, Wall 2, Moat 3 chips."]},
+    "The first player to have one complete Castle on their Goal Line wins 1 chip, the first to have two wins 2, three wins 3, and four wins 4.",
+    "The game ends when a player has all twelve pieces assembled as four Castles on their Goal Line. The player who has won more chips wins; equal chips is a draw.",
+    "A player who cannot move loses the turn; if neither can move, the game ends and the chips decide.",
+    "Added for this version, the rulebook gives none: after 200 moves each the game also ends and the chips decide."]}],
+  stats:function(s,i){var c=castles(s.b,i),h=0,p,t;
+    for(p=0;p<NP;p++)if(PJ[p]===GOALR[i])for(t=0;t<3;t++)if(s.b[p*3+t]===i+1)h++;
+    return{big:s.ch[i],text:"· "+h+" home, "+c+" Castle"+(c===1?"":"s")+" · chips:"}},
+  describe:function(s){return s.ev||""}
+};
+function build(){
+  var j,k,i,a,b;
+  NP=0;PI=[];PJ=[];ID={};
+  for(j=0;j<=10;j++)ROWS[j].forEach(function(x){ID[x+","+j]=NP++;PI.push(x);PJ.push(j)});
+  NB=[];for(i=0;i<NP;i++)NB.push([]);
+  EDGES.forEach(function(e){a=ID[e[0]+","+e[1]];b=ID[e[2]+","+e[3]];NB[a].push(b);NB[b].push(a)});
+}
+function pname(p){return String.fromCharCode(97+PI[p])+(11-PJ[p])}
+function nameOf(P){return GAME.sides[P].name}
+function castles(b,c){var n=0,p;for(p=0;p<NP;p++)if(PJ[p]===GOALR[c]&&b[p*3]===c+1&&b[p*3+1]===c+1&&b[p*3+2]===c+1)n++;return n}
+function onStart(b,c){for(var p=0;p<NP;p++)if(PJ[p]===START[c])for(var t=0;t<3;t++)if(b[p*3+t]===c+1)return true;return false}
+function mk(b,turn,ch,cl,sw,n,mv,ev){return{b:b,turn:turn,w:-1,ch:ch,cl:cl,sw:sw,n:n,ml:null,mv:mv,ev:ev||""}}
+function newState(){
+  var b=new Int8Array(NP*3),p,t;
+  for(p=0;p<NP;p++)for(t=0;t<3;t++)b[p*3+t]=PJ[p]===10?1:PJ[p]===0?2:0;
+  return settle(mk(b,FIRST,[0,0],[-1,-1,-1,-1,-1],[[],[]],0,null,""));
+}
+// all moves of the player to move
+// (a player with no move loses the turn; if neither can move the game ends: resolved here, when the moves are first needed)
+function gen(s){
+  if(s.ml)return s.ml;
+  if(s.w>=0)return s.ml=[];
+  var P=s.turn,ms=raw(s.b,P,s.sw[P]);
+  if(!ms.length){
+    var sw=s.sw.slice();sw[P]=[];ms=raw(s.b,1-P,sw[1-P]);
+    if(ms.length){s.turn=1-P;s.sw=sw;s.ev=(s.ev+" "+nameOf(P)+" cannot move and loses the turn.").trim()}
+    else{endGame(s,"Neither player can move.");s.ev=(s.ev+" "+s.et).trim()}
+  }
+  return s.ml=ms;
+}
+function raw(b,P,last){
+  var out=[],p,t;
+  for(p=0;p<NP;p++)for(t=0;t<3;t++)if(b[p*3+t]===P+1){
+    var bb=b.slice(),asm=[0,0,0];asm[t]=P+1;bb[p*3+t]=0;
+    dfs(bb,P,p,asm,1,[p],[],[],t,last,out);
+  }
+  return out;
+}
+// assembly asm (asm[type] = colour+1) stands at point `at` with `rem` steps still to make
+function dfs(bb,P,at,asm,rem,path,cap,side,t0,last,out){
+  var nb=NB[at],k,q,dj,t,c,ok,i,ncap,nasm,nbb,ncapl,nside,r;
+  for(k=0;k<nb.length;k++){q=nb[k];dj=PJ[q]-PJ[at];
+    if(dj!==0&&(dj>0?1:-1)!==FWD[P])continue;                 // never backward
+    if(dj===0){                                               // no shuttling sideways
+      ok=true;for(i=0;i<side.length;i+=2)if(side[i]===q&&side[i+1]===at)ok=false;
+      for(i=0;i<last.length;i+=2)if(last[i]===q&&last[i+1]===at)ok=false;
+      if(!ok)continue;
+    }
+    ok=true;
+    for(t=0;t<3;t++)if(asm[t]){
+      if(bb[q*3+t]){ok=false;break}                           // a piece of the same type is there
+      c=asm[t]-1;if(PJ[q]===START[c]&&PJ[at]!==START[c]){ok=false;break}   // no way back into its Starting Line (= the other side's Goal Line)
+    }
+    if(!ok)continue;
+    ncap=0;nasm=asm.slice();nbb=bb.slice();ncapl=cap.slice();
+    for(t=0;t<3;t++){c=bb[q*3+t];if(!c)continue;
+      if(c-1!==P&&PJ[q]===GOALR[c-1])continue;               // protected on its own Goal Line: stays, not captured
+      nasm[t]=c;nbb[q*3+t]=0;ncap++;ncapl.push([q,t,c-1]);
+    }
+    r=rem-1+ncap;nside=dj===0?side.concat(at,q):side;
+    var np=path.concat(q);
+    if(r===0||PJ[q]===GOALR[P])fin(nbb,P,q,nasm,np,ncapl,nside,t0,out);
+    if(r>0)dfs(nbb,P,q,nasm,r,np,ncapl,nside,t0,last,out);
+  }
+}
+function fin(bb,P,q,asm,path,cap,side,t0,out){
+  var b=bb.slice(),t;for(t=0;t<3;t++)if(asm[t])b[q*3+t]=asm[t];
+  if(PJ[q]===GOALR[P]&&b[q*3]===P+1&&b[q*3+1]===P+1&&b[q*3+2]===P+1&&onStart(b,P))return;   // a Castle cannot be completed yet
+  out.push({t:t0,p:path,cap:cap,b:b,sw:side});
+}
+function endGame(s,why){s.w=s.ch[0]>s.ch[1]?0:s.ch[1]>s.ch[0]?1:2;s.ml=[];
+  s.et=why+" "+(s.w===2?"Equal chips ("+s.ch[0]+"–"+s.ch[1]+"): the game is a draw.":nameOf(s.w)+" wins on chips, "+s.ch[s.w]+" to "+s.ch[1-s.w]+"!")}
+// after a move: castle bonuses, end of game
+function settle(s){
+  var c,k,n,txt=[];
+  for(c=0;c<2;c++){n=castles(s.b,c);for(k=1;k<=4&&k<=n;k++)if(s.cl[k]<0){s.cl[k]=c;s.ch[c]+=k;txt.push(nameOf(c)+" is the first with "+k+" Castle"+(k>1?"s":"")+" on the Goal Line: +"+k+" chip"+(k>1?"s":"")+".")}}
+  function end(why){endGame(s,why);txt.push(s.et)}
+  for(c=0;c<2;c++)if(castles(s.b,c)===4){end(nameOf(c)+" has rebuilt all four Castles on the Goal Line.");break}
+  if(s.w<0&&s.n>=CAP)end((CAP/2)+" moves each have been played.");
+  s.ev=(s.ev+" "+txt.join(" ")).trim();
+  return s;
+}
+function apply(s,m){
+  var P=s.turn,ch=s.ch.slice(),sw=s.sw.slice(),gain=0,own=[],opp=[],txt;
+  m.cap.forEach(function(x){if(x[2]===P)own.push(TN[x[1]]);else{opp.push(TN[x[1]]);gain+=VAL[SCORING][x[1]]}});
+  ch[P]+=gain;sw[P]=m.sw;
+  txt=nameOf(P)+" moved a "+TN[m.t]+" "+m.p.map(pname).join("–")+
+    (m.cap.length?", capturing "+(opp.length?nameOf(1-P)+"’s "+opp.join(" and "):"")+(opp.length&&own.length?" and ":"")+(own.length?"its own "+own.join(" and "):"")+(gain?" (+"+gain+" chip"+(gain>1?"s":"")+")":""):"")+".";
+  return settle(mk(m.b,1-P,ch,s.cl.slice(),sw,s.n+1,{p:m.p,t:m.t,by:P},txt));
+}
+function legal(s){var ms=gen(s);if(s.w>=0)return[];return ms.map(function(m){return{m:m,ns:apply(s,m)}})}
+
+/* ================================ 2. ENGINE ================================ */
+var AIW={C:1,A:.09,H:.25,K:.5,S:.12,F:.35};   // chip, advance per row step, piece home, castle, still on the Starting Line late, castle-finish race
+function ev(s){   // value from Yellow's point of view
+  if(s.w>=0)return s.w===2?0:s.w===0?1000:-1000;
+  var b=s.b,v=[0,0],p,t,c,adv,home=[0,0],st=[0,0];
+  for(p=0;p<NP;p++)for(t=0;t<3;t++){c=b[p*3+t];if(!c)continue;c--;
+    adv=(PJ[p]-START[c])*FWD[c];v[c]+=AIW.A*adv;
+    if(PJ[p]===GOALR[c]){v[c]+=AIW.H;home[c]++}
+    if(PJ[p]===START[c])st[c]++;
+  }
+  for(c=0;c<2;c++){v[c]+=AIW.C*s.ch[c]+AIW.K*castles(b,c);if(s.n>30)v[c]-=AIW.S*st[c]}
+  // whoever finishes first collects the remaining castle bonuses and ends the game
+  var lead=s.ch[0]-s.ch[1];v[0]+=AIW.F*(home[0]-home[1])*(lead>=0?1:.3);
+  return v[0]-v[1];
+}
+var NOISE=[0,1.5,.15,.04],LIM=[0,0,0,1500],nodes=0,limit=1e9,abort=false;
+function sgn(s){return s.turn===0?1:-1}
+function kids(s){return gen(s).map(function(m){return apply(s,m)})}
+function nega(s,d,al,be,ply){   // value for the player to move in s
+  if(s.w>=0)return (s.w===2?0:(s.w===s.turn?1:-1)*(1000-ply))+(s.w===2?0:(s.w===s.turn?1:-1)*(s.ch[s.w]-s.ch[1-s.w])*.01);
+  if(d<=0)return sgn(s)*ev(s);
+  if((++nodes&63)===0&&Date.now()>limit){abort=true;return 0}
+  gen(s);if(s.w>=0)return nega(s,0,al,be,ply);
+  var ks=kids(s),best=-1e9,i,v,P=s.turn;
+  if(d>=2){ks.forEach(function(k){k.o=(k.turn===P?1:-1)*sgn(k)*ev(k)});ks.sort(function(a,b){return b.o-a.o})}
+  for(i=0;i<ks.length;i++){
+    if(d>1)gen(ks[i]);   // resolve a pass first, so the sign below is right
+    v=ks[i].turn===P?nega(ks[i],d-1,al,be,ply+1):-nega(ks[i],d-1,-be,-al,ply+1);if(abort)return 0;
+    if(v>best)best=v;if(best>al)al=best;if(al>=be)break}
+  return best;
+}
+function cval(m,P,d,al,be){var k=m.ns;if(d>0)gen(k);return k.turn===P?nega(k,d,al,be,1):-nega(k,d,-be,-al,1)}
+function aiMove(s){
+  var ms=legal(s),lv=+$("level").value,P=s.turn,i,v,best,pick=null,d;
+  if(!ms.length)return null;
+  if(ms.length===1)return ms[0];
+  for(i=0;i<ms.length;i++)if(ms[i].ns.w===P)return ms[i];    // a move that wins right now
+  nodes=0;limit=Date.now()+1e9;abort=false;
+  ms.forEach(function(m){m.v=cval(m,P,0,-1e9,1e9);m.r=Math.random()*NOISE[lv]});
+  if(lv>1){
+    var maxD=lv===2?3:8;limit=Date.now()+(lv===2?1e9:LIM[3]);nodes=0;
+    for(d=2;d<=maxD;d++){
+      ms.sort(function(a,b){return b.v-a.v});
+      var al=-1e9,res=[];
+      for(i=0;i<ms.length;i++){v=cval(ms[i],P,d-1,al-NOISE[lv]-.001,1e9);if(abort)break;res.push(v);if(v>al)al=v}
+      if(abort)break;
+      for(i=0;i<ms.length;i++)ms[i].v=res[i];
+      if(al>900||al<-900)break;
+    }
+  }
+  best=-1e9;ms.forEach(function(m){if(m.v+m.r>best){best=m.v+m.r;pick=m}});
+  return pick;
+}
+var sim=null,LOCK=["score","mode","side","level","new","undo","redo","simN","simR","nFirst","nPrev","nNext","nLast"];
+function runSim(){   // computer vs computer, to look for first/second-player advantage
+  if(sim){sim.stop=true;return}
+  var me=sim={stop:false},TOTALG=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?4:+$("simR").value)),
+      done=0,w=[0,0,0],un=0,g=newState(),plies=0,lvName=$("level").options[$("level").selectedIndex].text,nm=GAME.sides.map(function(x){return x.name}),
+      f=FIRST,sc=0,lens=0;
+  LOCK.forEach(function(i){$(i).disabled=true});
+  $("sim").textContent="Stop simulation";
+  $("simout").textContent="Simulating at "+lvName+" level… 0/"+TOTALG;
+  function finish(stopped){
+    sim=null;$("sim").textContent="Simulation";
+    ["score","mode","new","simN","simR"].forEach(function(i){$(i).disabled=false});
+    $("level").disabled=$("side").disabled=$("mode").value==="2p";
+    var wf=w[f],ws=w[1-f],mg=done?(196*Math.sqrt((wf/done)*(1-wf/done)/done)).toFixed(1):"0";
+    var pc=function(n){return done?(100*n/done).toFixed(1)+"%":"n/a"};
+    $("simout").textContent=(stopped?"Stopped after ":"")+done+" games at "+lvName+" level (computer vs computer), "+(SCORING?"alternate":"standard")+" scoring, first "+RND+" moves random.\n"+
+      "First player ("+nm[f]+") won "+pc(wf)+" ("+wf+" games, margin ±"+mg+" points at 95% confidence). Second player ("+nm[1-f]+") won "+pc(ws)+" ("+ws+" games)."+(w[2]?" Draws: "+w[2]+".":"")+(un?" Unfinished: "+un+".":"")+
+      (done?" Average length "+Math.round(lens/done/2)+" moves each.":"");
+    render();
+  }
+  function stepSim(){
+    if(me.stop){finish(true);return}
+    var t0=Date.now(),m,ms;
+    while(Date.now()-t0<40){
+      if(g.w>=0){
+        w[g.w]++;lens+=g.n;
+        done++;g=newState();plies=0;
+        if(done>=TOTALG){finish(false);return}
+        continue;
+      }
+      if(plies<RND){ms=legal(g);m=ms[Math.floor(Math.random()*ms.length)]}
+      else m=aiMove(g);
+      if(g.w>=0)continue;
+      if(!m){un++;done++;g=newState();plies=0;if(done>=TOTALG){finish(false);return}continue}
+      g=m.ns;plies++;
+    }
+    $("simout").textContent="Simulating at "+lvName+" level… "+done+"/"+TOTALG;
+    setTimeout(stepSim,0);
+  }
+  stepSim();
+}
+
+/* =============================== 3. INTERFACE =============================== */
+var hist,redo=[],view=null,over,busy,note="",sel=null;   // view: null = live position, otherwise the index being reviewed; sel: {t:type, p:[points clicked so far]}
+var GREEN="#46c46a",HINT="#b8f0c6",GOLD="#e0a800",HI="#ff8a3d";
+function cur(){return hist[hist.length-1]}
+function line(){return hist.concat(redo.slice().reverse())}   // every position, including those that can still be redone
+function browsing(){return view!==null}
+function shown(){return view===null?cur():line()[view]}
+function goto(k){
+  if(busy||sim)return;
+  var n=hist.length-1+redo.length;k=Math.max(0,Math.min(n,k));
+  view=k===hist.length-1?null:k;note="";sel=null;render();
+}
+// Undo/Redo while reviewing: leave review and play on from the reviewed position (in computer mode, from the nearest position where it is the human's turn)
+function unlock(dir){
+  var Ln=line(),k=view,j;
+  if($("mode").value==="ai"){
+    j=k;while(j>=0&&j<Ln.length&&Ln[j].w<0&&Ln[j].turn!==+$("side").value)j+=dir;
+    if(j>=0&&j<Ln.length)k=j;
+  }
+  hist=Ln.slice(0,k+1);redo=Ln.slice(k+1).reverse();view=null;note="";sel=null;over=false;render();maybeAI();
+}
+function humanTurn(){return $("mode").value==="2p"||cur().turn===+$("side").value}
+function start(){
+  build();SCORING=+$("score").value;
+  $("gsub").textContent=GAME.subtitle();
+  hist=[newState()];redo=[];view=null;note="";sel=null;$("level").disabled=$("side").disabled=$("mode").value==="2p";over=false;busy=false;
+  render();maybeAI();
+}
+function pre(m,a){if(m.p.length<a.length)return false;for(var k=0;k<a.length;k++)if(m.p[k]!==a[k])return false;return true}
+// pieces seen from the side, standing on the point: Tower tall and narrow (back), Wall medium, Moat low and wide (front)
+var SHAPE=[[.12,.82],[.31,.5],[.52,.21]];   // half width, height
+function drawPoint(h,x,y,b,p,selT){
+  var base=y+.3,t,c,sd,w,ht;
+  for(t=0;t<3;t++){c=b[p*3+t];if(!c)continue;sd=GAME.sides[c-1];w=SHAPE[t][0];ht=SHAPE[t][1];
+    h.push('<rect x="'+(x-w)+'" y="'+(base-ht)+'" width="'+(2*w)+'" height="'+ht+'" rx=".03" fill="'+sd.fill+'" stroke="'+sd.edge+'" stroke-width=".035"/>');
+    if(t===1)h.push('<line x1="'+(x-w+.05)+'" y1="'+(base-ht+.09)+'" x2="'+(x+w-.05)+'" y2="'+(base-ht+.09)+'" stroke="'+sd.edge+'" stroke-width=".02" stroke-opacity=".6"/>');
+    if(t===2)h.push('<line x1="'+(x-w+.05)+'" y1="'+(base-ht+.06)+'" x2="'+(x+w-.05)+'" y2="'+(base-ht+.06)+'" stroke="'+sd.edge+'" stroke-width=".02" stroke-opacity=".6"/>');
+  }
+  if(selT>=0){w=SHAPE[selT][0];ht=SHAPE[selT][1];
+    h.push('<rect x="'+(x-w-.05)+'" y="'+(base-ht-.05)+'" width="'+(2*w+.1)+'" height="'+(ht+.1)+'" rx=".05" fill="none" stroke="'+HI+'" stroke-width=".06"/>')}
+}
+function render(){
+  var br=browsing(),s=shown();gen(s);
+  var sd=GAME.sides,h=[],P=s.turn,i,k,nT=hist.length-1+redo.length,kk=br?view:hist.length-1,lock=busy||!!sim,mv=s.mv,M=1.55;
+  over=s.w>=0;
+  h.push('<svg viewBox="'+(-M)+' '+(-M)+' '+(10+2*M)+' '+(10+2*M)+'" role="img" aria-label="Troke board">');
+  h.push('<rect x="-.85" y="-.85" width="11.7" height="11.7" rx=".2" fill="#111" stroke="#3a3a3a" stroke-width=".05"/>');
+  (function(){   // coordinates: letters = columns (top and bottom), numbers = rows (left and right), row 1 at the bottom
+    function lab(x,y,t){h.push('<text x="'+x+'" y="'+y+'" font-size=".36" text-anchor="middle" dominant-baseline="central" fill="var(--mute)" pointer-events="none">'+t+'</text>')}
+    for(var c=0;c<=10;c++){var Lt=String.fromCharCode(97+c);lab(c,-1.2,Lt);lab(c,11.2,Lt)}
+    for(var r=0;r<=10;r++){lab(-1.2,r,11-r);lab(11.2,r,11-r)}
+  })();
+  // lines
+  EDGES.concat(SEDGES).forEach(function(e){h.push('<line x1="'+e[0]+'" y1="'+e[1]+'" x2="'+e[2]+'" y2="'+e[3]+'" stroke="#ececec" stroke-width=".055"/>')});
+  // points: big circles on the Starting/Goal Lines, small rings elsewhere
+  function bigc(x,y,ring,ctr){h.push('<circle cx="'+x+'" cy="'+y+'" r=".44" fill="#111" stroke="'+ring+'" stroke-width=".11"/><circle cx="'+x+'" cy="'+y+'" r=".24" fill="'+ctr+'"/>')}
+  SIDE.forEach(function(q){q[0]?bigc(q[0],q[1],"#d8262a","#f4f4f4"):bigc(q[0],q[1],"#f4f4f4","#e0302a")});
+  for(i=0;i<NP;i++){
+    if(PJ[i]===0)bigc(PI[i],0,"#33b4e6","#f2e45a");
+    else if(PJ[i]===10)bigc(PI[i],10,"#f2e03a","#3cc6e8");
+    else h.push('<circle cx="'+PI[i]+'" cy="'+PJ[i]+'" r=".2" fill="#111" stroke="#ececec" stroke-width=".055"/>');
+  }
+  var HL=$("showLast").checked,canAct=!br&&!over&&humanTurn()&&!busy,ms=canAct?gen(s):[],cand=[],nxt={};
+  // last move: gold route and outlines
+  if(mv&&HL){
+    for(k=0;k<mv.p.length;k++)h.push('<circle cx="'+PI[mv.p[k]]+'" cy="'+PJ[mv.p[k]]+'" r=".55" fill="none" stroke="'+GOLD+'" stroke-width=".07"/>');
+    h.push('<polyline points="'+mv.p.map(function(q){return PI[q]+','+PJ[q]}).join(' ')+'" fill="none" stroke="'+GOLD+'" stroke-width=".08" stroke-linecap="round" stroke-linejoin="round" stroke-opacity=".85"/>');
+  }
+  if(canAct&&sel){cand=ms.filter(function(m){return m.t===sel.t&&pre(m,sel.p)});if(!cand.length)sel=null}
+  if(canAct&&sel){
+    cand.forEach(function(m){if(m.p.length>sel.p.length)nxt[m.p[sel.p.length]]=1});
+    if(HL)sel.p.forEach(function(q){h.push('<circle cx="'+PI[q]+'" cy="'+PJ[q]+'" r=".55" fill="'+HI+'" fill-opacity=".12" stroke="'+HI+'" stroke-width=".05"/>')});
+    if(HL&&sel.p.length>1)h.push('<polyline points="'+sel.p.map(function(q){return PI[q]+','+PJ[q]}).join(' ')+'" fill="none" stroke="'+HI+'" stroke-width=".06" stroke-dasharray=".14 .09"/>');
+  }else if(HL&&canAct){   // light dashed rings on the points with a piece that can move
+    var seen={};ms.forEach(function(m){if(!seen[m.p[0]]){seen[m.p[0]]=1;h.push('<circle cx="'+PI[m.p[0]]+'" cy="'+PJ[m.p[0]]+'" r=".56" fill="none" stroke="'+HINT+'" stroke-width=".035" stroke-opacity=".7" stroke-dasharray=".12 .08"/>')}});
+  }
+  // pieces (while a capture is being entered, the moving piece is shown on its starting point)
+  for(i=0;i<NP;i++)drawPoint(h,PI[i],PJ[i],s.b,i,HL&&sel&&canAct&&sel.p[0]===i?sel.t:-1);
+  if(HL)for(k in nxt)h.push('<circle cx="'+PI[+k]+'" cy="'+PJ[+k]+'" r=".14" fill="'+GREEN+'" fill-opacity=".85" stroke="#0b3d18" stroke-width=".03" pointer-events="none"/>');
+  // click targets
+  for(i=0;i<NP;i++)h.push('<circle data-i="'+i+'" cx="'+PI[i]+'" cy="'+PJ[i]+'" r=".66" fill="#000" fill-opacity="0" style="cursor:pointer"/>');
+  h.push('</svg>');
+  $("board").innerHTML=h.join("");
+  var names=sd.map(function(x){return x.name}),st;
+  for(i=0;i<2;i++){var t=GAME.stats(s,i);$("s"+i).textContent=t.big;$("d"+i).textContent=t.text;
+    $("p"+i).className="pl"+(!over&&s.turn===i?" on":"")}
+  if(br)st="Reviewing history (move "+kk+" of "+nT+"): the board is locked. Press Undo or Redo to play on from here.";
+  else if(over)st=s.w===2?"Game over: draw on chips.":"Game over: "+names[s.w]+" wins.";
+  else if(!humanTurn())st=names[P]+" to move (computer thinking…)";
+  else if(sel&&sel.p.length>1){var stop=cand.some(function(m){return m.p.length===sel.p.length});
+    st=names[P]+": the capture goes on, choose the next point"+(stop?", or click "+pname(sel.p[sel.p.length-1])+" again to stop on your Goal Line":"")+"."}
+  else if(sel){var more=ms.some(function(m){return m.p[0]===sel.p[0]&&m.t!==sel.t});
+    st=names[P]+": choose where the "+TN[sel.t]+" on "+pname(sel.p[0])+" goes"+(more?" (click the point again for another piece)":"")+"."}
+  else st=names[P]+" to move: pick one of your pieces ("+sd[P].where+" to "+(P?"South":"North")+").";
+  $("status").textContent=st;
+  $("last").textContent=(GAME.describe(s)+" "+note).trim();
+  $("undo").disabled=lock||!(br||hist.length>=2);
+  $("redo").disabled=lock||!(br||redo.length);
+  $("nFirst").disabled=$("nPrev").disabled=lock||kk<=0;
+  $("nNext").disabled=$("nLast").disabled=lock||kk>=nT;
+  $("nlab").textContent="Move "+kk+" of "+nT;
+}
+function play(ns){hist.push(ns);redo=[];note="";sel=null;render();maybeAI()}
+function types(ms,p){var o=[];[0,1,2].forEach(function(t){if(ms.some(function(m){return m.p[0]===p&&m.t===t}))o.push(t)});return o}
+function click(i){
+  if(over||busy||browsing()||!humanTurn())return;
+  var s=cur(),ms=gen(s),P=s.turn,cand,full,a,tp;note="";
+  if(sel){
+    var lastp=sel.p[sel.p.length-1];
+    if(i===lastp&&sel.p.length>1){   // stop the capture on the Goal Line
+      full=ms.filter(function(m){return m.t===sel.t&&m.p.length===sel.p.length&&pre(m,sel.p)});
+      if(full.length){play(apply(s,full[0]));return}
+    }
+    if(i===sel.p[0]&&sel.p.length===1){   // cycle through the movable pieces on this point
+      tp=types(ms,i);k=tp.indexOf(sel.t);
+      sel=k+1<tp.length?{t:tp[k+1],p:[i]}:null;render();return;
+    }
+    a=sel.p.concat(i);cand=ms.filter(function(m){return m.t===sel.t&&pre(m,a)});
+    if(cand.length){
+      full=cand.filter(function(m){return m.p.length===a.length});
+      if(full.length&&full.length===cand.length){play(apply(s,full[0]));return}
+      if(!full.length&&cand.length===1){play(apply(s,cand[0]));return}
+      sel={t:sel.t,p:a};render();return;
+    }
+    if(sel.p.length>1){note="That point does not continue this capture: the capture must go on.";render();return}
+  }
+  var k;tp=types(ms,i);
+  if(tp.length){sel={t:tp[0],p:[i]};render();return}
+  sel=null;
+  var mine=false;for(k=0;k<3;k++)if(s.b[i*3+k]===P+1)mine=true;
+  note=mine?"No piece of yours on "+pname(i)+" can move from there.":"Click a point with one of your pieces first.";
+  render();
+}
+var k;
+function maybeAI(){
+  if(over||$("mode").value!=="ai"||cur().turn===+$("side").value)return;
+  busy=true;render();
+  setTimeout(function(){
+    var c=cur(),m=aiMove(c);busy=false;
+    if(m){hist.push(m.ns);redo=[]}
+    render();maybeAI();
+  },60);
+}
+document.title=GAME.title;$("gtitle").textContent=GAME.title;
+function li(x){return"<li>"+(typeof x==="string"?x:x.t+"<ul>"+x.sub.map(li).join("")+"</ul>")+"</li>"}
+$("rules").innerHTML=GAME.rules.map(function(sec){return"<li><b>"+sec.h+"</b><ul>"+sec.items.map(li).join("")+"</ul></li>"}).join("");
+$("side").innerHTML=GAME.sides.map(function(x,i){return'<option value="'+i+'">You are '+x.name+(i===FIRST?" (first)":"")+'</option>'}).join("");
+for(var i=0;i<2;i++)$("n"+i).textContent=GAME.sides[i].name;
+$("board").onclick=function(e){var t=e.target.closest("[data-i]");if(t)click(+t.getAttribute("data-i"))};
+$("new").onclick=start;$("sim").onclick=runSim;$("showLast").onchange=render;
+$("mode").onchange=$("side").onchange=$("score").onchange=start;
+function aiSide(){return $("mode").value==="ai"&&cur().turn!==+$("side").value}
+$("redo").onclick=function(){
+  if(busy||sim)return;
+  if(browsing()){unlock(1);return}
+  if(!redo.length)return;
+  hist.push(redo.pop());
+  while(redo.length&&aiSide())hist.push(redo.pop());
+  note="";sel=null;render();
+};
+$("undo").onclick=function(){
+  if(busy||sim)return;
+  if(browsing()){unlock(-1);return}
+  if(hist.length<2)return;
+  redo.push(hist.pop());
+  while(hist.length>1&&aiSide())redo.push(hist.pop());
+  over=false;note="";sel=null;render();maybeAI();
+};
+$("nFirst").onclick=function(){goto(0)};
+$("nPrev").onclick=function(){goto((browsing()?view:hist.length-1)-1)};
+$("nNext").onclick=function(){goto((browsing()?view:hist.length-1)+1)};
+$("nLast").onclick=function(){goto(hist.length-1+redo.length)};
+start();
+})();
+</script>
+</body>
+</html>
