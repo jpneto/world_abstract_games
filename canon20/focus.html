@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Focus</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
+<style>
+:root{--bg:#eef0e6;--ink:#1f2a1c;--mute:#5d6a56;--cell:#dfe3cf;--edge:#b9bfa3;--hi:#e0803a;--panel:#fff;--line:#c5cab4;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f}}
+:root[data-theme="dark"]{--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+main{max-width:1080px;margin:0 auto;padding:16px 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.right>.bar:first-child{margin-top:0}
+@media (min-width:860px){.layout{grid-template-columns:minmax(0,600px) minmax(300px,1fr);gap:28px;align-items:start}}
+h1{font:700 2rem/1.1 "Bricolage Grotesque",Georgia,serif;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+select,button.ctl{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.ctl:disabled,select:disabled,input:disabled{opacity:.45;cursor:default}
+label.f{color:var(--mute);font-size:.9rem}
+input[type=number]{width:4.5em;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+button.ctl.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button.ctl.icon{display:inline-flex;align-items:center;justify-content:center;padding:6px 10px}
+button.ctl.icon svg{width:18px;height:18px;fill:currentColor;display:block}
+.navlab{min-width:7.5em;text-align:center;color:var(--mute);font-variant-numeric:tabular-nums}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.pl{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:8px 12px;display:flex;justify-content:space-between;align-items:baseline;gap:6px}
+.pl.on{border-color:var(--hi)}
+.pl b{font:700 1.6rem "Bricolage Grotesque",Georgia,serif}
+.pl small{color:var(--mute)}
+#status{min-height:1.5em;font-weight:600;margin:6px 0}
+#board svg{display:block;width:100%;max-width:600px;margin:0 auto;touch-action:manipulation}
+#board .sl{cursor:pointer}
+#board .sl .pv{opacity:0;transition:opacity .08s}
+#board .sl:hover .pv{opacity:.55}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+details li{margin:4px 0}
+.legend{color:var(--mute);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+<h1 id="gtitle"></h1>
+<p class="sub" id="gsub"></p>
+<div class="layout">
+<div class="left">
+<div id="board"></div>
+<p class="legend">Click a pile you control (your colour on top), then click where it goes: a pile moves as many squares as the pieces you lift, so the distance picks how many come off the top. Green dots mark the squares you can reach. To enter a piece from your reserve, click your reserve tray in the cut-off corner, then any square. Dashed rings mark what you can move. Piles are drawn from the side, bottom piece lowest, with their height. The gold outline marks the last move. Untick “Show highlights” to show only the board and pieces (moves are entered the same way).</p>
+</div>
+<aside class="right">
+<div class="bar">
+  <select id="mode" aria-label="Mode"><option value="ai">Play the computer</option><option value="2p">Two players</option></select>
+  <select id="level" aria-label="Computer strength"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select>
+  <select id="side" aria-label="Your side"></select>
+  <button class="ctl primary" id="new">New game</button>
+  <button class="ctl" id="undo">Undo</button>
+  <button class="ctl" id="redo">Redo</button>
+</div>
+<div class="bar" id="nav" role="group" aria-label="Game history">
+  <button class="ctl icon" id="nFirst" aria-label="Go to the beginning" title="Go to the beginning"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="2.5" height="14"/><path d="M19 5v14L8 12z"/></svg></button>
+  <button class="ctl icon" id="nPrev" aria-label="One move back" title="One move back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 5v14L6 12z"/></svg></button>
+  <span class="navlab" id="nlab" aria-live="polite">Move 0 of 0</span>
+  <button class="ctl icon" id="nNext" aria-label="One move forward" title="One move forward"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5v14l11-7z"/></svg></button>
+  <button class="ctl icon" id="nLast" aria-label="Go to the last move" title="Go to the last move"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5v14l11-7z"/><rect x="17.5" y="5" width="2.5" height="14"/></svg></button>
+  <label class="f"><input type="checkbox" id="showLast" checked> Show highlights</label>
+</div>
+<div class="score">
+  <div class="pl" id="p0"><span><span id="n0"></span> <small id="d0"></small></span><b id="s0">0</b></div>
+  <div class="pl" id="p1"><span><span id="n1"></span> <small id="d1"></small></span><b id="s1">0</b></div>
+</div>
+<div id="status" aria-live="polite"></div>
+<div id="last" class="legend" style="min-height:2.6em;margin:0 0 8px"></div>
+<div class="bar">
+  <label class="f">Simulation games <input id="simN" type="number" min="10" max="1000" value="10"></label>
+  <label class="f">Random opening moves <input id="simR" type="number" min="0" max="20" value="4"></label>
+  <button class="ctl" id="sim">Simulation</button>
+</div>
+<div id="simout" class="legend" style="white-space:pre-line;margin:0 0 8px"></div>
+<details>
+<summary>Rules</summary>
+<ul id="rules"></ul>
+</details>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+/* =====================================================================
+   1. GAME DEFINITION  - Focus rules, board geometry, move generation
+   2. ENGINE           - alpha-beta computer opponent, simulations
+   3. INTERFACE        - SVG board, click handling, controls
+   Board: 8x8, columns a-h (c = 0..7), rows 1-8 (r = 0..7, row 1 at the bottom, Red's side).
+   The three squares at each corner are cut off, leaving 52 squares, numbered 0..51.
+   A pile is one integer: bits 0-2 = height (0..5), bit 3+k = colour of the k-th piece from the bottom (0 Red, 1 Blue).
+   The colour on top controls the pile.
+   A move is an integer: from | to<<6 | n<<12, where from = 52 means a piece entered from the reserve, and n = pieces lifted
+   off the top = squares travelled.
+   A state is {b:52 piles, r:[reserves], k:[pieces captured by each player], turn (0 Red, 1 Blue),
+               w:winner (-1 none, 0 Red, 1 Blue, 2 draw), pa:previous state, q:plies since a piece left the board,
+               key, ml:cached legal moves, mv:last move, ev:text}.
+   ===================================================================== */
+var $=function(i){return document.getElementById(i)};
+
+/* ============================ 1. GAME DEFINITION ============================ */
+var SZ=8,N=0,SQC=[],SQR=[],ID,RAY,RES=52,MAXH=5;
+var DRAW={rep:3,quiet:100};   // draw on threefold repetition, or after 100 plies (50 moves each) in which no piece leaves the board (0 = off)
+var PC=[];for(var _i=0;_i<32;_i++){PC.push((_i&1)+(_i>>1&1)+(_i>>2&1)+(_i>>3&1)+(_i>>4&1))}
+var GAME={
+  title:"Focus",
+  subtitle:function(){return "Sid Sackson’s stacking game (1963). A checkerboard with its corners cut off, 18 pieces each. Piles move as far as they are tall; a pile taller than five loses pieces from the bottom: your own go to your reserve, the opponent’s are captured."},
+  sides:[{name:"Red",fill:"#d94a3d",edge:"#7c1d15",band:"#ad3328"},{name:"Blue",fill:"#3e74c9",edge:"#173a76",band:"#2c5aa3"}],
+  rules:[
+  {h:"Board",items:[
+    "An 8×8 board with the three squares at each corner removed: 52 squares.",
+    "Each player has 18 pieces. They start one high on the 36 central squares in pairs of the same colour, as in the rulebook’s diagram; the outer ring of 16 squares starts empty.",
+    "Pieces stack into piles of up to five. Whoever’s colour is on top controls the pile."]},
+  {h:"Moving",items:[
+    "Red moves first. On a turn you either move a pile you control, or enter one piece from your reserve.",
+    "A pile moves in a straight line up, down, left or right (never diagonally), exactly as many squares as there are pieces in it. It jumps over anything in between, which is not affected, and lands on an empty square or on top of any pile.",
+    "You may instead lift only some pieces off the top of a pile you control and move them as many squares as the pieces lifted. The rest stay behind, and whoever is now on top of them controls them."]},
+  {h:"Captures and reserves",items:[
+    "If a pile becomes taller than five, the extra pieces are taken off the bottom. Pieces of the opponent’s colour are captured and leave the game; pieces of your own colour go to your reserve.",
+    "Instead of moving a pile, you may take one piece from your reserve and place it on any square, empty or on top of a pile. It acts exactly as if it had moved there, so it can make a pile too tall and take pieces off its bottom."]},
+  {h:"End of the game",items:[
+    "A player who, on their turn, controls no pile and has no reserve pieces cannot move and loses.",
+    "Draw (added for this version, the rulebook gives none): the same position with the same player to move occurs for the third time, or 50 moves by each player pass without any piece leaving the board."]}],
+  stats:function(s,i){var p=0,on=0,k,c,h,bl;
+    for(k=0;k<N;k++){c=s.b[k];h=c&7;if(!h)continue;bl=PC[c>>3];on+=i?bl:h-bl;if(((c>>(2+h))&1)===i)p++}
+    return{big:p,text:"· "+on+" on board, "+s.r[i]+" in reserve, "+s.k[i]+" captured · piles:"}},
+  describe:function(s){return s.ev||""}
+};
+function build(){
+  var r,c,i,d,k,D=[[0,1],[0,-1],[1,0],[-1,0]];
+  ID=new Int8Array(SZ*SZ).fill(-1);SQC=[];SQR=[];
+  for(r=0;r<SZ;r++)for(c=0;c<SZ;c++)if(Math.min(c,SZ-1-c)+Math.min(r,SZ-1-r)>1){ID[r*SZ+c]=SQC.length;SQC.push(c);SQR.push(r)}
+  N=SQC.length;RAY=new Int8Array(N*20).fill(-1);
+  for(i=0;i<N;i++)for(d=0;d<4;d++)for(k=1;k<=MAXH;k++){c=SQC[i]+D[d][0]*k;r=SQR[i]+D[d][1]*k;
+    if(c>=0&&r>=0&&c<SZ&&r<SZ&&ID[r*SZ+c]>=0)RAY[(i*4+d)*MAXH+k-1]=ID[r*SZ+c]}
+}
+function sname(i){return String.fromCharCode(97+SQC[i])+(SQR[i]+1)}
+function nameOf(P){return GAME.sides[P].name}
+function topOf(c){var h=c&7;return h?(c>>(2+h))&1:-1}
+function pileColors(c){var h=c&7,a=[],k;for(k=h-1;k>=0;k--)a.push((c>>(3+k))&1);return a}   // top first
+// all moves of player P into buf from offset off; returns the count
+function gen(b,r,P,buf,off){
+  var o=off,i,c,h,n,d,t,base;
+  for(i=0;i<N;i++){c=b[i];h=c&7;if(!h||((c>>(2+h))&1)!==P)continue;
+    for(n=1;n<=h;n++)for(d=0;d<4;d++){t=RAY[(i*4+d)*MAXH+n-1];if(t>=0)buf[o++]=i|t<<6|n<<12}}
+  if(r[P]>0)for(t=0;t<N;t++)buf[o++]=RES|t<<6|4096;
+  return o-off;
+}
+// plays move m for P on board b and reserves r (both changed in place); returns captured*16 + pieces sent to the reserve
+function moveCore(b,r,P,m){
+  var f=m&63,t=(m>>6)&63,n=m>>12,mv,c,h,k,own=0,opp=0;
+  if(f===RES){mv=P;r[P]--}
+  else{c=b[f];h=c&7;k=h-n;mv=(c>>3)>>k;b[f]=k?(k|(((c>>3)&((1<<k)-1))<<3)):0}
+  c=b[t];h=c&7;var nb=(c>>3)|(mv<<h),NH=h+n;
+  if(NH>MAXH){var e=NH-MAXH,bl=PC[nb&((1<<e)-1)];if(P){own=bl;opp=e-bl}else{own=e-bl;opp=bl}r[P]+=own;nb>>=e;NH=MAXH}
+  b[t]=NH|(nb<<3);
+  return opp*16+own;
+}
+var GB=new Int32Array(256);
+function mk(b,r,k,turn,pa,mv,ev,reset){
+  var s={b:b,r:r,k:k,turn:turn,w:-1,pa:pa,q:reset||!pa?0:pa.q+1,key:b.join(",")+"/"+r[0]+","+r[1]+"/"+turn,ml:null,mv:mv,ev:ev||""};
+  if(!gen(b,r,turn,GB,0)){s.w=1-turn;s.ev=(s.ev+" "+nameOf(turn)+" controls no pile and has no reserve: "+nameOf(1-turn)+" wins!").trim();return s}
+  if(DRAW.quiet&&s.q>=DRAW.quiet){s.w=2;s.ev=(s.ev+" "+(DRAW.quiet/2)+" moves each without a piece leaving the board: the game is a draw.").trim();return s}
+  if(DRAW.rep&&s.q>=4){var n=1,a=pa,j=1;
+    for(;a&&j<=s.q;a=a.pa,j++)if(!(j&1)&&a.key===s.key&&++n>=DRAW.rep){s.w=2;s.ev=(s.ev+" The same position has occurred three times: the game is a draw.").trim();return s}}
+  return s;
+}
+function newState(){
+  var b=[],i,c,r;
+  for(i=0;i<N;i++){c=SQC[i];r=SQR[i];
+    if(c<1||c>6||r<1||r>6)b.push(0);
+    else{var blue=((r&1)===0)!==(((c-1)>>1)===1);b.push(1|(blue?8:0))}}   // rows 2,4,6: Red Red Blue Blue Red Red; rows 3,5,7: Blue Blue Red Red Blue Blue
+  return mk(b,[0,0],[0,0],0,null,null,"");
+}
+function gen0(s){if(s.ml)return s.ml;var n=gen(s.b,s.r,s.turn,GB,0),a=[];for(var i=0;i<n;i++)a.push(GB[i]);return s.ml=a}
+function mvFrom(m){return m&63}
+function mvTo(m){return(m>>6)&63}
+function mvN(m){return m>>12}
+function mvText(m){var f=m&63,t=(m>>6)&63,n=m>>12;return f===RES?"*"+sname(t):sname(f)+"–"+sname(t)+(n>1?" ("+n+")":"")}
+function apply(s,m){
+  var b=s.b.slice(),r=s.r.slice(),k=s.k.slice(),P=s.turn,f=m&63,t=(m>>6)&63,n=m>>12,h=f===RES?0:b[f]&7,x,txt;
+  x=moveCore(b,r,P,m);
+  var cap=x>>4,own=x&15;k[P]+=cap;
+  if(f===RES)txt=nameOf(P)+" entered a reserve piece on "+sname(t);
+  else txt=nameOf(P)+" moved "+(n===h?(n===1?"the piece":"the whole pile of "+n):n+" of "+h+" pieces")+" from "+sname(f)+" to "+sname(t);
+  var tail=[];
+  if(cap)tail.push("capturing "+cap+" "+nameOf(1-P)+" piece"+(cap>1?"s":""));
+  if(own)tail.push("putting "+own+" of their own back in reserve");
+  txt+=(tail.length?", "+tail.join(" and "):"")+".";
+  if(f!==RES&&b[f]&&topOf(b[f])!==P)txt+=" The pile left on "+sname(f)+" now belongs to "+nameOf(1-P)+".";
+  return mk(b,r,k,1-P,s,{f:f,t:t,n:n,by:P},txt,x>0);
+}
+function legal(s){if(s.w>=0)return[];return gen0(s).map(function(m){return{m:m,ns:apply(s,m)}})}
+
+/* ================================ 2. ENGINE ================================ */
+// Weights, in hundredths of a piece: own piece in a pile you control, own piece buried under the opponent,
+// reserve piece, controlled pile, height of a controlled pile, side to move.
+var AIW={vc:100,vb:10,vr:150,pl:90,ht:15,tm:12,ex:0,at:3};
+var WIN=1000000,MAXP=64,QD=0;
+var SB=new Int32Array(64),SR=new Int32Array(2),HL=0,HH=0;
+var ZL=new Int32Array(N*0+64*256),ZH=new Int32Array(64*256),ZRL=new Int32Array(128),ZRH=new Int32Array(128),ZTL,ZTH;
+(function(){var x=0x2545F491;function rnd(){x^=x<<13;x^=x>>>17;x^=x<<5;return x|0}
+  for(var i=0;i<64*256;i++){ZL[i]=rnd();ZH[i]=rnd()}for(i=0;i<128;i++){ZRL[i]=rnd();ZRH[i]=rnd()}ZTL=rnd();ZTH=rnd()})();
+var TBITS=19,TSZ=1<<TBITS,TMASK=TSZ-1,TK=new Int32Array(TSZ),TL=new Int32Array(TSZ),TV=new Int32Array(TSZ),TM=new Int32Array(TSZ),TD=new Int8Array(TSZ),TF=new Int8Array(TSZ);
+var MB=new Int32Array(MAXP*256),MS=new Float64Array(MAXP*256),UND=new Int32Array(MAXP*8),HIST=new Int32Array(2*32768),KIL=new Int32Array(MAXP*2);
+var nodes=0,limit=1e9,deadline=1e15,abort=false;
+function load(s){
+  var i;HL=0;HH=0;for(i=0;i<N;i++){SB[i]=s.b[i];HL^=ZL[i*256+SB[i]];HH^=ZH[i*256+SB[i]]}
+  SR[0]=s.r[0];SR[1]=s.r[1];HL^=ZRL[SR[0]]^ZRL[64+SR[1]];HH^=ZRH[SR[0]]^ZRH[64+SR[1]];
+  if(s.turn){HL^=ZTL;HH^=ZTH}
+}
+function make(m,P,ply){
+  var f=m&63,t=(m>>6)&63,u=ply*8,ob=f===RES?0:SB[f],ot=SB[t];
+  UND[u]=ob;UND[u+1]=ot;UND[u+2]=SR[0];UND[u+3]=SR[1];UND[u+4]=HL;UND[u+5]=HH;
+  HL^=ZRL[SR[0]]^ZRL[64+SR[1]]^ZTL;HH^=ZRH[SR[0]]^ZRH[64+SR[1]]^ZTH;
+  moveCore(SB,SR,P,m);
+  if(f!==RES){HL^=ZL[f*256+ob]^ZL[f*256+SB[f]];HH^=ZH[f*256+ob]^ZH[f*256+SB[f]]}
+  HL^=ZL[t*256+ot]^ZL[t*256+SB[t]]^ZRL[SR[0]]^ZRL[64+SR[1]];HH^=ZH[t*256+ot]^ZH[t*256+SB[t]]^ZRH[SR[0]]^ZRH[64+SR[1]];
+}
+function unmake(m,ply){
+  var f=m&63,t=(m>>6)&63,u=ply*8;
+  if(f!==RES)SB[f]=UND[u];SB[t]=UND[u+1];SR[0]=UND[u+2];SR[1]=UND[u+3];HL=UND[u+4];HH=UND[u+5];
+}
+var EVP=[0,0];
+function ev(P){   // value for P, the side to move
+  var s0=0,s1=0,i,c,h,bl,top,own,val,k,d,t,W=AIW;EVP[0]=EVP[1]=0;
+  for(i=0;i<N;i++){c=SB[i];h=c&7;if(!h)continue;bl=PC[c>>3];top=(c>>(2+h))&1;
+    own=top?bl:h-bl;val=W.pl+W.ht*h+own*W.vc;EVP[top]++;
+    if(top){s1+=val;s0+=(h-own)*W.vb}else{s0+=val;s1+=(h-own)*W.vb}
+    if(W.ex&&h>=3){for(k=0;k<=h-3;k++){if((c>>(3+k))&1)s1-=W.ex;else s0-=W.ex}}
+    if(W.at){for(k=1;k<=h;k++)for(d=0;d<4;d++){t=RAY[(i*4+d)*MAXH+k-1];if(t>=0&&SB[t]&&((SB[t]>>(2+(SB[t]&7)))&1)!==top){if(top)s1+=W.at;else s0+=W.at}}}}
+  s0+=SR[0]*W.vr;s1+=SR[1]*W.vr;
+  return (P?s1-s0:s0-s1)+W.tm;
+}
+function oscore(m,P){   // quick move-ordering guess
+  var f=m&63,t=(m>>6)&63,n=m>>12,c=SB[t],H=c&7,s=0,e,rm,bl,opp,k,b;
+  if(H&&((c>>(2+H))&1)!==P)s+=25*H;
+  if(H+n>MAXH){e=H+n-MAXH;rm=(c>>3)&((1<<e)-1);bl=PC[rm];opp=P?e-bl:bl;s+=120*opp+70*(e-opp)}
+  if(f!==RES){b=SB[f];k=(b&7)-n;if(k>0&&(((b>>3)>>(k-1))&1)!==P)s-=25*k}else s-=40;
+  return s;
+}
+function tick(){if((++nodes&1023)===0&&(nodes>limit||Date.now()>deadline))abort=true}
+function qs(al,be,ply,P,qd){
+  tick();if(abort)return 0;
+  var sp=ev(P);
+  if(!EVP[P]&&!SR[P])return -(WIN-ply);
+  if(sp>=be||qd>=QD||ply>=MAXP-1)return sp;
+  if(sp>al)al=sp;
+  var base=ply*256,n=0,i,c,h,k,d,t,j,best=sp,v,m;
+  for(i=0;i<N;i++){c=SB[i];h=c&7;if(!h||((c>>(2+h))&1)!==P)continue;
+    for(k=1;k<=h;k++)for(d=0;d<4;d++){t=RAY[(i*4+d)*MAXH+k-1];if(t>=0&&(SB[t]&7)+k>MAXH){m=i|t<<6|k<<12;MB[base+n]=m;MS[base+n]=oscore(m,P);n++}}}
+  if(SR[P])for(t=0;t<N;t++)if((SB[t]&7)===MAXH){m=RES|t<<6|4096;MB[base+n]=m;MS[base+n]=oscore(m,P);n++}
+  for(i=0;i<n;i++){
+    for(j=i+1,k=i;j<n;j++)if(MS[base+j]>MS[base+k])k=j;
+    m=MB[base+k];MB[base+k]=MB[base+i];MB[base+i]=m;v=MS[base+k];MS[base+k]=MS[base+i];MS[base+i]=v;
+    make(m,P,ply);v=-qs(-be,-al,ply+1,1-P,qd+1);unmake(m,ply);if(abort)return 0;
+    if(v>best){best=v;if(v>al){al=v;if(al>=be)break}}
+  }
+  return best;
+}
+function nega(d,al,be,ply,P){
+  tick();if(abort)return 0;
+  if(ply>=MAXP-2)return ev(P);
+  var idx=HL&TMASK,ttm=-1,v,a0=al;
+  if(TK[idx]===HH&&TL[idx]===HL){ttm=TM[idx];
+    if(TD[idx]>=d){v=TV[idx];if(v>WIN-1000)v-=ply;else if(v<-WIN+1000)v+=ply;
+      if(TF[idx]===0||(TF[idx]===1&&v>=be)||(TF[idx]===2&&v<=al))return v}}
+  if(d<=0)return qs(al,be,ply,P,0);
+  var base=ply*256,n=gen(SB,SR,P,MB,base),i,j,k,m,best=-1e9,bm=0,hb=P*32768;
+  if(!n)return -(WIN-ply);
+  for(i=0;i<n;i++){m=MB[base+i];MS[base+i]=m===ttm?1e9:(m===KIL[ply*2]?5e5:m===KIL[ply*2+1]?4e5:0)+oscore(m,P)*1000+HIST[hb+(m&32767)]}
+  for(i=0;i<n;i++){
+    for(j=i+1,k=i;j<n;j++)if(MS[base+j]>MS[base+k])k=j;
+    m=MB[base+k];MB[base+k]=MB[base+i];MB[base+i]=m;v=MS[base+k];MS[base+k]=MS[base+i];MS[base+i]=v;
+    make(m,P,ply);
+    if(i===0||d<2)v=-nega(d-1,-be,-al,ply+1,1-P);
+    else{v=-nega(d-1,-al-1,-al,ply+1,1-P);if(!abort&&v>al&&v<be)v=-nega(d-1,-be,-al,ply+1,1-P)}   // principal variation search
+    unmake(m,ply);if(abort)return 0;
+    if(v>best){best=v;bm=m;if(v>al){al=v;if(al>=be){
+      if(oscore(m,P)<=0&&KIL[ply*2]!==m){KIL[ply*2+1]=KIL[ply*2];KIL[ply*2]=m}
+      HIST[hb+(m&32767)]+=d*d;break}}}
+  }
+  TK[idx]=HH;TL[idx]=HL;TD[idx]=d;TM[idx]=bm;TF[idx]=best<=a0?2:best>=be?1:0;
+  TV[idx]=best>WIN-1000?best+ply:best<-WIN+1000?best-ply:best;
+  return best;
+}
+// level settings: maximum depth, node budget, time budget (ms), random noise on the move values, margin for a random pick among near-best moves
+var LV=[null,{d:1,nodes:2e5,ms:2000,noise:90,margin:0},{d:3,nodes:2.5e5,ms:2500,noise:0,margin:12},{d:40,nodes:2.5e6,ms:6000,noise:0,margin:0}];
+function aiMove(s,lv){
+  var ms=legal(s),P=s.turn,L=LV[lv],i,v,d,al,pick=null,best;
+  if(!ms.length)return null;
+  if(ms.length===1)return ms[0];
+  for(i=0;i<ms.length;i++)if(ms[i].ns.w===P)return ms[i];    // a move that wins right now
+  load(s);nodes=0;abort=false;limit=L.nodes;deadline=Date.now()+L.ms;
+  for(i=0;i<HIST.length;i++)HIST[i]>>=3;
+  for(i=0;i<KIL.length;i++)KIL[i]=0;
+  ms.forEach(function(x){x.o=oscore(x.m,P);x.r=Math.random()*L.noise+Math.random()*.01;x.v=-1e9});
+  ms.sort(function(a,b){return b.o-a.o});
+  for(d=1;d<=L.d;d++){
+    var res=[],bi=-1;al=-1e9;
+    for(i=0;i<ms.length;i++){
+      if(ms[i].ns.w===2)v=0;
+      else{make(ms[i].m,P,0);
+        var lo=L.margin||L.noise?-1e9:al;   // with a margin or noise every move gets a usable value
+        if(L.margin&&al>-1e9)lo=al-L.margin-1;
+        v=-nega(d-1,-1e9,-lo,1,1-P);unmake(ms[i].m,0)}
+      if(abort)break;
+      if(ms[i].ns.w<0&&ms[i].ns.q>0&&isRep(ms[i].ns)&&v>0)v=v>>1;   // steer away from repeating a position when ahead
+      res.push(v);if(v>al){al=v;bi=i}
+    }
+    if(abort&&d>1)break;
+    for(i=0;i<res.length;i++)ms[i].v=res[i];
+    if(bi>=0&&bi<res.length)ms[bi].v+=.5;   // fail-soft bounds of worse moves can equal the best value: keep the true best in front
+    if(abort)break;
+    ms.sort(function(a,b){return b.v-a.v});
+    if(Math.abs(ms[0].v)>WIN-1000)break;   // a forced result is found
+  }
+  if(L.margin){var top=ms.filter(function(x){return x.v>=ms[0].v-L.margin});return top[Math.floor(Math.random()*top.length)]}
+  best=-1e9;ms.forEach(function(x){if(x.v+x.r>best){best=x.v+x.r;pick=x}});
+  return pick;
+}
+function isRep(s){for(var a=s.pa,j=1;a&&j<=s.q;a=a.pa,j++)if(!(j&1)&&a.key===s.key)return true;return false}
+var sim=null,LOCK=["mode","side","level","new","undo","redo","simN","simR","nFirst","nPrev","nNext","nLast"];
+function runSim(){   // computer vs computer, to look for first/second-player advantage
+  if(sim){sim.stop=true;return}
+  var CAP=400,me=sim={stop:false},TOTALG=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?4:+$("simR").value)),
+      done=0,w=[0,0,0],un=0,g=newState(),plies=0,lv=+$("level").value,lvName=$("level").options[$("level").selectedIndex].text,nm=GAME.sides.map(function(x){return x.name});
+  LOCK.forEach(function(i){$(i).disabled=true});
+  $("sim").textContent="Stop simulation";
+  $("simout").textContent="Simulating at "+lvName+" level… 0/"+TOTALG;
+  function finish(stopped){
+    sim=null;$("sim").textContent="Simulation";
+    ["mode","new","simN","simR"].forEach(function(i){$(i).disabled=false});
+    $("level").disabled=$("side").disabled=$("mode").value==="2p";
+    var mg=done?(196*Math.sqrt((w[0]/done)*(1-w[0]/done)/done)).toFixed(1):"0";
+    var pc=function(n){return done?(100*n/done).toFixed(1)+"%":"n/a"};
+    $("simout").textContent=(stopped?"Stopped after ":"")+done+" games at "+lvName+" level (computer vs computer), first "+RND+" moves random.\n"+
+      "First player ("+nm[0]+") won "+pc(w[0])+" ("+w[0]+" games, margin ±"+mg+" points at 95% confidence). Second player ("+nm[1]+") won "+pc(w[1])+" ("+w[1]+" games)."+(w[2]?" Draws: "+w[2]+".":"")+(un?" Unfinished: "+un+".":"");
+    render();
+  }
+  function stepSim(){
+    if(me.stop){finish(true);return}
+    var t0=Date.now(),m,ms;
+    while(Date.now()-t0<40){
+      if(g.w>=0||plies>=CAP){
+        if(g.w>=0)w[g.w]++;else un++;
+        done++;g=newState();plies=0;
+        if(done>=TOTALG){finish(false);return}
+        continue;
+      }
+      if(plies<RND){ms=legal(g);m=ms[Math.floor(Math.random()*ms.length)]}
+      else m=aiMove(g,lv);
+      if(!m){g.w=2;continue}
+      g=m.ns;plies++;
+    }
+    $("simout").textContent="Simulating at "+lvName+" level… "+done+"/"+TOTALG;
+    setTimeout(stepSim,0);
+  }
+  stepSim();
+}
+
+/* =============================== 3. INTERFACE =============================== */
+var hist,redo=[],view=null,over,busy,note="",sel=-1;   // view: null = live position, otherwise the index being reviewed; sel: selected square, 52 = reserve, -1 = none
+var GREEN="#2e9e4f",GOLD="#e0a800",HI="#e0803a",IVORY="#F2EDE3";
+var TRAY=[{x:1,y:7.5},{x:7,y:.5}];   // reserve trays in the cut-off corners (a1-b1 for Red, g8-h8 for Blue)
+function trayRect(k,extra){var T=TRAY[k];return '<rect x="'+(T.x-.94)+'" y="'+(T.y-.44)+'" width="1.88" height=".88" rx=".12" '+extra+'/>'}
+function cur(){return hist[hist.length-1]}
+function line(){return hist.concat(redo.slice().reverse())}
+function browsing(){return view!==null}
+function shown(){return view===null?cur():line()[view]}
+function goto(k){
+  if(busy||sim)return;
+  var n=hist.length-1+redo.length;k=Math.max(0,Math.min(n,k));
+  view=k===hist.length-1?null:k;note="";sel=-1;render();
+}
+function unlock(dir){
+  var Ln=line(),k=view,j;
+  if($("mode").value==="ai"){
+    j=k;while(j>=0&&j<Ln.length&&Ln[j].w<0&&Ln[j].turn!==+$("side").value)j+=dir;
+    if(j>=0&&j<Ln.length)k=j;
+  }
+  hist=Ln.slice(0,k+1);redo=Ln.slice(k+1).reverse();view=null;note="";sel=-1;over=false;render();maybeAI();
+}
+function humanTurn(){return $("mode").value==="2p"||cur().turn===+$("side").value}
+function start(){
+  build();
+  $("gsub").textContent=GAME.subtitle();
+  hist=[newState()];redo=[];view=null;note="";sel=-1;$("level").disabled=$("side").disabled=$("mode").value==="2p";over=false;busy=false;
+  render();maybeAI();
+}
+function px(i){return i===RES?null:SQC[i]+.5}
+function py(i){return SZ-1-SQR[i]+.5}
+function drawStack(h,cx,cy,cols,label){   // cols: colours top first
+  var n=cols.length,th=Math.min(.11,.6/n),rx=.34,ry=.19,base=cy+.15,j,sd,y0,y1;
+  for(j=0;j<n;j++){sd=GAME.sides[cols[n-1-j]];y0=base-j*th;y1=y0-th;
+    h.push('<ellipse cx="'+cx+'" cy="'+y0+'" rx="'+rx+'" ry="'+ry+'" fill="'+sd.band+'" stroke="'+sd.edge+'" stroke-width=".025"/>');
+    h.push('<rect x="'+(cx-rx)+'" y="'+y1+'" width="'+(2*rx)+'" height="'+th+'" fill="'+sd.band+'"/>');
+    h.push('<line x1="'+(cx-rx)+'" y1="'+y1+'" x2="'+(cx-rx)+'" y2="'+y0+'" stroke="'+sd.edge+'" stroke-width=".025"/><line x1="'+(cx+rx)+'" y1="'+y1+'" x2="'+(cx+rx)+'" y2="'+y0+'" stroke="'+sd.edge+'" stroke-width=".025"/>');
+    h.push('<ellipse cx="'+cx+'" cy="'+y1+'" rx="'+rx+'" ry="'+ry+'" fill="'+sd.fill+'" stroke="'+sd.edge+'" stroke-width=".025"/>');
+  }
+  y1=base-n*th;
+  if((label!==undefined&&label!=="")||(label===undefined&&n>1))h.push('<text x="'+(cx+.4)+'" y="'+(y1-.1)+'" font-size=".24" font-weight="700" text-anchor="middle" dominant-baseline="central" fill="#2a2620" pointer-events="none">'+(label!==undefined?label:n)+'</text>');
+}
+function ring(h,x,y,r){h.push('<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="none" stroke="'+GREEN+'" stroke-width=".035" stroke-opacity=".5" stroke-dasharray=".1 .07" pointer-events="none"/>')}
+function box(h,x,y,col,fill){h.push('<rect x="'+(x-.45)+'" y="'+(y-.45)+'" width=".9" height=".9" rx=".06" fill="'+(fill?col:"none")+'"'+(fill?' fill-opacity=".18"':'')+' stroke="'+col+'" stroke-width=".07" pointer-events="none"/>')}
+function render(){
+  var br=browsing(),s=shown(),sd=GAME.sides,h=[],P=s.turn,i,k,nT=hist.length-1+redo.length,kk=br?view:hist.length-1,lock=busy||!!sim,mv=s.mv,M=1;
+  over=s.w>=0;
+  h.push('<svg viewBox="'+(-M)+' '+(-M)+' '+(SZ+2*M)+' '+(SZ+2*M)+'" role="img" aria-label="Focus board">');
+  h.push('<rect x="-.4" y="-.4" width="'+(SZ+.8)+'" height="'+(SZ+.8)+'" rx=".16" fill="#cfc6b2"/>');
+  h.push('<rect x="-.32" y="-.32" width="'+(SZ+.64)+'" height="'+(SZ+.64)+'" rx=".12" fill="#e4dccc" stroke="#d6ccb8" stroke-width=".04"/>');
+  (function(){   // coordinates: letters = columns (top and bottom), numbers = rows (left and right), row 1 at the bottom
+    function lab(x,y,t){h.push('<text x="'+x+'" y="'+y+'" font-size=".3" text-anchor="middle" dominant-baseline="central" fill="var(--mute)" pointer-events="none">'+t+'</text>')}
+    for(var c=0;c<SZ;c++){var Lt=String.fromCharCode(97+c);lab(c+.5,-.7,Lt);lab(c+.5,SZ+.7,Lt)}
+    for(var r=0;r<SZ;r++){lab(-.7,SZ-r-.5,r+1);lab(SZ+.7,SZ-r-.5,r+1)}
+  })();
+  for(i=0;i<N;i++)h.push('<rect x="'+SQC[i]+'" y="'+(SZ-1-SQR[i])+'" width="1" height="1" fill="'+IVORY+'" stroke="#b9ad96" stroke-width=".03"/>');
+  // reserve trays
+  for(k=0;k<2;k++){var T=TRAY[k];
+    h.push(trayRect(k,'fill="#ddd3c0" stroke="#b9ad96" stroke-width=".03"'));
+    if(s.r[k]){var cl=[];for(i=0;i<Math.min(3,s.r[k]);i++)cl.push(k);drawStack(h,T.x-.45,T.y,cl,"")}
+    h.push('<text x="'+(T.x+(s.r[k]?.42:0))+'" y="'+(T.y-.12)+'" font-size=".26" font-weight="700" text-anchor="middle" dominant-baseline="central" fill="#4a4234" pointer-events="none">'+(s.r[k]?"×"+s.r[k]:"0")+'</text>');
+    h.push('<text x="'+(T.x+(s.r[k]?.42:0))+'" y="'+(T.y+.18)+'" font-size=".16" text-anchor="middle" dominant-baseline="central" fill="#6b604e" pointer-events="none">'+sd[k].name+' reserve</text>');
+  }
+  var HL=$("showLast").checked;
+  function cxy(q,by){return q===RES?{x:TRAY[by].x,y:TRAY[by].y}:{x:px(q),y:py(q)}}
+  if(mv&&HL){var A=cxy(mv.f,mv.by),B=cxy(mv.t);
+    if(mv.f===RES)h.push(trayRect(mv.by,'fill="none" stroke="'+GOLD+'" stroke-width=".06" pointer-events="none"'));
+    else box(h,A.x,A.y,GOLD);
+    box(h,B.x,B.y,GOLD);
+    h.push('<line x1="'+A.x+'" y1="'+A.y+'" x2="'+B.x+'" y2="'+B.y+'" stroke="'+GOLD+'" stroke-width=".07" stroke-linecap="round" stroke-opacity=".8" pointer-events="none"/>');
+  }
+  var canAct=!br&&!over&&humanTurn()&&!busy,ms=canAct?gen0(s):[],nxt={};
+  if(canAct&&sel>=0){ms.forEach(function(m){if(mvFrom(m)===sel)nxt[mvTo(m)]=1});
+    if(HL){if(sel===RES)h.push(trayRect(P,'fill="'+HI+'" fill-opacity=".18" stroke="'+HI+'" stroke-width=".06" pointer-events="none"'));
+      else box(h,px(sel),py(sel),HI,true)}
+  }else if(canAct&&HL){   // playable hints: dashed rings on the piles and the reserve you can move
+    var seen={};ms.forEach(function(m){var f=mvFrom(m);if(!seen[f]){seen[f]=1;if(f===RES)h.push(trayRect(P,'fill="none" stroke="'+GREEN+'" stroke-width=".035" stroke-opacity=".5" stroke-dasharray=".1 .07" pointer-events="none"'));else ring(h,px(f),py(f),.45)}});
+  }
+  for(i=0;i<N;i++)if(s.b[i])drawStack(h,px(i),py(i),pileColors(s.b[i]));
+  if(HL)for(k in nxt)h.push('<circle cx="'+px(+k)+'" cy="'+(py(+k)+(s.b[+k]?.3:0))+'" r=".11" fill="'+GREEN+'" fill-opacity=".8" pointer-events="none"/>');
+  for(i=0;i<N;i++)h.push('<rect data-i="'+i+'" x="'+SQC[i]+'" y="'+(SZ-1-SQR[i])+'" width="1" height="1" fill="#000" fill-opacity="0" style="cursor:pointer"/>');
+  for(k=0;k<2;k++)h.push(trayRect(k,'data-r="'+k+'" fill="#000" fill-opacity="0" style="cursor:pointer"'));
+  h.push('</svg>');
+  $("board").innerHTML=h.join("");
+  var names=sd.map(function(x){return x.name}),st;
+  for(i=0;i<2;i++){var t=GAME.stats(s,i);$("s"+i).textContent=t.big;$("d"+i).textContent=t.text;
+    $("p"+i).className="pl"+(!over&&s.turn===i?" on":"")}
+  if(br)st="Reviewing history (move "+kk+" of "+nT+"): the board is locked. Press Undo or Redo to play on from here.";
+  else if(over)st=s.w===2?"Game over: draw.":"Game over: "+names[s.w]+" wins.";
+  else if(!humanTurn())st=names[P]+" to move (computer thinking…)";
+  else if(sel===RES)st=names[P]+": click any square to enter a reserve piece there.";
+  else if(sel>=0)st=names[P]+": choose where to move from "+sname(sel)+" (the distance is the number of pieces lifted).";
+  else st=names[P]+" to move: pick a pile you control"+(s.r[P]?" or your reserve.":".");
+  $("status").textContent=st;
+  $("last").textContent=(GAME.describe(s)+" "+note).trim();
+  $("undo").disabled=lock||!(br||hist.length>=2);
+  $("redo").disabled=lock||!(br||redo.length);
+  $("nFirst").disabled=$("nPrev").disabled=lock||kk<=0;
+  $("nNext").disabled=$("nLast").disabled=lock||kk>=nT;
+  $("nlab").textContent="Move "+kk+" of "+nT;
+}
+function play(ns){hist.push(ns);redo=[];note="";sel=-1;render();maybeAI()}
+function click(i,tray){
+  if(over||busy||browsing()||!humanTurn())return;
+  var s=cur(),ms=gen0(s),P=s.turn,m;note="";
+  if(tray>=0){
+    if(tray!==P)note="That is "+nameOf(tray)+"’s reserve.";
+    else if(!s.r[P])note="Your reserve is empty.";
+    else sel=sel===RES?-1:RES;
+    render();return;
+  }
+  if(sel>=0){
+    for(var k=0;k<ms.length;k++){m=ms[k];if(mvFrom(m)===sel&&mvTo(m)===i){play(apply(s,m));return}}
+    if(i===sel){sel=-1;render();return}
+  }
+  var x=s.b[i];
+  if(x&&topOf(x)===P)sel=i;
+  else note=sel>=0?"That square cannot be reached from "+(sel===RES?"the reserve":sname(sel))+".":x?"That pile is controlled by "+nameOf(topOf(x))+".":"Click a pile you control"+(s.r[P]?" or your reserve":"")+" first.";
+  render();
+}
+function maybeAI(){
+  if(over||$("mode").value!=="ai"||cur().turn===+$("side").value)return;
+  busy=true;render();
+  setTimeout(function(){
+    var c=cur(),m=aiMove(c,+$("level").value);busy=false;
+    if(m){hist.push(m.ns);redo=[]}
+    render();maybeAI();
+  },60);
+}
+document.title=GAME.title;$("gtitle").textContent=GAME.title;
+function li(x){return"<li>"+(typeof x==="string"?x:x.t+"<ul>"+x.sub.map(li).join("")+"</ul>")+"</li>"}
+$("rules").innerHTML=GAME.rules.map(function(sec){return"<li><b>"+sec.h+"</b><ul>"+sec.items.map(li).join("")+"</ul></li>"}).join("");
+$("side").innerHTML=GAME.sides.map(function(x,i){return'<option value="'+i+'">You are '+x.name+(i?"":" (first)")+'</option>'}).join("");
+for(var i=0;i<2;i++)$("n"+i).textContent=GAME.sides[i].name;
+$("board").onclick=function(e){var t=e.target.closest("[data-i],[data-r]");if(!t)return;
+  if(t.hasAttribute("data-r"))click(-1,+t.getAttribute("data-r"));else click(+t.getAttribute("data-i"),-1)};
+$("new").onclick=start;$("sim").onclick=runSim;$("showLast").onchange=render;
+$("mode").onchange=$("side").onchange=start;
+function aiSide(){return $("mode").value==="ai"&&cur().turn!==+$("side").value}
+$("redo").onclick=function(){
+  if(busy||sim)return;
+  if(browsing()){unlock(1);return}
+  if(!redo.length)return;
+  hist.push(redo.pop());
+  while(redo.length&&aiSide())hist.push(redo.pop());
+  note="";sel=-1;render();
+};
+$("undo").onclick=function(){
+  if(busy||sim)return;
+  if(browsing()){unlock(-1);return}
+  if(hist.length<2)return;
+  redo.push(hist.pop());
+  while(hist.length>1&&aiSide())redo.push(hist.pop());
+  over=false;note="";sel=-1;render();maybeAI();
+};
+$("nFirst").onclick=function(){goto(0)};
+$("nPrev").onclick=function(){goto((browsing()?view:hist.length-1)-1)};
+$("nNext").onclick=function(){goto((browsing()?view:hist.length-1)+1)};
+$("nLast").onclick=function(){goto(hist.length-1+redo.length)};
+start();
+})();
+</script>
+</body>
+</html>
