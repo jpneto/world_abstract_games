@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Four in a Row</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
+<style>
+:root{--bg:#eef0e6;--ink:#1f2a1c;--mute:#5d6a56;--cell:#dfe3cf;--edge:#b9bfa3;--hi:#e0803a;--panel:#fff;--line:#c5cab4;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f}}
+:root[data-theme="dark"]{--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+main{max-width:1080px;margin:0 auto;padding:16px 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.right>.bar:first-child{margin-top:0}
+@media (min-width:860px){.layout{grid-template-columns:minmax(0,600px) minmax(300px,1fr);gap:28px;align-items:start}}
+h1{font:700 2rem/1.1 "Bricolage Grotesque",Georgia,serif;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+select,button.ctl{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.ctl:disabled,select:disabled,input:disabled{opacity:.45;cursor:default}
+label.f{color:var(--mute);font-size:.9rem}
+input[type=number]{width:4.5em;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+button.ctl.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button.ctl.icon{display:inline-flex;align-items:center;justify-content:center;padding:6px 10px}
+button.ctl.icon svg{width:18px;height:18px;fill:currentColor;display:block}
+.navlab{min-width:7.5em;text-align:center;color:var(--mute);font-variant-numeric:tabular-nums}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.pl{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:8px 12px;display:flex;justify-content:space-between;align-items:baseline;gap:6px}
+.pl.on{border-color:var(--hi)}
+.pl b{font:700 1.6rem "Bricolage Grotesque",Georgia,serif}
+.pl small{color:var(--mute)}
+#status{min-height:1.5em;font-weight:600;margin:6px 0}
+#board svg{display:block;width:100%;max-width:600px;margin:0 auto;touch-action:manipulation}
+#board .sl{cursor:pointer}
+#board .sl .pv{opacity:0;transition:opacity .08s}
+#board .sl:hover .pv{opacity:.5}
+#board .sl.full{cursor:default}
+@keyframes drop{from{transform:translateY(var(--dy))}}
+#board .drop{animation:drop var(--dt) cubic-bezier(.55,0,1,.45)}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+details li{margin:4px 0}
+.legend{color:var(--mute);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+<h1 id="gtitle"></h1>
+<p class="sub" id="gsub"></p>
+<div class="layout">
+<div class="left">
+<div id="board"></div>
+<p class="legend">Click anywhere in a column to drop a disc there; it falls to the lowest empty hole, and hovering shows where it would land. A full column cannot take another disc. The gold dashed ring marks the disc dropped last; when someone wins, a light dashed line runs through the winning four. Letters name the columns (a–g), numbers the rows (1 at the bottom). Untick “Show highlights” to show only the board and discs.</p>
+</div>
+<aside class="right">
+<div class="bar">
+  <select id="mode" aria-label="Mode"><option value="ai">Play the computer</option><option value="2p">Two players</option></select>
+  <select id="level" aria-label="Computer strength"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select>
+  <select id="side" aria-label="Your side"></select>
+  <button class="ctl primary" id="new">New game</button>
+  <button class="ctl" id="undo">Undo</button>
+  <button class="ctl" id="redo">Redo</button>
+</div>
+<div class="bar" id="nav" role="group" aria-label="Game history">
+  <button class="ctl icon" id="nFirst" aria-label="Go to the beginning" title="Go to the beginning"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="2.5" height="14"/><path d="M19 5v14L8 12z"/></svg></button>
+  <button class="ctl icon" id="nPrev" aria-label="One move back" title="One move back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 5v14L6 12z"/></svg></button>
+  <span class="navlab" id="nlab" aria-live="polite">Move 0 of 0</span>
+  <button class="ctl icon" id="nNext" aria-label="One move forward" title="One move forward"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5v14l11-7z"/></svg></button>
+  <button class="ctl icon" id="nLast" aria-label="Go to the last move" title="Go to the last move"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5v14l11-7z"/><rect x="17.5" y="5" width="2.5" height="14"/></svg></button>
+  <label class="f"><input type="checkbox" id="showLast" checked> Show highlights</label>
+</div>
+<div class="score">
+  <div class="pl" id="p0"><span><span id="n0"></span> <small id="d0"></small></span><b id="s0">0</b></div>
+  <div class="pl" id="p1"><span><span id="n1"></span> <small id="d1"></small></span><b id="s1">0</b></div>
+</div>
+<div id="status" aria-live="polite"></div>
+<div id="last" class="legend" style="min-height:2.6em;margin:0 0 8px"></div>
+<div class="bar">
+  <label class="f">Simulation games <input id="simN" type="number" min="10" max="1000" value="10"></label>
+  <label class="f">Random opening moves <input id="simR" type="number" min="0" max="20" value="4"></label>
+  <button class="ctl" id="sim">Simulation</button>
+</div>
+<div id="simout" class="legend" style="white-space:pre-line;margin:0 0 8px"></div>
+<details>
+<summary>Rules</summary>
+<ul id="rules"></ul>
+</details>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+/* =====================================================================
+   1. GAME DEFINITION  - Four in a Row rules, grid geometry, lines of four, move generation
+   2. ENGINE           - alpha-beta negamax computer opponent, simulations
+   3. INTERFACE        - SVG stand-up board, column clicks, controls
+   Grid: 7 columns (c = 0..6, a..g) by 6 rows (r = 0..5, row 1 at the bottom). Cell index k = r*7 + c.
+   A move is {j:column, ns:resulting state}. Every dropped disc is one move (one history step).
+   A state is {b:cells (0 empty, 1 Red, 2 Yellow), h:discs in each column, turn, n:discs played,
+               w:winner (-1 none, 0 Red, 1 Yellow, 2 draw), line:the winning four cells, mv:{c,k,by}, ev}.
+   ===================================================================== */
+var $=function(i){return document.getElementById(i)};
+
+/* ============================ 1. GAME DEFINITION ============================ */
+var C=7,R=6,NC=C*R,DISCS=21,LINES=[],CL=[];
+var GAME={
+  title:"Connect 4",
+  subtitle:function(){return "Gravity four-in-a-row on an upright board, after Howard Wexler and Ned Strongin’s 1974 game. 7 columns × 6 rows, 21 discs each. Red moves first."},
+  sides:[{name:"Red",color:"#d83a2e",dark:"#8e1d15",light:"#ff8a7a"},{name:"Yellow",color:"#f4c22b",dark:"#b5860b",light:"#fff0a0"}],
+  rules:[
+  {h:"Board",items:[
+    "An upright grid of 7 columns and 6 rows of round holes, held vertically in a stand. Each column is a slot that holds up to six discs. The board starts empty.",
+    "Each player has 21 discs of their own colour, Red or Yellow, which together fill the 42 holes exactly."]},
+  {h:"Play",items:[
+    "Red moves first, then the players alternate. (The original rules leave the first player to the players; here Red always starts, and Yellow is the second player.)",
+    "On your turn, drop one disc into any column that is not full. It falls to the lowest empty hole of that column. Discs never move once dropped.",
+    "You win at once by making a line of four of your discs in a row: horizontally, vertically or diagonally.",
+    "If all 42 discs have been dropped and nobody has four in a row, the game is a draw."]},
+  {h:"Notes",items:[
+    "The game was invented by Howard Wexler and Ned Strongin and published in 1974 by Milton Bradley as Connect Four. This page is an independent version of the mechanics.",
+    "The 7×6 game was solved in 1988 (James D. Allen, and independently Victor Allis): with perfect play the first player wins, but only by starting in the centre column."]}],
+  stats:function(s,i){var n=0;for(var k=0;k<NC;k++)if(s.b[k]===i+1)n++;
+    return{big:DISCS-n,text:"· "+n+" dropped, discs left:"}},
+  describe:function(s){return s.ev||""}
+};
+(function build(){
+  var d=[[1,0],[0,1],[1,1],[1,-1]],r,c,k,i;
+  for(k=0;k<NC;k++)CL.push([]);
+  for(r=0;r<R;r++)for(c=0;c<C;c++)d.forEach(function(v){
+    var r3=r+3*v[1],c3=c+3*v[0];if(c3<0||c3>=C||r3<0||r3>=R)return;
+    var L=[];for(i=0;i<4;i++)L.push((r+i*v[1])*C+c+i*v[0]);
+    L.forEach(function(x){CL[x].push(LINES.length)});LINES.push(L);
+  });
+})();   // 69 lines of four
+function cn(k){return String.fromCharCode(97+k%C)+(Math.floor(k/C)+1)}
+function colName(c){return String.fromCharCode(97+c)}
+function nameOf(s){return GAME.sides[s.turn].name}
+function lineAt(b,k,p){   // a line of four of player p through cell k, or null
+  var A=CL[k],i,L;
+  for(i=0;i<A.length;i++){L=LINES[A[i]];if(b[L[0]]===p&&b[L[1]]===p&&b[L[2]]===p&&b[L[3]]===p)return L}
+  return null;
+}
+function newState(){return{b:new Uint8Array(NC),h:new Uint8Array(C),turn:0,n:0,w:-1,line:null,mv:null,ev:""}}
+function canPlace(s,c){return s.w<0&&s.h[c]<R}
+function place(s,c){
+  var P=s.turn,b=s.b.slice(),h=s.h.slice(),k=h[c]*C+c,L;
+  b[k]=P+1;h[c]++;
+  var ns={b:b,h:h,turn:1-P,n:s.n+1,w:-1,line:null,mv:{c:c,k:k,by:P},ev:nameOf(s)+" dropped a disc into column "+colName(c)+" ("+cn(k)+")."};
+  if((L=lineAt(b,k,P+1))){ns.w=P;ns.turn=P;ns.line=L;ns.ev+=" "+nameOf(s)+" has four in a row and wins!"}
+  else if(ns.n===NC){ns.w=2;ns.ev+=" The board is full with no four in a row: the game is a draw."}
+  return{j:c,ns:ns};
+}
+function legal(s){var out=[];if(s.w>=0)return out;for(var c=0;c<C;c++)if(canPlace(s,c))out.push(place(s,c));return out}
+
+/* ================================ 2. ENGINE ================================ */
+// Negamax with alpha-beta on a scratch board (make/unmake). Leaves are scored over the 69 lines of four:
+// a line holding only one player's discs is worth LW[discs] to that player; open threes whose empty cell is
+// directly playable are worth extra, and centre-column discs get a small bonus.
+var SB=new Uint8Array(NC),SH=new Uint8Array(C),ORDER=[3,2,4,1,5,0,6],WIN=100000,LW=[0,1,5,22],CEN=[0,1,2,4,2,1,0];
+var DEPTH=[0,2,5,9],NOISE=[0,14,3,.5];
+function evalB(p){
+  var q=3-p,s=0,i,L,m,t,e,a,x;
+  for(i=0;i<LINES.length;i++){L=LINES[i];m=t=0;e=-1;
+    for(a=0;a<4;a++){x=SB[L[a]];if(x===p)m++;else if(x===q)t++;else e=L[a]}
+    if(t===0){s+=LW[m];if(m===3&&SH[e%C]===(e/C|0))s+=12}
+    else if(m===0){s-=LW[t];if(t===3&&SH[e%C]===(e/C|0))s-=12}}
+  for(i=0;i<NC;i++){x=SB[i];if(x)s+=(x===p?1:-1)*CEN[i%C]}
+  return s;
+}
+function winsAt(c,p){var k=SH[c]*C+c;SB[k]=p;var r=lineAt(SB,k,p);SB[k]=0;return !!r}
+// transposition table (Zobrist keys: Z1 picks the slot, Z2 checks it)
+var TB=1<<20,TK=new Int32Array(TB),TV=new Int32Array(TB),TD=new Int8Array(TB),TF=new Int8Array(TB),TM=new Int8Array(TB),Z1=[],Z2=[],h1=0,h2=0;
+(function(){for(var p=0;p<3;p++){Z1.push(new Int32Array(NC));Z2.push(new Int32Array(NC));
+  for(var k=0;k<NC;k++){Z1[p][k]=Math.random()*4294967296|0;Z2[p][k]=Math.random()*4294967296|0}}})();
+function nega(p,d,al,be,ply,cnt){
+  var c,i,v,best=-1e9,q=3-p,forced=-1,nf=0,al0,ix,tm=-1,bm=-1,k;
+  if(cnt>=NC)return 0;
+  for(c=0;c<C;c++)if(SH[c]<R&&winsAt(c,p))return WIN-ply;
+  for(c=0;c<C;c++)if(SH[c]<R&&winsAt(c,q)){forced=c;nf++}
+  if(nf>1)return -(WIN-ply-1);                 // two threats at once: lost
+  if(d<=0&&forced<0)return evalB(p);
+  ix=h1&(TB-1);
+  if(TK[ix]===h2){tm=TM[ix];
+    if(TD[ix]>=d){v=TV[ix];if(TF[ix]===0)return v;if(TF[ix]===1){if(v>al)al=v}else if(v<be)be=v;if(al>=be)return v}}
+  al0=al;
+  for(i=-1;i<C;i++){c=i<0?(forced>=0?forced:tm):ORDER[i];
+    if(c<0||SH[c]>=R||(forced>=0&&c!==forced)||(i>=0&&c===(forced>=0?forced:tm)))continue;
+    k=SH[c]*C+c;SB[k]=p;SH[c]++;h1^=Z1[p][k];h2^=Z2[p][k];
+    v=-nega(q,d-1,-be,-al,ply+1,cnt+1);
+    SH[c]--;SB[k]=0;h1^=Z1[p][k];h2^=Z2[p][k];
+    if(v>best){best=v;bm=c}if(best>al)al=best;if(al>=be)break}
+  if(d>0){TK[ix]=h2;TV[ix]=best;TD[ix]=d;TM[ix]=bm;TF[ix]=best<=al0?2:best>=be?1:0}
+  return best;
+}
+function aiMove(s){
+  var ms=legal(s),lv=+$("level").value,P=s.turn,p=P+1,best=-1e9,pick=null,i,v,m,k;
+  if(!ms.length)return null;
+  for(i=0;i<ms.length;i++)if(ms[i].ns.w===P)return ms[i];    // a move that wins right now
+  SB.set(s.b);SH.set(s.h);h1=h2=0;
+  for(k=0;k<NC;k++)if(SB[k]){h1^=Z1[SB[k]][k];h2^=Z2[SB[k]][k]}
+  ms.sort(function(a,b){return Math.abs(a.j-3)-Math.abs(b.j-3)});
+  for(i=0;i<ms.length;i++){m=ms[i];var c=m.j;k=SH[c]*C+c;
+    SB[k]=p;SH[c]++;h1^=Z1[p][k];h2^=Z2[p][k];
+    v=-nega(3-p,DEPTH[lv]-1,-1e9,-(best-NOISE[lv]-1),1,s.n+1)+Math.random()*NOISE[lv];
+    SH[c]--;SB[k]=0;h1^=Z1[p][k];h2^=Z2[p][k];
+    if(v>best){best=v;pick=m}
+  }
+  return pick;
+}
+var sim=null,LOCK=["mode","side","level","new","undo","redo","simN","simR","nFirst","nPrev","nNext","nLast"];
+function runSim(){   // computer vs computer, to look for first/second-player advantage
+  if(sim){sim.stop=true;return}
+  var CAP=NC+5,me=sim={stop:false},TOTALG=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?4:+$("simR").value)),
+      done=0,w=[0,0,0],un=0,g=newState(),plies=0,lvName=$("level").options[$("level").selectedIndex].text,nm=GAME.sides.map(function(x){return x.name});
+  LOCK.forEach(function(i){$(i).disabled=true});
+  $("sim").textContent="Stop simulation";
+  $("simout").textContent="Simulating at "+lvName+" level… 0/"+TOTALG;
+  function finish(stopped){
+    sim=null;$("sim").textContent="Simulation";
+    ["mode","new","simN","simR"].forEach(function(i){$(i).disabled=false});
+    $("level").disabled=$("side").disabled=$("mode").value==="2p";
+    var mg=done?(196*Math.sqrt((w[0]/done)*(1-w[0]/done)/done)).toFixed(1):"0";
+    var pc=function(n){return done?(100*n/done).toFixed(1)+"%":"n/a"};
+    $("simout").textContent=(stopped?"Stopped after ":"")+done+" games at "+lvName+" level (computer vs computer), first "+RND+" moves random.\n"+
+      "First player ("+nm[0]+") won "+pc(w[0])+" ("+w[0]+" games, margin ±"+mg+" points at 95% confidence). Second player ("+nm[1]+") won "+pc(w[1])+" ("+w[1]+" games)."+(w[2]?" Draws: "+w[2]+".":"")+(un?" Unfinished: "+un+".":"");
+    render();
+  }
+  function stepSim(){
+    if(me.stop){finish(true);return}
+    var t0=Date.now(),m,ms;
+    while(Date.now()-t0<40){
+      if(g.w>=0||plies>=CAP){
+        if(g.w>=0)w[g.w]++;else un++;
+        done++;g=newState();plies=0;
+        if(done>=TOTALG){finish(false);return}
+        continue;
+      }
+      if(plies<RND){ms=legal(g);m=ms[Math.floor(Math.random()*ms.length)]}
+      else m=aiMove(g);
+      if(!m){g.w=2;continue}
+      g=m.ns;plies++;
+    }
+    $("simout").textContent="Simulating at "+lvName+" level… "+done+"/"+TOTALG;
+    setTimeout(stepSim,0);
+  }
+  stepSim();
+}
+
+/* =============================== 3. INTERFACE =============================== */
+var hist,redo=[],view=null,over,busy,note="",ANIM=null;   // view: null = live position, otherwise the index being reviewed
+var GOLD="#e8b923",FRAME="#2559c4",FRAME2="#1a43a0",RIM="#123478",HR=.37,DR=.43;
+function cur(){return hist[hist.length-1]}
+function line(){return hist.concat(redo.slice().reverse())}   // every position, including those that can still be redone
+function browsing(){return view!==null}
+function shown(){return view===null?cur():line()[view]}
+function goto(k){
+  if(busy||sim)return;
+  var n=hist.length-1+redo.length;k=Math.max(0,Math.min(n,k));
+  view=k===hist.length-1?null:k;note="";ANIM=null;render();
+}
+// Undo/Redo while reviewing: leave review and play on from the reviewed position (in computer mode, from the nearest position where it is the human's turn)
+function unlock(dir){
+  var Ln=line(),k=view,j;
+  if($("mode").value==="ai"){
+    j=k;while(j>=0&&j<Ln.length&&Ln[j].w<0&&Ln[j].turn!==+$("side").value)j+=dir;
+    if(j>=0&&j<Ln.length)k=j;
+  }
+  hist=Ln.slice(0,k+1);redo=Ln.slice(k+1).reverse();view=null;note="";over=false;ANIM=null;render();maybeAI();
+}
+function humanTurn(){return $("mode").value==="2p"||cur().turn===+$("side").value}
+function start(){
+  $("gsub").textContent=GAME.subtitle();
+  hist=[newState()];redo=[];view=null;note="";ANIM=null;$("level").disabled=$("side").disabled=$("mode").value==="2p";over=false;busy=false;
+  render();maybeAI();
+}
+function X(k){return k%C}
+function Y(k){return R-1-Math.floor(k/C)}
+function disc(P,op){var sd=GAME.sides[P];
+  return'<g'+(op?' class="pv"':'')+'><circle r="'+DR+'" fill="'+sd.dark+'"/><circle r="'+(DR-.035)+'" fill="'+sd.color+'"/>'+
+    [.32,.235,.15].map(function(r){return'<circle r="'+r+'" fill="none" stroke="'+sd.dark+'" stroke-opacity=".45" stroke-width=".022"/>'}).join("")+
+    '<circle r=".07" fill="'+sd.dark+'" fill-opacity=".22"/>'+
+    '<path d="M-.3,-.12 A.33,.33 0 0 1 .12,-.3" fill="none" stroke="'+sd.light+'" stroke-opacity=".55" stroke-width=".04" stroke-linecap="round"/></g>'}
+function animDur(k){return .16+.11*Math.sqrt(Y(k)+1.5)}
+function render(){
+  var br=browsing(),s=shown(),sd=GAME.sides,h=[],P=s.turn,i,k,c,nT=hist.length-1+redo.length,kk=br?view:hist.length-1,lock=busy||!!sim,mv=s.mv,HL=$("showLast").checked;
+  over=s.w>=0;
+  h.push('<svg viewBox="-1.75 -1.4 9.5 8.6" role="img" aria-label="Four in a Row board">');
+  h.push('<defs><linearGradient id="fg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a72dc"/><stop offset="1" stop-color="'+FRAME+'"/></linearGradient>'+
+    '<mask id="holes" maskUnits="userSpaceOnUse" x="-2" y="-2" width="12" height="12"><rect x="-2" y="-2" width="12" height="12" fill="#fff"/>');
+  for(k=0;k<NC;k++)h.push('<circle cx="'+X(k)+'" cy="'+Y(k)+'" r="'+HR+'" fill="#000"/>');
+  h.push('</mask></defs>');
+  // back of the stand (seen through empty holes only as shade)
+  h.push('<rect x="-.55" y="-.55" width="7.1" height="6.1" fill="#000" fill-opacity=".06"/>');
+  // discs sit behind the front frame
+  var now=Date.now();
+  for(k=0;k<NC;k++)if(s.b[k]){
+    var an=ANIM&&ANIM.s===s&&mv&&mv.k===k?(now-ANIM.t0)/1000:-1,dt=animDur(k),dy=-(Y(k)+1.35);
+    h.push('<g'+(an>=0&&an<dt?' class="drop" style="--dy:'+dy+'px;--dt:'+dt.toFixed(3)+'s;animation-delay:-'+an.toFixed(3)+'s"':'')+'><g transform="translate('+X(k)+','+Y(k)+')">'+disc(s.b[k]-1)+'</g></g>');
+  }
+  // stand: uprights and feet, then the front frame with its holes
+  [-.92,6.62].forEach(function(x0){var m=x0+.15;
+    h.push('<path d="M'+(m-.55)+',7.1 L'+(m-.15)+',6.45 L'+(m+.15)+',6.45 L'+(m+.55)+',7.1 Z" fill="'+FRAME2+'"/>');
+    h.push('<rect x="'+x0+'" y="-.75" width=".3" height="7.85" rx=".08" fill="'+FRAME2+'"/>');
+    h.push('<rect x="'+(x0+.07)+'" y="-.6" width=".08" height="7.1" rx=".04" fill="#fff" fill-opacity=".12"/>');
+  });
+  h.push('<rect x="-.62" y="-.62" width="7.24" height="6.24" rx=".16" fill="url(#fg)" mask="url(#holes)"/>');
+  h.push('<rect x="-.62" y="5.62" width="7.24" height=".22" rx=".06" fill="'+FRAME2+'"/>');
+  h.push('<rect x="-.55" y="-.58" width="7.1" height=".06" rx=".03" fill="#fff" fill-opacity=".22"/>');
+  for(k=0;k<NC;k++){
+    h.push('<circle cx="'+X(k)+'" cy="'+Y(k)+'" r="'+(HR+.012)+'" fill="none" stroke="'+RIM+'" stroke-width=".05"/>');
+    h.push('<path d="M'+(X(k)-HR-.03)+','+(Y(k)+.06)+' A'+(HR+.03)+','+(HR+.03)+' 0 0 0 '+(X(k)+.06)+','+(Y(k)+HR+.03)+'" fill="none" stroke="#fff" stroke-opacity=".18" stroke-width=".035"/>');
+  }
+  (function(){   // coordinates: letters = columns (top and bottom), numbers = rows (left and right), row 1 at the bottom
+    var fs=.32;
+    function lab(x,y,t){h.push('<text x="'+x+'" y="'+y+'" font-size="'+fs+'" text-anchor="middle" dominant-baseline="central" fill="var(--mute)" pointer-events="none">'+t+'</text>')}
+    for(c=0;c<C;c++){lab(c,-1.05,colName(c));lab(c,6.2,colName(c))}
+    for(var r=0;r<R;r++){lab(-1.3,R-1-r,r+1);lab(7.3,R-1-r,r+1)}
+  })();
+  // markers
+  if(HL&&mv)h.push('<circle cx="'+X(mv.k)+'" cy="'+Y(mv.k)+'" r=".455" fill="none" stroke="'+GOLD+'" stroke-width=".04" stroke-dasharray=".1 .07" pointer-events="none"/>');
+  if(HL&&s.line){var a=s.line[0],b=s.line[3];
+    h.push('<line x1="'+X(a)+'" y1="'+Y(a)+'" x2="'+X(b)+'" y2="'+Y(b)+'" stroke="#fff" stroke-opacity=".85" stroke-width=".05" stroke-dasharray=".14 .09" stroke-linecap="round" pointer-events="none"/>');
+    s.line.forEach(function(q){h.push('<circle cx="'+X(q)+'" cy="'+Y(q)+'" r=".2" fill="none" stroke="#fff" stroke-opacity=".85" stroke-width=".035" stroke-dasharray=".07 .06" pointer-events="none"/>')})}
+  // click targets: one per column, with a hover preview of where the disc would land
+  var canAct=!br&&!over&&humanTurn()&&!busy;
+  for(c=0;c<C;c++){var ok=canAct&&canPlace(s,c),lk=s.h[c]*C+c;
+    h.push('<g class="sl'+(ok?'':' full')+'" data-i="'+c+'">'+(ok&&HL?'<g transform="translate('+c+','+Y(lk)+')">'+disc(P,1)+'</g>':'')+
+      '<rect x="'+(c-.5)+'" y="-1.35" width="1" height="7.05" fill="#000" fill-opacity="0"/></g>');
+  }
+  h.push('</svg>');
+  $("board").innerHTML=h.join("");
+  var names=sd.map(function(x){return x.name}),st;
+  for(i=0;i<2;i++){var t=GAME.stats(s,i);$("s"+i).textContent=t.big;$("d"+i).textContent=t.text;
+    $("p"+i).className="pl"+(!over&&s.turn===i?" on":"")}
+  if(br)st="Reviewing history (move "+kk+" of "+nT+"): the board is locked. Press Undo or Redo to play on from here.";
+  else if(over)st=s.w===2?"Game over: draw.":"Game over: "+names[s.w]+" wins.";
+  else if(!humanTurn())st=names[P]+" to move (computer thinking…)";
+  else st=names[P]+" to move: drop a disc into a column.";
+  $("status").textContent=st;
+  $("last").textContent=(GAME.describe(s)+" "+note).trim();
+  $("undo").disabled=lock||!(br||hist.length>=2);
+  $("redo").disabled=lock||!(br||redo.length);
+  $("nFirst").disabled=$("nPrev").disabled=lock||kk<=0;
+  $("nNext").disabled=$("nLast").disabled=lock||kk>=nT;
+  $("nlab").textContent="Move "+kk+" of "+nT;
+}
+function animLeft(){var s=cur();return ANIM&&ANIM.s===s&&s.mv?Math.max(0,animDur(s.mv.k)*1000-(Date.now()-ANIM.t0)):0}
+function play(ns){hist.push(ns);redo=[];note="";ANIM={s:ns,t0:Date.now()};render();maybeAI()}
+function click(c){
+  if(over||busy||browsing()||!humanTurn())return;
+  var s=cur();note="";
+  if(s.h[c]>=R)note="Column "+colName(c)+" is full.";
+  else{play(place(s,c).ns);return}
+  render();
+}
+function maybeAI(){
+  if(over||$("mode").value!=="ai"||cur().turn===+$("side").value)return;
+  busy=true;render();
+  setTimeout(function(){
+    var c=cur(),m=aiMove(c);busy=false;
+    if(m){hist.push(m.ns);redo=[];ANIM={s:m.ns,t0:Date.now()}}else{c.w=2;c.ev="No legal move: the game is a draw."}
+    render();maybeAI();
+  },Math.max(60,animLeft()+40));
+}
+document.title=GAME.title;$("gtitle").textContent=GAME.title;
+function li(x){return"<li>"+(typeof x==="string"?x:x.t+"<ul>"+x.sub.map(li).join("")+"</ul>")+"</li>"}
+$("rules").innerHTML=GAME.rules.map(function(sec){return"<li><b>"+sec.h+"</b><ul>"+sec.items.map(li).join("")+"</ul></li>"}).join("");
+$("side").innerHTML=GAME.sides.map(function(x,i){return'<option value="'+i+'">You are '+x.name+(i?"":" (first)")+'</option>'}).join("");
+for(var i=0;i<2;i++)$("n"+i).textContent=GAME.sides[i].name;
+$("board").onclick=function(e){var t=e.target.closest("[data-i]");if(t)click(+t.getAttribute("data-i"))};
+$("new").onclick=start;$("sim").onclick=runSim;$("showLast").onchange=function(){ANIM=null;render()};
+$("mode").onchange=$("side").onchange=start;
+function aiSide(){return $("mode").value==="ai"&&cur().turn!==+$("side").value}
+$("redo").onclick=function(){
+  if(busy||sim)return;
+  if(browsing()){unlock(1);return}
+  if(!redo.length)return;
+  hist.push(redo.pop());
+  while(redo.length&&aiSide())hist.push(redo.pop());
+  note="";ANIM=null;render();
+};
+$("undo").onclick=function(){
+  if(busy||sim)return;
+  if(browsing()){unlock(-1);return}
+  if(hist.length<2)return;
+  redo.push(hist.pop());
+  while(hist.length>1&&aiSide())redo.push(hist.pop());
+  over=false;note="";ANIM=null;render();maybeAI();
+};
+$("nFirst").onclick=function(){goto(0)};
+$("nPrev").onclick=function(){goto((browsing()?view:hist.length-1)-1)};
+$("nNext").onclick=function(){goto((browsing()?view:hist.length-1)+1)};
+$("nLast").onclick=function(){goto(hist.length-1+redo.length)};
+start();
+})();
+</script>
+</body>
+</html>
