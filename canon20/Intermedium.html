@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Intermedium</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
+<style>
+:root{--bg:#eef0e6;--ink:#1f2a1c;--mute:#5d6a56;--cell:#dfe3cf;--edge:#b9bfa3;--hi:#e0803a;--panel:#fff;--line:#c5cab4;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f}}
+:root[data-theme="dark"]{--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+main{max-width:1080px;margin:0 auto;padding:16px 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.right>.bar:first-child{margin-top:0}
+@media (min-width:860px){.layout{grid-template-columns:minmax(0,600px) minmax(300px,1fr);gap:28px;align-items:start}}
+h1{font:700 2rem/1.1 "Bricolage Grotesque",Georgia,serif;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+select,button.ctl{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.ctl:disabled,select:disabled,input:disabled{opacity:.45;cursor:default}
+label.f{color:var(--mute);font-size:.9rem}
+input[type=number]{width:4.5em;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+button.ctl.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button.ctl.icon{display:inline-flex;align-items:center;justify-content:center;padding:6px 10px}
+button.ctl.icon svg{width:18px;height:18px;fill:currentColor;display:block}
+.navlab{min-width:7.5em;text-align:center;color:var(--mute);font-variant-numeric:tabular-nums}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.pl{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:8px 12px;display:flex;justify-content:space-between;align-items:baseline;gap:6px}
+.pl.on{border-color:var(--hi)}
+.pl b{font:700 1.6rem "Bricolage Grotesque",Georgia,serif}
+.pl small{color:var(--mute)}
+#status{min-height:1.5em;font-weight:600;margin:6px 0}
+#board svg{display:block;width:100%;max-width:470px;margin:0 auto;touch-action:manipulation}
+#board .sl{cursor:pointer}
+#board .sl .pv{opacity:0;transition:opacity .08s}
+#board .sl:hover .pv{opacity:.55}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+details li{margin:4px 0}
+.legend{color:var(--mute);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+<h1 id="gtitle"></h1>
+<p class="sub" id="gsub"></p>
+<div class="layout">
+<div class="left">
+<div id="board"></div>
+<p class="legend">Click one of your stacks of two or more stones, then click the points it sows into, one step at a time: each click drops one stone on a diagonally adjacent point along your own lines, and the move ends when the last stone is dropped. A step may not go straight back the way the last step came. Green dots mark the steps that can still finish the move; click the last point you dropped on to take that step back, or the starting stack (before the first step) to cancel. In the part-stack variant, clicking the starting stack before the first step lifts one stone fewer each time. Dashed rings mark the stacks you can move. The gold line and rings mark the last move and the stacks it captured. Untick “Show highlights” to show only the board and pieces (moves are entered the same way).</p>
+</div>
+<aside class="right">
+<div class="bar">
+  <select id="vr" aria-label="Variant"><option value="1" selected>Whole stacks move</option><option value="2">Part of a stack may move</option></select>
+</div>
+<div class="bar">
+  <select id="mode" aria-label="Mode"><option value="ai">Play the computer</option><option value="2p">Two players</option></select>
+  <select id="level" aria-label="Computer strength"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select>
+  <select id="side" aria-label="Your side"></select>
+  <button class="ctl primary" id="new">New game</button>
+  <button class="ctl" id="undo">Undo</button>
+  <button class="ctl" id="redo">Redo</button>
+</div>
+<div class="bar" id="nav" role="group" aria-label="Game history">
+  <button class="ctl icon" id="nFirst" aria-label="Go to the beginning" title="Go to the beginning"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="2.5" height="14"/><path d="M19 5v14L8 12z"/></svg></button>
+  <button class="ctl icon" id="nPrev" aria-label="One move back" title="One move back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 5v14L6 12z"/></svg></button>
+  <span class="navlab" id="nlab" aria-live="polite">Move 0 of 0</span>
+  <button class="ctl icon" id="nNext" aria-label="One move forward" title="One move forward"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5v14l11-7z"/></svg></button>
+  <button class="ctl icon" id="nLast" aria-label="Go to the last move" title="Go to the last move"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5v14l11-7z"/><rect x="17.5" y="5" width="2.5" height="14"/></svg></button>
+  <label class="f"><input type="checkbox" id="showLast" checked> Show highlights</label>
+</div>
+<div class="score">
+  <div class="pl" id="p0"><span><span id="n0"></span> <small id="d0"></small></span><b id="s0">0</b></div>
+  <div class="pl" id="p1"><span><span id="n1"></span> <small id="d1"></small></span><b id="s1">0</b></div>
+</div>
+<div id="status" aria-live="polite"></div>
+<div id="last" class="legend" style="min-height:2.6em;margin:0 0 8px"></div>
+<div class="bar">
+  <label class="f">Simulation games <input id="simN" type="number" min="10" max="1000" value="10"></label>
+  <label class="f">Random opening moves <input id="simR" type="number" min="0" max="20" value="4"></label>
+  <button class="ctl" id="sim">Simulation</button>
+</div>
+<div id="simout" class="legend" style="white-space:pre-line;margin:0 0 8px"></div>
+<details>
+<summary>Rules</summary>
+<ul id="rules"></ul>
+</details>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+/* =====================================================================
+   1. GAME DEFINITION  - Intermedium rules, two interleaved diagonal grids, sowing, captures, move generation
+   2. ENGINE           - beam-limited minimax computer opponent, simulations
+   3. INTERFACE        - SVG board, step-by-step sowing input, controls
+   Board: 7 columns (a-g) by 10 rows (1-10) of points, index i = r*7+c, r=0 is row 1 (South, Red's side).
+   Points with (c+r) odd form Red's grid, (c+r) even Blue's grid; the lines of each grid run diagonally, so a
+   stack only ever moves along its owner's grid and the two armies never share a point. Every point of one grid
+   sits inside a diamond of the other grid: its orthogonal neighbours (4 in the centre, 3 on an edge, 2 in a corner)
+   are the points that surround it. Cities: d1 (Red, on Red's grid) and d10 (Blue, on Blue's grid).
+   A move is {f:start point, k:stones lifted, p:[points sown, in order], ns:resulting state}.
+   A state is {b:stones per point (the owner follows from the grid), turn, w:winner (-1 none), why, mv}.
+   ===================================================================== */
+var $=function(i){return document.getElementById(i)};
+
+/* ============================ 1. GAME DEFINITION ============================ */
+var W=7,H=10,NC=W*H,VAR=1,START=4;
+var CC=[],RR=[],LAT=[],DN=[],ON=[],DX=[1,-1,-1,1],DY=[1,1,-1,-1],DNAME=["NE","NW","SW","SE"];   // d^2 is the opposite direction
+var CITY=[3,66];   // d1, d10
+var GAME={
+  title:"Intermedium",
+  subtitle:function(){return "Matt Crispis’ two-dimensional mancala (1974). Two interleaved diagonal grids on a 7×10 board, 11 stacks of "+START+" stones each. Stacks are sown along your own lines; surround the enemy city to win"+(VAR===2?". Variant: part of a stack may move.":".")},
+  sides:[{name:"Red",fill:"#e0393e",band:"#a8222a",edge:"#5c1015",line:"#d6455a",pale:"#f6c9cc"},
+         {name:"Blue",fill:"#2f7fc9",band:"#1d5a96",edge:"#0c2a4d",line:"#2f8fc4",pale:"#c6dcf2"}],
+  rules:[
+  {h:"Board",items:[
+    "The board has two interleaved grids of diagonal lines, 7 points wide (a–g) and 10 high (1–10). Red’s stacks stand on the red grid and Blue’s on the blue grid; stones only ever move along their own grid, so the two armies never meet on a point.",
+    "Each point of one grid lies in the middle of a diamond of the other grid. The corners of that diamond (the points straight above, below, left and right) are the sides that surround it: four for a point in the centre, three on an edge, two in a corner.",
+    "Each player starts with 11 stacks of "+START+" stones on their three home rows (Red on rows 2–4, Blue on rows 7–9). The cities are the centre points of each player’s first row: d1 for Red and d10 for Blue."]},
+  {h:"Play",items:[
+    "Red moves first. On your turn you must move one of your stacks of two or more stones; single stones never move.",
+    "Movement: lift the whole stack and sow it, mancala-style, along your diagonal lines: step to a diagonally adjacent point and drop one stone there, then keep stepping and dropping one stone per point until the stack is used up. The starting point is left empty.",
+    "Each step may go in any diagonal direction except straight back along the step just made (after a step north-east, the next may not go south-west). Points may be visited more than once, and with enough stones a stack may come back to the point it started from.",
+    "Capture: when your last stone lands on a point holding exactly one of your stones (so it becomes a stack of two), every enemy stack next to that point (straight above, below, left or right) that is surrounded on all its sides by your stacks is captured and removed from the board. If the last stone lands anywhere else, nothing is captured."]},
+  {h:"Winning",items:[
+    "You win at once when your stacks occupy every side of the enemy city: d10 is an edge point, so Red needs c10, e10 and d9; d1 needs c1, e1 and d2 for Blue. It does not matter whether the city itself holds stones. The capture trigger is not needed for this.",
+    "You also win when your opponent has no legal move on their turn, because all their remaining stacks are single stones (or none is left)."]},
+  {h:"Variant: part of a stack",items:[
+    "Instead of the whole stack you may lift just its top part, at least two stones; the rest stays behind on the starting point. Everything else is unchanged."]}],
+  stats:function(s,i){var t=tally(s.b,i);
+    return{big:t.st,text:"· "+t.sk+" stacks ("+t.mob+" movable) · city "+t.occ+"/"+CN[1-i].length+" · stones"}},
+  describe:function(s){
+    var m=s.mv;if(!m)return"";
+    var t=GAME.sides[m.by].name+" sowed "+m.k+(m.k<m.n?" of "+m.n:"")+" stones from "+cn(m.f)+": "+m.p.map(cn).join("–")+".";
+    if(m.caps.length)t+=" Captured "+m.caps.map(function(c){return"the stack of "+c[1]+" on "+cn(c[0])}).join(", ")+".";
+    else if(m.trig)t+=" The last stone landed on a single stone, but no enemy stack next to it was surrounded.";
+    if(s.w>=0)t+=s.why==="city"?" "+GAME.sides[s.w].name+" surrounds "+GAME.sides[1-s.w].name+"’s city at "+cn(CITY[1-s.w])+" and wins!":" "+GAME.sides[1-s.w].name+" has no stack of two or more stones that can move: "+GAME.sides[s.w].name+" wins!";
+    return t;
+  }
+};
+var CN=[[],[]];
+function build(){
+  for(var i=0;i<NC;i++){var c=i%W,r=Math.floor(i/W);CC[i]=c;RR[i]=r;LAT[i]=(c+r)%2?0:1;DN[i]=[];ON[i]=[];
+    for(var d=0;d<4;d++){var x=c+DX[d],y=r+DY[d];DN[i][d]=x>=0&&x<W&&y>=0&&y<H?y*W+x:-1}
+    [[1,0],[-1,0],[0,1],[0,-1]].forEach(function(o){var x=c+o[0],y=r+o[1];if(x>=0&&x<W&&y>=0&&y<H)ON[i].push(y*W+x)});
+  }
+  CN=[ON[CITY[0]],ON[CITY[1]]];
+}
+function cn(i){return String.fromCharCode(97+CC[i])+(RR[i]+1)}
+function nameOf(P){return GAME.sides[P].name}
+function newState(){
+  var b=new Uint8Array(NC);
+  [1,2,3,6,7,8].forEach(function(r){for(var c=0;c<W;c++){var i=r*W+c;if(LAT[i]===(r<5?0:1))b[i]=START}});
+  return{b:b,turn:0,w:-1,why:"",mv:null};
+}
+function tally(b,P){var t={st:0,sk:0,mob:0,occ:0};
+  for(var i=0;i<NC;i++)if(LAT[i]===P&&b[i]){t.st+=b[i];t.sk++;if(b[i]>1)t.mob++}
+  CN[1-P].forEach(function(q){if(b[q])t.occ++});return t}
+function citySur(b,P){var A=CN[1-P];for(var j=0;j<A.length;j++)if(!b[A[j]])return false;return true}
+// is there a walk of r more steps from c whose previous step went in direction pd?
+function canFinish(c,pd,r){
+  if(!r)return true;
+  for(var d=0;d<4;d++){if(pd>=0&&d===(pd^2))continue;var j=DN[c][d];if(j>=0&&canFinish(j,d,r-1))return true}
+  return false;
+}
+function minK(n){return VAR===2?2:n}
+function hasMove(b,P){
+  for(var i=0;i<NC;i++)if(LAT[i]===P&&b[i]>1&&(VAR===2||canFinish(i,-1,b[i])))return true;
+  return false;
+}
+function dirOf(a,b){for(var d=0;d<4;d++)if(DN[a][d]===b)return d;return -1}
+function apply(s,f,k,p){
+  var P=s.turn,b=s.b.slice(),i,last=p[k-1],caps=[],trig,n=b[f];
+  b[f]-=k;for(i=0;i<k;i++)b[p[i]]++;
+  trig=b[last]===2;
+  if(trig)for(i=0;i<ON[last].length;i++){var q=ON[last][i];
+    if(b[q]&&ON[q].every(function(z){return b[z]>0}))caps.push([q,b[q]])}
+  caps.forEach(function(c){b[c[0]]=0});
+  var ns={b:b,turn:1-P,w:-1,why:"",mv:{f:f,k:k,n:n,p:p,by:P,caps:caps,trig:trig}};
+  if(citySur(b,P)){ns.w=P;ns.why="city"}
+  else if(!hasMove(b,1-P)){ns.w=P;ns.why="stuck"}
+  return ns;
+}
+// all distinct moves (same start, stones lifted, set of points sown and last point = same result); long walks are sampled
+function gen(s,EX,SM){
+  var P=s.turn,b=s.b,out=[],seen={},f,k,p=[];
+  function add(){var a=p.slice().sort(function(x,y){return x-y}),key=f+","+k+":"+a.join(".")+"|"+p[k-1];
+    if(!seen[key]){seen[key]=1;out.push({f:f,k:k,p:p.slice()})}}
+  function dfs(c,pd){if(p.length===k){add();return}
+    for(var d=0;d<4;d++){if(pd>=0&&d===(pd^2))continue;var j=DN[c][d];if(j<0)continue;p.push(j);dfs(j,d);p.pop()}}
+  function walk(){var c=f,pd=-1,o=[],d,j,t;p.length=0;
+    while(p.length<k){t=0;for(d=0;d<4;d++)if(!(pd>=0&&d===(pd^2))&&DN[c][d]>=0)o[t++]=d;
+      if(!t)return;d=o[Math.floor(Math.random()*t)];j=DN[c][d];p.push(j);c=j;pd=d}
+    add()}
+  for(f=0;f<NC;f++)if(LAT[f]===P&&b[f]>1){
+    var n=b[f],k0=minK(n),nk=n-k0+1;
+    for(k=k0;k<=n;k++){
+      if(k<=EX){p.length=0;dfs(f,-1)}
+      else for(var t=Math.ceil(SM/(VAR===2?Math.sqrt(nk):1));t>0;t--)walk();
+    }
+  }
+  return out;
+}
+function legal(s,EX,SM){if(s.w>=0)return[];var ms=gen(s,EX||6,SM||300);ms.forEach(function(m){m.ns=apply(s,m.f,m.k,m.p)});return ms}
+
+/* ================================ 2. ENGINE ================================ */
+function cheb(a,b){return Math.max(Math.abs(CC[a]-CC[b]),Math.abs(RR[a]-RR[b]))}
+function side(b,P){   // heuristic worth of P's position
+  var v=0,i,n,st=0,mob=0,mst=0,adv=0,big=[],E=1-P;
+  for(i=0;i<NC;i++)if(LAT[i]===P&&(n=b[i])){st+=n;adv+=n*(P?H-1-RR[i]:RR[i]);if(n>1){mob++;mst+=n;big.push(i)}}
+  var A=CN[E],occ=0,reach=0;
+  A.forEach(function(q){if(b[q]){occ++;return}
+    for(var j=0;j<big.length;j++)if(cheb(big[j],q)<=b[big[j]]){reach++;break}});
+  // pressure on enemy stacks: sides already held around them
+  var pr=0;
+  for(i=0;i<NC;i++)if(LAT[i]===E&&b[i]){var o=ON[i],h=0;for(var j=0;j<o.length;j++)if(b[o[j]])h++;
+    if(h===o.length)pr+=1+b[i]*.3;else if(h===o.length-1)pr+=.25}
+  v=st*3+mob*1.3+mst*.15+adv*.035+occ*occ*2.2+reach*.9+(occ+reach>=A.length?3:0)+pr*.8;
+  if(mob<=1)v-=6;else if(mob===2)v-=2;
+  return v;
+}
+function ev(s){return side(s.b,0)-side(s.b,1)}   // from Red's point of view
+var BEAM=[0,0,10,8],DEPTH=[0,0,1,3],INB=5,NOISE=[0,2.5,.4,.1];
+function val1(ns,P){return ns.w>=0?(ns.w===P?1e4:-1e4):(P===0?1:-1)*ev(ns)}
+function nega(s,d,al,be){   // value of s for the player to move
+  if(s.w>=0)return s.w===s.turn?1e4+d:-1e4-d;
+  if(d===0)return(s.turn?-1:1)*ev(s);
+  var ms=legal(s,5,90),P=s.turn,best=-1e9,i,v;
+  if(!ms.length)return -1e4-d;
+  ms.forEach(function(m){m.v=val1(m.ns,P)});
+  if(d===1){ms.forEach(function(m){if(m.v>best)best=m.v});return best}
+  ms.sort(function(a,b){return b.v-a.v});ms=ms.slice(0,INB);
+  for(i=0;i<ms.length;i++){v=ms[i].ns.w>=0?(ms[i].ns.w===P?1e4+d:-1e4-d):-nega(ms[i].ns,d-1,-be,-al);if(v>best)best=v;if(best>al)al=best;if(al>=be)break}
+  return best;
+}
+function aiMove(s,lv){
+  var ms=legal(s,lv===1?5:6,lv===1?120:300),P=s.turn,best=-1e9,pick=null,i,v;
+  if(!ms.length)return null;
+  for(i=0;i<ms.length;i++)if(ms[i].ns.w===P)return ms[i];   // a move that wins right now
+  ms.forEach(function(m){m.v=val1(m.ns,P)+Math.random()*.3});
+  if(lv>1){ms.sort(function(a,b){return b.v-a.v});ms=ms.slice(0,BEAM[lv])}
+  for(i=0;i<ms.length;i++){
+    v=(lv===1?ms[i].v:-nega(ms[i].ns,DEPTH[lv],-1e9,1e9))+Math.random()*NOISE[lv];
+    if(v>best){best=v;pick=ms[i]}
+  }
+  return pick;
+}
+var sim=null,LOCK=["vr","mode","side","level","new","undo","redo","simN","simR","nFirst","nPrev","nNext","nLast"];
+function runSim(){   // computer vs computer, to look for first/second-player advantage
+  if(sim){sim.stop=true;return}
+  var CAP=300,me=sim={stop:false},TOTALG=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?4:+$("simR").value)),
+      done=0,w=[0,0,0],un=0,g=newState(),plies=0,lv=+$("level").value,lvName=$("level").options[$("level").selectedIndex].text,nm=GAME.sides.map(function(x){return x.name});
+  LOCK.forEach(function(i){$(i).disabled=true});
+  sel=null;
+  $("sim").textContent="Stop simulation";
+  $("simout").textContent="Simulating at "+lvName+" level… 0/"+TOTALG;
+  function finish(stopped){
+    sim=null;$("sim").textContent="Simulation";
+    ["vr","mode","new","simN","simR"].forEach(function(i){$(i).disabled=false});
+    $("level").disabled=$("side").disabled=$("mode").value==="2p";
+    var mg=done?(196*Math.sqrt((w[0]/done)*(1-w[0]/done)/done)).toFixed(1):"0";
+    var pc=function(n){return done?(100*n/done).toFixed(1)+"%":"n/a"};
+    $("simout").textContent=(stopped?"Stopped after ":"")+done+" games"+(VAR===2?" (part-stack variant)":"")+" at "+lvName+" level (computer vs computer), first "+RND+" moves random.\n"+
+      "First player ("+nm[0]+") won "+pc(w[0])+" ("+w[0]+" games, margin ±"+mg+" points at 95% confidence). Second player ("+nm[1]+") won "+pc(w[1])+" ("+w[1]+" games)."+(w[2]?" Draws: "+w[2]+".":"")+(un?" Unfinished after "+CAP+" moves: "+un+".":"");
+    render();
+  }
+  function stepSim(){
+    if(me.stop){finish(true);return}
+    var t0=Date.now(),m,ms;
+    while(Date.now()-t0<40){
+      if(g.w>=0||plies>=CAP){
+        if(g.w>=0)w[g.w]++;else un++;
+        done++;g=newState();plies=0;
+        if(done>=TOTALG){finish(false);return}
+        continue;
+      }
+      if(plies<RND){ms=legal(g,4,40);m=ms[Math.floor(Math.random()*ms.length)]}
+      else m=aiMove(g,lv);
+      if(!m){g.w=1-g.turn;continue}
+      g=m.ns;plies++;
+    }
+    $("simout").textContent="Simulating at "+lvName+" level… "+done+"/"+TOTALG;
+    setTimeout(stepSim,0);
+  }
+  stepSim();
+}
+
+/* =============================== 3. INTERFACE =============================== */
+var hist,redo=[],view=null,over,busy,note="",sel=null;   // sel: move being entered {f, k, p:[points sown so far]}
+var GREEN="#2e9e4f",GOLD="#e0a800",HI="#e0803a";
+function cur(){return hist[hist.length-1]}
+function line(){return hist.concat(redo.slice().reverse())}
+function browsing(){return view!==null}
+function shown(){return view===null?cur():line()[view]}
+function goto(k){
+  if(busy||sim)return;
+  var n=hist.length-1+redo.length;k=Math.max(0,Math.min(n,k));
+  view=k===hist.length-1?null:k;note="";sel=null;render();
+}
+function unlock(dir){
+  var Ln=line(),k=view,j;
+  if($("mode").value==="ai"){
+    j=k;while(j>=0&&j<Ln.length&&Ln[j].w<0&&Ln[j].turn!==+$("side").value)j+=dir;
+    if(j>=0&&j<Ln.length)k=j;
+  }
+  hist=Ln.slice(0,k+1);redo=Ln.slice(k+1).reverse();view=null;note="";sel=null;over=false;render();maybeAI();
+}
+function humanTurn(){return $("mode").value==="2p"||cur().turn===+$("side").value}
+function start(){
+  build();VAR=+$("vr").value;
+  $("gsub").textContent=GAME.subtitle();
+  hist=[newState()];redo=[];view=null;note="";sel=null;$("level").disabled=$("side").disabled=$("mode").value==="2p";over=false;busy=false;
+  render();maybeAI();
+}
+function px(i){return CC[i]}
+function py(i){return H-1-RR[i]}
+function movable(b,i,P){return LAT[i]===P&&b[i]>1&&(VAR===2||canFinish(i,-1,b[i]))}
+function head(){return sel.p.length?sel.p[sel.p.length-1]:sel.f}
+function lastDir(){var n=sel.p.length;return n?dirOf(n>1?sel.p[n-2]:sel.f,sel.p[n-1]):-1}
+function nextSteps(){   // steps that still allow the move to be finished
+  var c=head(),pd=lastDir(),r=sel.k-sel.p.length,o=[];
+  for(var d=0;d<4;d++){if(pd>=0&&d===(pd^2))continue;var j=DN[c][d];if(j>=0&&canFinish(j,d,r-1))o.push(j)}
+  return o;
+}
+function drawStack(h,cx,cy,n,P){
+  var sd=GAME.sides[P],th=Math.min(.085,.4/n),rx=.29,ry=.15,base=cy+.12,j,y0,y1;
+  for(j=0;j<n;j++){y0=base-j*th;y1=y0-th;
+    h.push('<ellipse cx="'+cx+'" cy="'+y0+'" rx="'+rx+'" ry="'+ry+'" fill="'+sd.band+'" stroke="'+sd.edge+'" stroke-width=".022"/>');
+    h.push('<rect x="'+(cx-rx)+'" y="'+y1+'" width="'+(2*rx)+'" height="'+th+'" fill="'+sd.band+'"/>');
+    h.push('<line x1="'+(cx-rx)+'" y1="'+y1+'" x2="'+(cx-rx)+'" y2="'+y0+'" stroke="'+sd.edge+'" stroke-width=".022"/><line x1="'+(cx+rx)+'" y1="'+y1+'" x2="'+(cx+rx)+'" y2="'+y0+'" stroke="'+sd.edge+'" stroke-width=".022"/>');
+    h.push('<ellipse cx="'+cx+'" cy="'+y1+'" rx="'+rx+'" ry="'+ry+'" fill="'+sd.fill+'" stroke="'+sd.edge+'" stroke-width=".022"/>');
+  }
+  if(n>1)h.push('<text x="'+cx+'" y="'+(base-n*th+.01)+'" font-size=".2" font-weight="700" text-anchor="middle" dominant-baseline="central" fill="#fff" pointer-events="none">'+n+'</text>');
+}
+function ring(h,i,r,col,dash,wd){h.push('<circle cx="'+px(i)+'" cy="'+py(i)+'" r="'+r+'" fill="none" stroke="'+col+'" stroke-width="'+(wd||.06)+'"'+(dash?' stroke-dasharray="'+dash+'" stroke-opacity=".6"':'')+' pointer-events="none"/>')}
+function poly(h,pts,col,wd,op){h.push('<polyline points="'+pts.map(function(i){return px(i)+','+py(i)}).join(' ')+'" fill="none" stroke="'+col+'" stroke-width="'+wd+'" stroke-opacity="'+op+'" stroke-linecap="round" stroke-linejoin="round" pointer-events="none"/>')}
+function cityIcon(h,i,P){var x=px(i),y=py(i),sd=GAME.sides[P];
+  h.push('<rect x="'+(x-.4)+'" y="'+(y-.4)+'" width=".8" height=".8" rx=".1" fill="'+sd.pale+'" stroke="'+sd.line+'" stroke-width=".04"/>');
+  h.push('<path d="M'+(x-.26)+' '+(y+.28)+'v-.26h.12v.08h.08v-.2h.12v.2h.08v-.08h.12v.26z" fill="'+sd.line+'" fill-opacity=".55" pointer-events="none"/>');
+  h.push('<path d="M'+(x-.05)+' '+(y-.16)+'h.1M'+x+' '+(y-.22)+'v.1" stroke="'+sd.line+'" stroke-opacity=".55" stroke-width=".03" pointer-events="none"/>');
+}
+function render(){
+  var br=browsing(),s=shown(),sd=GAME.sides,h=[],P=s.turn,i,k,nT=hist.length-1+redo.length,kk=br?view:hist.length-1,lock=busy||!!sim,mv=s.mv,HL=$("showLast").checked;
+  over=s.w>=0;
+  h.push('<svg viewBox="-1.15 -1.15 '+(W+1.3)+' '+(H+1.3)+'" role="img" aria-label="Intermedium board">');
+  h.push('<rect x="-.78" y="-.78" width="'+(W-1+1.56)+'" height="'+(H-1+1.56)+'" rx=".2" fill="#cfc8b6"/>');
+  h.push('<rect x="-.68" y="-.68" width="'+(W-1+1.36)+'" height="'+(H-1+1.36)+'" rx=".16" fill="#f8f6ef" stroke="#e2ddcf" stroke-width=".04"/>');
+  (function(){   // coordinates: letters = columns (top and bottom), numbers = rows (left and right), row 1 at the bottom
+    function lab(x,y,t){h.push('<text x="'+x+'" y="'+y+'" font-size=".3" text-anchor="middle" dominant-baseline="central" fill="var(--mute)" pointer-events="none">'+t+'</text>')}
+    for(var c=0;c<W;c++){var Lt=String.fromCharCode(97+c);lab(c,-.97,Lt);lab(c,H-1+.97,Lt)}
+    for(var r=0;r<H;r++){lab(-.97,H-1-r,r+1);lab(W-1+.97,H-1-r,r+1)}
+  })();
+  cityIcon(h,CITY[0],0);cityIcon(h,CITY[1],1);
+  // the two grids: diagonal lines in the owner's colour
+  for(i=0;i<NC;i++)[0,3].forEach(function(d){var j=DN[i][d];if(j>=0)h.push('<line x1="'+px(i)+'" y1="'+py(i)+'" x2="'+px(j)+'" y2="'+py(j)+'" stroke="'+sd[LAT[i]].line+'" stroke-width=".05" stroke-opacity=".55" stroke-linecap="round"/>')});
+  for(i=0;i<NC;i++)h.push('<circle cx="'+px(i)+'" cy="'+py(i)+'" r=".085" fill="'+sd[LAT[i]].line+'" fill-opacity=".8"/>');
+  var canAct=!br&&!over&&humanTurn()&&!busy,b=s.b,nx=[];
+  if(!canAct)sel=null;
+  if(sel){b=s.b.slice();b[sel.f]-=sel.k;sel.p.forEach(function(c){b[c]++});nx=nextSteps()}
+  if(mv&&HL&&!sel){
+    poly(h,[mv.f].concat(mv.p),GOLD,.09,.75);
+    ring(h,mv.f,.38,GOLD);ring(h,mv.p[mv.k-1],.42,GOLD);
+    mv.caps.forEach(function(c){ring(h,c[0],.38,GOLD,".09 .06",.07);
+      h.push('<path d="M'+(px(c[0])-.15)+' '+(py(c[0])-.15)+'l.3 .3m0 -.3l-.3 .3" stroke="'+GOLD+'" stroke-width=".07" stroke-linecap="round" pointer-events="none"/>')});
+  }
+  if(canAct&&HL){
+    if(sel){h.push('<circle cx="'+px(sel.f)+'" cy="'+py(sel.f)+'" r=".42" fill="'+HI+'" fill-opacity=".15" stroke="'+HI+'" stroke-width=".06" pointer-events="none"/>');
+      if(sel.p.length)poly(h,[sel.f].concat(sel.p),HI,.08,.8);}
+    else for(i=0;i<NC;i++)if(movable(s.b,i,P))ring(h,i,.42,GREEN,".1 .07",.04);
+  }
+  for(i=0;i<NC;i++)if(b[i])drawStack(h,px(i),py(i),b[i],LAT[i]);
+  if(sel&&HL){
+    nx.forEach(function(j){h.push('<circle cx="'+px(j)+'" cy="'+(py(j)+(b[j]?.27:0))+'" r=".11" fill="'+GREEN+'" fill-opacity=".85" pointer-events="none"/>')});
+    var hd=head(),r=sel.k-sel.p.length;
+    h.push('<rect x="'+(px(hd)+.2)+'" y="'+(py(hd)-.58)+'" width=".5" height=".28" rx=".08" fill="'+HI+'" pointer-events="none"/><text x="'+(px(hd)+.45)+'" y="'+(py(hd)-.44)+'" font-size=".2" font-weight="700" text-anchor="middle" dominant-baseline="central" fill="#fff" pointer-events="none">×'+r+'</text>');
+  }
+  for(i=0;i<NC;i++)h.push('<circle data-i="'+i+'" cx="'+px(i)+'" cy="'+py(i)+'" r=".5" fill="#000" fill-opacity="0" style="cursor:pointer"/>');
+  h.push('</svg>');
+  $("board").innerHTML=h.join("");
+  var names=sd.map(function(x){return x.name}),st;
+  for(i=0;i<2;i++){var t=GAME.stats(s,i);$("s"+i).textContent=t.big;$("d"+i).textContent=t.text;
+    $("p"+i).className="pl"+(!over&&s.turn===i?" on":"")}
+  if(br)st="Reviewing history (move "+kk+" of "+nT+"): the board is locked. Press Undo or Redo to play on from here.";
+  else if(over)st="Game over: "+names[s.w]+" wins.";
+  else if(!humanTurn())st=names[P]+" to move (computer thinking…)";
+  else if(sel){var rem=sel.k-sel.p.length;
+    st=names[P]+": sowing "+sel.k+(sel.k<s.b[sel.f]?" of "+s.b[sel.f]:"")+" stones from "+cn(sel.f)+", "+rem+" left. Click the next point"+(sel.p.length?" (or "+cn(head())+" to step back).":(VAR===2&&sel.k>2?" (or "+cn(sel.f)+" to lift one stone fewer).":" (or "+cn(sel.f)+" to cancel)."))}
+  else st=names[P]+" to move: pick one of your stacks of two or more stones.";
+  $("status").textContent=st;
+  $("last").textContent=(GAME.describe(s)+" "+note).trim();
+  $("undo").disabled=lock||!(br||hist.length>=2);
+  $("redo").disabled=lock||!(br||redo.length);
+  $("nFirst").disabled=$("nPrev").disabled=lock||kk<=0;
+  $("nNext").disabled=$("nLast").disabled=lock||kk>=nT;
+  $("nlab").textContent="Move "+kk+" of "+nT;
+}
+function play(ns){hist.push(ns);redo=[];note="";sel=null;render();maybeAI()}
+function click(i){
+  if(over||busy||browsing()||!humanTurn())return;
+  var s=cur(),P=s.turn,b=s.b;note="";
+  if(sel){
+    if(!sel.p.length&&i===sel.f){if(VAR===2&&sel.k>2)sel.k--;else sel=null;render();return}
+    if(sel.p.length&&i===head()){sel.p.pop();render();return}
+    if(nextSteps().indexOf(i)>=0){sel.p.push(i);
+      if(sel.p.length===sel.k){play(apply(s,sel.f,sel.k,sel.p.slice()));return}
+      render();return}
+    if(!sel.p.length&&movable(b,i,P)){sel={f:i,k:b[i],p:[]};render();return}
+    note=LAT[i]!==P?"That point is on "+nameOf(1-P)+"’s grid: your stones only move along your own lines.":"That point is not a legal next step from "+cn(head())+" (one diagonal step, not straight back, and the rest of the stones must still fit).";
+    render();return;
+  }
+  if(movable(b,i,P))sel={f:i,k:b[i],p:[]};
+  else note=LAT[i]!==P?(b[i]?"That stack belongs to "+nameOf(1-P)+".":"That point is on "+nameOf(1-P)+"’s grid."):b[i]===1?"Single stones do not move.":b[i]?"That stack has no legal sowing path.":"Click one of your stacks of two or more stones.";
+  render();
+}
+function maybeAI(){
+  if(over||$("mode").value!=="ai"||cur().turn===+$("side").value)return;
+  busy=true;render();
+  setTimeout(function(){
+    var c=cur(),m=aiMove(c,+$("level").value);busy=false;
+    if(m){hist.push(m.ns);redo=[]}
+    render();maybeAI();
+  },60);
+}
+document.title=GAME.title;$("gtitle").textContent=GAME.title;
+function li(x){return"<li>"+(typeof x==="string"?x:x.t+"<ul>"+x.sub.map(li).join("")+"</ul>")+"</li>"}
+$("rules").innerHTML=GAME.rules.map(function(sec){return"<li><b>"+sec.h+"</b><ul>"+sec.items.map(li).join("")+"</ul></li>"}).join("");
+$("side").innerHTML=GAME.sides.map(function(x,i){return'<option value="'+i+'">You are '+x.name+(i?"":" (first)")+'</option>'}).join("");
+for(var i=0;i<2;i++)$("n"+i).textContent=GAME.sides[i].name;
+$("board").onclick=function(e){var t=e.target.closest("[data-i]");if(t)click(+t.getAttribute("data-i"))};
+$("new").onclick=start;$("sim").onclick=runSim;$("showLast").onchange=render;
+$("mode").onchange=$("side").onchange=$("vr").onchange=start;
+document.addEventListener("keydown",function(e){if(e.key==="Escape"&&sel){sel=null;note="";render()}});
+function aiSide(){return $("mode").value==="ai"&&cur().turn!==+$("side").value}
+$("redo").onclick=function(){
+  if(busy||sim)return;
+  if(browsing()){unlock(1);return}
+  if(!redo.length)return;
+  hist.push(redo.pop());
+  while(redo.length&&aiSide())hist.push(redo.pop());
+  note="";sel=null;render();
+};
+$("undo").onclick=function(){
+  if(busy||sim)return;
+  if(browsing()){unlock(-1);return}
+  if(hist.length<2)return;
+  redo.push(hist.pop());
+  while(hist.length>1&&aiSide())redo.push(hist.pop());
+  over=false;note="";sel=null;render();maybeAI();
+};
+$("nFirst").onclick=function(){goto(0)};
+$("nPrev").onclick=function(){goto((browsing()?view:hist.length-1)-1)};
+$("nNext").onclick=function(){goto((browsing()?view:hist.length-1)+1)};
+$("nLast").onclick=function(){goto(hist.length-1+redo.length)};
+start();
+})();
+</script>
+</body>
+</html>

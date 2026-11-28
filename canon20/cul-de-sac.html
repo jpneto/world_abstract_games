@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cul-de-Sac</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&display=swap">
+<style>
+:root{--bg:#eef0e6;--ink:#1f2a1c;--mute:#5d6a56;--cell:#dfe3cf;--edge:#b9bfa3;--hi:#e0803a;--panel:#fff;--line:#c5cab4;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f}}
+:root[data-theme="dark"]{--bg:#161c14;--ink:#e8ecdc;--mute:#9aa68f;--cell:#2a3325;--edge:#3b4733;--panel:#1f271c;--line:#37422f}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+main{max-width:1080px;margin:0 auto;padding:16px 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.right>.bar:first-child{margin-top:0}
+@media (min-width:860px){.layout{grid-template-columns:minmax(0,600px) minmax(300px,1fr);gap:28px;align-items:start}}
+h1{font:700 2rem/1.1 "Bricolage Grotesque",Georgia,serif;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+select,button.ctl{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+button.ctl:disabled,select:disabled,input:disabled{opacity:.45;cursor:default}
+label.f{color:var(--mute);font-size:.9rem}
+input[type=number]{width:4.5em;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+button.ctl.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button.ctl.icon{display:inline-flex;align-items:center;justify-content:center;padding:6px 10px}
+button.ctl.icon svg{width:18px;height:18px;fill:currentColor;display:block}
+.navlab{min-width:7.5em;text-align:center;color:var(--mute);font-variant-numeric:tabular-nums}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.pl{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:8px 12px;display:flex;justify-content:space-between;align-items:baseline;gap:6px}
+.pl.on{border-color:var(--hi)}
+.pl b{font:700 1.6rem "Bricolage Grotesque",Georgia,serif}
+.pl small{color:var(--mute)}
+#status{min-height:1.5em;font-weight:600;margin:6px 0}
+#board svg{display:block;width:100%;max-width:600px;margin:0 auto;touch-action:manipulation}
+#board .sl{cursor:pointer}
+#board .sl .pv{opacity:0;transition:opacity .08s}
+#board .sl:hover .pv{opacity:.55}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+details li{margin:4px 0}
+.legend{color:var(--mute);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+<h1 id="gtitle"></h1>
+<p class="sub" id="gsub"></p>
+<div class="layout">
+<div class="left">
+<div id="board"></div>
+<p class="legend" id="help"></p>
+</div>
+<aside class="right">
+<div class="bar">
+  <select id="vr" aria-label="Variant"><option value="0" selected>Cul-de-Sac · 11×14, two pawns each</option><option value="1">Quoridor variant · 9×9, one pawn each</option></select>
+</div>
+<div class="bar">
+  <select id="mode" aria-label="Mode"><option value="ai">Play the computer</option><option value="2p">Two players</option></select>
+  <select id="level" aria-label="Computer strength"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select>
+  <select id="side" aria-label="Your side"></select>
+  <button class="ctl primary" id="new">New game</button>
+  <button class="ctl" id="undo">Undo</button>
+  <button class="ctl" id="redo">Redo</button>
+</div>
+<div class="bar" id="nav" role="group" aria-label="Game history">
+  <button class="ctl icon" id="nFirst" aria-label="Go to the beginning" title="Go to the beginning"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="2.5" height="14"/><path d="M19 5v14L8 12z"/></svg></button>
+  <button class="ctl icon" id="nPrev" aria-label="One move back" title="One move back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 5v14L6 12z"/></svg></button>
+  <span class="navlab" id="nlab" aria-live="polite">Move 0 of 0</span>
+  <button class="ctl icon" id="nNext" aria-label="One move forward" title="One move forward"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5v14l11-7z"/></svg></button>
+  <button class="ctl icon" id="nLast" aria-label="Go to the last move" title="Go to the last move"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5v14l11-7z"/><rect x="17.5" y="5" width="2.5" height="14"/></svg></button>
+  <label class="f"><input type="checkbox" id="showLast" checked> Show highlights</label>
+</div>
+<div class="score">
+  <div class="pl" id="p0"><span><span id="n0"></span> <small id="d0"></small></span><b id="s0">0</b></div>
+  <div class="pl" id="p1"><span><span id="n1"></span> <small id="d1"></small></span><b id="s1">0</b></div>
+</div>
+<div id="status" aria-live="polite"></div>
+<div id="last" class="legend" style="min-height:2.6em;margin:0 0 8px"></div>
+<div class="bar">
+  <label class="f">Simulation games <input id="simN" type="number" min="10" max="1000" value="10"></label>
+  <label class="f">Random opening moves <input id="simR" type="number" min="0" max="20" value="4"></label>
+  <button class="ctl" id="sim">Simulation</button>
+</div>
+<div id="simout" class="legend" style="white-space:pre-line;margin:0 0 8px"></div>
+<details>
+<summary>Rules</summary>
+<ul id="rules"></ul>
+</details>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+/* =====================================================================
+   1. GAME DEFINITION  - Cul-de-Sac / Quoridor rules, board geometry, walls, pawn moves
+   2. ENGINE           - minimax (beam-limited) computer opponent on shortest-path distances, simulations
+   3. INTERFACE        - SVG board, click handling, controls
+   Cells c = y*W+x, x = 0..W-1 west to east, y = 0..H-1 north to south (row number = H-y, row 1 in the south).
+   Wall centres are the inner grid corners (i,j), i = 1..W-1, j = 1..H-1, index k = (j-1)*(W-1)+(i-1).
+   A horizontal wall (o=0) at (i,j) closes the south sides of cells (i-1,j-1) and (i,j-1); a vertical wall (o=1)
+   closes the east sides of cells (i-1,j-1) and (i-1,j). bS[c] / bE[c] = 1 when the south / east side of c is closed.
+   A move is {t:0 (pawn) k:pawn index, to:cell, ns} or {t:1 (wall), o, k:centre, ns}. In Cul-de-Sac a turn is two
+   history steps (pawn move, then wall); in Quoridor it is one (pawn move or wall).
+   A state is {pos:pawn cells (first player's pawns first, -1 = removed), hw, vw:wall centres taken, bS, bE,
+               res:walls left [P0 blue/all, P0 green, P1 blue/all, P1 green], turn, ph (0 pawn, 1 wall: Cul-de-Sac only),
+               w:winner (-1 none, 0, 1, 2 draw), lm:{k,from,to,wall:[o,k]} last turn's actions, ev:text, f:distance fields}.
+   ===================================================================== */
+var $=function(i){return document.getElementById(i)};
+
+/* ============================ 1. GAME DEFINITION ============================ */
+var V=0,W,H,NC,NW,NP,DD,HOMES,GOAL,START;
+var VARS=[
+  {name:"Cul-de-Sac",W:11,H:14,np:2,walls:[9,9],
+   sides:[{name:"Red",color:"#e2392f",dark:"#7a140e",lite:"#ff9b8f",goal:"Yellow’s home spaces"},{name:"Yellow",color:"#f7c62b",dark:"#8a6400",lite:"#fff3b0",goal:"Red’s home spaces"}],
+   board:{rim:"#18181a",groove:"#0a0a0b",sq:"#2f2f33",edge:"#3d3d42"},
+   wall:[{f:"#5fc4e8",s:"#24819f",n:"blue"},{f:"#22b46a",s:"#0e6e3e",n:"green"}]},
+  {name:"Quoridor",W:9,H:9,np:1,walls:[10],
+   sides:[{name:"Light",color:"#eec47e",dark:"#8a5a22",lite:"#fff0d2",goal:"the north row"},{name:"Dark",color:"#4b2b1b",dark:"#1a0c05",lite:"#8a5a3e",goal:"the south row"}],
+   board:{rim:"#4e2112",groove:"#2e1208",sq:"#6c2f1b",edge:"#7d3a23"},
+   wall:[{f:"#e8b46c",s:"#9c6a2c",n:"wood"},{f:"#e8b46c",s:"#9c6a2c",n:"wood"}]}];
+var GAME={
+  title:"Cul-de-Sac",
+  sides:VARS[0].sides,
+  subtitle:function(){return V===0?"Philip Slater’s maze race (1975), also sold as Blockade. 11×14 board, two pawns and 9 blue + 9 green walls each. Reach one of the opponent’s home spaces first."
+    :"Quoridor variant, after Mirko Marchesi’s game (1997). 9×9 board, one pawn and 10 walls each. Reach the far row first."},
+  rules:[
+  {h:"Cul-de-Sac: board and setup",items:[
+    "An 11×14 board of squares with grooves between them for walls. Red’s home spaces are d4 and h4, Yellow’s are d11 and h11. Each player starts with both pawns on their own home spaces.",
+    "Each player has 9 blue walls, which can only be placed horizontally (east–west), and 9 green walls, which can only be placed vertically (north–south). A wall covers the side of exactly two squares and must line up with them.",
+    "Red moves first."]},
+  {h:"Cul-de-Sac: a turn",items:[
+    "On your turn you must move one of your pawns and then place one of your walls in any open groove. When you have no walls left you only move a pawn.",
+    "A pawn moves two squares in a straight line (forward, backward or sideways) or one square diagonally. Walls may not be in the way: a diagonal step needs at least one of its two L-shaped routes free of walls.",
+    "A pawn may jump over another pawn in its way. If the landing square of a straight move is taken by another pawn, the pawn may move just one square instead. Two pawns never share a square.",
+    "Walls may not overlap or cross other walls. There must always be at least one open path, however devious, from every pawn to all four home spaces, so a home space can never be closed in by walls.",
+    "If you cannot move either pawn you only place a wall; if you can do neither, you pass."]},
+  {h:"Cul-de-Sac: winning",items:[
+    "The first player to move a pawn onto either of the opponent’s home spaces wins. The winning move may be one or two squares.",
+    "You may not protect a home space by leaving a pawn on it: the winner may move onto an occupied enemy home space and removes the pawn standing there."]},
+  {h:"Variant: Quoridor",items:[
+    "A 9×9 board. Each player has one pawn, starting in the middle of their first row: Light on e1 (south), Dark on e9 (north). Light moves first.",
+    "Each player has 10 walls of one colour, which can be placed horizontally or vertically. A wall covers the side of two squares; walls may not overlap or cross.",
+    "On your turn you either move your pawn one square orthogonally or place one wall. A wall may never cut off either pawn from every square of its goal row.",
+    "If the pawns are face to face with no wall between them, you may jump over the opponent’s pawn. If a wall or the board edge is behind it, you may instead step diagonally to either side of it, unless a wall blocks that side.",
+    "The first player to reach any square of the opponent’s first row (Light the north row, Dark the south row) wins."]},
+  {h:"Notation",items:[
+    "Squares are named by column letter (a, b, c… from west to east) and row number (1 in the south). A wall is named after the square just south-west of its centre, plus h or v: d3h lies along the north sides of d3 and e3, d3v along the east sides of d3 and d4."]}],
+  stats:function(s,i){var F=fieldsOf(s)[i],d=pawnDist(s,i,F)[0],t=(d>=99?"no path":d+" move"+(d===1?"":"s")+" to goal")+" · ";
+    if(V===0)t+=s.res[2*i]+" blue + "+s.res[2*i+1]+" green walls:";else t+="walls left:";
+    return{big:V===0?s.res[2*i]+s.res[2*i+1]:s.res[2*i],text:"· "+t}},
+  describe:function(s){return s.ev||""}
+};
+function build(v){
+  V=v;var C=VARS[v],x;W=C.W;H=C.H;NC=W*H;NW=(W-1)*(H-1);NP=C.np;DD=[-W,1,W,-1];GAME.sides=C.sides;
+  GOAL=[new Uint8Array(NC),new Uint8Array(NC)];
+  if(v===0){
+    HOMES=[[(H-4)*W+3,(H-4)*W+7],[3*W+3,3*W+7]];START=HOMES[0].concat(HOMES[1]);
+    HOMES[1].forEach(function(c){GOAL[0][c]=1});HOMES[0].forEach(function(c){GOAL[1][c]=1});
+  }else{
+    HOMES=null;START=[(H-1)*W+4,4];
+    for(x=0;x<W;x++){GOAL[0][x]=1;GOAL[1][(H-1)*W+x]=1}
+  }
+}
+function cn(c){return String.fromCharCode(97+c%W)+(H-(c/W|0))}
+function wname(o,k){var i=k%(W-1)+1,j=(k/(W-1)|0)+1;return cn(j*W+i-1)+(o?"v":"h")}
+function nameOf(P){return GAME.sides[P].name}
+function owner(k){return k/NP|0}
+// is side d of cell c open? d: 0 N, 1 E, 2 S, 3 W
+function op(bS,bE,c,d){
+  switch(d){case 0:return c>=W&&!bS[c-W];case 1:return c%W<W-1&&!bE[c];case 2:return c<NC-W&&!bS[c];default:return c%W>0&&!bE[c-1]}
+}
+// Blockade steps that ignore pawns (two straight, or one diagonal along an open L): cb(target, via1, via2)
+function hop(bS,bE,u,cb){
+  var d,a,b,d1,d2,r1,r2;
+  for(d=0;d<4;d++)if(op(bS,bE,u,d)){a=u+DD[d];if(op(bS,bE,a,d))cb(a+DD[d],a,-1)}
+  for(d1=0;d1<4;d1+=2)for(d2=1;d2<4;d2+=2){
+    a=u+DD[d1];b=u+DD[d2];r1=op(bS,bE,u,d1)&&op(bS,bE,a,d2);r2=op(bS,bE,u,d2)&&op(bS,bE,b,d1);
+    if(r1||r2)cb(u+DD[d1]+DD[d2],r1?a:-1,r2?b:-1);
+  }
+}
+// moves player P needs from each cell to reach one of P's goal cells (pawns ignored), 99 = cut off
+function field(bS,bE,P){
+  var D=new Int16Array(NC).fill(99),q=new Int16Array(NC),h=0,t=0,c,u,du,d,v,G=GOAL[P];
+  for(c=0;c<NC;c++)if(G[c]){D[c]=0;q[t++]=c}
+  function see(v){if(D[v]>du){D[v]=du;q[t++]=v}}
+  while(h<t){u=q[h++];du=D[u]+1;
+    if(V===1||G[u]){for(d=0;d<4;d++)if(op(bS,bE,u,d)){v=u+DD[d];if(D[v]>du){D[v]=du;q[t++]=v}}}
+    if(V===0)hop(bS,bE,u,see);
+  }
+  return D;
+}
+function flood(bS,bE,src){
+  var seen=new Uint8Array(NC),q=[src],h,u,d,v;seen[src]=1;
+  for(h=0;h<q.length;h++){u=q[h];for(d=0;d<4;d++)if(op(bS,bE,u,d)){v=u+DD[d];if(!seen[v]){seen[v]=1;q.push(v)}}}
+  return seen;
+}
+// Blockade: all home spaces and pawns in one open region. Quoridor: each pawn can still reach its goal row.
+function connOK(bS,bE,pos){
+  var s,i,x;
+  if(V===0){s=flood(bS,bE,HOMES[0][0]);
+    for(i=0;i<2;i++)if(!s[HOMES[1][i]]||!s[HOMES[0][i]])return false;
+    for(i=0;i<pos.length;i++)if(pos[i]>=0&&!s[pos[i]])return false;
+    return true}
+  for(i=0;i<2;i++){s=flood(bS,bE,pos[i]);var ok=false;for(x=0;x<NC;x++)if(GOAL[i][x]&&s[x]){ok=true;break}if(!ok)return false}
+  return true;
+}
+function geomOK(hw,vw,o,k){
+  var i=k%(W-1)+1,j=(k/(W-1)|0)+1,R=W-1;
+  if(hw[k]||vw[k])return false;                       // same centre: taken or crossing
+  if(o===0)return!(i>1&&hw[k-1])&&!(i<W-1&&hw[k+1]);   // overlapping horizontal wall
+  return!(j>1&&vw[k-R])&&!(j<H-1&&vw[k+R]);            // overlapping vertical wall
+}
+function wedges(o,k){var i=k%(W-1)+1,j=(k/(W-1)|0)+1;return o===0?[(j-1)*W+i-1,(j-1)*W+i]:[(j-1)*W+i-1,j*W+i-1]}
+function wallsLeft(s,P,o){return V===0?s.res[2*P+o]:s.res[2*P]}
+function occ(s,c){for(var i=0;i<s.pos.length;i++)if(s.pos[i]===c)return i;return -1}
+function mk(pos,hw,vw,bS,bE,res,turn,ph,lm,ev){return{pos:pos,hw:hw,vw:vw,bS:bS,bE:bE,res:res,turn:turn,ph:ph,w:-1,lm:lm,ev:ev||"",f:null}}
+function newState(){var r=VARS[V].walls,res=V===0?[r[0],r[1],r[0],r[1]]:[r[0],0,r[0],0];
+  return mk(START.slice(),new Uint8Array(NW),new Uint8Array(NW),new Uint8Array(NC),new Uint8Array(NC),res,0,0,null,"")}
+// destination cells of pawn k
+function dests(s,k){
+  var P=owner(k),c=s.pos[k],bS=s.bS,bE=s.bE,out=[],G=GOAL[P],d,a,b,d1,d2,t,p;
+  function add(t){if(out.indexOf(t)<0)out.push(t)}
+  function ent(t){return G[t]||occ(s,t)<0}           // an enemy home space may be entered even when a pawn stands on it
+  if(c<0)return out;
+  if(V===0){
+    for(d=0;d<4;d++)if(op(bS,bE,c,d)){a=c+DD[d];if(G[a])add(a);
+      if(op(bS,bE,a,d)){b=a+DD[d];if(ent(b))add(b);else if(occ(s,a)<0)add(a)}}
+    for(d1=0;d1<4;d1+=2)for(d2=1;d2<4;d2+=2){a=c+DD[d1];b=c+DD[d2];
+      if((op(bS,bE,c,d1)&&op(bS,bE,a,d2))||(op(bS,bE,c,d2)&&op(bS,bE,b,d1))){t=c+DD[d1]+DD[d2];if(ent(t))add(t)}}
+  }else{
+    var e=s.pos[1-P];
+    for(d=0;d<4;d++){if(!op(bS,bE,c,d))continue;a=c+DD[d];
+      if(a!==e){add(a);continue}
+      if(op(bS,bE,a,d))add(a+DD[d]);
+      else for(p=1;p<4;p+=2){t=(d+p)%4;if(op(bS,bE,a,t))add(a+DD[t])}}
+  }
+  return out;
+}
+function hasPawnMove(s,P){for(var k=P*NP;k<P*NP+NP;k++)if(dests(s,k).length)return true;return false}
+function wallWhy(s,o,k){   // "" when player s.turn may place wall (o,k)
+  var P=s.turn;
+  if(wallsLeft(s,P,o)<=0)return V===0?"You have no "+VARS[0].wall[o].n+" walls left.":"You have no walls left.";
+  if(!geomOK(s.hw,s.vw,o,k))return"That groove is taken: walls may not overlap or cross.";
+  var e=wedges(o,k),bS=s.bS,bE=s.bE;
+  if(o===0){bS=bS.slice();bS[e[0]]=bS[e[1]]=1}else{bE=bE.slice();bE[e[0]]=bE[e[1]]=1}
+  if(!connOK(bS,bE,s.pos))return V===0?"That wall would cut off a pawn or a home space: an open path to all home spaces must remain.":"That wall would cut a pawn off from its goal row.";
+  return"";
+}
+function anyWall(s){
+  var o,k;for(o=0;o<2;o++)if(wallsLeft(s,s.turn,o)>0)for(k=0;k<NW;k++)if(geomOK(s.hw,s.vw,o,k)&&!wallWhy(s,o,k))return true;
+  return false;
+}
+// start of a turn: skip the pawn move (or the whole turn) when it is impossible
+function opening(s){
+  var Q=s.turn;
+  if(hasPawnMove(s,Q))return s;
+  if(anyWall(s)){if(V===0)s.ph=1;s.ev=(s.ev+" "+nameOf(Q)+" cannot move a pawn and only places a wall.").trim();return s}
+  s.ev=(s.ev+" "+nameOf(Q)+" can neither move nor place a wall and passes.").trim();
+  s.passes=(s.passes||0)+1;s.turn=1-Q;s.ph=0;
+  if(s.passes>=2){s.w=2;s.ev+=" Nobody can move: the game is a draw.";return s}
+  return opening(s);
+}
+function doMove(s,k,to){
+  var P=s.turn,pos=s.pos.slice(),from=pos[k],cap=occ(s,to),ns,lm={k:k,from:from,to:to,wall:null},
+      txt=nameOf(P)+" moved "+cn(from)+"–"+cn(to)+".";
+  if(cap>=0){pos[cap]=-1;txt+=" "+nameOf(1-P)+"’s pawn is removed from its home space."}
+  pos[k]=to;
+  if(GOAL[P][to]){ns=mk(pos,s.hw,s.vw,s.bS,s.bE,s.res,P,0,lm,txt+" "+nameOf(P)+" reaches "+(V===0?"one of ":"")+GAME.sides[P].goal+" and wins!");ns.w=P;ns.f=s.f;return{t:0,k:k,to:to,ns:ns}}
+  if(V===0){ns=mk(pos,s.hw,s.vw,s.bS,s.bE,s.res,P,1,lm,txt);ns.f=s.f;
+    if(ns.res[2*P]+ns.res[2*P+1]>0){if(anyWall(ns))return{t:0,k:k,to:to,ns:ns};txt+=" No wall can be placed."}}
+  ns=mk(pos,s.hw,s.vw,s.bS,s.bE,s.res,1-P,0,lm,txt);ns.f=s.f;
+  return{t:0,k:k,to:to,ns:opening(ns)};
+}
+function doWall(s,o,k){   // assumes the wall is legal
+  var P=s.turn,hw=s.hw,vw=s.vw,bS=s.bS,bE=s.bE,res=s.res.slice(),e=wedges(o,k),lm,txt;
+  if(o===0){hw=hw.slice();hw[k]=1;bS=bS.slice();bS[e[0]]=bS[e[1]]=1}else{vw=vw.slice();vw[k]=1;bE=bE.slice();bE[e[0]]=bE[e[1]]=1}
+  res[V===0?2*P+o:2*P]--;
+  lm=V===0&&s.ph===1&&s.lm&&s.lm.k>=0&&owner(s.lm.k)===P?{k:s.lm.k,from:s.lm.from,to:s.lm.to,wall:[o,k]}:{k:-1,wall:[o,k]};
+  txt=(V===0&&s.ph===1?s.ev+" ":"")+nameOf(P)+" placed "+(V===0?"a "+VARS[0].wall[o].n+" wall":"a wall")+" at "+wname(o,k)+".";
+  return{t:1,o:o,k:k,ns:opening(mk(s.pos,hw,vw,bS,bE,res,1-P,0,lm,txt))};
+}
+function pawnMoves(s){var out=[],P=s.turn,k;
+  for(k=P*NP;k<P*NP+NP;k++)dests(s,k).forEach(function(t){out.push(doMove(s,k,t))});
+  return out}
+function wallMoves(s,cand){
+  var out=[],o,k,i;
+  if(cand){for(i=0;i<cand.length;i+=2){o=cand[i];k=cand[i+1];if(!wallWhy(s,o,k))out.push(doWall(s,o,k))}}
+  else for(o=0;o<2;o++)if(wallsLeft(s,s.turn,o)>0)for(k=0;k<NW;k++)if(geomOK(s.hw,s.vw,o,k)&&!wallWhy(s,o,k))out.push(doWall(s,o,k));
+  return out;
+}
+function legal(s,inner){
+  if(s.w>=0)return[];
+  var out=[],c;
+  if(V===1||s.ph===0)out=pawnMoves(s);
+  if(V===1||s.ph===1){
+    if(wallsLeft(s,s.turn,0)+wallsLeft(s,s.turn,1)>0){c=inner?wallMoves(s,cands(s)):[];if(!c.length&&(!inner||V===0))c=wallMoves(s,null);out=out.concat(c)}
+  }
+  return out;
+}
+function fieldsOf(s){if(!s.f)s.f=[field(s.bS,s.bE,0),field(s.bS,s.bE,1)];return s.f}
+function pawnDist(s,P,F){var a=[],k;for(k=P*NP;k<P*NP+NP;k++)if(s.pos[k]>=0)a.push(F[s.pos[k]]);return a.sort(function(x,y){return x-y})}
+
+/* ================================ 2. ENGINE ================================ */
+// walls worth trying inside the search: those touching a shortest route of the opponent's closest pawn
+function cands(s){
+  var O=1-s.turn,F=fieldsOf(s)[O],mark=new Uint8Array(NC),dd=pawnDist(s,O,F),q=[],h,u,k,out=[],seen=new Uint8Array(2*NW),x,y,i,j,c,d;
+  if(!dd.length||dd[0]>=99)return out;
+  for(k=O*NP;k<O*NP+NP;k++)if(s.pos[k]>=0&&F[s.pos[k]]===dd[0]&&!mark[s.pos[k]]){mark[s.pos[k]]=1;q.push(s.pos[k])}
+  for(h=0;h<q.length;h++){u=q[h];var m=F[u];if(m===0)continue;
+    if(V===1||m===1)for(d=0;d<4;d++)if(op(s.bS,s.bE,u,d)){c=u+DD[d];if(F[c]===m-1&&(V===1||GOAL[O][c])&&!mark[c]){mark[c]=1;q.push(c)}}
+    if(V===0)hop(s.bS,s.bE,u,function(v,a,b){if(F[v]===m-1){if(a>=0)mark[a]=1;if(b>=0)mark[b]=1;if(!mark[v]){mark[v]=1;q.push(v)}}});
+  }
+  function add(o,i,j){if(i<1||i>W-1||j<1||j>H-1)return;var kk=(j-1)*(W-1)+i-1;if(!seen[o*NW+kk]){seen[o*NW+kk]=1;out.push(o,kk)}}
+  for(c=0;c<NC;c++)if(mark[c]){x=c%W;y=c/W|0;
+    for(i=x;i<=x+1;i++){add(0,i,y+1);add(0,i,y)}     // walls along the south and north sides
+    for(j=y;j<=y+1;j++){add(1,x+1,j);add(1,x,j)}     // walls along the east and west sides
+  }
+  return out;
+}
+function ev(s){   // value from the first player's point of view
+  if(s.w>=0)return s.w===2?0:s.w===0?1000:-1000;
+  var F=fieldsOf(s),a=pawnDist(s,0,F[0]),b=pawnDist(s,1,F[1]),mv=V===0&&s.ph===1?1-s.turn:s.turn,sg=mv===0?1:-1,dm=mv===0?a[0]:b[0];
+  if((V===1||s.ph===0)&&dm<=1)return sg*900;                 // the side to move steps onto its goal now
+  var v=10*(b[0]-a[0])+5*sg;
+  if(V===0)v+=1.5*(Math.min(b[1]===undefined?b[0]:b[1],30)-Math.min(a[1]===undefined?a[0]:a[1],30));
+  else v+=2.5*(s.res[0]-s.res[2]);
+  return v;
+}
+var BEAM=[0,0,8,5],NOISE=[0,7,.6,.1],DEPTH=[[0,1,2,5],[0,1,2,3]];
+function val1(ns,P){return ns.w>=0?(ns.w===2?0:ns.w===P?1001:-1001):(P===0?1:-1)*ev(ns)}
+function term(ns,d,P){return ns.w===2?0:(ns.w===P?1:-1)*(1000+d)}
+// value of state s for the player to move (the wall step of a Blockade turn keeps the same player on move)
+function nega(s,d,al,be){
+  if(s.w>=0)return term(s,d,s.turn);
+  if(d===0)return (s.turn===0?1:-1)*ev(s);
+  var ms=legal(s,true),best=-1e9,P=s.turn,i,v;
+  if(!ms.length)return 0;
+  ms.forEach(function(m){m.v=val1(m.ns,P)});
+  if(d===1){ms.forEach(function(m){if(m.v>best)best=m.v});return best}
+  ms.sort(function(a,b){return b.v-a.v});ms=ms.slice(0,BEAM[3]);
+  for(i=0;i<ms.length;i++){v=child(ms[i].ns,d-1,al,be,P);if(v>best)best=v;if(best>al)al=best;if(al>=be)break}
+  return best;
+}
+function child(ns,d,al,be,P){return ns.w>=0?term(ns,d,P):ns.turn===P?nega(ns,d,al,be):-nega(ns,d,-be,-al)}
+// past: the recent positions of the game. A pawn move back onto a square that pawn stood on in the last few turns is
+// penalised, so the computer does not shuffle back and forth to dodge walls it fears just beyond its search horizon.
+var REP=14,REPN=8;
+function aiMove(s,lv,past){
+  var ms=legal(s,false),P=s.turn,best=-1e9,pick=null,i,v,D=DEPTH[V][lv],seen={};
+  if(!ms.length)return null;
+  for(i=0;i<ms.length;i++)if(ms[i].ns.w===P)return ms[i];    // a move that wins right now
+  (past||[]).slice(-REPN).forEach(function(q){for(var k=P*NP;k<P*NP+NP;k++)if(q.pos[k]>=0)seen[k+":"+q.pos[k]]=1});
+  ms.forEach(function(m){m.rep=m.t===0&&seen[m.k+":"+m.to]?REP:0;m.v=val1(m.ns,P)-m.rep+Math.random()*.5});
+  if(lv>1){ms.sort(function(a,b){return b.v-a.v});ms=ms.slice(0,BEAM[2])}
+  for(i=0;i<ms.length;i++){
+    v=(D===1?ms[i].v:child(ms[i].ns,D-1,-1e9,1e9,P)-ms[i].rep)+Math.random()*NOISE[lv];
+    if(v>best){best=v;pick=ms[i]}
+  }
+  return pick;
+}
+var sim=null,LOCK=["vr","mode","side","level","new","undo","redo","simN","simR","nFirst","nPrev","nNext","nLast"];
+function runSim(){   // computer vs computer, to look for first/second-player advantage
+  if(sim){sim.stop=true;return}
+  var CAP=V===0?600:400,me=sim={stop:false},TOTALG=Math.max(10,Math.min(1000,+$("simN").value||10)),RND=Math.max(0,Math.min(20,isNaN(+$("simR").value)?4:+$("simR").value)),
+      done=0,w=[0,0,0],un=0,g=newState(),plies=0,past=[g],lv=+$("level").value,lvName=$("level").options[$("level").selectedIndex].text,nm=GAME.sides.map(function(x){return x.name});
+  LOCK.forEach(function(i){$(i).disabled=true});
+  $("sim").textContent="Stop simulation";
+  $("simout").textContent="Simulating at "+lvName+" level… 0/"+TOTALG;
+  function finish(stopped){
+    sim=null;$("sim").textContent="Simulation";
+    ["vr","mode","new","simN","simR"].forEach(function(i){$(i).disabled=false});
+    $("level").disabled=$("side").disabled=$("mode").value==="2p";
+    var mg=done?(196*Math.sqrt((w[0]/done)*(1-w[0]/done)/done)).toFixed(1):"0";
+    var pc=function(n){return done?(100*n/done).toFixed(1)+"%":"n/a"};
+    $("simout").textContent=(stopped?"Stopped after ":"")+done+" games of "+VARS[V].name+" at "+lvName+" level (computer vs computer), first "+RND+" moves random.\n"+
+      "First player ("+nm[0]+") won "+pc(w[0])+" ("+w[0]+" games, margin ±"+mg+" points at 95% confidence). Second player ("+nm[1]+") won "+pc(w[1])+" ("+w[1]+" games)."+(w[2]?" Draws: "+w[2]+".":"")+(un?" Unfinished after "+CAP+" moves: "+un+".":"");
+    render();
+  }
+  function stepSim(){
+    if(me.stop){finish(true);return}
+    var t0=Date.now(),m,ms;
+    while(Date.now()-t0<40){
+      if(g.w>=0||plies>=CAP){
+        if(g.w>=0)w[g.w]++;else un++;
+        done++;g=newState();plies=0;past=[g];
+        if(done>=TOTALG){finish(false);return}
+        continue;
+      }
+      if(plies<RND){ms=legal(g,false);m=ms[Math.floor(Math.random()*ms.length)]}
+      else m=aiMove(g,lv,past);
+      if(!m){g.w=2;continue}
+      g=m.ns;plies++;past.push(g);if(past.length>REPN)past.shift();
+    }
+    $("simout").textContent="Simulating at "+lvName+" level… "+done+"/"+TOTALG;
+    setTimeout(stepSim,0);
+  }
+  stepSim();
+}
+
+/* =============================== 3. INTERFACE =============================== */
+var hist,redo=[],view=null,over,busy,note="",sel=-1,selS=null,DST=null;   // view: null = live position, otherwise the index being reviewed
+var GREEN="#3fd17a",GOLD="#e0a800";
+function cur(){return hist[hist.length-1]}
+function line(){return hist.concat(redo.slice().reverse())}   // every position, including those that can still be redone
+function browsing(){return view!==null}
+function shown(){return view===null?cur():line()[view]}
+function goto(k){
+  if(busy||sim)return;
+  var n=hist.length-1+redo.length;k=Math.max(0,Math.min(n,k));
+  view=k===hist.length-1?null:k;note="";render();
+}
+// Undo/Redo while reviewing: leave review and play on from the reviewed position (in computer mode, from the nearest position where it is the human's turn)
+function unlock(dir){
+  var Ln=line(),k=view,j;
+  if($("mode").value==="ai"){
+    j=k;while(j>=0&&j<Ln.length&&Ln[j].w<0&&Ln[j].turn!==+$("side").value)j+=dir;
+    if(j>=0&&j<Ln.length)k=j;
+  }
+  hist=Ln.slice(0,k+1);redo=Ln.slice(k+1).reverse();view=null;note="";over=false;render();maybeAI();
+}
+function humanTurn(){return $("mode").value==="2p"||cur().turn===+$("side").value}
+function start(){
+  var sv=$("side").value||"0";
+  build(+$("vr").value);
+  $("side").innerHTML=GAME.sides.map(function(x,i){return'<option value="'+i+'">You are '+x.name+(i?"":" (first)")+'</option>'}).join("");
+  $("side").value=sv;
+  for(var i=0;i<2;i++)$("n"+i).textContent=GAME.sides[i].name;
+  $("gsub").textContent=GAME.subtitle();
+  $("help").textContent=V===0
+    ?"Click one of your pawns, then one of the green dots to move it (a dot that only one pawn can reach works without picking the pawn first). Then click a groove to place a wall: horizontal grooves take a blue wall, vertical grooves a green wall; hovering shows where it would go. The gold rings and outline mark the last turn’s pawn move and wall; the coloured outlines mark the home spaces. Untick “Show highlights” to show only the board and pieces."
+    :"Click a green dot to move your pawn, or click a groove between squares to place a wall there; hovering shows where it would go. The gold rings and outline mark the last move; the coloured bars mark each player’s goal row (Light aims north, Dark aims south). Untick “Show highlights” to show only the board and pieces.";
+  hist=[newState()];redo=[];view=null;note="";sel=-1;$("level").disabled=$("side").disabled=$("mode").value==="2p";over=false;busy=false;
+  render();maybeAI();
+}
+function cxy(c){return[c%W+.5,(c/W|0)+.5]}
+function wrect(o,k,p){var i=k%(W-1)+1,j=(k/(W-1)|0)+1,t=.095+p,l=.93+p;
+  return o===0?'x="'+(i-l)+'" y="'+(j-t)+'" width="'+2*l+'" height="'+2*t+'"':'x="'+(i-t)+'" y="'+(j-l)+'" width="'+2*t+'" height="'+2*l+'"'}
+function wallSvg(o,k,op){var C=VARS[V].wall[o];
+  return'<g'+(op?' opacity="'+op+'"':'')+' pointer-events="none"><rect '+wrect(o,k,0)+' rx=".04" fill="#000" fill-opacity=".35" transform="translate(.04 .05)"/>'+
+    '<rect '+wrect(o,k,0)+' rx=".04" fill="'+C.f+'" stroke="'+C.s+'" stroke-width=".03"/></g>'}
+function pawnSvg(c,P){var p=cxy(c),x=p[0],y=p[1],sd=GAME.sides[P];
+  return'<g pointer-events="none"><circle cx="'+(x+.05)+'" cy="'+(y+.07)+'" r=".33" fill="#000" fill-opacity=".45"/>'+
+    '<circle cx="'+x+'" cy="'+y+'" r=".32" fill="url(#pg'+P+')" stroke="'+sd.dark+'" stroke-width=".04"/>'+
+    (V===0?'<circle cx="'+x+'" cy="'+y+'" r=".13" fill="'+sd.dark+'" fill-opacity=".55"/><circle cx="'+x+'" cy="'+y+'" r=".2" fill="none" stroke="'+sd.dark+'" stroke-opacity=".35" stroke-width=".03"/>'
+          :'<circle cx="'+x+'" cy="'+y+'" r=".17" fill="url(#pg'+P+')" stroke="'+sd.dark+'" stroke-opacity=".7" stroke-width=".03"/>')+'</g>'}
+function render(){
+  var br=browsing(),s=shown(),sd=GAME.sides,C=VARS[V],B=C.board,h=[],P=s.turn,i,k,nT=hist.length-1+redo.length,kk=br?view:hist.length-1,lock=busy||!!sim,M=1.25,HL=$("showLast").checked,lm=s.lm;
+  over=s.w>=0;
+  var canAct=!br&&!over&&humanTurn()&&!busy&&!sim,pawnPh=canAct&&(V===1||s.ph===0);
+  if(selS!==s){sel=-1;selS=s}
+  DST=null;
+  if(pawnPh){DST={};var mov=[];for(k=P*NP;k<P*NP+NP;k++){DST[k]=dests(s,k);if(DST[k].length)mov.push(k)}
+    if(sel>=0&&!(DST[sel]&&DST[sel].length))sel=-1;if(mov.length===1)sel=mov[0]}
+  else sel=-1;
+  h.push('<svg viewBox="'+(-M)+' '+(-M)+' '+(W+2*M)+' '+(H+2*M)+'" role="img" aria-label="'+C.name+' board">');
+  h.push('<defs>'+sd.map(function(x,q){return'<radialGradient id="pg'+q+'" cx=".36" cy=".32" r=".75"><stop offset="0" stop-color="'+x.lite+'"/><stop offset=".55" stop-color="'+x.color+'"/><stop offset="1" stop-color="'+x.dark+'"/></radialGradient>'}).join("")+'</defs>');
+  h.push('<rect x="-.32" y="-.22" width="'+(W+.64)+'" height="'+(H+.64)+'" rx=".35" fill="#000" fill-opacity=".25"/>');
+  h.push('<rect x="-.35" y="-.35" width="'+(W+.7)+'" height="'+(H+.7)+'" rx=".35" fill="'+B.rim+'"/>');
+  h.push('<rect x="0" y="0" width="'+W+'" height="'+H+'" fill="'+B.groove+'"/>');
+  for(i=0;i<NC;i++){var x=i%W,y=i/W|0;h.push('<rect x="'+(x+.1)+'" y="'+(y+.1)+'" width=".8" height=".8" rx=".07" fill="'+B.sq+'" stroke="'+B.edge+'" stroke-width=".03"/>')}
+  (function(){   // coordinates: letters = columns (top and bottom), numbers = rows (left and right), row 1 at the bottom
+    var fs=.4;
+    function lab(x,y,t){h.push('<text x="'+x+'" y="'+y+'" font-size="'+fs+'" text-anchor="middle" dominant-baseline="central" fill="var(--mute)" pointer-events="none">'+t+'</text>')}
+    for(var c=0;c<W;c++){var Lt=String.fromCharCode(97+c);lab(c+.5,-.78,Lt);lab(c+.5,H+.78,Lt)}
+    for(var r=0;r<H;r++){lab(-.8,r+.5,H-r);lab(W+.8,r+.5,H-r)}
+  })();
+  if(HL){   // goals: home-space outlines (Blockade) or goal-row bars (Quoridor)
+    if(V===0)HOMES.forEach(function(L,q){L.forEach(function(c){var x=c%W,y=c/W|0;
+      h.push('<rect x="'+(x+.14)+'" y="'+(y+.14)+'" width=".72" height=".72" rx=".06" fill="none" stroke="'+sd[q].color+'" stroke-width=".045" stroke-opacity=".8" stroke-dasharray=".12 .08" pointer-events="none"/>')})});
+    else[[0,-.19],[1,H+.19]].forEach(function(b){var ln='<line x1=".15" y1="'+b[1]+'" x2="'+(W-.15)+'" y2="'+b[1]+'" stroke-linecap="round" pointer-events="none" ';
+      h.push(ln+'stroke="#d8b27c" stroke-width=".17"/>'+ln+'stroke="'+sd[b[0]].color+'" stroke-width=".11"/>')});
+  }
+  if(HL&&lm&&lm.k>=0&&lm.from>=0){var f=cxy(lm.from);h.push('<circle cx="'+f[0]+'" cy="'+f[1]+'" r=".22" fill="none" stroke="'+GOLD+'" stroke-width=".06" stroke-dasharray=".09 .06" pointer-events="none"/>')}
+  if(HL&&lm&&lm.wall)h.push('<rect '+wrect(lm.wall[0],lm.wall[1],.07)+' rx=".08" fill="'+GOLD+'" pointer-events="none"/>');
+  for(k=0;k<NW;k++){if(s.hw[k])h.push(wallSvg(0,k));if(s.vw[k])h.push(wallSvg(1,k))}
+  for(k=0;k<s.pos.length;k++)if(s.pos[k]>=0)h.push(pawnSvg(s.pos[k],owner(k)));
+  if(HL&&lm&&lm.k>=0&&lm.to>=0&&s.pos[lm.k]===lm.to){var t=cxy(lm.to);h.push('<circle cx="'+t[0]+'" cy="'+t[1]+'" r=".42" fill="none" stroke="'+GOLD+'" stroke-width=".07" pointer-events="none"/>')}
+  if(HL&&pawnPh){
+    if(sel>=0){var q=cxy(s.pos[sel]);
+      if(V===0)h.push('<circle cx="'+q[0]+'" cy="'+q[1]+'" r=".42" fill="none" stroke="'+GREEN+'" stroke-width=".06" pointer-events="none"/>');
+      DST[sel].forEach(function(c){var p=cxy(c);h.push('<circle cx="'+p[0]+'" cy="'+p[1]+'" r=".13" fill="'+GREEN+'" fill-opacity=".85" pointer-events="none"/>')})}
+    else for(k=P*NP;k<P*NP+NP;k++)if(DST[k].length){var r=cxy(s.pos[k]);
+      h.push('<circle cx="'+r[0]+'" cy="'+r[1]+'" r=".42" fill="none" stroke="'+GREEN+'" stroke-width=".04" stroke-dasharray=".1 .07" pointer-events="none"/>')}
+  }
+  h.push('<g id="pv" pointer-events="none"></g>');
+  h.push('<rect x="-.35" y="-.35" width="'+(W+.7)+'" height="'+(H+.7)+'" fill="#000" fill-opacity="0"/>');
+  h.push('</svg>');
+  $("board").innerHTML=h.join("");
+  $("board").style.cursor=canAct?"pointer":"default";
+  var names=sd.map(function(x){return x.name}),st;
+  for(i=0;i<2;i++){var tt=GAME.stats(s,i);$("s"+i).textContent=tt.big;$("d"+i).textContent=tt.text;
+    $("p"+i).className="pl"+(!over&&s.turn===i?" on":"")}
+  if(br)st="Reviewing history (move "+kk+" of "+nT+"): the board is locked. Press Undo or Redo to play on from here.";
+  else if(over)st=s.w===2?"Game over: draw.":"Game over: "+names[s.w]+" wins.";
+  else if(!humanTurn())st=names[P]+" to move (computer thinking…)";
+  else if(V===0&&s.ph===1)st=names[P]+": place a wall ("+s.res[2*P]+" blue for horizontal grooves, "+s.res[2*P+1]+" green for vertical grooves left).";
+  else if(V===0)st=names[P]+" to move: move a pawn towards "+sd[P].goal+".";
+  else st=names[P]+" to move: move your pawn towards "+sd[P].goal+(s.res[2*P]?" or place a wall ("+s.res[2*P]+" left).":".");
+  $("status").textContent=st;
+  $("last").textContent=(GAME.describe(s)+" "+note).trim();
+  $("undo").disabled=lock||!(br||hist.length>=2);
+  $("redo").disabled=lock||!(br||redo.length);
+  $("nFirst").disabled=$("nPrev").disabled=lock||kk<=0;
+  $("nNext").disabled=$("nLast").disabled=lock||kk>=nT;
+  $("nlab").textContent="Move "+kk+" of "+nT;
+}
+function play(ns){hist.push(ns);redo=[];note="";sel=-1;render();maybeAI()}
+function bpt(e){var svg=$("board").querySelector("svg");if(!svg)return null;var p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(svg.getScreenCTM().inverse())}
+// the wall nearest to board point (px,py); force: any point counts, otherwise only points close to a groove
+function pickWall(s,px,py,force){
+  if(px<0||py<0||px>W||py>H)return null;
+  var gx=Math.round(px),gy=Math.round(py),dv=gx>=1&&gx<=W-1?Math.abs(px-gx):9,dh=gy>=1&&gy<=H-1?Math.abs(py-gy):9,o,a,lim,c,L=[],i,k,why="";
+  if(dv>8&&dh>8)return null;
+  if(!force&&Math.min(dv,dh)>.2)return null;
+  o=dh<=dv?0:1;a=o===0?px:py;lim=o===0?W:H;
+  c=Math.min(lim-1,Math.max(0,Math.floor(a)));               // the square the pointer is beside
+  (a-c<.5?[c,c+1]:[c+1,c]).forEach(function(z){if(z>=1&&z<=lim-1)L.push(z)});
+  for(i=0;i<L.length;i++){k=o===0?(gy-1)*(W-1)+L[i]-1:(L[i]-1)*(W-1)+gx-1;var w=wallWhy(s,o,k);if(!w)return{o:o,k:k,why:""};if(!i)why=w}
+  return{o:o,k:-1,why:why};
+}
+function hover(e){
+  var g=$("pv");if(!g)return;
+  var s=cur(),p=bpt(e),w=null;
+  if(p&&!over&&!busy&&!sim&&!browsing()&&humanTurn()&&(V===1||s.ph===1))w=pickWall(s,p.x,p.y,V===0);
+  g.innerHTML=w&&w.k>=0?wallSvg(w.o,w.k,.6):"";
+}
+function click(e){
+  if(over||busy||sim||browsing()||!humanTurn())return;
+  var s=cur(),p=bpt(e),P=s.turn,w,c,k,own=-1,hits=[];note="";
+  if(!p)return;
+  if(V===1||s.ph===1){
+    w=pickWall(s,p.x,p.y,V===0);
+    if(w){if(w.k>=0){play(doWall(s,w.o,w.k).ns);return}note=w.why;render();return}
+  }
+  if(V===0&&s.ph===1){render();return}
+  if(p.x<0||p.y<0||p.x>=W||p.y>=H)return;
+  c=Math.floor(p.y)*W+Math.floor(p.x);
+  if(!DST)return;
+  for(k=P*NP;k<P*NP+NP;k++){if(s.pos[k]===c)own=k;if(DST[k]&&DST[k].indexOf(c)>=0)hits.push(k)}
+  if(own>=0&&!hits.length){
+    if(V===0){sel=sel===own?-1:own;if(!DST[own].length)note="That pawn has no legal move.";}
+    render();return}
+  if(sel>=0&&hits.indexOf(sel)>=0){play(doMove(s,sel,c).ns);return}
+  if(hits.length===1){play(doMove(s,hits[0],c).ns);return}
+  if(hits.length>1)note="Both pawns can reach "+cn(c)+": click the pawn you want to move first.";
+  else note=V===0?"That square cannot be reached: a pawn moves two squares straight or one diagonally, and walls block the way.":"Your pawn cannot move there.";
+  render();
+}
+function maybeAI(){
+  if(over||$("mode").value!=="ai"||cur().turn===+$("side").value)return;
+  busy=true;render();
+  setTimeout(function(){
+    var c=cur(),m=aiMove(c,+$("level").value,hist);busy=false;
+    if(m){hist.push(m.ns);redo=[]}else{c.w=2;c.ev="No legal move: the game is a draw."}
+    render();maybeAI();
+  },60);
+}
+document.title=GAME.title;$("gtitle").textContent=GAME.title;
+function li(x){return"<li>"+(typeof x==="string"?x:x.t+"<ul>"+x.sub.map(li).join("")+"</ul>")+"</li>"}
+$("rules").innerHTML=GAME.rules.map(function(sec){return"<li><b>"+sec.h+"</b><ul>"+sec.items.map(li).join("")+"</ul></li>"}).join("");
+$("board").onclick=click;
+$("board").onpointermove=hover;
+$("board").onpointerleave=function(){var g=$("pv");if(g)g.innerHTML=""};
+$("new").onclick=start;$("sim").onclick=runSim;$("showLast").onchange=render;
+$("mode").onchange=$("side").onchange=$("vr").onchange=start;
+function aiSide(){return $("mode").value==="ai"&&cur().turn!==+$("side").value}
+$("redo").onclick=function(){
+  if(busy||sim)return;
+  if(browsing()){unlock(1);return}
+  if(!redo.length)return;
+  hist.push(redo.pop());
+  while(redo.length&&aiSide())hist.push(redo.pop());
+  note="";render();
+};
+$("undo").onclick=function(){
+  if(busy||sim)return;
+  if(browsing()){unlock(-1);return}
+  if(hist.length<2)return;
+  redo.push(hist.pop());
+  while(hist.length>1&&aiSide())redo.push(hist.pop());
+  over=false;note="";render();maybeAI();
+};
+$("nFirst").onclick=function(){goto(0)};
+$("nPrev").onclick=function(){goto((browsing()?view:hist.length-1)-1)};
+$("nNext").onclick=function(){goto((browsing()?view:hist.length-1)+1)};
+$("nLast").onclick=function(){goto(hist.length-1+redo.length)};
+start();
+})();
+</script>
+</body>
+</html>
